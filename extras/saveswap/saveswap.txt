@@ -1,0 +1,19 @@
+Hi,
+here is a tool that helps you converting save files from an emulator to the ED64.
+it's like always ^^ just a beta version and needs some testing :D
+
+Howto:
+after executing, select the save file. now select the filesize to what the file should be extended.
+select the needed swapping options and click on "convert file".
+Rename the file to your rom-filename except the file-extension.
+
+Hint:
+In the most cases you will be fine with the default settings. If it's not working, create a new save-file with the ED64 and compare it with a hexeditor to your converting results, if it somehow matches. ^^
+Make sure you use exactly the same rom on the everdrive64 and your emulator.
+you can take a look at this boot/save list for the correct save settings.
+
+Features:
+byte-swap
+word-swap
+byte appending
+save backup (*.bak)
