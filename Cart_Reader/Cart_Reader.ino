@@ -2,8 +2,8 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-07-04
-   Version:          V16
+   Date:             2016-07-10
+   Version:          V17
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
@@ -29,7 +29,7 @@
    Snes9x - SuperFX Sram Fix
 
 **********************************************************************************/
-char ver[5] = "V16";
+char ver[5] = "V17";
 
 /******************************************
    Choose Output
@@ -102,7 +102,8 @@ SdFile myFile;
 #define mode_NPFlash 4
 #define mode_NPGame 5
 #define mode_GB 6
-#define mode_FLASH 7
+#define mode_FLASH8 7
+#define mode_FLASH16 8
 
 /******************************************
    Variables
@@ -294,6 +295,11 @@ const char n64MenuItem1[] PROGMEM = "Cart Slot";
 const char n64MenuItem2[] PROGMEM = "Controller";
 const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2};
 
+// Flash Submenu
+const char flashMenuItem1[] PROGMEM = "8bit slot";
+const char flashMenuItem2[] PROGMEM = "16bit slot";
+const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
+
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
@@ -305,7 +311,7 @@ void mainMenu() {
   switch (modeMenu)
   {
     case 0:
-      // create menu with title and 4 options to choose from
+      // create menu with title and 2 options to choose from
       unsigned char n64Dev;
       // Copy menuOptions of of progmem
       convertPgm(menuOptionsN64, 2);
@@ -352,10 +358,29 @@ void mainMenu() {
       break;
 
     case 4:
-      display_Clear();
-      display_Update();
-      setup_Flash();
-      mode =  mode_FLASH;
+      // create menu with title and 2 options to choose from
+      unsigned char flashSlot;
+      // Copy menuOptions of of progmem
+      convertPgm(menuOptionsFlash, 2);
+      flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (flashSlot)
+      {
+        case 0:
+          display_Clear();
+          display_Update();
+          setup_Flash8();
+          mode =  mode_FLASH8;
+          break;
+
+        case 1:
+         display_Clear();
+          display_Update();
+          setup_Flash16();
+          mode =  mode_FLASH16;
+          break;
+      }
       break;
 
     case 5:
@@ -1080,8 +1105,11 @@ void loop() {
   else if (mode == mode_SNES) {
     snesMenu();
   }
-  else if (mode == mode_FLASH) {
-    flashromMenu();
+  else if (mode == mode_FLASH8) {
+    flashromMenu8();
+  }
+   else if (mode == mode_FLASH16) {
+    flashromMenu16();
   }
   else if (mode == mode_NP) {
     npMenu();
