@@ -404,12 +404,14 @@ void printStartPage() {
     println_Msg(checksumStr);
     display_Update();
 
-    // Wait for user input
-    println_Msg(F(" "));
-    println_Msg(F(" "));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
+    if (enable_OLED) {
+      // Wait for user input
+      println_Msg(F(" "));
+      println_Msg(F(" "));
+      println_Msg(F("Press Button..."));
+      display_Update();
+      wait();
+    }
   }
 }
 
