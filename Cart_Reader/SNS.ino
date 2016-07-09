@@ -31,7 +31,8 @@ const char SnesMenuItem2[] PROGMEM = "Read Save";
 const char SnesMenuItem3[] PROGMEM = "Write Save";
 const char SnesMenuItem4[] PROGMEM = "Test SRAM";
 const char SnesMenuItem5[] PROGMEM = "Reset";
-const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5};
+const char SnesMenuItem6[] PROGMEM = "Reset cycle";
+const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6};
 
 // Manual config menu items
 const char confMenuItem1[] PROGMEM = "4MB LoRom 256K Sram";
@@ -45,8 +46,8 @@ void snesMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions of of progmem
-  convertPgm(menuOptionsSNES, 5);
-  mainMenu = question_box("SNES Cart Reader", menuOptions, 5, 0);
+  convertPgm(menuOptionsSNES, 6);
+  mainMenu = question_box("SNES Cart Reader", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -107,6 +108,17 @@ void snesMenu() {
       break;
 
     case 4:
+      asm volatile ("  jmp 0");
+      break;
+
+    case 5:
+      // For arcademaster1 (Markfrizb) multi-game carts
+      // Set reset pin to output (PH0)
+      DDRH |= (1 << 0);
+      // Switch RST(PH0) to LOW
+      PORTH &= ~(1 << 0);
+      print_Msg("Resetting 3s..");
+      delay(3000);  // wait 3 secs to switch to next game
       asm volatile ("  jmp 0");
       break;
   }
