@@ -2,8 +2,8 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-07-10
-   Version:          V17
+   Date:             2016-07-11
+   Version:          V17A
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
@@ -29,7 +29,7 @@
    Snes9x - SuperFX Sram Fix
 
 **********************************************************************************/
-char ver[5] = "V17";
+char ver[5] = "V17A";
 
 /******************************************
    Choose Output
@@ -375,7 +375,7 @@ void mainMenu() {
           break;
 
         case 1:
-         display_Clear();
+          display_Clear();
           display_Update();
           setup_Flash16();
           mode =  mode_FLASH16;
@@ -389,12 +389,49 @@ void mainMenu() {
       display.drawBitmap(0, 0, sig, 128, 64, 1);
       println_Msg(F("Nintendo Cart Reader"));
       println_Msg(F("github.com/sanni"));
-      println_Msg(F("2016"));
+      print_Msg(F("2016 "));
+      println_Msg(ver);
       println_Msg(F(""));
       println_Msg(F(""));
       println_Msg(F(""));
       println_Msg(F(""));
-      print_Error(F("Press Button"), true);
+      println_Msg(F("Press Button"));
+      display_Update();
+
+      while (1) {
+        if (enable_OLED) {
+          // get input button
+          int b = checkButton();
+
+          // Send some clock pulses to the Eeprom in case it locked up
+          // if the cart readers input button is pressed shortly
+          if (b == 1) {
+            asm volatile ("  jmp 0");
+          }
+
+          // if the cart readers input button is pressed long
+          if (b == 3) {
+            asm volatile ("  jmp 0");
+          }
+
+          // if the button is pressed super long
+          if (b == 4) {
+            display_Clear();
+            println_Msg(F("Resetting folder..."));
+            display_Update();
+            delay(2000);
+            foldern = 0;
+            EEPROM_writeAnything(0, foldern);
+            asm volatile ("  jmp 0");
+          }
+        }
+        if (enable_Serial) {
+          wait_serial();
+          asm volatile ("  jmp 0");
+        }
+        rgb.setColor(random(0, 255), random(0, 255), random(0, 255));
+        delay(random(50, 100));
+      }
       break;
   }
 }
@@ -707,8 +744,7 @@ void rgbLed(byte Color) {
   OLED Menu Module
 *****************************************/
 // Read button state
-int checkButton()
-{
+int checkButton() {
   int event = 0;
   // Read the state of the button (PD7)
   buttonVal = (PIND & (1 << 7));
@@ -1108,7 +1144,7 @@ void loop() {
   else if (mode == mode_FLASH8) {
     flashromMenu8();
   }
-   else if (mode == mode_FLASH16) {
+  else if (mode == mode_FLASH16) {
     flashromMenu16();
   }
   else if (mode == mode_NP) {
