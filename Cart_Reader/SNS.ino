@@ -34,11 +34,12 @@ const char SnesMenuItem5[] PROGMEM = "Reset";
 const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5};
 
 // Manual config menu items
-const char confMenuItem1[] PROGMEM = "4MB LoRom 256K Sram";
-const char confMenuItem2[] PROGMEM = "4MB HiRom 64K Sram";
-const char confMenuItem3[] PROGMEM = "6MB ExRom 256K Sram";
-const char confMenuItem4[] PROGMEM = "Reset";
-const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4};
+const char confMenuItem1[] PROGMEM = "Use header info";
+const char confMenuItem2[] PROGMEM = "4MB LoRom 256K Sram";
+const char confMenuItem3[] PROGMEM = "4MB HiRom 64K Sram";
+const char confMenuItem4[] PROGMEM = "6MB ExRom 256K Sram";
+const char confMenuItem5[] PROGMEM = "Reset";
+const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
 
 // SNES Menu
 void snesMenu() {
@@ -118,37 +119,40 @@ void snesMenu() {
 
 // Menu for manual configuration
 void confMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char subMenu;
   // Copy menuOptions of of progmem
-  convertPgm(menuOptionsConf, 4);
-  subMenu = question_box("Choose mapping", menuOptions, 4, 0);
+  convertPgm(menuOptionsConf, 5);
+  subMenu = question_box("Choose mapping", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (subMenu)
   {
     case 0:
+      break;
+
+    case 1:
       romType = LO;
       numBanks = 128;
       sramSize = 256;
       strcpy(romName, "LOROM");
       break;
 
-    case 1:
+    case 2:
       romType = HI;
       numBanks = 64;
       sramSize = 64;
       strcpy(romName, "HIROM");
       break;
 
-    case 2:
+    case 3:
       romType = EX;
       numBanks = 96;
       sramSize = 256;
       strcpy(romName, "EXROM");
       break;
 
-    case 3:
+    case 4:
       // Reset
       asm volatile ("  jmp 0");
       break;
@@ -237,7 +241,7 @@ void setup_Snes() {
   delay(1000);
 
   // Print all the info
-  printStartPage();
+  getCartInfo_SNES();
 }
 
 /******************************************
@@ -303,11 +307,17 @@ byte readBank_SNES(byte myBank, word myAddress) {
 /******************************************
   SNES ROM Functions
 ******************************************/
-void printStartPage() {
+void getCartInfo_SNES() {
+  boolean manualConfig = 0;
+
   // Print start page
-  if (checkcart() == 0) {
-    display_Clear();
+  if (checkcart_SNES() == 0) {
+    // Checksum either corrupt or 0000
+    manualConfig = 1;
+    errorLvl = 1;
     rgb.setColor(255, 0, 0);
+
+    display_Clear();
     println_Msg(F("ERROR"));
     println_Msg(F("Rom header corrupt"));
     println_Msg(F("or missing"));
@@ -318,86 +328,91 @@ void printStartPage() {
     println_Msg(F("or powercycle if SA1"));
     display_Update();
     wait();
-    confMenu();
+    // Wait() clears errors but in this case we still have an error
+    errorLvl = 1;
   }
-  else {
-    display_Clear();
-    print_Msg(F("Rom Name: "));
-    println_Msg(romName);
 
-    print_Msg(F("Type: "));
-    if (romType == HI)
-      print_Msg(F("HiROM"));
-    else if (romType == LO)
-      print_Msg(F("LoROM"));
-    else if (romType == EX)
-      print_Msg(F("ExHiRom"));
-    else
-      print_Msg(romType);
-    print_Msg(F(" "));
-    if (romSpeed == 0)
-      println_Msg(F("SlowROM"));
-    else if (romSpeed == 2)
-      println_Msg(F("SlowROM"));
-    else if (romSpeed == 3)
-      println_Msg(F("FastROM"));
-    else
-      println_Msg(romSpeed);
+  display_Clear();
+  print_Msg(F("Rom Name: "));
+  println_Msg(romName);
 
-    print_Msg(F("ICs: ROM "));
-    if (romChips == 0)
-      println_Msg(F("ONLY"));
-    else if (romChips == 1)
-      println_Msg(F("RAM"));
-    else if (romChips == 2)
-      println_Msg(F("SAVE"));
-    else if (romChips == 3)
-      println_Msg(F("DSP1"));
-    else if (romChips == 4)
-      println_Msg(F("DSP1 RAM"));
-    else if (romChips == 5)
-      println_Msg(F("DSP1 SAVE"));
-    else if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26))
-      println_Msg(F("SuperFX"));
-    else if (romChips == 52) {
-      println_Msg(F("SA1 RAM"));
-      romType = SA;
-    }
-    else if (romChips == 53) {
-      println_Msg(F("SA1 RAM BATT"));
-      romType = SA;
-    }
-    else if (romChips == 227)
-      println_Msg(F("RAM GBoy"));
-    else if (romChips == 246)
-      println_Msg(F("DSP2"));
-    else
-      println_Msg(F(""));
+  print_Msg(F("Type: "));
+  if (romType == HI)
+    print_Msg(F("HiROM"));
+  else if (romType == LO)
+    print_Msg(F("LoROM"));
+  else if (romType == EX)
+    print_Msg(F("ExHiRom"));
+  else
+    print_Msg(romType);
+  print_Msg(F(" "));
+  if (romSpeed == 0)
+    println_Msg(F("SlowROM"));
+  else if (romSpeed == 2)
+    println_Msg(F("SlowROM"));
+  else if (romSpeed == 3)
+    println_Msg(F("FastROM"));
+  else
+    println_Msg(romSpeed);
 
-    print_Msg(F("Rom Size: "));
-    print_Msg(romSize);
-    println_Msg(F("Mbit"));
+  print_Msg(F("ICs: ROM "));
+  if (romChips == 0)
+    println_Msg(F("ONLY"));
+  else if (romChips == 1)
+    println_Msg(F("RAM"));
+  else if (romChips == 2)
+    println_Msg(F("SAVE"));
+  else if (romChips == 3)
+    println_Msg(F("DSP1"));
+  else if (romChips == 4)
+    println_Msg(F("DSP1 RAM"));
+  else if (romChips == 5)
+    println_Msg(F("DSP1 SAVE"));
+  else if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26))
+    println_Msg(F("SuperFX"));
+  else if (romChips == 52) {
+    println_Msg(F("SA1 RAM"));
+    romType = SA;
+  }
+  else if (romChips == 53) {
+    println_Msg(F("SA1 RAM BATT"));
+    romType = SA;
+  }
+  else if (romChips == 227)
+    println_Msg(F("RAM GBoy"));
+  else if (romChips == 246)
+    println_Msg(F("DSP2"));
+  else
+    println_Msg(F(""));
 
-    print_Msg(F("Banks: "));
-    println_Msg(numBanks);
+  print_Msg(F("Rom Size: "));
+  print_Msg(romSize);
+  println_Msg(F("Mbit"));
 
-    print_Msg(F("Sram Size: "));
-    print_Msg(sramSize);
-    println_Msg(F("Kbit"));
+  print_Msg(F("Banks: "));
+  println_Msg(numBanks);
 
-    print_Msg(F("ROM Version: 1."));
-    println_Msg(romVersion);
+  print_Msg(F("Sram Size: "));
+  print_Msg(sramSize);
+  println_Msg(F("Kbit"));
 
-    print_Msg(F("Checksum: "));
-    println_Msg(checksumStr);
-    display_Update();
+  print_Msg(F("ROM Version: 1."));
+  println_Msg(romVersion);
 
-    // Wait for user input
-    println_Msg(F(" "));
-    println_Msg(F(" "));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
+  print_Msg(F("Checksum: "));
+  println_Msg(checksumStr);
+  display_Update();
+
+  // Wait for user input
+  println_Msg(F(" "));
+  println_Msg(F(" "));
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+
+  // Start manual config
+  if (manualConfig == 1) {
+    confMenu();
   }
 }
 
@@ -447,7 +462,7 @@ void checkAltConf() {
 }
 
 // Read header information
-void getCartInfo_SNES() {
+boolean checkcart_SNES() {
   // set control to read
   dataIn();
 
@@ -533,17 +548,18 @@ void getCartInfo_SNES() {
 
   // ROM Version
   romVersion = readBank_SNES(0, 65499);
-}
 
-boolean checkcart() {
-  // If cart is present and checksum is equal to reverse checksum
+  // Test if checksum is equal to reverse checksum
   if (((word(readBank_SNES(0, 65500)) + (word(readBank_SNES(0, 65501)) * 256)) + (word(readBank_SNES(0, 65502)) + (word(readBank_SNES(0, 65503)) * 256))) == 65535 ) {
-    getCartInfo_SNES();
-    return 1;
+    if (strcmp("0000", checksumStr) == 0) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
   }
   // Either rom checksum is wrong or no cart is inserted
   else {
-    errorLvl = 1;
     return 0;
   }
 }

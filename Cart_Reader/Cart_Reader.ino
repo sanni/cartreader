@@ -2,8 +2,8 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-07-11
-   Version:          V17A
+   Date:             2016-07-13
+   Version:          V17B
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
@@ -29,7 +29,7 @@
    Snes9x - SuperFX Sram Fix
 
 **********************************************************************************/
-char ver[5] = "V17A";
+char ver[5] = "V17B";
 
 /******************************************
    Choose Output
@@ -403,7 +403,6 @@ void mainMenu() {
           // get input button
           int b = checkButton();
 
-          // Send some clock pulses to the Eeprom in case it locked up
           // if the cart readers input button is pressed shortly
           if (b == 1) {
             asm volatile ("  jmp 0");

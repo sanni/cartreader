@@ -126,7 +126,7 @@ void NPGameMenu() {
       strcpy(romName, gameCode[gameSubMenu + 1]);
 
       // Print info
-      printStartPage();
+      getCartInfo_SNES();
       mode = mode_NPGame;
     }
     else {
@@ -139,7 +139,7 @@ void NPGameMenu() {
       strcpy(romName, gameCode[0]);
 
       // Print info
-      printStartPage();
+      getCartInfo_SNES();
       mode = mode_NPGame;
     }
   }
