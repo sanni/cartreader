@@ -2,8 +2,8 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-07-13
-   Version:          V17B
+   Date:             2016-07-29
+   Version:          V17C
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
@@ -29,7 +29,7 @@
    Snes9x - SuperFX Sram Fix
 
 **********************************************************************************/
-char ver[5] = "V17B";
+char ver[5] = "V17C";
 
 /******************************************
    Choose Output
