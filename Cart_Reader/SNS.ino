@@ -392,6 +392,9 @@ void getCartInfo_SNES() {
     println_Msg(F("SA1 RAM BATT"));
     romType = SA;
   }
+  else if (romChips == 69) {
+    println_Msg(F("SDD1 BATT"));
+  }
   else if (romChips == 227)
     println_Msg(F("RAM GBoy"));
   else if (romChips == 246)
@@ -500,17 +503,26 @@ boolean checkcart_SNES() {
   // Check RomChips
   romChips = readBank_SNES(0, 65494);
 
-  // Check RomSize
-  byte romSizeExp = readBank_SNES(0, 65495) - 7;
-  romSize = 1;
-  while (romSizeExp--)
-    romSize *= 2;
-
-  if ((romType == EX) || (romType == SA)) {
-    numBanks = long(romSize) * 2;
+  if (romChips == 69)
+  {
+    romSize = 48;
+    numBanks = 96;
+    romType = HI;
   }
-  else {
-    numBanks = (long(romSize) * 1024 * 1024 / 8) / (32768 + (long(romType) * 32768));
+  else
+  {
+    // Check RomSize
+    byte romSizeExp = readBank_SNES(0, 65495) - 7;
+    romSize = 1;
+    while (romSizeExp--)
+      romSize *= 2;
+  
+    if ((romType == EX) || (romType == SA)) {
+      numBanks = long(romSize) * 2;
+    }
+    else {
+      numBanks = (long(romSize) * 1024 * 1024 / 8) / (32768 + (long(romType) * 32768));
+    }
   }
 
   //Check SD card for alt config
@@ -803,7 +815,7 @@ void readROM_SNES() {
     }
   }
   // Dump High-type ROM
-  else if ((romType == HI) || (romType == SA) || (romType == EX)) {
+  else if (((romType == HI) || (romType == SA) || (romType == EX)) && (romChips != 69)) {
     println_Msg(F("Dumping HiRom..."));
     display_Update();
 
@@ -816,6 +828,42 @@ void readROM_SNES() {
       }
     }
   }
+  // Dump SDD1 High-type ROM
+  else if ((romType == HI) && (romChips == 69)) {
+    println_Msg(F("Dumping SDD1 HiRom..."));
+    display_Update();
+
+    controlIn_SNES();
+    byte initialSOMap = readBank_SNES(0, 18439);
+    
+    for (int currMemmap=0; currMemmap < (numBanks / 16); currMemmap++) {
+
+      dataOut();
+      controlOut_SNES();
+      
+      writeBank_SNES(0, 18439, currMemmap);
+
+      dataIn();
+      controlIn_SNES();
+      
+      for (int currBank = 240; currBank < 256; currBank++) {
+        for (long currByte = 0; currByte < 65536; currByte += 512) {
+          for (unsigned long c = 0; c < 512; c++) {
+            sdBuffer[c] = readBank_SNES(currBank, currByte + c);
+          }
+          myFile.write(sdBuffer, 512);
+        }
+      }
+    }
+    
+    dataOut();
+    controlOut_SNES();
+    
+    writeBank_SNES(0, 18439, initialSOMap);
+    
+    dataIn();
+    controlIn_SNES();
+  }  
   // Close the file:
   myFile.close();
 
