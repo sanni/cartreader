@@ -802,8 +802,8 @@ void readBlock(word myAddress) {
   // Read Controller Pak command
   unsigned char command[] = {0x02};
   // Address Command
-  unsigned char addressHigh[] = {myAddressCRC >> 8};
-  unsigned char addressLow[] = {myAddressCRC & 0xff};
+  unsigned char addressHigh[] = {(unsigned char)(myAddressCRC >> 8)};
+  unsigned char addressLow[] = {(unsigned char)(myAddressCRC & 0xff)};
 
   // don't want interrupts getting in the way
   noInterrupts();
@@ -902,8 +902,8 @@ void writeMPK() {
       // Write Controller Pak command
       unsigned char command[] = {0x03};
       // Address Command
-      unsigned char addressHigh[] = {myAddressCRC >> 8};
-      unsigned char addressLow[] = {myAddressCRC & 0xff};
+      unsigned char addressHigh[] = {(unsigned char)(myAddressCRC >> 8)};
+      unsigned char addressLow[] = {(unsigned char)(myAddressCRC & 0xff)};
 
       // don't want interrupts getting in the way
       noInterrupts();

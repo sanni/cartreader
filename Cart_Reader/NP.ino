@@ -616,14 +616,14 @@ void resetFlash_NP(int startBank) {
 
   // Reset command sequence
   if (romType) {
-    writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555 * 2, 0xf0);
+    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SNES(startBank, 0x5555L * 2, 0xf0);
   }
   else {
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAA * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xf0);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xf0);
   }
 }
 
@@ -636,9 +636,9 @@ void idFlash_NP(int startBank) {
 
   if (romType) {
     // ID command sequence
-    writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555 * 2, 0x90);
+    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SNES(startBank, 0x5555L * 2, 0x90);
 
     // Set data pins to input again
     dataIn();
@@ -649,9 +649,9 @@ void idFlash_NP(int startBank) {
     sprintf(flashid, "%x%x", readBank_SNES(startBank, 0x00), readBank_SNES(startBank, 0x02));
   }
   else {
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAA * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0x90);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0x90);
 
     // Set data pins to input again
     dataIn();
@@ -690,9 +690,9 @@ void writeFlash_NP(int startBank, uint32_t pos) {
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
           // Write command sequence
-          writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-          writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-          writeBank_SNES(startBank, 0x5555 * 2, 0xa0);
+          writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+          writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+          writeBank_SNES(startBank, 0x5555L * 2, 0xa0);
 
           for (byte c = 0; c < 128; c++) {
 
@@ -715,9 +715,9 @@ void writeFlash_NP(int startBank, uint32_t pos) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
           // Write command sequence
-          writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xaa);
-          writeBank_SNES(0, 0x8000 + 0x2AAA * 2, 0x55);
-          writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xa0);
+          writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
+          writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
+          writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xa0);
 
           for (byte c = 0; c < 128; c++) {
             // Write one byte of data
@@ -786,20 +786,20 @@ void eraseFlash_NP(int startBank) {
 
   if (romType) {
     // Erase command sequence
-    writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555 * 2, 0x80);
-    writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555 * 2, 0x10);
+    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SNES(startBank, 0x5555L * 2, 0x80);
+    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SNES(startBank, 0x5555L * 2, 0x10);
   }
   else {
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAA * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0x80);
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAA * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555 * 2, 0x10);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0x80);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0x10);
   }
 
   // Wait for erase to complete
@@ -943,9 +943,9 @@ void readSectorProtection_NP(byte startBank) {
   dataOut();
 
   // Display Sector Protection Status
-  writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-  writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-  writeBank_SNES(startBank, 0x5555 * 2, 0x90);
+  writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+  writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(startBank, 0x5555L * 2, 0x90);
 
   // Configure control pins
   controlIn_SNES();
@@ -1002,14 +1002,14 @@ void printMapping() {
   controlOut_SNES();
 
   // Reset Flash
-  writeBank_SNES(0xC0, 0x5555 * 2, 0xaa);
-  writeBank_SNES(0xC0, 0x2AAA * 2, 0x55);
-  writeBank_SNES(0xC0, 0x5555 * 2, 0xf0);
+  writeBank_SNES(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SNES(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(0xC0, 0x5555L * 2, 0xf0);
 
   // Reset Flash
-  writeBank_SNES(0xE0, 0x5555 * 2, 0xaa);
-  writeBank_SNES(0xE0, 0x2AAA * 2, 0x55);
-  writeBank_SNES(0xE0, 0x5555 * 2, 0xf0);
+  writeBank_SNES(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SNES(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(0xE0, 0x5555L * 2, 0xf0);
 
   // Switch to read
   dataIn();
@@ -1089,14 +1089,14 @@ void readMapping() {
   controlOut_SNES();
 
   // Reset Flash
-  writeBank_SNES(0xC0, 0x5555 * 2, 0xaa);
-  writeBank_SNES(0xC0, 0x2AAA * 2, 0x55);
-  writeBank_SNES(0xC0, 0x5555 * 2, 0xf0);
+  writeBank_SNES(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SNES(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(0xC0, 0x5555L * 2, 0xf0);
 
   // Reset Flash
-  writeBank_SNES(0xE0, 0x5555 * 2, 0xaa);
-  writeBank_SNES(0xE0, 0x2AAA * 2, 0x55);
-  writeBank_SNES(0xE0, 0x5555 * 2, 0xf0);
+  writeBank_SNES(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SNES(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(0xE0, 0x5555L * 2, 0xf0);
 
   // Switch to read
   dataIn();
@@ -1121,13 +1121,13 @@ void eraseMapping(byte startBank) {
       controlOut_SNES();
 
       // Prepare to erase/write Page Buffer
-      writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-      writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-      writeBank_SNES(startBank, 0x5555 * 2, 0x77);
+      writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+      writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+      writeBank_SNES(startBank, 0x5555L * 2, 0x77);
       // Erase Page Buffer
-      writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-      writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-      writeBank_SNES(startBank, 0x5555 * 2, 0xe0);
+      writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+      writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+      writeBank_SNES(startBank, 0x5555L * 2, 0xe0);
 
       // Wait until complete
       busyCheck_NP(startBank);
@@ -1204,14 +1204,14 @@ byte blankcheckMapping() {
   controlOut_SNES();
 
   // Reset Flash
-  writeBank_SNES(0xC0, 0x5555 * 2, 0xaa);
-  writeBank_SNES(0xC0, 0x2AAA * 2, 0x55);
-  writeBank_SNES(0xC0, 0x5555 * 2, 0xf0);
+  writeBank_SNES(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SNES(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(0xC0, 0x5555L * 2, 0xf0);
 
   // Reset Flash
-  writeBank_SNES(0xE0, 0x5555 * 2, 0xaa);
-  writeBank_SNES(0xE0, 0x2AAA * 2, 0x55);
-  writeBank_SNES(0xE0, 0x5555 * 2, 0xf0);
+  writeBank_SNES(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SNES(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SNES(0xE0, 0x5555L * 2, 0xf0);
 
   // Switch to read
   dataIn();
@@ -1242,13 +1242,13 @@ void writeMapping(byte startBank, uint32_t pos) {
         // Write to Page Buffer
         for (unsigned long currByte = 0xFF00; currByte < 0xFFFF; currByte += 128) {
           // Prepare to erase/write Page Buffer
-          writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-          writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-          writeBank_SNES(startBank, 0x5555 * 2, 0x77);
+          writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+          writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+          writeBank_SNES(startBank, 0x5555L * 2, 0x77);
           // Write Page Buffer Command
-          writeBank_SNES(startBank, 0x5555 * 2, 0xaa);
-          writeBank_SNES(startBank, 0x2AAA * 2, 0x55);
-          writeBank_SNES(startBank, 0x5555 * 2, 0x99);
+          writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
+          writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
+          writeBank_SNES(startBank, 0x5555L * 2, 0x99);
 
           myFile.read(sdBuffer, 128);
 

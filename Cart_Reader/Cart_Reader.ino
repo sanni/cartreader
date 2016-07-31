@@ -74,7 +74,7 @@ Si5351 clockgen;
 // set pins of red, green and blue
 RGBTools rgb(12, 11, 10);
 
-typedef enum {
+typedef enum COLOR_T{
   blue_color,
   red_color,
   purple_color,
@@ -82,7 +82,7 @@ typedef enum {
   turquoise_color,
   yellow_color,
   white_color,
-};
+} color_t;
 
 // SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
 #include <SdFat.h>
@@ -549,7 +549,7 @@ void print_Msg(const __FlashStringHelper *string) {
     Serial.print(string);
 }
 
-void print_Msg(char string[]) {
+void print_Msg(const char string[]) {
   if (enable_OLED)
     display.print(string);
   if (enable_Serial)
@@ -591,7 +591,7 @@ void println_Msg(byte message, int outputFormat) {
     Serial.println(message, outputFormat);
 }
 
-void println_Msg(char message[]) {
+void println_Msg(const char message[]) {
   if (enable_OLED)
     display.println(message);
   if (enable_Serial)
@@ -624,7 +624,7 @@ void display_Clear() {
   }
 }
 
-unsigned char question_box(char* question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char question_box(const char* question, char answers[7][20], int num_answers, int default_choice) {
   if (enable_OLED) {
     return questionBox_OLED(question, answers, num_answers, default_choice);
   }
@@ -633,7 +633,7 @@ unsigned char question_box(char* question, char answers[7][20], int num_answers,
   }
 }
 
-void fileBrowser(char browserTitle[]) {
+void fileBrowser(const char browserTitle[]) {
   if (enable_OLED) {
     fileBrowser_OLED(browserTitle);
   }
@@ -652,7 +652,7 @@ void wait_serial() {
   Serial.println("");
 }
 
-byte questionBox_Serial(char* question, char answers[7][20], int num_answers, int default_choice) {
+byte questionBox_Serial(const char* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
   Serial.print(question);
   Serial.println(F(" Menu"));
@@ -677,7 +677,7 @@ byte questionBox_Serial(char* question, char answers[7][20], int num_answers, in
 }
 
 // Prompt a filename from the Serial Monitor
-void fileBrowser_Serial(char browserTitle[]) {
+void fileBrowser_Serial(const char browserTitle[]) {
   Serial.println(browserTitle);
   // Print all files in root of SD
   Serial.println(F("Name - Size"));
@@ -832,7 +832,7 @@ void wait_btn() {
 }
 
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
-unsigned char questionBox_OLED(char* question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char questionBox_OLED(const char* question, char answers[7][20], int num_answers, int default_choice) {
 
   //clear the screen
   display.clearDisplay();
@@ -956,7 +956,7 @@ unsigned char questionBox_OLED(char* question, char answers[7][20], int num_answ
 /******************************************
   Filebrowser Module
 *****************************************/
-void fileBrowser_OLED(char browserTitle[]) {
+void fileBrowser_OLED(const char browserTitle[]) {
   char fileNames[30][26];
   int currFile;
   filebrowse = 1;
