@@ -1,1 +1,1 @@
-These drop-in replacement modules for special case use.  
+These are drop-in replacement modules for special case use.  
