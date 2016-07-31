@@ -2,8 +2,8 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-07-29
-   Version:          V17C
+   Date:             2016-07-31
+   Version:          V17D
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
@@ -26,10 +26,12 @@
    Shaun Taylor - N64 controller CRC functions
    Angus Gratton - CRC32
    Tamanegi_taro - SA1 fix
-   Snes9x - SuperFX Sram Fix
+   Snes9x - SuperFX sram fix
+   zzattack - multigame pcb fix
+   Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V17C";
+char ver[5] = "V17D";
 
 /******************************************
    Choose Output
@@ -74,7 +76,7 @@ Si5351 clockgen;
 // set pins of red, green and blue
 RGBTools rgb(12, 11, 10);
 
-typedef enum COLOR_T{
+typedef enum COLOR_T {
   blue_color,
   red_color,
   purple_color,

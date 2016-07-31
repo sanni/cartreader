@@ -516,7 +516,7 @@ boolean checkcart_SNES() {
     romSize = 1;
     while (romSizeExp--)
       romSize *= 2;
-  
+
     if ((romType == EX) || (romType == SA)) {
       numBanks = long(romSize) * 2;
     }
@@ -835,17 +835,17 @@ void readROM_SNES() {
 
     controlIn_SNES();
     byte initialSOMap = readBank_SNES(0, 18439);
-    
-    for (int currMemmap=0; currMemmap < (numBanks / 16); currMemmap++) {
+
+    for (int currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
 
       dataOut();
       controlOut_SNES();
-      
+
       writeBank_SNES(0, 18439, currMemmap);
 
       dataIn();
       controlIn_SNES();
-      
+
       for (int currBank = 240; currBank < 256; currBank++) {
         for (long currByte = 0; currByte < 65536; currByte += 512) {
           for (unsigned long c = 0; c < 512; c++) {
@@ -855,15 +855,15 @@ void readROM_SNES() {
         }
       }
     }
-    
+
     dataOut();
     controlOut_SNES();
-    
+
     writeBank_SNES(0, 18439, initialSOMap);
-    
+
     dataIn();
     controlIn_SNES();
-  }  
+  }
   // Close the file:
   myFile.close();
 
