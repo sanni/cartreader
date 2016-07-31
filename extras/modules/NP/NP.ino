@@ -24,7 +24,7 @@ const char NPFlashMenuItem2[] PROGMEM = "Write Flash";
 const char NPFlashMenuItem3[] PROGMEM = "Print Mapping";
 const char NPFlashMenuItem4[] PROGMEM = "Read Mapping";
 const char NPFlashMenuItem5[] PROGMEM = "Write Mapping";
-const char NPFlashMenuItem6[] PROGMEM = "Back";
+const char NPFlashMenuItem6[] PROGMEM = "Reset";
 const char* const menuOptionsNPFlash[] PROGMEM = {NPFlashMenuItem1, NPFlashMenuItem2, NPFlashMenuItem3, NPFlashMenuItem4, NPFlashMenuItem5, NPFlashMenuItem6};
 
 void NPGameOptions() {}
@@ -226,9 +226,9 @@ void npMenu() {
       writeMapping(0xE0, 256);
       break;
 
-    // Go back
+    // Reset
     case 5:
-      mode = mode_NP;
+      asm volatile ("  jmp 0");
       break;
   }
   if (flashSubMenu != 5) {
