@@ -30,9 +30,9 @@
    Shaun Taylor - N64 controller CRC functions  
    Angus Gratton - CRC32  
    Tamanegi_taro - SA1 fix  
-   Snes9x - SuperFX sram fix
-   zzattack - multigame pcb fix
-   Pickle - SDD-1 fix
+   Snes9x - SuperFX sram fix  
+   zzattack - multigame pcb fix  
+   Pickle - SDD-1 fix  
 
 ![cartreaderpcb](http://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/cartreader_np.jpg)
 
