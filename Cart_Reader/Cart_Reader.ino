@@ -2,15 +2,15 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-07-31
-   Version:          V17D
+   Date:             2016-08-15
+   Version:          V17E
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:         https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:    https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.6.9
+   Compiled with Arduino 1.6.10
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -31,7 +31,7 @@
    Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V17D";
+char ver[5] = "V17E";
 
 /******************************************
    Choose Output
@@ -635,15 +635,6 @@ unsigned char question_box(const char* question, char answers[7][20], int num_an
   }
 }
 
-void fileBrowser(const char browserTitle[]) {
-  if (enable_OLED) {
-    fileBrowser_OLED(browserTitle);
-  }
-  if (enable_Serial) {
-    fileBrowser_Serial(browserTitle);
-  }
-}
-
 /******************************************
   Serial Out
 *****************************************/
@@ -676,40 +667,6 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
   Serial.println(incomingByte);
   Serial.println("");
   return incomingByte;
-}
-
-// Prompt a filename from the Serial Monitor
-void fileBrowser_Serial(const char browserTitle[]) {
-  Serial.println(browserTitle);
-  // Print all files in root of SD
-  Serial.println(F("Name - Size"));
-  // Rewind filesystem and reset filepath
-  sd.vwd()->rewind();
-  filePath[0] = '\0';
-
-  while (myFile.openNext(sd.vwd(), O_READ)) {
-    if (myFile.isHidden()) {
-    }
-    else {
-      if (myFile.isDir()) {
-        // Indicate a directory.
-        Serial.write('/');
-      }
-      myFile.printName(&Serial);
-      Serial.write(' ');
-      myFile.printFileSize(&Serial);
-      Serial.println();
-    }
-    myFile.close();
-  }
-  Serial.println("");
-  Serial.print(F("Please enter a filename in 8.3 format: _"));
-  while (Serial.available() == 0) {
-  }
-  String strBuffer;
-  strBuffer = Serial.readString();
-  strBuffer.toCharArray(fileName, 13);
-  Serial.println(fileName);
 }
 
 /******************************************
@@ -958,7 +915,7 @@ unsigned char questionBox_OLED(const char* question, char answers[7][20], int nu
 /******************************************
   Filebrowser Module
 *****************************************/
-void fileBrowser_OLED(const char browserTitle[]) {
+void fileBrowser(const char browserTitle[]) {
   char fileNames[30][26];
   int currFile;
   filebrowse = 1;

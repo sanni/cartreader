@@ -310,8 +310,8 @@ byte readBank_SNES(byte myBank, word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
-  // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
   byte tempByte = PINC;
@@ -427,6 +427,10 @@ void getCartInfo_SNES() {
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
+  }
+
+  else if (enable_Serial) {
+    println_Msg(F(" "));
   }
 
   // Start manual config
@@ -965,6 +969,16 @@ void readSRAM () {
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
+  // Signal end of process
+  print_Msg(F("Reading to SAVE/"));
+  print_Msg(romName);
+  print_Msg(F("/"));
+  print_Msg(foldern);
+  print_Msg(F("/"));
+  print_Msg(fileName);
+  print_Msg(F("..."));
+  display_Update();
+
   // write new folder number back to eeprom
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
@@ -1012,12 +1026,7 @@ void readSRAM () {
   myFile.close();
 
   // Signal end of process
-  print_Msg(F("Saved to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern - 1);
-  print_Msg(F("/"));
-  println_Msg(fileName);
+  println_Msg(F("Done"));
   display_Update();
 }
 
