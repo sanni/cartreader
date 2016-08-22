@@ -2,15 +2,15 @@
                   Nintendo Cart Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-08-15
-   Version:          V17E
+   Date:             2016-08-22
+   Version:          V17F
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:         https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:    https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.6.10
+   Compiled with Arduino 1.6.11
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -31,13 +31,21 @@
    Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V17E";
+char ver[5] = "V17F";
 
 /******************************************
-   Choose Output
+   Define Output
 ******************************************/
+// If you don't have an OLED screen change
+// enable_OLED to 0 and enable_Serial to 1
 #define enable_OLED 1
 #define enable_Serial 0
+
+/******************************************
+   Define Input
+******************************************/
+// If you have two buttons on your cart reader change to 1
+#define twoButtons 0
 
 /******************************************
    Pinout
@@ -110,23 +118,35 @@ SdFile myFile;
 /******************************************
    Variables
  *****************************************/
-// Button timing variables
+// Button timing
 static int debounce = 20; // ms debounce period to prevent flickering when pressing or releasing the button
 static int DCgap = 250; // max ms between clicks for a double click event
 static int holdTime = 2000; // ms hold period: how long to wait for press+hold event
 static int longHoldTime = 5000; // ms long hold period: how long to wait for press+hold event
-// Other button variables
-boolean buttonVal = HIGH; // value read from button
-boolean buttonLast = HIGH; // buffered value of the button's previous state
-boolean DCwaiting = false; // whether we're waiting for a double click (down)
-boolean DConUp = false; // whether to register a double click on next release, or whether to wait and click
-boolean singleOK = true; // whether it's OK to do a single click
-long downTime = -1; // time the button was pressed down
-long upTime = -1; // time the button was released
-boolean ignoreUp = false; // whether to ignore the button release because the click+hold was triggered
-boolean waitForUp = false; // when held, whether to wait for the up event
-boolean holdEventPast = false; // whether or not the hold event happened already
-boolean longHoldEventPast = false;// whether or not the long hold event happened already
+// Variables for button 1
+boolean buttonVal1 = HIGH; // value read from button
+boolean buttonLast1 = HIGH; // buffered value of the button's previous state
+boolean DCwaiting1 = false; // whether we're waiting for a double click (down)
+boolean DConUp1 = false; // whether to register a double click on next release, or whether to wait and click
+boolean singleOK1 = true; // whether it's OK to do a single click
+long downTime1 = -1; // time the button was pressed down
+long upTime1 = -1; // time the button was released
+boolean ignoreUp1 = false; // whether to ignore the button release because the click+hold was triggered
+boolean waitForUp1 = false; // when held, whether to wait for the up event
+boolean holdEventPast1 = false; // whether or not the hold event happened already
+boolean longholdEventPast1 = false;// whether or not the long hold event happened already
+// Variables for button 2
+boolean buttonVal2 = HIGH; // value read from button
+boolean buttonLast2 = HIGH; // buffered value of the button's previous state
+boolean DCwaiting2 = false; // whether we're waiting for a double click (down)
+boolean DConUp2 = false; // whether to register a double click on next release, or whether to wait and click
+boolean singleOK2 = true; // whether it's OK to do a single click
+long downTime2 = -1; // time the button was pressed down
+long upTime2 = -1; // time the button was released
+boolean ignoreUp2 = false; // whether to ignore the button release because the click+hold was triggered
+boolean waitForUp2 = false; // when held, whether to wait for the up event
+boolean holdEventPast2 = false; // whether or not the hold event happened already
+boolean longholdEventPast2 = false;// whether or not the long hold event happened already
 
 // For incoming serial data
 int incomingByte;
@@ -703,60 +723,128 @@ void rgbLed(byte Color) {
 *****************************************/
 // Read button state
 int checkButton() {
+  if ((twoButtons) && (checkButton2() != 0))
+    return 3;
+  else
+    return (checkButton1());
+}
+
+
+// Read button 1
+int checkButton1() {
   int event = 0;
   // Read the state of the button (PD7)
-  buttonVal = (PIND & (1 << 7));
+  buttonVal1 = (PIND & (1 << 7));
   // Button pressed down
-  if (buttonVal == LOW && buttonLast == HIGH && (millis() - upTime) > debounce) {
-    downTime = millis();
-    ignoreUp = false;
-    waitForUp = false;
-    singleOK = true;
-    holdEventPast = false;
-    longHoldEventPast = false;
-    if ((millis() - upTime) < DCgap && DConUp == false && DCwaiting == true) DConUp = true;
-    else DConUp = false;
-    DCwaiting = false;
+  if (buttonVal1 == LOW && buttonLast1 == HIGH && (millis() - upTime1) > debounce) {
+    downTime1 = millis();
+    ignoreUp1 = false;
+    waitForUp1 = false;
+    singleOK1 = true;
+    holdEventPast1 = false;
+    longholdEventPast1 = false;
+    if ((millis() - upTime1) < DCgap && DConUp1 == false && DCwaiting1 == true) DConUp1 = true;
+    else DConUp1 = false;
+    DCwaiting1 = false;
   }
   // Button released
-  else if (buttonVal == HIGH && buttonLast == LOW && (millis() - downTime) > debounce) {
-    if (not ignoreUp) {
-      upTime = millis();
-      if (DConUp == false) DCwaiting = true;
+  else if (buttonVal1 == HIGH && buttonLast1 == LOW && (millis() - downTime1) > debounce) {
+    if (not ignoreUp1) {
+      upTime1 = millis();
+      if (DConUp1 == false) DCwaiting1 = true;
       else {
         event = 2;
-        DConUp = false;
-        DCwaiting = false;
-        singleOK = false;
+        DConUp1 = false;
+        DCwaiting1 = false;
+        singleOK1 = false;
       }
     }
   }
   // Test for normal click event: DCgap expired
-  if ( buttonVal == HIGH && (millis() - upTime) >= DCgap && DCwaiting == true && DConUp == false && singleOK == true) {
+  if ( buttonVal1 == HIGH && (millis() - upTime1) >= DCgap && DCwaiting1 == true && DConUp1 == false && singleOK1 == true) {
     event = 1;
-    DCwaiting = false;
+    DCwaiting1 = false;
   }
   // Test for hold
-  if (buttonVal == LOW && (millis() - downTime) >= holdTime) {
+  if (buttonVal1 == LOW && (millis() - downTime1) >= holdTime) {
     // Trigger "normal" hold
-    if (not holdEventPast) {
+    if (not holdEventPast1) {
       event = 3;
-      waitForUp = true;
-      ignoreUp = true;
-      DConUp = false;
-      DCwaiting = false;
-      //downTime = millis();
-      holdEventPast = true;
+      waitForUp1 = true;
+      ignoreUp1 = true;
+      DConUp1 = false;
+      DCwaiting1 = false;
+      //downTime1 = millis();
+      holdEventPast1 = true;
     }
     // Trigger "long" hold
-    if ((millis() - downTime) >= longHoldTime) {
-      if (not longHoldEventPast) {
+    if ((millis() - downTime1) >= longHoldTime) {
+      if (not longholdEventPast1) {
         event = 4;
-        longHoldEventPast = true;
+        longholdEventPast1 = true;
       }
     }
   }
-  buttonLast = buttonVal;
+  buttonLast1 = buttonVal1;
+  return event;
+}
+
+// Read button 2
+int checkButton2() {
+  int event = 0;
+  // Read the state of the button (PD7)
+  buttonVal2 = (PING & (1 << 2));
+  // Button pressed down
+  if (buttonVal2 == LOW && buttonLast2 == HIGH && (millis() - upTime2) > debounce) {
+    downTime2 = millis();
+    ignoreUp2 = false;
+    waitForUp2 = false;
+    singleOK2 = true;
+    holdEventPast2 = false;
+    longholdEventPast2 = false;
+    if ((millis() - upTime2) < DCgap && DConUp2 == false && DCwaiting2 == true) DConUp2 = true;
+    else DConUp2 = false;
+    DCwaiting2 = false;
+  }
+  // Button released
+  else if (buttonVal2 == HIGH && buttonLast2 == LOW && (millis() - downTime2) > debounce) {
+    if (not ignoreUp2) {
+      upTime2 = millis();
+      if (DConUp2 == false) DCwaiting2 = true;
+      else {
+        event = 2;
+        DConUp2 = false;
+        DCwaiting2 = false;
+        singleOK2 = false;
+      }
+    }
+  }
+  // Test for normal click event: DCgap expired
+  if ( buttonVal2 == HIGH && (millis() - upTime2) >= DCgap && DCwaiting2 == true && DConUp2 == false && singleOK2 == true) {
+    event = 1;
+    DCwaiting2 = false;
+  }
+  // Test for hold
+  if (buttonVal2 == LOW && (millis() - downTime2) >= holdTime) {
+    // Trigger "normal" hold
+    if (not holdEventPast2) {
+      event = 3;
+      waitForUp2 = true;
+      ignoreUp2 = true;
+      DConUp2 = false;
+      DCwaiting2 = false;
+      //downTime2 = millis();
+      holdEventPast2 = true;
+    }
+    // Trigger "long" hold
+    if ((millis() - downTime2) >= longHoldTime) {
+      if (not longholdEventPast2) {
+        event = 4;
+        longholdEventPast2 = true;
+      }
+    }
+  }
+  buttonLast2 = buttonVal2;
   return event;
 }
 
@@ -861,9 +949,12 @@ unsigned char questionBox_OLED(const char* question, char answers[7][20], int nu
           break;
         }
       }
-      else 
-        choice = (choice > 0) ? choice - 1 : num_answers - 1;
-
+      else if (choice > 0) {
+        choice--;
+      }
+      else {
+        choice = num_answers - 1;
+      }
 
       // draw selection box
       display.drawPixel(0, 8 * choice + 12, WHITE);
