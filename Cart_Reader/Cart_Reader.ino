@@ -3,10 +3,10 @@
 
    Author:           sanni
    Date:             2016-08-22
-   Version:          V17G
+   Version:          V17H
 
-   SD  lib:          https://github.com/greiman/SdFat
-   LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
+   SD  lib:         https://github.com/greiman/SdFat
+   LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
@@ -153,7 +153,7 @@ int incomingByte;
 
 // Variables for the menu
 int choice = 0;
-// Temp array to put the menu option read out of progmem in into
+// Temporary array that holds the menu option read out of progmem
 char menuOptions[6][20];
 
 // File browser
@@ -325,7 +325,7 @@ const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(modeOptions, 6);
   modeMenu = question_box("Cartridge Reader", menuOptions, 6, 0);
 
@@ -335,7 +335,7 @@ void mainMenu() {
     case 0:
       // create menu with title and 2 options to choose from
       unsigned char n64Dev;
-      // Copy menuOptions of of progmem
+      // Copy menuOptions out of progmem
       convertPgm(menuOptionsN64, 2);
       n64Dev = question_box("Select N64 device", menuOptions, 2, 0);
 
@@ -382,7 +382,7 @@ void mainMenu() {
     case 4:
       // create menu with title and 2 options to choose from
       unsigned char flashSlot;
-      // Copy menuOptions of of progmem
+      // Copy menuOptions out of progmem
       convertPgm(menuOptionsFlash, 2);
       flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
 
@@ -460,10 +460,12 @@ void mainMenu() {
    Setup
  *****************************************/
 void setup() {
-  // Set Button Pin(PD7) to Input
+  // Set Button Pins(PD7, PG2) to Input
   DDRD &= ~(1 << 7);
+  DDRG &= ~(1 << 2);
   // Activate Internal Pullup Resistors
   //PORTD |= (1 << 7);
+  //PORTG |= (1 << 2);
 
   // Read current folder number out of eeprom
   EEPROM_readAnything(0, foldern);
