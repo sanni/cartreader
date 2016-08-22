@@ -861,9 +861,9 @@ unsigned char questionBox_OLED(const char* question, char answers[7][20], int nu
           break;
         }
       }
-      else if (choice > 0) {
-        choice--;
-      }
+      else 
+        choice = (choice > 0) ? choice - 1 : num_answers - 1;
+
 
       // draw selection box
       display.drawPixel(0, 8 * choice + 12, WHITE);
