@@ -1,14 +1,14 @@
 /**********************************************************************************
-                  Nintendo Cart Reader for Arduino Mega2560
+                    Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
    Date:             2016-08-22
-   Version:          V17F
+   Version:          V17G
 
    SD  lib:          https://github.com/greiman/SdFat
    LCD lib:          https://github.com/adafruit/Adafruit_SSD1306
-   Clockgen:         https://github.com/etherkit/Si5351Arduino
-   RGB Tools lib:    https://github.com/joushx/Arduino-RGB-Tools
+   Clockgen:        https://github.com/etherkit/Si5351Arduino
+   RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
    Compiled with Arduino 1.6.11
 
@@ -31,7 +31,7 @@
    Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V17F";
+char ver[5] = "V17G";
 
 /******************************************
    Define Output
@@ -45,7 +45,7 @@ char ver[5] = "V17F";
    Define Input
 ******************************************/
 // If you have two buttons on your cart reader change to 1
-#define twoButtons 0
+#define enable_Button2 0
 
 /******************************************
    Pinout
@@ -327,7 +327,7 @@ void mainMenu() {
   unsigned char modeMenu;
   // Copy menuOptions of of progmem
   convertPgm(modeOptions, 6);
-  modeMenu = question_box("Nintendo Cart Reader", menuOptions, 6, 0);
+  modeMenu = question_box("Cartridge Reader", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
@@ -409,7 +409,7 @@ void mainMenu() {
       display_Clear();
       // Draw the Logo
       display.drawBitmap(0, 0, sig, 128, 64, 1);
-      println_Msg(F("Nintendo Cart Reader"));
+      println_Msg(F("Cartridge Reader"));
       println_Msg(F("github.com/sanni"));
       print_Msg(F("2016 "));
       println_Msg(ver);
@@ -488,7 +488,7 @@ void setup() {
   if (enable_Serial) {
     // Serial Begin
     Serial.begin(9600);
-    Serial.println(F("Nintendo Cart Reader"));
+    Serial.println(F("Cartridge Reader"));
     Serial.println(F("2016 sanni"));
     Serial.println("");
 
@@ -723,12 +723,11 @@ void rgbLed(byte Color) {
 *****************************************/
 // Read button state
 int checkButton() {
-  if ((twoButtons) && (checkButton2() != 0))
+  if ((enable_Button2) && (checkButton2() != 0))
     return 3;
   else
     return (checkButton1());
 }
-
 
 // Read button 1
 int checkButton1() {
