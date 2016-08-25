@@ -3,7 +3,7 @@
 
    Author:           sanni
    Date:             2016-08-25
-   Version:          V18
+   Version:          V18A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -31,7 +31,7 @@
    Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V18";
+char ver[5] = "V18A";
 
 /******************************************
    Define Output

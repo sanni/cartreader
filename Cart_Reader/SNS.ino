@@ -295,13 +295,13 @@ void writeBank_SNES(byte myBank, word myAddress, byte myData) {
   PORTH &= ~(1 << 5);
 
   // Leave WR low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch WR(PH5) to HIGH
   PORTH |= (1 << 5);
 
   // Leave WR high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 // Read one byte of data from a location specified by bank and address, 00:0000
@@ -964,8 +964,6 @@ void writeSRAM (boolean browseFile) {
             myFile.read(sdBuffer, 512);
             for (unsigned long c = 0; c < 512; c++) {
               writeBank_SNES(0, currByte + c, sdBuffer[c]);
-              // Wait a little to prevent 1 byte write error
-              __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
             }
           }
         }

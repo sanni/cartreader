@@ -117,7 +117,7 @@ void NPGameMenu() {
           print_Msg(F("Game "));
           print_Msg(gameSubMenu + 0x81, HEX);
           println_Msg(F(" Timeout"));
-          println_Msg(readBank_SNES(0, 0x2400));
+          println_Msg(readBank_SNES(0, 0x2400), HEX);
           println_Msg(F(""));
           print_Error(F("Please powercycle NP cart"), true);
         }
@@ -1321,46 +1321,36 @@ byte send_NP(byte command) {
   // Switch to write
   dataOut();
   controlOut_SNES();
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Write command
   writeBank_SNES(0, 0x2400, 0x09);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch to read
   dataIn();
   controlIn_SNES();
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-
+ 
   // Read status
   NPReady = readBank_SNES(0, 0x2400);
 
   // Switch to write
   dataOut();
   controlOut_SNES();
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   writeBank_SNES(0, 0x2401, 0x28);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
   writeBank_SNES(0, 0x2401, 0x84);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // NP_CMD_06h, send this only if above read has returned 7Dh, not if it's already returning 2Ah
   if (NPReady == 0x7D) {
     writeBank_SNES(0, 0x2400, 0x06);
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
     writeBank_SNES(0, 0x2400, 0x39);
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
   }
 
   // Write the command
   writeBank_SNES(0, 0x2400, command);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch to read
   dataIn();
   controlIn_SNES();
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read status
   NPReady = readBank_SNES(0, 0x2400);
