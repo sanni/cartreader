@@ -4,7 +4,7 @@
 
 ####Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
-  Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SA1(can't write save back to SA1)
+  Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SA1(needs Adafruit Clock Generator)  
 - Read and writes SFC Nintendo Power Cartridges  
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller  
@@ -20,7 +20,7 @@
    MichlK - ROM-Reader for Super Nintendo  
    Jeff Saltzman - 4-Way Button  
    Wayne and Layne - Video-Game-Shield menu  
-   skaman - SNES enhancements  
+   skaman - SNES enhancements and SA1 sram support    
    nocash - Nintendo Power commands  
    crazynation - N64 bus timing  
    hkz/themanbehindthecurtain - N64 flashram commands  
