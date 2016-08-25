@@ -932,13 +932,48 @@ void writeSRAM (boolean browseFile) {
     }
     // SA1
     else if (romType == SA) {
-      // Writing SRAM on HiRom needs CS(PH3) to be high
+      long lastByte = (long(sramSize) * 0x80);
+
+      // Enable CPU Clock
+      clockgen.set_freq(357954500ULL, SI5351_PLL_FIXED, SI5351_CLK1);
+      clockgen.output_enable(SI5351_CLK1, 1);
+
+      // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
+      // Break BW-RAM (SRAM) into 0x2000 blocks
+      // Use $2225 to map BW-RAM block to 0x6000-0x7FFF
+      // Writes must be to entire address range 0x0000-0x7FFF
+      byte lastBlock = 0;
+      lastBlock = lastByte / 0x2000;
+
+      // Writing SRAM on SA1 needs CS(PH3) to be high
       PORTH |=  (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      for (long currByte = 0x0; currByte < lastByte; currByte++) {
-        writeBank_SNES(0x40, currByte, myFile.read());
+
+      for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
+        // Set 0x2225 (SA-1 BMAP) to map SRAM Block to 0x6000-0x7FFF
+        writeBank_SNES(0, 0x2225, currBlock);
+        // Set 0x2227 to 0x80  SA-1 SWBE BW-RAM Write Enable
+        writeBank_SNES(0, 0x2227, 0x80);
+        for (long currByte = 0x0000; currByte < 0x8000; currByte += 512) {
+          if (currByte < 0x6000) {
+            for (unsigned long c = 0; c < 512; c++) {
+              // Shift to bypass protected 1st 0x100 bytes
+              writeBank_SNES(0, currByte + c, currBlock + lastBlock);
+            }
+          }
+          else {
+            myFile.read(sdBuffer, 512);
+            for (unsigned long c = 0; c < 512; c++) {
+              writeBank_SNES(0, currByte + c, sdBuffer[c]);
+              // Wait a little to prevent 1 byte write error
+              __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+            }
+          }
+        }
       }
+      // Set 0x2227 to 0x00  SA-1 SWBE BW-RAM Write Disable
+      writeBank_SNES(0, 0x2227, 0x00);
+      // Disable CPU clock
+      clockgen.output_enable(SI5351_CLK1, 0);
     }
 
     // Set pins to input

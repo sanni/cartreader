@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-08-22
-   Version:          V17H
+   Date:             2016-08-25
+   Version:          V18
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -16,7 +16,7 @@
    MichlK - ROM-Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video-Game-Shield menu
-   skaman - SNES enhancements
+   skaman - SNES enhancements and SA1 sram support
    nocash - Nintendo Power commands
    crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
@@ -31,7 +31,7 @@
    Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V17G";
+char ver[5] = "V18";
 
 /******************************************
    Define Output
