@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-08-25
-   Version:          V18A
+   Date:             2016-09-04
+   Version:          V18B
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -31,7 +31,7 @@
    Pickle - SDD1 fix
 
 **********************************************************************************/
-char ver[5] = "V18A";
+char ver[5] = "V18B";
 
 /******************************************
    Define Output
@@ -154,7 +154,7 @@ int incomingByte;
 // Variables for the menu
 int choice = 0;
 // Temporary array that holds the menu option read out of progmem
-char menuOptions[6][20];
+char menuOptions[7][20];
 
 // File browser
 char fileName[26];
@@ -1210,7 +1210,17 @@ void loop() {
     NPGameOptions();
   }
   else {
-    print_Error(F("Menu Error"), true);
+    display_Clear();
+    println_Msg(F("Menu Error"));
+    println_Msg("");
+    println_Msg("");
+    print_Msg(F("Mode = "));
+    print_Msg(mode);
+    println_Msg(F(""));
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
+    asm volatile ("  jmp 0");
   }
 }
 
