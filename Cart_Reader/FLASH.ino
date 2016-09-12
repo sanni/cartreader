@@ -348,17 +348,19 @@ void setup_Flash16() {
   // Set Control Pins to Output OE(PH1) BYTE(PH3) WE(PH4) CE(PH6)
   DDRH |=  (1 << 1) | (1 << 3) | (1 << 4) | (1 << 6);
 
-  // Setting OE(PH1) BYTE(PH3) WE(PH4) HIGH
-  PORTH |= (1 << 1) | (1 << 3) | (1 << 4);
-  // Setting CE(PH6) LOW
-  PORTH &= ~(1 << 6);
-
   // Set Data Pins (D0-D15) to Input
   DDRC = 0x00;
   DDRA = 0x00;
   // Disable Internal Pullups
   PORTC = 0x00;
   PORTA = 0x00;
+
+  // Setting OE(PH1) BYTE(PH3) WE(PH4) HIGH
+  PORTH |= (1 << 1) | (1 << 3) | (1 << 4);
+  // Setting CE(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  delay(10);
 
   // ID flash
   idFlash16();
@@ -407,7 +409,6 @@ void dataOut16() {
 
 // Switch data pins to read
 void dataIn16() {
-  // Set to Input and activate pull-up resistors
   DDRC = 0x00;
   DDRA = 0x00;
 }
@@ -482,7 +483,7 @@ void writeWord_Flash(unsigned long myAddress, word myData) {
   PORTH |= (1 << 4);
 
   // Leave WE high for at least 50ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 word readWord_Flash(unsigned long myAddress) {
@@ -501,9 +502,11 @@ word readWord_Flash(unsigned long myAddress) {
   // Read
   word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
 
+  __asm__("nop\n\t");
+
   // Setting OE(PH1) HIGH
   PORTH |= (1 << 1);
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempWord;
 }
@@ -587,7 +590,7 @@ void writeFlash29F032() {
       if (currByte % 2048 == 0)
         PORTB ^= (1 << 4);
 
-      for (unsigned long c = 0; c < 512; c++) {
+      for (int c = 0; c < 512; c++) {
         // Write command sequence
         writeByte_Flash(0x555, 0xaa);
         writeByte_Flash(0x2aa, 0x55);
@@ -792,7 +795,7 @@ void verifyFlash() {
     for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
-      for (unsigned long c = 0; c < 512; c++) {
+      for (int c = 0; c < 512; c++) {
         if (readByte_Flash(currByte + c) != sdBuffer[c]) {
           blank++;
         }
@@ -842,7 +845,7 @@ void readFlash() {
     print_Error(F("Can't create file on SD"), true);
   }
   for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
-    for (unsigned long c = 0; c < 512; c++) {
+    for (int c = 0; c < 512; c++) {
       sdBuffer[c] = readByte_Flash(currByte + c);
     }
     myFile.write(sdBuffer, 512);
@@ -1023,7 +1026,7 @@ void verifyFlash16() {
     for (unsigned long currByte = 0; currByte < flashSize / 2; currByte += 256) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
-      for (unsigned long c = 0; c < 256; c++) {
+      for (int c = 0; c < 256; c++) {
         word currWord = ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         // Swap bytes in word
         currWord = ((currWord >> 8) & 0x00FF00FF) | ((currWord & 0x00FF00FF) << 8);

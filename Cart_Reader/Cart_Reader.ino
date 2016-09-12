@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-09-04
-   Version:          V18B
+   Date:             2016-09-12
+   Version:          V19
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -17,7 +17,7 @@
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video-Game-Shield menu
    skaman - SNES enhancements and SA1 sram support
-   nocash - Nintendo Power commands
+   nocash - Nintendo Power commands and lots of other info
    crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
    jago85 - help with N64 stuff
@@ -29,9 +29,11 @@
    Snes9x - SuperFX sram fix
    zzattack - multigame pcb fix
    Pickle - SDD1 fix
+   insidegadgets - GBCartRead
+   lukeskaff - Nintendo DS GBA slot timing
 
 **********************************************************************************/
-char ver[5] = "V18B";
+char ver[5] = "V19";
 
 /******************************************
    Define Output
@@ -44,8 +46,8 @@ char ver[5] = "V18B";
 /******************************************
    Define Input
 ******************************************/
-// If you have two buttons on your cart reader change to 1
-#define enable_Button2 0
+// If you have two buttons on your cart reader you can remove the //
+//#define enable_Button2
 
 /******************************************
    Pinout
@@ -114,6 +116,7 @@ SdFile myFile;
 #define mode_GB 6
 #define mode_FLASH8 7
 #define mode_FLASH16 8
+#define mode_GBA 9
 
 /******************************************
    Variables
@@ -175,6 +178,8 @@ byte numBanks = 128;
 char checksumStr[5];
 bool errorLvl = 0;
 byte romVersion = 0;
+char cartID[5];
+unsigned long cartSize;
 
 // Variable to count errors
 unsigned long writeErrors;
@@ -322,6 +327,11 @@ const char flashMenuItem1[] PROGMEM = "8bit slot";
 const char flashMenuItem2[] PROGMEM = "16bit slot";
 const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
 
+// GBx Submenu
+const char gbxMenuItem1[] PROGMEM = "Game Boy Color";
+const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
+const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
+
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
@@ -373,10 +383,29 @@ void mainMenu() {
       break;
 
     case 3:
-      display_Clear();
-      display_Update();
-      setup_GB();
-      mode =  mode_GB;
+      // create menu with title and 2 options to choose from
+      unsigned char gbType;
+      // Copy menuOptions out of progmem
+      convertPgm(menuOptionsGBx, 2);
+      gbType = question_box("Select Game Boy", menuOptions, 2, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (gbType)
+      {
+        case 0:
+          display_Clear();
+          display_Update();
+          setup_GB();
+          mode =  mode_GB;
+          break;
+
+        case 1:
+          display_Clear();
+          display_Update();
+          setup_GBA();
+          mode =  mode_GBA;
+          break;
+      }
       break;
 
     case 4:
@@ -725,10 +754,14 @@ void rgbLed(byte Color) {
 *****************************************/
 // Read button state
 int checkButton() {
-  if ((enable_Button2) && (checkButton2() != 0))
+#ifdef enable_Button2
+  if (checkButton2() != 0)
     return 3;
   else
     return (checkButton1());
+#else
+  return (checkButton1());
+#endif
 }
 
 // Read button 1
@@ -1202,6 +1235,9 @@ void loop() {
   }
   else if (mode == mode_GB) {
     gbMenu();
+  }
+  else if (mode == mode_GBA) {
+    gbaMenu();
   }
   else if (mode == mode_NPFlash) {
     NPFlashMenu();

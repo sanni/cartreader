@@ -36,9 +36,7 @@ String button = "N/A";
 String lastbutton = "N/A";
 
 // Cartridge ID and size
-char cartID[5];
 byte saveType;
-unsigned long cartSize;
 
 // Rom base address
 unsigned long romBase = 0x10000000;

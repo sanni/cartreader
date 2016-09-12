@@ -91,31 +91,31 @@ void NPGameMenu() {
     if (hasMenu) {
       // Create submenu options
       char menuOptionsNPGames[8][20];
-      for (int i = 0; i < (numGames - 1); i++) {
-        strncpy(menuOptionsNPGames[i], gameCode[i + 1], 10);
+      for (int i = 0; i < (numGames); i++) {
+        strncpy(menuOptionsNPGames[i], gameCode[i], 10);
       }
 
-      // Create menu with title and numGames - 1 options to choose from
+      // Create menu with title and numGames options to choose from
       unsigned char gameSubMenu;
       // wait for user choice to come back from the question box menu
-      gameSubMenu = question_box("Select Game", menuOptionsNPGames, numGames - 1, 0);
+      gameSubMenu = question_box("Select Game", menuOptionsNPGames, numGames, 0);
 
       // Switch to game
-      send_NP(gameSubMenu + 0x81);
+      send_NP(gameSubMenu + 0x80);
       delay(200);
       // Check for successfull switch
       byte timeout = 0;
       while (readBank_SNES(0, 0x2400) != 0x7D) {
         delay(200);
         // Try again
-        send_NP(gameSubMenu + 0x81);
+        send_NP(gameSubMenu + 0x80);
         delay(200);
         timeout++;
         // Abort, something is wrong
         if (timeout == 5) {
           display_Clear();
           print_Msg(F("Game "));
-          print_Msg(gameSubMenu + 0x81, HEX);
+          print_Msg(gameSubMenu + 0x80, HEX);
           println_Msg(F(" Timeout"));
           println_Msg(readBank_SNES(0, 0x2400), HEX);
           println_Msg(F(""));
@@ -1328,7 +1328,7 @@ byte send_NP(byte command) {
   // Switch to read
   dataIn();
   controlIn_SNES();
- 
+
   // Read status
   NPReady = readBank_SNES(0, 0x2400);
 
