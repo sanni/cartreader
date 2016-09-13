@@ -64,8 +64,8 @@ const char N64CartMenuItem4[] PROGMEM = "Reset";
 const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4};
 
 // N64 CRC32 error menu items
-const char N64CRCMenuItem1[] PROGMEM = "Redump";
-const char N64CRCMenuItem2[] PROGMEM = "Recalc CRC";
+const char N64CRCMenuItem1[] PROGMEM = "Recalc CRC";
+const char N64CRCMenuItem2[] PROGMEM = "Redump";
 const char N64CRCMenuItem3[] PROGMEM = "Ignore";
 const char N64CRCMenuItem4[] PROGMEM = "Reset";
 const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
@@ -2015,12 +2015,21 @@ calcn64crc:
     strcpy(tempStr3, "CRC ERROR ");
     strcat(tempStr3, crcStr);
 
-    CRCMenu = question_box(tempStr3, menuOptions, 4, 0);
+    CRCMenu = question_box(tempStr3, menuOptions, 4, 1);
 
     // wait for user choice to come back from the question box menu
     switch (CRCMenu)
     {
       case 0:
+        // Change to last directory
+        sd.chdir(folder);
+        display_Clear();
+        // Calculate CRC again
+        rgb.setColor(0, 0, 0);
+        goto calcn64crc;
+        break;
+
+      case 1:
         // Change to last directory
         sd.chdir(folder);
         // Delete old file
@@ -2036,15 +2045,6 @@ calcn64crc:
         display_Update();
         rgb.setColor(0, 0, 0);
         goto readn64rom;
-        break;
-
-      case 1:
-        // Change to last directory
-        sd.chdir(folder);
-        display_Clear();
-        // Calculate CRC again
-        rgb.setColor(0, 0, 0);
-        goto calcn64crc;
         break;
 
       case 2:

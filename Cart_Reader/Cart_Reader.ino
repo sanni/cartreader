@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-09-12
-   Version:          V19
+   Date:             2016-09-14
+   Version:          V19A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -33,7 +33,7 @@
    lukeskaff - Nintendo DS GBA slot timing
 
 **********************************************************************************/
-char ver[5] = "V19";
+char ver[5] = "V19A";
 
 /******************************************
    Define Output
@@ -47,7 +47,7 @@ char ver[5] = "V19";
    Define Input
 ******************************************/
 // If you have two buttons on your cart reader you can remove the //
-//#define enable_Button2
+#define enable_Button2
 
 /******************************************
    Pinout
@@ -921,7 +921,7 @@ unsigned char questionBox_OLED(const char* question, char answers[7][20], int nu
   display.setCursor(0, 0);
 
   // change the rgb led to the start menu color
-  rgbLed(blue_color);
+  rgbLed(default_choice);
 
   // print menu
   display.println(question);

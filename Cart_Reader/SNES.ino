@@ -62,49 +62,67 @@ void snesMenu() {
       break;
 
     case 1:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      readSRAM();
+      if (sramSize > 0) {
+        display_Clear();
+        // Change working dir to root
+        sd.chdir("/");
+        readSRAM();
+      }
+      else {
+        display_Clear();
+        print_Error(F("Does not have SRAM"), false);
+      }
       break;
 
     case 2:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      writeSRAM(1);
-      unsigned long wrErrors;
-      wrErrors = verifySRAM();
-      if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
-        display_Update();
+      if (sramSize > 0) {
+        display_Clear();
+        // Change working dir to root
+        sd.chdir("/");
+        writeSRAM(1);
+        unsigned long wrErrors;
+        wrErrors = verifySRAM();
+        if (wrErrors == 0) {
+          println_Msg(F("Verified OK"));
+          display_Update();
+        }
+        else {
+          print_Msg(F("Error: "));
+          print_Msg(wrErrors);
+          println_Msg(F(" bytes "));
+          print_Error(F("did not verify."), false);
+        }
       }
       else {
-        print_Msg(F("Error: "));
-        print_Msg(wrErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        display_Clear();
+        print_Error(F("Does not have SRAM"), false);
       }
       break;
 
     case 3:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      readSRAM();
-      eraseSRAM(0x00);
-      eraseSRAM(0xFF);
-      writeSRAM(0);
-      wrErrors = verifySRAM();
-      if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
-        display_Update();
+      if (sramSize > 0) {
+        display_Clear();
+        // Change working dir to root
+        sd.chdir("/");
+        readSRAM();
+        eraseSRAM(0x00);
+        eraseSRAM(0xFF);
+        writeSRAM(0);
+        unsigned long wrErrors = verifySRAM();
+        if (wrErrors == 0) {
+          println_Msg(F("Verified OK"));
+          display_Update();
+        }
+        else {
+          print_Msg(F("Error: "));
+          print_Msg(wrErrors);
+          println_Msg(F(" bytes "));
+          print_Error(F("did not verify."), false);
+        }
       }
       else {
-        print_Msg(F("Error: "));
-        print_Msg(wrErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        display_Clear();
+        print_Error(F("Does not have SRAM"), false);
       }
       break;
 
