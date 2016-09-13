@@ -47,7 +47,7 @@ char ver[5] = "V19A";
    Define Input
 ******************************************/
 // If you have two buttons on your cart reader you can remove the //
-#define enable_Button2
+//#define enable_Button2
 
 /******************************************
    Pinout
