@@ -6,7 +6,7 @@
    Variables
  *****************************************/
 char calcChecksumStr[5];
-byte cartBuffer[513];
+byte cartBuffer[512];
 
 const int nintendoLogo[] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x24, 0xFF, 0xAE, 0x51, 0x69, 0x9A, 0xA2, 0x21, 0x3D, 0x84, 0x82, 0x0A,
@@ -31,11 +31,21 @@ const char GBAMenuItem3[] PROGMEM = "Write Save";
 const char GBAMenuItem4[] PROGMEM = "Reset";
 const char* const menuOptionsGBA[] PROGMEM = {GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4};
 
-const char GBARomMenuItem1[] PROGMEM = "4MB";
-const char GBARomMenuItem2[] PROGMEM = "8MB";
-const char GBARomMenuItem3[] PROGMEM = "16MB";
-const char GBARomMenuItem4[] PROGMEM = "32MB";
-const char* const menuOptionsGBARom[] PROGMEM = {GBARomMenuItem1, GBARomMenuItem2, GBARomMenuItem3, GBARomMenuItem4};
+// Rom menu
+const char GBARomItem1[] PROGMEM = "4MB";
+const char GBARomItem2[] PROGMEM = "8MB";
+const char GBARomItem3[] PROGMEM = "16MB";
+const char GBARomItem4[] PROGMEM = "32MB";
+const char* const romOptionsGBA[] PROGMEM = {GBARomItem1, GBARomItem2, GBARomItem3, GBARomItem4};
+
+// Save menu
+const char GBASaveItem1[] PROGMEM = "4K EEPROM";
+const char GBASaveItem2[] PROGMEM = "64K EEPROM";
+const char GBASaveItem3[] PROGMEM = "256K SRAM/FRAM";
+const char GBASaveItem4[] PROGMEM = "512K SRAM/FRAM";
+const char GBASaveItem5[] PROGMEM = "512K FLASHROM";
+const char GBASaveItem6[] PROGMEM = "1M FLASHROM";
+const char* const saveOptionsGBA[] PROGMEM = {GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6};
 
 void gbaMenu() {
   // create menu with title and 4 options to choose from
@@ -52,7 +62,7 @@ void gbaMenu() {
       // create submenu with title and 4 options to choose from
       unsigned char GBARomMenu;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsGBARom, 4);
+      convertPgm(romOptionsGBA, 4);
       GBARomMenu = question_box("Select ROM size", menuOptions, 4, 0);
 
       // wait for user choice to come back from the question box menu
@@ -88,28 +98,140 @@ void gbaMenu() {
       break;
 
     case 1:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      readSAVE_GBA();
+      // Read save
+      // create submenu with title and 6 options to choose from
+      unsigned char GBASaveMenu;
+      // Copy menuOptions out of progmem
+      convertPgm(saveOptionsGBA, 6);
+      GBASaveMenu = question_box("Select save type", menuOptions, 6, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (GBASaveMenu)
+      {
+        case 0:
+          display_Clear();
+          sd.chdir("/");
+          // 4K EEPROM
+          setGBA_ROM();
+          break;
+
+        case 1:
+          display_Clear();
+          sd.chdir("/");
+          // 64K EEPROM
+          setGBA_ROM();
+          break;
+
+        case 2:
+          display_Clear();
+          sd.chdir("/");
+          // 256K SRAM/FRAM
+          readFRAM_GBA(32768);
+          setGBA_ROM();
+          break;
+
+        case 3:
+          display_Clear();
+          sd.chdir("/");
+          // 512K SRAM/FRAM
+          readFRAM_GBA(65536);
+          setGBA_ROM();
+          break;
+
+        case 4:
+          display_Clear();
+          sd.chdir("/");
+          // 512K FLASH
+          setGBA_ROM();
+          break;
+
+        case 5:
+          display_Clear();
+          sd.chdir("/");
+          // 1M FLASH
+          setGBA_ROM();
+          break;
+      }
       break;
 
     case 2:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      writeSAVE_GBA();
-      unsigned long wrErrors;
-      wrErrors = verifySAVE_GBA();
-      if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
-        display_Update();
-      }
-      else {
-        print_Msg(F("Error: "));
-        print_Msg(wrErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+      // Write save
+      // create submenu with title and 6 options to choose from
+      unsigned char GBASavesMenu;
+      // Copy menuOptions out of progmem
+      convertPgm(saveOptionsGBA, 6);
+      GBASavesMenu = question_box("Select save type", menuOptions, 6, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (GBASavesMenu)
+      {
+        case 0:
+          display_Clear();
+          sd.chdir("/");
+          // 4K EEPROM
+          setGBA_ROM();
+          break;
+
+        case 1:
+          display_Clear();
+          sd.chdir("/");
+          // 64K EEPROM
+          setGBA_ROM();
+          break;
+
+        case 2:
+          display_Clear();
+          sd.chdir("/");
+          // 256K SRAM/FRAM
+          // Change working dir to root
+          writeFRAM_GBA(1, 32768);
+          writeErrors = verifyFRAM_GBA(32768);
+          if (writeErrors == 0) {
+            println_Msg(F("Verified OK"));
+            display_Update();
+          }
+          else {
+            print_Msg(F("Error: "));
+            print_Msg(writeErrors);
+            println_Msg(F(" bytes "));
+            print_Error(F("did not verify."), false);
+          }
+          setGBA_ROM();
+          break;
+
+        case 3:
+          display_Clear();
+          sd.chdir("/");
+          // 512K SRAM/FRAM
+          // Change working dir to root
+          writeFRAM_GBA(1, 65536);
+          writeErrors = verifyFRAM_GBA(65536);
+          if (writeErrors == 0) {
+            println_Msg(F("Verified OK"));
+            display_Update();
+          }
+          else {
+            print_Msg(F("Error: "));
+            print_Msg(writeErrors);
+            println_Msg(F(" bytes "));
+            print_Error(F("did not verify."), false);
+          }
+          setGBA_ROM();
+          break;
+
+        case 4:
+          display_Clear();
+          sd.chdir("/");
+          // 512K FLASH
+          setGBA_ROM();
+          break;
+
+        case 5:
+          display_Clear();
+          sd.chdir("/");
+          // 1M FLASH
+          setGBA_ROM();
+          break;
       }
       break;
 
@@ -127,28 +249,7 @@ void gbaMenu() {
    Setup
  *****************************************/
 void setup_GBA() {
-  // Set address/data pins to OUTPUT
-  // AD0-AD7
-  DDRF = 0xFF;
-  // AD8-AD15
-  DDRK = 0xFF;
-  // AD16-AD23
-  DDRC = 0xFF;
-
-  // Output a HIGH signal
-  // AD0-AD7
-  PORTF = 0xFF;
-  // AD8-AD15
-  PORTK = 0xFF;
-  // AD16-AD23
-  PORTC = 0xFF;
-
-  // Set Control Pins to Output CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
-  // CLK is N/C and IRQ is conected to GND inside the cartridge
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
-  // Output a high signal on CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
-  // At power-on all the control lines are high/disabled
-  PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
+  setGBA_ROM();
 
   // Delay until all is stable
   delay(500);
@@ -178,6 +279,32 @@ void setup_GBA() {
 /******************************************
   Low level functions
 *****************************************/
+// Setup all ports and pins for readign the rom
+void setGBA_ROM() {
+  // Set address/data pins to OUTPUT
+  // AD0-AD7
+  DDRF = 0xFF;
+  // AD8-AD15
+  DDRK = 0xFF;
+  // AD16-AD23
+  DDRC = 0xFF;
+
+  // Output a HIGH signal
+  // AD0-AD7
+  PORTF = 0xFF;
+  // AD8-AD15
+  PORTK = 0xFF;
+  // AD16-AD23
+  PORTC = 0xFF;
+
+  // Set Control Pins to Output CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
+  // CLK is N/C and IRQ is conected to GND inside the cartridge
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Output a high signal on CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
+  // At power-on all the control lines are high/disabled
+  PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
+}
+
 // Read one word and toggle both CS and RD
 word readWord_GBA(unsigned long myAddress) {
   //divide address by two since we read two bytes per offset
@@ -239,7 +366,7 @@ void readBlock_GBA(unsigned long myAddress, byte myArray[] , int numBytes) {
   }
 }
 /******************************************
-  Game Boy functions
+  Game Boy ROM Functions
 *****************************************/
 // Read info out of rom header
 void getCartInfo_GBA() {
@@ -399,14 +526,218 @@ boolean compare_checksum_GBA () {
   }
 }
 
-void readSAVE_GBA() {
+/******************************************
+  Game Boy SAVE Functions
+*****************************************/
+// MB85R256 FRAM (Ferroelectric Random Access Memory) 32,768 words x 8 bits
+void readFRAM_GBA (unsigned long framSize) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_SRAM(PH5)
+  PORTH |= (1 << 3) | (1 << 5);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+
+  // Set data pins to input
+  DDRC = 0x00;
+  // Disable Pullups
+  //PORTC = 0x00;
+
+  // Output a LOW signal on  CE_SRAM(PH0) and OE_SRAM(PH6)
+  PORTH &= ~((1 << 0) | (1 << 6));
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".srm");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // Signal end of process
+  print_Msg(F("Reading to SAVE/"));
+  print_Msg(romName);
+  print_Msg(F("/"));
+  print_Msg(foldern);
+  print_Msg(F("/"));
+  print_Msg(fileName);
+  print_Msg(F("..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+  for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
+    for (int c = 0; c < 512; c++) {
+      // Pull OE_SRAM(PH6) HIGH
+      PORTH |= (1 << 6);
+
+      // Set address
+      PORTF = (currAddress + c) & 0xFF;
+      PORTK = ((currAddress + c) >> 8) & 0xFF;
+
+      // Arduino running at 16Mhz -> one nop = 62.5ns
+      // Leave CS_SRAM HIGH for at least 85ns
+      __asm__("nop\n\t""nop\n\t");
+
+      // Pull OE_SRAM(PH6) LOW
+      PORTH &= ~ (1 << 6);
+
+      // Hold address for at least 25ns and wait 150ns before access
+      __asm__("nop\n\t""nop\n\t""nop\n\t");
+
+      // Read byte
+      sdBuffer[c] = PINC;
+    }
+    // Write sdBuffer to file
+    myFile.write(sdBuffer, 512);
+  }
+  // Close the file:
+  myFile.close();
+
+  // Signal end of process
+  println_Msg(F("Done"));
+  display_Update();
 }
 
-void writeSAVE_GBA() {
+// Write file to SRAM
+void writeFRAM_GBA (boolean browseFile, unsigned long framSize) {
+  // Output a HIGH signal on CS_ROM(PH3) and OE_SRAM(PH6)
+  PORTH |= (1 << 3) | (1 << 6);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+
+  // Set data port to output
+  DDRC = 0xFF;
+  // Output a high signal
+  //PORTC = 0xFF;
+
+  // Output a LOW signal on CE_SRAM(PH0) and WE_SRAM(PH5)
+  PORTH &= ~((1 << 0) | (1 << 5));
+
+  if (browseFile) {
+    filePath[0] = '\0';
+    sd.chdir("/");
+    fileBrowser("Select srm file");
+    // Create filepath
+    sprintf(filePath, "%s/%s", filePath, fileName);
+    display_Clear();
+  }
+  else
+    sprintf(filePath, "%s", fileName);
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
+      //fill sdBuffer
+      myFile.read(sdBuffer, 512);
+
+      for (int c = 0; c < 512; c++) {
+        // Output Data on PORTC
+        PORTC = sdBuffer[c];
+
+        // Arduino running at 16Mhz -> one nop = 62.5ns
+        // Data setup time 50ns
+        __asm__("nop\n\t");
+
+        // Pull WE_SRAM (PH5) HIGH
+        PORTH |= (1 << 5);
+
+        // Set address
+        PORTF = (currAddress + c) & 0xFF;
+        PORTK = ((currAddress + c) >> 8) & 0xFF;
+
+        // Leave WE_SRAM (PH5) HIGH for at least 85ns
+        __asm__("nop\n\t""nop\n\t");
+
+        // Pull WE_SRAM (PH5) LOW
+        PORTH &= ~ (1 << 5);
+
+        // Hold address for at least 25ns and wait 150ns before next write
+        __asm__("nop\n\t""nop\n\t""nop\n\t");
+      }
+    }
+    // Close the file:
+    myFile.close();
+    println_Msg(F("SRAM writing finished"));
+    display_Update();
+
+  }
+  else {
+    print_Error(F("File doesnt exist"), false);
+  }
 }
 
-unsigned long verifySAVE_GBA() {
+// Check if the SRAM was written without any error
+unsigned long verifyFRAM_GBA(unsigned long framSize) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_SRAM(PH5)
+  PORTH |= (1 << 3) | (1 << 5);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+
+  // Set data pins to input
+  DDRC = 0x00;
+  // Disable Pullups
+  //PORTC = 0x00;
+
+  // Output a LOW signal on  CE_SRAM(PH0) and OE_SRAM(PH6)
+  PORTH &= ~((1 << 0) | (1 << 6));
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+
+    // Variable for errors
+    writeErrors = 0;
+
+    for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
+      //fill sdBuffer
+      myFile.read(sdBuffer, 512);
+
+      for (int c = 0; c < 512; c++) {
+        // Pull OE_SRAM(PH6) HIGH
+        PORTH |= (1 << 6);
+
+        // Set address
+        PORTF = (currAddress + c) & 0xFF;
+        PORTK = ((currAddress + c) >> 8) & 0xFF;
+
+        // Arduino running at 16Mhz -> one nop = 62.5ns
+        // Leave CS_SRAM HIGH for at least 85ns
+        __asm__("nop\n\t""nop\n\t");
+
+        // Pull OE_SRAM(PH6) LOW
+        PORTH &= ~ (1 << 6);
+
+        // Hold address for at least 25ns and wait 150ns before access
+        __asm__("nop\n\t""nop\n\t""nop\n\t");
+
+        // Read byte
+        if (PINC != sdBuffer[c]) {
+          writeErrors++;
+        }
+      }
+    }
+
+    // Close the file:
+    myFile.close();
+    return writeErrors;
+  }
+  else {
+    print_Error(F("Can't open file"), false);
+  }
 }
+
 
 //******************************************
 // End of File

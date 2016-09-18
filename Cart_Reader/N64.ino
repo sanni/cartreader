@@ -19,6 +19,8 @@
 // Received N64 Eeprom data bits, 1 page
 bool tempBits[65];
 int eepPages;
+// Savetype
+byte saveType;
 
 // N64 Controller
 // 256 bits of received Controller data
@@ -34,9 +36,6 @@ N64_status;
 //stings that hold the buttons
 String button = "N/A";
 String lastbutton = "N/A";
-
-// Cartridge ID and size
-byte saveType;
 
 // Rom base address
 unsigned long romBase = 0x10000000;
