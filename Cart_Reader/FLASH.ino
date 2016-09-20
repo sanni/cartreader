@@ -6,7 +6,6 @@
    Variables
  *****************************************/
 // Flashrom
-char flashid[5];
 unsigned long flashSize;
 byte flashromType;
 byte secondID = 1;

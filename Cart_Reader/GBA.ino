@@ -112,14 +112,16 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 4K EEPROM
-          setGBA_ROM();
+          print_Error(F("Not supported yet"), false);
+          setROM_GBA();
           break;
 
         case 1:
           display_Clear();
           sd.chdir("/");
           // 64K EEPROM
-          setGBA_ROM();
+          print_Error(F("Not supported yet"), false);
+          setROM_GBA();
           break;
 
         case 2:
@@ -127,7 +129,7 @@ void gbaMenu() {
           sd.chdir("/");
           // 256K SRAM/FRAM
           readFRAM_GBA(32768);
-          setGBA_ROM();
+          setROM_GBA();
           break;
 
         case 3:
@@ -135,21 +137,23 @@ void gbaMenu() {
           sd.chdir("/");
           // 512K SRAM/FRAM
           readFRAM_GBA(65536);
-          setGBA_ROM();
+          setROM_GBA();
           break;
 
         case 4:
           display_Clear();
           sd.chdir("/");
           // 512K FLASH
-          setGBA_ROM();
+          readFLASH_GBA(65536);
+          setROM_GBA();
           break;
 
         case 5:
           display_Clear();
           sd.chdir("/");
           // 1M FLASH
-          setGBA_ROM();
+          readFLASH_GBA(131072);
+          setROM_GBA();
           break;
       }
       break;
@@ -169,14 +173,16 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 4K EEPROM
-          setGBA_ROM();
+          print_Error(F("Not supported yet"), false);
+          setROM_GBA();
           break;
 
         case 1:
           display_Clear();
           sd.chdir("/");
           // 64K EEPROM
-          setGBA_ROM();
+          print_Error(F("Not supported yet"), false);
+          setROM_GBA();
           break;
 
         case 2:
@@ -196,7 +202,7 @@ void gbaMenu() {
             println_Msg(F(" bytes "));
             print_Error(F("did not verify."), false);
           }
-          setGBA_ROM();
+          setROM_GBA();
           break;
 
         case 3:
@@ -216,21 +222,53 @@ void gbaMenu() {
             println_Msg(F(" bytes "));
             print_Error(F("did not verify."), false);
           }
-          setGBA_ROM();
+          setROM_GBA();
           break;
 
         case 4:
           display_Clear();
           sd.chdir("/");
           // 512K FLASH
-          setGBA_ROM();
+          idFlash_GBA();
+          resetFLASH_GBA();
+          if (strcmp(flashid, "BFD4") != 0) {
+            println_Msg(F("Flashrom Type not supported"));
+            print_Msg(F("ID: "));
+            println_Msg(flashid);
+            print_Error(F(":("), true);
+          }
+          eraseFLASH_GBA();
+          if (blankcheckFLASH_GBA(65536)) {
+            writeFLASH_GBA(1, 65536);
+            verifyFLASH_GBA(65536);
+          }
+          else {
+            print_Error(F("Erase failed"), false);
+          }
+          setROM_GBA();
           break;
 
         case 5:
           display_Clear();
           sd.chdir("/");
           // 1M FLASH
-          setGBA_ROM();
+          idFlash_GBA();
+          resetFLASH_GBA();
+          if (strcmp(flashid, "BFD4") != 0) {
+            println_Msg(F("Flashrom Type not supported"));
+            print_Msg(F("ID: "));
+            println_Msg(flashid);
+            print_Error(F(":("), true);
+          }
+          eraseFLASH_GBA();
+          if (blankcheckFLASH_GBA(131072)) {
+            writeFLASH_GBA(1, 131072);
+            verifyFLASH_GBA(131072);
+          }
+          else {
+            print_Error(F("Erase failed"), false);
+          }
+          setROM_GBA();
           break;
       }
       break;
@@ -249,7 +287,7 @@ void gbaMenu() {
    Setup
  *****************************************/
 void setup_GBA() {
-  setGBA_ROM();
+  setROM_GBA();
 
   // Delay until all is stable
   delay(500);
@@ -280,7 +318,7 @@ void setup_GBA() {
   Low level functions
 *****************************************/
 // Setup all ports and pins for readign the rom
-void setGBA_ROM() {
+void setROM_GBA() {
   // Set address/data pins to OUTPUT
   // AD0-AD7
   DDRF = 0xFF;
@@ -444,7 +482,7 @@ void readROM_GBA() {
 
   //clear the screen
   display_Clear();
-  println_Msg(F("Creating folder: "));
+  println_Msg(F("Reading to: "));
   println_Msg(folder);
   display_Update();
 
@@ -459,14 +497,14 @@ void readROM_GBA() {
 
   // Read rom
   for (int myAddress = 0; myAddress < cartSize; myAddress += 512) {
-    // Fill cartBuffer starting at myAddress and reading 512 bytes into array cartBuffer
+    // Fill sdBuffer starting at myAddress and reading 512 bytes
     readBlock_GBA(myAddress, sdBuffer, 512);
 
     // Write to SD
     myFile.write(sdBuffer, 512);
 
     // Pause between blocks, increase if you get errors every numBytes bytes
-    delayMicroseconds(10);
+    delayMicroseconds(20);
   }
 
   // Close the file:
@@ -527,7 +565,7 @@ boolean compare_checksum_GBA () {
 }
 
 /******************************************
-  Game Boy SAVE Functions
+  GBA FRAM SAVE Functions
 *****************************************/
 // MB85R256 FRAM (Ferroelectric Random Access Memory) 32,768 words x 8 bits
 void readFRAM_GBA (unsigned long framSize) {
@@ -738,6 +776,358 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
   }
 }
 
+/******************************************
+  GBA FLASH SAVE Functions
+*****************************************/
+// SST 39VF512 Flashrom
+void idFlash_GBA() {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set data pins to output
+  DDRC = 0xFF;
+
+  // Output a LOW signal on CE_FLASH(PH0)
+  PORTH &= ~(1 << 0);
+
+  // ID command sequence
+  writeByteFlash_GBA(0x5555, 0xaa);
+  writeByteFlash_GBA(0x2aaa, 0x55);
+  writeByteFlash_GBA(0x5555, 0x90);
+
+  // Set data pins to input
+  DDRC = 0x00;
+
+  // Output a LOW signal on OE_FLASH(PH6)
+  PORTH &= ~(1 << 6);
+
+  // Wait 150ns before reading ID
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t");
+
+  // Read the two id bytes into a string
+  sprintf(flashid, "%02X%02X", readByteFlash_GBA(0), readByteFlash_GBA(1));
+
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+}
+
+// Reset FLASH
+void resetFLASH_GBA() {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set data pins to output
+  DDRC = 0xFF;
+
+  // Output a LOW signal on CE_FLASH(PH0)
+  PORTH &= ~(1 << 0);
+
+  // Erase command sequence
+  writeByteFlash_GBA(0x5555, 0xf0);
+
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+}
+
+byte readByteFlash_GBA(unsigned long myAddress) {
+  // Set address
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  // Wait until byte is ready to read
+  __asm__("nop\n\t""nop\n\t");
+
+  // Read byte
+  byte tempByte = PINC;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  __asm__("nop\n\t");
+
+  return tempByte;
+}
+
+void writeByteFlash_GBA(unsigned long myAddress, byte myData) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTC = myData;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t");
+
+  // Switch WE_FLASH(PH5) to LOW
+  PORTH &= ~(1 << 5);
+
+  // Leave WE low for at least 40ns
+  __asm__("nop\n\t");
+
+  // Switch WE_FLASH(PH5) to HIGH
+  PORTH |= (1 << 5);
+
+  // Leave WE high for a bit
+  __asm__("nop\n\t");
+}
+
+// Erase FLASH
+void eraseFLASH_GBA() {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set data pins to output
+  DDRC = 0xFF;
+
+  // Output a LOW signal on CE_FLASH(PH0)
+  PORTH &= ~(1 << 0);
+
+  // Erase command sequence
+  writeByteFlash_GBA(0x5555, 0xaa);
+  writeByteFlash_GBA(0x2aaa, 0x55);
+  writeByteFlash_GBA(0x5555, 0x80);
+  writeByteFlash_GBA(0x5555, 0xaa);
+  writeByteFlash_GBA(0x2aaa, 0x55);
+  writeByteFlash_GBA(0x5555, 0x10);
+
+  // Wait 100ms until chip is erased
+  delay(100);
+
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+}
+
+boolean blankcheckFLASH_GBA (unsigned long flashSize) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
+  PORTH |= (1 << 3) | (1 << 5);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set address to 0
+  PORTF = 0x00;
+  PORTK = 0x00;
+
+  // Set data pins to input
+  DDRC = 0x00;
+  // Disable Pullups
+  //PORTC = 0x00;
+
+  boolean blank = 1;
+
+  // Output a LOW signal on  CE_FLASH(PH0)
+  PORTH &= ~(1 << 0);
+
+  // Output a LOW signal on OE_FLASH(PH6)
+  PORTH &= ~(1 << 6);
+
+  for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+    // Fill buffer
+    for (int c = 0; c < 512; c++) {
+      // Read byte
+      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
+    }
+    // Check buffer
+    for (unsigned long currByte = 0; currByte < 512; currByte++) {
+      if (sdBuffer[currByte] != 0xFF) {
+        currByte = 512;
+        currAddress = flashSize;
+        blank = 0;
+      }
+    }
+  }
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+
+  return blank;
+}
+
+void readFLASH_GBA (unsigned long flashSize) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
+  PORTH |= (1 << 3) | (1 << 5);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set address to 0
+  PORTF = 0x00;
+  PORTK = 0x00;
+
+  // Set data pins to input
+  DDRC = 0x00;
+  // Disable Pullups
+  //PORTC = 0x00;
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".fla");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // Signal end of process
+  print_Msg(F("Reading to SAVE/"));
+  print_Msg(romName);
+  print_Msg(F("/"));
+  print_Msg(foldern);
+  print_Msg(F("/"));
+  print_Msg(fileName);
+  print_Msg(F("..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  // Output a LOW signal on CE_FLASH(PH0)
+  PORTH &= ~(1 << 0);
+
+  // Output a LOW signal on OE_FLASH(PH6)
+  PORTH &= ~(1 << 6);
+
+  for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+    for (int c = 0; c < 512; c++) {
+      // Read byte
+      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
+    }
+    // Write sdBuffer to file
+    myFile.write(sdBuffer, 512);
+  }
+  myFile.close();
+
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+
+  // Signal end of process
+  println_Msg(F("Done"));
+  display_Update();
+}
+
+void writeFLASH_GBA (boolean browseFile, unsigned long flashSize) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set data port to output
+  DDRC = 0xFF;
+
+  if (browseFile) {
+    filePath[0] = '\0';
+    sd.chdir("/");
+    fileBrowser("Select fla file");
+    // Create filepath
+    sprintf(filePath, "%s/%s", filePath, fileName);
+    display_Clear();
+  }
+  else {
+    sprintf(filePath, "%s", fileName);
+  }
+
+  print_Msg(F("Writing flash..."));
+  display_Update();
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+
+    // Output a LOW signal on CE_FLASH(PH0)
+    PORTH &= ~(1 << 0);
+
+    for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+      //fill sdBuffer
+      myFile.read(sdBuffer, 512);
+
+      for (int c = 0; c < 512; c++) {
+        // Write command sequence
+        writeByteFlash_GBA(0x5555, 0xaa);
+        writeByteFlash_GBA(0x2aaa, 0x55);
+        writeByteFlash_GBA(0x5555, 0xa0);
+        // Write current byte
+        writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
+        // Wait 20us
+        delayMicroseconds(20);
+      }
+    }
+    // Set CS_FLASH(PH0) high
+    PORTH |= (1 << 0);
+
+    // Close the file:
+    myFile.close();
+    println_Msg(F("done"));
+    display_Update();
+
+  }
+  else {
+    println_Msg(F("Error"));
+    print_Error(F("File doesnt exist"), false);
+  }
+}
+
+// Check if the SRAM was written without any error
+void verifyFLASH_GBA(unsigned long flashSize) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
+  PORTH |= (1 << 3) | (1 << 5);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+
+  // Set data pins to input
+  DDRC = 0x00;
+
+  // Output a LOW signal on CE_FLASH(PH0) and  OE_FLASH(PH6)
+  PORTH &= ~((1 << 0) | (1 << 6));
+
+  // Signal beginning of process
+  print_Msg(F("Verify..."));
+  display_Update();
+
+  unsigned long wrError = 0;
+
+  //open file on sd card
+  if (!myFile.open(filePath, O_READ)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+    myFile.read(sdBuffer, 512);
+
+    for (int c = 0; c < 512; c++) {
+      // Read byte
+      if (sdBuffer[c] != readByteFlash_GBA(currAddress + c)) {
+        wrError++;
+      }
+    }
+  }
+  myFile.close();
+
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+
+  if (wrError == 0) {
+    println_Msg(F("OK"));
+  }
+  else {
+    println_Msg(wrError);
+    print_Error(F(" Errors"), false);
+  }
+}
 
 //******************************************
 // End of File

@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-09-18
-   Version:          V19B
+   Date:             2016-09-21
+   Version:          V19C
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -33,7 +33,7 @@
    lukeskaff - Nintendo DS GBA slot timing
 
 **********************************************************************************/
-char ver[5] = "V19B";
+char ver[5] = "V19C";
 
 /******************************************
    Define Output
@@ -48,6 +48,13 @@ char ver[5] = "V19B";
 ******************************************/
 // If you have two buttons on your cart reader you can remove the //
 //#define enable_Button2
+
+/******************************************
+   Define SD Speed
+******************************************/
+// Change to half speed if you get an sd error
+#define sdSpeed SPI_FULL_SPEED
+//#define sdSpeed SPI_HALF_SPEED
 
 /******************************************
    Pinout
@@ -180,6 +187,7 @@ bool errorLvl = 0;
 byte romVersion = 0;
 char cartID[5];
 unsigned long cartSize;
+char flashid[5];
 
 // Variable to count errors
 unsigned long writeErrors;
@@ -530,7 +538,7 @@ void setup() {
   }
 
   // Init SD card
-  if (!sd.begin(chipSelectPin, SPI_HALF_SPEED)) {
+  if (!sd.begin(chipSelectPin, sdSpeed)) {
     display_Clear();
     print_Error(F("SD Error"), true);
   }
