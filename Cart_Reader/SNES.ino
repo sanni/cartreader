@@ -110,7 +110,7 @@ void snesMenu() {
         writeSRAM(0);
         unsigned long wrErrors = verifySRAM();
         if (wrErrors == 0) {
-          println_Msg(F("Verified OK"));
+          println_Msg(F("Restored OK"));
           display_Update();
         }
         else {

@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-09-21
-   Version:          V19C
+   Date:             2016-09-27
+   Version:          V19D
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -30,10 +30,10 @@
    zzattack - multigame pcb fix
    Pickle - SDD1 fix
    insidegadgets - GBCartRead
-   lukeskaff - Nintendo DS GBA slot timing
+   RobinTheHood - GameboyAdvanceRomDumper
 
 **********************************************************************************/
-char ver[5] = "V19C";
+char ver[5] = "V19D";
 
 /******************************************
    Define Output

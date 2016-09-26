@@ -7,6 +7,7 @@
  *****************************************/
 char calcChecksumStr[5];
 byte cartBuffer[512];
+boolean readType;
 
 const int nintendoLogo[] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x24, 0xFF, 0xAE, 0x51, 0x69, 0x9A, 0xA2, 0x21, 0x3D, 0x84, 0x82, 0x0A,
@@ -289,9 +290,6 @@ void gbaMenu() {
 void setup_GBA() {
   setROM_GBA();
 
-  // Delay until all is stable
-  delay(500);
-
   // Print start page
   getCartInfo_GBA();
   display_Clear();
@@ -343,127 +341,162 @@ void setROM_GBA() {
   PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
 }
 
-// Read one word and toggle both CS and RD
-word readWord_GBA(unsigned long myAddress) {
-  //divide address by two since we read two bytes per offset
-  unsigned long currAddress = myAddress / 2;
+void setAddress_GBA(unsigned long myAddress) {
+  // Switch CS_ROM(PH3) to HIGH
+  PORTH |= (1 << 3);
 
-  // Output address to address pins,
-  PORTF = currAddress & 0xFF;
-  PORTK = (currAddress >> 8) & 0xFF;
-  PORTC = (currAddress >> 16) & 0xFF;
+  // Switch RD(PH6) to HIGH
+  PORTH |=  (1 << 6);
 
-  // Wait 30ns, Arduino running at 16Mhz -> one operation = 62.5ns
-  __asm__("nop\n\t");
-
-  // Pull CS_ROM(PH3) LOW to latch the address
-  PORTH &= ~(1 << 3);
-
-  // Wait 120ns between pulling CS and RD LOW
-  __asm__("nop\n\t""nop\n\t");
-
-  // Set address/data pins to LOW, this is important
-  PORTF = 0x0;
-  PORTK = 0x0;
-  // Set address/data ports to input so we can read, but don't enable pullups
-  DDRF = 0x0;
-  DDRK = 0x0;
-
-  // Pull RD(PH6) to LOW to read 16 bytes of data
-  PORTH &= ~ (1 << 6);
-
-  // Wait 120ns for the cartridge rom to write the data to the datalines
-  __asm__("nop\n\t""nop\n\t");
-
-  // Switch  CS_ROM(PH3) RD(PH6) to HIGH
-  PORTH |= (1 << 3)  | (1 << 6);
-
-  // Read the data off the data lines on the rising edge of the RD line.
-  word tempWord = ((PINF << 8) + PINK) & 0xFFFF;
-
-  // Set address/data pins to output
+  // Set address/data ports to output
   DDRF = 0xFF;
   DDRK = 0xFF;
   DDRC = 0xFF;
-  // Output a high signal so there are no floating pins
+
+  // Output address to address pins,
+  PORTF = (myAddress / 2) & 0xFF;
+  PORTK = ((myAddress / 2) >> 8) & 0xFF;
+  PORTC = ((myAddress / 2) >> 16) & 0xFF;
+
+  // Pull CS(PH3) to LOW
+  PORTH &= ~ (1 << 3);
+
+  // Output a high signal
   PORTF = 0XFF;
   PORTK = 0XFF;
   PORTC = 0XFF;
 
-  // Return the read word
-  return tempWord;
+  // Set address/data ports to input
+  DDRF = 0x00;
+  DDRK = 0x00;
+
+  // Pull RD(PH6) to LOW
+  PORTH &= ~ (1 << 6);
 }
 
-// Read multiple bytes into an array by toggling both CS and RD for each byte
-void readBlock_GBA(unsigned long myAddress, byte myArray[] , int numBytes) {
+// Read multiple bytes into an array toggle both CS and RD each time
+void readRand_GBA(unsigned long myAddress, byte myArray[] , int numBytes) {
   for (int currByte = 0; currByte < numBytes; currByte += 2) {
-    unsigned long currAddress = myAddress + currByte;
-    word currWord = readWord_GBA(currAddress);
+    setAddress_GBA(myAddress + currByte);
+
+    word currWord = ((PINF << 8) + PINK) & 0xFFFF;
+
     myArray[currByte] = (currWord >> 8) & 0xFF;
     myArray[currByte + 1] = currWord & 0xFF;
   }
+  setROM_GBA();
 }
+
+// Read multiple bytes into an array but only toggle CS once
+void readSeq_GBA(byte myArray[] , int numBytes) {
+  for (int currByte = 0; currByte < numBytes; currByte += 2) {
+    word currWord = ((PINF << 8) + PINK) & 0xFFFF;
+
+    myArray[currByte] = (currWord >> 8) & 0xFF;
+    myArray[currByte + 1] = currWord & 0xFF;
+
+    // Switch RD(PH6) to HIGH
+    PORTH |=  (1 << 6);
+
+    // Pull RD(PH6) to LOW
+    PORTH &= ~ (1 << 6);
+  }
+}
+
 /******************************************
   Game Boy ROM Functions
 *****************************************/
-// Read info out of rom header
-void getCartInfo_GBA() {
-  // Read Header into array
-  readBlock_GBA(0, cartBuffer, 192);
+// Test known Nintendo header for errors and sets read method to either sequential or random access
+int testHeader() {
+  // Set address to start of rom
+  setAddress_GBA(0);
+  // Read header into array sequentially
+  readSeq_GBA(cartBuffer, 192);
 
-  // Nintendo logo check
+  // Check if Nintendo logo is read ok
+  int logoErrors = checkLogo();
+
+  if (logoErrors != 0) {
+    // Nintendo logo has errors -> change read method
+    setROM_GBA();
+    setAddress_GBA(0);
+
+    // Read Header into array in random access mode
+    readRand_GBA(0, cartBuffer, 192);
+
+    logoErrors = checkLogo();
+    if (logoErrors == 0) {
+      readType = 0;
+    }
+  }
+  else {
+    readType = 1;
+  }
+  return logoErrors;
+}
+
+// Compare Nintendo logo, 156 bytes starting at 0x04
+int checkLogo() {
+  int errors = 0;
   for (int currByte = 0x4; currByte < 0xA0; currByte++) {
     if (pgm_read_byte(&nintendoLogo[currByte]) != cartBuffer[currByte]) {
-      print_Error(F("Nintendo Logo Error"), false);
+      errors++;
+    }
+  }
+  return errors;
+}
+
+// Read info out of rom header
+void getCartInfo_GBA() {
+  // Test rom header for errors
+  int logoErrors =  testHeader();
+
+  if (logoErrors != 0) {
+    print_Error(F("Nintendo Logo Error"), true);
+  }
+  else {
+    // Get cart ID
+    cartID[0] = char(cartBuffer[0xAC]);
+    cartID[1] = char(cartBuffer[0xAD]);
+    cartID[2] = char(cartBuffer[0xAE]);
+    cartID[3] = char(cartBuffer[0xAF]);
+
+    // Dump name into 8.3 compatible format
+    byte myByte = 0;
+    byte myLength = 0;
+    for (int addr = 0xA0; addr <= 0xAB; addr++) {
+      myByte = cartBuffer[addr];
+      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 8) {
+        romName[myLength] = char(myByte);
+        myLength++;
+      }
+    }
+
+    // Get ROM version
+    romVersion = cartBuffer[0xBC];
+
+    // Get Checksum as string
+    sprintf(checksumStr, "%02X", cartBuffer[0xBD]);
+
+    // Calculate Checksum
+    int calcChecksum = 0x00;
+    for (int n = 0xA0; n < 0xBD; n++) {
+      calcChecksum -= cartBuffer[n];
+    }
+    calcChecksum = (calcChecksum - 0x19) & 0xFF;
+    // Turn into string
+    sprintf(calcChecksumStr, "%02X", calcChecksum);
+
+    // Compare checksum
+    if (strcmp(calcChecksumStr, checksumStr) != 0) {
+      print_Msg(F("Result: "));
+      println_Msg(calcChecksumStr);
+      print_Error(F("Checksum Error"), false);
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
       display_Update();
       wait();
-      break;
     }
-  }
-
-  // Get cart ID
-  cartID[0] = char(cartBuffer[0xAC]);
-  cartID[1] = char(cartBuffer[0xAD]);
-  cartID[2] = char(cartBuffer[0xAE]);
-  cartID[3] = char(cartBuffer[0xAF]);
-
-  // Dump name into 8.3 compatible format
-  byte myByte = 0;
-  byte myLength = 0;
-  for (int addr = 0xA0; addr <= 0xAB; addr++) {
-    myByte = cartBuffer[addr];
-    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 8) {
-      romName[myLength] = char(myByte);
-      myLength++;
-    }
-  }
-
-  // Get ROM version
-  romVersion = cartBuffer[0xBC];
-
-  // Get Checksum as string
-  sprintf(checksumStr, "%02X", cartBuffer[0xBD]);
-
-  // Calculate Checksum
-  int calcChecksum = 0x00;
-  for (int n = 0xA0; n < 0xBD; n++) {
-    calcChecksum -= cartBuffer[n];
-  }
-  calcChecksum = (calcChecksum - 0x19) & 0xFF;
-  // Turn into string
-  sprintf(calcChecksumStr, "%02X", calcChecksum);
-
-  // Compare checksum
-  if (strcmp(calcChecksumStr, checksumStr) != 0) {
-    print_Msg(F("Result: "));
-    println_Msg(calcChecksumStr);
-    print_Error(F("Checksum Error"), false);
-    println_Msg(F(""));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
   }
 }
 
@@ -495,16 +528,23 @@ void readROM_GBA() {
     print_Error(F("Can't create file on SD"), true);
   }
 
+  // Set starting address
+  setAddress_GBA(0);
+
+  if (readType == 0) {
+    setROM_GBA();
+  }
+
   // Read rom
   for (int myAddress = 0; myAddress < cartSize; myAddress += 512) {
-    // Fill sdBuffer starting at myAddress and reading 512 bytes
-    readBlock_GBA(myAddress, sdBuffer, 512);
+    // Read either sequentially or in random acces mode
+    if (readType == 1)
+      readSeq_GBA(sdBuffer, 512);
+    else
+      readRand_GBA(myAddress, sdBuffer, 512);
 
     // Write to SD
     myFile.write(sdBuffer, 512);
-
-    // Pause between blocks, increase if you get errors every numBytes bytes
-    delayMicroseconds(20);
   }
 
   // Close the file:
