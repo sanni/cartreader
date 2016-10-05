@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-09-27
-   Version:          V19D
+   Date:             2016-10-05
+   Version:          V19E
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -31,9 +31,10 @@
    Pickle - SDD1 fix
    insidegadgets - GBCartRead
    RobinTheHood - GameboyAdvanceRomDumper
+   YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V19D";
+char ver[5] = "V19E";
 
 /******************************************
    Define Output

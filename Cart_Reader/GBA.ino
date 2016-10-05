@@ -145,15 +145,20 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 512K FLASH
-          readFLASH_GBA(65536);
+          readFLASH_GBA(1, 65536, 0);
           setROM_GBA();
           break;
 
         case 5:
           display_Clear();
           sd.chdir("/");
-          // 1M FLASH
-          readFLASH_GBA(131072);
+          // 1M FLASH (divided into two banks)
+          switchBank_GBA(0x0);
+          setROM_GBA();
+          readFLASH_GBA(1, 65536, 0);
+          switchBank_GBA(0x1);
+          setROM_GBA();
+          readFLASH_GBA(0, 65536, 65536);
           setROM_GBA();
           break;
       }
@@ -240,8 +245,8 @@ void gbaMenu() {
           }
           eraseFLASH_GBA();
           if (blankcheckFLASH_GBA(65536)) {
-            writeFLASH_GBA(1, 65536);
-            verifyFLASH_GBA(65536);
+            writeFLASH_GBA(1, 65536, 0);
+            verifyFLASH_GBA(65536, 0);
           }
           else {
             print_Error(F("Erase failed"), false);
@@ -255,16 +260,28 @@ void gbaMenu() {
           // 1M FLASH
           idFlash_GBA();
           resetFLASH_GBA();
-          if (strcmp(flashid, "BFD4") != 0) {
+          if (strcmp(flashid, "C209") != 0) {
             println_Msg(F("Flashrom Type not supported"));
             print_Msg(F("ID: "));
             println_Msg(flashid);
             print_Error(F(":("), true);
           }
           eraseFLASH_GBA();
-          if (blankcheckFLASH_GBA(131072)) {
-            writeFLASH_GBA(1, 131072);
-            verifyFLASH_GBA(131072);
+          // 131072 bytes are divided into two 65536 byte banks
+          switchBank_GBA(0x0);
+          setROM_GBA();
+          if (blankcheckFLASH_GBA(65536)) {
+            writeFLASH_GBA(1, 65536, 0);
+            verifyFLASH_GBA(65536, 0);
+          }
+          else {
+            print_Error(F("Erase failed"), false);
+          }
+          switchBank_GBA(0x1);
+          setROM_GBA();
+          if (blankcheckFLASH_GBA(65536)) {
+            writeFLASH_GBA(0, 65536, 65536);
+            verifyFLASH_GBA(65536, 65536);
           }
           else {
             print_Error(F("Erase failed"), false);
@@ -315,7 +332,7 @@ void setup_GBA() {
 /******************************************
   Low level functions
 *****************************************/
-// Setup all ports and pins for readign the rom
+// Setup all ports and pins for reading the rom
 void setROM_GBA() {
   // Set address/data pins to OUTPUT
   // AD0-AD7
@@ -339,6 +356,9 @@ void setROM_GBA() {
   // Output a high signal on CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
   // At power-on all the control lines are high/disabled
   PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Wait until all is stable
+  delay(500);
 }
 
 void setAddress_GBA(unsigned long myAddress) {
@@ -384,7 +404,29 @@ void readRand_GBA(unsigned long myAddress, byte myArray[] , int numBytes) {
     myArray[currByte] = (currWord >> 8) & 0xFF;
     myArray[currByte + 1] = currWord & 0xFF;
   }
-  setROM_GBA();
+  // setROM_GBA without delay
+  // Set address/data pins to OUTPUT
+  // AD0-AD7
+  DDRF = 0xFF;
+  // AD8-AD15
+  DDRK = 0xFF;
+  // AD16-AD23
+  DDRC = 0xFF;
+
+  // Output a HIGH signal
+  // AD0-AD7
+  PORTF = 0xFF;
+  // AD8-AD15
+  PORTK = 0xFF;
+  // AD16-AD23
+  PORTC = 0xFF;
+
+  // Set Control Pins to Output CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
+  // CLK is N/C and IRQ is conected to GND inside the cartridge
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Output a high signal on CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
+  // At power-on all the control lines are high/disabled
+  PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
 }
 
 // Read multiple bytes into an array but only toggle CS once
@@ -412,6 +454,8 @@ int testHeader() {
   setAddress_GBA(0);
   // Read header into array sequentially
   readSeq_GBA(cartBuffer, 192);
+  // Reset ports or the 1st maskrom byte on eeprom carts won't be read correctly
+  setROM_GBA();
 
   // Check if Nintendo logo is read ok
   int logoErrors = checkLogo();
@@ -869,11 +913,17 @@ void resetFLASH_GBA() {
   // Output a LOW signal on CE_FLASH(PH0)
   PORTH &= ~(1 << 0);
 
-  // Erase command sequence
+  // Reset command sequence
+  writeByteFlash_GBA(0x5555, 0xAA);
+  writeByteFlash_GBA(0x2AAA, 0x55);
+  writeByteFlash_GBA(0x5555, 0xf0);
   writeByteFlash_GBA(0x5555, 0xf0);
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
+
+  // Wait
+  delay(100);
 }
 
 byte readByteFlash_GBA(unsigned long myAddress) {
@@ -937,11 +987,11 @@ void eraseFLASH_GBA() {
   writeByteFlash_GBA(0x2aaa, 0x55);
   writeByteFlash_GBA(0x5555, 0x10);
 
-  // Wait 100ms until chip is erased
-  delay(100);
-
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
+
+  // Wait until all is erased
+  delay(500);
 }
 
 boolean blankcheckFLASH_GBA (unsigned long flashSize) {
@@ -989,7 +1039,33 @@ boolean blankcheckFLASH_GBA (unsigned long flashSize) {
   return blank;
 }
 
-void readFLASH_GBA (unsigned long flashSize) {
+// The MX29L010 is 131072 bytes in size and has 16 sectors per bank
+// each sector is 4096 bytes, there are 32 sectors total
+// therefore the bank size is 65536 bytes, so we have two banks in total
+void switchBank_GBA(byte bankNum) {
+  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Set address ports to output
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  // Set data pins to output
+  DDRC = 0xFF;
+
+  // Output a LOW signal on CE_FLASH(PH0)
+  PORTH &= ~(1 << 0);
+
+  // Switch bank command sequence
+  writeByteFlash_GBA(0x5555, 0xAA);
+  writeByteFlash_GBA(0x2AAA, 0x55);
+  writeByteFlash_GBA(0x5555, 0xB0);
+  writeByteFlash_GBA(0x0000, bankNum);
+
+  // Set CS_FLASH(PH0) high
+  PORTH |= (1 << 0);
+}
+
+void readFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1005,34 +1081,41 @@ void readFLASH_GBA (unsigned long flashSize) {
   // Disable Pullups
   //PORTC = 0x00;
 
-  // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".fla");
+  if (browseFile) {
+    // Get name, add extension and convert to char array for sd lib
+    strcpy(fileName, romName);
+    strcat(fileName, ".fla");
 
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+    // create a new folder for the save file
+    EEPROM_readAnything(0, foldern);
 
-  // Signal end of process
-  print_Msg(F("Reading to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern);
-  print_Msg(F("/"));
-  print_Msg(fileName);
-  print_Msg(F("..."));
-  display_Update();
+    sprintf(folder, "SAVE/%s/%d", romName, foldern);
+    sd.mkdir(folder, true);
+    sd.chdir(folder);
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+    // Signal end of process
+    print_Msg(F("Reading to SAVE/"));
+    print_Msg(romName);
+    print_Msg(F("/"));
+    print_Msg(foldern);
+    print_Msg(F("/"));
+    print_Msg(fileName);
+    print_Msg(F("..."));
+    display_Update();
+
+    // write new folder number back to eeprom
+    foldern = foldern + 1;
+    EEPROM_writeAnything(0, foldern);
+  }
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
   }
+
+  // Seek to a new position in the file
+  if (pos != 0)
+    myFile.seekCur(pos);
 
   // Output a LOW signal on CE_FLASH(PH0)
   PORTH &= ~(1 << 0);
@@ -1058,7 +1141,20 @@ void readFLASH_GBA (unsigned long flashSize) {
   display_Update();
 }
 
-void writeFLASH_GBA (boolean browseFile, unsigned long flashSize) {
+void busyCheck_GBA(int currByte) {
+  // Set data pins to input
+  DDRC = 0x00;
+  // Output a LOW signal on OE_FLASH(PH6)
+  PORTH &= ~(1 << 6);
+  // Read PINC
+  while (PINC != sdBuffer[currByte]) {}
+  // Output a HIGH signal on OE_FLASH(PH6)
+  PORTH |= (1 << 6);
+  // Set data pins to output
+  DDRC = 0xFF;
+}
+
+void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
 
@@ -1076,15 +1172,16 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize) {
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
   }
-  else {
-    sprintf(filePath, "%s", fileName);
-  }
 
   print_Msg(F("Writing flash..."));
   display_Update();
 
   //open file on sd card
   if (myFile.open(filePath, O_READ)) {
+
+    // Seek to a new position in the file
+    if (pos != 0)
+      myFile.seekCur(pos);
 
     // Output a LOW signal on CE_FLASH(PH0)
     PORTH &= ~(1 << 0);
@@ -1100,8 +1197,9 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize) {
         writeByteFlash_GBA(0x5555, 0xa0);
         // Write current byte
         writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
-        // Wait 20us
-        delayMicroseconds(20);
+
+        // Wait
+        busyCheck_GBA(c);
       }
     }
     // Set CS_FLASH(PH0) high
@@ -1120,7 +1218,7 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize) {
 }
 
 // Check if the SRAM was written without any error
-void verifyFLASH_GBA(unsigned long flashSize) {
+void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1145,6 +1243,10 @@ void verifyFLASH_GBA(unsigned long flashSize) {
     print_Error(F("SD Error"), true);
   }
 
+  // Seek to a new position in the file
+  if (pos != 0)
+    myFile.seekCur(pos);
+
   for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
     myFile.read(sdBuffer, 512);
 
@@ -1164,7 +1266,7 @@ void verifyFLASH_GBA(unsigned long flashSize) {
     println_Msg(F("OK"));
   }
   else {
-    println_Msg(wrError);
+    print_Msg(wrError);
     print_Error(F(" Errors"), false);
   }
 }
