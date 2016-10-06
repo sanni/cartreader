@@ -241,7 +241,7 @@ void gbaMenu() {
             println_Msg(F("Flashrom Type not supported"));
             print_Msg(F("ID: "));
             println_Msg(flashid);
-            print_Error(F(":("), true);
+            print_Error(F(""), true);
           }
           eraseFLASH_GBA();
           if (blankcheckFLASH_GBA(65536)) {
@@ -264,7 +264,7 @@ void gbaMenu() {
             println_Msg(F("Flashrom Type not supported"));
             print_Msg(F("ID: "));
             println_Msg(flashid);
-            print_Error(F(":("), true);
+            print_Error(F(""), true);
           }
           eraseFLASH_GBA();
           // 131072 bytes are divided into two 65536 byte banks
@@ -932,13 +932,13 @@ byte readByteFlash_GBA(unsigned long myAddress) {
   PORTK = (myAddress >> 8) & 0xFF;
 
   // Wait until byte is ready to read
-  __asm__("nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read byte
   byte tempByte = PINC;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempByte;
 }
@@ -950,19 +950,19 @@ void writeByteFlash_GBA(unsigned long myAddress, byte myData) {
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch WE_FLASH(PH5) to LOW
   PORTH &= ~(1 << 5);
 
   // Leave WE low for at least 40ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch WE_FLASH(PH5) to HIGH
   PORTH |= (1 << 5);
 
   // Leave WE high for a bit
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 // Erase FLASH
