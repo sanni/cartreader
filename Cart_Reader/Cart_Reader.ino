@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-10-06
-   Version:          V19F
+   Date:             2016-10-07
+   Version:          V19G
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V19F";
+char ver[5] = "V19G";
 
 /******************************************
    Define Output
@@ -47,8 +47,8 @@ char ver[5] = "V19F";
 /******************************************
    Define Input
 ******************************************/
-// If you have two buttons on your cart reader you can remove the //
-//#define enable_Button2
+// If you are using the old version with only one button add // in front of the next line
+#define enable_Button2
 
 /******************************************
    Define SD Speed
