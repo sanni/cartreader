@@ -113,7 +113,7 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 4K EEPROM
-          print_Error(F("Not supported yet"), false);
+          readEeprom_GBA(4);
           setROM_GBA();
           break;
 
@@ -122,6 +122,7 @@ void gbaMenu() {
           sd.chdir("/");
           // 64K EEPROM
           print_Error(F("Not supported yet"), false);
+          //readEeprom_GBA(64);
           setROM_GBA();
           break;
 
@@ -404,6 +405,7 @@ void readRand_GBA(unsigned long myAddress, byte myArray[] , int numBytes) {
     myArray[currByte] = (currWord >> 8) & 0xFF;
     myArray[currByte + 1] = currWord & 0xFF;
   }
+
   // setROM_GBA without delay
   // Set address/data pins to OUTPUT
   // AD0-AD7
@@ -1268,6 +1270,183 @@ void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
   else {
     print_Msg(wrError);
     print_Error(F(" Errors"), false);
+  }
+}
+
+/******************************************
+  GBA Eeprom SAVE Functions
+*****************************************/
+// Read eeprom to file
+void readEeprom_GBA(word eepSize) {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".eep");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+
+  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // Signal end of process
+  print_Msg(F("Reading to SAVE/"));
+  print_Msg(romName);
+  print_Msg(F("/"));
+  print_Msg(foldern);
+  print_Msg(F("/"));
+  print_Msg(fileName);
+  print_Msg(F("..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  for (word i = 0; i < eepSize * 16; i += 64) {
+    // Disable interrupts for more uniform clock pulses
+    noInterrupts();
+    // Fill sd Buffer
+    readBlock_EEP(i, eepSize);
+    interrupts();
+
+    // Wait
+    delayMicroseconds(200);
+
+    // Seek to a new position in the file
+    if (i != 0)
+      myFile.seekCur(i * 64);
+    // Write sdBuffer to file
+    myFile.write(cartBuffer, 512);
+  }
+  myFile.close();
+}
+
+// Send address as bits to eeprom
+void setAddress_EEP(word currAddr, word numBits) {
+  for (word addrBit = numBits; addrBit > 0; addrBit--) {
+    // If you want the k-th bit of n, then do
+    // (n & ( 1 << k )) >> k
+    if (((currAddr & ( 1 << (addrBit - 1))) >> (addrBit - 1))) {
+      // Set A0(PF0) to High
+      PORTF |= (1 << 0);
+      // Set WR(PH5) to LOW
+      PORTH &= ~ (1 << 5);
+      // Set WR(PH5) to High
+      PORTH |= (1 << 5);
+    }
+    else {
+      // Set A0(PF0) to Low
+      PORTF &= ~ (1 << 0);
+      // Set WR(PH5) to LOW
+      PORTH &= ~ (1 << 5);
+      // Set WR(PH5) to High
+      PORTH |= (1 << 5);
+    }
+  }
+}
+
+// Reads 512 bytes from eeprom
+void readBlock_EEP(word startAddress, word eepSize) {
+  // Setup
+  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to Output
+  DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
+  // Set A0(PF0) to Output
+  DDRF |= (1 << 0);
+  // Set A23/D7(PC7) to Output
+  DDRC |= (1 << 7);
+
+  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to High
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+  // Set A0(PF0) to High
+  PORTF |= (1 << 0);
+  // Set A23/D7(PC7) to High
+  PORTC |= (1 << 7);
+
+  __asm__("nop\n\t""nop\n\t");
+
+  // Read 64*8=512 bytes
+  for (word currAddr = startAddress; currAddr < startAddress + 64; currAddr++) {
+    // Set CS_ROM(PH3) to LOW
+    PORTH &= ~ (1 << 3);
+
+    // Send read request "11"
+    // Set A0(PF0) to High
+    PORTF |= (1 << 0);
+    // Set WR(PH5) to LOW
+    PORTH &= ~ (1 << 5);
+    // Set WR(PH5) to High
+    PORTH |= (1 << 5);
+    // Set WR(PH5) to LOW
+    PORTH &= ~ (1 << 5);
+    // Set WR(PH5) to High
+    PORTH |= (1 << 5);
+
+    // Send either 6 or 14 bit address
+    if (eepSize == 4) {
+      setAddress_EEP(currAddr, 6);
+    }
+    else {
+      setAddress_EEP(currAddr, 14);
+    }
+
+    // Send stop bit
+    // Set A0(PF0) to LOW
+    PORTF &= ~ (1 << 0);
+    // Set WR(PH5) to LOW
+    PORTH &= ~ (1 << 5);
+    // WR(PH5) to High
+    PORTH |=  (1 << 5);
+
+    // Set CS_ROM(PH3) to High
+    PORTH |= (1 << 3);
+
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    // Read data
+    // Set A0(PF0) to Input
+    DDRF &= ~ (1 << 0);
+    // Set CS_ROM(PH3) to low
+    PORTH &= ~(1 << 3);
+
+    // Array that holds the bits
+    bool tempBits[65];
+
+    // Ignore the first 4 bits
+    for (byte i = 0; i < 4; i++) {
+      // Set RD(PH6) to LOW
+      PORTH &= ~ (1 << 6);
+      // Set RD(PH6) to High
+      PORTH  |= (1 << 6);
+    }
+
+    // Read the remaining 64bits into array
+    for (byte currBit = 0; currBit < 64; currBit++) {
+      // Set RD(PH6) to LOW
+      PORTH &= ~ (1 << 6);
+      // Set RD(PH6) to High
+      PORTH  |= (1 << 6);
+
+      // Read bit from A0(PF0)
+      tempBits[currBit] = (PINF & 0x1);
+    }
+
+    // Set CS_ROM(PH3) to High
+    PORTH |= (1 << 3);
+    // Set A0(PF0) to High
+    PORTF |= (1 << 0);
+    // Set A0(PF0) to Output
+    DDRF |= (1 << 0);
+
+    // OR 8 bits into one byte for a total of 8 bytes
+    for (byte j = 0; j < 64; j += 8) {
+      cartBuffer[((currAddr - startAddress) * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
+    }
   }
 }
 
