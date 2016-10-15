@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2016-10-14
-   Version:          V19H
+   Date:             2016-10-15
+   Version:          V19I
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -17,7 +17,7 @@
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video-Game-Shield menu
    skaman - SNES enhancements and SA1 sram support
-   nocash - Nintendo Power commands and lots of other info
+   nocash - Nintendo Power and GBA Eeprom commands and lots of other info
    crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
    jago85 - help with N64 stuff
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V19H";
+char ver[5] = "V19I";
 
 /******************************************
    Define Output
@@ -201,7 +201,7 @@ int foldern;
 char folder[24];
 
 // Array that holds the data
-byte sdBuffer[512];
+byte sdBuffer[1024];
 
 //******************************************
 // Bitmaps

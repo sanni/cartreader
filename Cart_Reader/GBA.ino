@@ -6,7 +6,6 @@
    Variables
  *****************************************/
 char calcChecksumStr[5];
-byte cartBuffer[512];
 boolean readType;
 
 const int nintendoLogo[] PROGMEM = {
@@ -180,7 +179,18 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 4K EEPROM
-          print_Error(F("Not supported yet"), false);
+          writeEeprom_GBA(4);
+          writeErrors = verifyEEP_GBA(4);
+          if (writeErrors == 0) {
+            println_Msg(F("Verified OK"));
+            display_Update();
+          }
+          else {
+            print_Msg(F("Error: "));
+            print_Msg(writeErrors);
+            println_Msg(F(" bytes "));
+            print_Error(F("did not verify."), false);
+          }
           setROM_GBA();
           break;
 
@@ -189,6 +199,18 @@ void gbaMenu() {
           sd.chdir("/");
           // 64K EEPROM
           print_Error(F("Not supported yet"), false);
+          /*writeEeprom_GBA(64);
+            writeErrors = verifyEEP_GBA(64);
+            if (writeErrors == 0) {
+            println_Msg(F("Verified OK"));
+            display_Update();
+            }
+            else {
+            print_Msg(F("Error: "));
+            print_Msg(writeErrors);
+            println_Msg(F(" bytes "));
+            print_Error(F("did not verify."), false);
+            }*/
           setROM_GBA();
           break;
 
@@ -455,7 +477,7 @@ int testHeader() {
   // Set address to start of rom
   setAddress_GBA(0);
   // Read header into array sequentially
-  readSeq_GBA(cartBuffer, 192);
+  readSeq_GBA(sdBuffer, 192);
   // Reset ports or the 1st maskrom byte on eeprom carts won't be read correctly
   setROM_GBA();
 
@@ -468,7 +490,7 @@ int testHeader() {
     setAddress_GBA(0);
 
     // Read Header into array in random access mode
-    readRand_GBA(0, cartBuffer, 192);
+    readRand_GBA(0, sdBuffer, 192);
 
     logoErrors = checkLogo();
     if (logoErrors == 0) {
@@ -485,7 +507,7 @@ int testHeader() {
 int checkLogo() {
   int errors = 0;
   for (int currByte = 0x4; currByte < 0xA0; currByte++) {
-    if (pgm_read_byte(&nintendoLogo[currByte]) != cartBuffer[currByte]) {
+    if (pgm_read_byte(&nintendoLogo[currByte]) != sdBuffer[currByte]) {
       errors++;
     }
   }
@@ -502,16 +524,16 @@ void getCartInfo_GBA() {
   }
   else {
     // Get cart ID
-    cartID[0] = char(cartBuffer[0xAC]);
-    cartID[1] = char(cartBuffer[0xAD]);
-    cartID[2] = char(cartBuffer[0xAE]);
-    cartID[3] = char(cartBuffer[0xAF]);
+    cartID[0] = char(sdBuffer[0xAC]);
+    cartID[1] = char(sdBuffer[0xAD]);
+    cartID[2] = char(sdBuffer[0xAE]);
+    cartID[3] = char(sdBuffer[0xAF]);
 
     // Dump name into 8.3 compatible format
     byte myByte = 0;
     byte myLength = 0;
     for (int addr = 0xA0; addr <= 0xAB; addr++) {
-      myByte = cartBuffer[addr];
+      myByte = sdBuffer[addr];
       if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 8) {
         romName[myLength] = char(myByte);
         myLength++;
@@ -519,15 +541,15 @@ void getCartInfo_GBA() {
     }
 
     // Get ROM version
-    romVersion = cartBuffer[0xBC];
+    romVersion = sdBuffer[0xBC];
 
     // Get Checksum as string
-    sprintf(checksumStr, "%02X", cartBuffer[0xBD]);
+    sprintf(checksumStr, "%02X", sdBuffer[0xBD]);
 
     // Calculate Checksum
     int calcChecksum = 0x00;
     for (int n = 0xA0; n < 0xBD; n++) {
-      calcChecksum -= cartBuffer[n];
+      calcChecksum -= sdBuffer[n];
     }
     calcChecksum = (calcChecksum - 0x19) & 0xFF;
     // Turn into string
@@ -1219,7 +1241,7 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) 
   }
 }
 
-// Check if the SRAM was written without any error
+// Check if the Flashrom was written without any error
 void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
@@ -1276,6 +1298,46 @@ void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
 /******************************************
   GBA Eeprom SAVE Functions
 *****************************************/
+// Write eeprom from file
+void writeEeprom_GBA(word eepSize) {
+  // Launch Filebrowser
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser("Select eep file");
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  display_Clear();
+
+  print_Msg(F("Writing eeprom..."));
+  display_Update();
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Fill romBuffer
+    myFile.read(sdBuffer, 512);
+
+    for (word i = 0; i < eepSize * 16; i += 64) {
+      // Disable interrupts for more uniform clock pulses
+      noInterrupts();
+      // Write 512 bytes
+      writeBlock_EEP(i, eepSize);
+      interrupts();
+
+      // Wait
+      delayMicroseconds(200);
+    }
+
+    // Close the file:
+    myFile.close();
+    println_Msg(F("done"));
+    display_Update();
+  }
+  else {
+    println_Msg(F("Error"));
+    print_Error(F("File doesnt exist"), false);
+  }
+}
+
 // Read eeprom to file
 void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
@@ -1322,13 +1384,13 @@ void readEeprom_GBA(word eepSize) {
     if (i != 0)
       myFile.seekCur(i * 64);
     // Write sdBuffer to file
-    myFile.write(cartBuffer, 512);
+    myFile.write(sdBuffer, 512);
   }
   myFile.close();
 }
 
 // Send address as bits to eeprom
-void setAddress_EEP(word currAddr, word numBits) {
+void send_GBA(word currAddr, word numBits) {
   for (word addrBit = numBits; addrBit > 0; addrBit--) {
     // If you want the k-th bit of n, then do
     // (n & ( 1 << k )) >> k
@@ -1348,6 +1410,87 @@ void setAddress_EEP(word currAddr, word numBits) {
       // Set WR(PH5) to High
       PORTH |= (1 << 5);
     }
+  }
+}
+
+// Write 512K eeprom block
+void writeBlock_EEP(word startAddr, word eepSize) {
+  // Setup
+  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to Output
+  DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
+  // Set A0(PF0) to Output
+  DDRF |= (1 << 0);
+  // Set A23/D7(PC7) to Output
+  DDRC |= (1 << 7);
+
+  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to High
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+  // Set A0(PF0) to High
+  PORTF |= (1 << 0);
+  // Set A23/D7(PC7) to High
+  PORTC |= (1 << 7);
+
+  __asm__("nop\n\t""nop\n\t");
+
+  // Write 64*8=512 bytes
+  for (word currAddr = startAddr; currAddr < startAddr + 64; currAddr++) {
+    // Set CS_ROM(PH3) to LOW
+    PORTH &= ~ (1 << 3);
+
+    // Send write request "10"
+    // Set A0(PF0) to High
+    PORTF |= (1 << 0);
+    // Set WR(PH5) to LOW
+    PORTH &= ~ (1 << 5);
+    // Set WR(PH5) to High
+    PORTH |= (1 << 5);
+    // Set A0(PF0) to LOW
+    PORTF &= ~ (1 << 0);
+    // Set WR(PH5) to LOW
+    PORTH &= ~ (1 << 5);
+    // Set WR(PH5) to High
+    PORTH |= (1 << 5);
+
+    // Send either 6 or 14 bit address
+    if (eepSize == 4) {
+      send_GBA(currAddr, 6);
+    }
+    else {
+      send_GBA(currAddr, 14);
+    }
+
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    // Send data
+    for (byte currByte = 0; currByte < 8; currByte++) {
+      send_GBA(sdBuffer[currAddr * 8 + currByte], 8);
+    }
+
+    // Send stop bit
+    // Set A0(PF0) to LOW
+    PORTF &= ~ (1 << 0);
+    // Set WR(PH5) to LOW
+    PORTH &= ~ (1 << 5);
+    // WR(PH5) to High
+    PORTH |=  (1 << 5);
+
+    // Set CS_ROM(PH3) to High
+    PORTH |= (1 << 3);
+
+    // Wait until done
+    // Set A0(PF0) to Input
+    DDRF &= ~ (1 << 0);
+
+    do {
+      // Set  CS_ROM(PH3) RD(PH6) to LOW
+      PORTH &= ~((1 << 3) | (1 << 6));
+      // Set  CS_ROM(PH3) RD(PH6) to High
+      PORTH  |= (1 << 3) | (1 << 6);
+    }
+    while ((PINF & 0x1) == 0);
+
+    // Set A0(PF0) to Output
+    DDRF |= (1 << 0);
   }
 }
 
@@ -1389,10 +1532,10 @@ void readBlock_EEP(word startAddress, word eepSize) {
 
     // Send either 6 or 14 bit address
     if (eepSize == 4) {
-      setAddress_EEP(currAddr, 6);
+      send_GBA(currAddr, 6);
     }
     else {
-      setAddress_EEP(currAddr, 14);
+      send_GBA(currAddr, 14);
     }
 
     // Send stop bit
@@ -1445,9 +1588,36 @@ void readBlock_EEP(word startAddress, word eepSize) {
 
     // OR 8 bits into one byte for a total of 8 bytes
     for (byte j = 0; j < 64; j += 8) {
-      cartBuffer[((currAddr - startAddress) * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
+      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
     }
   }
+}
+
+// Check if the SRAM was written without any error
+unsigned long verifyEEP_GBA(word eepSize) {
+  unsigned long wrError = 0;
+
+  //open file on sd card
+  if (!myFile.open(filePath, O_READ)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  // Fill sd Buffer
+  for (word i = 0; i < eepSize * 16; i += 64) {
+    // Disable interrupts for more uniform clock pulses
+    noInterrupts();
+    readBlock_EEP(i, eepSize);
+    interrupts();
+  }
+  // Compare
+  for (int c = 0; c < eepSize * 16; c++) {
+    if (sdBuffer[c] != myFile.read()) {
+      wrError++;
+    }
+  }
+
+  myFile.close();
+  return wrError;
 }
 
 //******************************************
