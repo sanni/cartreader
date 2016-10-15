@@ -379,7 +379,7 @@ void setROM_GBA() {
   PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
 
   // Wait until all is stable
-  delay(200);
+  delay(600);
 }
 
 void setAddress_GBA(unsigned long myAddress) {
