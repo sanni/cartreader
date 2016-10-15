@@ -120,8 +120,7 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 64K EEPROM
-          print_Error(F("Not supported yet"), false);
-          //readEeprom_GBA(64);
+          readEeprom_GBA(64);
           setROM_GBA();
           break;
 
@@ -198,19 +197,18 @@ void gbaMenu() {
           display_Clear();
           sd.chdir("/");
           // 64K EEPROM
-          print_Error(F("Not supported yet"), false);
-          /*writeEeprom_GBA(64);
-            writeErrors = verifyEEP_GBA(64);
-            if (writeErrors == 0) {
+          writeEeprom_GBA(64);
+          writeErrors = verifyEEP_GBA(64);
+          if (writeErrors == 0) {
             println_Msg(F("Verified OK"));
             display_Update();
-            }
-            else {
+          }
+          else {
             print_Msg(F("Error: "));
             print_Msg(writeErrors);
             println_Msg(F(" bytes "));
             print_Error(F("did not verify."), false);
-            }*/
+          }
           setROM_GBA();
           break;
 
@@ -381,7 +379,7 @@ void setROM_GBA() {
   PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
 
   // Wait until all is stable
-  delay(500);
+  delay(200);
 }
 
 void setAddress_GBA(unsigned long myAddress) {
@@ -1313,10 +1311,9 @@ void writeEeprom_GBA(word eepSize) {
 
   //open file on sd card
   if (myFile.open(filePath, O_READ)) {
-    // Fill romBuffer
-    myFile.read(sdBuffer, 512);
-
     for (word i = 0; i < eepSize * 16; i += 64) {
+      // Fill romBuffer
+      myFile.read(sdBuffer, 512);
       // Disable interrupts for more uniform clock pulses
       noInterrupts();
       // Write 512 bytes
@@ -1370,21 +1367,19 @@ void readEeprom_GBA(word eepSize) {
     print_Error(F("SD Error"), true);
   }
 
-  for (word i = 0; i < eepSize * 16; i += 64) {
+  // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
+  for (word currAddress = 0; currAddress < eepSize * 16; currAddress += 64) {
     // Disable interrupts for more uniform clock pulses
     noInterrupts();
     // Fill sd Buffer
-    readBlock_EEP(i, eepSize);
+    readBlock_EEP(currAddress, eepSize);
     interrupts();
+
+    // Write sdBuffer to file
+    myFile.write(sdBuffer, 512);
 
     // Wait
     delayMicroseconds(200);
-
-    // Seek to a new position in the file
-    if (i != 0)
-      myFile.seekCur(i * 64);
-    // Write sdBuffer to file
-    myFile.write(sdBuffer, 512);
   }
   myFile.close();
 }
@@ -1463,7 +1458,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
     // Send data
     for (byte currByte = 0; currByte < 8; currByte++) {
-      send_GBA(sdBuffer[currAddr * 8 + currByte], 8);
+      send_GBA(sdBuffer[(currAddr - startAddr) * 8 + currByte], 8);
     }
 
     // Send stop bit
@@ -1603,19 +1598,19 @@ unsigned long verifyEEP_GBA(word eepSize) {
   }
 
   // Fill sd Buffer
-  for (word i = 0; i < eepSize * 16; i += 64) {
+  for (word currAddress = 0; currAddress < eepSize * 16; currAddress += 64) {
     // Disable interrupts for more uniform clock pulses
     noInterrupts();
-    readBlock_EEP(i, eepSize);
+    readBlock_EEP(currAddress, eepSize);
     interrupts();
-  }
-  // Compare
-  for (int c = 0; c < eepSize * 16; c++) {
-    if (sdBuffer[c] != myFile.read()) {
-      wrError++;
+
+    // Compare
+    for (int currByte = 0; currByte < 512; currByte++) {
+      if (sdBuffer[currByte] != myFile.read()) {
+        wrError++;
+      }
     }
   }
-
   myFile.close();
   return wrError;
 }

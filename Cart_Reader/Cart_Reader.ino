@@ -3,7 +3,7 @@
 
    Author:           sanni
    Date:             2016-10-15
-   Version:          V19I
+   Version:          V19J
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V19I";
+char ver[5] = "V19J";
 
 /******************************************
    Define Output
@@ -201,7 +201,7 @@ int foldern;
 char folder[24];
 
 // Array that holds the data
-byte sdBuffer[1024];
+byte sdBuffer[512];
 
 //******************************************
 // Bitmaps
