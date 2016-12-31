@@ -23,6 +23,9 @@ Contains:
 - 2x SD card spacer   
 - display protector   
 
+####snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of the metal SNES clone console slot   
+
+![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/snes_spacer.png)   
 
 ####For the needed parts list see here: https://github.com/sanni/cartreader/wiki/PCB-Needed-Parts   
 ####How to order a PCB: https://github.com/sanni/cartreader/wiki/PCB-How-to-order-printed-circuit-boards   
