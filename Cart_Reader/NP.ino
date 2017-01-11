@@ -58,7 +58,7 @@ const char* const menuOptionsNPGame[] PROGMEM = {NPGameMenuItem1, NPGameMenuItem
 void npMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsNP, 3);
   mainMenu = question_box("Nintendo Power", menuOptions, 3, 0);
 
@@ -151,7 +151,7 @@ void NPGameMenu() {
 void NPGameOptions() {
   // create menu with title and 3 options to choose from
   unsigned char gameSubMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsNPGame, 5);
   gameSubMenu = question_box("NP Game Menu", menuOptions, 5, 0);
 
@@ -216,7 +216,7 @@ void NPGameOptions() {
 void NPFlashMenu() {
   // create menu with title and 6 options to choose from
   unsigned char flashSubMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsNPFlash, 6);
   flashSubMenu = question_box("NP Flash Menu", menuOptions, 6, 0);
 

@@ -38,7 +38,7 @@ const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash16MenuI
 void flashromMenu8() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsFLASH8, 7);
   mainMenu = question_box("Flashrom Writer 8", menuOptions, 7, 0);
 
@@ -168,7 +168,7 @@ void flashromMenu8() {
 void flashromMenu16() {
   // create menu with title "Flashrom Writer 16" and 7 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsFLASH16, 7);
   mainMenu = question_box("Flashrom Writer 16", menuOptions, 7, 0);
 

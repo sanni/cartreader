@@ -15,18 +15,19 @@ int sramBanks;
 const char GBMenuItem1[] PROGMEM = "Read Rom";
 const char GBMenuItem2[] PROGMEM = "Read Save";
 const char GBMenuItem3[] PROGMEM = "Write Save";
-const char GBMenuItem4[] PROGMEM = "Reset";
-const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4};
+const char GBMenuItem4[] PROGMEM = "Write Flash";
+const char GBMenuItem5[] PROGMEM = "Reset";
+const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5};
 
 void gbMenu() {
   // Output a high signal on CS(PH3) WR(PH5) RD(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
 
-  // create menu with title and 4 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
-  convertPgm(menuOptionsGB, 4);
-  mainMenu = question_box("GB Cart Reader", menuOptions, 4, 0);
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsGB, 5);
+  mainMenu = question_box("GB Cart Reader", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -66,6 +67,12 @@ void gbMenu() {
       break;
 
     case 3:
+      // Change working dir to root
+      sd.chdir("/");
+      writeFlash_GB();
+      break;
+
+    case 4:
       asm volatile ("  jmp 0");
       break;
   }
@@ -680,6 +687,249 @@ unsigned long verifySRAM_GB() {
   }
   else {
     print_Error(F("Can't open file"), true);
+  }
+}
+
+/* Switch rom bank
+  void switchRomBank(word romBank) {
+  writeByte_GB(0x3000, romBank >> 8);
+  writeByte_GB(0x2000, romBank & 0xFFu);
+  }*/
+
+// Write 29F032 flashrom
+// A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
+// A14-A21 connected to MBC5
+void writeFlash_GB() {
+  // Launch filebrowser
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser("Select file");
+  display_Clear();
+
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    myFile.seekCur(0x147);
+    romType = myFile.read();
+    romSize = myFile.read();
+    // Go back to file beginning
+    myFile.seekCur(0);
+
+    numBanks = 2; // Default 32K
+    if (romSize == 1) {
+      numBanks = 4;
+    }
+    if (romSize == 2) {
+      numBanks = 8;
+    }
+    if (romSize == 3) {
+      numBanks = 16;
+    }
+    if (romSize == 4) {
+      numBanks = 32;
+    }
+    if (romSize == 5 && (romType == 1 || romType == 2 || romType == 3)) {
+      numBanks = 63;
+    }
+    else if (romSize == 5) {
+      numBanks = 64;
+    }
+    if (romSize == 6 && (romType == 1 || romType == 2 || romType == 3)) {
+      numBanks = 125;
+    }
+    else if (romSize == 6) {
+      numBanks = 128;
+    }
+    if (romSize == 7) {
+      numBanks = 255;
+    }
+    if (romSize == 82) {
+      numBanks = 72;
+    }
+    if (romSize == 83) {
+      numBanks = 80;
+    }
+    if (romSize == 84) {
+      numBanks = 96;
+    }
+
+    // Set data pins to output
+    dataOut();
+
+    // Set ROM bank 1
+    writeByte_GB(0x2100, 1);
+    delay(100);
+
+    // Reset flash
+    writeByte_GB(0x555, 0xf0);
+    delay(100);
+
+    // ID command sequence
+    writeByte_GB(0x555, 0xaa);
+    writeByte_GB(0x2aa, 0x55);
+    writeByte_GB(0x555, 0x90);
+
+    dataIn();
+
+    // Read the two id bytes into a string
+    sprintf(flashid, "%02X%02X", readByte_GB(0), readByte_GB(1));
+
+    if (strcmp(flashid, "04D4") == 0) {
+      println_Msg(F("MBM29F033C"));
+      print_Msg(F("Banks: "));
+      print_Msg(numBanks);
+      println_Msg(F("/256"));
+      display_Update();
+    }
+    else if (strcmp(flashid, "0141") == 0) {
+      println_Msg(F("AM29F032B"));
+      print_Msg(F("Banks: "));
+      print_Msg(numBanks);
+      println_Msg(F("/256"));
+      display_Update();
+    }
+    else if (strcmp(flashid, "01AD") == 0) {
+      println_Msg(F("AM29F016B"));
+      print_Msg(F("Banks: "));
+      print_Msg(numBanks);
+      println_Msg(F("/128"));
+      display_Update();
+    }
+    else {
+      print_Msg(F("Flash ID: "));
+      println_Msg(flashid);
+      display_Update();
+      print_Error(F("Unknown flashrom"), true);
+    }
+    dataOut();
+
+    // Reset flash
+    writeByte_GB(0x555, 0xf0);
+
+    delay(100);
+    println_Msg(F("Erasing flash"));
+    display_Update();
+
+    // Erase flash
+    writeByte_GB(0x555, 0xaa);
+    writeByte_GB(0x2aa, 0x55);
+    writeByte_GB(0x555, 0x80);
+    writeByte_GB(0x555, 0xaa);
+    writeByte_GB(0x2aa, 0x55);
+    writeByte_GB(0x555, 0x10);
+
+    dataIn();
+
+    // Read the status register
+    byte statusReg = readByte_GB(0);
+
+    // After a completed erase D7 will output 1
+    while ((statusReg & 0x80) != 0x80) {
+      // Blink led
+      PORTB ^= (1 << 4);
+      delay(100);
+      // Update Status
+      statusReg = readByte_GB(0);
+    }
+
+    // Blankcheck
+    println_Msg(F("Blankcheck"));
+    display_Update();
+
+    unsigned int addr = 0;
+
+    // Read x number of banks
+    for (int y = 1; y < numBanks; y++) {
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      dataOut();
+
+      // Set ROM bank
+      writeByte_GB(0x2100, y);
+      dataIn();
+
+      if (y > 1) {
+        addr = 0x4000;
+      }
+
+      for (; addr <= 0x7FFF; addr += 512) {
+        uint8_t readData[512];
+        for (int i = 0; i < 512; i++) {
+          readData[i] = readByte_GB(addr + i);
+        }
+        for (int j = 0; j < 512; j++) {
+          if (readData[j] != 0xFF) {
+            println_Msg(F("Not empty"));
+            display_Update();
+            print_Error(F("Erase failed"), true);
+          }
+        }
+      }
+    }
+
+    println_Msg(F("Writing flash"));
+    display_Update();
+
+    // Write flash
+    addr = 0;
+    dataOut();
+
+    for (int y = 1; y < numBanks; y++) {
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      // Set ROM bank
+      writeByte_GB(0x2100, y);
+
+      if (y > 1) {
+        addr = 0x4000;
+      }
+
+      for (; addr <= 0x7FFF; addr += 512) {
+        myFile.read(sdBuffer, 512);
+
+        for (int c = 0; c < 512; c++) {
+          // Write command sequence
+          writeByte_GB(0x555, 0xaa);
+          writeByte_GB(0x2aa, 0x55);
+          writeByte_GB(0x555, 0xa0);
+          // Write current byte
+          writeByte_GB(addr + c, sdBuffer[c]);
+
+          // Set data pins to input
+          dataIn();
+
+          // Switch CS(PH3) and RD(PH6) to LOW
+          PORTH &= ~((1 << 3) | (1 << 6));
+          __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+          // Busycheck
+          while ((PINC & 0x80) != (sdBuffer[c] & 0x80)) {
+          }
+          // Switch CS(PH3) and RD(PH6) to HIGH
+          PORTH |= (1 << 3) | (1 << 6);
+
+          // Set data pins to output
+          dataOut();
+        }
+      }
+    }
+    // Set data pins to input again
+    dataIn();
+
+    // Close the file:
+    myFile.close();
+
+    println_Msg(F("Done"));
+    display_Update();
+  }
+  else {
+    println_Msg(F("Can't open file"));
+    display_Update();
   }
 }
 

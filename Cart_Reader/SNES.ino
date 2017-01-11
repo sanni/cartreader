@@ -46,7 +46,7 @@ const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, con
 void snesMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsSNES, 6);
   mainMenu = question_box("SNES Cart Reader", menuOptions, 6, 0);
 
@@ -102,6 +102,16 @@ void snesMenu() {
     case 3:
       if (sramSize > 0) {
         display_Clear();
+        println_Msg(F("Warning:"));
+        println_Msg(F("This can erase"));
+        println_Msg(F("your save games"));
+        println_Msg(F(""));
+        println_Msg(F(""));
+        println_Msg(F("Press any button to"));
+        println_Msg(F("start sram testing"));
+        display_Update();
+        wait();
+        display_Clear();
         // Change working dir to root
         sd.chdir("/");
         readSRAM();
@@ -153,7 +163,7 @@ void snesMenu() {
 void confMenu() {
   // create menu with title and 5 options to choose from
   unsigned char subMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsConf, 5);
   subMenu = question_box("Choose mapping", menuOptions, 5, 0);
 
@@ -990,6 +1000,25 @@ void writeSRAM (boolean browseFile) {
       writeBank_SNES(0, 0x2227, 0x00);
       // Disable CPU clock
       clockgen.output_enable(SI5351_CLK1, 0);
+
+      // Reset SA1
+      // Set pins to input
+      dataIn();
+      // Close the file:
+      myFile.close();
+      println_Msg(F("SRAM writing finished"));
+      println_Msg(F("Press Button to reset"));
+      display_Update();
+      wait();
+      // Set reset pin to output (PH0)
+      DDRH |= (1 << 0);
+      // Switch RST(PH0) to LOW
+      PORTH &= ~(1 << 0);
+      display_Clear();
+      print_Msg("Resetting...");
+      display_Update();
+      delay(3000);  // wait 3 secs to switch to next game
+      asm volatile ("  jmp 0");
     }
 
     // Set pins to input

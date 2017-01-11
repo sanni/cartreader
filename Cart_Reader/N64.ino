@@ -73,7 +73,7 @@ const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem
 void n64ControllerMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64Controller, 4);
   mainMenu = question_box("N64 Controller", menuOptions, 4, 0);
 
@@ -124,7 +124,7 @@ void n64ControllerMenu() {
 void n64CartMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions of of progmem
+  // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64Cart, 4);
   mainMenu = question_box("N64 Cart Reader", menuOptions, 4, 0);
 
@@ -2007,7 +2007,7 @@ calcn64crc:
     rgb.setColor(255, 0, 0);
     // N64 CRC32 error Menu
     unsigned char CRCMenu;
-    // Copy menuOptions of of progmem
+    // Copy menuOptions out of progmem
     convertPgm(menuOptionsN64CRC, 4);
 
     char tempStr3[20];
