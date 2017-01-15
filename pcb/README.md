@@ -27,6 +27,10 @@ Contains:
 
 ![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/snes_spacer.png)   
 
+####gbslot.stl is a 3d printed case for the Game Boy (Advance) adapter pcb      
+
+![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/gbslot.png)   
+
 ####For the needed parts list see here: https://github.com/sanni/cartreader/wiki/PCB-Needed-Parts   
 ####How to order a PCB: https://github.com/sanni/cartreader/wiki/PCB-How-to-order-printed-circuit-boards   
 
