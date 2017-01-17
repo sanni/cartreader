@@ -31,6 +31,10 @@ Contains:
 
 ![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/gbslot.png)   
 
+####backplate_3dprint.stl is an alternative backplate for 3d printing   
+
+![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/backplate_3dprint.png)    
+
 ####For the needed parts list see here: https://github.com/sanni/cartreader/wiki/PCB-Needed-Parts   
 ####How to order a PCB: https://github.com/sanni/cartreader/wiki/PCB-How-to-order-printed-circuit-boards   
 
