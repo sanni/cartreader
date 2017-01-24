@@ -1,6 +1,6 @@
 # Cartridge Reader for Arduino Mega2560
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/v82_top.jpg)    
+![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/v9/cartreaders.JPG)    
 
 ####Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
@@ -12,7 +12,7 @@
 - Reads Game Boy Advance roms and reads/writes save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)   
 - Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211(needs 3.3V)   
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/v82_back.jpg)    
+![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/v9/cartreader_bottom.JPG)    
 
 ####Be sure to check the guides in the wiki too.
 
