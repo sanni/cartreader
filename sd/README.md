@@ -16,11 +16,11 @@ Savetypes:
 6 = 16K Eeprom  
 
 ####snes.txt  
-This file is needed for odd sized SNES games like Final Fantasy (JAP) or Tales of Symphonia. Without this file you will get overdumps. There are still a lot games missing from this list. 
+This file is needed for odd sized SNES games like Final Fantasy (JAP), Super Metroid(US/JAP) or Tales of Symphonia. Without this file you will get overdumps and the checksum calculation will fail. There are still a lot games missing from this list.    
 
 Example:  
 A172,24,48  
-checksum, size in Mbit, number of banks  
+checksum, size in Mbit, number of banks (lorom needs twice as many banks as hirom for the same rom size)  
 
 ####hirom64.map  
 This is a Nintendo Power mapping file that changes the mapping to a single 4MB HiRom game with 64Kbit/8KByte save. The first byte is used to specify the mapping.  
