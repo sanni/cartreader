@@ -104,8 +104,8 @@ void setup_GB() {
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
-  // Enable Internal Pullups
-  //PORTC = 0xFF;
+  // Disable Internal Pullups
+  PORTC = 0x00;
 
   // Print start page
   getCartInfo_GB();
@@ -244,6 +244,12 @@ void setup_GB() {
 /******************************************
   Low level functions
 *****************************************/
+// Switch data pins to read
+void dataIn_GB() {
+  // Set to Input
+  DDRC = 0x00;
+}
+
 byte readByte_GB(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -390,7 +396,7 @@ void readROM_GB() {
     dataOut();
     // Set ROM bank
     writeByte_GB(0x2100, y);
-    dataIn();
+    dataIn_GB();
     if (y > 1) {
       addr = 0x4000;
     }
@@ -525,7 +531,7 @@ void readSRAM_GB() {
       writeByte_GB(0x4000, bank);
 
       // Read RAM
-      dataIn();
+      dataIn_GB();
       for (addr = 0xA000; addr <= endaddr; addr = addr + 64) {
         uint8_t readData[64];
         for (int i = 0; i < 64; i++) {
@@ -537,7 +543,7 @@ void readSRAM_GB() {
     dataOut();
     // Disable RAM
     writeByte_GB(0x0000, 0x00);
-    dataIn();
+    dataIn_GB();
   }
   else {
     print_Error(F("Cart has no SRAM"), false);
@@ -616,7 +622,7 @@ void writeSRAM_GB() {
       print_Error(F("Cart has no SRAM"), false);
     }
     // Set pins to input
-    dataIn();
+    dataIn_GB();
 
     // Close the file:
     myFile.close();
@@ -665,7 +671,7 @@ unsigned long verifySRAM_GB() {
         writeByte_GB(0x4000, bank);
 
         // Read RAM
-        dataIn();
+        dataIn_GB();
         for (addr = 0xA000; addr <= endaddr; addr = addr + 64) {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
@@ -679,7 +685,7 @@ unsigned long verifySRAM_GB() {
       dataOut();
       // Disable RAM
       writeByte_GB(0x0000, 0x00);
-      dataIn();
+      dataIn_GB();
     }
     // Close the file:
     myFile.close();
@@ -716,7 +722,7 @@ void writeFlash_GB() {
     romType = myFile.read();
     romSize = myFile.read();
     // Go back to file beginning
-    myFile.seekCur(0);
+    myFile.seekSet(0);
 
     numBanks = 2; // Default 32K
     if (romSize == 1) {
@@ -759,8 +765,10 @@ void writeFlash_GB() {
     // Set data pins to output
     dataOut();
 
-    // Set ROM bank 1
-    writeByte_GB(0x2100, 1);
+    // Set ROM bank hi 0
+    writeByte_GB(0x3000, 0);
+    // Set ROM bank low 0
+    writeByte_GB(0x2000, 0);
     delay(100);
 
     // Reset flash
@@ -772,7 +780,7 @@ void writeFlash_GB() {
     writeByte_GB(0x2aa, 0x55);
     writeByte_GB(0x555, 0x90);
 
-    dataIn();
+    dataIn_GB();
 
     // Read the two id bytes into a string
     sprintf(flashid, "%02X%02X", readByte_GB(0), readByte_GB(1));
@@ -781,7 +789,7 @@ void writeFlash_GB() {
       println_Msg(F("MBM29F033C"));
       print_Msg(F("Banks: "));
       print_Msg(numBanks);
-      println_Msg(F("/256"));
+      println_Msg(F("/255"));
       display_Update();
     }
     else if (strcmp(flashid, "0141") == 0) {
@@ -821,7 +829,7 @@ void writeFlash_GB() {
     writeByte_GB(0x2aa, 0x55);
     writeByte_GB(0x555, 0x10);
 
-    dataIn();
+    dataIn_GB();
 
     // Read the status register
     byte statusReg = readByte_GB(0);
@@ -839,32 +847,25 @@ void writeFlash_GB() {
     println_Msg(F("Blankcheck"));
     display_Update();
 
-    unsigned int addr = 0;
-
     // Read x number of banks
-    for (int y = 1; y < numBanks; y++) {
+    for (int currBank = 0; currBank < numBanks; currBank++) {
       // Blink led
       PORTB ^= (1 << 4);
 
       dataOut();
 
       // Set ROM bank
-      writeByte_GB(0x2100, y);
+      writeByte_GB(0x2000, currBank);
       dataIn();
 
-      if (y > 1) {
-        addr = 0x4000;
-      }
-
-      for (; addr <= 0x7FFF; addr += 512) {
+      for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
         uint8_t readData[512];
-        for (int i = 0; i < 512; i++) {
-          readData[i] = readByte_GB(addr + i);
+        for (int currByte = 0; currByte < 512; currByte++) {
+          readData[currByte] = readByte_GB(currAddr + currByte);
         }
         for (int j = 0; j < 512; j++) {
           if (readData[j] != 0xFF) {
             println_Msg(F("Not empty"));
-            display_Update();
             print_Error(F("Erase failed"), true);
           }
         }
@@ -875,42 +876,37 @@ void writeFlash_GB() {
     display_Update();
 
     // Write flash
-    addr = 0;
     dataOut();
 
-    for (int y = 1; y < numBanks; y++) {
+    for (int currBank = 0; currBank < numBanks; currBank++) {
       // Blink led
       PORTB ^= (1 << 4);
 
       // Set ROM bank
-      writeByte_GB(0x2100, y);
+      writeByte_GB(0x2000, currBank);
 
-      if (y > 1) {
-        addr = 0x4000;
-      }
-
-      for (; addr <= 0x7FFF; addr += 512) {
+      for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
         myFile.read(sdBuffer, 512);
 
-        for (int c = 0; c < 512; c++) {
+        for (int currByte = 0; currByte < 512; currByte++) {
           // Write command sequence
           writeByte_GB(0x555, 0xaa);
           writeByte_GB(0x2aa, 0x55);
           writeByte_GB(0x555, 0xa0);
           // Write current byte
-          writeByte_GB(addr + c, sdBuffer[c]);
+          writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
           // Set data pins to input
           dataIn();
 
-          // Switch CS(PH3) and RD(PH6) to LOW
+          // Setting CS(PH3) and OE/RD(PH6) LOW
           PORTH &= ~((1 << 3) | (1 << 6));
-          __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-          // Busycheck
-          while ((PINC & 0x80) != (sdBuffer[c] & 0x80)) {
+          // Busy check
+          while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
           }
-          // Switch CS(PH3) and RD(PH6) to HIGH
+
+          // Switch CS(PH3) and OE/RD(PH6) to HIGH
           PORTH |= (1 << 3) | (1 << 6);
 
           // Set data pins to output
@@ -918,14 +914,56 @@ void writeFlash_GB() {
         }
       }
     }
-    // Set data pins to input again
-    dataIn();
 
+    // Set data pins to input again
+    dataIn_GB();
+
+    println_Msg(F("Verifying"));
+    display_Update();
+
+    // Go back to file beginning
+    myFile.seekSet(0);
+    unsigned int addr = 0;
+    writeErrors = 0;
+
+    // Verify flashrom
+    for (int y = 1; y < numBanks; y++) {
+      // Set ROM bank
+      dataOut();
+      writeByte_GB(0x2100, y);
+      dataIn_GB();
+
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      if (y > 1) {
+        addr = 0x4000;
+      }
+
+      for (; addr <= 0x7FFF; addr = addr + 512) {
+        // Fill sdBuffer
+        myFile.read(sdBuffer, 512);
+        // Compare
+        for (int i = 0; i < 512; i++) {
+          if (readByte_GB(addr + i) != sdBuffer[i]) {
+            writeErrors++;
+          }
+        }
+      }
+    }
     // Close the file:
     myFile.close();
 
-    println_Msg(F("Done"));
-    display_Update();
+    if (writeErrors == 0) {
+      println_Msg(F("OK"));
+      display_Update();
+    }
+    else {
+      print_Msg(F("Error: "));
+      print_Msg(writeErrors);
+      println_Msg(F(" bytes "));
+      print_Error(F("did not verify."), false);
+    }
   }
   else {
     println_Msg(F("Can't open file"));

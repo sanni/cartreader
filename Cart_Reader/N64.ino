@@ -277,6 +277,9 @@ void setup_N64_Cart() {
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
 
+  // Wait until all is stable
+  delay(500);
+
   // Print start page
   getCartInfo_N64();
   if (cartSize != 0) {
@@ -365,27 +368,33 @@ void setAddress_N64(unsigned long myAddress) {
   PORTF = myAdrHighOut & 0xFF;
   PORTK = (myAdrHighOut >> 8) & 0xFF;
 
-  // Leave ale_H and ale_L high for ~120ns
+  // Leave ale_H high for additional 120ns
   __asm__("nop\n\t""nop\n\t");
 
   // Pull ale_H(PC1) low
   PORTC &= ~(1 << 1);
 
+  // Leave address pins stable for a little bit
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
   // Output low part to address pins
   PORTF = myAdrLowOut & 0xFF;
   PORTK = (myAdrLowOut >> 8) & 0xFF;
 
-  // Leave ale_L high for another ~110ns
-  __asm__("nop\n\t""nop\n\t");
+  // Leave ale_L high for ~180ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t");
 
   // Pull ale_L(PC0) low
   PORTC &= ~(1 << 0);
 
-  // Wait ~1000ns before read
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Leave address pins stable for a little bit
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Set data pins to input
   adIn_N64();
+
+  // Wait ~600ns just to be sure address is set
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 // Read one word out of the cartridge
@@ -393,20 +402,14 @@ word readWord_N64() {
   // Pull read(PH6) low
   PORTH &= ~(1 << 6);
 
-  // Wait ~100ns
-  __asm__("nop\n\t""nop\n\t");
+  // Wait ~300ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Join bytes from PINF and PINK into a word
   word tempWord = ( ( PINK & 0xFF ) << 8 ) | ( PINF & 0xFF );
 
-  // Wait ~200ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t");
-
   // Pull read(PH6) high
   PORTH |= (1 << 6);
-
-  // Wait ~60ns
-  __asm__("nop\n\t");
 
   return tempWord;
 }

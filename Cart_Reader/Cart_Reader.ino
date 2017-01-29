@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-01-12
-   Version:          V19L
+   Date:             2017-01-29
+   Version:          V20
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.6.11
+   Compiled with Arduino 1.8.0
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V19L";
+char ver[5] = "V20";
 
 /******************************************
    Define Output
