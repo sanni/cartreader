@@ -825,6 +825,8 @@ void writeFlash_GB() {
 
       // Set ROM bank
       writeByte_GB(0x2000, currBank);
+      // 0x2A8000 fix
+      writeByte_GB(0x4000, 0x0);
 
       for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
         myFile.read(sdBuffer, 512);
@@ -844,14 +846,14 @@ void writeFlash_GB() {
           PORTH &= ~((1 << 3) | (1 << 6));
 
           // Busy check
-          int timeout = 0;
+          //int timeout = 0;
           while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-            __asm__("nop\n\t");
-            // Writing to 0x2A8000 fails for some unknown reason so a timeout is needed
-            timeout++;
-            if (timeout > 32760) {
-              break;
-            }
+            /* __asm__("nop\n\t");
+              // timeout in case writing fails
+              timeout++;
+              if (timeout > 32760) {
+               break;
+              }*/
           }
 
           // Switch CS(PH3) and OE/RD(PH6) to HIGH

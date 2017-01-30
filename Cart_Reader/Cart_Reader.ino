@@ -3,7 +3,7 @@
 
    Author:           sanni
    Date:             2017-01-30
-   Version:          V21
+   Version:          V21A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -16,7 +16,7 @@
    MichlK - ROM-Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video-Game-Shield menu
-   skaman - SNES enhancements and SA1 sram support
+   skaman - SNES enhancements, SA1 sram support and GB flash fix
    nocash - Nintendo Power and GBA Eeprom commands and lots of other info
    crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V21";
+char ver[5] = "V21A";
 
 /******************************************
    Define Output
