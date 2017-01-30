@@ -7,6 +7,8 @@
  *****************************************/
 // Game Boy
 int sramBanks;
+int romBanks;
+uint16_t sramEndAddress = 0;
 
 /******************************************
    Menu
@@ -15,14 +17,11 @@ int sramBanks;
 const char GBMenuItem1[] PROGMEM = "Read Rom";
 const char GBMenuItem2[] PROGMEM = "Read Save";
 const char GBMenuItem3[] PROGMEM = "Write Save";
-const char GBMenuItem4[] PROGMEM = "Write Flash";
+const char GBMenuItem4[] PROGMEM = "Write Flashcart";
 const char GBMenuItem5[] PROGMEM = "Reset";
 const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5};
 
 void gbMenu() {
-  // Output a high signal on CS(PH3) WR(PH5) RD(PH6)
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -42,27 +41,39 @@ void gbMenu() {
 
     case 1:
       display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      readSRAM_GB();
+      // Does cartridge have SRAM
+      if (sramEndAddress > 0) {
+        // Change working dir to root
+        sd.chdir("/");
+        readSRAM_GB();
+      }
+      else {
+        print_Error(F("Cart has no Sram"), false);
+      }
       break;
 
     case 2:
       display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      writeSRAM_GB();
-      unsigned long wrErrors;
-      wrErrors = verifySRAM_GB();
-      if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
-        display_Update();
+      // Does cartridge have SRAM
+      if (sramEndAddress > 0) {
+        // Change working dir to root
+        sd.chdir("/");
+        writeSRAM_GB();
+        unsigned long wrErrors;
+        wrErrors = verifySRAM_GB();
+        if (wrErrors == 0) {
+          println_Msg(F("Verified OK"));
+          display_Update();
+        }
+        else {
+          print_Msg(F("Error: "));
+          print_Msg(wrErrors);
+          println_Msg(F(" bytes "));
+          print_Error(F("did not verify."), false);
+        }
       }
       else {
-        print_Msg(F("Error: "));
-        print_Msg(wrErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_Error(F("Cart has no Sram"), false);
       }
       break;
 
@@ -70,6 +81,9 @@ void gbMenu() {
       // Change working dir to root
       sd.chdir("/");
       writeFlash_GB();
+      // Reset
+      wait();
+      asm volatile ("  jmp 0");
       break;
 
     case 4:
@@ -105,7 +119,9 @@ void setup_GB() {
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
   // Disable Internal Pullups
-  PORTC = 0x00;
+  //PORTC = 0x00;
+
+  delay(400);
 
   // Print start page
   getCartInfo_GB();
@@ -147,80 +163,52 @@ void setup_GB() {
     println_Msg(F(" "));
     print_Msg(F("Rom Size: "));
     switch (romSize) {
-      case 0:
-        print_Msg(F("32KByte"));
-        break;
-      case 1:
-        print_Msg(F("64KByte"));
-        break;
-      case 2:
-        print_Msg(F("128KByte"));
-        break;
-      case 3:
-        print_Msg(F("256KByte"));
-        break;
-      case 4:
-        print_Msg(F("512KByte"));
-        break;
+      case 0: print_Msg(F("32KB")); break;
+      case 1: print_Msg(F("64KB")); break;
+      case 2: print_Msg(F("128KB")); break;
+      case 3: print_Msg(F("256KB")); break;
+      case 4: print_Msg(F("512KB")); break;
       case 5:
         if (romType == 1 || romType == 2 || romType == 3) {
-          print_Msg(F("1MByte"));
+          print_Msg(F("1MB"));
         }
         else {
-          print_Msg(F("1MByte"));
+          print_Msg(F("1MB"));
         }
         break;
       case 6:
         if (romType == 1 || romType == 2 || romType == 3) {
-          print_Msg(F("2MByte"));
+          print_Msg(F("2MB"));
         }
         else {
-          print_Msg(F("2MByte"));
+          print_Msg(F("2MB"));
         }
         break;
-      case 7:
-        print_Msg(F("4MByte"));
-        break;
-      case 82:
-        print_Msg(F("1.1MByten"));
-        break;
-      case 83:
-        print_Msg(F("1.2MByte"));
-        break;
-      case 84:
-        print_Msg(F("1.5MByte"));
-        break;
-      default:
-        print_Msg(F("Not found"));
+      case 7: print_Msg(F("4MB")); break;
+      case 82: print_Msg(F("1.1MB")); break;
+      case 83: print_Msg(F("1.2MB")); break;
+      case 84: print_Msg(F("1.5MB)")); break;
+      default: print_Msg(F("Not found"));
     }
     println_Msg(F(""));
     print_Msg(F("Banks: "));
-    println_Msg(numBanks);
+    println_Msg(romBanks);
 
     print_Msg(F("Sram Size: "));
     switch (sramSize) {
       case 0:
         if (romType == 6) {
-          print_Msg(F("512 bytes"));
+          print_Msg(F("512B"));
         }
         else {
           print_Msg(F("None"));
         }
         break;
-      case 1:
-        print_Msg(F("2 KBytes"));
-        break;
-      case 2:
-        print_Msg(F("8 KBytes"));
-        break;
-      case 3:
-        print_Msg(F("32 KBytes"));
-        break;
-      case 4:
-        print_Msg(F("128 KBytes"));
-        break;
-      default:
-        print_Msg(F("Not found"));
+      case 1: print_Msg(F("2KB")); break;
+      case 2: print_Msg(F("8KB")); break;
+      case 3: print_Msg(F("32KB")); break;
+      case 4: print_Msg(F("128KB")); break;
+      default: print_Msg(F("Not found"));
     }
     println_Msg(F(""));
     print_Msg(F("Checksum: "));
@@ -299,6 +287,48 @@ void writeByte_GB(int myAddress, uint8_t myData) {
 *****************************************/
 // Read Cartridge Header
 void getCartInfo_GB() {
+  romType = readByte_GB(0x0147);
+  romSize = readByte_GB(0x0148);
+  sramSize = readByte_GB(0x0149);
+
+  // ROM banks
+  romBanks = 2; // Default 32K
+  if (romSize >= 1) { // Calculate rom size
+    romBanks = 2 << romSize;
+  }
+
+  // RAM banks
+  sramBanks = 0; // Default 0K RAM
+  if (romType == 6) {
+    sramBanks = 1;
+  }
+  if (sramSize == 2) {
+    sramBanks = 1;
+  }
+  if (sramSize == 3) {
+    sramBanks = 4;
+  }
+  if (sramSize == 4) {
+    sramBanks = 16;
+  }
+  if (sramSize == 5) {
+    sramBanks = 8;
+  }
+
+  // RAM end address
+  if (romType == 6) {
+    sramEndAddress = 0xA1FF;  // MBC2 512bytes (nibbles)
+  }
+  if (sramSize == 1) {
+    sramEndAddress = 0xA7FF;  // 2K RAM
+  }
+  if (sramSize > 1) {
+    sramEndAddress = 0xBFFF;  // 8K RAM
+  }
+
+  // Get Checksum as string
+  sprintf(checksumStr, "%02X%02X", readByte_GB(0x014E), readByte_GB(0x014F));
+
   // Dump name into 8.3 compatible format
   byte myByte = 0;
   byte myLength = 0;
@@ -309,55 +339,6 @@ void getCartInfo_GB() {
       romName[myLength] = char(myByte);
       myLength++;
     }
-  }
-  // Get Checksum as string
-  sprintf(checksumStr, "%02X%02X", readByte_GB(0x014E), readByte_GB(0x014F));
-  romType = readByte_GB(0x0147);
-  romSize = readByte_GB(0x0148);
-  sramSize = readByte_GB(0x0149);
-  numBanks = 2; // Default 32K
-  if (romSize == 1) {
-    numBanks = 4;
-  }
-  if (romSize == 2) {
-    numBanks = 8;
-  }
-  if (romSize == 3) {
-    numBanks = 16;
-  }
-  if (romSize == 4) {
-    numBanks = 32;
-  }
-  if (romSize == 5 && (romType == 1 || romType == 2 || romType == 3)) {
-    numBanks = 63;
-  }
-  else if (romSize == 5) {
-    numBanks = 64;
-  }
-  if (romSize == 6 && (romType == 1 || romType == 2 || romType == 3)) {
-    numBanks = 125;
-  }
-  else if (romSize == 6) {
-    numBanks = 128;
-  }
-  if (romSize == 7) {
-    numBanks = 255;
-  }
-  if (romSize == 82) {
-    numBanks = 72;
-  }
-  if (romSize == 83) {
-    numBanks = 80;
-  }
-  if (romSize == 84) {
-    numBanks = 96;
-  }
-  sramBanks = 1; // Default 8K RAM
-  if (sramSize == 3) {
-    sramBanks = 4;
-  }
-  if (sramSize == 4) {
-    sramBanks = 16;  // GB Camera
   }
 }
 
@@ -389,25 +370,40 @@ void readROM_GB() {
     print_Error(F("Can't create file on SD"), true);
   }
 
-  unsigned int addr = 0;
+  uint16_t romAddress = 0;
 
-  // Read x number of banks
-  for (int y = 1; y < numBanks; y++) {
+  // Read number of banks and switch banks
+  for (uint16_t bank = 1; bank < romBanks; bank++) {
+    // Switch data pins to output
     dataOut();
-    // Set ROM bank
-    writeByte_GB(0x2100, y);
-    dataIn_GB();
-    if (y > 1) {
-      addr = 0x4000;
+
+    if (romType >= 5) { // MBC2 and above
+      writeByte_GB(0x2100, bank); // Set ROM bank
     }
-    for (; addr <= 0x7FFF; addr = addr + 512) {
+    else { // MBC1
+      writeByte_GB(0x6000, 0); // Set ROM Mode
+      writeByte_GB(0x4000, bank >> 5); // Set bits 5 & 6 (01100000) of ROM bank
+      writeByte_GB(0x2000, bank & 0x1F); // Set bits 0 & 4 (00011111) of ROM bank
+    }
+
+    // Switch data pins to intput
+    dataIn_GB();
+
+    if (bank > 1) {
+      romAddress = 0x4000;
+    }
+
+    // Read up to 7FFF per bank
+    while (romAddress <= 0x7FFF) {
       uint8_t readData[512];
       for (int i = 0; i < 512; i++) {
-        readData[i] = readByte_GB(addr + i);
+        readData[i] = readByte_GB(romAddress + i);
       }
       myFile.write(readData, 512);
+      romAddress += 512;
     }
   }
+
   // Close the file:
   myFile.close();
 
@@ -483,155 +479,144 @@ boolean compare_checksum_GB() {
 
 // Read RAM
 void readSRAM_GB() {
-
-  // Get name, add extension and convert to char array for sd lib
-  char fileName[26];
-  strcpy(fileName, romName);
-  strcat(fileName, ".sav");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
-  }
-
-  // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
-  readByte_GB(0x0134);
-
-  unsigned int addr = 0;
-  unsigned int endaddr = 0;
-  if (romType == 6 && sramSize == 0) {
-    endaddr = 0xA1FF;  // MBC2 512bytes (nibbles)
-  }
-  if (sramSize == 1) {
-    endaddr = 0xA7FF;  // 2K RAM
-  }
-  if (sramSize > 1) {
-    endaddr = 0xBFFF;  // 8K RAM
-  }
-
   // Does cartridge have RAM
-  if (endaddr > 0) {
+  if (sramEndAddress > 0) {
+
+    // Get name, add extension and convert to char array for sd lib
+    char fileName[26];
+    strcpy(fileName, romName);
+    strcat(fileName, ".sav");
+
+    // create a new folder for the save file
+    EEPROM_readAnything(0, foldern);
+    sprintf(folder, "SAVE/%s/%d", romName, foldern);
+    sd.mkdir(folder, true);
+    sd.chdir(folder);
+
+    // write new folder number back to eeprom
+    foldern = foldern + 1;
+    EEPROM_writeAnything(0, foldern);
+
+    //open file on sd card
+    if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+      print_Error(F("SD Error"), true);
+    }
+
+    dataIn_GB();
+
+    // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
+    readByte_GB(0x0134);
+
     dataOut();
+    if (romType <= 4) { // MBC1
+      writeByte_GB(0x6000, 1); // Set RAM Mode
+    }
+
     // Initialise MBC
     writeByte_GB(0x0000, 0x0A);
 
-    // Switch RAM banks
-    for (int bank = 0; bank < sramBanks; bank++) {
+    // Switch SRAM banks
+    for (uint8_t bank = 0; bank < sramBanks; bank++) {
       dataOut();
       writeByte_GB(0x4000, bank);
 
-      // Read RAM
+      // Read SRAM
       dataIn_GB();
-      for (addr = 0xA000; addr <= endaddr; addr = addr + 64) {
+      for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress += 64) {
         uint8_t readData[64];
-        for (int i = 0; i < 64; i++) {
-          readData[i] = readByte_GB(addr + i);
+        for (uint8_t i = 0; i < 64; i++) {
+          readData[i] = readByte_GB(sramAddress + i);
         }
         myFile.write(readData, 64);
       }
     }
+
+    // Disable SRAM
     dataOut();
-    // Disable RAM
     writeByte_GB(0x0000, 0x00);
-    dataIn_GB();
-  }
-  else {
-    print_Error(F("Cart has no SRAM"), false);
-  }
-  // Close the file:
-  myFile.close();
-
-  // Signal end of process
-  print_Msg(F("Saved to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern - 1);
-  print_Msg(F("/"));
-  println_Msg(fileName);
-  display_Update();
-}
-
-// Write RAM
-void writeSRAM_GB() {
-
-  filePath[0] = '\0';
-  sd.chdir("/");
-  fileBrowser("Select sav file");
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-
-  //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
-    readByte_GB(0x0134);
-    unsigned int addr = 0;
-    unsigned int endaddr = 0;
-    if (romType == 6 && sramSize == 0) {
-      endaddr = 0xA1FF;  // MBC2 512bytes (nibbles)
-    }
-    if (sramSize == 1) {
-      endaddr = 0xA7FF;  // 2K RAM
-    }
-    if (sramSize > 1) {
-      endaddr = 0xBFFF;  // 8K RAM
-    }
-
-    // Does cartridge have RAM
-    if (endaddr > 0) {
-      dataOut();
-      // Initialise MBC
-      writeByte_GB(0x0000, 0x0A);
-
-      // Switch RAM banks
-      for (int bank = 0; bank < sramBanks; bank++) {
-        writeByte_GB(0x4000, bank);
-
-        // Write RAM
-        for (addr = 0xA000; addr <= endaddr; addr = addr + 64) {
-
-          // Wait for serial input
-          for (uint8_t i = 0; i < 64; i++) {
-            // Pull CS(PH3) LOW
-            PORTH &= ~(1 << 3);
-            // Write to RAM
-            writeByte_GB(addr + i, myFile.read());
-            asm volatile("nop");
-            asm volatile("nop");
-            asm volatile("nop");
-            // Pull CS(PH3) HIGH
-            PORTH |= (1 << 3) ;
-          }
-        }
-      }
-
-      // Disable RAM
-      writeByte_GB(0x0000, 0x00);
-      Serial.flush(); // Flush any serial data that wasn't processed
-    }
-    else {
-      print_Error(F("Cart has no SRAM"), false);
-    }
-    // Set pins to input
     dataIn_GB();
 
     // Close the file:
     myFile.close();
-    display_Clear();
-    println_Msg(F("SRAM writing finished"));
+
+    // Signal end of process
+    print_Msg(F("Saved to SAVE/"));
+    print_Msg(romName);
+    print_Msg(F("/"));
+    print_Msg(foldern - 1);
+    print_Msg(F("/"));
+    println_Msg(fileName);
     display_Update();
   }
   else {
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("Cart has no SRAM"), false);
+  }
+}
+
+// Write RAM
+void writeSRAM_GB() {
+  // Does cartridge have SRAM
+  if (sramEndAddress > 0) {
+
+    filePath[0] = '\0';
+    sd.chdir("/");
+    fileBrowser("Select sav file");
+    // Create filepath
+    sprintf(filePath, "%s/%s", filePath, fileName);
+
+    //open file on sd card
+    if (myFile.open(filePath, O_READ)) {
+      // Set pins to input
+      dataIn_GB();
+
+      // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
+      readByte_GB(0x0134);
+
+      dataOut();
+
+      if (romType <= 4) { // MBC1
+        writeByte_GB(0x6000, 1); // Set RAM Mode
+      }
+
+      // Initialise MBC
+      writeByte_GB(0x0000, 0x0A);
+
+      // Switch RAM banks
+      for (uint8_t bank = 0; bank < sramBanks; bank++) {
+        writeByte_GB(0x4000, bank);
+
+        // Write RAM
+        for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress++) {
+          // Pull CS(PH3) LOW
+          PORTH &= ~(1 << 3);
+          // Write to RAM
+          writeByte_GB(sramAddress, myFile.read());
+          asm volatile("nop");
+          asm volatile("nop");
+          asm volatile("nop");
+          // Pull CS(PH3) HIGH
+          PORTH |= (1 << 3) ;
+        }
+      }
+      // Disable RAM
+      writeByte_GB(0x0000, 0x00);
+
+      // Set pins to input
+      dataIn_GB();
+
+      // Close the file:
+      myFile.close();
+      display_Clear();
+      println_Msg(F("SRAM writing finished"));
+      display_Update();
+
+    }
+    else {
+      print_Error(F("File doesnt exist"), false);
+    }
+  }
+  else {
+    print_Error(F("Cart has no SRAM"), false);
   }
 }
 
@@ -644,39 +629,33 @@ unsigned long verifySRAM_GB() {
     // Variable for errors
     writeErrors = 0;
 
+    dataIn_GB();
+
     // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
     readByte_GB(0x0134);
 
-    unsigned int addr = 0;
-    unsigned int endaddr = 0;
-    if (romType == 6 && sramSize == 0) {
-      endaddr = 0xA1FF;  // MBC2 512bytes (nibbles)
-    }
-    if (sramSize == 1) {
-      endaddr = 0xA7FF;  // 2K RAM
-    }
-    if (sramSize > 1) {
-      endaddr = 0xBFFF;  // 8K RAM
-    }
-
     // Does cartridge have RAM
-    if (endaddr > 0) {
+    if (sramEndAddress > 0) {
       dataOut();
+      if (romType <= 4) { // MBC1
+        writeByte_GB(0x6000, 1); // Set RAM Mode
+      }
+
       // Initialise MBC
       writeByte_GB(0x0000, 0x0A);
 
-      // Switch RAM banks
-      for (int bank = 0; bank < sramBanks; bank++) {
+      // Switch SRAM banks
+      for (uint8_t bank = 0; bank < sramBanks; bank++) {
         dataOut();
         writeByte_GB(0x4000, bank);
 
-        // Read RAM
+        // Read SRAM
         dataIn_GB();
-        for (addr = 0xA000; addr <= endaddr; addr = addr + 64) {
+        for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress += 64) {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
           for (int c = 0; c < 64; c++) {
-            if (readByte_GB(addr + c) != sdBuffer[c]) {
+            if (readByte_GB(sramAddress + c) != sdBuffer[c]) {
               writeErrors++;
             }
           }
@@ -695,12 +674,6 @@ unsigned long verifySRAM_GB() {
     print_Error(F("Can't open file"), true);
   }
 }
-
-/* Switch rom bank
-  void switchRomBank(word romBank) {
-  writeByte_GB(0x3000, romBank >> 8);
-  writeByte_GB(0x2000, romBank & 0xFFu);
-  }*/
 
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
@@ -724,42 +697,10 @@ void writeFlash_GB() {
     // Go back to file beginning
     myFile.seekSet(0);
 
-    numBanks = 2; // Default 32K
-    if (romSize == 1) {
-      numBanks = 4;
-    }
-    if (romSize == 2) {
-      numBanks = 8;
-    }
-    if (romSize == 3) {
-      numBanks = 16;
-    }
-    if (romSize == 4) {
-      numBanks = 32;
-    }
-    if (romSize == 5 && (romType == 1 || romType == 2 || romType == 3)) {
-      numBanks = 63;
-    }
-    else if (romSize == 5) {
-      numBanks = 64;
-    }
-    if (romSize == 6 && (romType == 1 || romType == 2 || romType == 3)) {
-      numBanks = 125;
-    }
-    else if (romSize == 6) {
-      numBanks = 128;
-    }
-    if (romSize == 7) {
-      numBanks = 255;
-    }
-    if (romSize == 82) {
-      numBanks = 72;
-    }
-    if (romSize == 83) {
-      numBanks = 80;
-    }
-    if (romSize == 84) {
-      numBanks = 96;
+    // ROM banks
+    romBanks = 2; // Default 32K
+    if (romSize >= 1) { // Calculate rom size
+      romBanks = 2 << romSize;
     }
 
     // Set data pins to output
@@ -788,21 +729,21 @@ void writeFlash_GB() {
     if (strcmp(flashid, "04D4") == 0) {
       println_Msg(F("MBM29F033C"));
       print_Msg(F("Banks: "));
-      print_Msg(numBanks);
-      println_Msg(F("/255"));
+      print_Msg(romBanks);
+      println_Msg(F("/256"));
       display_Update();
     }
     else if (strcmp(flashid, "0141") == 0) {
       println_Msg(F("AM29F032B"));
       print_Msg(F("Banks: "));
-      print_Msg(numBanks);
+      print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
     }
     else if (strcmp(flashid, "01AD") == 0) {
       println_Msg(F("AM29F016B"));
       print_Msg(F("Banks: "));
-      print_Msg(numBanks);
+      print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
     }
@@ -848,7 +789,7 @@ void writeFlash_GB() {
     display_Update();
 
     // Read x number of banks
-    for (int currBank = 0; currBank < numBanks; currBank++) {
+    for (int currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
       PORTB ^= (1 << 4);
 
@@ -878,7 +819,7 @@ void writeFlash_GB() {
     // Write flash
     dataOut();
 
-    for (int currBank = 0; currBank < numBanks; currBank++) {
+    for (int currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
       PORTB ^= (1 << 4);
 
@@ -903,7 +844,14 @@ void writeFlash_GB() {
           PORTH &= ~((1 << 3) | (1 << 6));
 
           // Busy check
+          int timeout = 0;
           while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
+            __asm__("nop\n\t");
+            // Writing to 0x2A8000 fails for some unknown reason so a timeout is needed
+            timeout++;
+            if (timeout > 32760) {
+              break;
+            }
           }
 
           // Switch CS(PH3) and OE/RD(PH6) to HIGH
@@ -927,28 +875,42 @@ void writeFlash_GB() {
     writeErrors = 0;
 
     // Verify flashrom
-    for (int y = 1; y < numBanks; y++) {
-      // Set ROM bank
+    uint16_t romAddress = 0;
+
+    // Read number of banks and switch banks
+    for (uint16_t bank = 1; bank < romBanks; bank++) {
+      // Switch data pins to output
       dataOut();
-      writeByte_GB(0x2100, y);
+
+      if (romType >= 5) { // MBC2 and above
+        writeByte_GB(0x2100, bank); // Set ROM bank
+      }
+      else { // MBC1
+        writeByte_GB(0x6000, 0); // Set ROM Mode
+        writeByte_GB(0x4000, bank >> 5); // Set bits 5 & 6 (01100000) of ROM bank
+        writeByte_GB(0x2000, bank & 0x1F); // Set bits 0 & 4 (00011111) of ROM bank
+      }
+
+      // Switch data pins to intput
       dataIn_GB();
 
+      if (bank > 1) {
+        romAddress = 0x4000;
+      }
       // Blink led
       PORTB ^= (1 << 4);
 
-      if (y > 1) {
-        addr = 0x4000;
-      }
-
-      for (; addr <= 0x7FFF; addr = addr + 512) {
+      // Read up to 7FFF per bank
+      while (romAddress <= 0x7FFF) {
         // Fill sdBuffer
         myFile.read(sdBuffer, 512);
         // Compare
         for (int i = 0; i < 512; i++) {
-          if (readByte_GB(addr + i) != sdBuffer[i]) {
+          if (readByte_GB(romAddress + i) != sdBuffer[i]) {
             writeErrors++;
           }
         }
+        romAddress += 512;
       }
     }
     // Close the file:
