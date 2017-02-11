@@ -1,5 +1,21 @@
 ####Copy these files to the root of your SD card.  
 
+####gba.txt  
+This file stores the GBA database which is needed because the save type and rom size are not stored inside the rom. 
+
+Example:  
+A22J,08,3   
+game id, size in MByte, savetype  
+
+Savetypes:   
+0 = Unknown or no save   
+1 = 4k Eeprom   
+2 = 64K Eeprom   
+3 = 256K Sram   
+4 = 512K Flash   
+5 = 1024K Flash   
+6 = 512K Sram   
+
 ####n64.txt  
 This file stores the N64 database which is needed because the save type and rom size are not stored inside the rom.  
 The CRC32 checksum is used to verify a good dump.  
