@@ -32,11 +32,13 @@ const char GBAMenuItem4[] PROGMEM = "Reset";
 const char* const menuOptionsGBA[] PROGMEM = {GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4};
 
 // Rom menu
-const char GBARomItem1[] PROGMEM = "4MB";
-const char GBARomItem2[] PROGMEM = "8MB";
-const char GBARomItem3[] PROGMEM = "16MB";
-const char GBARomItem4[] PROGMEM = "32MB";
-const char* const romOptionsGBA[] PROGMEM = {GBARomItem1, GBARomItem2, GBARomItem3, GBARomItem4};
+const char GBARomItem1[] PROGMEM = "1MB";
+const char GBARomItem2[] PROGMEM = "2MB";
+const char GBARomItem3[] PROGMEM = "4MB";
+const char GBARomItem4[] PROGMEM = "8MB";
+const char GBARomItem5[] PROGMEM = "16MB";
+const char GBARomItem6[] PROGMEM = "32MB";
+const char* const romOptionsGBA[] PROGMEM = {GBARomItem1, GBARomItem2, GBARomItem3, GBARomItem4, GBARomItem5, GBARomItem6};
 
 // Save menu
 const char GBASaveItem1[] PROGMEM = "4K EEPROM";
@@ -59,36 +61,75 @@ void gbaMenu() {
   {
     case 0:
       // Read rom
-      // create submenu with title and 4 options to choose from
-      unsigned char GBARomMenu;
-      // Copy menuOptions out of progmem
-      convertPgm(romOptionsGBA, 4);
-      GBARomMenu = question_box("Select ROM size", menuOptions, 4, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (GBARomMenu)
+      switch (cartSize)
       {
         case 0:
+          // create submenu with title and 4 options to choose from
+          unsigned char GBARomMenu;
+          // Copy menuOptions out of progmem
+          convertPgm(romOptionsGBA, 6);
+          GBARomMenu = question_box("Select ROM size", menuOptions, 6, 0);
+
+          // wait for user choice to come back from the question box menu
+          switch (GBARomMenu)
+          {
+            case 0:
+              // 1MB
+              cartSize = 0x100000;
+              break;
+
+            case 1:
+              // 2MB
+              cartSize = 0x200000;
+              break;
+
+            case 2:
+              // 4MB
+              cartSize = 0x400000;
+              break;
+
+            case 3:
+              // 8MB
+              cartSize = 0x800000;
+              break;
+
+            case 4:
+              // 16MB
+              cartSize = 0x1000000;
+              break;
+
+            case 5:
+              // 32MB
+              cartSize = 0x2000000;
+              break;
+          }
+          break;
+
+        case 1:
+          // 1MB
+          cartSize = 0x100000;
+          break;
+
+        case 4:
           // 4MB
           cartSize = 0x400000;
           break;
 
-        case 1:
+        case 8:
           // 8MB
           cartSize = 0x800000;
           break;
 
-        case 2:
+        case 16:
           // 16MB
           cartSize = 0x1000000;
           break;
 
-        case 3:
+        case 32:
           // 32MB
           cartSize = 0x2000000;
           break;
       }
-
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
@@ -99,16 +140,50 @@ void gbaMenu() {
 
     case 1:
       // Read save
-      // create submenu with title and 6 options to choose from
-      unsigned char GBASaveMenu;
-      // Copy menuOptions out of progmem
-      convertPgm(saveOptionsGBA, 6);
-      GBASaveMenu = question_box("Select save type", menuOptions, 6, 0);
+      if (saveType == 0) {
+        // create submenu with title and 6 options to choose from
+        unsigned char GBASaveMenu;
+        // Copy menuOptions out of progmem
+        convertPgm(saveOptionsGBA, 6);
+        GBASaveMenu = question_box("Select save type", menuOptions, 6, 0);
 
-      // wait for user choice to come back from the question box menu
-      switch (GBASaveMenu)
+        // wait for user choice to come back from the question box menu
+        switch (GBASaveMenu)
+        {
+          case 0:
+            // 4K EEPROM
+            saveType = 1;
+            break;
+
+          case 1:
+            // 64K EEPROM
+            saveType = 2;
+            break;
+
+          case 2:
+            // 256K SRAM/FRAM
+            saveType = 3;
+            break;
+
+          case 3:
+            // 512K SRAM/FRAM
+            saveType = 6;
+            break;
+
+          case 4:
+            // 512K FLASH
+            saveType = 4;
+            break;
+
+          case 5:
+            // 1M FLASH
+            saveType = 5;
+            break;
+        }
+      }
+      switch (saveType)
       {
-        case 0:
+        case 1:
           display_Clear();
           sd.chdir("/");
           // 4K EEPROM
@@ -116,7 +191,7 @@ void gbaMenu() {
           setROM_GBA();
           break;
 
-        case 1:
+        case 2:
           display_Clear();
           sd.chdir("/");
           // 64K EEPROM
@@ -124,19 +199,11 @@ void gbaMenu() {
           setROM_GBA();
           break;
 
-        case 2:
+        case 3:
           display_Clear();
           sd.chdir("/");
           // 256K SRAM/FRAM
           readFRAM_GBA(32768);
-          setROM_GBA();
-          break;
-
-        case 3:
-          display_Clear();
-          sd.chdir("/");
-          // 512K SRAM/FRAM
-          readFRAM_GBA(65536);
           setROM_GBA();
           break;
 
@@ -160,21 +227,75 @@ void gbaMenu() {
           readFLASH_GBA(0, 65536, 65536);
           setROM_GBA();
           break;
+
+        case 6:
+          display_Clear();
+          sd.chdir("/");
+          // 512K SRAM/FRAM
+          // Change working dir to root
+          writeFRAM_GBA(1, 65536);
+          writeErrors = verifyFRAM_GBA(65536);
+          if (writeErrors == 0) {
+            println_Msg(F("Verified OK"));
+            display_Update();
+          }
+          else {
+            print_Msg(F("Error: "));
+            print_Msg(writeErrors);
+            println_Msg(F(" bytes "));
+            print_Error(F("did not verify."), false);
+          }
+          setROM_GBA();
+          break;
       }
       break;
 
     case 2:
       // Write save
-      // create submenu with title and 6 options to choose from
-      unsigned char GBASavesMenu;
-      // Copy menuOptions out of progmem
-      convertPgm(saveOptionsGBA, 6);
-      GBASavesMenu = question_box("Select save type", menuOptions, 6, 0);
+      if (saveType == 0) {
+        // create submenu with title and 6 options to choose from
+        unsigned char GBASavesMenu;
+        // Copy menuOptions out of progmem
+        convertPgm(saveOptionsGBA, 6);
+        GBASavesMenu = question_box("Select save type", menuOptions, 6, 0);
+        // wait for user choice to come back from the question box menu
+        switch (GBASavesMenu)
+        {
+          case 0:
+            // 4K EEPROM
+            saveType = 1;
+            break;
 
-      // wait for user choice to come back from the question box menu
-      switch (GBASavesMenu)
+          case 1:
+            // 64K EEPROM
+            saveType = 2;
+            break;
+
+          case 2:
+            // 256K SRAM/FRAM
+            saveType = 3;
+            break;
+
+          case 3:
+            // 512K SRAM/FRAM
+            saveType = 6;
+            break;
+
+          case 4:
+            // 512K FLASH
+            saveType = 4;
+            break;
+
+          case 5:
+            // 1024K FLASH
+            saveType = 5;
+            break;
+        }
+      }
+
+      switch (saveType)
       {
-        case 0:
+        case 1:
           display_Clear();
           sd.chdir("/");
           // 4K EEPROM
@@ -193,7 +314,7 @@ void gbaMenu() {
           setROM_GBA();
           break;
 
-        case 1:
+        case 2:
           display_Clear();
           sd.chdir("/");
           // 64K EEPROM
@@ -212,7 +333,7 @@ void gbaMenu() {
           setROM_GBA();
           break;
 
-        case 2:
+        case 3:
           display_Clear();
           sd.chdir("/");
           // 256K SRAM/FRAM
@@ -232,7 +353,7 @@ void gbaMenu() {
           setROM_GBA();
           break;
 
-        case 3:
+        case 6:
           display_Clear();
           sd.chdir("/");
           // 512K SRAM/FRAM
@@ -333,16 +454,49 @@ void setup_GBA() {
   display_Clear();
 
   println_Msg(F("GBA Cart Info"));
-  println_Msg("");
   print_Msg(F("Rom Name: "));
   println_Msg(romName);
   print_Msg(F("Cart ID: "));
   println_Msg(cartID);
+  print_Msg(F("Rom Size: "));
+  if (cartSize == 0)
+    println_Msg(F("Unknown"));
+  else {
+    print_Msg(cartSize);
+    println_Msg(F("MB"));
+  }
+  print_Msg(F("Save: "));
+  switch (saveType)
+  {
+    case 0:
+      println_Msg(F("Unknown"));
+      break;
+
+    case 1:
+      println_Msg(F("4K Eeprom"));
+      break;
+
+    case 2:
+      println_Msg(F("64K Eeprom"));
+      break;
+
+    case 3:
+      println_Msg(F("256K Sram"));
+      break;
+
+    case 4:
+      println_Msg(F("512K Flash"));
+      break;
+
+    case 5:
+      println_Msg(F("1024K Flash"));
+      break;
+  }
+
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
   print_Msg(F("Version: 1."));
   println_Msg(romVersion);
-  println_Msg("");
 
   // Wait for user input
   println_Msg(F("Press Button..."));
@@ -521,11 +675,63 @@ void getCartInfo_GBA() {
     print_Error(F("Nintendo Logo Error"), true);
   }
   else {
+    char tempStr2[2];
+    char tempStr[5];
+    char sizeStr[3];
+    char saveStr[2];
+
+    // cart not in list
+    cartSize = 0;
+    saveType = 0;
+
     // Get cart ID
     cartID[0] = char(sdBuffer[0xAC]);
     cartID[1] = char(sdBuffer[0xAD]);
     cartID[2] = char(sdBuffer[0xAE]);
     cartID[3] = char(sdBuffer[0xAF]);
+
+    if (myFile.open("gba.txt", O_READ)) {
+      // Loop through file
+      while (myFile.available()) {
+        // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
+        sprintf(tempStr, "%c", myFile.read());
+        for (byte i = 0; i < 3; i++) {
+          sprintf(tempStr2, "%c", myFile.read());
+          strcat(tempStr, tempStr2);
+        }
+
+        // Check if string is a match
+        if (strcmp(tempStr, cartID) == 0) {
+          // Skip the , in the file
+          myFile.seekSet(myFile.curPosition() + 1);
+
+          // Read the next ascii character and subtract 48 to convert to decimal
+          cartSize = myFile.read() - 48;
+          // Remove leading 0 for single digit cart sizes
+          if (cartSize != 0) {
+            cartSize = cartSize * 10 +  myFile.read() - 48;
+          }
+          else {
+            cartSize = myFile.read() - 48;
+          }
+
+          // Skip the , in the file
+          myFile.seekSet(myFile.curPosition() + 1);
+
+          // Read the next ascii character and subtract 48 to convert to decimal
+          saveType = myFile.read() - 48;
+        }
+        // If no match, empty string, advance by 7 and try again
+        else {
+          myFile.seekSet(myFile.curPosition() + 7);
+        }
+      }
+      // Close the file:
+      myFile.close();
+    }
+    else {
+      print_Error(F("GBA.txt missing"), true);
+    }
 
     // Dump name into 8.3 compatible format
     byte myByte = 0;

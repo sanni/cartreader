@@ -19,8 +19,6 @@
 // Received N64 Eeprom data bits, 1 page
 bool tempBits[65];
 int eepPages;
-// Savetype
-byte saveType;
 
 // N64 Controller
 // 256 bits of received Controller data

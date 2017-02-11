@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-01-30
-   Version:          V21A
+   Date:             2017-02-11
+   Version:          V22
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V21A";
+char ver[5] = "V22";
 
 /******************************************
    Define Output
@@ -181,6 +181,7 @@ char fileOptions[30][20];
 char romName[10];
 int sramSize = 0;
 int romType = 0;
+byte saveType;
 int romSize = 0;
 byte numBanks = 128;
 char checksumStr[5];
@@ -337,7 +338,7 @@ const char flashMenuItem2[] PROGMEM = "16bit slot";
 const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
 
 // GBx Submenu
-const char gbxMenuItem1[] PROGMEM = "Game Boy Color";
+const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
 const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
 
