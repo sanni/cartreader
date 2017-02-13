@@ -17,7 +17,7 @@
 
 ####Be sure to check the guides in the wiki too.
 
-[![](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/video.jpg)](https://www.youtube.com/watch?v=lTuarlsCCuY)   
+[![](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/youtubevideo.jpg)](https://www.youtube.com/watch?v=1BviR53_6NQ)   
 
 ####Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
