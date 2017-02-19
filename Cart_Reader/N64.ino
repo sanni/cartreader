@@ -147,6 +147,11 @@ void n64CartMenu() {
         display_Update();
         readSram(32768, 1);
       }
+      else if (saveType == 2) {
+        println_Msg(F("Reading Sram 768..."));
+        display_Update();
+        readSram(98304, 1);
+      }
       else  if (saveType == 4) {
         getFramType();
         println_Msg(F("Reading Flashram..."));
@@ -187,7 +192,25 @@ void n64CartMenu() {
           println_Msg(F(" bytes "));
           print_Error(F("did not verify."), false);
         }
-      }
+      } else
+      if (saveType == 2) {
+        // Launch file browser
+        fileBrowser("Select Sram 768 file");
+        display_Clear();
+
+        writeSram(98304);
+        writeErrors = verifySram(98304, 1);
+        if (writeErrors == 0) {
+          println_Msg(F("Sram verified OK"));
+          display_Update();
+        }
+        else {
+          print_Msg(F("Error: "));
+          print_Msg(writeErrors);
+          println_Msg(F(" bytes "));
+          print_Error(F("did not verify."), false);
+        }
+      }      
       else if (saveType == 4) {
         // Launch file browser
         fileBrowser("Select fla file");
@@ -294,6 +317,9 @@ void setup_N64_Cart() {
       case 1:
         println_Msg(F("Sram"));
         break;
+      case 2:
+        println_Msg(F("Sram 768"));
+        break;        
       case 4:
         println_Msg(F("Flashram"));
         break;
@@ -1475,7 +1501,7 @@ unsigned long verifyEeprom() {
 *****************************************/
 // Write sram to cartridge
 void writeSram(unsigned long sramSize) {
-  if (saveType == 1) {
+  if (saveType == 1 || saveType == 2) {
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     println_Msg(F("Writing..."));
@@ -1532,6 +1558,9 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
   else if (saveType == 1) {
     strcat(fileName, ".sra");
+  }
+  else if (saveType == 2) {
+    strcat(fileName, ".768");
   }
   else {
     print_Error(F("Savetype Error"), true);
