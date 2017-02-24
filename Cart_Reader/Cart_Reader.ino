@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-02-11
-   Version:          V22
+   Date:             2017-02-24
+   Version:          V22A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V22";
+char ver[5] = "V22A";
 
 /******************************************
    Define Output
@@ -907,7 +907,7 @@ void wait_btn() {
     int b = checkButton();
 
     // Send some clock pulses to the Eeprom in case it locked up
-    if (mode == mode_N64_Cart) {
+    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
       pulseClock_N64(1);
     }
     // if the cart readers input button is pressed shortly

@@ -252,18 +252,24 @@ void setup_N64_Controller() {
 }
 
 void setup_N64_Cart() {
-  // Set Address Pins to Output
+  // Set Address Pins to Output and set them low
   //A0-A7
   DDRF = 0xFF;
+  PORTF = 0x00;
   //A8-A15
   DDRK = 0xFF;
+  PORTK = 0x00;
 
-  // Set Control Pins to Output WR(PH5) RD(PH6) aleL(PC0) aleH(PC1)
-  DDRH |= (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RESET(PH0) WR(PH5) RD(PH6) aleL(PC0) aleH(PC1)
+  DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
   DDRC |= (1 << 0) | (1 << 1);
-  // Output a high signal on all pins, pins are active low therefore everything is disabled now
+  // Pull RESET(PH0) low until we are ready
+  PORTH &= ~(1 << 0);
+  // Output a high signal on WR(PH5) RD(PH6), pins are active low therefore everything is disabled now
   PORTH |= (1 << 5) | (1 << 6);
-  PORTC |= (1 << 0) | (1 << 1);
+  // Pull aleL(PC0) low and aleH(PC1) high
+  PORTC &= ~(1 << 0);
+  PORTC |= (1 << 1);
 
   // Set Eeprom Clock Pin(PH1) to Output
   DDRH |= (1 << 1);
@@ -275,8 +281,24 @@ void setup_N64_Cart() {
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
 
+  /* Adafruit Clock Generator
+    //clockgen.set_correction(-29000);
+    clockgen.set_correction(0);
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0);
+    clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+    //clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+    clockgen.set_freq(200000000ULL, SI5351_PLL_FIXED, SI5351_CLK1);
+    clockgen.output_enable(SI5351_CLK0, 0);
+    clockgen.output_enable(SI5351_CLK1, 1);
+    clockgen.output_enable(SI5351_CLK2, 0);
+  */
+
   // Wait until all is stable
-  delay(500);
+  delay(300);
+
+  // Pull RESET(PH0) high
+  PORTH |= (1 << 0);
+  delay(10);
 
   // Print start page
   getCartInfo_N64();
@@ -337,8 +359,10 @@ void setup_N64_Cart() {
 void adOut_N64() {
   //A0-A7
   DDRF = 0xFF;
+  PORTF = 0x00;
   //A8-A15
   DDRK = 0xFF;
+  PORTK = 0x00;
 }
 
 // Switch Cartridge address/data pins to read
@@ -351,12 +375,12 @@ void adIn_N64() {
 
 // Set Cartridge address
 void setAddress_N64(unsigned long myAddress) {
+  // Set address pins to output
+  adOut_N64();
+
   // Split address into two words
   word myAdrLowOut = myAddress & 0xFFFF;
   word myAdrHighOut = myAddress >> 16;
-
-  // Set address pins to output
-  adOut_N64();
 
   // Switch WR(PH5) RD(PH6) ale_L(PC0) ale_H(PC1) to high (since the pins are active low)
   PORTH |= (1 << 5) | (1 << 6);
@@ -366,33 +390,30 @@ void setAddress_N64(unsigned long myAddress) {
   PORTF = myAdrHighOut & 0xFF;
   PORTK = (myAdrHighOut >> 8) & 0xFF;
 
-  // Leave ale_H high for additional 120ns
+  // Leave ale_H high for additional 125ns
   __asm__("nop\n\t""nop\n\t");
 
   // Pull ale_H(PC1) low
   PORTC &= ~(1 << 1);
 
   // Leave address pins stable for a little bit
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  //__asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Output low part to address pins
   PORTF = myAdrLowOut & 0xFF;
   PORTK = (myAdrLowOut >> 8) & 0xFF;
 
-  // Leave ale_L high for ~180ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t");
+  // Leave ale_L high for ~125ns
+  __asm__("nop\n\t""nop\n\t");
 
   // Pull ale_L(PC0) low
   PORTC &= ~(1 << 0);
 
-  // Leave address pins stable for a little bit
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Wait ~1000ns just to be sure address is set
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Set data pins to input
   adIn_N64();
-
-  // Wait ~600ns just to be sure address is set
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 // Read one word out of the cartridge
@@ -400,7 +421,7 @@ word readWord_N64() {
   // Pull read(PH6) low
   PORTH &= ~(1 << 6);
 
-  // Wait ~300ns
+  // Wait ~310ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Join bytes from PINF and PINK into a word
@@ -409,6 +430,8 @@ word readWord_N64() {
   // Pull read(PH6) high
   PORTH |= (1 << 6);
 
+  // Wait 62.5ns
+  __asm__("nop\n\t");
   return tempWord;
 }
 
