@@ -27,6 +27,10 @@ Contains:
 
 ![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/snes_spacer.png)   
 
+####n64sleeve.stl helps with aligning N64 cartridges if the clone slot is not long/wide enough     
+
+![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/n64sleeve.png)   
+
 ####gbslot.stl is a 3d printed case for the Game Boy (Advance) adapter pcb      
 
 ![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/gbslot.png)   
