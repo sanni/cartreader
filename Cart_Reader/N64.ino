@@ -264,7 +264,7 @@ void setup_N64_Cart() {
   DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
   DDRC |= (1 << 0) | (1 << 1);
   // Pull RESET(PH0) low until we are ready
-  PORTH &= ~(1 << 0);
+  //PORTH &= ~(1 << 0);
   // Output a high signal on WR(PH5) RD(PH6), pins are active low therefore everything is disabled now
   PORTH |= (1 << 5) | (1 << 6);
   // Pull aleL(PC0) low and aleH(PC1) high
@@ -281,31 +281,20 @@ void setup_N64_Cart() {
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
 
-  /* Adafruit Clock Generator
-    //clockgen.set_correction(-29000);
-    clockgen.set_correction(0);
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0);
-    clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
-    //clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
-    clockgen.set_freq(200000000ULL, SI5351_PLL_FIXED, SI5351_CLK1);
-    clockgen.output_enable(SI5351_CLK0, 0);
-    clockgen.output_enable(SI5351_CLK1, 1);
-    clockgen.output_enable(SI5351_CLK2, 0);
-  */
-
   // Wait until all is stable
   delay(300);
 
   // Pull RESET(PH0) high
-  PORTH |= (1 << 0);
-  delay(10);
+  //PORTH |= (1 << 0);
+  //delay(10);
 
   // Print start page
   getCartInfo_N64();
   if (cartSize != 0) {
     println_Msg(F("N64 Cartridge Info"));
     println_Msg(F(""));
-    printName();
+    print_Msg(F("Name: "));
+    println_Msg(romName);
     print_Msg(F("ID: "));
     print_Msg(cartID);
     print_Msg(F(" Size: "));
@@ -343,7 +332,8 @@ void setup_N64_Cart() {
   else {
     println_Msg(F("GAMEPAK ERROR"));
     println_Msg("");
-    printName();
+    print_Msg(F("Name: "));
+    println_Msg(romName);
     print_Msg(F("ID: "));
     println_Msg(cartID);
     println_Msg("");
@@ -384,20 +374,19 @@ void setAddress_N64(unsigned long myAddress) {
 
   // Switch WR(PH5) RD(PH6) ale_L(PC0) ale_H(PC1) to high (since the pins are active low)
   PORTH |= (1 << 5) | (1 << 6);
-  PORTC |= (1 << 0) | (1 << 1);
+  PORTC |= (1 << 1);
+  __asm__("nop\n\t");
+  PORTC |= (1 << 0);
 
   // Output high part to address pins
   PORTF = myAdrHighOut & 0xFF;
   PORTK = (myAdrHighOut >> 8) & 0xFF;
 
-  // Leave ale_H high for additional 125ns
-  __asm__("nop\n\t""nop\n\t");
+  // Leave ale_H high for additional 62.5ns
+  __asm__("nop\n\t");
 
   // Pull ale_H(PC1) low
   PORTC &= ~(1 << 1);
-
-  // Leave address pins stable for a little bit
-  //__asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Output low part to address pins
   PORTF = myAdrLowOut & 0xFF;
@@ -409,8 +398,8 @@ void setAddress_N64(unsigned long myAddress) {
   // Pull ale_L(PC0) low
   PORTC &= ~(1 << 0);
 
-  // Wait ~1000ns just to be sure address is set
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Wait ~600ns just to be sure address is set
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Set data pins to input
   adIn_N64();
@@ -1181,65 +1170,37 @@ void getCartInfo_N64() {
 
 // Read rom ID
 void idCart() {
-  // Set address
-  setAddress_N64(romBase + 0x3A);
-
-  // Split word
-  word myWord = readWord_N64();
-  byte loByte = myWord & 0xFF;
-  byte hiByte = myWord >> 8;
-
-  // First letter is always N or C
-  cartID[0] = loByte;
-
-  // Split word
-  myWord = readWord_N64();
-  loByte = myWord & 0xFF;
-  hiByte = myWord >> 8;
-
-  // Game ID
-  cartID[1] = char(hiByte);
-  cartID[2] = char(loByte);
-
-  // Split word
-  myWord = readWord_N64();
-  loByte = myWord & 0xFF;
-  hiByte = myWord >> 8;
-
-  // Country Code
-  cartID[3] = char(hiByte);
-
-  // Get rom version
-  romVersion = loByte;
-}
-
-// Read name out of rom
-void printName() {
-  // Set the address for the next 512 bytes
-  setAddress_N64(romBase + 0x20);
-
-  // Dump name into 8.3 compatible format
-  byte myLength = 0;
-
-  for (unsigned int i = 0; i < 20; i += 2) {
+  // Set the address
+  setAddress_N64(romBase);
+  // Read first 64 bytes of rom
+  for (int c = 0; c < 64; c += 2) {
     // split word
     word myWord = readWord_N64();
     byte loByte = myWord & 0xFF;
     byte hiByte = myWord >> 8;
 
-    if (((char(hiByte) >= 48 && char(hiByte) <= 57) || (char(hiByte) >= 65 && char(hiByte) <= 122)) && myLength < 8) {
-      romName[myLength] = char(hiByte);
-      myLength++;
-    }
+    // write to buffer
+    sdBuffer[c] = hiByte;
+    sdBuffer[c + 1] = loByte;
+  }
 
-    if (((char(loByte) >= 48 && char(loByte) <= 57) || (char(loByte) >= 65 && char(loByte) <= 122)) && myLength < 8) {
-      romName[myLength] = char(loByte);
+  // Get cart id
+  cartID[0] = sdBuffer[0x3B];
+  cartID[1] = sdBuffer[0x3C];
+  cartID[2] = sdBuffer[0x3D];
+  cartID[3] = sdBuffer[0x3E];
+
+  // Get rom version
+  romVersion = sdBuffer[0x3F];
+
+  // Get name in 8.3 compatible format
+  byte myLength = 0;
+  for (unsigned int i = 0; i < 20; i++) {
+    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 8) {
+      romName[myLength] = char(sdBuffer[0x20 + i]);
       myLength++;
     }
   }
-  print_Msg(F("Name: "));
-  println_Msg(romName);
-  display_Update();
 }
 
 /******************************************
