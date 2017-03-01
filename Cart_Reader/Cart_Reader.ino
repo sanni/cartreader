@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-02-25
-   Version:          V22B
+   Date:             2017-03-02
+   Version:          V23
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V22B";
+char ver[5] = "V23";
 
 /******************************************
    Define Output
@@ -166,6 +166,7 @@ int incomingByte;
 int choice = 0;
 // Temporary array that holds the menu option read out of progmem
 char menuOptions[7][20];
+boolean ignoreError;
 
 // File browser
 char fileName[26];
@@ -330,7 +331,8 @@ const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, mode
 // N64 Submenu
 const char n64MenuItem1[] PROGMEM = "Cart Slot";
 const char n64MenuItem2[] PROGMEM = "Controller";
-const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2};
+const char n64MenuItem3[] PROGMEM = "Flash Repro";
+const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
 
 // Flash Submenu
 const char flashMenuItem1[] PROGMEM = "8bit slot";
@@ -356,8 +358,8 @@ void mainMenu() {
       // create menu with title and 2 options to choose from
       unsigned char n64Dev;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsN64, 2);
-      n64Dev = question_box("Select N64 device", menuOptions, 2, 0);
+      convertPgm(menuOptionsN64, 3);
+      n64Dev = question_box("Select N64 device", menuOptions, 3, 0);
 
       // wait for user choice to come back from the question box menu
       switch (n64Dev)
@@ -366,6 +368,7 @@ void mainMenu() {
           display_Clear();
           display_Update();
           setup_N64_Cart();
+          printCartInfo_N64();
           mode = mode_N64_Cart;
           break;
 
@@ -375,6 +378,16 @@ void mainMenu() {
           setup_N64_Controller();
           mode = mode_N64_Controller;
           break;
+
+        case 2:
+          display_Clear();
+          display_Update();
+          setup_N64_Cart();
+          flashRepro_N64();
+          printCartInfo_N64();
+          mode = mode_N64_Cart;
+          break;
+
       }
       break;
 
@@ -592,7 +605,19 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
-    asm volatile ("  jmp 0");
+    if (ignoreError == 0) {
+      asm volatile ("  jmp 0");
+    }
+    else {
+      ignoreError = 0;
+      display_Clear();
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F("  Error Overwrite"));
+      display_Update();
+      delay(2000);
+    }
   }
 }
 
@@ -917,6 +942,7 @@ void wait_btn() {
 
     // if the cart readers input button is pressed long
     if (b == 3) {
+      ignoreError = 1;
       break;
     }
   }

@@ -38,6 +38,7 @@ String lastbutton = "N/A";
 // Rom base address
 unsigned long romBase = 0x10000000;
 unsigned long sramBase = 0x08000000;
+unsigned long fileSize;
 
 // Flashram type
 byte flashramType = 1;
@@ -287,59 +288,6 @@ void setup_N64_Cart() {
   // Pull RESET(PH0) high
   //PORTH |= (1 << 0);
   //delay(10);
-
-  // Print start page
-  getCartInfo_N64();
-  if (cartSize != 0) {
-    println_Msg(F("N64 Cartridge Info"));
-    println_Msg(F(""));
-    print_Msg(F("Name: "));
-    println_Msg(romName);
-    print_Msg(F("ID: "));
-    print_Msg(cartID);
-    print_Msg(F(" Size: "));
-    print_Msg(cartSize);
-    println_Msg(F("MB"));
-    print_Msg(F("Save: "));
-    switch (saveType) {
-      case 1:
-        println_Msg(F("Sram"));
-        break;
-      case 4:
-        println_Msg(F("Flashram"));
-        break;
-      case 5:
-        println_Msg(F("4K Eeprom"));
-        eepPages = 64;
-        break;
-      case 6:
-        println_Msg(F("16K Eeprom"));
-        eepPages = 256;
-        break;
-      default:
-        println_Msg(F("unknown"));
-        break;
-    }
-    print_Msg(F("Version: 1."));
-    println_Msg(romVersion);
-
-    // Wait for user input
-    println_Msg(F(" "));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
-  else {
-    println_Msg(F("GAMEPAK ERROR"));
-    println_Msg("");
-    print_Msg(F("Name: "));
-    println_Msg(romName);
-    print_Msg(F("ID: "));
-    println_Msg(cartID);
-    println_Msg("");
-    display_Update();
-    print_Error(F("Cartridge unknown"), true);
-  }
 }
 
 /******************************************
@@ -979,6 +927,63 @@ void verifyMPK() {
 /******************************************
   N64 Cartridge functions
 *****************************************/
+void printCartInfo_N64() {
+  // Check cart
+  getCartInfo_N64();
+
+  // Print start page
+  if (cartSize != 0) {
+    println_Msg(F("N64 Cartridge Info"));
+    println_Msg(F(""));
+    print_Msg(F("Name: "));
+    println_Msg(romName);
+    print_Msg(F("ID: "));
+    print_Msg(cartID);
+    print_Msg(F(" Size: "));
+    print_Msg(cartSize);
+    println_Msg(F("MB"));
+    print_Msg(F("Save: "));
+    switch (saveType) {
+      case 1:
+        println_Msg(F("Sram"));
+        break;
+      case 4:
+        println_Msg(F("Flashram"));
+        break;
+      case 5:
+        println_Msg(F("4K Eeprom"));
+        eepPages = 64;
+        break;
+      case 6:
+        println_Msg(F("16K Eeprom"));
+        eepPages = 256;
+        break;
+      default:
+        println_Msg(F("unknown"));
+        break;
+    }
+    print_Msg(F("Version: 1."));
+    println_Msg(romVersion);
+
+    // Wait for user input
+    println_Msg(F(" "));
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
+  }
+  else {
+    println_Msg(F("GAMEPAK ERROR"));
+    println_Msg("");
+    print_Msg(F("Name: "));
+    println_Msg(romName);
+    print_Msg(F("ID: "));
+    println_Msg(cartID);
+    println_Msg("");
+    display_Update();
+    print_Error(F("Cartridge unknown"), true);
+  }
+}
+
 // CRC32 lookup table
 static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -2042,6 +2047,301 @@ calcn64crc:
     }
   }
   display_Update();
+}
+
+/******************************************
+   N64 Repro Flashrom Functions
+ *****************************************/
+void flashRepro_N64() {
+  // Check flashrom ID's
+  idFlashrom_N64();
+  if (cartSize != 0) {
+    print_Msg("ID: ");
+    print_Msg(flashid);
+    print_Msg(" Size: ");
+    print_Msg(cartSize / 1048576);
+    println_Msg("MB");
+    println_Msg("");
+    println_Msg(F("This will erase your"));
+    println_Msg(F("Repro Cartridge."));
+    println_Msg(F("Attention: Use 3.3V!"));
+    println_Msg("");
+    println_Msg(F("Press Button"));
+    println_Msg(F("to continue"));
+    display_Update();
+    wait();
+
+    // Launch file browser
+    filePath[0] = '\0';
+    sd.chdir("/");
+    fileBrowser("Select z64 file");
+    display_Clear();
+    display_Update();
+
+    // Erase flashrom
+    eraseFlashrom_N64();
+    if (blankcheckFlashrom_N64()) {
+      writeFlashrom_N64();
+      writeErrors = verifyFlashrom_N64();
+      if (writeErrors == 0) {
+        println_Msg(F("Verified OK"));
+        display_Update();
+      }
+      else {
+        print_Msg(F("Error: "));
+        print_Msg(writeErrors);
+        println_Msg(F(" bytes "));
+        print_Error(F("did not verify."), false);
+      }
+    }
+    else {
+      print_Error(F("Erase failed"), false);
+    }
+
+  }
+  else {
+    print_Error(F("Unknown flashrom"), false);
+  }
+
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+  display_Clear();
+  display_Update();
+}
+
+void resetFlashrom_N64(unsigned long flashBase) {
+  // Send reset Command
+  setAddress_N64(flashBase);
+  writeWord_N64(0xF0);
+  delay(100);
+}
+
+void idFlashrom_N64() {
+  // Size of repro cartridge
+  cartSize = 0;
+
+  // Send ID command to first flashrom
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x90);
+
+  // Read manufacturer ID
+  setAddress_N64(romBase);
+  readWord_N64();
+  // Read flashrom ID
+  sprintf(flashid, "%04X", readWord_N64());
+
+  resetFlashrom_N64(romBase);
+
+  if (strcmp(flashid, "227E") == 0) {
+    cartSize = 0x2000000;
+
+    // Send ID command to second flashrom
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0x90);
+
+    // Read manufacturer ID
+    setAddress_N64(romBase + 0x2000000);
+    readWord_N64();
+    // Read flashrom ID
+    sprintf(flashid, "%04X", readWord_N64());
+    if (strcmp(flashid, "227E") == 0) {
+      cartSize = 0x4000000;
+    }
+    resetFlashrom_N64(romBase + 0x2000000);
+  }
+}
+
+void eraseFlashrom_N64() {
+  println_Msg(F("Erasing Flashrom"));
+  display_Update();
+
+  // Send Erase Command to first flashrom
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x80);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x10);
+
+  if (cartSize == 0x4000000) {
+    // Send Erase Command to second flashrom
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0x80);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0x10);
+  }
+
+  delay(1000);
+
+  // Read the status register
+  setAddress_N64(romBase);
+  word statusReg = readWord_N64();
+  while ((statusReg | 0xFF7F) != 0xFFFF) {
+    // Blink led
+    PORTB ^= (1 << 4);
+    delay(1000);
+    setAddress_N64(romBase);
+    statusReg = readWord_N64();
+  }
+
+  if (cartSize == 0x4000000) {
+    // Read the status register
+    setAddress_N64(romBase + 0x2000000);
+    word statusReg = readWord_N64();
+    while ((statusReg | 0xFF7F) != 0xFFFF) {
+      // Blink led
+      PORTB ^= (1 << 4);
+      delay(1000);
+      setAddress_N64(romBase + 0x2000000);
+      statusReg = readWord_N64();
+    }
+  }
+}
+
+boolean blankcheckFlashrom_N64() {
+  print_Msg(F("Blankcheck..."));
+  display_Update();
+  for (unsigned long currByte = romBase; currByte < romBase + cartSize; currByte += 512) {
+    // Blink led
+    if (currByte % 131072 == 0)
+      PORTB ^= (1 << 4);
+
+    // Set the address for the next 512 bytes
+    setAddress_N64(currByte);
+
+    for (int c = 0; c < 512; c += 2) {
+      if (readWord_N64() != 0xFFFF) {
+        println_Msg(F("failed"));
+        display_Update();
+        return 0;
+      }
+    }
+
+  }
+  println_Msg(F("OK"));
+  display_Update();
+  return 1;
+}
+
+void writeFlashrom_N64() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    print_Msg(F("Writing "));
+    println_Msg(filePath);
+    print_Msg(F("File size: "));
+    print_Msg(fileSize / 1048576);
+    println_Msg(F("MB"));
+    display_Update();
+
+    unsigned long flashBase = romBase;
+
+    for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      // Change to second rom
+      if (currSector == 0x2000000) {
+        flashBase = romBase + 0x2000000;
+      }
+
+      // Write to flashrom
+      for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
+        // Fill SD buffer
+        myFile.read(sdBuffer, 512);
+        for (int currByte = 0; currByte < 512; currByte += 2) {
+          // Join two bytes into one word
+          word currWord = ( ( sdBuffer[currByte] & 0xFF ) << 8 ) | ( sdBuffer[currByte + 1] & 0xFF );
+          // 2 unlock commands
+          setAddress_N64(flashBase + (0x555 << 1));
+          writeWord_N64(0xAA);
+          setAddress_N64(flashBase + (0x2AA << 1));
+          writeWord_N64(0x55);
+          // Program command
+          setAddress_N64(flashBase + (0x555 << 1));
+          writeWord_N64(0xA0);
+          // Write word
+          setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+          writeWord_N64(currWord);
+
+          // Read the status register
+          setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+          word statusReg = readWord_N64();
+          while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
+            setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+            statusReg = readWord_N64();
+          }
+        }
+      }
+    }
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file"));
+    display_Update();
+  }
+}
+
+unsigned long verifyFlashrom_N64() {
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    writeErrors = 0;
+
+    for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
+      // Blink led
+      PORTB ^= (1 << 4);
+      for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
+        // Fill SD buffer
+        myFile.read(sdBuffer, 512);
+        for (int currByte = 0; currByte < 512; currByte += 2) {
+          // Join two bytes into one word
+          word currWord = ( ( sdBuffer[currByte] & 0xFF ) << 8 ) | ( sdBuffer[currByte + 1] & 0xFF );
+          // Read flash
+          setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+          // Compare both
+          if (readWord_N64() != currWord) {
+            writeErrors++;
+          }
+        }
+      }
+    }
+    // Close the file:
+    myFile.close();
+    return writeErrors;
+  }
+  else {
+    println_Msg(F("Can't open file"));
+    display_Update();
+    return 9999;
+  }
 }
 
 //******************************************
