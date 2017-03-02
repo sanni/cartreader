@@ -1,2 +1,2 @@
-A simple tool used to byteswap or wordswap N64 roms.   
-Made by Skelux.   
+A simple tool you can use to byteswap N64 roms to z64 fileformat.   
+Made by Def.   
