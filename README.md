@@ -2,7 +2,7 @@
 
 ![image](https://www.dropbox.com/s/9yt37pw4juaup6u/cartreaders.JPG?dl=1)    
 
-####Features:  
+#### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, SA1(needs Adafruit Clock Generator)  
 - Reads and writes SFC Nintendo Power Flash Cartridges (also known as SF Memory, needs Adafruit Clock Generator for best result)  
@@ -16,11 +16,11 @@
 
 ![image](https://www.dropbox.com/s/q5xdd3ovycj4nv3/cartreader_bottom.JPG?dl=1)    
 
-####Be sure to check the guides in the wiki too.
+#### Be sure to check the guides in the wiki too.
 
 [![](https://www.dropbox.com/s/bdjq4xts322xdb0/youtubevideo.jpg?dl=1)](https://www.youtube.com/watch?v=1BviR53_6NQ)   
 
-####Thanks to:  
+#### Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
    Jeff Saltzman - 4-Way Button   
    Wayne and Layne - Video-Game-Shield menu   
@@ -43,4 +43,4 @@
 
 ![image](https://www.dropbox.com/s/uslx6kf0v69owgn/v82_components.jpg?dl=1)   
 
-####Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
+#### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
