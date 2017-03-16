@@ -16,7 +16,7 @@ Contains:
 
 #### backplate.dxf are the acrylic pieces for laser cutting, the thickness is 4mm and size is 10x10cm, you need to tell the manufacturer that you need all the cut-outs too     
 
-![image](https://www.dropbox.com/s/0qixf0n33emi1ed/backplate.png?dl=0)    
+![image](https://www.dropbox.com/s/0qixf0n33emi1ed/backplate.png?dl=1)    
 
 Contains:   
 - backplate   
