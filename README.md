@@ -38,5 +38,7 @@
    insidegadgets - GBCartRead   
    RobinTheHood - GameboyAdvanceRomDumper   
    YamaArashi - GBA flashrom bank switch command    
+   
+![image](https://www.dropbox.com/s/pw0zf6747n9laat/3d_model_2.png?dl=1)   
 
 #### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
