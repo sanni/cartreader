@@ -26,7 +26,7 @@ Contains:
 
 ![image](https://www.dropbox.com/s/se2qe9zbw0dbvrb/gbslot.png?dl=1)   
 
-#### backplate_3dprint.stl is the backplate where the Arduino is screwed to    
+#### backplate.stl is the backplate that holds the Arduino    
 
 ![image](https://www.dropbox.com/s/sbsd41tyqyjonqf/backplate_3dprint.png?dl=1)    
 
