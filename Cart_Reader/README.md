@@ -64,4 +64,4 @@ For development purposes you can route all the text output to the Arduino's Seri
 #define enable_Serial 1   
 ```
 
-To compile and upload the code please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/BASICS-How-to-flash-the-Arduino-Code-to-your-Cart-Reader).   
+To compile and upload the code please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/How-to-flash-the-Arduino-Code-to-your-Cart-Reader).   
