@@ -16,7 +16,7 @@
 
 #### Be sure to check the guides in the wiki too.
 
-[![](https://www.dropbox.com/s/bdjq4xts322xdb0/youtubevideo.jpg?dl=1)](https://www.youtube.com/watch?v=1BviR53_6NQ)   
+[![](https://www.dropbox.com/s/950svg0i21syq3j/youtube_preview.jpg?dl=1)](https://www.youtube.com/watch?v=AD_o7J85bCg)   
 
 #### Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
