@@ -14,15 +14,6 @@ Contains:
 - flash adapter for flashing 29F016, 29F032, 29F033, 29F1610 and 29L3211 flashroms   
 - adapter for soldering a 29F032 into a SNES cartridge   
 
-#### backplate.dxf are the acrylic pieces for laser cutting, the thickness is 4mm and size is 10x10cm, you need to tell the manufacturer that you need all the cut-outs too     
-
-![image](https://www.dropbox.com/s/0qixf0n33emi1ed/backplate.png?dl=1)    
-
-Contains:   
-- backplate   
-- 2x SD card spacer   
-- display protector   
-
 #### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
 ![image](https://www.dropbox.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
@@ -35,7 +26,7 @@ Contains:
 
 ![image](https://www.dropbox.com/s/se2qe9zbw0dbvrb/gbslot.png?dl=1)   
 
-#### backplate_3dprint.stl is an alternative backplate for 3d printing   
+#### backplate_3dprint.stl is the backplate where the Arduino is screwed to    
 
 ![image](https://www.dropbox.com/s/sbsd41tyqyjonqf/backplate_3dprint.png?dl=1)    
 
