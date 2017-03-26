@@ -32,5 +32,3 @@ Contains:
 
 #### For the needed parts list see here: https://github.com/sanni/cartreader/wiki/PCB-Needed-Parts   
 #### How to order a PCB: https://github.com/sanni/cartreader/wiki/PCB-How-to-order-printed-circuit-boards   
-
-### Attention: While I have tested all the parts I can not guarantee flawless operation, so use at own risk and always check the boards for short circuits   
