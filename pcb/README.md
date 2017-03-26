@@ -30,5 +30,5 @@ Contains:
 
 ![image](https://www.dropbox.com/s/sbsd41tyqyjonqf/backplate_3dprint.png?dl=1)    
 
-#### For the needed parts list see here: https://github.com/sanni/cartreader/wiki/PCB-Needed-Parts   
-#### How to order a PCB: https://github.com/sanni/cartreader/wiki/PCB-How-to-order-printed-circuit-boards   
+#### For the needed parts list see here: https://github.com/sanni/cartreader/wiki/Needed-Parts   
+#### How to order a PCB: https://github.com/sanni/cartreader/wiki/How-to-order-printed-circuit-boards   
