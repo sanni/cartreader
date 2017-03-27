@@ -12,7 +12,7 @@ Source code files:
 
 Every submodule has it's own setup_XX() function that configures the needed pins and a submenu that lets you choose what you want to do. 
 The code directly addresses the pins via the DDR, PIN and PORT registers.   
-Please also refer to the [pinout Excel sheet] (https://github.com/sanni/cartreader/blob/master/pinout.xls).    
+Please also refer to the [pinout Excel sheet](https://github.com/sanni/cartreader/blob/master/pinout.xls).    
 ```
 void setup_N64_Controller() {  
   // Output a low signal  
