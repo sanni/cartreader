@@ -28,7 +28,11 @@ Contains:
 
 #### backplate.stl is the backplate that holds the Arduino    
 
-![image](https://www.dropbox.com/s/sbsd41tyqyjonqf/backplate_3dprint.png?dl=1)    
+![image](https://www.dropbox.com/s/0qixf0n33emi1ed/backplate.png?dl=1)    
+
+#### sd_spacer.stl holds the RGB led and fits between the SD card and the Cart Reader pcb    
+
+![image](https://www.dropbox.com/s/fn6g1pm88puq8h6/sd_spacer.png?dl=1)  
 
 #### For the needed parts list see here: https://github.com/sanni/cartreader/wiki/Needed-Parts   
 #### How to order a PCB: https://github.com/sanni/cartreader/wiki/How-to-order-printed-circuit-boards   
