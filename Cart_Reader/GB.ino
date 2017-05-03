@@ -14,12 +14,12 @@ uint16_t sramEndAddress = 0;
    Menu
  *****************************************/
 // GB menu items
-const char GBMenuItem1[] PROGMEM = "Read Rom";
-const char GBMenuItem2[] PROGMEM = "Read Save";
-const char GBMenuItem3[] PROGMEM = "Write Save";
-const char GBMenuItem4[] PROGMEM = "Write Flashcart";
-const char GBMenuItem5[] PROGMEM = "Reset";
-const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5};
+static const char GBMenuItem1[] PROGMEM = "Read Rom";
+static const char GBMenuItem2[] PROGMEM = "Read Save";
+static const char GBMenuItem3[] PROGMEM = "Write Save";
+static const char GBMenuItem4[] PROGMEM = "Write Flashcart";
+static const char GBMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5};
 
 void gbMenu() {
   // create menu with title and 5 options to choose from

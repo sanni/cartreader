@@ -26,21 +26,21 @@ boolean NP = false;
   Menu
 *****************************************/
 // SNES menu items
-const char SnesMenuItem1[] PROGMEM = "Read Rom";
-const char SnesMenuItem2[] PROGMEM = "Read Save";
-const char SnesMenuItem3[] PROGMEM = "Write Save";
-const char SnesMenuItem4[] PROGMEM = "Test SRAM";
-const char SnesMenuItem5[] PROGMEM = "Cycle cart";
-const char SnesMenuItem6[] PROGMEM = "Reset";
-const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6};
+static const char SnesMenuItem1[] PROGMEM = "Read Rom";
+static const char SnesMenuItem2[] PROGMEM = "Read Save";
+static const char SnesMenuItem3[] PROGMEM = "Write Save";
+static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
+static const char SnesMenuItem5[] PROGMEM = "Cycle cart";
+static const char SnesMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6};
 
 // Manual config menu items
-const char confMenuItem1[] PROGMEM = "Use header info";
-const char confMenuItem2[] PROGMEM = "4MB LoRom 256K Sram";
-const char confMenuItem3[] PROGMEM = "4MB HiRom 64K Sram";
-const char confMenuItem4[] PROGMEM = "6MB ExRom 256K Sram";
-const char confMenuItem5[] PROGMEM = "Reset";
-const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
+static const char confMenuItem1[] PROGMEM = "Use header info";
+static const char confMenuItem2[] PROGMEM = "4MB LoRom 256K Sram";
+static const char confMenuItem3[] PROGMEM = "4MB HiRom 64K Sram";
+static const char confMenuItem4[] PROGMEM = "6MB ExRom 256K Sram";
+static const char confMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
 
 // SNES Menu
 void snesMenu() {

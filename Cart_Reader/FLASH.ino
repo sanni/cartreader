@@ -16,24 +16,24 @@ unsigned long blank;
    Menu
  *****************************************/
 // 8bit Flash menu items
-const char flash8MenuItem1[] PROGMEM = "Blankcheck";
-const char flash8MenuItem2[] PROGMEM = "Erase";
-const char flash8MenuItem3[] PROGMEM = "Read";
-const char flash8MenuItem4[] PROGMEM = "Write";
-const char flash8MenuItem5[] PROGMEM = "ID";
-const char flash8MenuItem6[] PROGMEM = "Print";
-const char flash8MenuItem7[] PROGMEM = "Reset";
-const char* const menuOptionsFLASH8[] PROGMEM = {flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, flash8MenuItem7};
+static const char flash8MenuItem1[] PROGMEM = "Blankcheck";
+static const char flash8MenuItem2[] PROGMEM = "Erase";
+static const char flash8MenuItem3[] PROGMEM = "Read";
+static const char flash8MenuItem4[] PROGMEM = "Write";
+static const char flash8MenuItem5[] PROGMEM = "ID";
+static const char flash8MenuItem6[] PROGMEM = "Print";
+static const char flash8MenuItem7[] PROGMEM = "Reset";
+static const char* const menuOptionsFLASH8[] PROGMEM = {flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, flash8MenuItem7};
 
 // 16bit Flash menu items
-const char flash16MenuItem1[] PROGMEM = "Blankcheck";
-const char flash16MenuItem2[] PROGMEM = "Erase";
-const char flash16MenuItem3[] PROGMEM = "Read";
-const char flash16MenuItem4[] PROGMEM = "Write";
-const char flash16MenuItem5[] PROGMEM = "ID";
-const char flash16MenuItem6[] PROGMEM = "Print";
-const char flash16MenuItem7[] PROGMEM = "Reset";
-const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7};
+static const char flash16MenuItem1[] PROGMEM = "Blankcheck";
+static const char flash16MenuItem2[] PROGMEM = "Erase";
+static const char flash16MenuItem3[] PROGMEM = "Read";
+static const char flash16MenuItem4[] PROGMEM = "Write";
+static const char flash16MenuItem5[] PROGMEM = "ID";
+static const char flash16MenuItem6[] PROGMEM = "Print";
+static const char flash16MenuItem7[] PROGMEM = "Reset";
+static const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7};
 
 void flashromMenu8() {
   // create menu with title and 7 options to choose from

@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-03-02
-   Version:          V23
+   Date:             2017-05-03
+   Version:          V23A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.0
+   Compiled with Arduino 1.8.2
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -34,12 +34,11 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V23";
+char ver[5] = "V23A";
 
 /******************************************
    Define Output
 ******************************************/
-// If you don't have an OLED screen change
 // enable_OLED to 0 and enable_Serial to 1
 #define enable_OLED 1
 #define enable_Serial 0
@@ -320,29 +319,29 @@ static const unsigned char PROGMEM sig [] = {
 *****************************************/
 // All menus and menu entries are stored in progmem to save on sram
 // Main menu
-const char modeItem1[] PROGMEM = "Nintendo 64";
-const char modeItem2[] PROGMEM = "Super Nintendo";
-const char modeItem3[] PROGMEM = "Nintendo Power";
-const char modeItem4[] PROGMEM = "Game Boy";
-const char modeItem5[] PROGMEM = "Flashrom Programmer";
-const char modeItem6[] PROGMEM = "About";
-const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6};
+static const char modeItem1[] PROGMEM = "Nintendo 64";
+static const char modeItem2[] PROGMEM = "Super Nintendo";
+static const char modeItem3[] PROGMEM = "Nintendo Power";
+static const char modeItem4[] PROGMEM = "Game Boy";
+static const char modeItem5[] PROGMEM = "Flashrom Programmer";
+static const char modeItem6[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6};
 
 // N64 Submenu
-const char n64MenuItem1[] PROGMEM = "Cart Slot";
-const char n64MenuItem2[] PROGMEM = "Controller";
-const char n64MenuItem3[] PROGMEM = "Flash Repro";
-const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
+static const char n64MenuItem1[] PROGMEM = "Cart Slot";
+static const char n64MenuItem2[] PROGMEM = "Controller";
+static const char n64MenuItem3[] PROGMEM = "Flash Repro";
+static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
 
 // Flash Submenu
-const char flashMenuItem1[] PROGMEM = "8bit slot";
-const char flashMenuItem2[] PROGMEM = "16bit slot";
-const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
+static const char flashMenuItem1[] PROGMEM = "8bit slot";
+static const char flashMenuItem2[] PROGMEM = "16bit slot";
+static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
 
 // GBx Submenu
-const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
-const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
-const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
+static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
+static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
+static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
 
 void mainMenu() {
   // create menu with title and 6 options to choose from
@@ -518,6 +517,9 @@ void setup() {
   // Activate Internal Pullup Resistors
   //PORTD |= (1 << 7);
   //PORTG |= (1 << 2);
+
+  // Initialize LED
+  rgb.setColor(0, 0, 0);
 
   // Read current folder number out of eeprom
   EEPROM_readAnything(0, foldern);
@@ -919,12 +921,9 @@ int checkButton2() {
 
 // Wait for user to push button
 void wait_btn() {
-
   // Change led to green
   if (errorLvl == 0)
     rgbLed(green_color);
-  else
-    errorLvl = 0;
 
   while (1)
   {
@@ -937,12 +936,16 @@ void wait_btn() {
     }
     // if the cart readers input button is pressed shortly
     if (b == 1) {
+      errorLvl = 0;
       break;
     }
 
     // if the cart readers input button is pressed long
     if (b == 3) {
-      ignoreError = 1;
+      if (errorLvl) {
+        ignoreError = 1;
+        errorLvl = 0;
+      }
       break;
     }
   }

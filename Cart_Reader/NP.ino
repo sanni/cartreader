@@ -33,27 +33,27 @@ boolean hirom[8];
   Menu
 *****************************************/
 // NP menu items
-const char NPMenuItem1[] PROGMEM = "Game Menu";
-const char NPMenuItem2[] PROGMEM = "Flash Menu";
-const char NPMenuItem3[] PROGMEM = "Reset";
-const char* const menuOptionsNP[] PROGMEM = {NPMenuItem1, NPMenuItem2, NPMenuItem3};
+static const char NPMenuItem1[] PROGMEM = "Game Menu";
+static const char NPMenuItem2[] PROGMEM = "Flash Menu";
+static const char NPMenuItem3[] PROGMEM = "Reset";
+static const char* const menuOptionsNP[] PROGMEM = {NPMenuItem1, NPMenuItem2, NPMenuItem3};
 
 // NP flash menu items
-const char NPFlashMenuItem1[] PROGMEM = "Read Flash";
-const char NPFlashMenuItem2[] PROGMEM = "Write Flash";
-const char NPFlashMenuItem3[] PROGMEM = "Print Mapping";
-const char NPFlashMenuItem4[] PROGMEM = "Read Mapping";
-const char NPFlashMenuItem5[] PROGMEM = "Write Mapping";
-const char NPFlashMenuItem6[] PROGMEM = "Back";
-const char* const menuOptionsNPFlash[] PROGMEM = {NPFlashMenuItem1, NPFlashMenuItem2, NPFlashMenuItem3, NPFlashMenuItem4, NPFlashMenuItem5, NPFlashMenuItem6};
+static const char NPFlashMenuItem1[] PROGMEM = "Read Flash";
+static const char NPFlashMenuItem2[] PROGMEM = "Write Flash";
+static const char NPFlashMenuItem3[] PROGMEM = "Print Mapping";
+static const char NPFlashMenuItem4[] PROGMEM = "Read Mapping";
+static const char NPFlashMenuItem5[] PROGMEM = "Write Mapping";
+static const char NPFlashMenuItem6[] PROGMEM = "Back";
+static const char* const menuOptionsNPFlash[] PROGMEM = {NPFlashMenuItem1, NPFlashMenuItem2, NPFlashMenuItem3, NPFlashMenuItem4, NPFlashMenuItem5, NPFlashMenuItem6};
 
 // NP game menu items
-const char NPGameMenuItem1[] PROGMEM = "Read Sram";
-const char NPGameMenuItem2[] PROGMEM = "Read Game";
-const char NPGameMenuItem3[] PROGMEM = "Write Sram";
-const char NPGameMenuItem4[] PROGMEM = "Switch Game";
-const char NPGameMenuItem5[] PROGMEM = "Reset";
-const char* const menuOptionsNPGame[] PROGMEM = {NPGameMenuItem1, NPGameMenuItem2, NPGameMenuItem3, NPGameMenuItem4, NPGameMenuItem5};
+static const char NPGameMenuItem1[] PROGMEM = "Read Sram";
+static const char NPGameMenuItem2[] PROGMEM = "Read Game";
+static const char NPGameMenuItem3[] PROGMEM = "Write Sram";
+static const char NPGameMenuItem4[] PROGMEM = "Switch Game";
+static const char NPGameMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsNPGame[] PROGMEM = {NPGameMenuItem1, NPGameMenuItem2, NPGameMenuItem3, NPGameMenuItem4, NPGameMenuItem5};
 
 void npMenu() {
   // create menu with title and 3 options to choose from

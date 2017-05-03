@@ -8,7 +8,7 @@
 char calcChecksumStr[5];
 boolean readType;
 
-const int nintendoLogo[] PROGMEM = {
+static const int nintendoLogo[] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x24, 0xFF, 0xAE, 0x51, 0x69, 0x9A, 0xA2, 0x21, 0x3D, 0x84, 0x82, 0x0A,
   0x84, 0xE4, 0x09, 0xAD, 0x11, 0x24, 0x8B, 0x98, 0xC0, 0x81, 0x7F, 0x21, 0xA3, 0x52, 0xBE, 0x19,
   0x93, 0x09, 0xCE, 0x20, 0x10, 0x46, 0x4A, 0x4A, 0xF8, 0x27, 0x31, 0xEC, 0x58, 0xC7, 0xE8, 0x33,
@@ -25,29 +25,29 @@ const int nintendoLogo[] PROGMEM = {
    Menu
  *****************************************/
 // GBA menu items
-const char GBAMenuItem1[] PROGMEM = "Read Rom";
-const char GBAMenuItem2[] PROGMEM = "Read Save";
-const char GBAMenuItem3[] PROGMEM = "Write Save";
-const char GBAMenuItem4[] PROGMEM = "Reset";
-const char* const menuOptionsGBA[] PROGMEM = {GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4};
+static const char GBAMenuItem1[] PROGMEM = "Read Rom";
+static const char GBAMenuItem2[] PROGMEM = "Read Save";
+static const char GBAMenuItem3[] PROGMEM = "Write Save";
+static const char GBAMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsGBA[] PROGMEM = {GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4};
 
 // Rom menu
-const char GBARomItem1[] PROGMEM = "1MB";
-const char GBARomItem2[] PROGMEM = "2MB";
-const char GBARomItem3[] PROGMEM = "4MB";
-const char GBARomItem4[] PROGMEM = "8MB";
-const char GBARomItem5[] PROGMEM = "16MB";
-const char GBARomItem6[] PROGMEM = "32MB";
-const char* const romOptionsGBA[] PROGMEM = {GBARomItem1, GBARomItem2, GBARomItem3, GBARomItem4, GBARomItem5, GBARomItem6};
+static const char GBARomItem1[] PROGMEM = "1MB";
+static const char GBARomItem2[] PROGMEM = "2MB";
+static const char GBARomItem3[] PROGMEM = "4MB";
+static const char GBARomItem4[] PROGMEM = "8MB";
+static const char GBARomItem5[] PROGMEM = "16MB";
+static const char GBARomItem6[] PROGMEM = "32MB";
+static const char* const romOptionsGBA[] PROGMEM = {GBARomItem1, GBARomItem2, GBARomItem3, GBARomItem4, GBARomItem5, GBARomItem6};
 
 // Save menu
-const char GBASaveItem1[] PROGMEM = "4K EEPROM";
-const char GBASaveItem2[] PROGMEM = "64K EEPROM";
-const char GBASaveItem3[] PROGMEM = "256K SRAM/FRAM";
-const char GBASaveItem4[] PROGMEM = "512K SRAM/FRAM";
-const char GBASaveItem5[] PROGMEM = "512K FLASHROM";
-const char GBASaveItem6[] PROGMEM = "1M FLASHROM";
-const char* const saveOptionsGBA[] PROGMEM = {GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6};
+static const char GBASaveItem1[] PROGMEM = "4K EEPROM";
+static const char GBASaveItem2[] PROGMEM = "64K EEPROM";
+static const char GBASaveItem3[] PROGMEM = "256K SRAM/FRAM";
+static const char GBASaveItem4[] PROGMEM = "512K SRAM/FRAM";
+static const char GBASaveItem5[] PROGMEM = "512K FLASHROM";
+static const char GBASaveItem6[] PROGMEM = "1M FLASHROM";
+static const char* const saveOptionsGBA[] PROGMEM = {GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6};
 
 void gbaMenu() {
   // create menu with title and 4 options to choose from
