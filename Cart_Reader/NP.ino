@@ -1,11 +1,16 @@
 //******************************************
-// NINTENDO POWER
+// NINTENDO POWER Cartridges for SFC and GB
+//  (GB Memory starts at around line 1430)
 //******************************************
 
 /******************************************
-   NP Clock Source
+   SF Memory Cassette
 ******************************************/
-// The clock signal for the Nintendo Power cart
+
+/******************************************
+   SF Memory Clock Source
+******************************************/
+// The clock signal for the SF Memory cassette
 // is generated with the Adafruit Clock Generator
 // If you don't have one just plug a wire into CLK0
 // (Snes Pin 1) and let the 50/60Hz noise of your
@@ -14,10 +19,10 @@
 /******************************************
    Variables
  *****************************************/
-// Nintendo Power status
-byte NPReady = 0;
+// SF Memory status
+byte sfmReady = 0;
 
-// NP Menu
+// SF Memory Menu
 boolean hasMenu = true;
 byte numGames = 0;
 
@@ -32,46 +37,46 @@ boolean hirom[8];
 /******************************************
   Menu
 *****************************************/
-// NP menu items
-static const char NPMenuItem1[] PROGMEM = "Game Menu";
-static const char NPMenuItem2[] PROGMEM = "Flash Menu";
-static const char NPMenuItem3[] PROGMEM = "Reset";
-static const char* const menuOptionsNP[] PROGMEM = {NPMenuItem1, NPMenuItem2, NPMenuItem3};
+// SFM menu items
+static const char sfmMenuItem1[] PROGMEM = "Game Menu";
+static const char sfmMenuItem2[] PROGMEM = "Flash Menu";
+static const char sfmMenuItem3[] PROGMEM = "Reset";
+static const char* const menuOptionsSFM[] PROGMEM = {sfmMenuItem1, sfmMenuItem2, sfmMenuItem3};
 
-// NP flash menu items
-static const char NPFlashMenuItem1[] PROGMEM = "Read Flash";
-static const char NPFlashMenuItem2[] PROGMEM = "Write Flash";
-static const char NPFlashMenuItem3[] PROGMEM = "Print Mapping";
-static const char NPFlashMenuItem4[] PROGMEM = "Read Mapping";
-static const char NPFlashMenuItem5[] PROGMEM = "Write Mapping";
-static const char NPFlashMenuItem6[] PROGMEM = "Back";
-static const char* const menuOptionsNPFlash[] PROGMEM = {NPFlashMenuItem1, NPFlashMenuItem2, NPFlashMenuItem3, NPFlashMenuItem4, NPFlashMenuItem5, NPFlashMenuItem6};
+// SFM flash menu items
+static const char sfmFlashMenuItem1[] PROGMEM = "Read Flash";
+static const char sfmFlashMenuItem2[] PROGMEM = "Write Flash";
+static const char sfmFlashMenuItem3[] PROGMEM = "Print Mapping";
+static const char sfmFlashMenuItem4[] PROGMEM = "Read Mapping";
+static const char sfmFlashMenuItem5[] PROGMEM = "Write Mapping";
+static const char sfmFlashMenuItem6[] PROGMEM = "Back";
+static const char* const menuOptionsSFMFlash[] PROGMEM = {sfmFlashMenuItem1, sfmFlashMenuItem2, sfmFlashMenuItem3, sfmFlashMenuItem4, sfmFlashMenuItem5, sfmFlashMenuItem6};
 
-// NP game menu items
-static const char NPGameMenuItem1[] PROGMEM = "Read Sram";
-static const char NPGameMenuItem2[] PROGMEM = "Read Game";
-static const char NPGameMenuItem3[] PROGMEM = "Write Sram";
-static const char NPGameMenuItem4[] PROGMEM = "Switch Game";
-static const char NPGameMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsNPGame[] PROGMEM = {NPGameMenuItem1, NPGameMenuItem2, NPGameMenuItem3, NPGameMenuItem4, NPGameMenuItem5};
+// SFM game menu items
+static const char sfmGameMenuItem1[] PROGMEM = "Read Sram";
+static const char sfmGameMenuItem2[] PROGMEM = "Read Game";
+static const char sfmGameMenuItem3[] PROGMEM = "Write Sram";
+static const char sfmGameMenuItem4[] PROGMEM = "Switch Game";
+static const char sfmGameMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsSFMGame[] PROGMEM = {sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, sfmGameMenuItem5};
 
-void npMenu() {
+void sfmMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsNP, 3);
-  mainMenu = question_box("Nintendo Power", menuOptions, 3, 0);
+  convertPgm(menuOptionsSFM, 3);
+  mainMenu = question_box("SF Memory", menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
   {
     // Game menu
     case 0:
-      NPGameMenu();
+      sfmGameMenu();
       break;
     // Flash menu
     case 1:
-      mode = mode_NPFlash;
+      mode = mode_SFM_Flash;
       break;
     // Reset
     case 2:
@@ -80,9 +85,9 @@ void npMenu() {
   }
 }
 
-void NPGameMenu() {
+void sfmGameMenu() {
   // Switch to hirom all
-  if (send_NP(0x04) == 0x2A) {
+  if (send_SFM(0x04) == 0x2A) {
     delay(300);
 
     // Fill arrays with data
@@ -90,25 +95,25 @@ void NPGameMenu() {
 
     if (hasMenu) {
       // Create submenu options
-      char menuOptionsNPGames[8][20];
+      char menuOptionsSFMGames[8][20];
       for (int i = 0; i < (numGames); i++) {
-        strncpy(menuOptionsNPGames[i], gameCode[i], 10);
+        strncpy(menuOptionsSFMGames[i], gameCode[i], 10);
       }
 
       // Create menu with title and numGames options to choose from
       unsigned char gameSubMenu;
       // wait for user choice to come back from the question box menu
-      gameSubMenu = question_box("Select Game", menuOptionsNPGames, numGames, 0);
+      gameSubMenu = question_box("Select Game", menuOptionsSFMGames, numGames, 0);
 
       // Switch to game
-      send_NP(gameSubMenu + 0x80);
+      send_SFM(gameSubMenu + 0x80);
       delay(200);
       // Check for successfull switch
       byte timeout = 0;
       while (readBank_SNES(0, 0x2400) != 0x7D) {
         delay(200);
         // Try again
-        send_NP(gameSubMenu + 0x80);
+        send_SFM(gameSubMenu + 0x80);
         delay(200);
         timeout++;
         // Abort, something is wrong
@@ -119,7 +124,7 @@ void NPGameMenu() {
           println_Msg(F(" Timeout"));
           println_Msg(readBank_SNES(0, 0x2400), HEX);
           println_Msg(F(""));
-          print_Error(F("Please powercycle NP cart"), true);
+          print_Error(F("Powercycle SFM cart"), true);
         }
       }
       // Copy gameCode to romName in case of japanese chars in romName
@@ -127,12 +132,12 @@ void NPGameMenu() {
 
       // Print info
       getCartInfo_SNES();
-      mode = mode_NPGame;
+      mode = mode_SFM_Game;
     }
     else {
       // No menu so switch to only game
       // Switch to game
-      send_NP(0x80);
+      send_SFM(0x80);
       delay(200);
 
       // Copy gameCode to romName in case of japanese chars in romName
@@ -140,7 +145,7 @@ void NPGameMenu() {
 
       // Print info
       getCartInfo_SNES();
-      mode = mode_NPGame;
+      mode = mode_SFM_Game;
     }
   }
   else {
@@ -148,12 +153,12 @@ void NPGameMenu() {
   }
 }
 
-void NPGameOptions() {
-  // create menu with title and 3 options to choose from
+void sfmGameOptions() {
+  // create menu with title and 5 options to choose from
   unsigned char gameSubMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsNPGame, 5);
-  gameSubMenu = question_box("NP Game Menu", menuOptions, 5, 0);
+  convertPgm(menuOptionsSFMGame, 5);
+  gameSubMenu = question_box("SFM Game Menu", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gameSubMenu)
@@ -197,7 +202,7 @@ void NPGameOptions() {
 
     // Switch game
     case 3:
-      NPGameMenu();
+      sfmGameMenu();
       break;
 
     // Reset
@@ -213,12 +218,12 @@ void NPGameOptions() {
   }
 }
 
-void NPFlashMenu() {
+void sfmFlashMenu() {
   // create menu with title and 6 options to choose from
   unsigned char flashSubMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsNPFlash, 6);
-  flashSubMenu = question_box("NP Flash Menu", menuOptions, 6, 0);
+  convertPgm(menuOptionsSFMFlash, 6);
+  flashSubMenu = question_box("SFM Flash Menu", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSubMenu)
@@ -235,29 +240,29 @@ void NPFlashMenu() {
       romType = 1;
       print_Msg(F("Switch to HiRom..."));
       display_Update();
-      if (send_NP(0x04) == 0x2A) {
+      if (send_SFM(0x04) == 0x2A) {
         println_Msg(F("OK"));
         display_Update();
 
         // Reset flash
-        resetFlash_NP(0xC0);
-        resetFlash_NP(0xE0);
+        resetFlash_SFM(0xC0);
+        resetFlash_SFM(0xE0);
 
         flashSize = 4194304;
         numBanks = 64;
 
         // Get name, add extension and convert to char array for sd lib
-        EEPROM_readAnything(0, foldern);
-        sprintf(fileName, "NP%d", foldern);
+        EEPROM_readAnything(10, foldern);
+        sprintf(fileName, "SFM%d", foldern);
         strcat(fileName, ".bin");
         sd.mkdir("NP", true);
         sd.chdir("NP");
         // write new folder number back to eeprom
         foldern = foldern + 1;
-        EEPROM_writeAnything(0, foldern);
+        EEPROM_writeAnything(10, foldern);
 
         // Read flash
-        readFlash_NP();
+        readFlash_SFM();
       }
       else {
         print_Error(F("Switch to HiRom failed"), false);
@@ -277,12 +282,12 @@ void NPFlashMenu() {
       println_Msg(F("Writing 1st rom"));
       display_Update();
       // Program 1st flashrom
-      write_NP(0xC0, 0);
+      write_SFM(0xC0, 0);
       display_Clear();
       println_Msg(F("Writing 2nd rom"));
       display_Update();
       // Program 2nd flashrom
-      write_NP(0xE0, 2097152);
+      write_SFM(0xE0, 2097152);
       break;
 
     // Print mapping
@@ -297,22 +302,22 @@ void NPFlashMenu() {
       romType = 1;
       print_Msg(F("Switch to HiRom..."));
       display_Update();
-      if (send_NP(0x04) == 0x2A) {
+      if (send_SFM(0x04) == 0x2A) {
         println_Msg(F("OK"));
         display_Update();
-        idFlash_NP(0xC0);
+        idFlash_SFM(0xC0);
         if (strcmp(flashid, "c2f3") == 0) {
-          idFlash_NP(0xE0);
+          idFlash_SFM(0xE0);
           if (strcmp(flashid, "c2f3") == 0) {
             // Reset flash
-            resetFlash_NP(0xC0);
-            resetFlash_NP(0xE0);
+            resetFlash_SFM(0xC0);
+            resetFlash_SFM(0xE0);
             delay(100);
             // Clear screen
             display_Clear();
             printMapping();
-            resetFlash_NP(0xC0);
-            resetFlash_NP(0xE0);
+            resetFlash_SFM(0xC0);
+            resetFlash_SFM(0xE0);
           }
           else {
             print_Error(F("Error: Wrong Flash ID"), true);
@@ -339,20 +344,20 @@ void NPFlashMenu() {
       romType = 1;
       print_Msg(F("Switch to HiRom..."));
       display_Update();
-      if (send_NP(0x04) == 0x2A) {
+      if (send_SFM(0x04) == 0x2A) {
         println_Msg(F("OK"));
         display_Update();
-        idFlash_NP(0xC0);
+        idFlash_SFM(0xC0);
         if (strcmp(flashid, "c2f3") == 0) {
-          idFlash_NP(0xE0);
+          idFlash_SFM(0xE0);
           if (strcmp(flashid, "c2f3") == 0) {
             // Reset flash
-            resetFlash_NP(0xC0);
-            resetFlash_NP(0xE0);
+            resetFlash_SFM(0xC0);
+            resetFlash_SFM(0xE0);
             delay(100);
             readMapping();
-            resetFlash_NP(0xC0);
-            resetFlash_NP(0xE0);
+            resetFlash_SFM(0xC0);
+            resetFlash_SFM(0xE0);
           }
           else {
             print_Error(F("Error: Wrong Flash ID"), true);
@@ -380,7 +385,7 @@ void NPFlashMenu() {
       eraseMapping(0xE0);
       print_Msg(F("Blankcheck..."));
       display_Update();
-      if (blankcheckMapping()) {
+      if (blankcheckMapping_SFM()) {
         println_Msg(F("OK"));
         display_Update();
       }
@@ -405,13 +410,13 @@ void NPFlashMenu() {
       display_Update();
 
       // Write mapping
-      writeMapping(0xD0, 0);
-      writeMapping(0xE0, 256);
+      writeMapping_SFM(0xD0, 0);
+      writeMapping_SFM(0xE0, 256);
       break;
 
     // Go back
     case 5:
-      mode = mode_NP;
+      mode = mode_SFM;
       break;
   }
   if (flashSubMenu != 5) {
@@ -534,7 +539,7 @@ void getGames() {
 /******************************************
    Setup
  *****************************************/
-void setup_NP() {
+void setup_SFM() {
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
   // Output a high signal to disable snesCIC if installed
@@ -586,12 +591,12 @@ void setup_NP() {
 
   // Switch to HiRom All
   byte timeout = 0;
-  send_NP(0x04);
+  send_SFM(0x04);
   delay(100);
   while (readBank_SNES(0, 0x2400) != 0x2A) {
     delay(100);
     // Try again
-    send_NP(0x04);
+    send_SFM(0x04);
     delay(100);
     timeout++;
     // Abort, something is wrong
@@ -599,7 +604,7 @@ void setup_NP() {
       println_Msg(F("Hirom All Timeout"));
       println_Msg(F(""));
       println_Msg(F(""));
-      print_Error(F("Please powercycle NP cart"), true);
+      print_Error(F("Powercycle SFM cart"), true);
     }
   }
 }
@@ -608,7 +613,7 @@ void setup_NP() {
    29F1601 flashrom functions (NP)
  *****************************************/
 // Reset the MX29F1601 flashrom, startbank is 0xC0 for first and 0xE0 for second flashrom
-void resetFlash_NP(int startBank) {
+void resetFlash_SFM(int startBank) {
   // Configure control pins
   controlOut_SNES();
   // Set data pins to output
@@ -628,7 +633,7 @@ void resetFlash_NP(int startBank) {
 }
 
 // Print flashrom manufacturer and device ID
-void idFlash_NP(int startBank) {
+void idFlash_SFM(int startBank) {
   // Configure control pins
   controlOut_SNES();
   // Set data pins to output
@@ -664,7 +669,7 @@ void idFlash_NP(int startBank) {
 }
 
 // Write the flashroms by reading a file from the SD card, pos defines where in the file the reading/writing should start
-void writeFlash_NP(int startBank, uint32_t pos) {
+void writeFlash_SFM(int startBank, uint32_t pos) {
   display_Clear();
   print_Msg(F("Writing Bank 0x"));
   print_Msg(startBank, HEX);
@@ -705,7 +710,7 @@ void writeFlash_NP(int startBank, uint32_t pos) {
             }
           }
           // Wait until write is finished
-          busyCheck_NP(startBank);
+          busyCheck_SFM(startBank);
         }
       }
     }
@@ -729,7 +734,7 @@ void writeFlash_NP(int startBank, uint32_t pos) {
             }
           }
           // Wait until write is finished
-          busyCheck_NP(startBank);
+          busyCheck_SFM(startBank);
         }
       }
     }
@@ -743,7 +748,7 @@ void writeFlash_NP(int startBank, uint32_t pos) {
 }
 
 // Delay between write operations based on status register
-void busyCheck_NP(byte startBank) {
+void busyCheck_SFM(byte startBank) {
   // Set data pins to input
   dataIn();
   // Set control pins to input and therefore pull CE low and latch status register content
@@ -777,7 +782,7 @@ void busyCheck_NP(byte startBank) {
 }
 
 // Erase the flashrom to 0xFF
-void eraseFlash_NP(int startBank) {
+void eraseFlash_SFM(int startBank) {
 
   // Configure control pins
   controlOut_SNES();
@@ -803,11 +808,11 @@ void eraseFlash_NP(int startBank) {
   }
 
   // Wait for erase to complete
-  busyCheck_NP(startBank);
+  busyCheck_SFM(startBank);
 }
 
 // Check if an erase succeeded, return 1 if blank and 0 if not
-byte blankcheck_NP(int startBank) {
+byte blankcheck_SFM(int startBank) {
 
   // Set data pins to input again
   dataIn();
@@ -839,7 +844,7 @@ byte blankcheck_NP(int startBank) {
 }
 
 // Check if a write succeeded, returns 0 if all is ok and number of errors if not
-unsigned long verifyFlash_NP(int startBank, uint32_t pos) {
+unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
   unsigned long  verified = 0;
 
   // Open file on sd card
@@ -892,13 +897,13 @@ unsigned long verifyFlash_NP(int startBank, uint32_t pos) {
 }
 
 // Read flashroms and save them to the SD card
-void readFlash_NP() {
+void readFlash_SFM() {
   // Set data pins to input
   dataIn();
   // Set control pins to input
   controlIn_SNES();
 
-  print_Msg(F("Saving as "));
+  print_Msg(F("Saving as NP/"));
   print_Msg(fileName);
   println_Msg(F("..."));
   display_Update();
@@ -935,7 +940,7 @@ void readFlash_NP() {
 }
 
 // Display protected sectors/banks as 0xc2 and unprotected as 0x00
-void readSectorProtection_NP(byte startBank) {
+void readSectorProtection_SFM(byte startBank) {
 
   // Configure control pins
   controlOut_SNES();
@@ -1038,7 +1043,7 @@ void readMapping() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(10, foldern);
   sprintf(fileName, "NP%d", foldern);
   strcat(fileName, ".MAP");
   sd.mkdir("NP", true);
@@ -1046,7 +1051,7 @@ void readMapping() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1112,9 +1117,9 @@ void eraseMapping(byte startBank) {
 
   if (unlockHirom()) {
     // Get ID
-    idFlash_NP(startBank);
+    idFlash_SFM(startBank);
     if (strcmp(flashid, "c2f3") == 0) {
-      resetFlash_NP(startBank);
+      resetFlash_SFM(startBank);
 
       // Switch to write
       dataOut();
@@ -1130,7 +1135,7 @@ void eraseMapping(byte startBank) {
       writeBank_SNES(startBank, 0x5555L * 2, 0xe0);
 
       // Wait until complete
-      busyCheck_NP(startBank);
+      busyCheck_SFM(startBank);
 
       // Switch to read
       dataIn();
@@ -1146,7 +1151,7 @@ void eraseMapping(byte startBank) {
 }
 
 // Check if the current mapping is all 0xFF
-byte blankcheckMapping() {
+byte blankcheckMapping_SFM() {
   byte blank = 1;
 
   // Switch to write
@@ -1220,13 +1225,13 @@ byte blankcheckMapping() {
   return blank;
 }
 
-void writeMapping(byte startBank, uint32_t pos) {
+void writeMapping_SFM(byte startBank, uint32_t pos) {
 
   if (unlockHirom()) {
     // Get ID
-    idFlash_NP(startBank);
+    idFlash_SFM(startBank);
     if (strcmp(flashid, "c2f3") == 0) {
-      resetFlash_NP(startBank);
+      resetFlash_SFM(startBank);
 
       // Switch to write
       dataOut();
@@ -1259,7 +1264,7 @@ void writeMapping(byte startBank, uint32_t pos) {
               writeBank_SNES(startBank, currByte + c, sdBuffer[c]);
             }
           }
-          busyCheck_NP(startBank);
+          busyCheck_SFM(startBank);
         }
 
         // Close the file:
@@ -1284,20 +1289,20 @@ void writeMapping(byte startBank, uint32_t pos) {
 }
 
 /******************************************
-  Nintendo Power functions
+  SF Memory functions
 *****************************************/
 // Switch to HiRom All and unlock Write Protection
 boolean unlockHirom() {
   romType = 1;
   print_Msg(F("Switch to HiRom..."));
   display_Update();
-  if (send_NP(0x04) == 0x2A) {
+  if (send_SFM(0x04) == 0x2A) {
     println_Msg(F("OK"));
     display_Update();
     // Unlock Write Protection
     print_Msg(F("Enable Write..."));
     display_Update();
-    send_NP(0x02);
+    send_SFM(0x02);
     if (readBank_SNES(0, 0x2401) == 0x4) {
       println_Msg(F("OK"));
       display_Update();
@@ -1317,7 +1322,7 @@ boolean unlockHirom() {
 }
 
 // Send a command to the MX15001 chip
-byte send_NP(byte command) {
+byte send_SFM(byte command) {
   // Switch to write
   dataOut();
   controlOut_SNES();
@@ -1330,7 +1335,7 @@ byte send_NP(byte command) {
   controlIn_SNES();
 
   // Read status
-  NPReady = readBank_SNES(0, 0x2400);
+  sfmReady = readBank_SNES(0, 0x2400);
 
   // Switch to write
   dataOut();
@@ -1340,7 +1345,7 @@ byte send_NP(byte command) {
   writeBank_SNES(0, 0x2401, 0x84);
 
   // NP_CMD_06h, send this only if above read has returned 7Dh, not if it's already returning 2Ah
-  if (NPReady == 0x7D) {
+  if (sfmReady == 0x7D) {
     writeBank_SNES(0, 0x2400, 0x06);
     writeBank_SNES(0, 0x2400, 0x39);
   }
@@ -1353,26 +1358,26 @@ byte send_NP(byte command) {
   controlIn_SNES();
 
   // Read status
-  NPReady = readBank_SNES(0, 0x2400);
-  return NPReady;
+  sfmReady = readBank_SNES(0, 0x2400);
+  return sfmReady;
 }
 
 // This function will erase and program the NP cart from a 4MB file off the SD card
-void write_NP(int startBank, uint32_t pos) {
+void write_SFM(int startBank, uint32_t pos) {
   // Switch NP cart's mapping
   if (unlockHirom()) {
     // Get ID
-    idFlash_NP(startBank);
+    idFlash_SFM(startBank);
     if (strcmp(flashid, "c2f3") == 0) {
       print_Msg(F("Flash ID: "));
       println_Msg(flashid);
       display_Update();
-      resetFlash_NP(startBank);
+      resetFlash_SFM(startBank);
       delay(1000);
       // Erase flash
       print_Msg(F("Blankcheck..."));
       display_Update();
-      if (blankcheck_NP(startBank)) {
+      if (blankcheck_SFM(startBank)) {
         println_Msg(F("OK"));
         display_Update();
       }
@@ -1381,12 +1386,12 @@ void write_NP(int startBank, uint32_t pos) {
         display_Clear();
         print_Msg(F("Erasing..."));
         display_Update();
-        eraseFlash_NP(startBank);
-        resetFlash_NP(startBank);
+        eraseFlash_SFM(startBank);
+        resetFlash_SFM(startBank);
         println_Msg(F("Done"));
         print_Msg(F("Blankcheck..."));
         display_Update();
-        if (blankcheck_NP(startBank)) {
+        if (blankcheck_SFM(startBank)) {
           println_Msg(F("OK"));
           display_Update();
         }
@@ -1395,15 +1400,15 @@ void write_NP(int startBank, uint32_t pos) {
         }
       }
       // Write flash
-      writeFlash_NP(startBank, pos);
+      writeFlash_SFM(startBank, pos);
 
       // Reset flash
-      resetFlash_NP(startBank);
+      resetFlash_SFM(startBank);
 
       // Checking for errors
       print_Msg(F("Verifying..."));
       display_Update();
-      writeErrors = verifyFlash_NP(startBank, pos);
+      writeErrors = verifyFlash_SFM(startBank, pos);
       if (writeErrors == 0) {
         println_Msg(F("OK"));
         display_Update();
@@ -1422,6 +1427,506 @@ void write_NP(int startBank, uint32_t pos) {
   else {
     print_Error(F("Unlock failed"), true);
   }
+}
+
+/******************************************
+  GB Memory Cassette
+******************************************/
+
+/******************************************
+  Menu
+*****************************************/
+// GBM menu items
+static const char gbmMenuItem1[] PROGMEM = "Read Flash";
+static const char gbmMenuItem2[] PROGMEM = "Write Flash";
+static const char gbmMenuItem3[] PROGMEM = "Read Mapping";
+static const char gbmMenuItem4[] PROGMEM = "Write Mapping";
+static const char* const menuOptionsGBM[] PROGMEM = {gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4};
+
+void gbmMenu() {
+  // create menu with title and 4 options to choose from
+  unsigned char mainMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsGBM, 4);
+  mainMenu = question_box("GB Memory Menu", menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (mainMenu)
+  {
+    // Read Flash
+    case 0:
+      // Clear screen
+      display_Clear();
+      // Reset to root directory
+      sd.chdir("/");
+
+      // Read flash
+      readFlash_GBM();
+      break;
+
+    // Write Flash
+    case 1:
+      filePath[0] = '\0';
+      sd.chdir("/");
+      // Launch file browser
+      fileBrowser("Select 1MB file");
+      display_Clear();
+      sprintf(filePath, "%s/%s", filePath, fileName);
+      println_Msg(F("Writing rom"));
+      display_Update();
+
+      // Write flash
+      writeFlash_GBM();
+      break;
+
+    // Print mapping
+    case 2:
+      // Clear screen
+      display_Clear();
+
+      // Reset to root directory
+      sd.chdir("/");
+
+      // Read mapping
+      readMapping_GBM();
+      break;
+
+    // Write mapping
+    case 3:
+      // Clear screen
+      display_Clear();
+
+      // Reset to root directory
+      sd.chdir("/");
+
+      // Erase mapping
+      eraseMapping_GBM();
+      print_Msg(F("Blankcheck..."));
+      display_Update();
+      if (blankcheckMapping_GBM()) {
+        println_Msg(F("OK"));
+        display_Update();
+      }
+      else {
+        println_Msg(F("Nope"));
+        break;
+      }
+
+      // Clear screen
+      display_Clear();
+
+      // Clear filepath
+      filePath[0] = '\0';
+
+      // Reset to root directory
+      sd.chdir("/");
+
+      // Launch file browser
+      fileBrowser("Select MAP file");
+      display_Clear();
+      sprintf(filePath, "%s/%s", filePath, fileName);
+      display_Update();
+
+      // Write mapping
+      writeMapping_GBM();
+      break;
+  }
+  println_Msg(F(""));
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+}
+
+/******************************************
+  Setup
+*****************************************/
+void setup_GBM() {
+  // Set Address Pins to Output
+  //A0-A7
+  DDRF = 0xFF;
+  //A8-A15
+  DDRK = 0xFF;
+
+  // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) RD(PH6)
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Output a high signal on all pins, pins are active low therefore everything is disabled now
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+
+  // Set Data Pins (D0-D7) to Input
+  DDRC = 0x00;
+}
+
+/**********************
+  LOW LEVEL
+**********************/
+// Read one word out of the cartridge
+byte readByte_GBM(word myAddress) {
+  // Set data pins to Input
+  DDRC = 0x00;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  // Wait until all is stable
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pull read(PH6) low
+  PORTH &= ~(1 << 6);
+
+  // Wait ~310ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  byte tempByte = PINC;
+
+  // Pull read(PH6) high
+  PORTH |= (1 << 6);
+
+  // Wait
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  return tempByte;
+}
+
+// Write one word to data pins of the cartridge
+void writeByte_GBM(word myAddress, byte myData) {
+  // Set data pins to Output
+  DDRC = 0xFF;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTC = myData;
+
+  // Wait until all is stable
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pull write(PH5) low
+  PORTH &= ~(1 << 5);
+
+  // Wait ~310ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pull write(PH5) high
+  PORTH |= (1 << 5);
+
+  // Wait ~125ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Set data pins to Input
+  DDRC = 0x00;
+}
+
+/**********************
+  HELPER FUNCTIONS
+**********************/
+void printSdBuffer(word startByte, word numBytes) {
+  for (int currByte = 0; currByte < numBytes; currByte += 10) {
+    for (byte c = 0; c < 10; c++) {
+      // Convert to char array so we don't lose leading zeros
+      char currByteStr[2];
+      sprintf(currByteStr, "%02X", sdBuffer[startByte + currByte + c]);
+      print_Msg(currByteStr);
+    }
+    // Add a new line every 10 bytes
+    println_Msg("");
+  }
+  display_Update();
+}
+
+void readROM_GBM(word numBanks) {
+  println_Msg(F("Reading Rom..."));
+  display_Update();
+
+  // Get name, add extension and convert to char array for sd lib
+  EEPROM_readAnything(10, foldern);
+  sprintf(fileName, "GBM%d", foldern);
+  strcat(fileName, ".bin");
+  sd.mkdir("NP", true);
+  sd.chdir("NP");
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't create file on SD"), true);
+  }
+  else {
+    // Read rom
+    word currAddress = 0;
+
+    for (word currBank = 1; currBank < numBanks; currBank++) {
+      // Set rom bank
+      writeByte_GBM(0x2100, currBank);
+
+      // Switch bank start address
+      if (currBank > 1) {
+        currAddress = 0x4000;
+      }
+
+      for (; currAddress < 0x7FFF; currAddress += 512) {
+        for (int currByte = 0; currByte < 512; currByte++) {
+          sdBuffer[currByte] = readByte_GBM(currAddress + currByte);
+        }
+        myFile.write(sdBuffer, 512);
+      }
+    }
+
+    // Close the file:
+    myFile.close();
+
+    // Signal end of process
+    print_Msg(F("Saved to NP/"));
+    println_Msg(fileName);
+    display_Update();
+  }
+}
+
+/**********************
+  GB Memory Functions
+**********************/
+void send_GBM(byte myCommand) {
+  switch (myCommand) {
+    case 0x02:
+      //CMD_02h -> Write enable Step 2
+      writeByte_GBM(0x0120, 0x02);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x04:
+      //CMD_04h -> Map entire flashrom (MBC4 mode)
+      writeByte_GBM(0x0120, 0x04);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x05:
+      //CMD_05h -> Map menu (MBC5 mode)
+      writeByte_GBM(0x0120, 0x05);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x08:
+      //CMD_08h -> disable writes/reads to/from special Nintendo Power registers (those at 0120h..013Fh)
+      writeByte_GBM(0x0120, 0x08);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x09:
+      //CMD_09h Wakeup -> re-enable access to ports 0120h..013Fh
+      writeByte_GBM(0x0120, 0x09);
+      writeByte_GBM(0x0121, 0xAA);
+      writeByte_GBM(0x0122, 0x55);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x0A:
+      //CMD_0Ah -> Write enable Step 1
+      writeByte_GBM(0x0120, 0x0A);
+      writeByte_GBM(0x0125, 0x62);
+      writeByte_GBM(0x0126, 0x04);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x10:
+      //CMD_10h -> disable writes to normal MBC registers (such like 2100h)
+      writeByte_GBM(0x0120, 0x10);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    case 0x11:
+      //CMD_11h -> re-enable access to MBC registers like 0x2100
+      writeByte_GBM(0x0120, 0x11);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+  }
+}
+
+// CMD_0Fh -> Write address/byte to flash
+void send_Flash(word myAddress, byte myData) {
+  byte myAddrLow = myAddress & 0xFF;
+  byte myAddrHigh = (myAddress >> 8) & 0xFF;
+  // Bank must be 0x01 for writes to 0x5555
+  writeByte_GBM(0x0120, 0x0F);
+  writeByte_GBM(0x0125, myAddrHigh);
+  writeByte_GBM(0x0126, myAddrLow);
+  writeByte_GBM(0x0127, myData);
+  writeByte_GBM(0x013F, 0xA5);
+}
+
+// Enable NP ports 0x0120...
+boolean wakeup_GBM() {
+  byte timeout = 0;
+
+  // First byte of NP register is always 0x21
+  while (readByte_GBM(0x0120) != 0x21) {
+    send_GBM(0x09);
+    timeout++;
+    if (timeout > 4) {
+      print_Error(F("Error: Time Out"), true);
+      return 0;
+    }
+  }
+}
+
+void switchGame_GBM(byte myData) {
+  // Enable ports 0x0120...
+  wakeup_GBM();
+
+  //CMD_C0h -> map selected game without reset
+  writeByte_GBM(0x0120, 0xC0 & myData);
+  writeByte_GBM(0x013F, 0xA5);
+}
+
+void enableWrite_GBM() {
+  send_GBM(0x0A);
+  send_GBM(0x02);
+}
+
+void resetFlash_GBM() {
+  // Enable ports 0x0120...
+  wakeup_GBM();
+
+  // Send reset command
+  writeByte_GBM(0x2100, 0x01);
+  send_Flash(0x5555, 0xAA);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0xF0);
+  delay(100);
+}
+
+boolean readFlashID_GBM() {
+  writeByte_GBM(0x2100, 0x01);
+  // Read ID command
+  send_Flash(0x5555, 0xAA);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0x90);
+
+  // Read the two id bytes into a string
+  sprintf(flashid, "%02X%02X", readByte_GBM(0), readByte_GBM(1));
+  if (strcmp(flashid, "C289") == 0) {
+    return 1;
+  }
+  else {
+    println_Msg(flashid);
+    print_Error(F("Unknown Flash ID"), true);
+    return 0;
+  }
+}
+
+void readMapping_GBM() {
+  // Enable ports 0x0120...
+  wakeup_GBM();
+
+  // Set WE and WP
+  enableWrite_GBM();
+
+  // Enable hidden mapping area
+  writeByte_GBM(0x2100, 0x01);
+  send_Flash(0x5555, 0xAA);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0x77);
+  send_Flash(0x5555, 0xAA);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0x77);
+
+  // Read mapping
+  println_Msg(F("Reading Mapping..."));
+  display_Update();
+
+  // Get name, add extension and convert to char array for sd lib
+  EEPROM_readAnything(10, foldern);
+  sprintf(fileName, "GBM%d", foldern);
+  strcat(fileName, ".map");
+  sd.mkdir("NP", true);
+  sd.chdir("NP");
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't create file on SD"), true);
+  }
+  else {
+    for (byte currByte = 0; currByte < 128; currByte++) {
+      sdBuffer[currByte] = readByte_GBM(currByte);
+    }
+    myFile.write(sdBuffer, 128);
+
+    // Close the file:
+    myFile.close();
+
+    // Signal end of process
+    printSdBuffer(0, 20);
+    printSdBuffer(102, 20);
+    println_Msg("");
+    print_Msg(F("Saved to NP/"));
+    println_Msg(fileName);
+    display_Update();
+  }
+
+  // Reset flash to leave hidden mapping area
+  resetFlash_GBM();
+}
+
+void readFlash_GBM() {
+  // Enable ports 0x0120...
+  wakeup_GBM();
+
+  // Check flashid
+  if (readFlashID_GBM()) {
+    // Reset flashrom to leave flashID area and switch to output
+    resetFlash_GBM();
+    // Map entire flashrom
+    send_GBM(0x04);
+    // Disable ports 0x0120...
+    send_GBM(0x08);
+    // Read 1MB rom
+    readROM_GBM(64);
+  }
+  else {
+    print_Error(F("Flash ID error"), true);
+  }
+}
+
+void eraseFlash_GBM() {
+
+}
+
+boolean blankcheckFlash_GBM() {
+
+}
+
+void writeFlash_GBM() {
+  // Enable ports 0x0120...
+  wakeup_GBM();
+
+  // Check flashid
+  if (readFlashID_GBM()) {
+    // Reset flashrom to leave flashID area and switch to output
+    resetFlash_GBM();
+    // Earse flash
+    eraseFlash_GBM();
+    if (blankcheckFlash_GBM()) {
+
+    }
+    else {
+      print_Error(F("Erase failed"), true);
+    }
+  }
+  else {
+    print_Error(F("Flash ID error"), true);
+  }
+}
+
+void eraseMapping_GBM() {
+
+}
+
+boolean blankcheckMapping_GBM() {
+
+}
+
+void writeMapping_GBM() {
+
 }
 
 //******************************************

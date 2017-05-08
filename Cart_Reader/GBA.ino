@@ -453,8 +453,7 @@ void setup_GBA() {
   getCartInfo_GBA();
   display_Clear();
 
-  println_Msg(F("GBA Cart Info"));
-  print_Msg(F("Rom Name: "));
+  print_Msg(F("Name: "));
   println_Msg(romName);
   print_Msg(F("Cart ID: "));
   println_Msg(cartID);
@@ -733,12 +732,12 @@ void getCartInfo_GBA() {
       print_Error(F("GBA.txt missing"), true);
     }
 
-    // Dump name into 8.3 compatible format
+    // Get name
     byte myByte = 0;
     byte myLength = 0;
     for (int addr = 0xA0; addr <= 0xAB; addr++) {
       myByte = sdBuffer[addr];
-      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 8) {
+      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 16) {
         romName[myLength] = char(myByte);
         myLength++;
       }
@@ -775,25 +774,25 @@ void getCartInfo_GBA() {
 // Dump ROM
 void readROM_GBA() {
   // Get name, add extension and convert to char array for sd lib
-  char fileName[26];
   strcpy(fileName, romName);
   strcat(fileName, ".gba");
 
   // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "GBA/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   //clear the screen
   display_Clear();
-  println_Msg(F("Reading to: "));
-  println_Msg(folder);
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
   display_Update();
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -821,10 +820,6 @@ void readROM_GBA() {
 
   // Close the file:
   myFile.close();
-
-  // Signal end of process
-  print_Msg(F("Saved as "));
-  println_Msg(fileName);
 }
 
 // Calculate the checksum of the dumped rom
@@ -832,13 +827,12 @@ boolean compare_checksum_GBA () {
   println_Msg(F("Calculating Checksum"));
   display_Update();
 
-  char fileName[26];
   strcpy(fileName, romName);
   strcat(fileName, ".gba");
 
   // last used rom folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern - 1);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "GBA/ROM/%s/%d", romName, foldern - 1);
   sd.chdir(folder);
 
   // If file exists
@@ -901,24 +895,19 @@ void readFRAM_GBA (unsigned long framSize) {
   strcat(fileName, ".srm");
 
   // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  // Signal end of process
-  print_Msg(F("Reading to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern);
-  print_Msg(F("/"));
-  print_Msg(fileName);
-  print_Msg(F("..."));
+  // Save location
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
   display_Update();
-
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1315,25 +1304,21 @@ void readFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) {
     strcat(fileName, ".fla");
 
     // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
+    EEPROM_readAnything(10, foldern);
 
-    sprintf(folder, "SAVE/%s/%d", romName, foldern);
+    sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
-    // Signal end of process
-    print_Msg(F("Reading to SAVE/"));
-    print_Msg(romName);
-    print_Msg(F("/"));
-    print_Msg(foldern);
-    print_Msg(F("/"));
-    print_Msg(fileName);
-    print_Msg(F("..."));
+    // Save location
+    print_Msg(F("Saving to "));
+    print_Msg(folder);
+    println_Msg(F("/..."));
     display_Update();
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
+    EEPROM_writeAnything(10, foldern);
   }
 
   //open file on sd card
@@ -1548,25 +1533,21 @@ void readEeprom_GBA(word eepSize) {
   strcat(fileName, ".eep");
 
   // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(10, foldern);
 
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  // Signal end of process
-  print_Msg(F("Reading to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern);
-  print_Msg(F("/"));
-  print_Msg(fileName);
-  print_Msg(F("..."));
+  // Save location
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
   display_Update();
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

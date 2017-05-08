@@ -375,7 +375,7 @@ void getCartInfo_SNES() {
   }
 
   display_Clear();
-  print_Msg(F("Rom Name: "));
+  print_Msg(F("Name: "));
   println_Msg(romName);
 
   print_Msg(F("Type: "));
@@ -560,12 +560,12 @@ boolean checkcart_SNES() {
   //Check SD card for alt config
   checkAltConf();
 
-  // Dump name into 8.3 compatible format
+  // Get name
   byte myByte = 0;
   byte myLength = 0;
   for (unsigned int i = 65472; i < 65492; i++) {
     myByte = readBank_SNES(0, i);
-    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 8) {
+    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 16) {
       romName[myLength] = char(myByte);
       myLength++;
     }
@@ -777,8 +777,8 @@ boolean compare_checksum() {
   strcat(fileName, ".sfc");
 
   // last used rom folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern - 1);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "SNES/ROM/%s/%d", romName, foldern - 1);
 
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
@@ -810,20 +810,21 @@ void readROM_SNES() {
   strcat(fileName, ".sfc");
 
   // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "SNES/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   //clear the screen
   display_Clear();
-  println_Msg(F("Creating folder: "));
-  println_Msg(folder);
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
   display_Update();
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -832,9 +833,6 @@ void readROM_SNES() {
 
   // Check if LoROM or HiROM...
   if (romType == LO) {
-    println_Msg(F("Dumping LoRom..."));
-    display_Update();
-
     // Read up to 96 banks starting at bank 0×00.
     for (int currBank = 0; currBank < numBanks; currBank++) {
       // Dump the bytes to SD 512B at a time
@@ -848,9 +846,6 @@ void readROM_SNES() {
   }
   // Dump High-type ROM
   else if (((romType == HI) || (romType == SA) || (romType == EX)) && (romChips != 69)) {
-    println_Msg(F("Dumping HiRom..."));
-    display_Update();
-
     for (int currBank = 192; currBank < (numBanks + 192); currBank++) {
       for (long currByte = 0; currByte < 65536; currByte += 512) {
         for (int c = 0; c < 512; c++) {
@@ -862,9 +857,6 @@ void readROM_SNES() {
   }
   // Dump SDD1 High-type ROM
   else if ((romType == HI) && (romChips == 69)) {
-    println_Msg(F("Dumping SDD1 HiRom..."));
-    display_Update();
-
     controlIn_SNES();
     byte initialSOMap = readBank_SNES(0, 18439);
 
@@ -898,10 +890,6 @@ void readROM_SNES() {
   }
   // Close the file:
   myFile.close();
-
-  // Signal end of process
-  print_Msg(F("Saved as "));
-  println_Msg(fileName);
 }
 
 /******************************************
@@ -1044,24 +1032,14 @@ void readSRAM () {
   strcat(fileName, ".srm");
 
   // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "SNES/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  // Signal end of process
-  print_Msg(F("Reading to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern);
-  print_Msg(F("/"));
-  print_Msg(fileName);
-  print_Msg(F("..."));
-  display_Update();
-
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1106,7 +1084,10 @@ void readSRAM () {
   myFile.close();
 
   // Signal end of process
-  println_Msg(F("Done"));
+  display_Clear();
+  print_Msg(F("Saved to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
   display_Update();
 }
 

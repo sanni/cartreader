@@ -128,7 +128,7 @@ void setup_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
     println_Msg(F("GB Cart Info"));
-    print_Msg(F("Rom Name: "));
+    print_Msg(F("Name: "));
     println_Msg(romName);
     print_Msg(F("Rom Type: "));
     switch (romType) {
@@ -329,13 +329,13 @@ void getCartInfo_GB() {
   // Get Checksum as string
   sprintf(checksumStr, "%02X%02X", readByte_GB(0x014E), readByte_GB(0x014F));
 
-  // Dump name into 8.3 compatible format
+  // Get name
   byte myByte = 0;
   byte myLength = 0;
 
   for (int addr = 0x0134; addr <= 0x13C; addr++) {
     myByte = readByte_GB(addr);
-    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 8) {
+    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 16) {
       romName[myLength] = char(myByte);
       myLength++;
     }
@@ -345,25 +345,24 @@ void getCartInfo_GB() {
 // Dump ROM
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
-  char fileName[26];
   strcpy(fileName, romName);
   strcat(fileName, ".GB");
 
   // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "GB/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  //clear the screen
   display_Clear();
-  println_Msg(F("Creating folder: "));
-  println_Msg(folder);
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
   display_Update();
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -406,10 +405,6 @@ void readROM_GB() {
 
   // Close the file:
   myFile.close();
-
-  // Signal end of process
-  print_Msg(F("Saved as "));
-  println_Msg(fileName);
 }
 
 unsigned int calc_checksum_GB (char* fileName, char* folder) {
@@ -451,13 +446,12 @@ boolean compare_checksum_GB() {
   println_Msg(F("Calculating Checksum"));
   display_Update();
 
-  char fileName[26];
   strcpy(fileName, romName);
   strcat(fileName, ".GB");
 
   // last used rom folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern - 1);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "GB/ROM/%s/%d", romName, foldern - 1);
 
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
@@ -483,19 +477,18 @@ void readSRAM_GB() {
   if (sramEndAddress > 0) {
 
     // Get name, add extension and convert to char array for sd lib
-    char fileName[26];
     strcpy(fileName, romName);
     strcat(fileName, ".sav");
 
     // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "SAVE/%s/%d", romName, foldern);
+    EEPROM_readAnything(10, foldern);
+    sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
+    EEPROM_writeAnything(10, foldern);
 
     //open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -540,12 +533,9 @@ void readSRAM_GB() {
     myFile.close();
 
     // Signal end of process
-    print_Msg(F("Saved to SAVE/"));
-    print_Msg(romName);
-    print_Msg(F("/"));
-    print_Msg(foldern - 1);
-    print_Msg(F("/"));
-    println_Msg(fileName);
+    print_Msg(F("Saved to "));
+    print_Msg(folder);
+    println_Msg(F("/"));
     display_Update();
   }
   else {

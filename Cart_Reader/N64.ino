@@ -132,10 +132,6 @@ void n64CartMenu() {
   {
     case 0:
       sd.chdir("/");
-      display_Clear();
-
-      println_Msg(F("Reading Rom..."));
-      display_Update();
       readRom_N64();
       break;
 
@@ -805,17 +801,19 @@ void readBlock(word myAddress) {
 void readMPK() {
   // Change to root
   sd.chdir("/");
+  // Make MPK directory
+  sd.mkdir("N64/MPK", true);
   // Change to MPK directory
-  sd.chdir("MPK");
+  sd.chdir("N64/MPK");
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(10, foldern);
   sprintf(fileName, "%d", foldern);
   strcat(fileName, ".mpk");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -836,7 +834,7 @@ void readMPK() {
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved as /MPK/"));
+  print_Msg(F("Saved as N64/MPK/"));
   println_Msg(fileName);
   display_Update();
 }
@@ -1202,10 +1200,10 @@ void idCart() {
   // Get rom version
   romVersion = sdBuffer[0x3F];
 
-  // Get name in 8.3 compatible format
+  // Get name
   byte myLength = 0;
   for (unsigned int i = 0; i < 20; i++) {
-    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 8) {
+    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 16) {
       romName[myLength] = char(sdBuffer[0x20 + i]);
       myLength++;
     }
@@ -1341,14 +1339,14 @@ void readEeprom() {
     strcat(fileName, ".eep");
 
     // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "SAVE/%s/%d", romName, foldern);
+    EEPROM_readAnything(10, foldern);
+    sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
+    EEPROM_writeAnything(10, foldern);
 
     // Open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1386,12 +1384,11 @@ void readEeprom() {
     }
     // Close the file:
     myFile.close();
-    print_Msg(F("Saved to SAVE/"));
-    print_Msg(romName);
-    print_Msg(F("/"));
-    print_Msg(foldern - 1);
-    print_Msg(F("/"));
-    println_Msg(fileName);
+    //clear the screen
+    display_Clear();
+    print_Msg(F("Saved to "));
+    print_Msg(folder);
+    println_Msg(F("/"));
     display_Update();
   }
   else {
@@ -1531,14 +1528,14 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
 
   // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1563,12 +1560,9 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern - 1);
-  print_Msg(F("/"));
-  println_Msg(fileName);
+  print_Msg(F("Saved to "));
+  print_Msg(folder);
+  println_Msg(F("/"));
   display_Update();
 }
 
@@ -1932,14 +1926,20 @@ void readRom_N64() {
   strcat(fileName, ".Z64");
 
   // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
 readn64rom:
   // Open file on sd card
@@ -1969,13 +1969,6 @@ readn64rom:
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to ROM/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern - 1);
-  print_Msg(F("/"));
-  println_Msg(fileName);
-  display_Update();
 
 calcn64crc:
   // Calculate Checksum and convert to string

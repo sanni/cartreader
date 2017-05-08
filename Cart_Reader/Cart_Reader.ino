@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-05-03
-   Version:          V23A
+   Date:             2017-05-08
+   Version:          V24
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V23A";
+char ver[5] = "V24";
 
 /******************************************
    Define Output
@@ -117,13 +117,14 @@ SdFile myFile;
 #define mode_N64_Cart 0
 #define mode_N64_Controller 1
 #define mode_SNES 2
-#define mode_NP 3
-#define mode_NPFlash 4
-#define mode_NPGame 5
+#define mode_SFM 3
+#define mode_SFM_Flash 4
+#define mode_SFM_Game 5
 #define mode_GB 6
 #define mode_FLASH8 7
 #define mode_FLASH16 8
 #define mode_GBA 9
+#define mode_GBM 10
 
 /******************************************
    Variables
@@ -178,7 +179,7 @@ boolean filebrowse = 0;
 char fileOptions[30][20];
 
 // Common
-char romName[10];
+char romName[17];
 int sramSize = 0;
 int romType = 0;
 byte saveType;
@@ -199,7 +200,7 @@ byte mode;
 
 //remember folder number to create a new folder for every save
 int foldern;
-char folder[24];
+char folder[36];
 
 // Array that holds the data
 byte sdBuffer[512];
@@ -333,6 +334,11 @@ static const char n64MenuItem2[] PROGMEM = "Controller";
 static const char n64MenuItem3[] PROGMEM = "Flash Repro";
 static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
 
+// Nintendo Power Submenu
+static const char npMenuItem1[] PROGMEM = "SF Memory";
+static const char npMenuItem2[] PROGMEM = "GB Memory";
+static const char* const menuOptionsNP[] PROGMEM = {npMenuItem1, npMenuItem2};
+
 // Flash Submenu
 static const char flashMenuItem1[] PROGMEM = "8bit slot";
 static const char flashMenuItem2[] PROGMEM = "16bit slot";
@@ -354,7 +360,7 @@ void mainMenu() {
   switch (modeMenu)
   {
     case 0:
-      // create menu with title and 2 options to choose from
+      // create menu with title and 3 options to choose from
       unsigned char n64Dev;
       // Copy menuOptions out of progmem
       convertPgm(menuOptionsN64, 3);
@@ -398,10 +404,29 @@ void mainMenu() {
       break;
 
     case 2:
-      display_Clear();
-      display_Update();
-      setup_NP();
-      mode =  mode_NP;
+      // create menu with title and 2 options to choose from
+      unsigned char npCart;
+      // Copy menuOptions out of progmem
+      convertPgm(menuOptionsNP, 1);
+      npCart = question_box("Select NP Cart", menuOptions, 1, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (npCart)
+      {
+        case 0:
+          display_Clear();
+          display_Update();
+          setup_SFM();
+          mode =  mode_SFM;
+          break;
+
+        case 1:
+          display_Clear();
+          display_Update();
+          setup_GBM();
+          mode =  mode_GBM;
+          break;
+      }
       break;
 
     case 3:
@@ -493,7 +518,7 @@ void mainMenu() {
             display_Update();
             delay(2000);
             foldern = 0;
-            EEPROM_writeAnything(0, foldern);
+            EEPROM_writeAnything(10, foldern);
             asm volatile ("  jmp 0");
           }
         }
@@ -522,7 +547,7 @@ void setup() {
   rgb.setColor(0, 0, 0);
 
   // Read current folder number out of eeprom
-  EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(10, foldern);
 
   if (enable_OLED) {
     // GLCD
@@ -1269,8 +1294,8 @@ void loop() {
   else if (mode == mode_FLASH16) {
     flashromMenu16();
   }
-  else if (mode == mode_NP) {
-    npMenu();
+  else if (mode == mode_SFM) {
+    sfmMenu();
   }
   else if (mode == mode_GB) {
     gbMenu();
@@ -1278,11 +1303,14 @@ void loop() {
   else if (mode == mode_GBA) {
     gbaMenu();
   }
-  else if (mode == mode_NPFlash) {
-    NPFlashMenu();
+  else if (mode == mode_SFM_Flash) {
+    sfmFlashMenu();
   }
-  else if (mode == mode_NPGame) {
-    NPGameOptions();
+  else if (mode == mode_SFM_Game) {
+    sfmGameOptions();
+  }
+  else if (mode == mode_GBM) {
+    gbmMenu();
   }
   else {
     display_Clear();
