@@ -570,6 +570,18 @@ boolean checkcart_SNES() {
       myLength++;
     }
   }
+  // If name consists out of all japanese characters use game code
+  if (myLength == 0) {
+    // Get rom code
+    romName[0] = 'S';
+    romName[1] = 'H';
+    romName[2] = 'V';
+    romName[3] = 'C';
+    romName[4] = '-';
+    for (unsigned int i = 0; i < 4; i++) {
+      romName[i + 5] = readBank_SNES(0, 0xFFB2 + i);
+    }
+  }
 
   // Read sramSizeExp
   byte sramSizeExp;
