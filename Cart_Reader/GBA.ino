@@ -737,7 +737,7 @@ void getCartInfo_GBA() {
     byte myLength = 0;
     for (int addr = 0xA0; addr <= 0xAB; addr++) {
       myByte = sdBuffer[addr];
-      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 16) {
+      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
         romName[myLength] = char(myByte);
         myLength++;
       }

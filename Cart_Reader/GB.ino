@@ -335,7 +335,7 @@ void getCartInfo_GB() {
 
   for (int addr = 0x0134; addr <= 0x13C; addr++) {
     myByte = readByte_GB(addr);
-    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 16) {
+    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
       romName[myLength] = char(myByte);
       myLength++;
     }

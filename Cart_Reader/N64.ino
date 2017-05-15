@@ -1203,7 +1203,7 @@ void idCart() {
   // Get name
   byte myLength = 0;
   for (unsigned int i = 0; i < 20; i++) {
-    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 16) {
+    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 15) {
       romName[myLength] = char(sdBuffer[0x20 + i]);
       myLength++;
     }

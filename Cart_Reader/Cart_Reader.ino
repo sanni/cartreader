@@ -3,7 +3,7 @@
 
    Author:           sanni
    Date:             2017-05-15
-   Version:          V24C
+   Version:          V24D
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V24C";
+char ver[5] = "V24D";
 
 /******************************************
    Define Output
