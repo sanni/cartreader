@@ -565,7 +565,7 @@ boolean checkcart_SNES() {
   byte myLength = 0;
   for (unsigned int i = 65472; i < 65492; i++) {
     myByte = readBank_SNES(0, i);
-    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 16) {
+    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
       romName[myLength] = char(myByte);
       myLength++;
     }
