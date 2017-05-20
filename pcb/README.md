@@ -4,15 +4,9 @@
 
 ![image](https://www.dropbox.com/s/yze20m39gjvii3q/cartreader.png?dl=1)    
 
-#### adapter.zip are various adapter PCBs, PCB thickness is 1.2mm and size is 10x10cm    
+#### gbaadapter.zip is an adapter for Game Boy and Game Boy Advance cartridges, PCB thickness is 1.2mm 
 
-![image](https://www.dropbox.com/s/d9c75c3h116rxms/adapter.png?dl=1)    
-
-Contains:   
-- Game Boy (Color)/ Game Boy Advance cartridge adapter   
-- small pcb for soldering a 29F032 flashrom into a Mission Impossible Game Boy Color cartridge   
-- flash adapter for flashing 29F016, 29F032, 29F033, 29F1610 and 29L3211 flashroms   
-- adapter for soldering a 29F032 into a SNES cartridge   
+![image](https://www.dropbox.com/s/rnnnstkn3ynv10g/gbaadapter_pcb.png?dl=1)    
 
 #### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
@@ -22,9 +16,9 @@ Contains:
 
 ![image](https://www.dropbox.com/s/s6jxobazww3sm81/n64sleeve.png?dl=1)   
 
-#### gbslot.stl is a 3d printed case for the Game Boy (Advance) adapter pcb      
+#### gbaadapter.stl is a 3d printed case for the Game Boy (Advance) adapter pcb      
 
-![image](https://www.dropbox.com/s/se2qe9zbw0dbvrb/gbslot.png?dl=1)   
+![image](https://www.dropbox.com/s/ainwnoclzzq24ez/gbaadapter.png?dl=1)   
 
 #### backplate.stl is the backplate that holds the Arduino    
 
