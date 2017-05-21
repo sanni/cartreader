@@ -8,7 +8,7 @@
 - Reads and writes SFC Nintendo Power Flash Cartridges (also known as SF Memory, needs Adafruit Clock Generator for best result)  
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
-- Reflashes N64 Repros (those with the Max II CPLD and 29GL256 flashroms)    
+- Reflashes N64 Repros (those with the Max II CPLD and Spansion S29GL256N or Intel 4400L0ZDQ0 flashroms)    
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Programs custom made Game Boy Color flashcarts   
 - Reads Game Boy Advance roms and reads/writes save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)   
