@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-05-21
-   Version:          V24E
+   Date:             2017-05-30
+   Version:          V25
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V24E";
+char ver[5] = "V25";
 
 /******************************************
    Define Output
@@ -170,7 +170,7 @@ boolean ignoreError;
 
 // File browser
 char fileName[26];
-char filePath[36];
+char filePath[50];
 byte currPage;
 byte lastPage;
 byte numPages;
@@ -407,8 +407,8 @@ void mainMenu() {
       // create menu with title and 2 options to choose from
       unsigned char npCart;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsNP, 1);
-      npCart = question_box("Select NP Cart", menuOptions, 1, 0);
+      convertPgm(menuOptionsNP, 2);
+      npCart = question_box("Select NP Cart", menuOptions, 2, 0);
 
       // wait for user choice to come back from the question box menu
       switch (npCart)

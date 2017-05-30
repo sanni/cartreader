@@ -271,6 +271,22 @@ void sfmFlashMenu() {
 
     // Write Flash
     case 1:
+      // Clear screen
+      display_Clear();
+
+      // Print warning
+      println_Msg(F("Attention"));
+      println_Msg(F("This will erase your"));
+      println_Msg(F("NP Cartridge."));
+      println_Msg("");
+      println_Msg(F("Press Button"));
+      println_Msg(F("to continue"));
+      display_Update();
+      wait();
+
+      // Clear screen
+      display_Clear();
+
       filePath[0] = '\0';
       sd.chdir("/");
       // Launch file browser
@@ -374,6 +390,19 @@ void sfmFlashMenu() {
 
     // Write mapping
     case 4:
+      // Clear screen
+      display_Clear();
+
+      // Print warning
+      println_Msg(F("Attention"));
+      println_Msg(F("This will erase your"));
+      println_Msg(F("NP Cartridge."));
+      println_Msg("");
+      println_Msg(F("Press Button"));
+      println_Msg(F("to continue"));
+      display_Update();
+      wait();
+
       // Clear screen
       display_Clear();
 
@@ -1438,8 +1467,8 @@ void write_SFM(int startBank, uint32_t pos) {
 *****************************************/
 // GBM menu items
 static const char gbmMenuItem1[] PROGMEM = "Read Flash";
-static const char gbmMenuItem2[] PROGMEM = "Write Flash";
-static const char gbmMenuItem3[] PROGMEM = "Read Mapping";
+static const char gbmMenuItem2[] PROGMEM = "Read Mapping";
+static const char gbmMenuItem3[] PROGMEM = "Write Flash";
 static const char gbmMenuItem4[] PROGMEM = "Write Mapping";
 static const char* const menuOptionsGBM[] PROGMEM = {gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4};
 
@@ -1447,8 +1476,8 @@ void gbmMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBM, 4);
-  mainMenu = question_box("GB Memory Menu", menuOptions, 4, 0);
+  convertPgm(menuOptionsGBM, 2);
+  mainMenu = question_box("GB Memory Menu", menuOptions, 2, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -1464,23 +1493,8 @@ void gbmMenu() {
       readFlash_GBM();
       break;
 
-    // Write Flash
+    // Read mapping
     case 1:
-      filePath[0] = '\0';
-      sd.chdir("/");
-      // Launch file browser
-      fileBrowser("Select 1MB file");
-      display_Clear();
-      sprintf(filePath, "%s/%s", filePath, fileName);
-      println_Msg(F("Writing rom"));
-      display_Update();
-
-      // Write flash
-      writeFlash_GBM();
-      break;
-
-    // Print mapping
-    case 2:
       // Clear screen
       display_Clear();
 
@@ -1491,8 +1505,50 @@ void gbmMenu() {
       readMapping_GBM();
       break;
 
+    // Write Flash
+    case 2:
+      // Clear screen
+      display_Clear();
+
+      // Print warning
+      println_Msg(F("Attention"));
+      println_Msg(F("This will erase your"));
+      println_Msg(F("NP Cartridge."));
+      println_Msg("");
+      println_Msg(F("Press Button"));
+      println_Msg(F("to continue"));
+      display_Update();
+      wait();
+
+      // Clear screen
+      display_Clear();
+
+      filePath[0] = '\0';
+      sd.chdir("/");
+      // Launch file browser
+      fileBrowser("Select 1MB file");
+      display_Clear();
+      sprintf(filePath, "%s/%s", filePath, fileName);
+
+      // Write rom
+      writeRom_GBM();
+      break;
+
     // Write mapping
     case 3:
+      // Clear screen
+      display_Clear();
+
+      // Print warning
+      println_Msg(F("Attention"));
+      println_Msg(F("This will erase your"));
+      println_Msg(F("NP Cartridge."));
+      println_Msg("");
+      println_Msg(F("Press Button"));
+      println_Msg(F("to continue"));
+      display_Update();
+      wait();
+
       // Clear screen
       display_Clear();
 
@@ -1758,9 +1814,11 @@ boolean wakeup_GBM() {
   // First byte of NP register is always 0x21
   while (readByte_GBM(0x0120) != 0x21) {
     send_GBM(0x09);
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
     timeout++;
-    if (timeout > 4) {
-      print_Error(F("Error: Time Out"), true);
+    if (timeout > 10) {
+      println_Msg(F("Error: Time Out"));
+      print_Error(F("Please power cycle"), true);
       return 0;
     }
   }
@@ -1888,14 +1946,85 @@ void readFlash_GBM() {
 }
 
 void eraseFlash_GBM() {
+  // Enable ports 0x0120...
+  wakeup_GBM();
 
+  // Set WE and WP
+  enableWrite_GBM();
+
+  // Unprotect sector 0
+  writeByte_GBM(0x2100, 0x01);
+  send_Flash(0x5555, 0xAA);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0x60);
+  send_Flash(0x5555, 0xAA);
+  send_Flash(0x2AAA, 0x55);
+  writeByte_GBM(0x2100, 0x0);
+  send_Flash(0x0000, 0x40);
+
+  // Send erase command
+  writeByte_GBM(0x2100, 0x01);
+  send_Flash(0x5555, 0xaa);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0x80);
+  send_Flash(0x5555, 0xaa);
+  send_Flash(0x2AAA, 0x55);
+  send_Flash(0x5555, 0x10);
+
+  // Wait for erase to complete
+  while ((readByte_GBM(0) & 0x80) != 0x80) {
+  }
 }
 
 boolean blankcheckFlash_GBM() {
+  // Reset flashrom
+  resetFlash_GBM();
+  // Map entire flashrom
+  //send_GBM(0x04);
+  // Disable ports 0x0120...
+  send_GBM(0x08);
 
+  // Read rom
+  word currAddress = 0;
+
+  for (byte currBank = 1; currBank < 64; currBank++) {
+    // Set rom bank
+    writeByte_GBM(0x2100, currBank);
+
+    // Switch bank start address
+    if (currBank > 1) {
+      currAddress = 0x4000;
+    }
+
+    for (; currAddress < 0x7FFF; currAddress++) {
+      if (readByte_GBM(currAddress) != 0xFF) {
+        return 0;
+      }
+    }
+  }
+  return 1;
 }
 
 void writeFlash_GBM() {
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+
+    for (unsigned long currBuffer = 0; currBuffer < fileSize; currBuffer += 128) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 128);
+    }
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    print_Error(F("Can't open file"), false);
+  }
+}
+
+void writeRom_GBM() {
   // Enable ports 0x0120...
   wakeup_GBM();
 
@@ -1903,10 +2032,14 @@ void writeFlash_GBM() {
   if (readFlashID_GBM()) {
     // Reset flashrom to leave flashID area and switch to output
     resetFlash_GBM();
-    // Earse flash
+    // Erase flash
+    print_Msg(F("Erasing..."));
+    display_Update();
     eraseFlash_GBM();
     if (blankcheckFlash_GBM()) {
-
+      println_Msg(F("Ok"));
+      display_Update();
+      writeFlash_GBM();
     }
     else {
       print_Error(F("Erase failed"), true);
