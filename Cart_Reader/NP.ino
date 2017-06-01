@@ -577,17 +577,15 @@ void setup_SFM() {
   DDRG &= ~(1 << 0);
 
   // Adafruit Clock Generator
-  //clockgen.set_correction(-29000);
-  clockgen.set_correction(0);
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0);
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
   // Half Clock
-  //clockgen.set_freq(1073863600ULL, SI5351_PLL_FIXED, SI5351_CLK0);
+  //clockgen.set_freq(1073863600ULL, SI5351_CLK0);
   // Full Clock
-  clockgen.set_freq(2147727200ULL, SI5351_PLL_FIXED, SI5351_CLK0);
+  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
   // CIC Clock
-  //clockgen.set_freq(307200000ULL, SI5351_PLL_FIXED, SI5351_CLK2);
+  //clockgen.set_freq(307200000ULL, SI5351_CLK2);
   clockgen.output_enable(SI5351_CLK0, 1);
   clockgen.output_enable(SI5351_CLK1, 0);
   clockgen.output_enable(SI5351_CLK2, 0);

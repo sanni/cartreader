@@ -213,13 +213,11 @@ void setup_Snes() {
   DDRG &= ~(1 << 0);
 
   // Adafruit Clock Generator
-  //clockgen.set_correction(-29000);
-  clockgen.set_correction(0);
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0);
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
-  clockgen.set_freq(2147727200ULL, SI5351_PLL_FIXED, SI5351_CLK0);
-  clockgen.set_freq(307200000ULL, SI5351_PLL_FIXED, SI5351_CLK2);
+  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
+  clockgen.set_freq(307200000ULL, SI5351_CLK2);
   clockgen.output_enable(SI5351_CLK0, 1);
   clockgen.output_enable(SI5351_CLK1, 0);
   clockgen.output_enable(SI5351_CLK2, 1);
@@ -963,7 +961,7 @@ void writeSRAM (boolean browseFile) {
       long lastByte = (long(sramSize) * 0x80);
 
       // Enable CPU Clock
-      clockgen.set_freq(357954500ULL, SI5351_PLL_FIXED, SI5351_CLK1);
+      clockgen.set_freq(357954500ULL, SI5351_CLK1);
       clockgen.output_enable(SI5351_CLK1, 1);
 
       // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work

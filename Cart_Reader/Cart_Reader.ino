@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-05-30
-   Version:          V25
+   Date:             2017-06-01
+   Version:          V25A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V25";
+char ver[5] = "V25A";
 
 /******************************************
    Define Output
@@ -105,7 +105,6 @@ typedef enum COLOR_T {
 
 // SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
 #include <SdFat.h>
-#include <SdFatUtil.h>
 #define chipSelectPin 53
 SdFat sd;
 SdFile myFile;
@@ -572,11 +571,6 @@ void setup() {
     Serial.println(F("Cartridge Reader"));
     Serial.println(F("2017 sanni"));
     Serial.println("");
-
-    // Print available RAM
-    Serial.print(F("Free Ram: "));
-    Serial.print(FreeRam());
-    Serial.println(F("Bytes"));
   }
 
   // Init SD card
