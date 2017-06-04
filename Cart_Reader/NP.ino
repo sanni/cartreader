@@ -1745,6 +1745,12 @@ void send_GBM(byte myCommand) {
       writeByte_GBM(0x013F, 0xA5);
       break;
 
+    case 0x03:
+      //CMD_03h -> Undo write Step 2
+      writeByte_GBM(0x0120, 0x03);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
     case 0x04:
       //CMD_04h -> Map entire flashrom (MBC4 mode)
       writeByte_GBM(0x0120, 0x04);
@@ -1789,6 +1795,10 @@ void send_GBM(byte myCommand) {
       //CMD_11h -> re-enable access to MBC registers like 0x2100
       writeByte_GBM(0x0120, 0x11);
       writeByte_GBM(0x013F, 0xA5);
+      break;
+
+    default:
+      print_Error(F("Unknown Command"), true);
       break;
   }
 }
