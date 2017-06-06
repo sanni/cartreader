@@ -2165,7 +2165,7 @@ void resetFlashrom_N64(unsigned long flashBase) {
 }
 
 void idFlashrom_N64() {
-  // Size of repro cartridge
+  // Size of repro cartridge if no ID is found
   cartSize = 0;
 
   // Send ID command to first flashrom
@@ -2182,16 +2182,18 @@ void idFlashrom_N64() {
   // Read flashrom ID
   sprintf(flashid, "%04X", readWord_N64());
 
-  // Reset flashrom to read mode
-  if (strcmp(flashid, "227E") == 0)
-    resetFlashrom_N64(romBase);
-  else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0))
-    resetReadmode_N64();
-
+  // Check for known ID
   if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "8816") == 0)) {
+    // Reset flashrom to read mode
+    if (strcmp(flashid, "227E") == 0)
+      resetFlashrom_N64(romBase);
+    else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0))
+      resetReadmode_N64();
+
+    // Found first flashrom chip, set to 32MB
     cartSize = 32;
 
-    // Send ID command to second flashrom
+    // Send ID command to possible second flashrom
     setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
     writeWord_N64(0xAA);
     setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
@@ -2203,16 +2205,21 @@ void idFlashrom_N64() {
     setAddress_N64(romBase + 0x2000000);
     readWord_N64();
     // Read flashrom ID
-    sprintf(flashid, "%04X", readWord_N64());
-    if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "8813") == 0)) {
-      cartSize = 64;
-    }
+    sprintf(cartID, "%04X", readWord_N64());
 
-    // Reset flashrom to read mode
-    if (strcmp(flashid, "227E") == 0)
-      resetFlashrom_N64(romBase);
-    else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0))
-      resetReadmode_N64();
+    // Check if second flashrom chip is present
+    if ((strcmp(cartID, "227E") == 0) || (strcmp(cartID, "8813") == 0)) {
+      cartSize = 64;
+      strncpy(flashid , cartID, 5);
+
+      // Reset flashrom to read mode
+      if (strcmp(flashid, "227E") == 0)
+        resetFlashrom_N64(romBase + 0x2000000);
+      else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0))
+        resetReadmode_N64();
+    }
+    // Empty cartID string
+    cartID[0] = '\0';
   }
 }
 

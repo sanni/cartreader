@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-06-03
-   Version:          V25B
+   Date:             2017-06-06
+   Version:          V25C
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.2
+   Compiled with Arduino 1.8.3
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V25B";
+char ver[5] = "V25C";
 
 /******************************************
    Define Output
@@ -165,7 +165,7 @@ int incomingByte;
 int choice = 0;
 // Temporary array that holds the menu option read out of progmem
 char menuOptions[7][20];
-boolean ignoreError;
+boolean ignoreError = 0;
 
 // File browser
 char fileName[26];
@@ -962,7 +962,8 @@ void wait_btn() {
     // if the cart readers input button is pressed long
     if (b == 3) {
       if (errorLvl) {
-        ignoreError = 1;
+        // Debug 
+        //ignoreError = 1;
         errorLvl = 0;
       }
       break;
