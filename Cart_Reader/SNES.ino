@@ -841,8 +841,31 @@ void readROM_SNES() {
     print_Error(F("Can't create file on SD"), true);
   }
 
-  // Check if LoROM or HiROM...
-  if (romType == LO) {
+  //Dump Derby Stallion '96 (Japan) Actual Size is 24Mb
+  if ((romType == LO) && (numBanks == 128) && (strcmp("CC86", checksumStr) == 0)) {
+    // Read Banks 0x00-0x3F for the 1st/2nd MB
+    for (int currBank = 0; currBank < 64; currBank++) {
+      // Dump the bytes to SD 512B at a time
+      for (long currByte = 32768; currByte < 65536; currByte += 512) {
+        for (int c = 0; c < 512; c++) {
+          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
+        }
+        myFile.write(sdBuffer, 512);
+      }
+    }
+    //Read Bank 0x80-9F for the 3rd MB
+    for (int currBank = 128; currBank < 160; currBank++) {
+      // Dump the bytes to SD 512B at a time
+      for (long currByte = 32768; currByte < 65536; currByte += 512) {
+        for (int c = 0; c < 512; c++) {
+          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
+        }
+        myFile.write(sdBuffer, 512);
+      }
+    }
+  }
+  //Dump Low-type ROM
+  else if (romType == LO) {
     // Read up to 96 banks starting at bank 0×00.
     for (int currBank = 0; currBank < numBanks; currBank++) {
       // Dump the bytes to SD 512B at a time
