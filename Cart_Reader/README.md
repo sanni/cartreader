@@ -7,7 +7,7 @@ Source code files:
 - GB.ino includes everything Game Boy and Game Boy Color   
 - GBA.ino includes everything Game Boy Advance   
 - N64.ino includes everything Nintendo 64   
-- NP.ino includes everything Nintendo Power/SF Memory Super Famicom Flashcarts   
+- NP.ino includes everything for Nintendo Power SF Memory and GB Memory cartridges   
 - SNES.ino includes everything Super Nintendo   
 
 Every submodule has it's own setup_XX() function that configures the needed pins and a submenu that lets you choose what you want to do. 
