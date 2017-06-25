@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-06-10
-   Version:          V25D
+   Date:             2017-06-25
+   Version:          V26
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V25D";
+char ver[5] = "V26";
 
 /******************************************
    Define Output
@@ -190,6 +190,7 @@ byte romVersion = 0;
 char cartID[5];
 unsigned long cartSize;
 char flashid[5];
+unsigned long fileSize;
 
 // Variable to count errors
 unsigned long writeErrors;
@@ -962,7 +963,7 @@ void wait_btn() {
     // if the cart readers input button is pressed long
     if (b == 3) {
       if (errorLvl) {
-        // Debug 
+        // Debug
         //ignoreError = 1;
         errorLvl = 0;
       }

@@ -68,8 +68,6 @@ void flashromMenu8() {
       }
       else {
         eraseFlash29F1610();
-        delay(1000);
-        busyCheck29F1610();
       }
       println_Msg(F("Flashrom erased"));
       display_Update();
@@ -96,21 +94,22 @@ void flashromMenu8() {
       time = millis();
       if (flashromType == 1)
         writeFlash29F032();
-      else if (flashromType == 2)
-        writeFlash29F1610();
-
+      else if (flashromType == 2) {
+        if (strcmp(flashid, "C2F3") == 0)
+          writeFlash29F1601();
+        else
+          writeFlash29F1610();
+      }
+      delay(100);
       // Reset twice just to be sure
-      delay(1000);
       if (flashromType == 1)
         resetFlash29F032();
       else
         resetFlash29F1610();
-      delay(1000);
       if (flashromType == 1)
         resetFlash29F032();
       else
         resetFlash29F1610();
-      delay(1000);
       verifyFlash();
       break;
 
@@ -150,7 +149,6 @@ void flashromMenu8() {
         resetFlash29F032();
       else
         resetFlash29F1610();
-      delay(500);
       asm volatile ("  jmp 0");
       break;
   }
@@ -189,12 +187,10 @@ void flashromMenu16() {
       println_Msg(F("Erase Flashrom"));
       display_Update();
       time = millis();
+      resetFlash16();
       eraseFlash16();
-      delay(1000);
-      busyCheck16();
       println_Msg(F("Flashrom erased."));
       display_Update();
-      resetFlash16();
       break;
 
     case 2:
@@ -210,7 +206,12 @@ void flashromMenu16() {
       fileBrowser("Select file");
       display_Clear();
       time = millis();
-      writeFlash16();
+      if (strcmp(flashid, "C2F3") == 0) {
+        writeFlash16_29F1601();
+      }
+      else {
+        writeFlash16();
+      }
       delay(100);
       resetFlash16();
       delay(100);
@@ -241,7 +242,6 @@ void flashromMenu16() {
       display_Clear();
       display_Update();
       resetFlash16();
-      delay(500);
       asm volatile ("  jmp 0");
       break;
   }
@@ -293,6 +293,11 @@ idtheflash:
 
   if (strcmp(flashid, "C2F1") == 0) {
     println_Msg(F("MX29F1610 detected"));
+    flashSize = 2097152;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2F3") == 0) {
+    println_Msg(F("MX29F1601 detected"));
     flashSize = 2097152;
     flashromType = 2;
   }
@@ -359,7 +364,7 @@ void setup_Flash16() {
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
-  delay(10);
+  delay(100);
 
   // ID flash
   idFlash16();
@@ -372,6 +377,11 @@ void setup_Flash16() {
   if (strcmp(flashid, "C2F1") == 0) {
     println_Msg(F("MX29F1610 detected"));
     println_Msg(" ");
+    flashSize = 2097152;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2F3") == 0) {
+    println_Msg(F("MX29F1601 detected"));
     flashSize = 2097152;
     flashromType = 2;
   }
@@ -522,6 +532,8 @@ void resetFlash29F032() {
 
   // Set data pins to input again
   dataIn8();
+
+  delay(500);
 }
 
 void idFlash29F032() {
@@ -578,12 +590,16 @@ void writeFlash29F032() {
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
 
     // Set data pins to output
     dataOut();
 
     // Fill sdBuffer
-    for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       myFile.read(sdBuffer, 512);
       // Blink led
       if (currByte % 2048 == 0)
@@ -644,6 +660,8 @@ void resetFlash29F1610() {
 
   // Set data pins to input again
   dataIn8();
+
+  delay(500);
 }
 
 void writeFlash29F1610() {
@@ -655,10 +673,15 @@ void writeFlash29F1610() {
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
     // Set data pins to output
     dataOut();
 
-    for (unsigned long currByte = 0; currByte < flashSize; currByte += 128) {
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
       myFile.read(sdBuffer, 128);
 
@@ -680,6 +703,69 @@ void writeFlash29F1610() {
         writeByte_Flash(currByte + c, sdBuffer[c]);
       }
     }
+
+    // Check if write is complete
+    busyCheck29F1610();
+
+    // Set data pins to input again
+    dataIn8();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD"));
+    display_Update();
+  }
+}
+
+void writeFlash29F1601() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut();
+
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
+      // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
+      myFile.read(sdBuffer, 128);
+
+      // Blink led
+      if (currByte % 3072 == 0)
+        PORTB ^= (1 << 4);
+
+      // Check if write is complete
+      delayMicroseconds(100);
+      busyCheck29F1610();
+
+      // Write command sequence
+      writeByte_Flash(0x5555 << 1, 0xaa);
+      writeByte_Flash(0x2aaa << 1, 0x55);
+      writeByte_Flash(0x5555 << 1, 0xa0);
+
+      // Write one full page at a time
+      for (byte c = 0; c < 128; c++) {
+        writeByte_Flash(currByte + c, sdBuffer[c]);
+
+        if (c == 127) {
+          // Write the last byte twice or else it won't write at all
+          writeByte_Flash(currByte + c, sdBuffer[c]);
+        }
+      }
+    }
+
+    // Check if write is complete
+    busyCheck29F1610();
 
     // Set data pins to input again
     dataIn8();
@@ -740,6 +826,8 @@ void eraseFlash29F1610() {
 
   // Set data pins to input again
   dataIn8();
+
+  busyCheck29F1610();
 }
 
 // Delay between write operations based on status register
@@ -783,15 +871,18 @@ void blankcheck_Flash() {
 }
 
 void verifyFlash() {
-  println_Msg(F("Verifying against"));
-  println_Msg(filePath);
+  println_Msg(F("Verifying..."));
   display_Update();
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
 
     blank = 0;
-    for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 512; c++) {
@@ -887,6 +978,8 @@ void resetFlash16() {
 
   // Set data pins to input again
   dataIn16();
+
+  delay(500);
 }
 
 void writeFlash16() {
@@ -898,12 +991,17 @@ void writeFlash16() {
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
     // Set data pins to output
     dataOut16();
 
     // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
     int d = 0;
-    for (unsigned long currByte = 0; currByte < flashSize / 2; currByte += 64) {
+    for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
       myFile.read(sdBuffer, 128);
 
       // Blink led
@@ -921,12 +1019,79 @@ void writeFlash16() {
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
-        word currWord = ((sdBuffer[d + 1] << 8) | sdBuffer[d]);
+        word currWord = ( ( sdBuffer[d] & 0xFF ) << 8 ) | ( sdBuffer[d + 1] & 0xFF );
         writeWord_Flash(currByte + c, currWord);
         d += 2;
       }
       d = 0;
     }
+
+    // Check if write is complete
+    busyCheck16();
+
+    // Set data pins to input again
+    dataIn16();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD."));
+    display_Update();
+  }
+}
+
+void writeFlash16_29F1601() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut16();
+
+    // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
+    int d = 0;
+    for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
+      myFile.read(sdBuffer, 128);
+
+      // Blink led
+      if (currByte % 2048 == 0)
+        PORTB ^= (1 << 4);
+
+      // Check if write is complete
+      delayMicroseconds(100);
+      busyCheck16();
+
+      // Write command sequence
+      writeWord_Flash(0x5555, 0xaa);
+      writeWord_Flash(0x2aaa, 0x55);
+      writeWord_Flash(0x5555, 0xa0);
+
+      // Write one full page at a time
+      for (byte c = 0; c < 64; c++) {
+        word currWord = ( ( sdBuffer[d] & 0xFF ) << 8 ) | ( sdBuffer[d + 1] & 0xFF );
+        writeWord_Flash(currByte + c, currWord);
+
+        if (c == 63) {
+          // Write the last byte twice or else it won't write at all
+          writeWord_Flash(currByte + c, sdBuffer[d + 1]);
+        }
+        d += 2;
+      }
+      d = 0;
+    }
+
+    // Check if write is complete
+    busyCheck16();
 
     // Set data pins to input again
     dataIn16();
@@ -987,6 +1152,8 @@ void eraseFlash16() {
 
   // Set data pins to input again
   dataIn16();
+
+  busyCheck16();
 }
 
 void blankcheck16() {
@@ -1006,29 +1173,30 @@ void blankcheck16() {
     display_Update();
   }
   else {
-    println_Msg(F("Error: Not blank!"));
-    display_Update();
+    print_Error(F("Error: Not blank"), false);
   }
 }
 
 void verifyFlash16() {
-
-  println_Msg(F("Verifying against"));
-  println_Msg(filePath);
+  println_Msg(F("Verifying..."));
   display_Update();
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize) {
+      print_Error(F("File size exceeds flash size."), true);
+    }
 
     blank = 0;
     word d = 0;
-    for (unsigned long currByte = 0; currByte < flashSize / 2; currByte += 256) {
+    for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 256; c++) {
         word currWord = ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
-        // Swap bytes in word
-        currWord = ((currWord >> 8) & 0x00FF00FF) | ((currWord & 0x00FF00FF) << 8);
+
         if (readWord_Flash(currByte + c) != currWord) {
           blank++;
         }
@@ -1085,8 +1253,6 @@ void readFlash16() {
   for (unsigned long currByte = 0; currByte < flashSize / 2; currByte += 256) {
     for (word c = 0; c < 256; c++) {
       word currWord = readWord_Flash(currByte + c);
-      // Swap bytes in word
-      currWord = ((currWord >> 8) & 0x00FF00FF) | ((currWord & 0x00FF00FF) << 8);
       // Split word into two bytes
       // Left
       sdBuffer[d] = (( currWord >> 8 ) & 0xFF);
@@ -1117,9 +1283,6 @@ void printFlash16(int numBytes) {
     for (int c = 0; c < 5; c++) {
 
       word currWord = readWord_Flash(currByte + c);
-
-      // Swap bytes in word
-      currWord = ((currWord >> 8) & 0x00FF00FF) | ((currWord & 0x00FF00FF) << 8);
 
       // Split word into two bytes
       byte right_byte = currWord & 0xFF;

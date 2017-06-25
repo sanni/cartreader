@@ -38,7 +38,6 @@ String lastbutton = "N/A";
 // Rom base address
 unsigned long romBase = 0x10000000;
 unsigned long sramBase = 0x08000000;
-unsigned long fileSize;
 
 // Flashram type
 byte flashramType = 1;
