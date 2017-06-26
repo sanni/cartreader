@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-06-25
-   Version:          V26
+   Date:             2017-06-26
+   Version:          V27
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V26";
+char ver[5] = "V27";
 
 /******************************************
    Define Output
@@ -124,6 +124,7 @@ SdFile myFile;
 #define mode_FLASH16 8
 #define mode_GBA 9
 #define mode_GBM 10
+#define mode_MD 11
 
 /******************************************
    Variables
@@ -179,10 +180,10 @@ char fileOptions[30][20];
 
 // Common
 char romName[17];
-int sramSize = 0;
+unsigned long sramSize = 0;
 int romType = 0;
 byte saveType;
-int romSize = 0;
+word romSize = 0;
 byte numBanks = 128;
 char checksumStr[5];
 bool errorLvl = 0;
@@ -324,9 +325,10 @@ static const char modeItem1[] PROGMEM = "Nintendo 64";
 static const char modeItem2[] PROGMEM = "Super Nintendo";
 static const char modeItem3[] PROGMEM = "Nintendo Power";
 static const char modeItem4[] PROGMEM = "Game Boy";
-static const char modeItem5[] PROGMEM = "Flashrom Programmer";
-static const char modeItem6[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6};
+static const char modeItem5[] PROGMEM = "Mega Drive";
+static const char modeItem6[] PROGMEM = "Flashrom Programmer";
+static const char modeItem7[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
 
 // N64 Submenu
 static const char n64MenuItem1[] PROGMEM = "Cart Slot";
@@ -353,8 +355,8 @@ void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
   // Copy menuOptions out of progmem
-  convertPgm(modeOptions, 6);
-  modeMenu = question_box("Cartridge Reader", menuOptions, 6, 0);
+  convertPgm(modeOptions, 7);
+  modeMenu = question_box("Cartridge Reader", menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
@@ -456,6 +458,13 @@ void mainMenu() {
       break;
 
     case 4:
+      display_Clear();
+      display_Update();
+      setup_MD();
+      mode =  mode_MD;
+      break;
+
+    case 5:
       // create menu with title and 2 options to choose from
       unsigned char flashSlot;
       // Copy menuOptions out of progmem
@@ -481,7 +490,7 @@ void mainMenu() {
       }
       break;
 
-    case 5:
+    case 6:
       display_Clear();
       // Draw the Logo
       display.drawBitmap(0, 0, sig, 128, 64, 1);
@@ -1307,6 +1316,9 @@ void loop() {
   }
   else if (mode == mode_GBM) {
     gbmMenu();
+  }
+  else if (mode == mode_MD) {
+    mdMenu();
   }
   else {
     display_Clear();
