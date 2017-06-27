@@ -37,7 +37,6 @@ String lastbutton = "N/A";
 
 // Rom base address
 unsigned long romBase = 0x10000000;
-unsigned long sramBase = 0x08000000;
 
 // Flashram type
 byte flashramType = 1;
@@ -276,6 +275,9 @@ void setup_N64_Cart() {
   DDRH &= ~(1 << 4);
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
+
+  // Set sram base address
+  sramBase = 0x08000000;
 
   // Wait until all is stable
   delay(300);
