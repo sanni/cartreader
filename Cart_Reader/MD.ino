@@ -44,7 +44,9 @@ void mdMenu() {
         sd.chdir("/");
         println_Msg(F("Reading Sram..."));
         display_Update();
+        enableSram_MD(1);
         readSram_MD();
+        enableSram_MD(0);
       }
       else {
         print_Error(F("Cart has no Sram"), false);
@@ -60,9 +62,10 @@ void mdMenu() {
         // Launch file browser
         fileBrowser("Select srm file");
         display_Clear();
-
+        enableSram_MD(1);
         writeSram_MD();
         writeErrors = verifySram_MD();
+        enableSram_MD(0);
         if (writeErrors == 0) {
           println_Msg(F("Sram verified OK"));
           display_Update();
@@ -110,17 +113,21 @@ void setup_MD() {
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output CS(PH3) WR(PH5) OE(PH6)
-  DDRH |=  (1 << 3) | (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6)
+  DDRH |=  (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+
+  // Set TIME(PJ0) to Output
+  DDRJ |=  (1 << 0);
 
   // Set Data Pins (D0-D15) to Input
   DDRC = 0x00;
   DDRA = 0x00;
 
-  // Setting WR(PH5) OE(PH6) HIGH
-  PORTH |= (1 << 5) | (1 << 6);
-  // Setting CS(PH3) LOW
-  PORTH &= ~(1 << 3);
+  // Setting RST(PH0) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6) HIGH
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+
+  // Setting TIME(PJ0) HIGH
+  PORTJ |= (1 << 0);
 
   delay(200);
 
@@ -148,10 +155,14 @@ void writeWord_MD(unsigned long myAddress, word myData) {
 
   // Switch WR(PH5) to LOW
   PORTH &= ~(1 << 5);
+  // Setting CS(PH3) LOW
+  PORTH &= ~(1 << 3);
 
-  // Leave WR low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Leave WR low for at least 200ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
+  // Setting CS(PH3) HIGH
+  PORTH |= (1 << 3);
   // Switch WR(PH5) to HIGH
   PORTH |= (1 << 5);
 
@@ -165,16 +176,21 @@ word readWord_MD(unsigned long myAddress) {
   PORTL = (myAddress >> 16) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t");
+  __asm__("nop\n\t");
 
+  // Setting CS(PH3) LOW
+  PORTH &= ~(1 << 3);
   // Setting OE(PH6) LOW
   PORTH &= ~(1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Long delay here or there will be read errors
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
   word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
 
+  // Setting CS(PH3) HIGH
+  PORTH |= (1 << 3);
   // Setting OE(PH6) HIGH
   PORTH |= (1 << 6);
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
@@ -258,12 +274,12 @@ void getCartInfo_MD() {
   print_Msg(F("Name: "));
   println_Msg(romName);
   print_Msg(F("Size: "));
-  print_Msg(cartSize / 1024 / 1024);
-  println_Msg(F("MB"));
+  print_Msg(cartSize * 8 / 1024 / 1024 );
+  println_Msg(F(" MBit"));
   print_Msg(F("Sram: "));
   if (sramSize > 0) {
-    print_Msg(sramSize / 1024);
-    println_Msg(F("KB"));
+    print_Msg(sramSize * 8 / 1024);
+    println_Msg(F(" KBit"));
   }
   else
     println_Msg(F("None"));
@@ -332,6 +348,23 @@ void readROM_MD() {
 /******************************************
   SRAM functions
 *****************************************/
+// Sonic 3 sram enable
+void enableSram_MD(boolean enableSram) {
+  dataOut_MD();
+
+  // Set D0 to either 1(enable SRAM) or 0(enable ROM)
+  PORTC = enableSram;
+
+  // Strobe TIME(PJ0) LOW to latch the data
+  PORTJ &= ~(1 << 0);
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Set TIME(PJ0) HIGH
+  PORTJ |= (1 << 0);
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  dataIn_MD();
+}
+
 // Write sram to cartridge
 void writeSram_MD() {
   dataOut_MD();
