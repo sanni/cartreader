@@ -12,6 +12,7 @@
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Programs custom made Game Boy Color flashcarts   
 - Reads Game Boy Advance roms and reads/writes save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)   
+- Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
 - Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211    
 
 #### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
