@@ -2,15 +2,15 @@
 
 #### cartreader.zip is the main PCB, PCB thickness is 1.6mm and size is 10x10cm  
 
-![image](https://dl.dropboxusercontent.com/s/yze20m39gjvii3q/cartreader.png?dl=1)    
+![image](https://dl.dropboxusercontent.com/s/b21houxm5bvdds1/cartreader.png?dl=01)    
 
 #### gbaadapter.zip is an adapter for Game Boy and Game Boy Advance cartridges, PCB thickness is 1.2mm 
 
 ![image](https://dl.dropboxusercontent.com/s/rnnnstkn3ynv10g/gbaadapter_pcb.png?dl=1)    
 
-#### flash_apter.zip is an adapter for 8bit and 16bit flashroms like the 29F032 or the 29L3211, PCB thickness is 1.2mm 
+#### flash_adapter.zip is an adapter for 8bit and 16bit flashroms like the 29F032 or the 29L3211, PCB thickness is 1.2mm 
 
-![image](https://www.dropbox.com/s/2xnf2qfgaat95m2/flash_adapter.jpg?dl=1)    
+![image](https://dl.dropboxusercontent.com/s/3oovzhcgdt3a3x9/flashadapter.png?dl=1)    
 
 #### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
