@@ -6,6 +6,7 @@ Source code files:
 - FLASH.ino is for reading and writing 29F016, 29F032, 29F033, 29F1610 and 29L3211 flashroms   
 - GB.ino includes everything Game Boy and Game Boy Color   
 - GBA.ino includes everything Game Boy Advance   
+- MD.ino includes everything for the SEGA Mega Drive   
 - N64.ino includes everything Nintendo 64   
 - NP.ino includes everything for Nintendo Power SF Memory and GB Memory cartridges   
 - SNES.ino includes everything Super Nintendo   
