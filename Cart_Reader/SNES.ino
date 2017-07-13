@@ -1076,26 +1076,26 @@ void writeSRAM (boolean browseFile) {
       // Disable CPU clock
       clockgen.output_enable(SI5351_CLK1, 0);
 
-/*    // MOVED RESET TO AFTER VERIFY
-      // Reset SA1
-      // Set pins to input
-      dataIn();
-      // Close the file:
-      myFile.close();
-      println_Msg(F("SRAM writing finished"));
-      println_Msg(F("Press Button to reset"));
-      display_Update();
-      wait();
-      // Set reset pin to output (PH0)
-      DDRH |= (1 << 0);
-      // Switch RST(PH0) to LOW
-      PORTH &= ~(1 << 0);
-      display_Clear();
-      print_Msg("Resetting...");
-      display_Update();
-      delay(3000);  // wait 3 secs to switch to next game
-      asm volatile ("  jmp 0");
-*/
+      /*    // MOVED RESET TO AFTER VERIFY
+            // Reset SA1
+            // Set pins to input
+            dataIn();
+            // Close the file:
+            myFile.close();
+            println_Msg(F("SRAM writing finished"));
+            println_Msg(F("Press Button to reset"));
+            display_Update();
+            wait();
+            // Set reset pin to output (PH0)
+            DDRH |= (1 << 0);
+            // Switch RST(PH0) to LOW
+            PORTH &= ~(1 << 0);
+            display_Clear();
+            print_Msg("Resetting...");
+            display_Update();
+            delay(3000);  // wait 3 secs to switch to next game
+            asm volatile ("  jmp 0");
+      */
     }
 
     // Set pins to input

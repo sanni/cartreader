@@ -1019,7 +1019,7 @@ void writeFlash16() {
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
-        word currWord = ( ( sdBuffer[d] & 0xFF ) << 8 ) | ( sdBuffer[d + 1] & 0xFF );
+        word currWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
         writeWord_Flash(currByte + c, currWord);
         d += 2;
       }
@@ -1078,7 +1078,7 @@ void writeFlash16_29F1601() {
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
-        word currWord = ( ( sdBuffer[d] & 0xFF ) << 8 ) | ( sdBuffer[d + 1] & 0xFF );
+        word currWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
         writeWord_Flash(currByte + c, currWord);
 
         if (c == 63) {
@@ -1195,7 +1195,7 @@ void verifyFlash16() {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 256; c++) {
-        word currWord = ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
+        word currWord = ((sdBuffer[d + 1] << 8) | sdBuffer[d]);
 
         if (readWord_Flash(currByte + c) != currWord) {
           blank++;
@@ -1254,10 +1254,10 @@ void readFlash16() {
     for (word c = 0; c < 256; c++) {
       word currWord = readWord_Flash(currByte + c);
       // Split word into two bytes
-      // Left
-      sdBuffer[d] = (( currWord >> 8 ) & 0xFF);
       // Right
-      sdBuffer[d + 1] = (currWord & 0xFF);
+      sdBuffer[d + 1] = (( currWord >> 8 ) & 0xFF);
+      // Left
+      sdBuffer[d] = (currWord & 0xFF);
       d += 2;
     }
     myFile.write(sdBuffer, 512);
@@ -1277,30 +1277,31 @@ void printFlash16(int numBytes) {
     short_val = ( ( left_byte & 0xFF ) << 8 ) | ( right_byte & 0xFF );
   */
 
-  char buffer[3];
+  char buf[3];
 
   for (int currByte = 0; currByte < numBytes / 2; currByte += 5) {
+    // 5 words per line
     for (int c = 0; c < 5; c++) {
-
       word currWord = readWord_Flash(currByte + c);
 
       // Split word into two bytes
-      byte right_byte = currWord & 0xFF;
-      byte left_byte = ( currWord >> 8 ) & 0xFF;
+      byte left_byte = currWord & 0xFF;
+      byte right_byte = ( currWord >> 8 ) & 0xFF;
 
-      itoa (left_byte, buffer, 16);
-      for (int i = 0; i < 2 - strlen(buffer); i++) {
-        print_Msg('0');
+
+      sprintf (buf, "%x", left_byte);
+      for (int i = 0; i < 2 - strlen(buf); i++) {
+        print_Msg("0");
       }
       // Now print the significant bits
-      print_Msg(buffer);
+      print_Msg(buf);
 
-      itoa (right_byte, buffer, 16);
-      for (int i = 0; i < 2 - strlen(buffer); i++) {
-        print_Msg('0');
+      sprintf (buf, "%x", right_byte);
+      for (int i = 0; i < 2 - strlen(buf); i++) {
+        print_Msg("0");
       }
       // Now print the significant bits
-      print_Msg(buffer);
+      print_Msg(buf);
     }
     println_Msg("");
   }
