@@ -1,6 +1,6 @@
 # Cartridge Reader for Arduino Mega2560
 
-![image](https://dl.dropboxusercontent.com/s/cqjxdd51n4iiuu2/3d_model.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/o26c0yey8onuha2/v11_front_diagonal.jpg?dl=1)   
 
 #### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
@@ -14,6 +14,8 @@
 - Reads Game Boy Advance roms and reads/writes save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)   
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
 - Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211    
+
+![image](https://dl.dropboxusercontent.com/s/goc70t6cg9v7sfa/v11_switches.jpg?dl=1)   
 
 #### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
 
@@ -40,6 +42,6 @@
    RobinTheHood - GameboyAdvanceRomDumper   
    YamaArashi - GBA flashrom bank switch command    
    
-![image](https://dl.dropboxusercontent.com/s/pw0zf6747n9laat/3d_model_2.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/0be9rp9ss37vq2c/v11_rear.jpg?dl=1)   
 
 #### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
