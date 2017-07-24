@@ -32,5 +32,9 @@
 
 ![image](https://dl.dropboxusercontent.com/s/fn6g1pm88puq8h6/sd_spacer.png?dl=1)  
 
+#### sidewall.stl secures the Arduino Mega to the backplate with three M2x10 screws    
+
+![image](https://www.dropbox.com/s/3wqdbc4p9au7dqw/sidewall.png?dl=1)  
+
 #### For the needed parts list see here: https://github.com/sanni/cartreader/wiki/Needed-Parts   
 #### How to order a PCB: https://github.com/sanni/cartreader/wiki/How-to-order-printed-circuit-boards   
