@@ -3,7 +3,7 @@
 
    Author:           sanni
    Date:             2017-09-08
-   Version:          V28A
+   Version:          V28B
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V28A";
+char ver[5] = "V28B";
 
 /******************************************
    Define Output

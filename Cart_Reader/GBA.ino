@@ -2377,6 +2377,13 @@ void flashRepro_GBA() {
         println_Msg(F("Erasing..."));
         display_Update();
         eraseIntel4000_GBA();
+        delay(1000);
+        resetIntel_GBA(0x8000);
+        delay(1000);
+        resetIntel_GBA(0x100000);
+        delay(1000);
+        resetIntel_GBA(0x200000);
+        delay(1000);
       }
       else if (strcmp(flashid, "227E") == 0) {
         //if (sectorCheckMX29GL128E_GBA()) {
