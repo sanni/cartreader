@@ -1,4 +1,4 @@
-# Cartridge Reader for Arduino Mega2560
+# Cartridge Reader Shield for Arduino Mega2560
 
 ![image](https://dl.dropboxusercontent.com/s/o26c0yey8onuha2/v11_front_diagonal.jpg?dl=1)   
 
