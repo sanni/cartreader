@@ -2062,7 +2062,7 @@ void idFlashrom_GBA() {
     cartSize = 0x2000000;
   }
   else {
-    // Send swapped MX29GL128E ID command to flashrom
+    // Send swapped MX29GL128E/MSP55LV128 ID command to flashrom
     writeWord_GAB(0xAAA, 0xAA);
     writeWord_GAB(0x555, 0x55);
     writeWord_GAB(0xAAA, 0x90);
@@ -2071,8 +2071,10 @@ void idFlashrom_GBA() {
     // Read flashrom ID
     sprintf(flashid, "%02X%02X", ((readWord_GAB(0x2) >> 8) & 0xFF), (readWord_GAB(0x2) & 0xFF));
 
-    // MX29GL128E
+    // MX29GL128E or MSP55LV128
     if (strcmp(flashid, "227E") == 0) {
+      // MX is 0xC2 and MSP is 0x4
+      romType = (readWord_GAB(0x0) & 0xFF);
       cartSize = 0x1000000;
       resetMX29GL128E_GBA();
     }
@@ -2181,6 +2183,29 @@ void eraseIntel4000_GBA() {
   }
 }
 
+void sectorEraseMSP55LV128_GBA() {
+  unsigned long lastSector = 0xFFFFFF;
+
+  // Erase 256 sectors with 64kbytes each
+  unsigned long currSector;
+  for (currSector = 0x0; currSector < lastSector; currSector += 0x10000) {
+    writeWord_GAB(0xAAA, 0xAA);
+    writeWord_GAB(0x555, 0x55);
+    writeWord_GAB(0xAAA, 0x80);
+    writeWord_GAB(0xAAA, 0xAA);
+    writeWord_GAB(0x555, 0x55);
+    writeWord_GAB(currSector, 0x30);
+
+    // Read the status register
+    word statusReg = readWord_GAB(currSector);
+    while ((statusReg | 0xFF7F) != 0xFFFF) {
+      statusReg = readWord_GAB(currSector);
+    }
+    // Blink LED
+    PORTB ^= (1 << 4);
+  }
+}
+
 void sectorEraseMX29GL128E_GBA() {
   unsigned long lastSector = 0xFFFFFF;
 
@@ -2246,6 +2271,48 @@ void writeIntel4000_GBA() {
         statusReg = readWord_GBA(currBlock + currSdBuffer + currWriteBuffer + 62);
         while ((statusReg | 0xFF7F) != 0xFFFF) {
           statusReg = readWord_GBA(currBlock + currSdBuffer + currWriteBuffer + 62);
+        }
+      }
+    }
+  }
+}
+
+void writeMSP55LV128_GBA() {
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x10000) {
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    // Write to flashrom
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x10000; currSdBuffer += 512) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 512);
+
+      // Write 16 words at a time
+      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
+        // Write Buffer command
+        writeWord_GAB(0xAAA, 0xAA);
+        writeWord_GAB(0x555, 0x55);
+        writeWord_GAB(currSector, 0x25);
+
+        // Write word count (minus 1)
+        writeWord_GAB(currSector, 0xF);
+
+        // Write buffer
+        word currWord;
+        for (byte currByte = 0; currByte < 32; currByte += 2) {
+          // Join two bytes into one word
+          currWord = ( ( sdBuffer[currWriteBuffer + currByte + 1] & 0xFF ) << 8 ) | ( sdBuffer[currWriteBuffer + currByte] & 0xFF );
+          writeWord_GBA(currSector + currSdBuffer + currWriteBuffer + currByte, currWord);
+        }
+
+        // Confirm write buffer
+        writeWord_GAB(currSector, 0x29);
+
+        // Read the status register
+        word statusReg = readWord_GAB(currSector + currSdBuffer + currWriteBuffer + 30);
+
+        while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
+          statusReg = readWord_GAB(currSector + currSdBuffer + currWriteBuffer + 30);
         }
       }
     }
@@ -2344,12 +2411,35 @@ void flashRepro_GBA() {
     print_Msg(F(" Size: "));
     print_Msg(cartSize / 0x100000);
     println_Msg(F("MB"));
+    // MX29GL128E or MSP55LV128
+    if (strcmp(flashid, "227E") == 0) {
+      // MX is 0xC2 and MSP is 0x4
+      if (romType == 0xC2) {
+        println_Msg(F("Macronix MX29GL128E"));
+      }
+      else if (romType == 0x4) {
+        println_Msg(F("Fujitsu MSP55LV128"));
+      }
+      else {
+        println_Msg(romType);
+        print_Error(F("Unknown manufacturer"), true);
+      }
+    }
+    // Intel 4000L0YBQ0
+    else if (strcmp(flashid, "8802") == 0) {
+      println_Msg(F("Intel 4000L0YBQ0"));
+    }
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Repro Cartridge."));
+    if (strcmp(flashid, "8802") == 0) {
+      println_Msg("Please use 3.3V!");
+    }
+    else if (strcmp(flashid, "227E") == 0) {
+      println_Msg("Attention: Use 5V!");
+    }
     println_Msg("");
     println_Msg(F("Press Button"));
-    println_Msg(F("to continue"));
     display_Update();
     wait();
 
@@ -2392,7 +2482,12 @@ void flashRepro_GBA() {
         //else {
         println_Msg(F("Erasing..."));
         display_Update();
-        sectorEraseMX29GL128E_GBA();
+        if (romType == 0xC2) {
+          sectorEraseMX29GL128E_GBA();
+        }
+        else if (romType == 0x4) {
+          sectorEraseMSP55LV128_GBA();
+        }
         //}
       }
 
@@ -2409,7 +2504,12 @@ void flashRepro_GBA() {
           writeIntel4000_GBA();
         }
         else if (strcmp(flashid, "227E") == 0) {
-          writeMX29GL128E_GBA();
+          if (romType == 0xC2) {
+            writeMX29GL128E_GBA();
+          }
+          else if (romType == 0x4) {
+            writeMSP55LV128_GBA();
+          }
         }
 
         // Close the file:
