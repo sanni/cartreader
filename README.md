@@ -12,7 +12,7 @@
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Programs custom made Game Boy Color flashcarts with MX29F033 flashrom   
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
-- Reflashes GBA Repros with Intel 4000L0YBQ0 or Macronix 29GL128E flashroms    
+- Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
 - Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211    
 
