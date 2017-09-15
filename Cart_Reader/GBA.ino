@@ -748,12 +748,12 @@ void getCartInfo_GBA() {
   }
 
   // Compare Nintendo logo against known checksum, 156 bytes starting at 0x04
-  byte logoChecksum = 0;
+  word logoChecksum = 0;
   for (int currByte = 0x4; currByte < 0xA0; currByte++) {
     logoChecksum += sdBuffer[currByte];
   }
 
-  if (logoChecksum != 0x1B) {
+  if (logoChecksum != 0x4B1B) {
     print_Error(F("CARTRIDGE ERROR"), false);
     strcpy(romName, "ERROR");
     println_Msg(F(""));
