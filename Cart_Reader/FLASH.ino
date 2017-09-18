@@ -97,6 +97,10 @@ void flashromMenu8() {
       else if (flashromType == 2) {
         if (strcmp(flashid, "C2F3") == 0)
           writeFlash29F1601();
+        else if (strcmp(flashid, "C2A8") == 0)
+          writeFlash29LV320();
+        else if (strcmp(flashid, "C2C9") == 0)
+          writeFlash29LV640();
         else
           writeFlash29F1610();
       }
@@ -305,6 +309,16 @@ idtheflash:
     println_Msg(F("MX29L3211 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2A8") == 0) {
+    println_Msg(F("MX29LV320"));
+    flashSize = 4194304;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2C9") == 0) {
+    println_Msg(F("MX29LV640"));
+    flashSize = 8388608;
     flashromType = 2;
   }
   else if (strcmp(flashid, "0141") == 0) {
@@ -844,6 +858,112 @@ void busyCheck29F1610() {
 
   // Set data pins to output
   dataOut();
+}
+
+/******************************************
+  MX29LV flashrom functions
+*****************************************/
+void busyCheck29LV640(unsigned long myAddress, byte myData) {
+  // Set data pins to input
+  dataIn8();
+  // Read the status register
+  byte statusReg = readByte_Flash(myAddress);
+  while ((statusReg & 0x80) != (myData & 0x80)) {
+    statusReg = readByte_Flash(myAddress);
+  }
+  // Set data pins to output
+  dataOut();
+}
+
+void writeFlash29LV320() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut();
+
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
+      // Fill sdBuffer
+      myFile.read(sdBuffer, 512);
+
+      // Blink led
+      if (currByte % 2048 == 0)
+        PORTB ^= (1 << 4);
+
+      for (int c = 0; c < 512; c++) {
+        // Write command sequence
+        writeByte_Flash(0x555 << 1, 0xaa);
+        writeByte_Flash(0x2aa << 1, 0x55);
+        writeByte_Flash(0x555 << 1, 0xa0);
+        // Write current byte
+        writeByte_Flash(currByte + c, sdBuffer[c]);
+        // Check if write is complete
+        busyCheck29F032(sdBuffer[c]);
+      }
+    }
+
+    // Set data pins to input again
+    dataIn8();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD"));
+    display_Update();
+  }
+}
+void writeFlash29LV640() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut();
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
+      // Fill sdBuffer
+      myFile.read(sdBuffer, 512);
+      // Blink led
+      if (currByte % 2048 == 0)
+        PORTB ^= (1 << 4);
+      for (int c = 0; c < 512; c++) {
+        // Write command sequence
+        writeByte_Flash(0x555 << 1, 0xaa);
+        writeByte_Flash(0x2aa << 1, 0x55);
+        writeByte_Flash(0x555 << 1, 0xa0);
+        // Write current byte
+        writeByte_Flash(currByte + c, sdBuffer[c]);
+        // Check if write is complete
+        busyCheck29LV640(currByte + c, sdBuffer[c]);
+      }
+    }
+    // Set data pins to input again
+    dataIn8();
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD"));
+    display_Update();
+  }
 }
 
 /******************************************
