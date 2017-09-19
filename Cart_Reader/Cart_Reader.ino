@@ -47,7 +47,7 @@ char ver[5] = "V28E";
    Define Input
 ******************************************/
 // If you are using the old version with only one button add // in front of the next line
-#define enable_Button2
+// #define enable_Button2
 
 /******************************************
    Define SD Speed
