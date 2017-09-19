@@ -1,2 +1,1 @@
-A simple tool used to byteswap or wordswap N64 roms.   
-Made by Skelux.   
+Here are two tools that can byteswap a N64 rom for you.    

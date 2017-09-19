@@ -1,25 +1,28 @@
-# Cartridge Reader for Arduino Mega2560
+# Cartridge Reader Shield for Arduino Mega 2560
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/v9/cartreaders.JPG)    
+![image](https://dl.dropboxusercontent.com/s/o26c0yey8onuha2/v11_front_diagonal.jpg?dl=1)   
 
-####Features:  
+#### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, SA1(needs Adafruit Clock Generator)  
-- Reads and writes SFC Nintendo Power Cartridges (also known as SF Memory, needs Adafruit Clock Generator for best result)  
+- Reads and writes SFC Nintendo Power Flash Cartridges (also known as SF Memory, needs Adafruit Clock Generator for best result)  
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
-- Reads Game Boy (Color) roms and reads/writes save games(only tested with MBC5)  
-- Programs custom made Game Boy Color flashcarts   
-- Reads Game Boy Advance roms and reads/writes save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)   
-- Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211(needs 3.3V)   
+- Reflashes N64 Repros with Spansion S29GL256N or Intel 4400L0ZDQ0 flashroms    
+- Reads Game Boy (Color) roms and reads/writes save games   
+- Programs custom made Game Boy Color flashcarts with MX29F033 flashrom   
+- Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
+- Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
+- Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
+- Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211    
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/v9/cartreader_bottom.JPG)    
+![image](https://dl.dropboxusercontent.com/s/goc70t6cg9v7sfa/v11_switches.jpg?dl=1)   
 
-####Be sure to check the guides in the wiki too.
+#### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
 
-[![](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/youtubevideo.jpg)](https://www.youtube.com/watch?v=1BviR53_6NQ)   
+[![](https://dl.dropboxusercontent.com/s/950svg0i21syq3j/youtube_preview.jpg?dl=1)](https://www.youtube.com/watch?v=AD_o7J85bCg)   
 
-####Thanks to:  
+#### Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
    Jeff Saltzman - 4-Way Button   
    Wayne and Layne - Video-Game-Shield menu   
@@ -39,7 +42,8 @@
    insidegadgets - GBCartRead   
    RobinTheHood - GameboyAdvanceRomDumper   
    YamaArashi - GBA flashrom bank switch command    
+   
+![image](https://dl.dropboxusercontent.com/s/0be9rp9ss37vq2c/v11_rear.jpg?dl=1)   
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/v82_components.jpg)   
-
-####Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
+#### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
+And also feel free to send me a private message over the Arduino Forum in case you need help with ordering the parts or soldering or really anything else.   

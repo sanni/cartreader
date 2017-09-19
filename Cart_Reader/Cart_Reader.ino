@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-02-11
-   Version:          V22
+   Date:             2017-09-18
+   Version:          V28E
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.0
+   Compiled with Arduino 1.8.3
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -34,12 +34,11 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V22";
+char ver[5] = "V28E";
 
 /******************************************
    Define Output
 ******************************************/
-// If you don't have an OLED screen change
 // enable_OLED to 0 and enable_Serial to 1
 #define enable_OLED 1
 #define enable_Serial 0
@@ -106,7 +105,6 @@ typedef enum COLOR_T {
 
 // SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
 #include <SdFat.h>
-#include <SdFatUtil.h>
 #define chipSelectPin 53
 SdFat sd;
 SdFile myFile;
@@ -118,13 +116,15 @@ SdFile myFile;
 #define mode_N64_Cart 0
 #define mode_N64_Controller 1
 #define mode_SNES 2
-#define mode_NP 3
-#define mode_NPFlash 4
-#define mode_NPGame 5
+#define mode_SFM 3
+#define mode_SFM_Flash 4
+#define mode_SFM_Game 5
 #define mode_GB 6
 #define mode_FLASH8 7
 #define mode_FLASH16 8
 #define mode_GBA 9
+#define mode_GBM 10
+#define mode_MD 11
 
 /******************************************
    Variables
@@ -166,10 +166,11 @@ int incomingByte;
 int choice = 0;
 // Temporary array that holds the menu option read out of progmem
 char menuOptions[7][20];
+boolean ignoreError = 0;
 
 // File browser
 char fileName[26];
-char filePath[36];
+char filePath[50];
 byte currPage;
 byte lastPage;
 byte numPages;
@@ -178,11 +179,11 @@ boolean filebrowse = 0;
 char fileOptions[30][20];
 
 // Common
-char romName[10];
-int sramSize = 0;
+char romName[17];
+unsigned long sramSize = 0;
 int romType = 0;
 byte saveType;
-int romSize = 0;
+word romSize = 0;
 byte numBanks = 128;
 char checksumStr[5];
 bool errorLvl = 0;
@@ -190,6 +191,8 @@ byte romVersion = 0;
 char cartID[5];
 unsigned long cartSize;
 char flashid[5];
+unsigned long fileSize;
+unsigned long sramBase;
 
 // Variable to count errors
 unsigned long writeErrors;
@@ -199,7 +202,7 @@ byte mode;
 
 //remember folder number to create a new folder for every save
 int foldern;
-char folder[24];
+char folder[36];
 
 // Array that holds the data
 byte sdBuffer[512];
@@ -319,45 +322,52 @@ static const unsigned char PROGMEM sig [] = {
 *****************************************/
 // All menus and menu entries are stored in progmem to save on sram
 // Main menu
-const char modeItem1[] PROGMEM = "Nintendo 64";
-const char modeItem2[] PROGMEM = "Super Nintendo";
-const char modeItem3[] PROGMEM = "Nintendo Power";
-const char modeItem4[] PROGMEM = "Game Boy";
-const char modeItem5[] PROGMEM = "Flashrom Programmer";
-const char modeItem6[] PROGMEM = "About";
-const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6};
+static const char modeItem1[] PROGMEM = "Nintendo 64";
+static const char modeItem2[] PROGMEM = "Super Nintendo";
+static const char modeItem3[] PROGMEM = "Nintendo Power";
+static const char modeItem4[] PROGMEM = "Game Boy";
+static const char modeItem5[] PROGMEM = "Mega Drive";
+static const char modeItem6[] PROGMEM = "Flashrom Programmer";
+static const char modeItem7[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
 
 // N64 Submenu
-const char n64MenuItem1[] PROGMEM = "Cart Slot";
-const char n64MenuItem2[] PROGMEM = "Controller";
-const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2};
+static const char n64MenuItem1[] PROGMEM = "Cart Slot";
+static const char n64MenuItem2[] PROGMEM = "Controller";
+static const char n64MenuItem3[] PROGMEM = "Flash Repro";
+static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
+
+// Nintendo Power Submenu
+static const char npMenuItem1[] PROGMEM = "SF Memory";
+static const char npMenuItem2[] PROGMEM = "GB Memory";
+static const char* const menuOptionsNP[] PROGMEM = {npMenuItem1, npMenuItem2};
 
 // Flash Submenu
-const char flashMenuItem1[] PROGMEM = "8bit slot";
-const char flashMenuItem2[] PROGMEM = "16bit slot";
-const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
+static const char flashMenuItem1[] PROGMEM = "8bit slot";
+static const char flashMenuItem2[] PROGMEM = "16bit slot";
+static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
 
 // GBx Submenu
-const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
-const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
-const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
+static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
+static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
+static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
 
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
   // Copy menuOptions out of progmem
-  convertPgm(modeOptions, 6);
-  modeMenu = question_box("Cartridge Reader", menuOptions, 6, 0);
+  convertPgm(modeOptions, 7);
+  modeMenu = question_box("Cartridge Reader", menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
   {
     case 0:
-      // create menu with title and 2 options to choose from
+      // create menu with title and 3 options to choose from
       unsigned char n64Dev;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsN64, 2);
-      n64Dev = question_box("Select N64 device", menuOptions, 2, 0);
+      convertPgm(menuOptionsN64, 3);
+      n64Dev = question_box("Select N64 device", menuOptions, 3, 0);
 
       // wait for user choice to come back from the question box menu
       switch (n64Dev)
@@ -366,6 +376,7 @@ void mainMenu() {
           display_Clear();
           display_Update();
           setup_N64_Cart();
+          printCartInfo_N64();
           mode = mode_N64_Cart;
           break;
 
@@ -375,6 +386,16 @@ void mainMenu() {
           setup_N64_Controller();
           mode = mode_N64_Controller;
           break;
+
+        case 2:
+          display_Clear();
+          display_Update();
+          setup_N64_Cart();
+          flashRepro_N64();
+          printCartInfo_N64();
+          mode = mode_N64_Cart;
+          break;
+
       }
       break;
 
@@ -386,10 +407,29 @@ void mainMenu() {
       break;
 
     case 2:
-      display_Clear();
-      display_Update();
-      setup_NP();
-      mode =  mode_NP;
+      // create menu with title and 2 options to choose from
+      unsigned char npCart;
+      // Copy menuOptions out of progmem
+      convertPgm(menuOptionsNP, 2);
+      npCart = question_box("Select NP Cart", menuOptions, 2, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (npCart)
+      {
+        case 0:
+          display_Clear();
+          display_Update();
+          setup_SFM();
+          mode =  mode_SFM;
+          break;
+
+        case 1:
+          display_Clear();
+          display_Update();
+          setup_GBM();
+          mode =  mode_GBM;
+          break;
+      }
       break;
 
     case 3:
@@ -419,6 +459,13 @@ void mainMenu() {
       break;
 
     case 4:
+      display_Clear();
+      display_Update();
+      setup_MD();
+      mode =  mode_MD;
+      break;
+
+    case 5:
       // create menu with title and 2 options to choose from
       unsigned char flashSlot;
       // Copy menuOptions out of progmem
@@ -444,7 +491,7 @@ void mainMenu() {
       }
       break;
 
-    case 5:
+    case 6:
       display_Clear();
       // Draw the Logo
       display.drawBitmap(0, 0, sig, 128, 64, 1);
@@ -481,7 +528,7 @@ void mainMenu() {
             display_Update();
             delay(2000);
             foldern = 0;
-            EEPROM_writeAnything(0, foldern);
+            EEPROM_writeAnything(10, foldern);
             asm volatile ("  jmp 0");
           }
         }
@@ -506,8 +553,11 @@ void setup() {
   //PORTD |= (1 << 7);
   //PORTG |= (1 << 2);
 
+  // Initialize LED
+  rgb.setColor(0, 0, 0);
+
   // Read current folder number out of eeprom
-  EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(10, foldern);
 
   if (enable_OLED) {
     // GLCD
@@ -532,11 +582,6 @@ void setup() {
     Serial.println(F("Cartridge Reader"));
     Serial.println(F("2017 sanni"));
     Serial.println("");
-
-    // Print available RAM
-    Serial.print(F("Free Ram: "));
-    Serial.print(FreeRam());
-    Serial.println(F("Bytes"));
   }
 
   // Init SD card
@@ -592,7 +637,19 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
-    asm volatile ("  jmp 0");
+    if (ignoreError == 0) {
+      asm volatile ("  jmp 0");
+    }
+    else {
+      ignoreError = 0;
+      display_Clear();
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F("  Error Overwrite"));
+      display_Update();
+      delay(2000);
+    }
   }
 }
 
@@ -894,12 +951,9 @@ int checkButton2() {
 
 // Wait for user to push button
 void wait_btn() {
-
   // Change led to green
   if (errorLvl == 0)
     rgbLed(green_color);
-  else
-    errorLvl = 0;
 
   while (1)
   {
@@ -907,16 +961,22 @@ void wait_btn() {
     int b = checkButton();
 
     // Send some clock pulses to the Eeprom in case it locked up
-    if (mode == mode_N64_Cart) {
+    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
       pulseClock_N64(1);
     }
     // if the cart readers input button is pressed shortly
     if (b == 1) {
+      errorLvl = 0;
       break;
     }
 
     // if the cart readers input button is pressed long
     if (b == 3) {
+      if (errorLvl) {
+        // Debug
+        //ignoreError = 1;
+        errorLvl = 0;
+      }
       break;
     }
   }
@@ -1240,8 +1300,8 @@ void loop() {
   else if (mode == mode_FLASH16) {
     flashromMenu16();
   }
-  else if (mode == mode_NP) {
-    npMenu();
+  else if (mode == mode_SFM) {
+    sfmMenu();
   }
   else if (mode == mode_GB) {
     gbMenu();
@@ -1249,11 +1309,17 @@ void loop() {
   else if (mode == mode_GBA) {
     gbaMenu();
   }
-  else if (mode == mode_NPFlash) {
-    NPFlashMenu();
+  else if (mode == mode_SFM_Flash) {
+    sfmFlashMenu();
   }
-  else if (mode == mode_NPGame) {
-    NPGameOptions();
+  else if (mode == mode_SFM_Game) {
+    sfmGameOptions();
+  }
+  else if (mode == mode_GBM) {
+    gbmMenu();
+  }
+  else if (mode == mode_MD) {
+    mdMenu();
   }
   else {
     display_Clear();

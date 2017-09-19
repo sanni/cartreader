@@ -1,41 +1,40 @@
-###Here you will find all the printed circuit boards needed to build the Arduino Cartridge Reader   
+### Here you will find all the printed circuit boards needed to build the Arduino Cartridge Reader   
 
-####cartreader.zip is the main PCB, PCB thickness is 1.6mm and size is 10x10cm  
+#### cartreader.zip is the main PCB, PCB thickness is 1.6mm and size is 10x10cm  
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/cartreader.png)    
+![image](https://dl.dropboxusercontent.com/s/b21houxm5bvdds1/cartreader.png?dl=01)    
 
-####adapter.zip are various adapter PCBs, PCB thickness is 1.2mm and size is 10x10cm    
+#### gbaadapter.zip is an adapter for Game Boy and Game Boy Advance cartridges, PCB thickness is 1.2mm 
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/adapter.png)    
+![image](https://dl.dropboxusercontent.com/s/rnnnstkn3ynv10g/gbaadapter_pcb.png?dl=1)    
 
-Contains:   
-- Game Boy (Color)/ Game Boy Advance cartridge adapter   
-- small pcb for soldering a 29F032 flashrom into a Mission Impossible Game Boy Color cartridge   
-- flash adapter for flashing 29F016, 29F032, 29F033, 29F1610 and 29L3211 flashroms   
-- adapter for soldering a 29F032 into a SNES cartridge   
+#### flash_adapter.zip is an adapter for 8bit and 16bit flashroms like the 29F032 or the 29L3211, PCB thickness is 1.2mm 
 
-####backplate.dxf are the acrylic pieces for laser cutting, the thickness is 4mm and size is 10x10cm, you need to tell the manufacturer that you need all the cut-outs too     
+![image](https://dl.dropboxusercontent.com/s/3oovzhcgdt3a3x9/flashadapter.png?dl=1)    
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/backplate.png)    
+#### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
-Contains:   
-- backplate   
-- 2x SD card spacer   
-- display protector   
+![image](https://dl.dropboxusercontent.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
 
-####snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
+#### n64sleeve.stl helps with aligning N64 cartridges if the clone slot is not long/wide enough     
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/snes_spacer.png)   
+![image](https://dl.dropboxusercontent.com/s/s6jxobazww3sm81/n64sleeve.png?dl=1)   
 
-####gbslot.stl is a 3d printed case for the Game Boy (Advance) adapter pcb      
+#### gbaadapter.stl is a 3d printed case for the Game Boy (Advance) adapter pcb      
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/gbslot.png)   
+![image](https://dl.dropboxusercontent.com/s/ainwnoclzzq24ez/gbaadapter.png?dl=1)   
 
-####backplate_3dprint.stl is an alternative backplate for 3d printing   
+#### backplate.stl is the backplate that holds the Arduino    
 
-![image](https://dl.dropboxusercontent.com/u/20912715/snes/Snes_Cart_Reader_Mega_Shield/wiki/backplate_3dprint.png)    
+![image](https://dl.dropboxusercontent.com/s/0qixf0n33emi1ed/backplate.png?dl=1)    
 
-####For the needed parts list see here: https://github.com/sanni/cartreader/wiki/PCB-Needed-Parts   
-####How to order a PCB: https://github.com/sanni/cartreader/wiki/PCB-How-to-order-printed-circuit-boards   
+#### sd_spacer.stl holds the RGB led and fits between the SD card and the Cart Reader pcb    
 
-###Attention: While I have tested all the parts I can not guarantee flawless operation, so use at own risk and always check the boards for short circuits   
+![image](https://dl.dropboxusercontent.com/s/fn6g1pm88puq8h6/sd_spacer.png?dl=1)  
+
+#### sidewall.stl secures the Arduino Mega to the backplate with three M2x10 screws    
+
+![image](https://dl.dropboxusercontent.com/s/3wqdbc4p9au7dqw/sidewall.png?dl=1)  
+
+#### For the needed parts list see here: https://github.com/sanni/cartreader/wiki/Needed-Parts   
+#### How to order a PCB: https://github.com/sanni/cartreader/wiki/How-to-order-printed-circuit-boards   

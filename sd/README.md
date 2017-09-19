@@ -1,6 +1,6 @@
-####Copy these files to the root of your SD card.  
+#### Copy these files to the root of your SD card.  
 
-####gba.txt  
+#### gba.txt  
 This file stores the GBA database which is needed because the save type and rom size are not stored inside the rom. 
 
 Example:  
@@ -16,7 +16,7 @@ Savetypes:
 5 = 1024K Flash   
 6 = 512K Sram   
 
-####n64.txt  
+#### n64.txt  
 This file stores the N64 database which is needed because the save type and rom size are not stored inside the rom.  
 The CRC32 checksum is used to verify a good dump.  
 
@@ -31,14 +31,14 @@ Savetypes:
 5 = 4K Eeprom  
 6 = 16K Eeprom  
 
-####snes.txt  
+#### snes.txt  
 This file is needed for odd sized SNES games like Final Fantasy (JAP), Super Metroid(US/JAP) or Tales of Symphonia. Without this file you will get overdumps and the checksum calculation will fail. There are still a lot games missing from this list.    
 
 Example:  
 A172,24,48  
 checksum, size in Mbit, number of banks (lorom needs twice as many banks as hirom for the same rom size)  
 
-####hirom64.map  
+#### hirom64.map  
 This is a Nintendo Power mapping file that changes the mapping to a single 4MB HiRom game with 64Kbit/8KByte save. The first byte is used to specify the mapping.  
 
 Bit0-1 SRAM Size (0=2K, 1=8K, 2=32K, 3=None) ;ie. 2K SHL (N*2)  
@@ -54,7 +54,7 @@ Example:
 111 -> 4M  
 01 -> 8K  
 
-####lorom256.map  
+#### lorom256.map  
 This is a Nintendo Power mapping file that changes the mapping to a single 4MB LoRom game with 256Kbit/32 KByte save.  
 
 Example:  

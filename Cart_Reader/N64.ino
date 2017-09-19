@@ -37,7 +37,6 @@ String lastbutton = "N/A";
 
 // Rom base address
 unsigned long romBase = 0x10000000;
-unsigned long sramBase = 0x08000000;
 
 // Flashram type
 byte flashramType = 1;
@@ -47,25 +46,25 @@ boolean MN63F81MPN = false;
   Menu
 *****************************************/
 // N64 controller menu items
-const char N64ContMenuItem1[] PROGMEM = "Test Controller";
-const char N64ContMenuItem2[] PROGMEM = "Read ControllerPak";
-const char N64ContMenuItem3[] PROGMEM = "Write ControllerPak";
-const char N64ContMenuItem4[] PROGMEM = "Reset";
-const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, N64ContMenuItem4};
+static const char N64ContMenuItem1[] PROGMEM = "Test Controller";
+static const char N64ContMenuItem2[] PROGMEM = "Read ControllerPak";
+static const char N64ContMenuItem3[] PROGMEM = "Write ControllerPak";
+static const char N64ContMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, N64ContMenuItem4};
 
 // N64 cart menu items
-const char N64CartMenuItem1[] PROGMEM = "Read Rom";
-const char N64CartMenuItem2[] PROGMEM = "Read Save";
-const char N64CartMenuItem3[] PROGMEM = "Write Save";
-const char N64CartMenuItem4[] PROGMEM = "Reset";
-const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4};
+static const char N64CartMenuItem1[] PROGMEM = "Read Rom";
+static const char N64CartMenuItem2[] PROGMEM = "Read Save";
+static const char N64CartMenuItem3[] PROGMEM = "Write Save";
+static const char N64CartMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4};
 
 // N64 CRC32 error menu items
-const char N64CRCMenuItem1[] PROGMEM = "Recalc CRC";
-const char N64CRCMenuItem2[] PROGMEM = "Redump";
-const char N64CRCMenuItem3[] PROGMEM = "Ignore";
-const char N64CRCMenuItem4[] PROGMEM = "Reset";
-const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
+static const char N64CRCMenuItem1[] PROGMEM = "Recalc CRC";
+static const char N64CRCMenuItem2[] PROGMEM = "Redump";
+static const char N64CRCMenuItem3[] PROGMEM = "Ignore";
+static const char N64CRCMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
 
 // N64 Controller Menu
 void n64ControllerMenu() {
@@ -131,10 +130,6 @@ void n64CartMenu() {
   {
     case 0:
       sd.chdir("/");
-      display_Clear();
-
-      println_Msg(F("Reading Rom..."));
-      display_Update();
       readRom_N64();
       break;
 
@@ -252,18 +247,24 @@ void setup_N64_Controller() {
 }
 
 void setup_N64_Cart() {
-  // Set Address Pins to Output
+  // Set Address Pins to Output and set them low
   //A0-A7
   DDRF = 0xFF;
+  PORTF = 0x00;
   //A8-A15
   DDRK = 0xFF;
+  PORTK = 0x00;
 
-  // Set Control Pins to Output WR(PH5) RD(PH6) aleL(PC0) aleH(PC1)
-  DDRH |= (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RESET(PH0) WR(PH5) RD(PH6) aleL(PC0) aleH(PC1)
+  DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
   DDRC |= (1 << 0) | (1 << 1);
-  // Output a high signal on all pins, pins are active low therefore everything is disabled now
+  // Pull RESET(PH0) low until we are ready
+  //PORTH &= ~(1 << 0);
+  // Output a high signal on WR(PH5) RD(PH6), pins are active low therefore everything is disabled now
   PORTH |= (1 << 5) | (1 << 6);
-  PORTC |= (1 << 0) | (1 << 1);
+  // Pull aleL(PC0) low and aleH(PC1) high
+  PORTC &= ~(1 << 0);
+  PORTC |= (1 << 1);
 
   // Set Eeprom Clock Pin(PH1) to Output
   DDRH |= (1 << 1);
@@ -275,59 +276,15 @@ void setup_N64_Cart() {
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
 
+  // Set sram base address
+  sramBase = 0x08000000;
+
   // Wait until all is stable
-  delay(500);
+  delay(300);
 
-  // Print start page
-  getCartInfo_N64();
-  if (cartSize != 0) {
-    println_Msg(F("N64 Cartridge Info"));
-    println_Msg(F(""));
-    printName();
-    print_Msg(F("ID: "));
-    print_Msg(cartID);
-    print_Msg(F(" Size: "));
-    print_Msg(cartSize);
-    println_Msg(F("MB"));
-    print_Msg(F("Save: "));
-    switch (saveType) {
-      case 1:
-        println_Msg(F("Sram"));
-        break;
-      case 4:
-        println_Msg(F("Flashram"));
-        break;
-      case 5:
-        println_Msg(F("4K Eeprom"));
-        eepPages = 64;
-        break;
-      case 6:
-        println_Msg(F("16K Eeprom"));
-        eepPages = 256;
-        break;
-      default:
-        println_Msg(F("unknown"));
-        break;
-    }
-    print_Msg(F("Version: 1."));
-    println_Msg(romVersion);
-
-    // Wait for user input
-    println_Msg(F(" "));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
-  else {
-    println_Msg(F("GAMEPAK ERROR"));
-    println_Msg("");
-    printName();
-    print_Msg(F("ID: "));
-    println_Msg(cartID);
-    println_Msg("");
-    display_Update();
-    print_Error(F("Cartridge unknown"), true);
-  }
+  // Pull RESET(PH0) high
+  //PORTH |= (1 << 0);
+  //delay(10);
 }
 
 /******************************************
@@ -337,8 +294,10 @@ void setup_N64_Cart() {
 void adOut_N64() {
   //A0-A7
   DDRF = 0xFF;
+  PORTF = 0x00;
   //A8-A15
   DDRK = 0xFF;
+  PORTK = 0x00;
 }
 
 // Switch Cartridge address/data pins to read
@@ -351,48 +310,44 @@ void adIn_N64() {
 
 // Set Cartridge address
 void setAddress_N64(unsigned long myAddress) {
+  // Set address pins to output
+  adOut_N64();
+
   // Split address into two words
   word myAdrLowOut = myAddress & 0xFFFF;
   word myAdrHighOut = myAddress >> 16;
 
-  // Set address pins to output
-  adOut_N64();
-
   // Switch WR(PH5) RD(PH6) ale_L(PC0) ale_H(PC1) to high (since the pins are active low)
   PORTH |= (1 << 5) | (1 << 6);
-  PORTC |= (1 << 0) | (1 << 1);
+  PORTC |= (1 << 1);
+  __asm__("nop\n\t");
+  PORTC |= (1 << 0);
 
   // Output high part to address pins
   PORTF = myAdrHighOut & 0xFF;
   PORTK = (myAdrHighOut >> 8) & 0xFF;
 
-  // Leave ale_H high for additional 120ns
-  __asm__("nop\n\t""nop\n\t");
+  // Leave ale_H high for additional 62.5ns
+  __asm__("nop\n\t");
 
   // Pull ale_H(PC1) low
   PORTC &= ~(1 << 1);
-
-  // Leave address pins stable for a little bit
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Output low part to address pins
   PORTF = myAdrLowOut & 0xFF;
   PORTK = (myAdrLowOut >> 8) & 0xFF;
 
-  // Leave ale_L high for ~180ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t");
+  // Leave ale_L high for ~125ns
+  __asm__("nop\n\t""nop\n\t");
 
   // Pull ale_L(PC0) low
   PORTC &= ~(1 << 0);
 
-  // Leave address pins stable for a little bit
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Wait ~600ns just to be sure address is set
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Set data pins to input
   adIn_N64();
-
-  // Wait ~600ns just to be sure address is set
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 // Read one word out of the cartridge
@@ -400,7 +355,7 @@ word readWord_N64() {
   // Pull read(PH6) low
   PORTH &= ~(1 << 6);
 
-  // Wait ~300ns
+  // Wait ~310ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Join bytes from PINF and PINK into a word
@@ -409,6 +364,8 @@ word readWord_N64() {
   // Pull read(PH6) high
   PORTH |= (1 << 6);
 
+  // Wait 62.5ns
+  __asm__("nop\n\t");
   return tempWord;
 }
 
@@ -845,17 +802,19 @@ void readBlock(word myAddress) {
 void readMPK() {
   // Change to root
   sd.chdir("/");
+  // Make MPK directory
+  sd.mkdir("N64/MPK", true);
   // Change to MPK directory
-  sd.chdir("MPK");
+  sd.chdir("N64/MPK");
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(10, foldern);
   sprintf(fileName, "%d", foldern);
   strcat(fileName, ".mpk");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -876,7 +835,7 @@ void readMPK() {
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved as /MPK/"));
+  print_Msg(F("Saved as N64/MPK/"));
   println_Msg(fileName);
   display_Update();
 }
@@ -967,6 +926,67 @@ void verifyMPK() {
 /******************************************
   N64 Cartridge functions
 *****************************************/
+void printCartInfo_N64() {
+  // Check cart
+  getCartInfo_N64();
+
+  // Print start page
+  if (cartSize != 0) {
+    println_Msg(F("N64 Cartridge Info"));
+    println_Msg(F(""));
+    print_Msg(F("Name: "));
+    println_Msg(romName);
+    print_Msg(F("ID: "));
+    print_Msg(cartID);
+    print_Msg(F(" Size: "));
+    print_Msg(cartSize);
+    println_Msg(F("MB"));
+    print_Msg(F("Save: "));
+    switch (saveType) {
+      case 1:
+        println_Msg(F("Sram"));
+        break;
+      case 4:
+        println_Msg(F("Flashram"));
+        break;
+      case 5:
+        println_Msg(F("4K Eeprom"));
+        eepPages = 64;
+        break;
+      case 6:
+        println_Msg(F("16K Eeprom"));
+        eepPages = 256;
+        break;
+      default:
+        println_Msg(F("unknown"));
+        break;
+    }
+    print_Msg(F("Version: 1."));
+    println_Msg(romVersion);
+
+    // Wait for user input
+    println_Msg(F(" "));
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
+  }
+  else {
+    // Display error
+    println_Msg(F("GAMEPAK ERROR"));
+    println_Msg("");
+    print_Msg(F("Name: "));
+    println_Msg(romName);
+    print_Msg(F("ID: "));
+    println_Msg(cartID);
+    println_Msg("");
+    display_Update();
+    // Set cartSize to 64MB for test dumps
+    cartSize = 64;
+    strcpy(romName, "GPERROR");
+    print_Error(F("Cartridge unknown"), true);
+  }
+}
+
 // CRC32 lookup table
 static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -1158,65 +1178,37 @@ void getCartInfo_N64() {
 
 // Read rom ID
 void idCart() {
-  // Set address
-  setAddress_N64(romBase + 0x3A);
-
-  // Split word
-  word myWord = readWord_N64();
-  byte loByte = myWord & 0xFF;
-  byte hiByte = myWord >> 8;
-
-  // First letter is always N or C
-  cartID[0] = loByte;
-
-  // Split word
-  myWord = readWord_N64();
-  loByte = myWord & 0xFF;
-  hiByte = myWord >> 8;
-
-  // Game ID
-  cartID[1] = char(hiByte);
-  cartID[2] = char(loByte);
-
-  // Split word
-  myWord = readWord_N64();
-  loByte = myWord & 0xFF;
-  hiByte = myWord >> 8;
-
-  // Country Code
-  cartID[3] = char(hiByte);
-
-  // Get rom version
-  romVersion = loByte;
-}
-
-// Read name out of rom
-void printName() {
-  // Set the address for the next 512 bytes
-  setAddress_N64(romBase + 0x20);
-
-  // Dump name into 8.3 compatible format
-  byte myLength = 0;
-
-  for (unsigned int i = 0; i < 20; i += 2) {
+  // Set the address
+  setAddress_N64(romBase);
+  // Read first 64 bytes of rom
+  for (int c = 0; c < 64; c += 2) {
     // split word
     word myWord = readWord_N64();
     byte loByte = myWord & 0xFF;
     byte hiByte = myWord >> 8;
 
-    if (((char(hiByte) >= 48 && char(hiByte) <= 57) || (char(hiByte) >= 65 && char(hiByte) <= 122)) && myLength < 8) {
-      romName[myLength] = char(hiByte);
-      myLength++;
-    }
+    // write to buffer
+    sdBuffer[c] = hiByte;
+    sdBuffer[c + 1] = loByte;
+  }
 
-    if (((char(loByte) >= 48 && char(loByte) <= 57) || (char(loByte) >= 65 && char(loByte) <= 122)) && myLength < 8) {
-      romName[myLength] = char(loByte);
+  // Get cart id
+  cartID[0] = sdBuffer[0x3B];
+  cartID[1] = sdBuffer[0x3C];
+  cartID[2] = sdBuffer[0x3D];
+  cartID[3] = sdBuffer[0x3E];
+
+  // Get rom version
+  romVersion = sdBuffer[0x3F];
+
+  // Get name
+  byte myLength = 0;
+  for (unsigned int i = 0; i < 20; i++) {
+    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 15) {
+      romName[myLength] = char(sdBuffer[0x20 + i]);
       myLength++;
     }
   }
-  print_Msg(F("Name: "));
-  println_Msg(romName);
-  display_Update();
 }
 
 /******************************************
@@ -1348,14 +1340,14 @@ void readEeprom() {
     strcat(fileName, ".eep");
 
     // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "SAVE/%s/%d", romName, foldern);
+    EEPROM_readAnything(10, foldern);
+    sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
+    EEPROM_writeAnything(10, foldern);
 
     // Open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1393,12 +1385,11 @@ void readEeprom() {
     }
     // Close the file:
     myFile.close();
-    print_Msg(F("Saved to SAVE/"));
-    print_Msg(romName);
-    print_Msg(F("/"));
-    print_Msg(foldern - 1);
-    print_Msg(F("/"));
-    println_Msg(fileName);
+    //clear the screen
+    display_Clear();
+    print_Msg(F("Saved to "));
+    print_Msg(folder);
+    println_Msg(F("/"));
     display_Update();
   }
   else {
@@ -1538,14 +1529,14 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
 
   // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SAVE/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1570,12 +1561,9 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to SAVE/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern - 1);
-  print_Msg(F("/"));
-  println_Msg(fileName);
+  print_Msg(F("Saved to "));
+  print_Msg(folder);
+  println_Msg(F("/"));
   display_Update();
 }
 
@@ -1939,14 +1927,20 @@ void readRom_N64() {
   strcat(fileName, ".Z64");
 
   // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ROM/%s/%d", romName, foldern);
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  EEPROM_writeAnything(10, foldern);
 
 readn64rom:
   // Open file on sd card
@@ -1976,13 +1970,6 @@ readn64rom:
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to ROM/"));
-  print_Msg(romName);
-  print_Msg(F("/"));
-  print_Msg(foldern - 1);
-  print_Msg(F("/"));
-  println_Msg(fileName);
-  display_Update();
 
 calcn64crc:
   // Calculate Checksum and convert to string
@@ -2058,6 +2045,648 @@ calcn64crc:
     }
   }
   display_Update();
+}
+
+/******************************************
+   N64 Repro Flashrom Functions
+ *****************************************/
+void flashRepro_N64() {
+  // Check flashrom ID's
+  idFlashrom_N64();
+
+  // If the ID is known continue
+  if (cartSize != 0) {
+    print_Msg("ID: ");
+    print_Msg(flashid);
+    print_Msg(" Size: ");
+    print_Msg(cartSize);
+    println_Msg("MB");
+    println_Msg("");
+    println_Msg(F("This will erase your"));
+    println_Msg(F("Repro Cartridge."));
+    println_Msg(F("Attention: Use 3.3V!"));
+    println_Msg("");
+    println_Msg(F("Press Button"));
+    println_Msg(F("to continue"));
+    display_Update();
+    wait();
+
+    // Launch file browser
+    filePath[0] = '\0';
+    sd.chdir("/");
+    fileBrowser("Select z64 file");
+    display_Clear();
+    display_Update();
+
+    // Create filepath
+    sprintf(filePath, "%s/%s", filePath, fileName);
+
+    // Open file on sd card
+    if (myFile.open(filePath, O_READ)) {
+      // Get rom size from file
+      fileSize = myFile.fileSize();
+      print_Msg(F("File size: "));
+      print_Msg(fileSize / 1048576);
+      println_Msg(F("MB"));
+      display_Update();
+
+      // Compare file size to flashrom size
+      if ((fileSize / 1048576) > cartSize) {
+        print_Error(F("File too big"), true);
+      }
+
+      // Erase needed sectors
+      if (strcmp(flashid, "227E") == 0) {
+        // Spansion S29GL256N
+        eraseFlashrom_N64(0x20000);
+      }
+      else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
+        // Intel 4400L0ZDQ0
+        eraseIntel4400_N64();
+        resetIntel4400_N64();
+      }
+      else if (strcmp(flashid, "127E") == 0) {
+        // Fujitsu MSP55LV100S
+        eraseFlashrom_N64(0x10000);
+      }
+      else if (strcmp(flashid, "C2C9") == 0) {
+        // Macronix MX29LV640
+        eraseFlashrom_N64(0x8000);
+      }
+
+      // Check if erase was successful
+      if (blankcheckFlashrom_N64()) {
+        // Write flashrom
+        println_Msg(F("OK"));
+        print_Msg(F("Writing "));
+        println_Msg(filePath);
+        display_Update();
+
+        if (strcmp(flashid, "227E") == 0) {
+          // Spansion S29GL256N
+          write29GL256N_N64();
+        }
+        else if (strcmp(flashid, "127E") == 0) {
+          // Fujitsu MSP55LV100S
+          writeMSP55LV100S_N64();
+        }
+        else if (strcmp(flashid, "C2C9") == 0) {
+          // Macronix MX29LV640
+          write29LV640_N64();
+        }
+        else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
+          // Intel 4400L0ZDQ0
+          writeIntel4400_N64();
+          resetIntel4400_N64();
+        }
+
+        // Close the file:
+        myFile.close();
+
+        // Verify
+        print_Msg(F("Verifying..."));
+        display_Update();
+        writeErrors = verifyFlashrom_N64();
+        if (writeErrors == 0) {
+          println_Msg(F("OK"));
+          display_Update();
+        }
+        else {
+          print_Msg(writeErrors);
+          print_Msg(F(" bytes "));
+          print_Error(F("did not verify."), false);
+        }
+      }
+      else {
+        print_Error(F("failed"), false);
+      }
+    }
+    else {
+      print_Error(F("Can't open file"), false);
+    }
+  }
+  // If the ID is unknown show error message
+  else {
+    print_Msg(F("Flash ID: "));
+    println_Msg(flashid);
+    print_Error(F("Unknown flashrom"), false);
+  }
+
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+  display_Clear();
+  display_Update();
+}
+
+// Reset to read mode
+void resetIntel4400_N64() {
+  for (unsigned long currPartition = 0; currPartition < (cartSize * 0x100000); currPartition += 0x20000) {
+    setAddress_N64(romBase + currPartition);
+    writeWord_N64(0xFF);
+  }
+}
+
+// Common reset command
+void resetFlashrom_N64(unsigned long flashBase) {
+  // Send reset Command
+  setAddress_N64(flashBase);
+  writeWord_N64(0xF0);
+  delay(100);
+}
+
+void idFlashrom_N64() {
+  // Set size to 0 if no ID is found
+  cartSize = 0;
+
+  // Send flashrom ID command
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x90);
+
+  // Read and discard manufacturer ID
+  setAddress_N64(romBase);
+  readWord_N64();
+  // Read flashrom ID
+  sprintf(flashid, "%04X", readWord_N64());
+
+  // Spansion S29GL256N(32MB/64MB) or Macronix MX29LV640(8MB/16MB)
+  if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "C2C9") == 0)) {
+    // Reset flashrom
+    resetFlashrom_N64(romBase);
+
+    // Found first flashrom chip
+    if (strcmp(flashid, "227E") == 0) {
+      cartSize = 32;
+    }
+    else if (strcmp(flashid, "C2C9") == 0)  {
+      cartSize = 8;
+    }
+
+    // These use PCBs with either one or two flashrom chips so try to read ID of possible second chip
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0x90);
+
+    // Read manufacturer ID
+    setAddress_N64(romBase + 0x2000000);
+    readWord_N64();
+    // Read flashrom ID
+    sprintf(cartID, "%04X", readWord_N64());
+
+    // Check if second flashrom chip is present
+    if (strcmp(cartID, "227E") == 0)  {
+      cartSize = 64;
+    }
+    else if (strcmp(cartID, "C2C9") == 0)  {
+      cartSize = 16;
+    }
+    resetFlashrom_N64(romBase + 0x2000000);
+    // Empty cartID string
+    cartID[0] = '\0';
+  }
+  // Intel 4400L0ZDQ0 (64MB)
+  else if (strcmp(flashid, "8816") == 0) {
+    resetIntel4400_N64();
+    cartSize = 64;
+  }
+  //Fujitsu MSP55LV100S (64MB)
+  else if (strcmp(flashid, "127E") == 0) {
+    resetFlashrom_N64(romBase);
+    cartSize = 64;
+  }
+}
+
+// Erase Intel flashrom
+void eraseIntel4400_N64() {
+  unsigned long flashBase = romBase;
+
+  print_Msg(F("Erasing..."));
+  display_Update();
+
+  // If the game is smaller than 32Mbit only erase the needed blocks
+  unsigned long lastBlock = 0x1FFFFFF;
+  if (fileSize < 0x1FFFFFF)
+    lastBlock = fileSize;
+
+  // Erase 4 blocks with 16kwords each
+  for (unsigned long currBlock = 0x0; currBlock < 0x1FFFF; currBlock += 0x8000) {
+    // Unlock block command
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0x60);
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0xD0);
+    // Erase command
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0x20);
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0xD0);
+
+    // Read the status register
+    setAddress_N64(flashBase + currBlock);
+    word statusReg = readWord_N64();
+    while ((statusReg | 0xFF7F) != 0xFFFF) {
+      setAddress_N64(flashBase + currBlock);
+      statusReg = readWord_N64();
+    }
+  }
+
+  // Erase up to 255 blocks with 64kwords each
+  for (unsigned long currBlock = 0x20000; currBlock < lastBlock; currBlock += 0x1FFFF) {
+    // Unlock block command
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0x60);
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0xD0);
+    // Erase command
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0x20);
+    setAddress_N64(flashBase + currBlock);
+    writeWord_N64(0xD0);
+
+    // Read the status register
+    setAddress_N64(flashBase + currBlock);
+    word statusReg = readWord_N64();
+    while ((statusReg | 0xFF7F) != 0xFFFF) {
+      setAddress_N64(flashBase + currBlock);
+      statusReg = readWord_N64();
+    }
+
+    // Blink led
+    PORTB ^= (1 << 4);
+  }
+
+  // Check if we should erase the seconds chip too
+  if ((cartSize = 64) && (fileSize > 0x2000000)) {
+    // Switch base address to second chip
+    flashBase = romBase + 0x2000000;
+
+    // 255 blocks with 64kwords each
+    for (unsigned long currBlock = 0x0; currBlock < 0x1FDFFFF; currBlock += 0x1FFFF) {
+      // Unlock block command
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0x60);
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0xD0);
+      // Erase command
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0x20);
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0xD0);
+
+      // Read the status register
+      setAddress_N64(flashBase + currBlock);
+      word statusReg = readWord_N64();
+      while ((statusReg | 0xFF7F) != 0xFFFF) {
+        setAddress_N64(flashBase + currBlock);
+        statusReg = readWord_N64();
+      }
+
+      // Blink led
+      PORTB ^= (1 << 4);
+    }
+
+    // 4 blocks with 16kword each
+    for (unsigned long currBlock = 0x1FE0000; currBlock < 0x1FFFFFF; currBlock += 0x8000) {
+      // Unlock block command
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0x60);
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0xD0);
+      // Erase command
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0x20);
+      setAddress_N64(flashBase + currBlock);
+      writeWord_N64(0xD0);
+
+      // Read the status register
+      setAddress_N64(flashBase + currBlock);
+      word statusReg = readWord_N64();
+      while ((statusReg | 0xFF7F) != 0xFFFF) {
+        setAddress_N64(flashBase + currBlock);
+        statusReg = readWord_N64();
+      }
+    }
+  }
+}
+
+// Common sector erase command
+void eraseFlashrom_N64(unsigned long sectorSize) {
+  unsigned long flashBase = romBase;
+
+  print_Msg(F("Erasing..."));
+  display_Update();
+
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    // If pcb has two flashrom chips change to second
+    if ((currSector == 0x2000000) && ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "C2C9") == 0))) {
+      flashBase = romBase + 0x2000000;
+    }
+
+    // Send Erase Command
+    setAddress_N64(flashBase + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(flashBase + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(flashBase + (0x555 << 1));
+    writeWord_N64(0x80);
+    setAddress_N64(flashBase + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(flashBase + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + currSector);
+    writeWord_N64(0x30);
+
+    // Read the status register
+    setAddress_N64(romBase + currSector);
+    word statusReg = readWord_N64();
+    while ((statusReg | 0xFF7F) != 0xFFFF) {
+      setAddress_N64(romBase + currSector);
+      statusReg = readWord_N64();
+    }
+  }
+}
+
+boolean blankcheckFlashrom_N64() {
+  for (unsigned long currByte = romBase; currByte < romBase + fileSize; currByte += 512) {
+    // Blink led
+    if (currByte % 131072 == 0)
+      PORTB ^= (1 << 4);
+
+    // Set the address
+    setAddress_N64(currByte);
+
+    for (int c = 0; c < 512; c += 2) {
+      if (readWord_N64() != 0xFFFF) {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+
+// Write Intel flashrom
+void writeIntel4400_N64() {
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    // Write to flashrom
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 512);
+
+      // Write 32 words at a time
+      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 64) {
+        // Buffered program command
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        writeWord_N64(0xE8);
+
+        // Check Status register
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        word statusReg = readWord_N64();
+        while ((statusReg | 0xFF7F) != 0xFFFF) {
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+          statusReg = readWord_N64();
+        }
+
+        // Write word count (minus 1)
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        writeWord_N64(0x1F);
+
+        // Write buffer
+        for (byte currByte = 0; currByte < 64; currByte += 2) {
+          // Join two bytes into one word
+          word currWord = ( ( sdBuffer[currWriteBuffer + currByte] & 0xFF ) << 8 ) | ( sdBuffer[currWriteBuffer + currByte + 1] & 0xFF );
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
+          writeWord_N64(currWord);
+        }
+
+        // Write Buffer to Flash
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 62);
+        writeWord_N64(0xD0);
+
+        // Read the status register at last written address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 62);
+        statusReg = readWord_N64();
+        while ((statusReg | 0xFF7F) != 0xFFFF) {
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 62);
+          statusReg = readWord_N64();
+        }
+      }
+    }
+  }
+}
+
+// Write Spansion S29GL256N flashrom using the 32 byte write buffer
+void write29GL256N_N64() {
+  unsigned long flashBase = romBase;
+
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x20000) {
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    // Change to second rom chip
+    if (currSector == 0x2000000) {
+      flashBase = romBase + 0x2000000;
+    }
+
+    // Write to flashrom
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x20000; currSdBuffer += 512) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 512);
+
+      // Write 16 words at a time
+      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
+
+        // 2 unlock commands
+        setAddress_N64(flashBase + (0x555 << 1));
+        writeWord_N64(0xAA);
+        setAddress_N64(flashBase + (0x2AA << 1));
+        writeWord_N64(0x55);
+
+        // Write buffer load command at sector address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        writeWord_N64(0x25);
+        // Write word count (minus 1) at sector address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        writeWord_N64(0xF);
+
+        // Define variable before loop so we can use it later when reading the status register
+        word currWord;
+
+        for (byte currByte = 0; currByte < 32; currByte += 2) {
+          // Join two bytes into one word
+          currWord = ( ( sdBuffer[currWriteBuffer + currByte] & 0xFF ) << 8 ) | ( sdBuffer[currWriteBuffer + currByte + 1] & 0xFF );
+
+          // Load Buffer Words
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
+          writeWord_N64(currWord);
+        }
+
+        // Write Buffer to Flash
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+        writeWord_N64(0x29);
+
+        // Read the status register at last written address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+        word statusReg = readWord_N64();
+        while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+          statusReg = readWord_N64();
+        }
+      }
+    }
+  }
+}
+
+// Write Fujitsu MSP55LV100S flashrom using the 32 byte write buffer
+void writeMSP55LV100S_N64() {
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x10000) {
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    // Write to flashrom
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x10000; currSdBuffer += 512) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 512);
+
+      // Write 16 words at a time
+      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
+
+        // 2 unlock commands
+        setAddress_N64(romBase + (0x555 << 1));
+        writeWord_N64(0xAA);
+        setAddress_N64(romBase + (0x2AA << 1));
+        writeWord_N64(0x55);
+
+        // Write buffer load command at sector address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        writeWord_N64(0x25);
+        // Write word count (minus 1) at sector address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
+        writeWord_N64(0xF);
+
+        // Define variable before loop so we can use it later when reading the status register
+        word currWord;
+
+        for (byte currByte = 0; currByte < 32; currByte += 2) {
+          // Join two bytes into one word
+          currWord = ( ( sdBuffer[currWriteBuffer + currByte] & 0xFF ) << 8 ) | ( sdBuffer[currWriteBuffer + currByte + 1] & 0xFF );
+
+          // Load Buffer Words
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
+          writeWord_N64(currWord);
+        }
+
+        // Write Buffer to Flash
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+        writeWord_N64(0x29);
+
+        // Read the status register at last written address
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+        word statusReg = readWord_N64();
+        while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+          statusReg = readWord_N64();
+        }
+      }
+    }
+  }
+}
+
+// Write MX29LV640 flashrom without write buffer
+void write29LV640_N64() {
+  unsigned long flashBase = romBase;
+
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x8000) {
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    // Change to second rom
+    if (currSector == 0x800000) {
+      flashBase = romBase + 0x800000;
+    }
+
+    // Write to flashrom
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x8000; currSdBuffer += 512) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 512);
+      for (int currByte = 0; currByte < 512; currByte += 2) {
+        // Join two bytes into one word
+        word currWord = ( ( sdBuffer[currByte] & 0xFF ) << 8 ) | ( sdBuffer[currByte + 1] & 0xFF );
+        // 2 unlock commands
+        setAddress_N64(flashBase + (0x555 << 1));
+        writeWord_N64(0xAA);
+        setAddress_N64(flashBase + (0x2AA << 1));
+        writeWord_N64(0x55);
+        // Program command
+        setAddress_N64(flashBase + (0x555 << 1));
+        writeWord_N64(0xA0);
+        // Write word
+        setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+        writeWord_N64(currWord);
+
+        // Read the status register
+        setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+        word statusReg = readWord_N64();
+        while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
+          setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+          statusReg = readWord_N64();
+        }
+      }
+    }
+  }
+}
+
+unsigned long verifyFlashrom_N64() {
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    writeErrors = 0;
+
+    for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
+      // Blink led
+      PORTB ^= (1 << 4);
+      for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
+        // Fill SD buffer
+        myFile.read(sdBuffer, 512);
+        for (int currByte = 0; currByte < 512; currByte += 2) {
+          // Join two bytes into one word
+          word currWord = ( ( sdBuffer[currByte] & 0xFF ) << 8 ) | ( sdBuffer[currByte + 1] & 0xFF );
+          // Read flash
+          setAddress_N64(romBase + currSector + currSdBuffer + currByte);
+          // Compare both
+          if (readWord_N64() != currWord) {
+            writeErrors++;
+            // Abord if too many errors
+            if (writeErrors > 20) {
+              print_Msg(F("More than "));
+              // Close the file:
+              myFile.close();
+              return writeErrors;
+            }
+          }
+        }
+      }
+    }
+    // Close the file:
+    myFile.close();
+    return writeErrors;
+  }
+  else {
+    println_Msg(F("Can't open file"));
+    display_Update();
+    return 9999;
+  }
 }
 
 //******************************************
