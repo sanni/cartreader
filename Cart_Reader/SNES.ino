@@ -346,6 +346,35 @@ byte readBank_SNES(byte myBank, word myAddress) {
   return tempByte;
 }
 
+void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
+{
+  byte buffer[512];
+
+  for (int currBank = start; currBank < total; currBank++) {
+    // Dump the bytes to SD 512B at a time
+    for (long currByte = 32768; currByte < 65536; currByte += 512) {
+      for (int c = 0; c < 512; c++) {
+        buffer[c] = readBank_SNES(currBank, currByte + c);
+      }
+      file->write(buffer, 512);
+    }
+  }
+}
+
+void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
+{
+  byte buffer[512];
+
+  for (int currBank = start; currBank < total; currBank++) {
+    for (long currByte = 0; currByte < 65536; currByte += 512) {
+      for (int c = 0; c < 512; c++) {
+        buffer[c] = readBank_SNES(currBank, currByte + c);
+      }
+      file->write(buffer, 512);
+    }
+  }
+}
+
 /******************************************
   SNES ROM Functions
 ******************************************/
@@ -427,6 +456,8 @@ void getCartInfo_SNES() {
     println_Msg(F("RAM GBoy"));
   else if (romChips == 246)
     println_Msg(F("DSP2"));
+  else if (romChips == 249)
+    println_Msg(F("SPC RAM BATT RTC"));    
   else
     println_Msg(F(""));
 
@@ -435,7 +466,9 @@ void getCartInfo_SNES() {
   println_Msg(F("Mbit"));
 
   print_Msg(F("Banks: "));
-  println_Msg(numBanks);
+  print_Msg(numBanks);
+  print_Msg(F(" Chips: "));
+  println_Msg(romChips);
 
   print_Msg(F("Sram Size: "));
   print_Msg(sramSize);
@@ -520,13 +553,15 @@ boolean checkcart_SNES() {
   // Get Checksum as string
   sprintf(checksumStr, "%02X%02X", readBank_SNES(0, 65503), readBank_SNES(0, 65502));
 
-  // Check if ExHiROM
-  if (readBank_SNES(0, 0xFFD5) == 0x35) {
-    romType = EX;
+  romType = readBank_SNES(0, 0xFFD5);
+  if (romType == 0x35) {
+    romType = EX; // Check if ExHiROM
+  }
+  else if (romType == 0x3A) {
+    romType = HI; // Check if SPC7110
   }
   else {
-    // Check if LoROM or HiROM
-    romType = (readBank_SNES(0, 0xFFD5) & 1);
+    romType &= 1; // Must be LoROM or HiROM
   }
 
   // Check RomSpeed
@@ -540,6 +575,11 @@ boolean checkcart_SNES() {
     romSize = 48;
     numBanks = 96;
     romType = HI;
+  }
+  else if ((romChips == 249) && (romType == HI)) // SPC7110
+  {
+    romSize = 40;
+    numBanks = 80;
   }
   else
   {
@@ -836,33 +876,18 @@ void readROM_SNES() {
     display_Update();
 
     // Read up to 96 banks starting at bank 0×00.
-    for (int currBank = 0; currBank < numBanks; currBank++) {
-      // Dump the bytes to SD 512B at a time
-      for (long currByte = 32768; currByte < 65536; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
-        }
-        myFile.write(sdBuffer, 512);
-      }
-    }
+    readLoRomBanks( 0, numBanks, &myFile );
   }
   // Dump High-type ROM
-  else if (((romType == HI) || (romType == SA) || (romType == EX)) && (romChips != 69)) {
+  else if (((romType == HI) || (romType == SA) || (romType == EX)) && ((romChips != 69)&&(romChips != 249))) {
     println_Msg(F("Dumping HiRom..."));
     display_Update();
 
-    for (int currBank = 192; currBank < (numBanks + 192); currBank++) {
-      for (long currByte = 0; currByte < 65536; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
-        }
-        myFile.write(sdBuffer, 512);
-      }
-    }
+    readHiRomBanks( 192, numBanks + 192, &myFile );
   }
   // Dump SDD1 High-type ROM
   else if ((romType == HI) && (romChips == 69)) {
-    println_Msg(F("Dumping SDD1 HiRom..."));
+    println_Msg(F("Dumping SDD1 HiRom"));
     display_Update();
 
     controlIn_SNES();
@@ -878,14 +903,7 @@ void readROM_SNES() {
       dataIn();
       controlIn_SNES();
 
-      for (int currBank = 240; currBank < 256; currBank++) {
-        for (long currByte = 0; currByte < 65536; currByte += 512) {
-          for (int c = 0; c < 512; c++) {
-            sdBuffer[c] = readBank_SNES(currBank, currByte + c);
-          }
-          myFile.write(sdBuffer, 512);
-        }
-      }
+      readHiRomBanks( 240, 256, &myFile );
     }
 
     dataOut();
@@ -896,6 +914,63 @@ void readROM_SNES() {
     dataIn();
     controlIn_SNES();
   }
+  // Dump SPC7110 High-type ROM
+  else if ((romType == HI) && ((romChips == 245)||(romChips == 249))) {
+    println_Msg(F("Dumping SPC7110 HiRom"));
+    display_Update();
+
+    // 0xC00000-0xDFFFFF
+    print_Msg(F(" Part 1"));
+    display_Update();
+    readHiRomBanks( 192, 224, &myFile );
+    
+    if (numBanks > 32) {      
+      dataOut();
+      controlOut_SNES();
+      // Set 0x4834 to 0xFF
+      writeBank_SNES( 0, 0x4834, 0xFF );
+      
+      dataIn();
+      controlIn_SNES();
+      
+      // 0xE00000-0xEFFFFF
+      print_Msg(F(" 2"));
+      display_Update();
+      readHiRomBanks( 224, 240, &myFile );
+      
+      if (numBanks > 48) {
+        // 0xF00000-0xFFFFFF
+        print_Msg(F(" 3"));
+        display_Update();
+        readHiRomBanks( 240, 256, &myFile );
+                        
+        dataOut();
+        controlOut_SNES();
+        
+        // Set 0x4833 to 3
+        writeBank_SNES( 0, 0x4833, 3 );
+        
+        dataIn();
+        controlIn_SNES();
+
+        // 0xF00000-0xFFFFFF
+        println_Msg(F(" 4"));
+        display_Update();        
+        readHiRomBanks( 240, 256, &myFile );
+      }
+      
+      // Return mapping registers to initial settings...
+      dataOut();
+      controlOut_SNES();
+      
+      writeBank_SNES( 0, 0x4833, 2 );
+      writeBank_SNES( 0, 0x4834, 0 );
+      
+      dataIn();
+      controlIn_SNES();
+    }     
+  }
+  
   // Close the file:
   myFile.close();
 
