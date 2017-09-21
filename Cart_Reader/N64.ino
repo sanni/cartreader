@@ -2056,20 +2056,45 @@ void flashRepro_N64() {
 
   // If the ID is known continue
   if (cartSize != 0) {
-    print_Msg("ID: ");
+    // Print info
+    if ((strcmp(flashid, "227E") == 0)  && (strcmp(vendorID, "01") == 0)) {
+      print_Msg(F("Spansion S29GL256N"));
+      if (cartSize == 64)
+        println_Msg(F(" x2"));
+      else
+        println_Msg("");
+    }
+    else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+      print_Msg(F("Macronix MX29LV640"));
+      if (cartSize == 16)
+        println_Msg(F(" x2"));
+      else
+        println_Msg("");
+    }
+    else if (strcmp(flashid, "8816") == 0)
+      println_Msg(F("Intel 4400L0ZDQ0"));
+    else if (strcmp(flashid, "127E") == 0)
+      println_Msg(F("Fujitsu MSP55LV100S"));
+    else if (strcmp(flashid, "227E") == 0)
+      println_Msg(F("Fujitsu MSP55LV512"));
+    print_Msg(F("ID: "));
     print_Msg(flashid);
-    print_Msg(" Size: ");
+    print_Msg(F(" Size: "));
     print_Msg(cartSize);
-    println_Msg("MB");
+    println_Msg(F("MB"));
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Repro Cartridge."));
     println_Msg(F("Attention: Use 3.3V!"));
     println_Msg("");
     println_Msg(F("Press Button"));
-    println_Msg(F("to continue"));
     display_Update();
     wait();
+
+    // Check if sectors are protected
+    if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "127E") == 0)) {
+      sectorCheck_N64();
+    }
 
     // Launch file browser
     filePath[0] = '\0';
@@ -2096,8 +2121,8 @@ void flashRepro_N64() {
       }
 
       // Erase needed sectors
-      if (strcmp(flashid, "227E") == 0) {
-        // Spansion S29GL256N
+      if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "127E") == 0)) {
+        // Spansion S29GL256N, Fujitsu MSP55LV512 or Fujitsu MSP55LV100S with 0x20000 sector size and 32 byte buffer
         eraseFlashrom_N64(0x20000);
       }
       else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
@@ -2105,12 +2130,8 @@ void flashRepro_N64() {
         eraseIntel4400_N64();
         resetIntel4400_N64();
       }
-      else if (strcmp(flashid, "127E") == 0) {
-        // Fujitsu MSP55LV100S
-        eraseFlashrom_N64(0x10000);
-      }
-      else if (strcmp(flashid, "C2C9") == 0) {
-        // Macronix MX29LV640
+      else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+        // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
         eraseFlashrom_N64(0x8000);
       }
 
@@ -2122,17 +2143,13 @@ void flashRepro_N64() {
         println_Msg(filePath);
         display_Update();
 
-        if (strcmp(flashid, "227E") == 0) {
-          // Spansion S29GL256N
-          write29GL256N_N64();
+        if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "127E") == 0)) {
+          // Spansion S29GL256N or Fujitsu MSP55LV512 or Fujitsu MSP55LV100S with 0x20000 sector size and 32 byte buffer
+          writeFlashBuffer_N64(0x20000, 32);
         }
-        else if (strcmp(flashid, "127E") == 0) {
-          // Fujitsu MSP55LV100S
-          writeMSP55LV100S_N64();
-        }
-        else if (strcmp(flashid, "C2C9") == 0) {
-          // Macronix MX29LV640
-          write29LV640_N64();
+        else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+          // Macronix MX29LV640 without buffer
+          writeFlashrom_N64();
         }
         else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
           // Intel 4400L0ZDQ0
@@ -2207,26 +2224,23 @@ void idFlashrom_N64() {
   setAddress_N64(romBase + (0x555 << 1));
   writeWord_N64(0x90);
 
-  // Read and discard manufacturer ID
+  // Read 1 byte vendor ID
   setAddress_N64(romBase);
-  readWord_N64();
-  // Read flashrom ID
+  sprintf(vendorID, "%02X", readWord_N64());
+  // Read 2 bytes flashrom ID
   sprintf(flashid, "%04X", readWord_N64());
+  // Read 2 bytes secondary flashrom ID
+  setAddress_N64(romBase + 0x1C);
+  sprintf(cartID, "%04X", ((readWord_N64() << 8)  | (readWord_N64() & 0xFF)));
 
-  // Spansion S29GL256N(32MB/64MB) or Macronix MX29LV640(8MB/16MB)
-  if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "C2C9") == 0)) {
+  // Spansion S29GL256N(32MB/64MB) with either one or two flashrom chips
+  if ((strcmp(vendorID, "01") == 0) && (strcmp(flashid, "227E") == 0)) {
+    cartSize = 32;
+
     // Reset flashrom
     resetFlashrom_N64(romBase);
 
-    // Found first flashrom chip
-    if (strcmp(flashid, "227E") == 0) {
-      cartSize = 32;
-    }
-    else if (strcmp(flashid, "C2C9") == 0)  {
-      cartSize = 8;
-    }
-
-    // These use PCBs with either one or two flashrom chips so try to read ID of possible second chip
+    // Test for second flashrom chip at 0x2000000 (32MB)
     setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
     writeWord_N64(0xAA);
     setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
@@ -2234,23 +2248,48 @@ void idFlashrom_N64() {
     setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
     writeWord_N64(0x90);
 
-    // Read manufacturer ID
+    char tempID[5];
     setAddress_N64(romBase + 0x2000000);
+    // Read manufacturer ID
     readWord_N64();
     // Read flashrom ID
-    sprintf(cartID, "%04X", readWord_N64());
+    sprintf(tempID, "%04X", readWord_N64());
 
     // Check if second flashrom chip is present
-    if (strcmp(cartID, "227E") == 0)  {
+    if (strcmp(tempID, "227E") == 0)  {
       cartSize = 64;
     }
-    else if (strcmp(cartID, "C2C9") == 0)  {
+    resetFlashrom_N64(romBase + 0x2000000);
+  }
+
+  // Macronix MX29LV640(8MB/16MB) with either one or two flashrom chips
+  else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+    cartSize = 8;
+
+    resetFlashrom_N64(romBase + 0x800000);
+
+    // Test for second flashrom chip at 0x800000 (8MB)
+    setAddress_N64(romBase + 0x800000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x800000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x800000 + (0x555 << 1));
+    writeWord_N64(0x90);
+
+    char tempID[5];
+    setAddress_N64(romBase + 0x800000);
+    // Read manufacturer ID
+    readWord_N64();
+    // Read flashrom ID
+    sprintf(tempID, "%04X", readWord_N64());
+
+    // Check if second flashrom chip is present
+    if ((strcmp(tempID, "22C9") == 0) || (strcmp(tempID, "22CB") == 0)) {
       cartSize = 16;
     }
-    resetFlashrom_N64(romBase + 0x2000000);
-    // Empty cartID string
-    cartID[0] = '\0';
+    resetFlashrom_N64(romBase + 0x800000);
   }
+
   // Intel 4400L0ZDQ0 (64MB)
   else if (strcmp(flashid, "8816") == 0) {
     resetIntel4400_N64();
@@ -2260,6 +2299,104 @@ void idFlashrom_N64() {
   else if (strcmp(flashid, "127E") == 0) {
     resetFlashrom_N64(romBase);
     cartSize = 64;
+  }
+  //Fujitsu MSP55LV512 (64MB)
+  else if (strcmp(flashid, "227E") == 0) {
+    resetFlashrom_N64(romBase);
+    cartSize = 64;
+  }
+}
+
+// Check for sector protection
+void sectorCheck_N64() {
+  word numLocked = 0;
+  word numUnlocked = 0;
+  word numError = 0;
+  unsigned long lastSector;
+
+  // Spansion S29GL256N(32MB/64MB) with two flashrom chips
+  if ((cartSize == 64) && (strcmp(vendorID, "01") == 0)) {
+    lastSector = 0x2000000;
+  }
+  else {
+    lastSector = cartSize * 1024 * 1024;
+  }
+
+  // Send flashrom ID command
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x90);
+
+  word tempWord;
+
+  for (unsigned long currSector = 0x0; currSector < lastSector; currSector += 0x20000) {
+    setAddress_N64(romBase + currSector + 0x04);
+    tempWord = readWord_N64();
+
+    if (tempWord == 0x1) {
+      numLocked++;
+    }
+    else if (tempWord == 0x0) {
+      numUnlocked++;
+    }
+    else {
+      numError++;
+    }
+  }
+  resetFlashrom_N64(romBase);
+
+  // Spansion S29GL256N(32MB/64MB) with two flashrom chips
+  if ((cartSize == 64) && (strcmp(vendorID, "01") == 0)) {
+    // Send flashrom ID command
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0x90);
+
+    for (unsigned long currSector = 0x2000000; currSector < 0x4000000; currSector += 0x20000) {
+      setAddress_N64(romBase + currSector + 0x04);
+      tempWord = readWord_N64();
+
+      if (tempWord == 0x1) {
+        numLocked++;
+      }
+      else if (tempWord == 0x0) {
+        numUnlocked++;
+      }
+      else {
+        numError++;
+      }
+    }
+    resetFlashrom_N64(romBase + 0x2000000);
+  }
+
+  display_Clear();
+  println_Msg(F("Sector Check"));
+  print_Msg(F("Unlocked: "));
+  println_Msg(numUnlocked);
+  print_Msg(F("Locked: "));
+  println_Msg(numLocked);
+  print_Msg(F("Error: "));
+  println_Msg(numError);
+  println_Msg(F(""));
+
+  if ((numLocked != 0) || (numError != 0)) {
+    println_Msg(F("Error:"));
+    println_Msg(F("Not all Sectors"));
+    print_Error(F("are unlocked"), true);
+  }
+
+  else {
+    println_Msg(F(""));
+    println_Msg(F("Press button"));
+    display_Update();
+    wait();
+    display_Clear();
   }
 }
 
@@ -2387,9 +2524,14 @@ void eraseFlashrom_N64(unsigned long sectorSize) {
     // Blink led
     PORTB ^= (1 << 4);
 
-    // If pcb has two flashrom chips change to second
-    if ((currSector == 0x2000000) && ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "C2C9") == 0))) {
+    // Spansion S29GL256N(32MB/64MB) with two flashrom chips
+    if ((currSector == 0x2000000) && (strcmp(vendorID, "01") == 0) && (strcmp(flashid, "227E") == 0)) {
+      // Change to second chip
       flashBase = romBase + 0x2000000;
+    }
+    // Macronix MX29LV640(8MB/16MB) with two flashrom chips
+    else if ((currSector == 0x800000) && ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0))) {
+      flashBase = romBase + 0x800000;
     }
 
     // Send Erase Command
@@ -2488,25 +2630,25 @@ void writeIntel4400_N64() {
 }
 
 // Write Spansion S29GL256N flashrom using the 32 byte write buffer
-void write29GL256N_N64() {
+void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
   unsigned long flashBase = romBase;
 
-  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x20000) {
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
     PORTB ^= (1 << 4);
 
-    // Change to second rom chip
-    if (currSector == 0x2000000) {
+    // Spansion S29GL256N(32MB/64MB) with two flashrom chips
+    if ((currSector == 0x2000000) && (strcmp(vendorID, "01") == 0)) {
       flashBase = romBase + 0x2000000;
     }
 
     // Write to flashrom
-    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x20000; currSdBuffer += 512) {
+    for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
       // Fill SD buffer
       myFile.read(sdBuffer, 512);
 
-      // Write 16 words at a time
-      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
+      // Write 32 bytes at a time
+      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += bufferSize) {
 
         // 2 unlock commands
         setAddress_N64(flashBase + (0x555 << 1));
@@ -2519,12 +2661,12 @@ void write29GL256N_N64() {
         writeWord_N64(0x25);
         // Write word count (minus 1) at sector address
         setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
-        writeWord_N64(0xF);
+        writeWord_N64((bufferSize / 2) - 1);
 
         // Define variable before loop so we can use it later when reading the status register
         word currWord;
 
-        for (byte currByte = 0; currByte < 32; currByte += 2) {
+        for (byte currByte = 0; currByte < bufferSize; currByte += 2) {
           // Join two bytes into one word
           currWord = ( ( sdBuffer[currWriteBuffer + currByte] & 0xFF ) << 8 ) | ( sdBuffer[currWriteBuffer + currByte + 1] & 0xFF );
 
@@ -2534,69 +2676,14 @@ void write29GL256N_N64() {
         }
 
         // Write Buffer to Flash
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + bufferSize - 2);
         writeWord_N64(0x29);
 
         // Read the status register at last written address
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + bufferSize - 2);
         word statusReg = readWord_N64();
         while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
-          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
-          statusReg = readWord_N64();
-        }
-      }
-    }
-  }
-}
-
-// Write Fujitsu MSP55LV100S flashrom using the 32 byte write buffer
-void writeMSP55LV100S_N64() {
-  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x10000) {
-    // Blink led
-    PORTB ^= (1 << 4);
-
-    // Write to flashrom
-    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x10000; currSdBuffer += 512) {
-      // Fill SD buffer
-      myFile.read(sdBuffer, 512);
-
-      // Write 16 words at a time
-      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
-
-        // 2 unlock commands
-        setAddress_N64(romBase + (0x555 << 1));
-        writeWord_N64(0xAA);
-        setAddress_N64(romBase + (0x2AA << 1));
-        writeWord_N64(0x55);
-
-        // Write buffer load command at sector address
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
-        writeWord_N64(0x25);
-        // Write word count (minus 1) at sector address
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
-        writeWord_N64(0xF);
-
-        // Define variable before loop so we can use it later when reading the status register
-        word currWord;
-
-        for (byte currByte = 0; currByte < 32; currByte += 2) {
-          // Join two bytes into one word
-          currWord = ( ( sdBuffer[currWriteBuffer + currByte] & 0xFF ) << 8 ) | ( sdBuffer[currWriteBuffer + currByte + 1] & 0xFF );
-
-          // Load Buffer Words
-          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
-          writeWord_N64(currWord);
-        }
-
-        // Write Buffer to Flash
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
-        writeWord_N64(0x29);
-
-        // Read the status register at last written address
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
-        word statusReg = readWord_N64();
-        while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
-          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 30);
+          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + bufferSize - 2);
           statusReg = readWord_N64();
         }
       }
@@ -2605,14 +2692,14 @@ void writeMSP55LV100S_N64() {
 }
 
 // Write MX29LV640 flashrom without write buffer
-void write29LV640_N64() {
+void writeFlashrom_N64() {
   unsigned long flashBase = romBase;
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x8000) {
     // Blink led
     PORTB ^= (1 << 4);
 
-    // Change to second rom
+    // Macronix MX29LV640(8MB/16MB) with two flashrom chips
     if (currSector == 0x800000) {
       flashBase = romBase + 0x800000;
     }

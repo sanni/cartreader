@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-09-19
-   Version:          V28F
+   Date:             2017-09-21
+   Version:          V28G
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -34,7 +34,7 @@
    YamaArashi - GBA flashrom bank switch command
 
 **********************************************************************************/
-char ver[5] = "V28F";
+char ver[5] = "V28G";
 
 /******************************************
    Define Output
@@ -191,6 +191,7 @@ byte romVersion = 0;
 char cartID[5];
 unsigned long cartSize;
 char flashid[5];
+char vendorID[5];
 unsigned long fileSize;
 unsigned long sramBase;
 
