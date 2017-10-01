@@ -331,6 +331,11 @@ idtheflash:
     flashSize = 2097152;
     flashromType = 1;
   }
+  else if (strcmp(flashid, "20AD") == 0) {
+    println_Msg(F("AM29F016D"));
+    flashSize = 2097152;
+    flashromType = 1;
+  }
   else if (strcmp(flashid, "04D4") == 0) {
     println_Msg(F("MBM29F033C"));
     flashSize = 4194304;

@@ -2056,8 +2056,8 @@ void flashRepro_N64() {
 
   // If the ID is known continue
   if (cartSize != 0) {
-    // Print info
-    if ((strcmp(flashid, "227E") == 0)  && (strcmp(vendorID, "01") == 0)) {
+    // Print flashrom name
+    if ((strcmp(flashid, "227E") == 0)  && (strcmp(cartID, "2201") == 0)) {
       print_Msg(F("Spansion S29GL256N"));
       if (cartSize == 64)
         println_Msg(F(" x2"));
@@ -2075,8 +2075,10 @@ void flashRepro_N64() {
       println_Msg(F("Intel 4400L0ZDQ0"));
     else if (strcmp(flashid, "127E") == 0)
       println_Msg(F("Fujitsu MSP55LV100S"));
-    else if (strcmp(flashid, "227E") == 0)
+    else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "2301") == 0))
       println_Msg(F("Fujitsu MSP55LV512"));
+
+    // Print info
     print_Msg(F("ID: "));
     print_Msg(flashid);
     print_Msg(F(" Size: "));
@@ -2091,10 +2093,11 @@ void flashRepro_N64() {
     display_Update();
     wait();
 
-    // Check if sectors are protected
-    if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "127E") == 0)) {
+    /* Check if sectors are protected
+      if ((strcmp(flashid, "227E") == 0) || (strcmp(flashid, "127E") == 0)) {
       sectorCheck_N64();
-    }
+      }
+    */
 
     // Launch file browser
     filePath[0] = '\0';
@@ -2234,7 +2237,7 @@ void idFlashrom_N64() {
   sprintf(cartID, "%04X", ((readWord_N64() << 8)  | (readWord_N64() & 0xFF)));
 
   // Spansion S29GL256N(32MB/64MB) with either one or two flashrom chips
-  if ((strcmp(vendorID, "01") == 0) && (strcmp(flashid, "227E") == 0)) {
+  if ((strcmp(cartID, "2201") == 0) && (strcmp(flashid, "227E") == 0)) {
     cartSize = 32;
 
     // Reset flashrom
@@ -2292,16 +2295,38 @@ void idFlashrom_N64() {
 
   // Intel 4400L0ZDQ0 (64MB)
   else if (strcmp(flashid, "8816") == 0) {
+    // Found first flashrom chip, set to 32MB
+    cartSize = 32;
     resetIntel4400_N64();
-    cartSize = 64;
+
+    // Test if second half of the flashrom might be hidden
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0xAA);
+    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
+    writeWord_N64(0x55);
+    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
+    writeWord_N64(0x90);
+
+    // Read manufacturer ID
+    setAddress_N64(romBase + 0x2000000);
+    readWord_N64();
+    // Read flashrom ID
+    sprintf(cartID, "%04X", readWord_N64());
+    if (strcmp(cartID, "8813") == 0) {
+      cartSize = 64;
+      strncpy(flashid , cartID, 5);
+    }
+    resetIntel4400_N64();
+    // Empty cartID string
+    cartID[0] = '\0';
   }
-  //Fujitsu MSP55LV100S (64MB)
+  //Fujitsu MSP55LV100S (128MB)
   else if (strcmp(flashid, "127E") == 0) {
     resetFlashrom_N64(romBase);
     cartSize = 64;
   }
-  //Fujitsu MSP55LV512 (64MB)
-  else if (strcmp(flashid, "227E") == 0) {
+  //Fujitsu MSP55LV512/Spansion S29GL512N (64MB)
+  else if ((strcmp(cartID, "2301") == 0) && (strcmp(flashid, "227E") == 0)) {
     resetFlashrom_N64(romBase);
     cartSize = 64;
   }
@@ -2315,7 +2340,7 @@ void sectorCheck_N64() {
   unsigned long lastSector;
 
   // Spansion S29GL256N(32MB/64MB) with two flashrom chips
-  if ((cartSize == 64) && (strcmp(vendorID, "01") == 0)) {
+  if ((cartSize == 64) && (strcmp(cartID, "2201") == 0)) {
     lastSector = 0x2000000;
   }
   else {
@@ -2349,7 +2374,7 @@ void sectorCheck_N64() {
   resetFlashrom_N64(romBase);
 
   // Spansion S29GL256N(32MB/64MB) with two flashrom chips
-  if ((cartSize == 64) && (strcmp(vendorID, "01") == 0)) {
+  if ((cartSize == 64) && (strcmp(cartID, "2201") == 0)) {
     // Send flashrom ID command
     setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
     writeWord_N64(0xAA);
@@ -2525,7 +2550,7 @@ void eraseFlashrom_N64(unsigned long sectorSize) {
     PORTB ^= (1 << 4);
 
     // Spansion S29GL256N(32MB/64MB) with two flashrom chips
-    if ((currSector == 0x2000000) && (strcmp(vendorID, "01") == 0) && (strcmp(flashid, "227E") == 0)) {
+    if ((currSector == 0x2000000) && (strcmp(cartID, "2201") == 0) && (strcmp(flashid, "227E") == 0)) {
       // Change to second chip
       flashBase = romBase + 0x2000000;
     }
@@ -2638,7 +2663,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
     PORTB ^= (1 << 4);
 
     // Spansion S29GL256N(32MB/64MB) with two flashrom chips
-    if ((currSector == 0x2000000) && (strcmp(vendorID, "01") == 0)) {
+    if ((currSector == 0x2000000) && (strcmp(cartID, "2201") == 0)) {
       flashBase = romBase + 0x2000000;
     }
 
