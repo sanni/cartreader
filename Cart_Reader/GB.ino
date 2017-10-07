@@ -737,6 +737,13 @@ void writeFlash_GB() {
       println_Msg(F("/128"));
       display_Update();
     }
+    else if (strcmp(flashid, "01D5") == 0) {
+      println_Msg(F("AM29F080B"));
+      print_Msg(F("Banks: "));
+      print_Msg(romBanks);
+      println_Msg(F("/64"));
+      display_Update();
+    }
     else {
       print_Msg(F("Flash ID: "));
       println_Msg(flashid);

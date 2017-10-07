@@ -2050,7 +2050,7 @@ void idFlashrom_GBA() {
 
     // MX29GL128E or MSP55LV128
     if (strcmp(flashid, "227E") == 0) {
-      // MX is 0xC2 and MSP is 0x4
+      // MX is 0xC2 and MSP is 0x4 or 0x1
       romType = (readWord_GAB(0x0) & 0xFF);
       cartSize = 0x1000000;
       resetMX29GL128E_GBA();
@@ -2472,14 +2472,14 @@ void flashRepro_GBA() {
     print_Msg(F(" Size: "));
     print_Msg(cartSize / 0x100000);
     println_Msg(F("MB"));
-    // MX29GL128E or MSP55LV128
+    // MX29GL128E or MSP55LV128(N)
     if (strcmp(flashid, "227E") == 0) {
-      // MX is 0xC2 and MSP is 0x4
+      // MX is 0xC2 and MSP55LV128 is 0x4 and MSP55LV128N 0x1
       if (romType == 0xC2) {
         println_Msg(F("Macronix MX29GL128E"));
       }
-      else if (romType == 0x4) {
-        println_Msg(F("Fujitsu MSP55LV128"));
+      else if ((romType == 0x1) || (romType == 0x4)) {
+        println_Msg(F("Fujitsu MSP55LV128N"));
       }
       else {
         println_Msg(romType);
@@ -2543,9 +2543,11 @@ void flashRepro_GBA() {
         println_Msg(F("Erasing..."));
         display_Update();
         if (romType == 0xC2) {
+          //MX29GL128E
           sectorEraseMX29GL128E_GBA();
         }
-        else if (romType == 0x4) {
+        else if ((romType == 0x1) || (romType == 0x4)) {
+          //MSP55LV128(N)
           sectorEraseMSP55LV128_GBA();
         }
         //}
@@ -2566,9 +2568,11 @@ void flashRepro_GBA() {
       }
       else if (strcmp(flashid, "227E") == 0) {
         if (romType == 0xC2) {
+          //MX29GL128E
           writeMX29GL128E_GBA();
         }
-        else if (romType == 0x4) {
+        else if ((romType == 0x1) || (romType == 0x4)) {
+          //MSP55LV128(N)
           writeMSP55LV128_GBA();
         }
       }
