@@ -1,6 +1,6 @@
 //******************************************
 // NINTENDO POWER Cartridges for SFC and GB
-//  (GB Memory starts at around line 1430)
+//  (GB Memory starts at around line 1460)
 //******************************************
 
 /******************************************
@@ -1494,10 +1494,24 @@ void gbmMenu() {
     case 1:
       // Clear screen
       display_Clear();
+      // Print warning
+      println_Msg(F("Attention"));
+      println_Msg(F("Always power cycle"));
+      println_Msg(F("cartreader directly"));
+      println_Msg(F("before reading"));
+      println_Msg("");
+      println_Msg(F("Press Button"));
+      println_Msg(F("to continue"));
+      display_Update();
+      wait();
+      // Clear screen
+      display_Clear();
+
       // Reset to root directory
       sd.chdir("/");
 
-      // Read flash
+      // Enable access to ports 0120h
+      send_GBM(0x09);
       // Map entire flashrom
       send_GBM(0x04);
       // Disable ports 0x0120...
@@ -1505,7 +1519,6 @@ void gbmMenu() {
       // Read 1MB rom
       readROM_GBM(64);
       break;
-
 
     // Erase Flash
     case 2:
@@ -2070,7 +2083,7 @@ void writeFlash_GBM() {
       print_Error(F("File is too big."), true);
     }
 
-    //enable access to ports 0120h
+    // Enable access to ports 0120h
     send_GBM(0x09);
     // Enable write
     send_GBM(0x0A);
@@ -2082,7 +2095,7 @@ void writeFlash_GBM() {
     // Set bank for unprotect later on, writes to 0x5555 need odd bank number
     writeByte_GBM(0x2100, 0x1);
 
-    // disable ports 0x2100 and 0x120 or else addresses will not be writable
+    // Disable ports 0x2100 and 0x120 or else addresses will not be writable
     send_GBM(0x10);
     send_GBM(0x08);
 
@@ -2097,45 +2110,68 @@ void writeFlash_GBM() {
     // Check if flashrom is ready for writing or busy
     while ((readByte_GBM(0) & 0x80) != 0x80) {}
 
-    // first bank: 0x0000-0x7FFF,
-    word currAddress = 0x0;
+    // Blink led
+    PORTB ^= (1 << 4);
 
-    // only write the first bank for now as bank switching doesn't work yet
-    for (word currBank = 0x1; currBank < 0x2; currBank++) {
-      // Blink Led
+    // Write first bank
+    for (word currAddress = 0x0; currAddress < 0x7FFF; currAddress += 128) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 128);
+
+      // Write flash buffer command
+      writeByte_GBM(0x5555, 0xAA);
+      writeByte_GBM(0x2AAA, 0x55);
+      writeByte_GBM(0x5555, 0xA0);
+
+      // Fill flash buffer
+      for (word currByte = 0; currByte < 128; currByte++) {
+        writeByte_GBM(currAddress + currByte, sdBuffer[currByte]);
+      }
+      // Execute write
+      writeByte_GBM(currAddress + 127, 0xFF);
+
+      // Wait for write to complete
+      while ((readByte_GBM(0) & 0x80) != 0x80) {}
+    }
+
+    // Enable access to ports 0120h
+    send_GBM(0x09);
+    // Enable access to ports 2100h
+    send_GBM(0x11);
+
+    // Write rest of the banks
+    for (byte currBank = 2; currBank < (fileSize / 0x4000); currBank++) {
+      // Blink led
       PORTB ^= (1 << 4);
 
-      // all following banks: 0x4000-0x7FFF
-      if (currBank > 1) {
-        currAddress = 0x4000;
-      }
-
-      // write one bank
-      for (; currAddress < 0x7FFF; currAddress += 128) {
+      // Write single bank in 128 byte steps
+      for (word currAddress = 0x4000; currAddress < 0x7FFF; currAddress += 128) {
         // Fill SD buffer
         myFile.read(sdBuffer, 128);
 
         // Write flash buffer command
-        writeByte_GBM(0x5555, 0xAA);
-        writeByte_GBM(0x2AAA, 0x55);
-        writeByte_GBM(0x5555, 0xA0);
+        writeByte_GBM(0x2100, 0x1);
+        send_GBM(0x0F, 0x5555, 0xAA);
+        send_GBM(0x0F, 0x2AAA, 0x55);
+        send_GBM(0x0F, 0x5555, 0xA0);
+
+        // Setting bank here does not work and aborts the write
+        writeByte_GBM(0x2100, currBank);
 
         // Fill flash buffer
         for (word currByte = 0; currByte < 128; currByte++) {
-          writeByte_GBM(currAddress + currByte, sdBuffer[currByte]);
+          send_GBM(0x0F, currAddress + currByte, sdBuffer[currByte]);
         }
         // Execute write
-        writeByte_GBM(currAddress + 127, 0xFF);
+        send_GBM(0x0F, currAddress + 127, 0xFF);
 
         // Wait for write to complete
+        writeByte_GBM(0x2100, 0x1);
         while ((readByte_GBM(0) & 0x80) != 0x80) {}
       }
     }
     // Close the file:
     myFile.close();
-
-    // Reset flashrom
-    resetFlash_GBM();
     println_Msg(F("Done"));
   }
   else {
