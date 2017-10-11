@@ -1464,60 +1464,84 @@ void write_SFM(int startBank, uint32_t pos) {
   Menu
 *****************************************/
 // GBM menu items
-static const char gbmMenuItem1[] PROGMEM = "Read Flash";
-static const char gbmMenuItem2[] PROGMEM = "Read Mapping";
-static const char gbmMenuItem3[] PROGMEM = "Write Flash";
-static const char gbmMenuItem4[] PROGMEM = "Write Mapping";
-static const char* const menuOptionsGBM[] PROGMEM = {gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4};
+static const char gbmMenuItem1[] PROGMEM = "Read ID";
+static const char gbmMenuItem2[] PROGMEM = "Read Flash";
+static const char gbmMenuItem3[] PROGMEM = "Erase Flash";
+static const char gbmMenuItem4[] PROGMEM = "Blankcheck";
+static const char gbmMenuItem5[] PROGMEM = "Write Flash";
+static const char gbmMenuItem6[] PROGMEM = "Read Mapping";
+static const char gbmMenuItem7[] PROGMEM = "Write Mapping";
+static const char* const menuOptionsGBM[] PROGMEM = {gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4, gbmMenuItem5, gbmMenuItem6, gbmMenuItem7};
 
 void gbmMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBM, 2);
-  mainMenu = question_box("GB Memory Menu", menuOptions, 2, 0);
+  convertPgm(menuOptionsGBM, 6);
+  mainMenu = question_box("GB Memory Menu", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
   {
-    // Read Flash
+    // Read Flash ID
     case 0:
+      // Clear screen
+      display_Clear();
+      readFlashID_GBM();
+      break;
+
+    // Read Flash
+    case 1:
       // Clear screen
       display_Clear();
       // Reset to root directory
       sd.chdir("/");
 
       // Read flash
-      readFlash_GBM();
+      // Map entire flashrom
+      send_GBM(0x04);
+      // Disable ports 0x0120...
+      send_GBM(0x08);
+      // Read 1MB rom
+      readROM_GBM(64);
       break;
 
-    // Read mapping
-    case 1:
-      // Clear screen
-      display_Clear();
 
-      // Reset to root directory
-      sd.chdir("/");
-
-      // Read mapping
-      readMapping_GBM();
-      break;
-
-    // Write Flash
+    // Erase Flash
     case 2:
       // Clear screen
       display_Clear();
-
       // Print warning
       println_Msg(F("Attention"));
       println_Msg(F("This will erase your"));
       println_Msg(F("NP Cartridge."));
       println_Msg("");
+      println_Msg("");
       println_Msg(F("Press Button"));
       println_Msg(F("to continue"));
       display_Update();
       wait();
+      // Clear screen
+      display_Clear();
+      eraseFlash_GBM();
+      break;
 
+    // Blankcheck Flash
+    case 3:
+      // Clear screen
+      display_Clear();
+      if (blankcheckFlash_GBM()) {
+        println_Msg(F("OK"));
+        display_Update();
+      }
+      else {
+        println_Msg(F("ERROR"));
+        display_Update();
+      }
+      break;
+
+    // Write Flash
+    case 4:
       // Clear screen
       display_Clear();
 
@@ -1529,11 +1553,23 @@ void gbmMenu() {
       sprintf(filePath, "%s/%s", filePath, fileName);
 
       // Write rom
-      writeRom_GBM();
+      writeFlash_GBM();
+      break;
+
+    // Read mapping
+    case 5:
+      // Clear screen
+      display_Clear();
+
+      // Reset to root directory
+      sd.chdir("/");
+
+      // Read mapping
+      readMapping_GBM();
       break;
 
     // Write mapping
-    case 3:
+    case 6:
       // Clear screen
       display_Clear();
 
@@ -1595,6 +1631,11 @@ void gbmMenu() {
   Setup
 *****************************************/
 void setup_GBM() {
+  // Set RST(PH0) to Input
+  DDRH &= ~(1 << 0);
+  // Activate Internal Pullup Resistors
+  PORTH |= (1 << 0);
+
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
@@ -1602,12 +1643,29 @@ void setup_GBM() {
   DDRK = 0xFF;
 
   // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) RD(PH6)
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
   // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
+
+  delay(400);
+
+  // Check for Nintendo Power GB Memory cart
+  byte timeout = 0;
+
+  // First byte of NP register is always 0x21
+  while (readByte_GBM(0x120) != 0x21) {
+    // Enable ports 0x120h (F2)
+    send_GBM(0x09);
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    timeout++;
+    if (timeout > 10) {
+      println_Msg(F("Error: Time Out"));
+      print_Error(F("Please power cycle"), true);
+    }
+  }
 }
 
 /**********************
@@ -1616,27 +1674,24 @@ void setup_GBM() {
 // Read one word out of the cartridge
 byte readByte_GBM(word myAddress) {
   // Set data pins to Input
-  DDRC = 0x00;
+  DDRC = 0x0;
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
-  // Wait until all is stable
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Pull read(PH6) low
+  // Switch CS(PH3) and RD(PH6) to LOW
+  PORTH &= ~(1 << 3);
   PORTH &= ~(1 << 6);
 
-  // Wait ~310ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
   byte tempByte = PINC;
 
-  // Pull read(PH6) high
+  // Switch CS(PH3) and RD(PH6) to HIGH
   PORTH |= (1 << 6);
-
-  // Wait
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  PORTH |= (1 << 3);
 
   return tempByte;
 }
@@ -1649,23 +1704,20 @@ void writeByte_GBM(word myAddress, byte myData) {
   PORTK = (myAddress >> 8) & 0xFF;
   PORTC = myData;
 
-  // Wait until all is stable
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-
-  // Pull write(PH5) low
+  // Pull CS(PH3) and write(PH5) low
+  PORTH &= ~(1 << 3);
   PORTH &= ~(1 << 5);
 
-  // Wait ~310ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Pull write(PH5) high
+  // Pull CS(PH3) and write(PH5) high
   PORTH |= (1 << 5);
+  PORTH |= (1 << 3);
 
-  // Wait ~125ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Set data pins to Input
-  DDRC = 0x00;
+  // Set data pins to Input (or read errors??!)
+  DDRC = 0x0;
 }
 
 /**********************
@@ -1739,6 +1791,12 @@ void readROM_GBM(word numBanks) {
 **********************/
 void send_GBM(byte myCommand) {
   switch (myCommand) {
+    case 0x01:
+      //CMD_01h -> ???
+      writeByte_GBM(0x0120, 0x01);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
+
     case 0x02:
       //CMD_02h -> Write enable Step 2
       writeByte_GBM(0x0120, 0x02);
@@ -1803,95 +1861,92 @@ void send_GBM(byte myCommand) {
   }
 }
 
-// CMD_0Fh -> Write address/byte to flash
-void send_Flash(word myAddress, byte myData) {
+void send_GBM(byte myCommand, word myAddress, byte myData) {
   byte myAddrLow = myAddress & 0xFF;
   byte myAddrHigh = (myAddress >> 8) & 0xFF;
-  // Bank must be 0x01 for writes to 0x5555
-  writeByte_GBM(0x0120, 0x0F);
-  writeByte_GBM(0x0125, myAddrHigh);
-  writeByte_GBM(0x0126, myAddrLow);
-  writeByte_GBM(0x0127, myData);
-  writeByte_GBM(0x013F, 0xA5);
-}
 
-// Enable NP ports 0x0120...
-boolean wakeup_GBM() {
-  byte timeout = 0;
+  switch (myCommand) {
+    case 0x0F:
+      // CMD_0Fh -> Write address/byte to flash
+      writeByte_GBM(0x0120, 0x0F);
+      writeByte_GBM(0x0125, myAddrHigh);
+      writeByte_GBM(0x0126, myAddrLow);
+      writeByte_GBM(0x0127, myData);
+      writeByte_GBM(0x013F, 0xA5);
+      break;
 
-  // First byte of NP register is always 0x21
-  while (readByte_GBM(0x0120) != 0x21) {
-    send_GBM(0x09);
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-    timeout++;
-    if (timeout > 10) {
-      println_Msg(F("Error: Time Out"));
-      print_Error(F("Please power cycle"), true);
-      return 0;
-    }
+    default:
+      print_Error(F("Unknown Command"), true);
+      break;
   }
 }
 
 void switchGame_GBM(byte myData) {
-  // Enable ports 0x0120...
-  wakeup_GBM();
+  // Enable ports 0x0120 (F2)
+  send_GBM(0x09);
 
   //CMD_C0h -> map selected game without reset
   writeByte_GBM(0x0120, 0xC0 & myData);
   writeByte_GBM(0x013F, 0xA5);
 }
 
-void enableWrite_GBM() {
-  send_GBM(0x0A);
-  send_GBM(0x02);
-}
-
 void resetFlash_GBM() {
-  // Enable ports 0x0120...
-  wakeup_GBM();
+  // Enable ports 0x0120 (F2)
+  send_GBM(0x09);
 
   // Send reset command
   writeByte_GBM(0x2100, 0x01);
-  send_Flash(0x5555, 0xAA);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0xF0);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0xF0);
   delay(100);
 }
 
 boolean readFlashID_GBM() {
+  // Enable ports 0x0120 (F2)
+  send_GBM(0x09);
+
   writeByte_GBM(0x2100, 0x01);
   // Read ID command
-  send_Flash(0x5555, 0xAA);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0x90);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x90);
 
   // Read the two id bytes into a string
   sprintf(flashid, "%02X%02X", readByte_GBM(0), readByte_GBM(1));
   if (strcmp(flashid, "C289") == 0) {
+    print_Msg(F("Flash ID: "));
+    println_Msg(flashid);
+    display_Update();
+    resetFlash_GBM();
     return 1;
   }
   else {
+    print_Msg(F("Flash ID: "));
     println_Msg(flashid);
     print_Error(F("Unknown Flash ID"), true);
+    resetFlash_GBM();
     return 0;
   }
 }
 
 void readMapping_GBM() {
-  // Enable ports 0x0120...
-  wakeup_GBM();
+  // Enable ports 0x0120 (F2)
+  send_GBM(0x09);
 
-  // Set WE and WP
-  enableWrite_GBM();
+  // Set WE and WP (F4)
+  send_GBM(0x0A);
+  send_GBM(0x1);
+  send_GBM(0x2);
 
   // Enable hidden mapping area
   writeByte_GBM(0x2100, 0x01);
-  send_Flash(0x5555, 0xAA);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0x77);
-  send_Flash(0x5555, 0xAA);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0x77);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x77);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x77);
 
   // Read mapping
   println_Msg(F("Reading Mapping..."));
@@ -1933,62 +1988,52 @@ void readMapping_GBM() {
   resetFlash_GBM();
 }
 
-void readFlash_GBM() {
-  // Enable ports 0x0120...
-  wakeup_GBM();
-
-  // Check flashid
-  if (readFlashID_GBM()) {
-    // Reset flashrom to leave flashID area and switch to output
-    resetFlash_GBM();
-    // Map entire flashrom
-    send_GBM(0x04);
-    // Disable ports 0x0120...
-    send_GBM(0x08);
-    // Read 1MB rom
-    readROM_GBM(64);
-  }
-  else {
-    print_Error(F("Flash ID error"), true);
-  }
-}
-
 void eraseFlash_GBM() {
-  // Enable ports 0x0120...
-  wakeup_GBM();
+  println_Msg(F("Erasing..."));
+  display_Update();
 
-  // Set WE and WP
-  enableWrite_GBM();
+  //enable access to ports 0120h (F2)
+  send_GBM(0x09);
+  // Enable write (F4)
+  send_GBM(0x0A);
+  send_GBM(0x1);
+  send_GBM(0x2);
 
   // Unprotect sector 0
-  writeByte_GBM(0x2100, 0x01);
-  send_Flash(0x5555, 0xAA);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0x60);
-  send_Flash(0x5555, 0xAA);
-  send_Flash(0x2AAA, 0x55);
-  writeByte_GBM(0x2100, 0x0);
-  send_Flash(0x0000, 0x40);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x60);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x40);
+
+  // Wait for unprotect to complete
+  while ((readByte_GBM(0) & 0x80) != 0x80) {}
 
   // Send erase command
-  writeByte_GBM(0x2100, 0x01);
-  send_Flash(0x5555, 0xaa);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0x80);
-  send_Flash(0x5555, 0xaa);
-  send_Flash(0x2AAA, 0x55);
-  send_Flash(0x5555, 0x10);
+  send_GBM(0x0F, 0x5555, 0xaa);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x80);
+  send_GBM(0x0F, 0x5555, 0xaa);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x10);
 
   // Wait for erase to complete
-  while ((readByte_GBM(0) & 0x80) != 0x80) {
-  }
+  while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+  // Reset flashrom
+  resetFlash_GBM();
 }
 
 boolean blankcheckFlash_GBM() {
-  // Reset flashrom
-  resetFlash_GBM();
+  print_Msg(F("Blankcheck..."));
+  display_Update();
+
+  //enable access to ports 0120h (F2)
+  send_GBM(0x09);
+
   // Map entire flashrom
-  //send_GBM(0x04);
+  send_GBM(0x04);
   // Disable ports 0x0120...
   send_GBM(0x08);
 
@@ -2014,47 +2059,87 @@ boolean blankcheckFlash_GBM() {
 }
 
 void writeFlash_GBM() {
+  print_Msg(F("Writing..."));
+  display_Update();
+
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     // Get rom size from file
     fileSize = myFile.fileSize();
-
-    for (unsigned long currBuffer = 0; currBuffer < fileSize; currBuffer += 128) {
-      // Fill SD buffer
-      myFile.read(sdBuffer, 128);
+    if ((fileSize / 0x4000) > 64) {
+      print_Error(F("File is too big."), true);
     }
 
+    //enable access to ports 0120h
+    send_GBM(0x09);
+    // Enable write
+    send_GBM(0x0A);
+    send_GBM(0x2);
+
+    // Map entire flash rom
+    send_GBM(0x4);
+
+    // Set bank for unprotect later on, writes to 0x5555 need odd bank number
+    writeByte_GBM(0x2100, 0x1);
+
+    // disable ports 0x2100 and 0x120 or else addresses will not be writable
+    send_GBM(0x10);
+    send_GBM(0x08);
+
+    // Unprotect sector 0
+    writeByte_GBM(0x5555, 0xAA);
+    writeByte_GBM(0x2AAA, 0x55);
+    writeByte_GBM(0x5555, 0x60);
+    writeByte_GBM(0x5555, 0xAA);
+    writeByte_GBM(0x2AAA, 0x55);
+    writeByte_GBM(0x5555, 0x40);
+
+    // Check if flashrom is ready for writing or busy
+    while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+    // first bank: 0x0000-0x7FFF,
+    word currAddress = 0x0;
+
+    // only write the first bank for now as bank switching doesn't work yet
+    for (word currBank = 0x1; currBank < 0x2; currBank++) {
+      // Blink Led
+      PORTB ^= (1 << 4);
+
+      // all following banks: 0x4000-0x7FFF
+      if (currBank > 1) {
+        currAddress = 0x4000;
+      }
+
+      // write one bank
+      for (; currAddress < 0x7FFF; currAddress += 128) {
+        // Fill SD buffer
+        myFile.read(sdBuffer, 128);
+
+        // Write flash buffer command
+        writeByte_GBM(0x5555, 0xAA);
+        writeByte_GBM(0x2AAA, 0x55);
+        writeByte_GBM(0x5555, 0xA0);
+
+        // Fill flash buffer
+        for (word currByte = 0; currByte < 128; currByte++) {
+          writeByte_GBM(currAddress + currByte, sdBuffer[currByte]);
+        }
+        // Execute write
+        writeByte_GBM(currAddress + 127, 0xFF);
+
+        // Wait for write to complete
+        while ((readByte_GBM(0) & 0x80) != 0x80) {}
+      }
+    }
     // Close the file:
     myFile.close();
+
+    // Reset flashrom
+    resetFlash_GBM();
+    println_Msg(F("Done"));
   }
   else {
     print_Error(F("Can't open file"), false);
-  }
-}
-
-void writeRom_GBM() {
-  // Enable ports 0x0120...
-  wakeup_GBM();
-
-  // Check flashid
-  if (readFlashID_GBM()) {
-    // Reset flashrom to leave flashID area and switch to output
-    resetFlash_GBM();
-    // Erase flash
-    print_Msg(F("Erasing..."));
-    display_Update();
-    eraseFlash_GBM();
-    if (blankcheckFlash_GBM()) {
-      println_Msg(F("Ok"));
-      display_Update();
-      writeFlash_GBM();
-    }
-    else {
-      print_Error(F("Erase failed"), true);
-    }
-  }
-  else {
-    print_Error(F("Flash ID error"), true);
   }
 }
 
