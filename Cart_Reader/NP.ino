@@ -1944,12 +1944,11 @@ boolean readFlashID_GBM() {
 }
 
 void readMapping_GBM() {
-  // Enable ports 0x0120 (F2)
+  // Enable ports 0x0120
   send_GBM(0x09);
 
-  // Set WE and WP (F4)
+  // Set WE and WP
   send_GBM(0x0A);
-  send_GBM(0x1);
   send_GBM(0x2);
 
   // Enable hidden mapping area
@@ -2005,11 +2004,10 @@ void eraseFlash_GBM() {
   println_Msg(F("Erasing..."));
   display_Update();
 
-  //enable access to ports 0120h (F2)
+  //enable access to ports 0120h
   send_GBM(0x09);
-  // Enable write (F4)
+  // Enable write
   send_GBM(0x0A);
-  send_GBM(0x1);
   send_GBM(0x2);
 
   // Unprotect sector 0
@@ -2092,10 +2090,10 @@ void writeFlash_GBM() {
     // Map entire flash rom
     send_GBM(0x4);
 
-    // Set bank for unprotect later on, writes to 0x5555 need odd bank number
+    // Set bank for unprotect command, writes to 0x5555 need odd bank number
     writeByte_GBM(0x2100, 0x1);
 
-    // Disable ports 0x2100 and 0x120 or else addresses will not be writable
+    // Disable ports 0x2100 and 0x120 or else those addresses will not be writable
     send_GBM(0x10);
     send_GBM(0x08);
 
@@ -2110,64 +2108,63 @@ void writeFlash_GBM() {
     // Check if flashrom is ready for writing or busy
     while ((readByte_GBM(0) & 0x80) != 0x80) {}
 
-    // Blink led
-    PORTB ^= (1 << 4);
+    // first bank: 0x0000-0x7FFF,
+    word currAddress = 0x0;
 
-    // Write first bank
-    for (word currAddress = 0x0; currAddress < 0x7FFF; currAddress += 128) {
-      // Fill SD buffer
-      myFile.read(sdBuffer, 128);
-
-      // Write flash buffer command
-      writeByte_GBM(0x5555, 0xAA);
-      writeByte_GBM(0x2AAA, 0x55);
-      writeByte_GBM(0x5555, 0xA0);
-
-      // Fill flash buffer
-      for (word currByte = 0; currByte < 128; currByte++) {
-        writeByte_GBM(currAddress + currByte, sdBuffer[currByte]);
-      }
-      // Execute write
-      writeByte_GBM(currAddress + 127, 0xFF);
-
-      // Wait for write to complete
-      while ((readByte_GBM(0) & 0x80) != 0x80) {}
-    }
-
-    // Enable access to ports 0120h
-    send_GBM(0x09);
-    // Enable access to ports 2100h
-    send_GBM(0x11);
-
-    // Write rest of the banks
-    for (byte currBank = 2; currBank < (fileSize / 0x4000); currBank++) {
+    // Write 63 banks
+    for (byte currBank = 0x1; currBank < (fileSize / 0x4000); currBank++) {
       // Blink led
       PORTB ^= (1 << 4);
 
+      // all following banks: 0x4000-0x7FFF
+      if (currBank > 1) {
+        currAddress = 0x4000;
+      }
+
       // Write single bank in 128 byte steps
-      for (word currAddress = 0x4000; currAddress < 0x7FFF; currAddress += 128) {
+      for (; currAddress < 0x7FFF; currAddress += 128) {
         // Fill SD buffer
         myFile.read(sdBuffer, 128);
 
-        // Write flash buffer command
-        writeByte_GBM(0x2100, 0x1);
-        send_GBM(0x0F, 0x5555, 0xAA);
-        send_GBM(0x0F, 0x2AAA, 0x55);
-        send_GBM(0x0F, 0x5555, 0xA0);
+        // Enable access to ports 0x120 and 0x2100
+        send_GBM(0x09);
+        send_GBM(0x11);
 
-        // Setting bank here does not work and aborts the write
+        // Set bank
+        writeByte_GBM(0x2100, 0x1);
+
+        // Disable ports 0x2100 and 0x120 or else those addresses will not be writable
+        send_GBM(0x10);
+        send_GBM(0x08);
+
+        // Write flash buffer command
+        writeByte_GBM(0x5555, 0xAA);
+        writeByte_GBM(0x2AAA, 0x55);
+        writeByte_GBM(0x5555, 0xA0);
+
+        // Wait until flashrom is ready again
+        while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+        // Enable access to ports 0x120 and 0x2100
+        send_GBM(0x09);
+        send_GBM(0x11);
+
+        // Set bank
         writeByte_GBM(0x2100, currBank);
+
+        // Disable ports 0x2100 and 0x120 or else those addresses will not be writable
+        send_GBM(0x10);
+        send_GBM(0x08);
 
         // Fill flash buffer
         for (word currByte = 0; currByte < 128; currByte++) {
-          send_GBM(0x0F, currAddress + currByte, sdBuffer[currByte]);
+          writeByte_GBM(currAddress + currByte, sdBuffer[currByte]);
         }
         // Execute write
-        send_GBM(0x0F, currAddress + 127, 0xFF);
+        writeByte_GBM(currAddress + 127, 0xFF);
 
         // Wait for write to complete
-        writeByte_GBM(0x2100, 0x1);
-        while ((readByte_GBM(0) & 0x80) != 0x80) {}
+        while ((readByte_GBM(currAddress) & 0x80) != 0x80) {}
       }
     }
     // Close the file:

@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-10-11
-   Version:          V29B
+   Date:             2017-10-12
+   Version:          V29C
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -32,9 +32,10 @@
    insidegadgets - GBCartRead
    RobinTheHood - GameboyAdvanceRomDumper
    YamaArashi - GBA flashrom bank switch command
+   infinest - help with GM Memory cart
 
 **********************************************************************************/
-char ver[5] = "V29B";
+char ver[5] = "V29C";
 
 /******************************************
    Define Output
