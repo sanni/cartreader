@@ -1477,8 +1477,8 @@ void gbmMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBM, 6);
-  mainMenu = question_box("GB Memory Menu", menuOptions, 6, 0);
+  convertPgm(menuOptionsGBM, 7);
+  mainMenu = question_box("GB Memory Menu", menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -1589,31 +1589,16 @@ void gbmMenu() {
       // Print warning
       println_Msg(F("Attention"));
       println_Msg(F("This will erase your"));
-      println_Msg(F("NP Cartridge."));
+      println_Msg(F("NP Cartridge's"));
+      println_Msg(F("mapping data"));
       println_Msg("");
       println_Msg(F("Press Button"));
       println_Msg(F("to continue"));
       display_Update();
       wait();
 
-      // Clear screen
-      display_Clear();
-
       // Reset to root directory
       sd.chdir("/");
-
-      // Erase mapping
-      eraseMapping_GBM();
-      print_Msg(F("Blankcheck..."));
-      display_Update();
-      if (blankcheckMapping_GBM()) {
-        println_Msg(F("OK"));
-        display_Update();
-      }
-      else {
-        println_Msg(F("Nope"));
-        break;
-      }
 
       // Clear screen
       display_Clear();
@@ -1629,6 +1614,20 @@ void gbmMenu() {
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Update();
+
+      // Clear screen
+      display_Clear();
+
+      // Erase mapping
+      eraseMapping_GBM();
+      if (blankcheckMapping_GBM()) {
+        println_Msg(F("OK"));
+        display_Update();
+      }
+      else {
+        print_Error(F("Erasing failed"), false);
+        break;
+      }
 
       // Write mapping
       writeMapping_GBM();
@@ -1943,63 +1942,6 @@ boolean readFlashID_GBM() {
   }
 }
 
-void readMapping_GBM() {
-  // Enable ports 0x0120
-  send_GBM(0x09);
-
-  // Set WE and WP
-  send_GBM(0x0A);
-  send_GBM(0x2);
-
-  // Enable hidden mapping area
-  writeByte_GBM(0x2100, 0x01);
-  send_GBM(0x0F, 0x5555, 0xAA);
-  send_GBM(0x0F, 0x2AAA, 0x55);
-  send_GBM(0x0F, 0x5555, 0x77);
-  send_GBM(0x0F, 0x5555, 0xAA);
-  send_GBM(0x0F, 0x2AAA, 0x55);
-  send_GBM(0x0F, 0x5555, 0x77);
-
-  // Read mapping
-  println_Msg(F("Reading Mapping..."));
-  display_Update();
-
-  // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(10, foldern);
-  sprintf(fileName, "GBM%d", foldern);
-  strcat(fileName, ".map");
-  sd.mkdir("NP", true);
-  sd.chdir("NP");
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
-  }
-  else {
-    for (byte currByte = 0; currByte < 128; currByte++) {
-      sdBuffer[currByte] = readByte_GBM(currByte);
-    }
-    myFile.write(sdBuffer, 128);
-
-    // Close the file:
-    myFile.close();
-
-    // Signal end of process
-    printSdBuffer(0, 20);
-    printSdBuffer(102, 20);
-    println_Msg("");
-    print_Msg(F("Saved to NP/"));
-    println_Msg(fileName);
-    display_Update();
-  }
-
-  // Reset flash to leave hidden mapping area
-  resetFlash_GBM();
-}
-
 void eraseFlash_GBM() {
   println_Msg(F("Erasing..."));
   display_Update();
@@ -2176,16 +2118,220 @@ void writeFlash_GBM() {
   }
 }
 
-void eraseMapping_GBM() {
+void readMapping_GBM() {
+  // Enable ports 0x0120
+  send_GBM(0x09);
 
+  // Set WE and WP
+  send_GBM(0x0A);
+  send_GBM(0x2);
+
+  // Enable hidden mapping area
+  writeByte_GBM(0x2100, 0x01);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x77);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x77);
+
+  // Read mapping
+  println_Msg(F("Reading Mapping..."));
+  display_Update();
+
+  // Get name, add extension and convert to char array for sd lib
+  EEPROM_readAnything(10, foldern);
+  sprintf(fileName, "GBM%d", foldern);
+  strcat(fileName, ".map");
+  sd.mkdir("NP", true);
+  sd.chdir("NP");
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't create file on SD"), true);
+  }
+  else {
+    for (byte currByte = 0; currByte < 128; currByte++) {
+      sdBuffer[currByte] = readByte_GBM(currByte);
+    }
+    myFile.write(sdBuffer, 128);
+
+    // Close the file:
+    myFile.close();
+
+    // Signal end of process
+    printSdBuffer(0, 20);
+    printSdBuffer(102, 20);
+    println_Msg("");
+    print_Msg(F("Saved to NP/"));
+    println_Msg(fileName);
+    display_Update();
+  }
+
+  // Reset flash to leave hidden mapping area
+  resetFlash_GBM();
+}
+
+void eraseMapping_GBM() {
+  println_Msg(F("Erasing..."));
+  display_Update();
+
+  //enable access to ports 0120h
+  send_GBM(0x09);
+  // Enable write
+  send_GBM(0x0A);
+  send_GBM(0x2);
+
+  // Unprotect sector 0
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x60);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x40);
+
+  // Wait for unprotect to complete
+  while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+  // Send erase command
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x60);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x04);
+
+  // Wait for erase to complete
+  while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+  // Reset flashrom
+  resetFlash_GBM();
 }
 
 boolean blankcheckMapping_GBM() {
+  print_Msg(F("Blankcheck..."));
+  display_Update();
 
+  // Enable ports 0x0120
+  send_GBM(0x09);
+
+  // Set WE and WP
+  send_GBM(0x0A);
+  send_GBM(0x2);
+
+  // Enable hidden mapping area
+  writeByte_GBM(0x2100, 0x01);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x77);
+  send_GBM(0x0F, 0x5555, 0xAA);
+  send_GBM(0x0F, 0x2AAA, 0x55);
+  send_GBM(0x0F, 0x5555, 0x77);
+
+  // Disable ports 0x0120...
+  send_GBM(0x08);
+
+  // Read rom
+  for (byte currByte = 0; currByte < 128; currByte++) {
+    if (readByte_GBM(currByte) != 0xFF) {
+      return 0;
+    }
+  }
+  return 1;
 }
 
 void writeMapping_GBM() {
+  print_Msg(F("Writing..."));
+  display_Update();
 
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get map file size and check if it exceeds 128KByte
+    if (myFile.fileSize() > 0x80) {
+      print_Error(F("File is too big."), true);
+    }
+
+    // Enable access to ports 0120h
+    send_GBM(0x09);
+
+    // Enable write
+    send_GBM(0x0A);
+    send_GBM(0x2);
+
+    // Map entire flash rom
+    send_GBM(0x4);
+
+    // Set bank, writes to 0x5555 need odd bank number
+    writeByte_GBM(0x2100, 0x1);
+
+    // Disable ports 0x2100 and 0x120 or else those addresses will not be writable
+    send_GBM(0x10);
+    send_GBM(0x08);
+
+    // Unlock write to map area
+    writeByte_GBM(0x5555, 0xAA);
+    writeByte_GBM(0x2AAA, 0x55);
+    writeByte_GBM(0x5555, 0x60);
+    writeByte_GBM(0x5555, 0xAA);
+    writeByte_GBM(0x2AAA, 0x55);
+    writeByte_GBM(0x5555, 0xE0);
+
+    // Check if flashrom is ready for writing or busy
+    while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+    // Fill SD buffer
+    myFile.read(sdBuffer, 128);
+
+    // Enable access to ports 0x120 and 0x2100
+    send_GBM(0x09);
+    send_GBM(0x11);
+
+    // Set bank
+    writeByte_GBM(0x2100, 0x1);
+
+    // Disable ports 0x2100 and 0x120 or else those addresses will not be writable
+    send_GBM(0x10);
+    send_GBM(0x08);
+
+    // Write flash buffer command
+    writeByte_GBM(0x5555, 0xAA);
+    writeByte_GBM(0x2AAA, 0x55);
+    writeByte_GBM(0x5555, 0xA0);
+
+    // Wait until flashrom is ready again
+    while ((readByte_GBM(0) & 0x80) != 0x80) {}
+
+    // Enable access to ports 0x120 and 0x2100
+    send_GBM(0x09);
+    send_GBM(0x11);
+
+    // Set bank
+    writeByte_GBM(0x2100, 0);
+
+    // Disable ports 0x2100 and 0x120 or else those addresses will not be writable
+    send_GBM(0x10);
+    send_GBM(0x08);
+
+    // Fill flash buffer
+    for (word currByte = 0; currByte < 128; currByte++) {
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      writeByte_GBM(currByte, sdBuffer[currByte]);
+    }
+    // Execute write
+    writeByte_GBM(127, 0xFF);
+
+    // Close the file:
+    myFile.close();
+    println_Msg(F("Done"));
+  }
+  else {
+    print_Error(F("Can't open file"), false);
+  }
 }
 
 //******************************************
