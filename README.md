@@ -43,7 +43,7 @@
    insidegadgets - GBCartRead   
    RobinTheHood - GameboyAdvanceRomDumper   
    YamaArashi - GBA flashrom bank switch command    
-   infinest - help with GM Memory cart    
+   infinest - help with GB Memory cart    
    
 ![image](https://dl.dropboxusercontent.com/s/0be9rp9ss37vq2c/v11_rear.jpg?dl=1)   
 
