@@ -8,14 +8,14 @@
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
-- Reflashes N64 Repros with Spansion S29GL256N, Fujitsu MSP55LV512 or Intel 4400L0ZDQ0 flashroms    
+- Reflashes N64 Repros with Spansion S29GL256N, Fujitsu MSP55LV512, Fujitsu MSP55LV100S or Intel 4400L0ZDQ0 flashroms    
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
-- Programs custom made Game Boy Color flashcarts with MX29F033 flashrom   
+- Programs custom made Game Boy (Color) flashcarts with 29F016/29F032/29F033 flashrom   
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
-- Programs Flashroms like 29F016, 29F032, 29F033, 29F1610 and 29L3211    
+- Programs Flashroms like 29F016, 29F032, 29F033, 29F1610, 29L3211 and 29LV160 (custom made adapters needed)   
 
 ![image](https://dl.dropboxusercontent.com/s/goc70t6cg9v7sfa/v11_switches.jpg?dl=1)   
 
