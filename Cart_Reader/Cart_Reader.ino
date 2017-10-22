@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-10-13
-   Version:          V29D
+   Date:             2017-10-22
+   Version:          V30
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V29D";
+char ver[5] = "V30";
 
 /******************************************
    Define Output
@@ -354,6 +354,171 @@ static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
 static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
 
+void n64Menu() {
+  // create menu with title and 3 options to choose from
+  unsigned char n64Dev;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsN64, 3);
+  n64Dev = question_box("Select N64 device", menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (n64Dev)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_N64_Cart();
+      printCartInfo_N64();
+      mode = mode_N64_Cart;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_N64_Controller();
+      mode = mode_N64_Controller;
+      break;
+
+    case 2:
+      display_Clear();
+      display_Update();
+      setup_N64_Cart();
+      flashRepro_N64();
+      printCartInfo_N64();
+      mode = mode_N64_Cart;
+      break;
+
+  }
+}
+
+void npMenu() {
+  // create menu with title and 2 options to choose from
+  unsigned char npCart;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsNP, 2);
+  npCart = question_box("Select NP Cart", menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (npCart)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_SFM();
+      mode =  mode_SFM;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_GBM();
+      mode =  mode_GBM;
+      break;
+  }
+}
+
+void gbxMenu() {
+  // create menu with title and 2 options to choose from
+  unsigned char gbType;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsGBx, 2);
+  gbType = question_box("Select Game Boy", menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (gbType)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_GB();
+      mode =  mode_GB;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_GBA();
+      mode =  mode_GBA;
+      break;
+  }
+}
+
+void flashMenu() {
+  // create menu with title and 2 options to choose from
+  unsigned char flashSlot;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsFlash, 2);
+  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (flashSlot)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_Flash8();
+      mode =  mode_FLASH8;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_Flash16();
+      mode =  mode_FLASH16;
+      break;
+  }
+}
+
+void aboutScreen() {
+  display_Clear();
+  // Draw the Logo
+  display.drawBitmap(0, 0, sig, 128, 64, 1);
+  println_Msg(F("Cartridge Reader"));
+  println_Msg(F("github.com/sanni"));
+  print_Msg(F("2017 "));
+  println_Msg(ver);
+  println_Msg(F(""));
+  println_Msg(F(""));
+  println_Msg(F(""));
+  println_Msg(F(""));
+  println_Msg(F("Press Button"));
+  display_Update();
+
+  while (1) {
+    if (enable_OLED) {
+      // get input button
+      int b = checkButton();
+
+      // if the cart readers input button is pressed shortly
+      if (b == 1) {
+        asm volatile ("  jmp 0");
+      }
+
+      // if the cart readers input button is pressed long
+      if (b == 3) {
+        asm volatile ("  jmp 0");
+      }
+
+      // if the button is pressed super long
+      if (b == 4) {
+        display_Clear();
+        println_Msg(F("Resetting folder..."));
+        display_Update();
+        delay(2000);
+        foldern = 0;
+        EEPROM_writeAnything(10, foldern);
+        asm volatile ("  jmp 0");
+      }
+    }
+    if (enable_Serial) {
+      wait_serial();
+      asm volatile ("  jmp 0");
+    }
+    rgb.setColor(random(0, 255), random(0, 255), random(0, 255));
+    delay(random(50, 100));
+  }
+}
+
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
@@ -365,40 +530,7 @@ void mainMenu() {
   switch (modeMenu)
   {
     case 0:
-      // create menu with title and 3 options to choose from
-      unsigned char n64Dev;
-      // Copy menuOptions out of progmem
-      convertPgm(menuOptionsN64, 3);
-      n64Dev = question_box("Select N64 device", menuOptions, 3, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (n64Dev)
-      {
-        case 0:
-          display_Clear();
-          display_Update();
-          setup_N64_Cart();
-          printCartInfo_N64();
-          mode = mode_N64_Cart;
-          break;
-
-        case 1:
-          display_Clear();
-          display_Update();
-          setup_N64_Controller();
-          mode = mode_N64_Controller;
-          break;
-
-        case 2:
-          display_Clear();
-          display_Update();
-          setup_N64_Cart();
-          flashRepro_N64();
-          printCartInfo_N64();
-          mode = mode_N64_Cart;
-          break;
-
-      }
+      n64Menu();
       break;
 
     case 1:
@@ -409,55 +541,11 @@ void mainMenu() {
       break;
 
     case 2:
-      // create menu with title and 2 options to choose from
-      unsigned char npCart;
-      // Copy menuOptions out of progmem
-      convertPgm(menuOptionsNP, 2);
-      npCart = question_box("Select NP Cart", menuOptions, 2, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (npCart)
-      {
-        case 0:
-          display_Clear();
-          display_Update();
-          setup_SFM();
-          mode =  mode_SFM;
-          break;
-
-        case 1:
-          display_Clear();
-          display_Update();
-          setup_GBM();
-          mode =  mode_GBM;
-          break;
-      }
+      npMenu();
       break;
 
     case 3:
-      // create menu with title and 2 options to choose from
-      unsigned char gbType;
-      // Copy menuOptions out of progmem
-      convertPgm(menuOptionsGBx, 2);
-      gbType = question_box("Select Game Boy", menuOptions, 2, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (gbType)
-      {
-        case 0:
-          display_Clear();
-          display_Update();
-          setup_GB();
-          mode =  mode_GB;
-          break;
-
-        case 1:
-          display_Clear();
-          display_Update();
-          setup_GBA();
-          mode =  mode_GBA;
-          break;
-      }
+      gbxMenu();
       break;
 
     case 4:
@@ -468,79 +556,11 @@ void mainMenu() {
       break;
 
     case 5:
-      // create menu with title and 2 options to choose from
-      unsigned char flashSlot;
-      // Copy menuOptions out of progmem
-      convertPgm(menuOptionsFlash, 2);
-      flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (flashSlot)
-      {
-        case 0:
-          display_Clear();
-          display_Update();
-          setup_Flash8();
-          mode =  mode_FLASH8;
-          break;
-
-        case 1:
-          display_Clear();
-          display_Update();
-          setup_Flash16();
-          mode =  mode_FLASH16;
-          break;
-      }
+      flashMenu();
       break;
 
     case 6:
-      display_Clear();
-      // Draw the Logo
-      display.drawBitmap(0, 0, sig, 128, 64, 1);
-      println_Msg(F("Cartridge Reader"));
-      println_Msg(F("github.com/sanni"));
-      print_Msg(F("2017 "));
-      println_Msg(ver);
-      println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F("Press Button"));
-      display_Update();
-
-      while (1) {
-        if (enable_OLED) {
-          // get input button
-          int b = checkButton();
-
-          // if the cart readers input button is pressed shortly
-          if (b == 1) {
-            asm volatile ("  jmp 0");
-          }
-
-          // if the cart readers input button is pressed long
-          if (b == 3) {
-            asm volatile ("  jmp 0");
-          }
-
-          // if the button is pressed super long
-          if (b == 4) {
-            display_Clear();
-            println_Msg(F("Resetting folder..."));
-            display_Update();
-            delay(2000);
-            foldern = 0;
-            EEPROM_writeAnything(10, foldern);
-            asm volatile ("  jmp 0");
-          }
-        }
-        if (enable_Serial) {
-          wait_serial();
-          asm volatile ("  jmp 0");
-        }
-        rgb.setColor(random(0, 255), random(0, 255), random(0, 255));
-        delay(random(50, 100));
-      }
+      aboutScreen();
       break;
   }
 }
@@ -776,12 +796,32 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
   }
   // Wait for user input
   Serial.println("");
-  Serial.print(F("Please enter a single number: _ "));
+  Serial.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
+  Serial.print(F("and enter a selection by typing a number(0-6): _ "));
   while (Serial.available() == 0) {
   }
 
   // Read the incoming byte:
   incomingByte = Serial.read() - 48;
+
+  if (incomingByte == 69) {
+    if (filebrowse == 1) {
+      if (currPage > 1) {
+        lastPage = currPage;
+        currPage--;
+      }
+      else {
+        root = 1;
+      }
+    }
+
+  }
+  else if (incomingByte == 52) {
+    if ((numPages > currPage) && (filebrowse == 1)) {
+      lastPage = currPage;
+      currPage++;
+    }
+  }
 
   // Print the received byte for validation e.g. in case of a different keyboard mapping
   Serial.println(incomingByte);
