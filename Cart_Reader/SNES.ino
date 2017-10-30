@@ -907,8 +907,13 @@ void readROM_SNES() {
 
   //Dump Low-type ROM
   else if (romType == LO) {
+    if(romSize > 24) { 
+      // ROM > 96 banks (up to 128 banks)
+      readLoRomBanks( 0x80, numBanks + 0x80, &myFile );
+    } else {
     // Read up to 96 banks starting at bank 0×00.
-    readLoRomBanks( 0, numBanks, &myFile );
+      readLoRomBanks( 0, numBanks, &myFile );
+    }
   }
 
   // Dump High-type ROM
