@@ -9,9 +9,13 @@
 ![image](https://dl.dropboxusercontent.com/s/rnnnstkn3ynv10g/gbaadapter_pcb.png?dl=1)    
 
 #### flash_adapter.zip is an adapter for 8bit and 16bit flashroms like the 29F032 or the 29L3211, PCB thickness is 1.2mm 
-
+   
 ![image](https://dl.dropboxusercontent.com/s/3oovzhcgdt3a3x9/flashadapter.png?dl=1)    
-
+   
+#### md_adapter.zip is an adapter for SEGA Mega Drive/Genesis carts, PCB thickness is 1.2mm 
+   
+![image](https://dl.dropboxusercontent.com/s/li0kb0v3m98bqd2/md_adapter_pcb.png?dl=1)   
+   
 #### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
 ![image](https://dl.dropboxusercontent.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
