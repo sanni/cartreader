@@ -2,9 +2,9 @@ This Arduino sketch can write Nintendo Power SF Memory cartridges without an ext
 
 Copy the rom and map file to the root directory of your SD card and make sure that the filenames are below 8 characters in length.   
 
-Configure the switches like so:   
+Configure the switches like so and use the USB port that is connected directly to the Arduino Mega:   
 
-![](https://dl.dropboxusercontent.com/s/5np6jvcv7x6ilvl/flash_jumper.jpg?dl=1)    
+![image](https://dl.dropboxusercontent.com/s/yzewnnx5mb2ajk0/flash_firmware.jpg?dl=1)  
 
 First send "8" to switch the cart to "hirom all" mode. Check that it did succeed:   
 (8)HIROM ALL 0x04    
