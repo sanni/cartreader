@@ -19,3 +19,5 @@ Success.
 
 Before you write anything you should always do a backup of your rom and mapping.    
 To flash something new you need to erase both the flash and the mapping first before you send the write command.   
+
+![](https://dl.dropboxusercontent.com/s/7ptv5hdf4iwi0lb/npwriter10.jpg?dl=1)    
