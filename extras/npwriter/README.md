@@ -1,5 +1,5 @@
-This Arduino sketch can write Nintendo Power SF Memory cartridges without an external clock source like the Adafruit Clock Generator.   
-It also uses the Arduino Serial Monitor instead of the OLED display and buttons.      
+This Arduino sketch can write Nintendo Power SF Memory cartridges without an external clock source like the Adafruit Clock Generator. It also uses the Arduino Serial Monitor instead of the OLED display and buttons.      
+
 Copy the rom and map file to the root directory of your SD card and make sure that the filenames are below 8 characters in length.   
 
 Configure the switches like so:   
