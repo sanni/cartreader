@@ -42,6 +42,14 @@ static const char confMenuItem4[] PROGMEM = "6MB ExRom 256K Sram";
 static const char confMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
 
+// SNES start menu
+void snsMenu() {
+  display_Clear();
+  display_Update();
+  setup_Snes();
+  mode =  mode_SNES;
+}
+
 // SNES Menu
 void snesMenu() {
   // create menu with title and 7 options to choose from
@@ -907,11 +915,11 @@ void readROM_SNES() {
 
   //Dump Low-type ROM
   else if (romType == LO) {
-    if(romSize > 24) { 
+    if (romSize > 24) {
       // ROM > 96 banks (up to 128 banks)
       readLoRomBanks( 0x80, numBanks + 0x80, &myFile );
     } else {
-    // Read up to 96 banks starting at bank 0×00.
+      // Read up to 96 banks starting at bank 0×00.
       readLoRomBanks( 0, numBanks, &myFile );
     }
   }

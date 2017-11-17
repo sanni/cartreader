@@ -15,6 +15,11 @@ unsigned long blank;
 /******************************************
    Menu
  *****************************************/
+// Flash start menu
+static const char flashMenuItem1[] PROGMEM = "8bit slot";
+static const char flashMenuItem2[] PROGMEM = "16bit slot";
+static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
+
 // 8bit Flash menu items
 static const char flash8MenuItem1[] PROGMEM = "Blankcheck";
 static const char flash8MenuItem2[] PROGMEM = "Erase";
@@ -34,6 +39,32 @@ static const char flash16MenuItem5[] PROGMEM = "ID";
 static const char flash16MenuItem6[] PROGMEM = "Print";
 static const char flash16MenuItem7[] PROGMEM = "Reset";
 static const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7};
+
+void flashMenu() {
+  // create menu with title and 2 options to choose from
+  unsigned char flashSlot;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsFlash, 2);
+  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (flashSlot)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_Flash8();
+      mode =  mode_FLASH8;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_Flash16();
+      mode =  mode_FLASH16;
+      break;
+  }
+}
 
 void flashromMenu8() {
   // create menu with title and 7 options to choose from

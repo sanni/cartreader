@@ -18,6 +18,14 @@ static const char MDMenuItem4[] PROGMEM = "Write Flashcart";
 static const char MDMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsMD[] PROGMEM = {MDMenuItem1, MDMenuItem2, MDMenuItem3, MDMenuItem4, MDMenuItem5};
 
+// Sega start menu
+void segaMenu() {
+  display_Clear();
+  display_Update();
+  setup_MD();
+  mode =  mode_MD;
+}
+
 void mdMenu() {
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;

@@ -45,6 +45,12 @@ boolean MN63F81MPN = false;
 /******************************************
   Menu
 *****************************************/
+// N64 start menu
+static const char n64MenuItem1[] PROGMEM = "Cart Slot";
+static const char n64MenuItem2[] PROGMEM = "Controller";
+static const char n64MenuItem3[] PROGMEM = "Flash Repro";
+static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
+
 // N64 controller menu items
 static const char N64ContMenuItem1[] PROGMEM = "Test Controller";
 static const char N64ContMenuItem2[] PROGMEM = "Read ControllerPak";
@@ -65,6 +71,44 @@ static const char N64CRCMenuItem2[] PROGMEM = "Redump";
 static const char N64CRCMenuItem3[] PROGMEM = "Ignore";
 static const char N64CRCMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
+
+// N64 start menu
+void n64Menu() {
+  // create menu with title and 3 options to choose from
+  unsigned char n64Dev;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsN64, 3);
+  n64Dev = question_box("Select N64 device", menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (n64Dev)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_N64_Cart();
+      printCartInfo_N64();
+      mode = mode_N64_Cart;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_N64_Controller();
+      mode = mode_N64_Controller;
+      break;
+
+    case 2:
+      display_Clear();
+      display_Update();
+      setup_N64_Cart();
+      flashRepro_N64();
+      printCartInfo_N64();
+      mode = mode_N64_Cart;
+      break;
+
+  }
+}
 
 // N64 Controller Menu
 void n64ControllerMenu() {

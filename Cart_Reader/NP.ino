@@ -12,9 +12,7 @@
 ******************************************/
 // The clock signal for the SF Memory cassette
 // is generated with the Adafruit Clock Generator
-// If you don't have one just plug a wire into CLK0
-// (Snes Pin 1) and let the 50/60Hz noise of your
-// mains do the rest, works in ~80% of all cases ;)
+// or a similar external clock source
 
 /******************************************
    Variables
@@ -37,6 +35,11 @@ boolean hirom[8];
 /******************************************
   Menu
 *****************************************/
+// Nintendo Power start menu
+static const char npMenuItem1[] PROGMEM = "SF Memory";
+static const char npMenuItem2[] PROGMEM = "GB Memory";
+static const char* const menuOptionsNP[] PROGMEM = {npMenuItem1, npMenuItem2};
+
 // SFM menu items
 static const char sfmMenuItem1[] PROGMEM = "Game Menu";
 static const char sfmMenuItem2[] PROGMEM = "Flash Menu";
@@ -59,6 +62,32 @@ static const char sfmGameMenuItem3[] PROGMEM = "Write Sram";
 static const char sfmGameMenuItem4[] PROGMEM = "Switch Game";
 static const char sfmGameMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsSFMGame[] PROGMEM = {sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, sfmGameMenuItem5};
+
+void npMenu() {
+  // create menu with title and 2 options to choose from
+  unsigned char npCart;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsNP, 2);
+  npCart = question_box("Select NP Cart", menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (npCart)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_SFM();
+      mode =  mode_SFM;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_GBM();
+      mode =  mode_GBM;
+      break;
+  }
+}
 
 void sfmMenu() {
   // create menu with title and 3 options to choose from

@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-10-22
-   Version:          V30
+   Date:             2017-11-17
+   Version:          V30B
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.3
+   Compiled with Arduino 1.8.5
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -35,7 +35,13 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30";
+char ver[5] = "V30B";
+
+/******************************************
+   Define Starting Point
+******************************************/
+// mainMenu, n64Menu, snsMenu, npMenu, gbxMenu, segaMenu, flashMenu
+#define startMenu mainMenu
 
 /******************************************
    Define Output
@@ -56,11 +62,6 @@ char ver[5] = "V30";
 // Change to half speed if you get an sd error
 #define sdSpeed SPI_FULL_SPEED
 //#define sdSpeed SPI_HALF_SPEED
-
-/******************************************
-   Pinout
-******************************************/
-// Please see included pinout.xls
 
 /******************************************
    Libraries
@@ -91,7 +92,7 @@ Si5351 clockgen;
 // RGB LED
 #include <RGBTools.h>
 
-// set pins of red, green and blue
+// Set pins of red, green and blue
 RGBTools rgb(12, 11, 10);
 
 typedef enum COLOR_T {
@@ -212,7 +213,6 @@ byte sdBuffer[512];
 //******************************************
 // Bitmaps
 //******************************************
-// Logo
 static const unsigned char PROGMEM icon [] = {
   0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF,
@@ -322,7 +322,6 @@ static const unsigned char PROGMEM sig [] = {
 /******************************************
   Menu
 *****************************************/
-// All menus and menu entries are stored in progmem to save on sram
 // Main menu
 static const char modeItem1[] PROGMEM = "Nintendo 64";
 static const char modeItem2[] PROGMEM = "Super Nintendo";
@@ -332,142 +331,6 @@ static const char modeItem5[] PROGMEM = "Mega Drive";
 static const char modeItem6[] PROGMEM = "Flashrom Programmer";
 static const char modeItem7[] PROGMEM = "About";
 static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
-
-// N64 Submenu
-static const char n64MenuItem1[] PROGMEM = "Cart Slot";
-static const char n64MenuItem2[] PROGMEM = "Controller";
-static const char n64MenuItem3[] PROGMEM = "Flash Repro";
-static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3};
-
-// Nintendo Power Submenu
-static const char npMenuItem1[] PROGMEM = "SF Memory";
-static const char npMenuItem2[] PROGMEM = "GB Memory";
-static const char* const menuOptionsNP[] PROGMEM = {npMenuItem1, npMenuItem2};
-
-// Flash Submenu
-static const char flashMenuItem1[] PROGMEM = "8bit slot";
-static const char flashMenuItem2[] PROGMEM = "16bit slot";
-static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
-
-// GBx Submenu
-static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
-static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
-static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
-
-void n64Menu() {
-  // create menu with title and 3 options to choose from
-  unsigned char n64Dev;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64, 3);
-  n64Dev = question_box("Select N64 device", menuOptions, 3, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (n64Dev)
-  {
-    case 0:
-      display_Clear();
-      display_Update();
-      setup_N64_Cart();
-      printCartInfo_N64();
-      mode = mode_N64_Cart;
-      break;
-
-    case 1:
-      display_Clear();
-      display_Update();
-      setup_N64_Controller();
-      mode = mode_N64_Controller;
-      break;
-
-    case 2:
-      display_Clear();
-      display_Update();
-      setup_N64_Cart();
-      flashRepro_N64();
-      printCartInfo_N64();
-      mode = mode_N64_Cart;
-      break;
-
-  }
-}
-
-void npMenu() {
-  // create menu with title and 2 options to choose from
-  unsigned char npCart;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionsNP, 2);
-  npCart = question_box("Select NP Cart", menuOptions, 2, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (npCart)
-  {
-    case 0:
-      display_Clear();
-      display_Update();
-      setup_SFM();
-      mode =  mode_SFM;
-      break;
-
-    case 1:
-      display_Clear();
-      display_Update();
-      setup_GBM();
-      mode =  mode_GBM;
-      break;
-  }
-}
-
-void gbxMenu() {
-  // create menu with title and 2 options to choose from
-  unsigned char gbType;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 2);
-  gbType = question_box("Select Game Boy", menuOptions, 2, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (gbType)
-  {
-    case 0:
-      display_Clear();
-      display_Update();
-      setup_GB();
-      mode =  mode_GB;
-      break;
-
-    case 1:
-      display_Clear();
-      display_Update();
-      setup_GBA();
-      mode =  mode_GBA;
-      break;
-  }
-}
-
-void flashMenu() {
-  // create menu with title and 2 options to choose from
-  unsigned char flashSlot;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 2);
-  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (flashSlot)
-  {
-    case 0:
-      display_Clear();
-      display_Update();
-      setup_Flash8();
-      mode =  mode_FLASH8;
-      break;
-
-    case 1:
-      display_Clear();
-      display_Update();
-      setup_Flash16();
-      mode =  mode_FLASH16;
-      break;
-  }
-}
 
 void aboutScreen() {
   display_Clear();
@@ -534,10 +397,7 @@ void mainMenu() {
       break;
 
     case 1:
-      display_Clear();
-      display_Update();
-      setup_Snes();
-      mode =  mode_SNES;
+      snsMenu();
       break;
 
     case 2:
@@ -549,10 +409,7 @@ void mainMenu() {
       break;
 
     case 4:
-      display_Clear();
-      display_Update();
-      setup_MD();
-      mode =  mode_MD;
+      segaMenu();
       break;
 
     case 5:
@@ -564,6 +421,7 @@ void mainMenu() {
       break;
   }
 }
+
 /******************************************
    Setup
  *****************************************/
@@ -619,7 +477,7 @@ void setup() {
     Serial.print(F("GB FAT"));
     Serial.println(int(sd.vol()->fatType()));
   }
-  mainMenu();
+  startMenu();
 }
 
 /******************************************
