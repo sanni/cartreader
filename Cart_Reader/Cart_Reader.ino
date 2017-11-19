@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-11-17
-   Version:          V30B
+   Date:             2017-11-19
+   Version:          V30C
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30B";
+char ver[5] = "V30C";
 
 /******************************************
    Define Starting Point
@@ -325,12 +325,11 @@ static const unsigned char PROGMEM sig [] = {
 // Main menu
 static const char modeItem1[] PROGMEM = "Nintendo 64";
 static const char modeItem2[] PROGMEM = "Super Nintendo";
-static const char modeItem3[] PROGMEM = "Nintendo Power";
-static const char modeItem4[] PROGMEM = "Game Boy";
-static const char modeItem5[] PROGMEM = "Mega Drive";
-static const char modeItem6[] PROGMEM = "Flashrom Programmer";
-static const char modeItem7[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
+static const char modeItem3[] PROGMEM = "Game Boy";
+static const char modeItem4[] PROGMEM = "Mega Drive";
+static const char modeItem5[] PROGMEM = "Flashrom Programmer";
+static const char modeItem6[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6};
 
 void aboutScreen() {
   display_Clear();
@@ -386,8 +385,8 @@ void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
   // Copy menuOptions out of progmem
-  convertPgm(modeOptions, 7);
-  modeMenu = question_box("Cartridge Reader", menuOptions, 7, 0);
+  convertPgm(modeOptions, 6);
+  modeMenu = question_box("Cartridge Reader", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
@@ -401,22 +400,18 @@ void mainMenu() {
       break;
 
     case 2:
-      npMenu();
-      break;
-
-    case 3:
       gbxMenu();
       break;
 
-    case 4:
+    case 3:
       segaMenu();
       break;
 
-    case 5:
+    case 4:
       flashMenu();
       break;
 
-    case 6:
+    case 5:
       aboutScreen();
       break;
   }
@@ -682,8 +677,8 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
   }
 
   // Print the received byte for validation e.g. in case of a different keyboard mapping
-  Serial.println(incomingByte);
-  Serial.println("");
+  //Serial.println(incomingByte);
+  //Serial.println("");
   return incomingByte;
 }
 

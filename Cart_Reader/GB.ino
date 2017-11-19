@@ -16,7 +16,8 @@ uint16_t sramEndAddress = 0;
 // GBx start menu
 static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
-static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2};
+static const char gbxMenuItem3[] PROGMEM = "NP GB Memory";
+static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3};
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
@@ -28,11 +29,11 @@ static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GB
 
 // Start menu for both GB and GBA
 void gbxMenu() {
-  // create menu with title and 2 options to choose from
+  // create menu with title and 3 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 2);
-  gbType = question_box("Select Game Boy", menuOptions, 2, 0);
+  convertPgm(menuOptionsGBx, 3);
+  gbType = question_box("Select Game Boy", menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gbType)
@@ -49,6 +50,13 @@ void gbxMenu() {
       display_Update();
       setup_GBA();
       mode =  mode_GBA;
+      break;
+
+    case 2:
+      display_Clear();
+      display_Update();
+      setup_GBM();
+      mode =  mode_GBM;
       break;
   }
 }

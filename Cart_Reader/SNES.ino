@@ -25,6 +25,11 @@ boolean NP = false;
 /******************************************
   Menu
 *****************************************/
+// SNES/Nintendo Power SF Memory start menu
+static const char snsMenuItem1[] PROGMEM = "SNES SFC";
+static const char snsMenuItem2[] PROGMEM = "NP SF Memory";
+static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2};
+
 // SNES menu items
 static const char SnesMenuItem1[] PROGMEM = "Read Rom";
 static const char SnesMenuItem2[] PROGMEM = "Read Save";
@@ -44,10 +49,29 @@ static const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuIte
 
 // SNES start menu
 void snsMenu() {
-  display_Clear();
-  display_Update();
-  setup_Snes();
-  mode =  mode_SNES;
+  // create menu with title and 2 options to choose from
+  unsigned char snsCart;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsSNS, 2);
+  snsCart = question_box("Select Cart Type", menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (snsCart)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_Snes();
+      mode =  mode_SNES;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_SFM();
+      mode =  mode_SFM;
+      break;
+  }
 }
 
 // SNES Menu
