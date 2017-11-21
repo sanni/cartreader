@@ -47,8 +47,8 @@ char ver[5] = "V30D";
    Define Output
 ******************************************/
 // enable_OLED to 0 and enable_Serial to 1
-#define enable_OLED 0
-#define enable_Serial 1
+#define enable_OLED 1
+#define enable_Serial 0
 
 /******************************************
    Define Input
