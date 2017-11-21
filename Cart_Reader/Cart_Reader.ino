@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-11-19
-   Version:          V30C
+   Date:             2017-11-21
+   Version:          V30D
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,20 +35,20 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30C";
+char ver[5] = "V30D";
 
 /******************************************
    Define Starting Point
 ******************************************/
-// mainMenu, n64Menu, snsMenu, npMenu, gbxMenu, segaMenu, flashMenu
+// mainMenu, n64Menu, snsMenu, gbxMenu, segaMenu, flashMenu
 #define startMenu mainMenu
 
 /******************************************
    Define Output
 ******************************************/
 // enable_OLED to 0 and enable_Serial to 1
-#define enable_OLED 1
-#define enable_Serial 0
+#define enable_OLED 0
+#define enable_Serial 1
 
 /******************************************
    Define Input
@@ -508,22 +508,28 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
   display_Update();
 
   if (forceReset) {
-    println_Msg(F(""));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-    if (ignoreError == 0) {
-      asm volatile ("  jmp 0");
+    if (enable_Serial) {
+      println_Msg(F("Fatal Error, please reset"));
+      while (1);
     }
     else {
-      ignoreError = 0;
-      display_Clear();
       println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F("  Error Overwrite"));
+      println_Msg(F("Press Button..."));
       display_Update();
-      delay(2000);
+      wait();
+      if (ignoreError == 0) {
+        asm volatile ("  jmp 0");
+      }
+      else {
+        ignoreError = 0;
+        display_Clear();
+        println_Msg(F(""));
+        println_Msg(F(""));
+        println_Msg(F(""));
+        println_Msg(F("  Error Overwrite"));
+        display_Update();
+        delay(2000);
+      }
     }
   }
 }
@@ -635,11 +641,41 @@ void wait_serial() {
   while (Serial.available() == 0) {
   }
   incomingByte = Serial.read() - 48;
+
+  if (incomingByte == 53) {
+    // Open file on sd card
+    sd.chdir(folder);
+    if (myFile.open(fileName, O_READ)) {
+      // Get rom size from file
+      fileSize = myFile.fileSize();
+
+      // Send file
+      for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
+        myFile.read(sdBuffer, 512);
+        // Blink led
+        if (currByte % 2048 == 0)
+          PORTB ^= (1 << 4);
+
+        for (int c = 0; c < 512; c++) {
+          Serial.write(sdBuffer[c]);
+        }
+      }
+
+      // Close the file:
+      myFile.close();
+    }
+    else {
+      print_Error(F("Can't open file"), true);
+    }
+  }
   Serial.println("");
 }
 
 byte questionBox_Serial(const char* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
+  if (enable_Serial && filebrowse) {
+    Serial.print("Filebrowser: ");
+  }
   Serial.print(question);
   Serial.println(F(" Menu"));
   for (byte i = 0; i < num_answers; i++) {
@@ -657,6 +693,44 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
   // Read the incoming byte:
   incomingByte = Serial.read() - 48;
 
+  // Import file (i)
+  if (incomingByte == 57) {
+    if (filebrowse == 1) {
+      // Make sure we have an import directory
+      sd.mkdir("IMPORT", true);
+
+      // Create and open file on sd card
+      EEPROM_readAnything(10, foldern);
+      sprintf(fileName, "IMPORT/%d.bin", foldern);
+      if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+        print_Error(F("Can't create file on SD"), true);
+      }
+
+      // Read file from serial
+      fileSize = 0;
+      while (Serial.available() > 0) {
+        myFile.write(Serial.read());
+        fileSize++;
+        // Blink led
+        PORTB ^= (1 << 4);
+      }
+
+      // Close the file:
+      myFile.close();
+
+      // Write new folder number back to eeprom
+      foldern = foldern + 1;
+      EEPROM_writeAnything(10, foldern);
+
+      print_Msg("Imported ");
+      print_Msg(fileSize);
+      print_Msg(" bytes to file ");
+      println_Msg(fileName);
+      return 7;
+    }
+  }
+
+  // Page up (u)
   if (incomingByte == 69) {
     if (filebrowse == 1) {
       if (currPage > 1) {
@@ -667,8 +741,9 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
         root = 1;
       }
     }
-
   }
+
+  // Page down (d)
   else if (incomingByte == 52) {
     if ((numPages > currPage) && (filebrowse == 1)) {
       lastPage = currPage;
@@ -1155,6 +1230,10 @@ page:
 
     case 6:
       strcpy(fileName, fileNames[6 + ((currPage - 1) * 7)]);
+      break;
+
+    case 7:
+      // File import
       break;
   }
 

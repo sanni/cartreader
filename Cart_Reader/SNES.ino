@@ -649,7 +649,21 @@ boolean checkcart_SNES() {
     romName[3] = 'C';
     romName[4] = '-';
     for (unsigned int i = 0; i < 4; i++) {
-      romName[i + 5] = readBank_SNES(0, 0xFFB2 + i);
+      myByte = readBank_SNES(0, 0xFFB2 + i);
+      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 4) {
+        romName[myLength + 5] = char(myByte);
+        myLength++;
+      }
+    }
+    if (myLength == 0) {
+      // Rom code unknown
+      romName[0] = 'U';
+      romName[1] = 'N';
+      romName[2] = 'K';
+      romName[3] = 'N';
+      romName[4] = 'O';
+      romName[5] = 'W';
+      romName[6] = 'N';
     }
   }
 
