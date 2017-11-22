@@ -303,7 +303,7 @@ void setup_N64_Cart() {
   DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
   DDRC |= (1 << 0) | (1 << 1);
   // Pull RESET(PH0) low until we are ready
-  //PORTH &= ~(1 << 0);
+  PORTH &= ~(1 << 0);
   // Output a high signal on WR(PH5) RD(PH6), pins are active low therefore everything is disabled now
   PORTH |= (1 << 5) | (1 << 6);
   // Pull aleL(PC0) low and aleH(PC1) high
@@ -326,9 +326,8 @@ void setup_N64_Cart() {
   // Wait until all is stable
   delay(300);
 
-  // Pull RESET(PH0) high
-  //PORTH |= (1 << 0);
-  //delay(10);
+  // Pull RESET(PH0) high to start eeprom
+  PORTH |= (1 << 0);
 }
 
 /******************************************
@@ -1338,11 +1337,10 @@ void writeEeprom() {
 
       for (byte i = 0; i < (eepPages / 64); i++) {
         myFile.read(sdBuffer, 512);
+        // Disable interrupts for more uniform clock pulses
+        noInterrupts();
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-          // Disable interrupts for more uniform clock pulses
-          noInterrupts();
-
           // Wait ~50ms between page writes or eeprom will have write errors
           pulseClock_N64(26000);
 
@@ -1355,10 +1353,10 @@ void writeEeprom() {
             sendData(sdBuffer[(pageNumber * 8) + j]);
           }
           sendStop();
-
-          interrupts();
         }
+        interrupts();
       }
+
       // Close the file:
       myFile.close();
       println_Msg(F("Done"));
@@ -1400,10 +1398,10 @@ void readEeprom() {
     }
 
     for (byte i = 0; i < (eepPages / 64); i++) {
-      for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-        // Disable interrupts for more uniform clock pulses
-        noInterrupts();
+      // Disable interrupts for more uniform clock pulses
+      noInterrupts();
 
+      for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
         // Send read command
         sendData(0x04);
         // Send Page number
@@ -1415,8 +1413,6 @@ void readEeprom() {
         readData();
         sendStop();
 
-        interrupts();
-
         // OR 8 bits into one byte for a total of 8 bytes
         for (byte j = 0; j < 64; j += 8) {
           sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
@@ -1424,6 +1420,7 @@ void readEeprom() {
         // Wait ~0.6ms between pages or eeprom will lock up
         pulseClock_N64(300);
       }
+      interrupts();
 
       // Write 64 pages at once to the SD card
       myFile.write(sdBuffer, 512);
@@ -1458,10 +1455,10 @@ unsigned long verifyEeprom() {
     if (myFile.open(filePath, O_READ)) {
 
       for (byte i = 0; i < (eepPages / 64); i++) {
-        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-          // Disable interrupts for more uniform clock pulses
-          noInterrupts();
+        // Disable interrupts for more uniform clock pulses
+        noInterrupts();
 
+        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
           // Send read command
           sendData(0x04);
           // Send Page number
@@ -1473,7 +1470,7 @@ unsigned long verifyEeprom() {
           readData();
           sendStop();
 
-          interrupts();
+
 
           // OR 8 bits into one byte for a total of 8 bytes
           for (byte j = 0; j < 64; j += 8) {
@@ -1482,6 +1479,7 @@ unsigned long verifyEeprom() {
           // Wait ~0.6ms between pages or eeprom will lock up
           pulseClock_N64(300);
         }
+        interrupts();
 
         // Check sdBuffer content against file on sd card
         for (int c = 0; c < 512; c++) {
@@ -1987,7 +1985,7 @@ void readRom_N64() {
   foldern = foldern + 1;
   EEPROM_writeAnything(10, foldern);
 
-readn64rom:
+  //readn64rom:
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
@@ -2016,80 +2014,85 @@ readn64rom:
   // Close the file:
   myFile.close();
 
-calcn64crc:
-  // Calculate Checksum and convert to string
-  println_Msg(F("Calculating CRC.."));
-  display_Update();
-  char crcStr[9];
-  sprintf(crcStr, "%08lx", crc32());
-  // Print checksum
-  println_Msg(crcStr);
-  display_Update();
-
-  // Search n64.txt for crc
-  if (searchCRC(crcStr)) {
-    // Dump was a known good rom
-    println_Msg(F("Checksum matches"));
-    println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+  /*calcn64crc:
+    // Calculate Checksum and convert to string
+    println_Msg(F("Calculating CRC.."));
     display_Update();
-    wait();
-  }
-  else {
-    // Dump was bad or unknown
-    rgb.setColor(255, 0, 0);
-    // N64 CRC32 error Menu
-    unsigned char CRCMenu;
-    // Copy menuOptions out of progmem
-    convertPgm(menuOptionsN64CRC, 4);
+    char crcStr[9];
+    sprintf(crcStr, "%08lx", crc32());
+    // Print checksum
+    println_Msg(crcStr);
+    display_Update();
 
-    char tempStr3[20];
-    strcpy(tempStr3, "CRC ERROR ");
-    strcat(tempStr3, crcStr);
-
-    CRCMenu = question_box(tempStr3, menuOptions, 4, 1);
-
-    // wait for user choice to come back from the question box menu
-    switch (CRCMenu)
-    {
-      case 0:
-        // Change to last directory
-        sd.chdir(folder);
-        display_Clear();
-        // Calculate CRC again
-        rgb.setColor(0, 0, 0);
-        goto calcn64crc;
-        break;
-
-      case 1:
-        // Change to last directory
-        sd.chdir(folder);
-        // Delete old file
-        if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-          print_Error(F("SD Error"), true);
-        }
-        if (!myFile.remove()) {
-          print_Error(F("Delete Error"), true);
-        }
-        // Dump again
-        display_Clear();
-        println_Msg(F("Reading Rom..."));
-        display_Update();
-        rgb.setColor(0, 0, 0);
-        goto readn64rom;
-        break;
-
-      case 2:
-        // Return to N64 menu
-        break;
-
-      case 3:
-        // Reset
-        asm volatile ("  jmp 0");
-        break;
+    // Search n64.txt for crc
+    if (searchCRC(crcStr)) {
+      // Dump was a known good rom
+      println_Msg(F("Checksum matches"));
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
+      display_Update();
+      wait();
     }
-  }
+    else {
+      // Dump was bad or unknown
+      rgb.setColor(255, 0, 0);
+      // N64 CRC32 error Menu
+      unsigned char CRCMenu;
+      // Copy menuOptions out of progmem
+      convertPgm(menuOptionsN64CRC, 4);
+
+      char tempStr3[20];
+      strcpy(tempStr3, "CRC ERROR ");
+      strcat(tempStr3, crcStr);
+
+      CRCMenu = question_box(tempStr3, menuOptions, 4, 1);
+
+      // wait for user choice to come back from the question box menu
+      switch (CRCMenu)
+      {
+        case 0:
+          // Change to last directory
+          sd.chdir(folder);
+          display_Clear();
+          // Calculate CRC again
+          rgb.setColor(0, 0, 0);
+          goto calcn64crc;
+          break;
+
+        case 1:
+          // Change to last directory
+          sd.chdir(folder);
+          // Delete old file
+          if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+            print_Error(F("SD Error"), true);
+          }
+          if (!myFile.remove()) {
+            print_Error(F("Delete Error"), true);
+          }
+          // Dump again
+          display_Clear();
+          println_Msg(F("Reading Rom..."));
+          display_Update();
+          rgb.setColor(0, 0, 0);
+          goto readn64rom;
+          break;
+
+        case 2:
+          // Return to N64 menu
+          break;
+
+        case 3:
+          // Reset
+          asm volatile ("  jmp 0");
+          break;
+      }
+    }
+    display_Update();*/
+  println_Msg(F("Done."));
+  println_Msg(F(""));
+  println_Msg(F("Press Button..."));
   display_Update();
+  wait();
 }
 
 /******************************************

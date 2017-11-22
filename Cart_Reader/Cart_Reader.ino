@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-11-21
-   Version:          V30D
+   Date:             2017-11-22
+   Version:          V30E
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30D";
+char ver[5] = "V30E";
 
 /******************************************
    Define Starting Point
@@ -457,6 +457,8 @@ void setup() {
     Serial.println(F("Cartridge Reader"));
     Serial.println(F("2017 sanni"));
     Serial.println("");
+    // LED
+    rgb.setColor(0, 0, 255);
   }
 
   // Init SD card
@@ -616,6 +618,8 @@ void println_Msg(long unsigned int message) {
 void display_Update() {
   if (enable_OLED)
     display.display();
+  if (enable_Serial)
+    delay(100);
 }
 
 void display_Clear() {
@@ -641,43 +645,44 @@ void wait_serial() {
   while (Serial.available() == 0) {
   }
   incomingByte = Serial.read() - 48;
+  /* if ((incomingByte == 53) && (fileName[0] != '\0')) {
+      // Open file on sd card
+      sd.chdir(folder);
+      if (myFile.open(fileName, O_READ)) {
+        // Get rom size from file
+        fileSize = myFile.fileSize();
 
-  if (incomingByte == 53) {
-    // Open file on sd card
-    sd.chdir(folder);
-    if (myFile.open(fileName, O_READ)) {
-      // Get rom size from file
-      fileSize = myFile.fileSize();
+        // Send filesize
+        char tempStr[16];
+        sprintf(tempStr, "%d", fileSize);
+        Serial.write(tempStr);
 
-      // Send file
-      for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
-        myFile.read(sdBuffer, 512);
-        // Blink led
-        if (currByte % 2048 == 0)
-          PORTB ^= (1 << 4);
-
-        for (int c = 0; c < 512; c++) {
-          Serial.write(sdBuffer[c]);
+        // Wait for ok
+        while (Serial.available() == 0) {
         }
-      }
 
-      // Close the file:
-      myFile.close();
-    }
-    else {
-      print_Error(F("Can't open file"), true);
-    }
-  }
-  Serial.println("");
+        // Send file
+        for (unsigned long currByte = 0; currByte < fileSize; currByte++) {
+          // Blink led
+          if (currByte % 1024 == 0)
+            PORTB ^= (1 << 4);
+          Serial.write(myFile.read());
+        }
+        // Close the file:
+        myFile.close();
+      }
+      else {
+        print_Error(F("Can't open file"), true);
+      }
+    }*/
 }
 
 byte questionBox_Serial(const char* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
-  if (enable_Serial && filebrowse) {
+  if (filebrowse) {
     Serial.print("Filebrowser: ");
   }
-  Serial.print(question);
-  Serial.println(F(" Menu"));
+  Serial.println(question);
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
     Serial.print(F(")"));
@@ -686,15 +691,15 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
   // Wait for user input
   Serial.println("");
   Serial.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
-  Serial.print(F("and enter a selection by typing a number(0-6): _ "));
+  Serial.println(F("and enter a selection by typing a number(0-6): _ "));
   while (Serial.available() == 0) {
   }
 
   // Read the incoming byte:
   incomingByte = Serial.read() - 48;
 
-  // Import file (i)
-  if (incomingByte == 57) {
+  /* Import file (i)
+    if (incomingByte == 57) {
     if (filebrowse == 1) {
       // Make sure we have an import directory
       sd.mkdir("IMPORT", true);
@@ -728,7 +733,7 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
       println_Msg(fileName);
       return 7;
     }
-  }
+    }*/
 
   // Page up (u)
   if (incomingByte == 69) {
