@@ -1750,6 +1750,7 @@ void writeFram(byte flashramType) {
         // Delay between banks
         delay(20);
       }
+      println_Msg("");
       // Close the file:
       myFile.close();
     }

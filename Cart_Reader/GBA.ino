@@ -893,9 +893,12 @@ void readROM_GBA() {
 
   // Read rom
   for (int myAddress = 0; myAddress < cartSize; myAddress += 512) {
+    // Blink led
+    if (myAddress % 16384 == 0)
+      PORTB ^= (1 << 4);
+
     for (int currWord = 0; currWord < 512; currWord += 2) {
       word tempWord = readWord_GBA(myAddress + currWord);
-
       sdBuffer[currWord] = tempWord & 0xFF;
       sdBuffer[currWord + 1] = (tempWord >> 8) & 0xFF;
     }

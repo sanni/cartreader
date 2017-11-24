@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-11-22
-   Version:          V30E
+   Date:             2017-11-24
+   Version:          V30F
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30E";
+char ver[5] = "V30F";
 
 /******************************************
    Define Starting Point
@@ -46,6 +46,7 @@ char ver[5] = "V30E";
 /******************************************
    Define Output
 ******************************************/
+// To use the Serial Monitor change
 // enable_OLED to 0 and enable_Serial to 1
 #define enable_OLED 1
 #define enable_Serial 0
@@ -59,7 +60,7 @@ char ver[5] = "V30E";
 /******************************************
    Define SD Speed
 ******************************************/
-// Change to half speed if you get an sd error
+// Change to half speed if you get an sd error or it hangs when writing
 #define sdSpeed SPI_FULL_SPEED
 //#define sdSpeed SPI_HALF_SPEED
 
