@@ -62,8 +62,9 @@ static const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1,
 static const char N64CartMenuItem1[] PROGMEM = "Read Rom";
 static const char N64CartMenuItem2[] PROGMEM = "Read Save";
 static const char N64CartMenuItem3[] PROGMEM = "Write Save";
-static const char N64CartMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4};
+static const char N64CartMenuItem4[] PROGMEM = "Force Savetype";
+static const char N64CartMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4, N64CartMenuItem5};
 
 // N64 CRC32 error menu items
 static const char N64CRCMenuItem1[] PROGMEM = "Recalc CRC";
@@ -71,6 +72,23 @@ static const char N64CRCMenuItem2[] PROGMEM = "Redump";
 static const char N64CRCMenuItem3[] PROGMEM = "Ignore";
 static const char N64CRCMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
+
+// Rom menu
+static const char N64RomItem1[] PROGMEM = "4MB";
+static const char N64RomItem2[] PROGMEM = "8MB";
+static const char N64RomItem3[] PROGMEM = "12MB";
+static const char N64RomItem4[] PROGMEM = "16MB";
+static const char N64RomItem5[] PROGMEM = "32MB";
+static const char N64RomItem6[] PROGMEM = "64MB";
+static const char* const romOptionsN64[] PROGMEM = {N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6};
+
+// Save menu
+static const char N64SaveItem1[] PROGMEM = "None";
+static const char N64SaveItem2[] PROGMEM = "4K EEPROM";
+static const char N64SaveItem3[] PROGMEM = "16K EEPROM";
+static const char N64SaveItem4[] PROGMEM = "SRAM";
+static const char N64SaveItem5[] PROGMEM = "FLASHRAM";
+static const char* const saveOptionsN64[] PROGMEM = {N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5};
 
 // N64 start menu
 void n64Menu() {
@@ -166,8 +184,8 @@ void n64CartMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64Cart, 4);
-  mainMenu = question_box("N64 Cart Reader", menuOptions, 4, 0);
+  convertPgm(menuOptionsN64Cart, 5);
+  mainMenu = question_box("N64 Cart Reader", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -275,6 +293,45 @@ void n64CartMenu() {
       break;
 
     case 3:
+      // create submenu with title and 6 options to choose from
+      unsigned char N64SaveMenu;
+      // Copy menuOptions out of progmem
+      convertPgm(saveOptionsN64, 5);
+      N64SaveMenu = question_box("Select save type", menuOptions, 5, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (N64SaveMenu)
+      {
+        case 0:
+          // None
+          saveType = 0;
+          break;
+
+        case 1:
+          // 4K EEPROM
+          saveType = 5;
+          eepPages = 64;
+          break;
+
+        case 2:
+          // 16K EEPROM
+          saveType = 6;
+          eepPages = 256;
+          break;
+
+        case 3:
+          // SRAM
+          saveType = 1;
+          break;
+
+        case 4:
+          // FLASHRAM
+          saveType = 4;
+          break;
+      }
+      break;
+
+    case 4:
       asm volatile ("  jmp 0");
       break;
   }
@@ -1023,11 +1080,50 @@ void printCartInfo_N64() {
     println_Msg(cartID);
     println_Msg("");
     display_Update();
-    // Set cartSize to 64MB for test dumps
-    cartSize = 64;
+
     strcpy(romName, "GPERROR");
     print_Error(F("Cartridge unknown"), false);
     wait();
+
+    // Set cartsize manually
+    unsigned char N64RomMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(romOptionsN64, 6);
+    N64RomMenu = question_box("Select ROM size", menuOptions, 6, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (N64RomMenu)
+    {
+      case 0:
+        // 4MB
+        cartSize = 4;
+        break;
+
+      case 1:
+        // 8MB
+        cartSize = 8;
+        break;
+
+      case 2:
+        // 12MB
+        cartSize = 12;
+        break;
+
+      case 3:
+        // 16MB
+        cartSize = 16;
+        break;
+
+      case 4:
+        // 32MB
+        cartSize = 32;
+        break;
+
+      case 5:
+        // 64MB
+        cartSize = 64;
+        break;
+    }
   }
 }
 
@@ -2113,6 +2209,9 @@ void flashRepro_N64() {
       else
         println_Msg("");
     }
+    else if ((strcmp(flashid, "227E") == 0)  && (strcmp(cartID, "2101") == 0)) {
+      print_Msg(F("Spansion S29GL128N"));
+    }
     else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
       print_Msg(F("Macronix MX29LV640"));
       if (cartSize == 16)
@@ -2194,7 +2293,7 @@ void flashRepro_N64() {
         display_Update();
 
         if (strcmp(flashid, "227E") == 0) {
-          // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
+          // Spansion S29GL128N/S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
           writeFlashBuffer_N64(0x20000, 32);
         }
         else if (strcmp(flashid, "7E7E") == 0) {
@@ -2240,8 +2339,12 @@ void flashRepro_N64() {
   }
   // If the ID is unknown show error message
   else {
-    print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    print_Msg(F("Vendor: "));
+    println_Msg(vendorID);
+    print_Msg(F("ID: "));
+    print_Msg(flashid);
+    print_Msg(F(" "));
+    println_Msg(cartID);
     print_Error(F("Unknown flashrom"), false);
   }
 
@@ -2381,11 +2484,21 @@ void idFlashrom_N64() {
     // Empty cartID string
     cartID[0] = '\0';
   }
+
   //Fujitsu MSP55LV512/Spansion S29GL512N (64MB)
   else if ((strcmp(cartID, "2301") == 0) && (strcmp(flashid, "227E") == 0)) {
-    resetFlashrom_N64(romBase);
     cartSize = 64;
+    // Reset flashrom
+    resetFlashrom_N64(romBase);
   }
+
+  // Spansion S29GL128N(16MB) with one flashrom chip
+  else if ((strcmp(cartID, "2101") == 0) && (strcmp(flashid, "227E") == 0)) {
+    cartSize = 16;
+    // Reset flashrom
+    resetFlashrom_N64(romBase);
+  }
+
   //Test for Fujitsu MSP55LV100S (64MB)
   else  {
     // Send flashrom ID command
