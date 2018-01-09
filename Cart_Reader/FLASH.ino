@@ -128,7 +128,7 @@ void flashromMenu8() {
       else if (flashromType == 2) {
         if (strcmp(flashid, "C2F3") == 0)
           writeFlash29F1601();
-        else if (strcmp(flashid, "C2F1") == 0)
+        else if ((strcmp(flashid, "C2F1") == 0) || (strcmp(flashid, "C2F9") == 0))
           writeFlash29F1610();
         else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0))
           writeFlash29LV640();
@@ -946,7 +946,6 @@ void writeFlash29LV640() {
         // Write current byte
         writeByte_Flash(currByte + c, sdBuffer[c]);
         // Check if write is complete
-        //busyCheck29F032(sdBuffer[c]);
         busyCheck29LV640(currByte + c, sdBuffer[c]);
       }
     }

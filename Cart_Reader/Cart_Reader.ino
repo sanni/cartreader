@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2017-12-20
-   Version:          V30G
+   Date:             2018-01-09
+   Version:          V30H
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30G";
+char ver[5] = "V30H";
 
 /******************************************
    Define Starting Point
@@ -338,7 +338,7 @@ void aboutScreen() {
   display.drawBitmap(0, 0, sig, 128, 64, 1);
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2017 "));
+  print_Msg(F("2018 "));
   println_Msg(ver);
   println_Msg(F(""));
   println_Msg(F(""));
@@ -456,7 +456,7 @@ void setup() {
     // Serial Begin
     Serial.begin(9600);
     Serial.println(F("Cartridge Reader"));
-    Serial.println(F("2017 sanni"));
+    Serial.println(F("2018 sanni"));
     Serial.println("");
     // LED
     rgb.setColor(0, 0, 255);
