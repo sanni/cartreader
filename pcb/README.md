@@ -8,10 +8,10 @@
 
 ![image](https://dl.dropboxusercontent.com/s/rnnnstkn3ynv10g/gbaadapter_pcb.png?dl=1)    
 
-#### flash_adapter.zip is an adapter for 8bit and 16bit flashroms like the 29F032 or the 29L3211, PCB thickness is 1.2mm 
+#### flash_adapter.zip is an adapter for 8bit and 16bit(in 8bit mode) flashroms like the 29F032, 29L3211 or 29LV160, PCB thickness is 1.2mm 
    
-![image](https://dl.dropboxusercontent.com/s/3oovzhcgdt3a3x9/flashadapter.png?dl=1)    
-   
+![image](https://dl.dropboxusercontent.com/s/jk2xmjy5bp4jfms/flash_adapter.png?dl=1)    
+
 #### md_adapter.zip is an adapter for SEGA Mega Drive/Genesis carts, PCB thickness is 1.2mm 
    
 ![image](https://dl.dropboxusercontent.com/s/li0kb0v3m98bqd2/md_adapter_pcb.png?dl=1)   
