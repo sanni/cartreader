@@ -15,7 +15,7 @@
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
-- Programs Flashroms like 29F016, 29F032, 29F033, 29F1610, 29L3211 and 29LV160 (custom made adapters needed)   
+- Programs Flashroms like 29F016, 29F032 and 29F033(DIP36 to TSOP40 pcb needed), 29F1610, 29L3211 and 29LV160 (PSOP44 to DIL44 adapter needed)   
 
 ![image](https://dl.dropboxusercontent.com/s/goc70t6cg9v7sfa/v11_switches.jpg?dl=1)   
 
