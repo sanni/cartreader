@@ -40,7 +40,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/3wqdbc4p9au7dqw/sidewall.png?dl=1)  
 
-#### TSOP40_to_DIP36 is a small adapter pcb that can be used to make homebrew SNES games with the 29F032 family of flashroms   
+#### TSOP40_to_DIP36.zip is an adapter pcb for making homebrew SNES games with the 29F032 family of flashroms   
 
 ![image](https://dl.dropboxusercontent.com/s/lfyts5puzsub1be/TSOP40_to_DIP36.gif?dl=1)  
 
