@@ -2082,7 +2082,7 @@ void readRom_N64() {
   foldern = foldern + 1;
   EEPROM_writeAnything(10, foldern);
 
-  //readn64rom:
+readn64rom:
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
@@ -2111,7 +2111,8 @@ void readRom_N64() {
   // Close the file:
   myFile.close();
 
-  /*calcn64crc:
+  if (n64crc) {
+calcn64crc:
     // Calculate Checksum and convert to string
     println_Msg(F("Calculating CRC.."));
     display_Update();
@@ -2125,10 +2126,6 @@ void readRom_N64() {
     if (searchCRC(crcStr)) {
       // Dump was a known good rom
       println_Msg(F("Checksum matches"));
-      println_Msg(F(""));
-      println_Msg(F("Press Button..."));
-      display_Update();
-      wait();
     }
     else {
       // Dump was bad or unknown
@@ -2184,7 +2181,8 @@ void readRom_N64() {
           break;
       }
     }
-    display_Update();*/
+    display_Update();
+  }
   println_Msg(F("Done."));
   println_Msg(F(""));
   println_Msg(F("Press Button..."));

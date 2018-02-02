@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2018-01-09
-   Version:          V30H
+   Date:             2018-02-02
+   Version:          V30I
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V30H";
+char ver[5] = "V30I";
 
 /******************************************
    Define Starting Point
@@ -63,6 +63,12 @@ char ver[5] = "V30H";
 // Change to half speed if you get an sd error or it hangs when writing
 #define sdSpeed SPI_FULL_SPEED
 //#define sdSpeed SPI_HALF_SPEED
+
+/******************************************
+   Options
+******************************************/
+// If set to 1 then the crc32 checksum will be calculated after reading a N64 rom
+boolean n64crc = 1;
 
 /******************************************
    Libraries
