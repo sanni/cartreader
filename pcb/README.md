@@ -38,7 +38,7 @@
 
 #### sidewall.stl secures the Arduino Mega to the backplate with three M2x10 screws    
 
-![image](https://dl.dropboxusercontent.com/s/3wqdbc4p9au7dqw/sidewall.png?dl=1)  
+![image](https://dl.dropboxusercontent.com/s/p7v2l37f1c130b4/sidewall.png?dl=1)  
 
 #### TSOP40_to_DIP36.zip is an adapter pcb for making homebrew SNES games with the 29F032 family of flashroms   
 
