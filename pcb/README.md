@@ -30,7 +30,7 @@
 
 #### backplate.stl is the backplate that holds the Arduino    
 
-![image](https://dl.dropboxusercontent.com/s/0qixf0n33emi1ed/backplate.png?dl=1)    
+![image](https://dl.dropboxusercontent.com/s/01v4d28lzbp1ue4/backplate16.png?dl=1)    
 
 #### sd_spacer.stl holds the RGB led and fits between the SD card and the Cart Reader pcb    
 
