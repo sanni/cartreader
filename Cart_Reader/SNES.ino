@@ -27,7 +27,7 @@ boolean NP = false;
 *****************************************/
 // SNES/Nintendo Power SF Memory start menu
 static const char snsMenuItem1[] PROGMEM = "SNES SFC";
-static const char snsMenuItem2[] PROGMEM = "NP SF Memory";
+static const char snsMenuItem2[] PROGMEM = "NintPower SF Memory";
 static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2};
 
 // SNES menu items
@@ -1178,59 +1178,45 @@ void writeSRAM (boolean browseFile) {
 
       // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
       // Break BW-RAM (SRAM) into 0x2000 blocks
-      // Use $2225 to map BW-RAM block to 0x6000-0x7FFF
-      // Writes must be to entire address range 0x0000-0x7FFF
       byte lastBlock = 0;
       lastBlock = lastByte / 0x2000;
 
       // Writing SRAM on SA1 needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      // PORTH |=  (1 << 3);
 
+      // Setup BW-RAM
+      // Set 0x2224 (SNES BMAPS) to map SRAM Block 0 to 0x6000-0x7FFF
+      writeBank_SNES(0, 0x2224, 0);
+      // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
+      writeBank_SNES(0, 0x2226, 0x80);
+      // Set 0x2228 (SNES BWPA) to 0x00 BW-RAM Write-Protected Area
+      writeBank_SNES(0, 0x2228, 0);
+      delay(1000);
+
+      // Use $2224 (SNES) to map BW-RAM block to 0x6000-0x7FFF
+      // Use $2226 (SNES) to write enable the BW-RAM
+      byte firstByte = 0;
       for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
-        // Set 0x2225 (SA-1 BMAP) to map SRAM Block to 0x6000-0x7FFF
-        writeBank_SNES(0, 0x2225, currBlock);
-        // Set 0x2227 to 0x80  SA-1 SWBE BW-RAM Write Enable
-        writeBank_SNES(0, 0x2227, 0x80);
-        for (long currByte = 0x0000; currByte < 0x8000; currByte += 512) {
-          if (currByte < 0x6000) {
-            for (int c = 0; c < 512; c++) {
-              // Shift to bypass protected 1st 0x100 bytes
-              writeBank_SNES(0, currByte + c, currBlock + lastBlock);
-            }
+        // Set 0x2224 (SNES BMAPS) to map SRAM Block to 0x6000-0x7FFF
+        writeBank_SNES(0, 0x2224, currBlock);
+        // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
+        writeBank_SNES(0, 0x2226, 0x80);
+        for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
+          myFile.read(sdBuffer, 512);
+          if ((currBlock == 0) && (currByte == 0x6000)) {
+            firstByte = sdBuffer[0];
           }
-          else {
-            myFile.read(sdBuffer, 512);
-            for (int c = 0; c < 512; c++) {
-              writeBank_SNES(0, currByte + c, sdBuffer[c]);
-            }
+          for (int c = 0; c < 512; c++) {
+            writeBank_SNES(0, currByte + c, sdBuffer[c]);
           }
         }
       }
-      // Set 0x2227 to 0x00  SA-1 SWBE BW-RAM Write Disable
-      writeBank_SNES(0, 0x2227, 0x00);
+      // Rewrite First Byte
+      writeBank_SNES(0, 0x2224, 0);
+      writeBank_SNES(0, 0x2226, 0x80);
+      writeBank_SNES(0, 0x6000, firstByte);
       // Disable CPU clock
       clockgen.output_enable(SI5351_CLK1, 0);
-
-      /*    // MOVED RESET TO AFTER VERIFY
-            // Reset SA1
-            // Set pins to input
-            dataIn();
-            // Close the file:
-            myFile.close();
-            println_Msg(F("SRAM writing finished"));
-            println_Msg(F("Press Button to reset"));
-            display_Update();
-            wait();
-            // Set reset pin to output (PH0)
-            DDRH |= (1 << 0);
-            // Switch RST(PH0) to LOW
-            PORTH &= ~(1 << 0);
-            display_Clear();
-            print_Msg("Resetting...");
-            display_Update();
-            delay(3000);  // wait 3 secs to switch to next game
-            asm volatile ("  jmp 0");
-      */
     }
 
     // Set pins to input
@@ -1690,36 +1676,39 @@ boolean eraseSRAM (byte b) {
 
     // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
     // Break BW-RAM (SRAM) into 0x2000 blocks
-    // Use $2225 to map BW-RAM block to 0x6000-0x7FFF
-    // Writes must be to entire address range 0x0000-0x7FFF
+    // Use $2224 to map BW-RAM block to 0x6000-0x7FFF
     byte lastBlock = 0;
     lastBlock = lastByte / 0x2000;
 
     // Writing SRAM on SA1 needs CS(PH3) to be high
-    PORTH |=  (1 << 3);
+    // PORTH |=  (1 << 3);
 
+    // Setup BW-RAM
+    // Set 0x2224 (SNES BMAPS) to map SRAM Block 0 to 0x6000-0x7FFF
+    writeBank_SNES(0, 0x2224, 0);
+    // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
+    writeBank_SNES(0, 0x2226, 0x80);
+    // Set 0x2228 (SNES BWPA) to 0x00 BW-RAM Write-Protected Area
+    writeBank_SNES(0, 0x2228, 0);
+    delay(1000);
+
+    // Use $2224 (SNES) to map BW-RAM block to 0x6000-0x7FFF
+    // Use $2226 (SNES) to write enable the BW-RAM
     for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
-      // Set 0x2225 (SA-1 BMAP) to map SRAM Block to 0x6000-0x7FFF
-      writeBank_SNES(0, 0x2225, currBlock);
-      // Set 0x2227 to 0x80  SA-1 SWBE BW-RAM Write Enable
-      writeBank_SNES(0, 0x2227, 0x80);
-      for (long currByte = 0x0000; currByte < 0x8000; currByte += 512) {
-        if (currByte < 0x6000) {
-          for (int c = 0; c < 512; c++) {
-            // Shift to bypass protected 1st 0x100 bytes
-            writeBank_SNES(0, currByte + c, currBlock + lastBlock);
-          }
-        }
-        else {
-          myFile.read(sdBuffer, 512);
-          for (int c = 0; c < 512; c++) {
-            writeBank_SNES(0, currByte + c, b);
-          }
+      // Set 0x2224 (SNES BMAPS) to map SRAM Block to 0x6000-0x7FFF
+      writeBank_SNES(0, 0x2224, currBlock);
+      // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
+      writeBank_SNES(0, 0x2226, 0x80);
+      for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
+        for (int c = 0; c < 512; c++) {
+          writeBank_SNES(0, currByte + c, b);
         }
       }
     }
-    // Set 0x2227 to 0x00  SA-1 SWBE BW-RAM Write Disable
-    writeBank_SNES(0, 0x2227, 0x00);
+    // Rewrite First Byte
+    writeBank_SNES(0, 0x2224, 0);
+    writeBank_SNES(0, 0x2226, 0x80);
+    writeBank_SNES(0, 0x6000, b);
     // Disable CPU clock
     clockgen.output_enable(SI5351_CLK1, 0);
   }

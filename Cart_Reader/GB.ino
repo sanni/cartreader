@@ -16,7 +16,7 @@ uint16_t sramEndAddress = 0;
 // GBx start menu
 static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
-static const char gbxMenuItem3[] PROGMEM = "NP GB Memory";
+static const char gbxMenuItem3[] PROGMEM = "NintPower GB Memory";
 static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3};
 
 // GB menu items
