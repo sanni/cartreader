@@ -847,9 +847,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
   }
   else {
     // Else show error
-    display.println(F("ERROR"));
-    display.println(F("DUMP ROM 1ST"));
-    display.display();
+    print_Error(F("DUMP ROM 1ST"), false);
     return 0;
   }
 }
