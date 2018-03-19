@@ -486,8 +486,10 @@ void getCartInfo_SNES() {
     println_Msg(F("RAM GBoy"));
   else if (romChips == 246)
     println_Msg(F("DSP2"));
+  else if (romChips == 245)
+    println_Msg(F("SPC RAM BATT"));
   else if (romChips == 249)
-    println_Msg(F("SPC RAM BATT RTC"));
+    println_Msg(F("SPC RAM RTC"));
   else
     println_Msg(F(""));
 
@@ -600,19 +602,20 @@ boolean checkcart_SNES() {
   // Check RomChips
   romChips = readBank_SNES(0, 65494);
 
-  if (romChips == 69)
-  {
+  if (romChips == 69) {
     romSize = 48;
     numBanks = 96;
     romType = HI;
   }
-  else if ((romChips == 249) && (romType == HI)) // SPC7110
-  {
+  else if ((romChips == 245) && (romType == HI)) {
+    romSize = 24;
+    numBanks = 48;
+  }
+  else if ((romChips == 249) && (romType == HI)) {
     romSize = 40;
     numBanks = 80;
   }
-  else
-  {
+  else {
     // Check RomSize
     byte romSizeExp = readBank_SNES(0, 65495) - 7;
     romSize = 1;
@@ -747,31 +750,19 @@ unsigned int calc_checksum (char* fileName, char* folder) {
       }
       calcChecksum += 0xF47C; // FFs from 0x60000-0x80000
     }
-    else if (calcFilesize == 12 || calcFilesize == 20) {
-      // Divide filesize by 8 to get number of 8Mbit chunks
-      for (i = 0; i < (calcFilesize / 8); i++ ) {
-        // Add all the bits in the 8Mbit chunks
-        for (j = 0; j < (1048576 / 512); j++) {
-          myFile.read(sdBuffer, 512);
-          for (c = 0; c < 512; c++) {
-            calcChecksumChunk += sdBuffer[c];
-          }
-        }
-        calcChecksum = calcChecksumChunk;
-      }
-      calcChecksumChunk = 0;
-      // Add the 4Mbit rest
-      for (j = 0; j < (524288 / 512); j++) {
-        myFile.read(sdBuffer, 512);
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
-      }
-      calcChecksum +=  2 * calcChecksumChunk;
-    }
-    else if (calcFilesize == 24 || calcFilesize == 28) {
-      /* Momotarou Dentestu Happy Fix 3MB (24Mbit)
-        if ((calcFilesize == 24) && (romSizeExp = 0x0C)) {
+    else if ((calcFilesize == 10) || (calcFilesize == 12) || (calcFilesize == 20) || (calcFilesize == 24)) {
+      unsigned long calcBase = 0;
+      unsigned long calcMirror = 0;
+      byte calcMirrorCount = 0;
+      if (calcFilesize > 16)
+        calcBase = 2097152;
+      else
+        calcBase = 1048576;
+      calcMirror = myFile.fileSize() - calcBase;
+      calcMirrorCount = calcBase / calcMirror;
+
+      // Momotarou Dentetsu Happy Fix 3MB (24Mbit)
+      if ((calcFilesize == 24) && (romChips == 245)) {
         for (i = 0; i < (myFile.fileSize() / 512); i++) {
           myFile.read(sdBuffer, 512);
           for (c = 0; c < 512; c++) {
@@ -779,29 +770,26 @@ unsigned int calc_checksum (char* fileName, char* folder) {
           }
         }
         calcChecksum = 2 * calcChecksumChunk;
-        }
-        else {*/
-      for (i = 0; i < (calcFilesize / 16); i++ ) {
-        // Add all the bits in the 16Mbit chunks
-        for (j = 0; j < (2097152 / 512); j++) {
+      }
+      else {
+        // Base 8/16 Mbit chunk
+        for (j = 0; j < (calcBase / 512); j++) {
           myFile.read(sdBuffer, 512);
           for (c = 0; c < 512; c++) {
             calcChecksumChunk += sdBuffer[c];
           }
         }
         calcChecksum = calcChecksumChunk;
-      }
-      calcChecksumChunk = 0;
-
-      // Add the 8Mbit rest
-      for (j = 0; j < (1048576 / 512); j++) {
-        myFile.read(sdBuffer, 512);
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
+        calcChecksumChunk = 0;
+        // Add the mirrored chunk
+        for (j = 0; j < (calcMirror / 512); j++) {
+          myFile.read(sdBuffer, 512);
+          for (c = 0; c < 512; c++) {
+            calcChecksumChunk += sdBuffer[c];
+          }
         }
+        calcChecksum +=  calcMirrorCount * calcChecksumChunk;
       }
-      calcChecksum +=  2 * calcChecksumChunk;
-      //}
     }
     else if ((calcFilesize == 40) && (romChips == 85)) {
       // Daikaijuu Monogatari 2 Fix 5MB (40Mbit)
@@ -857,9 +845,11 @@ unsigned int calc_checksum (char* fileName, char* folder) {
     sd.chdir();
     return (calcChecksum);
   }
-  // Else show error
   else {
-    print_Error(F("DUMP ROM 1ST"), false);
+    // Else show error
+    display.println(F("ERROR"));
+    display.println(F("DUMP ROM 1ST"));
+    display.display();
     return 0;
   }
 }
@@ -962,14 +952,6 @@ void readROM_SNES() {
     }
   }
 
-  // Dump High-type ROM
-  else if (((romType == HI) || (romType == SA) || (romType == EX)) && ((romChips != 69) && (romChips != 249))) {
-    println_Msg(F("Dumping HiRom..."));
-    display_Update();
-
-    readHiRomBanks( 192, numBanks + 192, &myFile );
-  }
-
   // Dump SDD1 High-type ROM
   else if ((romType == HI) && (romChips == 69)) {
     println_Msg(F("Dumping SDD1 HiRom"));
@@ -1005,7 +987,7 @@ void readROM_SNES() {
     display_Update();
 
     // 0xC00000-0xDFFFFF
-    print_Msg(F(" Part 1"));
+    print_Msg(F("Part 1"));
     display_Update();
     readHiRomBanks( 192, 224, &myFile );
 
@@ -1039,10 +1021,11 @@ void readROM_SNES() {
         controlIn_SNES();
 
         // 0xF00000-0xFFFFFF
-        println_Msg(F(" 4"));
+        print_Msg(F(" 4"));
         display_Update();
         readHiRomBanks( 240, 256, &myFile );
       }
+      println_Msg(F(""));
 
       // Return mapping registers to initial settings...
       dataOut();
@@ -1054,6 +1037,14 @@ void readROM_SNES() {
       dataIn();
       controlIn_SNES();
     }
+  }
+
+  // Dump standard High-type ROM
+  else if ((romType == HI) || (romType == SA) || (romType == EX)) {
+    println_Msg(F("Dumping HiRom..."));
+    display_Update();
+
+    readHiRomBanks( 192, numBanks + 192, &myFile );
   }
 
   // Close the file:

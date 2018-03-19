@@ -122,7 +122,7 @@ void setup_MD() {
   DDRL = 0xFF;
 
   // Set Control Pins to Output RST(PH0) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6)
-  DDRH |=  (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRH |=  (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output
   DDRJ |=  (1 << 0);
