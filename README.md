@@ -47,5 +47,4 @@
    
 ![image](https://dl.dropboxusercontent.com/s/0be9rp9ss37vq2c/v11_rear.jpg?dl=1)   
 
-#### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0   
-And also feel free to send me a private message over the Arduino Forum in case you need help with ordering the parts or soldering or really anything else.   
+#### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0      
