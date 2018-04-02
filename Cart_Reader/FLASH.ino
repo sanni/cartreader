@@ -16,8 +16,8 @@ unsigned long blank;
    Menu
  *****************************************/
 // Flash start menu
-static const char flashMenuItem1[] PROGMEM = "8bit slot";
-static const char flashMenuItem2[] PROGMEM = "16bit slot";
+static const char flashMenuItem1[] PROGMEM = "8bit adapter";
+static const char flashMenuItem2[] PROGMEM = "16bit adapter";
 static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
 
 // 8bit Flash menu items
@@ -242,6 +242,9 @@ void flashromMenu16() {
       if (strcmp(flashid, "C2F3") == 0) {
         writeFlash16_29F1601();
       }
+      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0)) {
+        writeFlash16_29LV640();
+      }
       else {
         writeFlash16();
       }
@@ -405,8 +408,8 @@ void setup_Flash16() {
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output OE(PH1) BYTE(PH3) WE(PH4) CE(PH6)
-  DDRH |=  (1 << 1) | (1 << 3) | (1 << 4) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) CE(PH6)
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 6);
 
   // Set Data Pins (D0-D15) to Input
   DDRC = 0x00;
@@ -415,8 +418,8 @@ void setup_Flash16() {
   PORTC = 0x00;
   PORTA = 0x00;
 
-  // Setting OE(PH1) BYTE(PH3) WE(PH4) HIGH
-  PORTH |= (1 << 1) | (1 << 3) | (1 << 4);
+  // Setting RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) HIGH
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4);
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
@@ -445,6 +448,24 @@ void setup_Flash16() {
     println_Msg(F("MX29L3211 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2C4") == 0) {
+    println_Msg(F("MX29LV160 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 2097152;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2A8") == 0) {
+    println_Msg(F("MX29LV320"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 4194304;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2C9") == 0) {
+    println_Msg(F("MX29LV640"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 8388608;
     flashromType = 2;
   }
   else {
@@ -908,11 +929,13 @@ void busyCheck29F1610() {
 void busyCheck29LV640(unsigned long myAddress, byte myData) {
   // Set data pins to input
   dataIn8();
+
   // Read the status register
   byte statusReg = readByte_Flash(myAddress);
   while ((statusReg & 0x80) != (myData & 0x80)) {
     statusReg = readByte_Flash(myAddress);
   }
+
   // Set data pins to output
   dataOut();
 }
@@ -923,6 +946,7 @@ void writeFlash29LV640() {
   println_Msg(F("Flashing file "));
   println_Msg(filePath);
   display_Update();
+
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     // Get rom size from file
@@ -932,6 +956,7 @@ void writeFlash29LV640() {
 
     // Set data pins to output
     dataOut();
+
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       // Fill sdBuffer
       myFile.read(sdBuffer, 512);
@@ -1436,6 +1461,77 @@ void busyCheck16() {
 
   // Set data pins to output
   dataOut16();
+}
+
+/******************************************
+  MX29LV flashrom functions 16bit
+*****************************************/
+// Delay between write operations based on status register
+void busyCheck16_29LV640(unsigned long myAddress, word myData) {
+  // Set data pins to input
+  dataIn16();
+
+  // Read the status register
+  word statusReg = readWord_Flash(myAddress);
+  while ((statusReg & 0x80) != (myData & 0x80)) {
+    statusReg = readWord_Flash(myAddress);
+  }
+
+  // Set data pins to output
+  dataOut16();
+}
+
+void writeFlash16_29LV640() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut16();
+
+    int d = 0;
+    for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
+      // Fill sdBuffer
+      myFile.read(sdBuffer, 512);
+
+      // Blink led
+      if (currWord % 4096 == 0)
+        PORTB ^= (1 << 4);
+
+      for (int c = 0; c < 256; c++) {
+        // Write command sequence
+        writeWord_Flash(0x5555, 0xaa);
+        writeWord_Flash(0x2aaa, 0x55);
+        writeWord_Flash(0x5555, 0xa0);
+
+        // Write current word
+        word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+        writeWord_Flash(currWord + c, myWord);
+        d += 2;
+        // Check if write is complete
+        busyCheck16_29LV640(currWord + c, myWord);
+      }
+      d = 0;
+    }
+    // Set data pins to input again
+    dataIn16();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD."));
+    display_Update();
+  }
 }
 
 //******************************************
