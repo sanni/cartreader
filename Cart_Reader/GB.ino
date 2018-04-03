@@ -23,9 +23,10 @@ static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2,
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
-static const char GBMenuItem4[] PROGMEM = "Write Flashcart";
-static const char GBMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5};
+static const char GBMenuItem4[] PROGMEM = "Flash MBC3 cart";
+static const char GBMenuItem5[] PROGMEM = "Flash MBC5 cart";
+static const char GBMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5, GBMenuItem6};
 
 // Start menu for both GB and GBA
 void gbxMenu() {
@@ -62,11 +63,11 @@ void gbxMenu() {
 }
 
 void gbMenu() {
-  // create menu with title and 5 options to choose from
+  // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGB, 5);
-  mainMenu = question_box("GB Cart Reader", menuOptions, 5, 0);
+  convertPgm(menuOptionsGB, 6);
+  mainMenu = question_box("GB Cart Reader", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -120,13 +121,24 @@ void gbMenu() {
     case 3:
       // Change working dir to root
       sd.chdir("/");
-      writeFlash_GB();
+      //MBC3
+      writeFlash_GB(3);
       // Reset
       wait();
       asm volatile ("  jmp 0");
       break;
 
     case 4:
+      // Change working dir to root
+      sd.chdir("/");
+      //MBC5
+      writeFlash_GB(5);
+      // Reset
+      wait();
+      asm volatile ("  jmp 0");
+      break;
+
+    case 5:
       asm volatile ("  jmp 0");
       break;
   }
@@ -708,7 +720,7 @@ unsigned long verifySRAM_GB() {
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-void writeFlash_GB() {
+void writeFlash_GB(byte MBC) {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
@@ -850,54 +862,101 @@ void writeFlash_GB() {
       }
     }
 
-    println_Msg(F("Writing flash"));
-    display_Update();
+    if (MBC == 3) {
+      println_Msg(F("Writing flash MBC3"));
+      display_Update();
 
-    // Write flash
-    dataOut();
+      // Write flash
+      dataOut();
 
-    for (int currBank = 0; currBank < romBanks; currBank++) {
-      // Blink led
-      PORTB ^= (1 << 4);
+      uint16_t currAddr = 0;
 
-      // Set ROM bank
-      writeByte_GB(0x2000, currBank);
-      // 0x2A8000 fix
-      writeByte_GB(0x4000, 0x0);
+      for (int currBank = 1; currBank < romBanks; currBank++) {
+        // Blink led
+        PORTB ^= (1 << 4);
 
-      for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-        myFile.read(sdBuffer, 512);
+        // Set ROM bank
+        writeByte_GB(0x2100, currBank);
 
-        for (int currByte = 0; currByte < 512; currByte++) {
-          // Write command sequence
-          writeByte_GB(0x555, 0xaa);
-          writeByte_GB(0x2aa, 0x55);
-          writeByte_GB(0x555, 0xa0);
-          // Write current byte
-          writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+        if (currBank > 1) {
+          currAddr = 0x4000;
+        }
 
-          // Set data pins to input
-          dataIn();
+        while (currAddr <= 0x7FFF) {
+          myFile.read(sdBuffer, 512);
 
-          // Setting CS(PH3) and OE/RD(PH6) LOW
-          PORTH &= ~((1 << 3) | (1 << 6));
+          for (int currByte = 0; currByte < 512; currByte++) {
+            // Write command sequence
+            writeByte_GB(0x555, 0xaa);
+            writeByte_GB(0x2aa, 0x55);
+            writeByte_GB(0x555, 0xa0);
+            // Write current byte
+            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
-          // Busy check
-          //int timeout = 0;
-          while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-            /* __asm__("nop\n\t");
-              // timeout in case writing fails
-              timeout++;
-              if (timeout > 32760) {
-               break;
-              }*/
+            // Set data pins to input
+            dataIn();
+
+            // Setting CS(PH3) and OE/RD(PH6) LOW
+            PORTH &= ~((1 << 3) | (1 << 6));
+
+            // Busy check
+            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
+            }
+
+            // Switch CS(PH3) and OE/RD(PH6) to HIGH
+            PORTH |= (1 << 3) | (1 << 6);
+
+            // Set data pins to output
+            dataOut();
           }
+          currAddr += 512;
+        }
+      }
+    }
 
-          // Switch CS(PH3) and OE/RD(PH6) to HIGH
-          PORTH |= (1 << 3) | (1 << 6);
+    else if (MBC == 5) {
+      println_Msg(F("Writing flash MBC5"));
+      display_Update();
 
-          // Set data pins to output
-          dataOut();
+      // Write flash
+      dataOut();
+
+      for (int currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        PORTB ^= (1 << 4);
+
+        // Set ROM bank
+        writeByte_GB(0x2000, currBank);
+        // 0x2A8000 fix
+        writeByte_GB(0x4000, 0x0);
+
+        for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
+          myFile.read(sdBuffer, 512);
+
+          for (int currByte = 0; currByte < 512; currByte++) {
+            // Write command sequence
+            writeByte_GB(0x555, 0xaa);
+            writeByte_GB(0x2aa, 0x55);
+            writeByte_GB(0x555, 0xa0);
+            // Write current byte
+            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+
+            // Set data pins to input
+            dataIn();
+
+            // Setting CS(PH3) and OE/RD(PH6) LOW
+            PORTH &= ~((1 << 3) | (1 << 6));
+
+            // Busy check
+            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
+            }
+
+            // Switch CS(PH3) and OE/RD(PH6) to HIGH
+            PORTH |= (1 << 3) | (1 << 6);
+
+            // Set data pins to output
+            dataOut();
+          }
         }
       }
     }
