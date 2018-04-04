@@ -18,7 +18,8 @@ unsigned long blank;
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit adapter";
 static const char flashMenuItem2[] PROGMEM = "16bit adapter";
-static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2};
+static const char flashMenuItem3[] PROGMEM = "Eprom adapter";
+static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3};
 
 // 8bit Flash menu items
 static const char flash8MenuItem1[] PROGMEM = "Blankcheck";
@@ -40,12 +41,19 @@ static const char flash16MenuItem6[] PROGMEM = "Print";
 static const char flash16MenuItem7[] PROGMEM = "Reset";
 static const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7};
 
+// Eprom menu items
+static const char epromMenuItem1[] PROGMEM = "Blankcheck";
+static const char epromMenuItem2[] PROGMEM = "Read 27C322";
+static const char epromMenuItem3[] PROGMEM = "Write 27C322";
+static const char epromMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4};
+
 void flashMenu() {
-  // create menu with title and 2 options to choose from
+  // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 2);
-  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
+  convertPgm(menuOptionsFlash, 3);
+  flashSlot = question_box("Select flashrom slot", menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -62,6 +70,13 @@ void flashMenu() {
       display_Update();
       setup_Flash16();
       mode =  mode_FLASH16;
+      break;
+
+    case 2:
+      display_Clear();
+      display_Update();
+      setup_Eprom();
+      mode =  mode_EPROM;
       break;
   }
 }
@@ -290,6 +305,55 @@ void flashromMenu16() {
   wait();
 }
 
+void epromMenu() {
+  // create menu with title "Eprom Writer" and 4 options to choose from
+  unsigned char mainMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsEprom, 4);
+  mainMenu = question_box("Eprom Writer", menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (mainMenu)
+  {
+    case 0:
+      display_Clear();
+      println_Msg(F("Blankcheck"));
+      display_Update();
+      time = millis();
+      blankcheck_Eprom();
+      break;
+
+    case 1:
+      display_Clear();
+      time = millis();
+      read_Eprom();
+      break;
+
+    case 2:
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser("Select file");
+      display_Clear();
+      time = millis();
+      write_Eprom();
+      break;
+
+    case 3:
+      time = 0;
+      display_Clear();
+      display_Update();
+      asm volatile ("  jmp 0");
+      break;
+  }
+  if (time != 0) {
+    print_Msg(F("Operation took: "));
+    print_Msg((millis() - time) / 1000, DEC);
+    println_Msg("s");
+    display_Update();
+  }
+  wait();
+}
+
 /******************************************
    Setup
  *****************************************/
@@ -476,6 +540,34 @@ void setup_Flash16() {
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
+}
+
+void setup_Eprom() {
+  // Set Address Pins to Output
+  //A0-A7
+  DDRF = 0xFF;
+  //A8-A15
+  DDRK = 0xFF;
+  //A16-A23
+  DDRL = 0xFF;
+
+  // Set Data Pins (D0-D15) to Input
+  DDRC = 0x00;
+  DDRA = 0x00;
+  // Disable Internal Pullups
+  PORTC = 0x00;
+  PORTA = 0x00;
+
+  // Set Control Pins to Output VPP/OE(PH5) CE(PH6)
+  DDRH |= (1 << 5) | (1 << 6);
+
+  // Setting CE(PH6) HIGH
+  PORTH |= (1 << 6);
+  // Setting VPP/OE(PH5) LOW
+  PORTH &= ~(1 << 5);
+
+  // 27C322 is a 4MB eprom
+  flashSize = 4194304;
 }
 
 /******************************************
@@ -1525,6 +1617,202 @@ void writeFlash16_29LV640() {
     // Set data pins to input again
     dataIn16();
 
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD."));
+    display_Update();
+  }
+}
+
+/******************************************
+  Eprom functions
+*****************************************/
+void writeWord_Eprom(unsigned long myAddress, word myData) {
+  // Data out
+  DDRC = 0xFF;
+  DDRA = 0xFF;
+  // Set address
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+  // Set data
+  PORTC = myData;
+  PORTA = (myData >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t");
+
+  // Switch VPP/OE(PH5) to HIGH
+  PORTH |= (1 << 5);
+  // Setting CE(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  // Leave VPP HIGH for a 50us programming pulse
+  delayMicroseconds(50);
+
+  // Setting CE(PH6) HIGH
+  PORTH |= (1 << 6);
+  // Switch VPP/OE(PH5) to LOW
+  PORTH &= ~(1 << 5);
+
+  // Leave VPP LOW for a little bit
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+word readWord_Eprom(unsigned long myAddress) {
+  // Data in
+  DDRC = 0x00;
+  DDRA = 0x00;
+  // Set address
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  __asm__("nop\n\t");
+
+  // Setting CE(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+
+  __asm__("nop\n\t");
+
+  // Setting CE(PH6) HIGH
+  PORTH |= (1 << 6);
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  return tempWord;
+}
+
+void blankcheck_Eprom() {
+
+  println_Msg(F("Please wait..."));
+  display_Update();
+
+  blank = 1;
+  for (unsigned long currWord = 0; currWord < flashSize / 2; currWord++) {
+    if (readWord_Eprom(currWord) != 0xFFFF) {
+      currWord = flashSize / 2;
+      blank = 0;
+    }
+  }
+  if (blank) {
+    println_Msg(F("Flashrom is empty."));
+    display_Update();
+  }
+  else {
+    print_Error(F("Error: Not blank"), false);
+  }
+}
+
+void read_Eprom() {
+  // Reset to root directory
+  sd.chdir("/");
+
+  // Get name, add extension and convert to char array for sd lib
+  EEPROM_readAnything(10, foldern);
+  sd.mkdir("FLASH", true);
+  sd.chdir("FLASH");
+  sprintf(fileName, "FL%d", foldern);
+  strcat(fileName, ".bin");
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  display_Clear();
+  print_Msg(F("Saving as "));
+  print_Msg(fileName);
+  println_Msg(F("..."));
+  display_Update();
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    println_Msg(F("Can't create file on SD."));
+    display_Update();
+    while (1);
+  }
+  word d = 0;
+  for (unsigned long currWord = 0; currWord < flashSize / 2; currWord += 256) {
+    for (word c = 0; c < 256; c++) {
+      word myWord = readWord_Eprom(currWord + c);
+      // Split word into two bytes
+      // Right
+      sdBuffer[d + 1] = ((myWord >> 8 ) & 0xFF);
+      // Left
+      sdBuffer[d] = (myWord & 0xFF);
+      d += 2;
+    }
+    myFile.write(sdBuffer, 512);
+    d = 0;
+  }
+
+  // Close the file:
+  myFile.close();
+  println_Msg(F("Finished reading."));
+  display_Update();
+}
+
+void write_Eprom() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    int d = 0;
+    for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 512);
+
+      // Blink led
+      if (currWord % 2048 == 0)
+        PORTB ^= (1 << 4);
+
+      // Work through SD buffer
+      for (int c = 0; c < 256; c++) {
+        word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+
+        // No need to write word if it's 0xFFFF
+        if (myWord != 0xFFFF) {
+          // Error counter
+          byte n = 0;
+
+          // Presto III allows up to 25 rewrites per word
+          do {
+            // Write word
+            writeWord_Eprom(currWord + c, myWord);
+            // Check for fail
+            if (n == 25) {
+              print_Msg("Program Error 0x");
+              println_Msg(currWord + c, HEX);
+              print_Msg("0x");
+              print_Msg(readWord_Eprom(currWord + c), HEX);
+              print_Msg(" != 0x");
+              println_Msg(myWord, HEX);
+              print_Error(F("Press button to reset"), true);
+            }
+            n++;
+          }
+          while (readWord_Eprom(currWord + c) != myWord);
+        }
+        d += 2;
+      }
+      d = 0;
+    }
     // Close the file:
     myFile.close();
   }

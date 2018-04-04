@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2018-04-03
-   Version:          V31A
+   Date:             2018-04-04
+   Version:          V32
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V31A";
+char ver[5] = "V32";
 
 /******************************************
    Define Starting Point
@@ -134,6 +134,7 @@ SdFile myFile;
 #define mode_GBA 9
 #define mode_GBM 10
 #define mode_MD 11
+#define mode_EPROM 12
 
 /******************************************
    Variables
@@ -1285,6 +1286,9 @@ void loop() {
   }
   else if (mode == mode_FLASH16) {
     flashromMenu16();
+  }
+  else if (mode == mode_EPROM) {
+    epromMenu();
   }
   else if (mode == mode_SFM) {
     sfmMenu();
