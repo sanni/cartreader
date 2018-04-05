@@ -336,6 +336,7 @@ void epromMenu() {
       display_Clear();
       time = millis();
       write_Eprom();
+      verify_Eprom();
       break;
 
     case 3:
@@ -1812,6 +1813,52 @@ void write_Eprom() {
         d += 2;
       }
       d = 0;
+    }
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD."));
+    display_Update();
+  }
+}
+
+void verify_Eprom() {
+  println_Msg(F("Verifying..."));
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize) {
+      print_Error(F("File size exceeds flash size."), true);
+    }
+
+    blank = 0;
+    word d = 0;
+    for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
+      //fill sdBuffer
+      myFile.read(sdBuffer, 512);
+      for (int c = 0; c < 256; c++) {
+        word myWord = ((sdBuffer[d + 1] << 8) | sdBuffer[d]);
+
+        if (readWord_Eprom(currWord + c) != myWord) {
+          blank++;
+        }
+        d += 2;
+      }
+      d = 0;
+    }
+    if (blank == 0) {
+      println_Msg(F("Eprom verified OK"));
+      display_Update();
+    }
+    else {
+      println_Msg(F("Verification ERROR!"));
+      print_Msg(blank);
+      print_Error(F("B did not verify."), false);
+      display_Update();
     }
     // Close the file:
     myFile.close();
