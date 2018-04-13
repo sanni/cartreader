@@ -1,4 +1,4 @@
-### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
+#### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
 ![image](https://dl.dropboxusercontent.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
 
