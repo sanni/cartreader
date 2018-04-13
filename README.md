@@ -1,6 +1,6 @@
 # Cartridge Reader Shield for Arduino Mega 2560
 
-![image](https://dl.dropboxusercontent.com/s/o26c0yey8onuha2/v11_front_diagonal.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/nc5lblrrf49sgxb/v17_slots.png?dl=1)   
 
 #### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
@@ -17,11 +17,9 @@
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
 - Programs Flashroms like 29F016, 29F032 and 29F033(DIP36 to TSOP40 pcb needed), 29F1610, 29L3211 and 29LV160 (PSOP44 to DIL44 adapter needed)   
 
-![image](https://dl.dropboxusercontent.com/s/goc70t6cg9v7sfa/v11_switches.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
 
 #### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
-
-[![](https://dl.dropboxusercontent.com/s/950svg0i21syq3j/youtube_preview.jpg?dl=1)](https://www.youtube.com/watch?v=AD_o7J85bCg)   
 
 #### Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
@@ -45,6 +43,6 @@
    YamaArashi - GBA flashrom bank switch command    
    infinest - help with GB Memory cart    
    
-![image](https://dl.dropboxusercontent.com/s/0be9rp9ss37vq2c/v11_rear.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/ptswm9c7nhi6pa3/v17_back.png?dl=1)   
 
 #### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0      
