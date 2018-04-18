@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             2018-05-04
-   Version:          V32A
+   Date:             04-18-2018
+   Version:          V33
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -25,7 +25,7 @@
    bryc - mempak
    Shaun Taylor - N64 controller CRC functions
    Angus Gratton - CRC32
-   Tamanegi_taro - SA1 fix
+   Tamanegi_taro - SA1 fix and PCE support
    Snes9x - SuperFX sram fix
    zzattack - multigame pcb fix
    Pickle - SDD1 fix
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V32A";
+char ver[5] = "V33";
 
 /******************************************
    Define Starting Point
@@ -135,6 +135,7 @@ SdFile myFile;
 #define mode_GBM 10
 #define mode_MD 11
 #define mode_EPROM 12
+#define mode_PCE 13
 
 /******************************************
    Variables
@@ -327,6 +328,10 @@ static const unsigned char PROGMEM sig [] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+//For PC Engine
+extern void pcsMenu(void);
+extern void pceMenu(void);
+
 /******************************************
   Menu
 *****************************************/
@@ -336,8 +341,9 @@ static const char modeItem2[] PROGMEM = "Super Nintendo";
 static const char modeItem3[] PROGMEM = "Game Boy";
 static const char modeItem4[] PROGMEM = "Mega Drive";
 static const char modeItem5[] PROGMEM = "Flashrom Programmer";
-static const char modeItem6[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6};
+static const char modeItem6[] PROGMEM = "PC Engine/TG16";
+static const char modeItem7[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
 
 void aboutScreen() {
   display_Clear();
@@ -393,8 +399,8 @@ void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
   // Copy menuOptions out of progmem
-  convertPgm(modeOptions, 6);
-  modeMenu = question_box("Cartridge Reader", menuOptions, 6, 0);
+  convertPgm(modeOptions, 7);
+  modeMenu = question_box("Cartridge Reader", menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
@@ -418,8 +424,10 @@ void mainMenu() {
     case 4:
       flashMenu();
       break;
-
     case 5:
+      pcsMenu();
+      break;
+    case 6:
       aboutScreen();
       break;
   }
@@ -1310,6 +1318,9 @@ void loop() {
   }
   else if (mode == mode_MD) {
     mdMenu();
+  }
+  else if (mode == mode_PCE) {
+    pceMenu();
   }
   else {
     display_Clear();
