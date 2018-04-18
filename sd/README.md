@@ -38,6 +38,9 @@ Example:
 A172,24,48  
 checksum, size in Mbit, number of banks (lorom needs twice as many banks as hirom for the same rom size)  
 
+#### PCE_CRC_LIST.txt    
+Placing this file into the root of the SD card will enable verify and automatic game name identifier.    
+
 #### hirom64.map  
 This is a Nintendo Power SF Memory mapping file that changes the mapping to a single 4MB HiRom game with 64Kbit/8KByte save. The first byte is used to specify the mapping.  
 
