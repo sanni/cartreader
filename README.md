@@ -15,6 +15,7 @@
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
+- Reads PC engine/TG16 (custom made adapter needed)   
 - Programs Flashroms like 29F016, 29F032 and 29F033(DIP36 to TSOP40 pcb needed), 29F1610, 29L3211 and 29LV160 (PSOP44 to DIL44 adapter needed)   
 
 ![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
@@ -34,7 +35,7 @@
    bryc - mempak   
    Shaun Taylor - N64 controller CRC functions   
    Angus Gratton - CRC32   
-   Tamanegi_taro - SA1 fix   
+   Tamanegi_taro - SA1 fix and PC engine/TG16 support  
    Snes9x - SuperFX sram fix   
    zzattack - multigame pcb fix  
    Pickle - SDD1 fix   
