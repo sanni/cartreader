@@ -49,11 +49,11 @@ static const char epromMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4};
 
 void flashMenu() {
-  // create menu with title and 2 options to choose from
+  // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 2);
-  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
+  convertPgm(menuOptionsFlash, 3);
+  flashSlot = question_box("Select flashrom slot", menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -336,7 +336,7 @@ void epromMenu() {
       display_Clear();
       time = millis();
       write_Eprom();
-      verify_Eprom();
+      //verify_Eprom();
       break;
 
     case 3:
@@ -1630,7 +1630,7 @@ void writeFlash16_29LV640() {
 /******************************************
   Eprom functions
 *****************************************/
-void writeWord_Eprom(unsigned long myAddress, word myData) {
+word writeWord_Eprom(unsigned long myAddress, word myData) {
   // Data out
   DDRC = 0xFF;
   DDRA = 0xFF;
@@ -1643,7 +1643,7 @@ void writeWord_Eprom(unsigned long myAddress, word myData) {
   PORTA = (myData >> 8) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t");
 
   // Switch VPP/OE(PH5) to HIGH
   PORTH |= (1 << 5);
@@ -1665,11 +1665,29 @@ void writeWord_Eprom(unsigned long myAddress, word myData) {
   // Leave CE High for 1us for VPP Low to Chip Enable Low
   delayMicroseconds(1);
 
+  // Data in
+  DDRC = 0x00;
+  DDRA = 0x00;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  __asm__("nop\n\t");
+
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
   // Wait 1us for Chip Enable Low to Output Valid while program verify
   delayMicroseconds(1);
+
+  // Read
+  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+
+  // Setting CE(PH6) HIGH
+  PORTH |= (1 << 6);
+
+  // Delay 130ns for Chip Enable High to Output Hi-Z
+  __asm__("nop\n\t""nop\n\t""nop\n\t");
+
+  return tempWord;
 }
 
 word readWord_Eprom(unsigned long myAddress) {
@@ -1682,22 +1700,19 @@ word readWord_Eprom(unsigned long myAddress) {
   PORTL = (myAddress >> 16) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t");
 
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
-  // Delay for at least 100ns for read
+  // Delay for 100ns for Address Valid/Chip Enable Low to Output Valid
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
   word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
 
-  __asm__("nop\n\t");
-
   // Setting CE(PH6) HIGH
   PORTH |= (1 << 6);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempWord;
 }
@@ -1783,6 +1798,10 @@ void write_Eprom() {
     if (fileSize > flashSize)
       print_Error(F("File size exceeds flash size."), true);
 
+    // Switch VPP/OE(PH5) to HIGH
+    PORTH |= (1 << 5);
+    delay(1000);
+
     int d = 0;
     for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
       // Fill SD buffer
@@ -1793,6 +1812,7 @@ void write_Eprom() {
         PORTB ^= (1 << 4);
 
       // Work through SD buffer
+      word checkWord = 0xFFFF;
       for (int c = 0; c < 256; c++) {
         word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
 
@@ -1804,7 +1824,7 @@ void write_Eprom() {
           // Presto III allows up to 25 rewrites per word
           do {
             // Write word
-            writeWord_Eprom(currWord + c, myWord);
+            checkWord = writeWord_Eprom(currWord + c, myWord);
             // Check for fail
             if (n == 25) {
               print_Msg("Program Error 0x");
@@ -1817,7 +1837,7 @@ void write_Eprom() {
             }
             n++;
           }
-          while (readWord_Eprom(currWord + c) != myWord);
+          while (checkWord != myWord);
         }
         d += 2;
       }
@@ -1846,11 +1866,11 @@ void verify_Eprom() {
 
     blank = 0;
     word d = 0;
-    for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
+    for (unsigned long currWord = 0; currWord < (fileSize / 2); currWord += 256) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 256; c++) {
-        word myWord = ((sdBuffer[d + 1] << 8) | sdBuffer[d]);
+        word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
 
         if (readWord_Eprom(currWord + c) != myWord) {
           blank++;
@@ -1866,7 +1886,7 @@ void verify_Eprom() {
     else {
       println_Msg(F("Verification ERROR!"));
       print_Msg(blank);
-      print_Error(F("B did not verify."), false);
+      print_Error(F(" words did not verify."), false);
       display_Update();
     }
     // Close the file:

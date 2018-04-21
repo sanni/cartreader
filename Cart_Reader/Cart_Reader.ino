@@ -3,7 +3,7 @@
 
    Author:           sanni
    Date:             04-21-2018
-   Version:          V33B
+   Version:          V33C
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V33B";
+char ver[5] = "V33C";
 
 /******************************************
    Define Starting Point
