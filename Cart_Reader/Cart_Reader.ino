@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             04-18-2018
-   Version:          V33
+   Date:             04-21-2018
+   Version:          V33A
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,12 +35,12 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "V33";
+char ver[5] = "V33A";
 
 /******************************************
    Define Starting Point
 ******************************************/
-// mainMenu, n64Menu, snsMenu, gbxMenu, segaMenu, flashMenu
+// mainMenu, n64Menu, snsMenu, gbxMenu, segaMenu, flashMenu, pceMenu
 #define startMenu mainMenu
 
 /******************************************
