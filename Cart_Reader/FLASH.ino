@@ -1643,24 +1643,33 @@ void writeWord_Eprom(unsigned long myAddress, word myData) {
   PORTA = (myData >> 8) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  // Wait till output is stable
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch VPP/OE(PH5) to HIGH
   PORTH |= (1 << 5);
+  // Wait 1us for VPP High to Chip Enable Low
+  delayMicroseconds(1);
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
-  // Leave VPP HIGH for a 50us programming pulse
-  delayMicroseconds(50);
+  // Leave VPP HIGH for 50us Chip Enable Program Pulse Width
+  delayMicroseconds(55);
 
   // Setting CE(PH6) HIGH
   PORTH |= (1 << 6);
+  // Wait 2us for Chip Enable High to VPP Transition
+  delayMicroseconds(2);
   // Switch VPP/OE(PH5) to LOW
   PORTH &= ~(1 << 5);
 
-  // Leave VPP LOW for a little bit
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Leave CE High for 1us for VPP Low to Chip Enable Low
+  delayMicroseconds(1);
+
+  // Setting CE(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  // Wait 1us for Chip Enable Low to Output Valid while program verify
+  delayMicroseconds(1);
 }
 
 word readWord_Eprom(unsigned long myAddress) {
@@ -1673,11 +1682,12 @@ word readWord_Eprom(unsigned long myAddress) {
   PORTL = (myAddress >> 16) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
+  // Delay for at least 100ns for read
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
@@ -1693,7 +1703,6 @@ word readWord_Eprom(unsigned long myAddress) {
 }
 
 void blankcheck_Eprom() {
-
   println_Msg(F("Please wait..."));
   display_Update();
 
