@@ -10,7 +10,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/lfyts5puzsub1be/TSOP40_to_DIP36.gif?dl=1)  
 
-#### With the sd_adapter pcb you can transform the microSD module into a full size sd module.    
+#### With the sd_adapter pcb you can transform the microSD module into a full size sd module by desoldering all the components and solder them to this pcb.    
 
 ![image](https://dl.dropboxusercontent.com/s/jcse9iaxm3bbuu6/sd_adapter.pngg?dl=1)    
 
