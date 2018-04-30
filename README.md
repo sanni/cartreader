@@ -22,7 +22,7 @@
 
 #### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
 
-![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/ptswm9c7nhi6pa3/v17_back.png?dl=1)   
 
 #### Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
@@ -46,6 +46,6 @@
    YamaArashi - GBA flashrom bank switch command    
    infinest - help with GB Memory cart    
    
-![image](https://dl.dropboxusercontent.com/s/ptswm9c7nhi6pa3/v17_back.png?dl=1)   
+   ![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
 
 #### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0      
