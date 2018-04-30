@@ -1,6 +1,6 @@
 # Cartridge Reader Shield for Arduino Mega 2560
 
-![image](https://dl.dropboxusercontent.com/s/nc5lblrrf49sgxb/v17_slots.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/sfbfcb031cjlo1z/red.jpg?dl=1)   
 
 #### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
@@ -18,9 +18,11 @@
 - Reads PC engine/TG16 (custom made adapter needed)   
 - Programs Flashroms like 29F016, 29F032 and 29F033(DIP36 to TSOP40 pcb needed), 29F1610, 29L3211 and 29LV160 (PSOP44 to DIL44 adapter needed)   
 
-![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/nc5lblrrf49sgxb/v17_slots.png?dl=1)   
 
 #### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
+
+![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
 
 #### Thanks to:  
    MichlK - ROM-Reader for Super Nintendo   
