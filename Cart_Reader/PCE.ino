@@ -6,7 +6,7 @@
 // sanni - Arduino cart reader
 // skaman - ROM size detection
 // NO-INTRO - CRC list for game name detection
-// 
+//
 //******************************************
 
 /******************************************
@@ -63,9 +63,9 @@ void draw_progressbar(uint32_t processedsize, uint32_t totalsize)
   static uint8_t previousstatus;
 
   //Find progressbar length and draw if processed size is not 0
-  if(processedsize != 0)
+  if (processedsize != 0)
   {
-    
+
     // Progress bar
     if (processedsize >= totalsize)
     {
@@ -104,7 +104,7 @@ void draw_progressbar(uint32_t processedsize, uint32_t totalsize)
     //If processed size is 0, initialize and draw "["
     previousstatus = 0;
     print_Msg(F("["));
-    display_Update();    
+    display_Update();
   }
 }
 
@@ -129,7 +129,7 @@ void pcsMenu(void) {
       break;
 
     case 1:
-    //Turbografx
+      //Turbografx
       display_Clear();
       display_Update();
       pce_internal_mode = TURBOCHIP;
@@ -159,7 +159,7 @@ void pin_read_write_PCE(void)
   DDRH |= (1 << 0) | (1 << 3) | (1 << 5);
   // Switch all of above to HIGH
   PORTH |= (1 << 0) | (1 << 3) | (1 << 5);
-    
+
   // Set IRQ(PH4) to Input
   DDRH &= ~(1 << 4);
   // Activate Internal Pullup Resistors
@@ -167,7 +167,7 @@ void pin_read_write_PCE(void)
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
-  
+
   // Enable Internal Pullups
   PORTC = 0xFF;
 
@@ -186,7 +186,7 @@ void pin_init_PCE(void)
   PORTL = 0xFF;
   DDRH &= ~((1 << 0) | (1 << 3) | (1 << 5) | (1 << 6));
   PORTH = (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
-  
+
   // Set IRQ(PH4) to Input
   DDRH &= ~(1 << 4);
   // Activate Internal Pullup Resistors
@@ -196,7 +196,7 @@ void pin_init_PCE(void)
   DDRC = 0x00;
   // Enable Internal Pullups
   PORTC = 0xFF;
-  
+
 }
 
 void setup_cart_PCE(void)
@@ -207,7 +207,7 @@ void setup_cart_PCE(void)
   PORTG |= (1 << 1);
 
   pin_init_PCE();
-  
+
 }
 
 void reset_cart_PCE(void)
@@ -216,7 +216,7 @@ void reset_cart_PCE(void)
   PORTH &= ~(1 << 0);
   delay(200);
   //Set RESET as High
-  PORTH |= (1 << 0);  
+  PORTH |= (1 << 0);
   delay(200);
 
 }
@@ -226,7 +226,7 @@ void set_address_PCE(uint32_t address)
   //Set address
   PORTF = address & 0xFF;
   PORTK = (address >> 8) & 0xFF;
-  PORTL = (PORTL & 0xF0) | ((address >> 16) & 0x0F);  
+  PORTL = (PORTL & 0xF0) | ((address >> 16) & 0x0F);
 }
 
 uint8_t read_byte_PCE(uint32_t address)
@@ -235,7 +235,7 @@ uint8_t read_byte_PCE(uint32_t address)
   uint8_t address_byte;
 
   set_address_PCE(address);
-  
+
   // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
@@ -245,23 +245,23 @@ uint8_t read_byte_PCE(uint32_t address)
 
   // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-  
+
   //read byte
   ret =  PINC;
 
   //Swap bit order for PC Engine HuCARD
-  if(pce_internal_mode == HUCARD)
+  if (pce_internal_mode == HUCARD)
   {
     ret = ((ret & 0x01) << 7) | ((ret & 0x02) << 5) | ((ret & 0x04) << 3) | ((ret & 0x08) << 1) | ((ret & 0x10) >> 1) | ((ret & 0x20) >> 3) | ((ret & 0x40) >> 5) | ((ret & 0x80) >> 7);
   }
-  
+
   // Set CS(PL4) and RD(PH3) as HIGH
   PORTL |= (1 << 4);
   PORTH |= (1 << 3);
 
   //return read data
   return ret;
-  
+
 }
 
 uint8_t write_byte_PCE(uint32_t address, uint8_t data)
@@ -275,7 +275,7 @@ uint8_t write_byte_PCE(uint32_t address, uint8_t data)
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   //Swap bit order for PC Engine HuCARD
-  if(pce_internal_mode == HUCARD)
+  if (pce_internal_mode == HUCARD)
   {
     data = ((data & 0x01) << 7) | ((data & 0x02) << 5) | ((data & 0x04) << 3) | ((data & 0x08) << 1) | ((data & 0x10) >> 1) | ((data & 0x20) >> 3) | ((data & 0x40) >> 5) | ((data & 0x80) >> 7);
   }
@@ -292,7 +292,7 @@ uint8_t write_byte_PCE(uint32_t address, uint8_t data)
 
   // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-  
+
   // Set CS(PL4) and WR(PH5) as HIGH
   PORTL |= (1 << 4);
   PORTH |= (1 << 5);
@@ -302,10 +302,10 @@ uint8_t write_byte_PCE(uint32_t address, uint8_t data)
 
   // Enable Internal Pullups
   PORTC = 0xFF;
-  
+
   //return read data
   return ret;
-  
+
 }
 
 //Confirm the size of ROM - 128Kb, 256Kb, 384Kb, 512Kb, 768Kb or 1024Kb
@@ -321,43 +321,43 @@ uint32_t detect_rom_size_PCE(void)
   detect_256 = 0;
   detect_512 = 0;
   detect_768 = 0;
-  
+
   //Set pins to read PC Engine cart
   pin_read_write_PCE();
 
   //Confirm where mirror address start from(128KB, 256KB, 512KB, 768, or 1024KB)
   for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
-    if((current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768))
+    if ((current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768))
     {
       //If none matched, it is 1024KB
       break;
     }
-    
+
     //read byte for 128KB, 256KB, 512KB detection
     read_byte = read_byte_PCE(current_byte);
 
     //128KB detection
-    if(current_byte == detect_128)
+    if (current_byte == detect_128)
     {
-      if(read_byte_PCE(current_byte + 128UL * 1024UL) == read_byte)
+      if (read_byte_PCE(current_byte + 128UL * 1024UL) == read_byte)
       {
         detect_128++;
       }
     }
-    
+
     //256KB detection
-    if(current_byte == detect_256)
+    if (current_byte == detect_256)
     {
-      if(read_byte_PCE(current_byte + 256UL * 1024UL) == read_byte)
+      if (read_byte_PCE(current_byte + 256UL * 1024UL) == read_byte)
       {
         detect_256++;
       }
     }
 
     //512KB detection
-    if(current_byte == detect_512)
+    if (current_byte == detect_512)
     {
-      if(read_byte_PCE(current_byte + 512UL * 1024UL) == read_byte)
+      if (read_byte_PCE(current_byte + 512UL * 1024UL) == read_byte)
       {
         detect_512++;
       }
@@ -365,9 +365,9 @@ uint32_t detect_rom_size_PCE(void)
 
     //768KB detection
     read_byte = read_byte_PCE(current_byte + 512UL * 1024UL);
-    if(current_byte == detect_768)
+    if (current_byte == detect_768)
     {
-      if(read_byte_PCE(current_byte + 768UL * 1024UL) == read_byte)
+      if (read_byte_PCE(current_byte + 768UL * 1024UL) == read_byte)
       {
         detect_768++;
       }
@@ -379,15 +379,15 @@ uint32_t detect_rom_size_PCE(void)
   //println_Msg(fileName);
 
   //ROM size detection by result
-  if(detect_128 == DETECTION_SIZE)
+  if (detect_128 == DETECTION_SIZE)
   {
     rom_size = 128;
   }
-  else if(detect_256 == DETECTION_SIZE)
+  else if (detect_256 == DETECTION_SIZE)
   {
-    if(detect_512 == DETECTION_SIZE)
+    if (detect_512 == DETECTION_SIZE)
     {
-      rom_size = 256;    
+      rom_size = 256;
     }
     else
     {
@@ -395,13 +395,13 @@ uint32_t detect_rom_size_PCE(void)
       rom_size = 384;
     }
   }
-  else if(detect_512 == DETECTION_SIZE)
+  else if (detect_512 == DETECTION_SIZE)
   {
     rom_size = 512;
   }
-  else if(detect_768 == DETECTION_SIZE)
+  else if (detect_768 == DETECTION_SIZE)
   {
-      rom_size = 768;
+    rom_size = 768;
   }
   else
   {
@@ -409,11 +409,11 @@ uint32_t detect_rom_size_PCE(void)
   }
 
   //If rom size is more than or equal to 512KB, detect Street fighter II'
-  if(rom_size >= 512)
+  if (rom_size >= 512)
   {
     //Look for "NEC HE "
-    if(read_byte_PCE(0x7FFF9) == 'N' && read_byte_PCE(0x7FFFA) == 'E'  && read_byte_PCE(0x7FFFB) == 'C'
-    && read_byte_PCE(0x7FFFC) == ' ' && read_byte_PCE(0x7FFFD) == 'H' && read_byte_PCE(0x7FFFE) == 'E')
+    if (read_byte_PCE(0x7FFF9) == 'N' && read_byte_PCE(0x7FFFA) == 'E'  && read_byte_PCE(0x7FFFB) == 'C'
+        && read_byte_PCE(0x7FFFC) == ' ' && read_byte_PCE(0x7FFFD) == 'H' && read_byte_PCE(0x7FFFE) == 'E')
     {
       rom_size = 2560;
     }
@@ -427,7 +427,7 @@ void read_bank_PCE(uint32_t address_start, uint32_t address_end, uint32_t *proce
 {
   uint32_t currByte;
   uint16_t c;
-  
+
   for (currByte = address_start; currByte < address_end; currByte += 512) {
     for (c = 0; c < 512; c++) {
       sdBuffer[c] = read_byte_PCE(currByte + c);
@@ -467,7 +467,7 @@ void get_line(char* str_buf, SdFile* readfile, uint8_t maxi)
   while (readfile->available())
   {
     //If line size is more than maximum array, limit it.
-    if(i >= maxi)
+    if (i >= maxi)
     {
       i = maxi - 1;
     }
@@ -507,14 +507,14 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
   char crc_file[9], crc_search[9];
   uint8_t flag;
   flag = CHKSUM_SKIP;
-  
+
   //Open list file. If no list file found, just skip
   sd.chdir("/"); //Set read directry to root
-  if (script.open("PCE_CRC_LIST.txt", O_READ)) 
+  if (script.open("PCE_CRC_LIST.txt", O_READ))
   {
     //Calculate CRC of ROM file
     sd.chdir(folder_p);
-    if (rom.open(file_p, O_READ)) 
+    if (rom.open(file_p, O_READ))
     {
       //Initialize flag as error
       flag = CHKSUM_ERROR;
@@ -523,15 +523,15 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
       println_Msg("Calculating chksum...");
       processedsize = 0;
       draw_progressbar(0, rom_size * 1024UL); //Initialize progress bar
-      
-      while (rom.available()) 
+
+      while (rom.available())
       {
         r = rom.read(sdBuffer, 512);
         crc = calculate_crc32(r, sdBuffer, crc);
         processedsize += r;
         draw_progressbar(processedsize, rom_size * 1024UL);
       }
-      
+
       crc = crc ^ 0xFFFFFFFFUL; //Finish CRC calculation and progress bar
       draw_progressbar(rom_size * 1024UL, rom_size * 1024UL);
 
@@ -544,9 +544,9 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
         get_line(gamename, &script, 96);
         get_line(crc_search, &script, 9);
         skip_line(&script); //Skip every 3rd line
-  
+
         //if checksum search successful, rename the file and end search
-        if(strcmp(crc_search, crc_file) == 0)
+        if (strcmp(crc_search, crc_file) == 0)
         {
           print_Msg("Chksum OK ");
           println_Msg(crc_file);
@@ -561,19 +561,19 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
           break;
         }
       }
-      rom.close();    
+      rom.close();
     }
   }
 
-  
-  if(flag == CHKSUM_SKIP)
+
+  if (flag == CHKSUM_SKIP)
   {
     print_Msg(F("Saved to "));
     print_Msg(folder_p);
     print_Msg(F("/"));
     print_Msg(file_p);
   }
-  else if(flag == CHKSUM_ERROR)
+  else if (flag == CHKSUM_ERROR)
   {
     print_Msg("Chksum Error ");
     println_Msg(crc_file);
@@ -601,7 +601,7 @@ void read_rom_PCE(void)
 
   //debug
   //return;
-  
+
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, "PCEROM");
   strcat(fileName, ".pce");
@@ -629,13 +629,13 @@ void read_rom_PCE(void)
   //Initialize progress bar by setting processed size as 0
   draw_progressbar(0, rom_size * 1024UL);
 
-  if(rom_size == 384)
+  if (rom_size == 384)
   {
     //Read two sections. 0x000000--0x040000 and 0x080000--0x0A0000 for 384KB
     read_bank_PCE(0, 0x40000, &processed_size, rom_size * 1024UL);
     read_bank_PCE(0x80000, 0xA0000, &processed_size, rom_size * 1024UL);
   }
-  else if(rom_size == 2560)
+  else if (rom_size == 2560)
   {
     //Dump Street fighter II' Champion Edition
     read_bank_PCE(0, 0x80000, &processed_size, rom_size * 1024UL);  //Read first bank
@@ -661,7 +661,7 @@ void read_rom_PCE(void)
 
   //CRC search and rename ROM
   crc_search(fileName, folder, rom_size);
-  
+
 }
 
 
@@ -673,8 +673,8 @@ void pceMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionspceCart, 2);
-  
-  if(pce_internal_mode == HUCARD)
+
+  if (pce_internal_mode == HUCARD)
   {
     mainMenu = question_box("PCE HuCARD menu", menuOptions, 2, 0);
   }
@@ -707,4 +707,3 @@ void pceMenu() {
 //******************************************
 // End of File
 //******************************************
-

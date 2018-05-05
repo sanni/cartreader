@@ -1,5 +1,5 @@
 //******************************************
-// NINTENDO POWER Cartridges for SFC and GB
+// NINTENDO POWER  MODULE
 //  (GB Memory starts at around line 1460)
 //******************************************
 

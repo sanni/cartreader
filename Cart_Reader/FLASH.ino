@@ -1,5 +1,5 @@
 //******************************************
-// FLASHROM
+// FLASHROM MODULE
 //******************************************
 
 /******************************************
@@ -52,8 +52,8 @@ void flashMenu() {
   // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 3);
-  flashSlot = question_box("Select flashrom slot", menuOptions, 3, 0);
+  convertPgm(menuOptionsFlash, 2);
+  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
