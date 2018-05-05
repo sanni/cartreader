@@ -9,6 +9,7 @@ Source code files:
 - MD.ino includes everything for the SEGA Mega Drive   
 - N64.ino includes everything Nintendo 64   
 - NP.ino includes everything for Nintendo Power SF Memory and GB Memory cartridges   
+- PCE.ino includes everything for the PC Engine/TG16   
 - SNES.ino includes everything Super Nintendo   
 
 Every submodule has it's own setup_XX() function that configures the needed pins and a submenu that lets you choose what you want to do. 
