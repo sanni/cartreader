@@ -1,3 +1,9 @@
+# Combined STL file with all parts   
+
+![image](https://dl.dropboxusercontent.com/s/4remnau0kni660i/combined_no_tabs.png?dl=1)   
+
+# Separate STL files for each part    
+
 #### snes_spacer.stl is a small 3d printed spacer to relieve pressure from the pins of SNES clone console slot   
 
 ![image](https://dl.dropboxusercontent.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
@@ -14,6 +20,6 @@
 
 ![image](https://dl.dropboxusercontent.com/s/fn6g1pm88puq8h6/sd_spacer.png?dl=1)  
 
-#### sidewall_tabs.stl secures the Arduino Mega to the backplate with three M2x10 screws    
+#### sidewall_tabs.stl secures the Arduino Mega to the backplate with five M2x8 screws    
 
 ![image](https://dl.dropboxusercontent.com/s/p7v2l37f1c130b4/sidewall.png?dl=1)  
