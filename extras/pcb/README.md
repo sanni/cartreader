@@ -15,3 +15,4 @@
 ![image](https://dl.dropboxusercontent.com/s/jcse9iaxm3bbuu6/sd_adapter.pngg?dl=1)    
 
 
+For oshpark you need to rename filename.GML to filename.GKO or it won't find the board outline.   
