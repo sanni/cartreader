@@ -1789,8 +1789,8 @@ void writeFram(byte flashramType) {
       display_Update();
     }
     else {
-      println_Msg("FAILED");
-      print_Error(F("Flash is not blank"), true);
+      println_Msg("FAIL");
+      display_Update();
     }
 
     // Create filepath
@@ -2223,6 +2223,8 @@ void flashRepro_N64() {
       println_Msg(F("Fujitsu MSP55LV100S"));
     else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "2301") == 0))
       println_Msg(F("Fujitsu MSP55LV512"));
+    else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "3901") == 0))
+      println_Msg(F("Intel 512M29EW"));
 
     // Print info
     print_Msg(F("ID: "));
@@ -2290,7 +2292,12 @@ void flashRepro_N64() {
         println_Msg(filePath);
         display_Update();
 
-        if (strcmp(flashid, "227E") == 0) {
+
+        if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
+          // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
+          writeFlashBuffer_N64(0x20000, 128);
+        }
+        else if (strcmp(flashid, "227E") == 0) {
           // Spansion S29GL128N/S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
           writeFlashBuffer_N64(0x20000, 32);
         }
@@ -2493,6 +2500,20 @@ void idFlashrom_N64() {
   // Spansion S29GL128N(16MB) with one flashrom chip
   else if ((strcmp(cartID, "2101") == 0) && (strcmp(flashid, "227E") == 0)) {
     cartSize = 16;
+    // Reset flashrom
+    resetFlashrom_N64(romBase);
+  }
+
+  // Intel 512M29EW(64MB) with one flashrom chip
+  else if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
+    cartSize = 64;
+    // Reset flashrom
+    resetFlashrom_N64(romBase);
+  }
+
+  // Unknown 227E type
+  else if (strcmp(flashid, "227E") == 0) {
+    cartSize = 0;
     // Reset flashrom
     resetFlashrom_N64(romBase);
   }
