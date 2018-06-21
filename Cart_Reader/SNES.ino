@@ -613,13 +613,13 @@ boolean checkcart_SNES() {
   }
   else if (romChips == 243) {
     cx4Type = readBank_SNES(0, 65481) & 0xF;
-    if (cx4Type == 3) { // X3
-      romSize = 16;
-      numBanks = 64;
-    }
-    else { // X2
+    if (cx4Type == 2) { // X2
       romSize = 12;
       numBanks = 48;
+    }
+    else if (cx4Type == 3){ // X3
+      romSize = 16;
+      numBanks = 64;
     }
   }
   else if ((romChips == 245) && (romType == HI)) {
