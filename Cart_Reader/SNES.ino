@@ -17,10 +17,12 @@
 // Define SNES Cart Reader Variables
 int romSpeed = 0;      // 0 = SlowROM, 3 = FastROM
 int romChips = 0;      // 0 = ROM only, 1 = ROM & RAM, 2 = ROM & Save RAM,  3 = ROM & DSP1, 4 = ROM & RAM & DSP1, 5 = ROM & Save RAM & DSP1, 19 = ROM & SFX
-// 227 = ROM & RAM & GameBoy data, 246 = ROM & DSP2
+// 227 = ROM & RAM & GameBoy data, 243 = CX4, 246 = ROM & DSP2
 byte romSizeExp = 0;   // ROM-Size Exponent
 int cartCountry = 255;
 boolean NP = false;
+byte cx4Type = 0;
+byte cx4Map = 0;
 
 /******************************************
   Menu
@@ -484,6 +486,8 @@ void getCartInfo_SNES() {
   }
   else if (romChips == 227)
     println_Msg(F("RAM GBoy"));
+  else if (romChips == 243)
+    println_Msg(F("CX4"));
   else if (romChips == 246)
     println_Msg(F("DSP2"));
   else if (romChips == 245)
@@ -606,6 +610,17 @@ boolean checkcart_SNES() {
     romSize = 48;
     numBanks = 96;
     romType = HI;
+  }
+  else if (romChips == 243) {
+    cx4Type = readBank_SNES(0, 65481) & 0xF;
+    if (cx4Type == 3) { // X3
+      romSize = 16;
+      numBanks = 64;
+    }
+    else { // X2
+      romSize = 12;
+      numBanks = 48;
+    }
   }
   else if ((romChips == 245) && (romType == HI)) {
     romSize = 24;
@@ -941,12 +956,37 @@ void readROM_SNES() {
 
   //Dump Low-type ROM
   else if (romType == LO) {
+    if (romChips == 243) { //0xF3
+      cx4Map = readBank_SNES(0, 32594); //0x7F52
+      if ((cx4Type == 2) && (cx4Map != 0)) { //X2
+        dataOut();
+        controlOut_SNES();
+        writeBank_SNES(0, 32594, 0); // Set 0x7F52 to 0
+        dataIn();
+        controlIn_SNES();
+      }
+      else if ((cx4Type == 3) && (cx4Map == 0)) { //X3
+        dataOut();
+        controlOut_SNES();
+        writeBank_SNES(0, 32594, 1); // Set 0x7F52 to 1
+        dataIn();
+        controlIn_SNES();
+      }
+    }
     if (romSize > 24) {
       // ROM > 96 banks (up to 128 banks)
       readLoRomBanks( 0x80, numBanks + 0x80, &myFile );
     } else {
       // Read up to 96 banks starting at bank 0×00.
       readLoRomBanks( 0, numBanks, &myFile );
+    }
+    if (romChips == 243) { //0xF3
+      // Restore CX4 Mapping Register
+      dataOut();
+      controlOut_SNES();
+      writeBank_SNES(0, 32594, cx4Map); // 0x7F52
+      dataIn();
+      controlIn_SNES();
     }
   }
 
