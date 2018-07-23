@@ -36,7 +36,7 @@ This file is needed for odd sized SNES games like Final Fantasy (JAP), Super Met
 
 Example:  
 A172,24,48  
-checksum, size in Mbit, number of banks (lorom needs twice as many banks as hirom for the same rom size)  
+checksum, size in Mbit, number of banks (lorom needs twice as many banks as hirom for the same rom size, lorom: 32kb banks, hirom: 64kb banks)  
 
 #### PCE_CRC_LIST.txt    
 Placing this file into the root of the SD card will enable verify and automatic game name identifier.    
