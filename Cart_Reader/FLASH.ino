@@ -367,12 +367,12 @@ void setup_Flash8() {
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output RST(PH0) OE(PH1) WE(PH4) CE(PH6)
-  DDRH |=  (1 << 0) | (1 << 1) | (1 << 4) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) CE(PH6)
+  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 6);
   // Setting RST(PH0) OE(PH1) WE(PH4) HIGH
   PORTH |= (1 << 0) | (1 << 1) | (1 << 4);
-  // Setting CE(PH6) LOW
-  PORTH &= ~(1 << 6);
+  // Setting BYTE(PH3) and CE(PH6) LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
