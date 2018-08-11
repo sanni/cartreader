@@ -15,4 +15,4 @@
 ![image](https://dl.dropboxusercontent.com/s/jcse9iaxm3bbuu6/sd_adapter.pngg?dl=1)    
 
 
-For [Oshpark](https://oshpark.com/) you need to rename filename.GML to filename.GKO or it won't find the board outline. Oshpark is great for ordering the smaller PCBs.   
+For [Oshpark](https://oshpark.com/) you need to [rename filename.GML to filename.GKO](https://www.dropbox.com/s/0rcvhalgeu11sf8/rename.jpg?dl=0) or it won't find the board outline. Oshpark is great for ordering the smaller PCBs.   
