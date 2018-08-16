@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             29-07-2018
-   Version:          1.3
+   Date:             16-08-2018
+   Version:          1.4
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "1.3";
+char ver[5] = "1.4";
 
 /******************************************
    Define Starting Point

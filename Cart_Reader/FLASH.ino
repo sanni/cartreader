@@ -145,7 +145,7 @@ void flashromMenu8() {
           writeFlash29F1601();
         else if ((strcmp(flashid, "C2F1") == 0) || (strcmp(flashid, "C2F9") == 0))
           writeFlash29F1610();
-        else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0))
+        else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
           writeFlash29LV640();
       }
       delay(100);
@@ -257,7 +257,7 @@ void flashromMenu16() {
       if (strcmp(flashid, "C2F3") == 0) {
         writeFlash16_29F1601();
       }
-      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0)) {
+      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
         writeFlash16_29LV640();
       }
       else {
@@ -367,10 +367,10 @@ void setup_Flash8() {
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) CE(PH6)
-  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) WP(PH5) CE(PH6)
+  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
   // Setting RST(PH0) OE(PH1) WE(PH4) HIGH
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 4);
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 4) | (1 << 5);
   // Setting BYTE(PH3) and CE(PH6) LOW
   PORTH &= ~((1 << 3) | (1 << 6));
 
@@ -414,13 +414,13 @@ idtheflash:
     flashSize = 2097152;
     flashromType = 2;
   }
-  else if (strcmp(flashid, "C2A8") == 0) {
+  else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
     println_Msg(F("MX29LV320"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
   }
-  else if (strcmp(flashid, "C2C9") == 0) {
+  else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
     println_Msg(F("MX29LV640"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
@@ -473,8 +473,8 @@ void setup_Flash16() {
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) CE(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) WP(PH5) CE(PH6)
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set Data Pins (D0-D15) to Input
   DDRC = 0x00;
@@ -483,8 +483,8 @@ void setup_Flash16() {
   PORTC = 0x00;
   PORTA = 0x00;
 
-  // Setting RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) HIGH
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4);
+  // Setting RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) WP(PH5) HIGH
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5);
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
@@ -521,13 +521,13 @@ void setup_Flash16() {
     flashSize = 2097152;
     flashromType = 2;
   }
-  else if (strcmp(flashid, "C2A8") == 0) {
+  else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
     println_Msg(F("MX29LV320"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
   }
-  else if (strcmp(flashid, "C2C9") == 0) {
+  else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
     println_Msg(F("MX29LV640"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
