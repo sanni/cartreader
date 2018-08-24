@@ -45,15 +45,16 @@ static const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash
 static const char epromMenuItem1[] PROGMEM = "Blankcheck";
 static const char epromMenuItem2[] PROGMEM = "Read 27C322";
 static const char epromMenuItem3[] PROGMEM = "Write 27C322";
-static const char epromMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4};
+static const char epromMenuItem4[] PROGMEM = "Verify 27C322";
+static const char epromMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5};
 
 void flashMenu() {
   // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 2);
-  flashSlot = question_box("Select flashrom slot", menuOptions, 2, 0);
+  convertPgm(menuOptionsFlash, 3);
+  flashSlot = question_box("Select flashrom slot", menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -309,8 +310,8 @@ void epromMenu() {
   // create menu with title "Eprom Writer" and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsEprom, 4);
-  mainMenu = question_box("Eprom Writer", menuOptions, 4, 0);
+  convertPgm(menuOptionsEprom, 5);
+  mainMenu = question_box("Eprom Writer", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -336,10 +337,18 @@ void epromMenu() {
       display_Clear();
       time = millis();
       write_Eprom();
-      //verify_Eprom();
       break;
 
     case 3:
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser("Verify against");
+      display_Clear();
+      time = millis();
+      verify_Eprom();
+      break;
+
+    case 4:
       time = 0;
       display_Clear();
       display_Update();
@@ -350,6 +359,8 @@ void epromMenu() {
     print_Msg(F("Operation took: "));
     print_Msg((millis() - time) / 1000, DEC);
     println_Msg("s");
+    println_Msg("Please do a manual");
+    println_Msg("powercycle now");
     display_Update();
   }
   wait();
@@ -569,6 +580,17 @@ void setup_Eprom() {
 
   // 27C322 is a 4MB eprom
   flashSize = 4194304;
+
+  display_Clear();
+  println_Msg("This is still a work");
+  println_Msg("in progress.");
+  println_Msg("");
+  println_Msg("Sometimes it works...");
+  println_Msg("sometimes it blows up");
+  println_Msg("");
+  println_Msg("Press Button");
+  display_Update();
+  wait();
 }
 
 /******************************************

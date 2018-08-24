@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             16-08-2018
-   Version:          1.4
+   Date:             24-08-2018
+   Version:          1.5
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "1.4";
+char ver[5] = "1.5";
 
 /******************************************
    Define Starting Point
@@ -444,9 +444,6 @@ void setup() {
   //PORTD |= (1 << 7);
   //PORTG |= (1 << 2);
 
-  // Initialize LED
-  rgb.setColor(0, 0, 0);
-
   // Read current folder number out of eeprom
   EEPROM_readAnything(10, foldern);
 
@@ -456,15 +453,46 @@ void setup() {
     display.setTextSize(1);
     display.setTextColor(WHITE);
 
-    // Clear the buffer.
+    // Clear the screen buffer.
     display_Clear();
+
+    // Draw line
+    display.drawLine(0, 32, 127, 32, WHITE);
+    display_Update();
+    delay(100);
+
+    // Initialize LED
+    rgb.setColor(0, 0, 0);
+
+    // Clear the screen.
+    display_Clear();
+    display_Update();
+    delay(25);
 
     // Draw the Logo
     display.drawBitmap(28, 0, icon, 72, 64, 1);
+    for (int s = 1; s < 64; s += 2) {
+      // Draw Scanlines
+      display.drawLine(0, s, 127, s, BLACK);
+    }
+    display_Update();
+    delay(50);
+
+    // Clear the screen.
+    display_Clear();
+    display_Update();
+    delay(25);
+
+    // Draw the Logo
+    display.drawBitmap(28, 0, icon, 72, 64, 1);
+    for (int s = 1; s < 64; s += 2) {
+      // Draw Scanlines
+      display.drawLine(0, s, 127, s, BLACK);
+    }
     display.setCursor(100, 55);
     display.println(ver);
     display_Update();
-    delay(1200);
+    delay(200);
   }
 
   if (enable_Serial) {
@@ -473,8 +501,12 @@ void setup() {
     Serial.println(F("Cartridge Reader"));
     Serial.println(F("2018 sanni"));
     Serial.println("");
-    // LED
+    // LED Error
     rgb.setColor(0, 0, 255);
+  }
+  else {
+    // LED Off
+    rgb.setColor(0, 0, 0);
   }
 
   // Init SD card
@@ -490,6 +522,7 @@ void setup() {
     Serial.print(F("GB FAT"));
     Serial.println(int(sd.vol()->fatType()));
   }
+
   startMenu();
 }
 
