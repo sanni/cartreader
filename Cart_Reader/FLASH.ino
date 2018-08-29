@@ -11,14 +11,16 @@ byte flashromType;
 byte secondID = 1;
 unsigned long time;
 unsigned long blank;
+unsigned long sectorSize;
+byte bufferSize;
 
 /******************************************
    Menu
  *****************************************/
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit adapter";
-static const char flashMenuItem2[] PROGMEM = "16bit adapter";
-static const char flashMenuItem3[] PROGMEM = "Eprom adapter";
+static const char flashMenuItem2[] PROGMEM = "16bit adapter (old)";
+static const char flashMenuItem3[] PROGMEM = "Eprom adapter (beta)";
 static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3};
 
 // 8bit Flash menu items
@@ -54,7 +56,7 @@ void flashMenu() {
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsFlash, 3);
-  flashSlot = question_box("Select flashrom slot", menuOptions, 3, 0);
+  flashSlot = question_box("Select adapter PCB", menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -148,6 +150,10 @@ void flashromMenu8() {
           writeFlash29F1610();
         else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
           writeFlash29LV640();
+        else if (strcmp(flashid, "017E") == 0) {
+          // sector size, write buffer size
+          writeFlash29GL(sectorSize, bufferSize);
+        }
       }
       delay(100);
       // Reset twice just to be sure
@@ -170,8 +176,12 @@ void flashromMenu8() {
         idFlash29F032();
       else
         idFlash29F1610();
-      println_Msg(flashid);
+
+      println_Msg(F(""));
+      printFlash(40);
+      println_Msg(F(""));
       display_Update();
+
       if (flashromType == 1)
         resetFlash29F032();
       else
@@ -275,7 +285,9 @@ void flashromMenu16() {
       display_Clear();
       println_Msg(F("ID Flashrom"));
       idFlash16();
-      println_Msg(flashid);
+      println_Msg(F(""));
+      printFlash16(40);
+      println_Msg(F(""));
       display_Update();
       resetFlash16();
       break;
@@ -426,44 +438,74 @@ idtheflash:
     flashromType = 2;
   }
   else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
-    println_Msg(F("MX29LV320"));
+    println_Msg(F("MX29LV320 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
   }
   else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
-    println_Msg(F("MX29LV640"));
+    println_Msg(F("MX29LV640 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
   }
   else if (strcmp(flashid, "0141") == 0) {
-    println_Msg(F("AM29F032B"));
+    println_Msg(F("AM29F032B detected"));
     flashSize = 4194304;
     flashromType = 1;
   }
   else if (strcmp(flashid, "01AD") == 0) {
-    println_Msg(F("AM29F016B"));
+    println_Msg(F("AM29F016B detected"));
     flashSize = 2097152;
     flashromType = 1;
   }
   else if (strcmp(flashid, "20AD") == 0) {
-    println_Msg(F("AM29F016D"));
+    println_Msg(F("AM29F016D detected"));
     flashSize = 2097152;
     flashromType = 1;
   }
   else if (strcmp(flashid, "04D4") == 0) {
-    println_Msg(F("MBM29F033C"));
+    println_Msg(F("MBM29F033C detected"));
     flashSize = 4194304;
     flashromType = 1;
   }
+  else if (strcmp(flashid, "017E") == 0) {
+    // S29GL032M
+    if (readByte_Flash(28) == 0x1A) {
+      println_Msg(F("S29GL032M detected"));
+      flashSize = 4194304;
+      sectorSize = 65536;
+      bufferSize = 32;
+    }
+    // Unknown S29GL type
+    else {
+      println_Msg(F("Unknown S29GL Type"));
+      flashSize = 4194304;
+      sectorSize = 65536;
+      bufferSize = 32;
+    }
+    println_Msg(F("ATTENTION 3.3V"));
+    flashromType = 2;
+  }
   else if (secondID) {
+    // Backup first ID read-out
+    strncpy(vendorID, flashid, 5);
+    // Read ID a second time using a different command
     idFlash29F1610();
     secondID = 0;
     goto idtheflash;
   }
   else {
-    print_Error(F("Unknown flashrom"), true);
+    // ID not found
+    display_Clear();
+    println_Msg(F("Flashrom Writer 8bit"));
+    println_Msg(" ");
+    print_Msg(F("ID Type 1: "));
+    println_Msg(vendorID);
+    print_Msg(F("ID Type 2: "));
+    println_Msg(flashid);
+    println_Msg(" ");
+    print_Error(F("UNKNOWN FLASHROM"), true);
   }
   println_Msg(" ");
   println_Msg(F("Press Button..."));
@@ -533,13 +575,13 @@ void setup_Flash16() {
     flashromType = 2;
   }
   else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
-    println_Msg(F("MX29LV320"));
+    println_Msg(F("MX29LV320 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
   }
   else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
-    println_Msg(F("MX29LV640"));
+    println_Msg(F("MX29LV640 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
@@ -1087,6 +1129,74 @@ void writeFlash29LV640() {
         writeByte_Flash(currByte + c, sdBuffer[c]);
         // Check if write is complete
         busyCheck29LV640(currByte + c, sdBuffer[c]);
+      }
+    }
+    // Set data pins to input again
+    dataIn8();
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD"));
+    display_Update();
+  }
+}
+
+/******************************************
+  S29GL flashrom functions
+*****************************************/
+void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut();
+
+    for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      // Write to flashrom
+      for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
+        // Fill SD buffer
+        myFile.read(sdBuffer, 512);
+
+        // Write bufferSize bytes at a time
+        for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += bufferSize) {
+          // 2 unlock commands
+          writeByte_Flash(0x555 << 1, 0xaa);
+          writeByte_Flash(0x2aa << 1, 0x55);
+          // Write buffer load command at sector address
+          writeByte_Flash(currSector + currSdBuffer + currWriteBuffer, 0x25);
+          // Write byte count (minus 1) at sector address
+          writeByte_Flash(currSector + currSdBuffer + currWriteBuffer, bufferSize - 1);
+
+          // Load bytes into buffer
+          for (byte currByte = 0; currByte < bufferSize; currByte++) {
+            writeByte_Flash(currSector + currSdBuffer + currWriteBuffer + currByte, sdBuffer[currWriteBuffer + currByte]);
+          }
+
+          // Write Buffer to Flash
+          writeByte_Flash(currSector + currSdBuffer + currWriteBuffer + bufferSize - 1, 0x29);
+
+          // Read the status register at last written address
+          dataIn8();
+          byte statusReg = readByte_Flash(currSector + currSdBuffer + currWriteBuffer + bufferSize - 1);
+          while ((statusReg & 0x80) != (sdBuffer[currWriteBuffer + bufferSize - 1] & 0x80)) {
+            statusReg = readByte_Flash(currSector + currSdBuffer + currWriteBuffer + bufferSize - 1);
+          }
+          dataOut();
+        }
       }
     }
     // Set data pins to input again

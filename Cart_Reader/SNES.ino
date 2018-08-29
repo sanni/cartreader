@@ -617,7 +617,7 @@ boolean checkcart_SNES() {
       romSize = 12;
       numBanks = 48;
     }
-    else if (cx4Type == 3){ // X3
+    else if (cx4Type == 3) { // X3
       romSize = 16;
       numBanks = 64;
     }
