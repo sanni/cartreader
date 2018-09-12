@@ -28,9 +28,11 @@ byte cx4Map = 0;
   Menu
 *****************************************/
 // SNES/Nintendo Power SF Memory start menu
-static const char snsMenuItem1[] PROGMEM = "SNES SFC";
-static const char snsMenuItem2[] PROGMEM = "NintPower SF Memory";
-static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2};
+static const char snsMenuItem1[] PROGMEM = "Super Nintendo";
+static const char snsMenuItem2[] PROGMEM = "NPower SF Memory";
+static const char snsMenuItem3[] PROGMEM = "HiROM repro";
+static const char snsMenuItem4[] PROGMEM = "LoROM repro";
+static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4};
 
 // SNES menu items
 static const char SnesMenuItem1[] PROGMEM = "Read Rom";
@@ -51,11 +53,11 @@ static const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuIte
 
 // SNES start menu
 void snsMenu() {
-  // create menu with title and 2 options to choose from
+  // create menu with title and 4 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSNS, 2);
-  snsCart = question_box("Select Cart Type", menuOptions, 2, 0);
+  convertPgm(menuOptionsSNS, 4);
+  snsCart = question_box("Select Cart Type", menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsCart)
@@ -64,14 +66,34 @@ void snsMenu() {
       display_Clear();
       display_Update();
       setup_Snes();
-      mode =  mode_SNES;
+      mode = mode_SNES;
       break;
 
     case 1:
       display_Clear();
       display_Update();
       setup_SFM();
-      mode =  mode_SFM;
+      mode = mode_SFM;
+      break;
+
+    case 2:
+      display_Clear();
+      display_Update();
+      hiROM = 1;
+      setup_Flash8();
+      id_Flash8();
+      wait();
+      mode = mode_FLASH8;
+      break;
+
+    case 3:
+      display_Clear();
+      display_Update();
+      hiROM = 0;
+      setup_Flash8();
+      id_Flash8();
+      wait();
+      mode = mode_FLASH8;
       break;
   }
 }

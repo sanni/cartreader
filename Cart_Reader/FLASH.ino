@@ -13,14 +13,15 @@ unsigned long time;
 unsigned long blank;
 unsigned long sectorSize;
 byte bufferSize;
+boolean hiROM = 1;
 
 /******************************************
    Menu
  *****************************************/
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit adapter";
-static const char flashMenuItem2[] PROGMEM = "16bit adapter (old)";
-static const char flashMenuItem3[] PROGMEM = "Eprom adapter (beta)";
+static const char flashMenuItem2[] PROGMEM = "16bit adapter(old)";
+static const char flashMenuItem3[] PROGMEM = "Eprom adapter(beta)";
 static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3};
 
 // 8bit Flash menu items
@@ -52,7 +53,7 @@ static const char epromMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5};
 
 void flashMenu() {
-  // create menu with title and 3 options to choose from
+  // create menu with title and 4 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsFlash, 3);
@@ -64,7 +65,10 @@ void flashMenu() {
     case 0:
       display_Clear();
       display_Update();
+      hiROM = 1;
       setup_Flash8();
+      id_Flash8();
+      wait();
       mode =  mode_FLASH8;
       break;
 
@@ -72,6 +76,8 @@ void flashMenu() {
       display_Clear();
       display_Update();
       setup_Flash16();
+      id_Flash16();
+      wait();
       mode =  mode_FLASH16;
       break;
 
@@ -148,7 +154,7 @@ void flashromMenu8() {
           writeFlash29F1601();
         else if ((strcmp(flashid, "C2F1") == 0) || (strcmp(flashid, "C2F9") == 0))
           writeFlash29F1610();
-        else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
+        else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
           writeFlash29LV640();
         else if (strcmp(flashid, "017E") == 0) {
           // sector size, write buffer size
@@ -268,7 +274,7 @@ void flashromMenu16() {
       if (strcmp(flashid, "C2F3") == 0) {
         writeFlash16_29F1601();
       }
-      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
+      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
         writeFlash16_29LV640();
       }
       else {
@@ -379,29 +385,9 @@ void epromMenu() {
 }
 
 /******************************************
-   Setup
+   Flash IDs
  *****************************************/
-void setup_Flash8() {
-  // Set Address Pins to Output
-  //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
-  //A16-A23
-  DDRL = 0xFF;
-
-  // Set Control Pins to Output RST(PH0) OE(PH1) BYTE(PH3) WE(PH4) WP(PH5) CE(PH6)
-  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-  // Setting RST(PH0) OE(PH1) WE(PH4) HIGH
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 4) | (1 << 5);
-  // Setting BYTE(PH3) and CE(PH6) LOW
-  PORTH &= ~((1 << 3) | (1 << 6));
-
-  // Set Data Pins (D0-D7) to Input
-  DDRC = 0x00;
-  // Disable Internal Pullups
-  PORTC = 0x00;
-
+void id_Flash8() {
   // ID flash
   idFlash29F032();
 
@@ -431,7 +417,7 @@ idtheflash:
     flashSize = 4194304;
     flashromType = 2;
   }
-  else if (strcmp(flashid, "C2C4") == 0) {
+  else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0)) {
     println_Msg(F("MX29LV160 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 2097152;
@@ -514,7 +500,84 @@ idtheflash:
     resetFlash29F032();
   else
     resetFlash29F1610();
-  wait();
+}
+
+void id_Flash16() {
+  // ID flash
+  idFlash16();
+  resetFlash16();
+
+  println_Msg(F("Flashrom Writer 16bit"));
+  println_Msg(" ");
+  print_Msg(F("Flash ID: "));
+  println_Msg(flashid);
+  if (strcmp(flashid, "C2F1") == 0) {
+    println_Msg(F("MX29F1610 detected"));
+    println_Msg(" ");
+    flashSize = 2097152;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2F3") == 0) {
+    println_Msg(F("MX29F1601 detected"));
+    flashSize = 2097152;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2F9") == 0) {
+    println_Msg(F("MX29L3211 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 4194304;
+    flashromType = 2;
+  }
+  else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0)) {
+    println_Msg(F("MX29LV160 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 2097152;
+    flashromType = 2;
+  }
+  else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
+    println_Msg(F("MX29LV320 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 4194304;
+    flashromType = 2;
+  }
+  else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
+    println_Msg(F("MX29LV640 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 8388608;
+    flashromType = 2;
+  }
+  else {
+    print_Error(F("Unknown flashrom"), true);
+    println_Msg(" ");
+  }
+  println_Msg(" ");
+  println_Msg(F("Press Button..."));
+  display_Update();
+}
+
+/******************************************
+   Setup
+ *****************************************/
+void setup_Flash8() {
+  // Set Address Pins to Output
+  //A0-A7
+  DDRF = 0xFF;
+  //A8-A15
+  DDRK = 0xFF;
+  //A16-A23
+  DDRL = 0xFF;
+
+  // Set Control Pins to Output RST(PH0) OE(PH1) OE_SNS(PH3) WE(PH4) WE_SNS(PH5) CE(PH6)
+  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  // Setting RST(PH0) OE(PH1) OE_SNS(PH3) WE(PH4) WE_SNS(PH5) HIGH
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5);
+  // Setting CE(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  // Set Data Pins (D0-D7) to Input
+  DDRC = 0x00;
+  // Disable Internal Pullups
+  PORTC = 0x00;
 }
 
 void setup_Flash16() {
@@ -542,58 +605,6 @@ void setup_Flash16() {
   PORTH &= ~(1 << 6);
 
   delay(100);
-
-  // ID flash
-  idFlash16();
-  resetFlash16();
-
-  println_Msg(F("Flashrom Writer 16bit"));
-  println_Msg(" ");
-  print_Msg(F("Flash ID: "));
-  println_Msg(flashid);
-  if (strcmp(flashid, "C2F1") == 0) {
-    println_Msg(F("MX29F1610 detected"));
-    println_Msg(" ");
-    flashSize = 2097152;
-    flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2F3") == 0) {
-    println_Msg(F("MX29F1601 detected"));
-    flashSize = 2097152;
-    flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2F9") == 0) {
-    println_Msg(F("MX29L3211 detected"));
-    println_Msg(F("ATTENTION 3.3V"));
-    flashSize = 4194304;
-    flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2C4") == 0) {
-    println_Msg(F("MX29LV160 detected"));
-    println_Msg(F("ATTENTION 3.3V"));
-    flashSize = 2097152;
-    flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
-    println_Msg(F("MX29LV320 detected"));
-    println_Msg(F("ATTENTION 3.3V"));
-    flashSize = 4194304;
-    flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
-    println_Msg(F("MX29LV640 detected"));
-    println_Msg(F("ATTENTION 3.3V"));
-    flashSize = 8388608;
-    flashromType = 2;
-  }
-  else {
-    print_Error(F("Unknown flashrom"), true);
-    println_Msg(" ");
-  }
-  println_Msg(" ");
-  println_Msg(F("Press Button..."));
-  display_Update();
-  wait();
 }
 
 void setup_Eprom() {
@@ -661,46 +672,58 @@ void dataIn16() {
  *****************************************/
 void writeByte_Flash(unsigned long myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTL = (myAddress >> 16) & 0xFF;
+  if (hiROM) {
+    PORTK = (myAddress >> 8) & 0xFF;
+    PORTL = (myAddress >> 16) & 0xFF;
+  }
+  else {
+    PORTK = (myAddress >> 8) & 0x7F;
+    PORTL = (myAddress >> 15) & 0xFF;
+  }
   PORTC = myData;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch WE(PH4) to LOW
-  PORTH &= ~(1 << 4);
+  // Switch WE(PH4) WE_SNS(PH5) to LOW
+  PORTH &= ~((1 << 4) | (1 << 5));
 
   // Leave WE low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch WE(PH4) to HIGH
-  PORTH |= (1 << 4);
+  // Switch WE(PH4) WE_SNS(PH5) to HIGH
+  PORTH |= (1 << 4) | (1 << 5);
 
   // Leave WE high for at least 50ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
 byte readByte_Flash(unsigned long myAddress) {
   PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTL = (myAddress >> 16) & 0xFF;
+  if (hiROM) {
+    PORTK = (myAddress >> 8) & 0xFF;
+    PORTL = (myAddress >> 16) & 0xFF;
+  }
+  else {
+    PORTK = (myAddress >> 8) & 0x7F;
+    PORTL = (myAddress >> 15) & 0xFF;
+  }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Setting OE(PH1) LOW
-  PORTH &= ~(1 << 1);
+  // Setting OE(PH1) OE_SNS(PH3) LOW
+  PORTH &= ~((1 << 1) | (1 << 3));
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
   byte tempByte = PINC;
 
-  // Setting OE(PH1) HIGH
-  PORTH |= (1 << 1);
-  __asm__("nop\n\t");
+  // Setting OE(PH1) OE_SNS(PH3) HIGH
+  PORTH |= (1 << 1) | (1 << 3);
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempByte;
 }
@@ -867,8 +890,8 @@ void busyCheck29F032(byte c) {
 
   // Setting OE(PH1) CE(PH6)LOW
   PORTH &= ~((1 << 1) | (1 << 6));
-  // Setting WE(PH4) HIGH
-  PORTH |=  (1 << 4);
+  // Setting WE(PH4) WE_SNES HIGH
+  PORTH |=  (1 << 4) | (1 << 5);
 
   //When the Embedded Program algorithm is complete, the device outputs the datum programmed to D7
   while ((PINC & 0x80) != (c & 0x80)) {}
