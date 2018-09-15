@@ -6,6 +6,7 @@
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)  
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
+- Writes custom-made 29F033 repros using original SHVC-1J3M-20 and SHVC-1A3M-30 PCBs    
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
 - Reflashes N64 Repros with Spansion S29GL256N, Fujitsu MSP55LV512, Fujitsu MSP55LV100S or Intel 4400L0ZDQ0 flashroms    
