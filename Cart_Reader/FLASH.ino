@@ -53,7 +53,7 @@ static const char epromMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5};
 
 void flashMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsFlash, 3);
@@ -678,6 +678,8 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
   }
   else {
     PORTK = (myAddress >> 8) & 0x7F;
+    // Set A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
     PORTL = (myAddress >> 15) & 0xFF;
   }
   PORTC = myData;
@@ -707,6 +709,8 @@ byte readByte_Flash(unsigned long myAddress) {
   }
   else {
     PORTK = (myAddress >> 8) & 0x7F;
+    // Set A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
     PORTL = (myAddress >> 15) & 0xFF;
   }
 
@@ -890,7 +894,7 @@ void busyCheck29F032(byte c) {
 
   // Setting OE(PH1) CE(PH6)LOW
   PORTH &= ~((1 << 1) | (1 << 6));
-  // Setting WE(PH4) WE_SNES HIGH
+  // Setting WE(PH4) WE_SNES(PH5) HIGH
   PORTH |=  (1 << 4) | (1 << 5);
 
   //When the Embedded Program algorithm is complete, the device outputs the datum programmed to D7
