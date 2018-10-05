@@ -46,11 +46,12 @@ static const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash
 
 // Eprom menu items
 static const char epromMenuItem1[] PROGMEM = "Blankcheck";
-static const char epromMenuItem2[] PROGMEM = "Read 27C322";
-static const char epromMenuItem3[] PROGMEM = "Write 27C322";
-static const char epromMenuItem4[] PROGMEM = "Verify 27C322";
-static const char epromMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5};
+static const char epromMenuItem2[] PROGMEM = "Read";
+static const char epromMenuItem3[] PROGMEM = "Write";
+static const char epromMenuItem4[] PROGMEM = "Verify";
+static const char epromMenuItem5[] PROGMEM = "Print";
+static const char epromMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5, epromMenuItem6};
 
 void flashMenu() {
   // create menu with title and 3 options to choose from
@@ -328,8 +329,8 @@ void epromMenu() {
   // create menu with title "Eprom Writer" and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsEprom, 5);
-  mainMenu = question_box("Eprom Writer", menuOptions, 5, 0);
+  convertPgm(menuOptionsEprom, 6);
+  mainMenu = question_box("Eprom Writer", menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -355,18 +356,27 @@ void epromMenu() {
       display_Clear();
       time = millis();
       write_Eprom();
+      delay(1000);
+      verify_Eprom();
       break;
 
     case 3:
       filePath[0] = '\0';
       sd.chdir("/");
       fileBrowser("Verify against");
+      sprintf(filePath, "%s/%s", filePath, fileName);
       display_Clear();
       time = millis();
       verify_Eprom();
       break;
 
     case 4:
+      display_Clear();
+      time = millis();
+      print_Eprom(80);
+      break;
+
+    case 5:
       time = 0;
       display_Clear();
       display_Update();
@@ -377,8 +387,6 @@ void epromMenu() {
     print_Msg(F("Operation took: "));
     print_Msg((millis() - time) / 1000, DEC);
     println_Msg("s");
-    println_Msg("Please do a manual");
-    println_Msg("powercycle now");
     display_Update();
   }
   wait();
@@ -633,17 +641,6 @@ void setup_Eprom() {
 
   // 27C322 is a 4MB eprom
   flashSize = 4194304;
-
-  display_Clear();
-  println_Msg("This is still a work");
-  println_Msg("in progress.");
-  println_Msg("");
-  println_Msg("Sometimes it works...");
-  println_Msg("sometimes it blows up");
-  println_Msg("");
-  println_Msg("Press Button");
-  display_Update();
-  wait();
 }
 
 /******************************************
@@ -1793,6 +1790,10 @@ word writeWord_Eprom(unsigned long myAddress, word myData) {
   // Data out
   DDRC = 0xFF;
   DDRA = 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  __asm__("nop\n\t");
+
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -1801,7 +1802,6 @@ word writeWord_Eprom(unsigned long myAddress, word myData) {
   PORTC = myData;
   PORTA = (myData >> 8) & 0xFF;
 
-  // Arduino running at 16Mhz -> one nop = 62.5ns
   __asm__("nop\n\t");
 
   // Switch VPP/OE(PH5) to HIGH
@@ -1829,16 +1829,18 @@ word writeWord_Eprom(unsigned long myAddress, word myData) {
   DDRA = 0x00;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
 
   // Wait 1us for Chip Enable Low to Output Valid while program verify
-  delayMicroseconds(1);
+  delayMicroseconds(3);
 
   // Read
   word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Setting CE(PH6) HIGH
   PORTH |= (1 << 6);
@@ -1961,46 +1963,42 @@ void write_Eprom() {
     PORTH |= (1 << 5);
     delay(1000);
 
-    int d = 0;
     for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
       // Fill SD buffer
       myFile.read(sdBuffer, 512);
+      int d = 0;
 
       // Blink led
       if (currWord % 2048 == 0)
         PORTB ^= (1 << 4);
 
       // Work through SD buffer
-      word checkWord = 0xFFFF;
       for (int c = 0; c < 256; c++) {
+        word checkWord;
         word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
 
-        // No need to write word if it's 0xFFFF
-        if (myWord != 0xFFFF) {
-          // Error counter
-          byte n = 0;
+        // Error counter
+        byte n = 0;
 
-          // Presto III allows up to 25 rewrites per word
-          do {
-            // Write word
-            checkWord = writeWord_Eprom(currWord + c, myWord);
-            // Check for fail
-            if (n == 25) {
-              print_Msg("Program Error 0x");
-              println_Msg(currWord + c, HEX);
-              print_Msg("0x");
-              print_Msg(readWord_Eprom(currWord + c), HEX);
-              print_Msg(" != 0x");
-              println_Msg(myWord, HEX);
-              print_Error(F("Press button to reset"), true);
-            }
-            n++;
+        // Presto III allows up to 25 rewrites per word
+        do {
+          // Write word
+          checkWord = writeWord_Eprom(currWord + c, myWord);
+          // Check for fail
+          if (n == 25) {
+            print_Msg("Program Error 0x");
+            println_Msg(currWord + c, HEX);
+            print_Msg("0x");
+            print_Msg(readWord_Eprom(currWord + c), HEX);
+            print_Msg(" != 0x");
+            println_Msg(myWord, HEX);
+            print_Error(F("Press button to reset"), true);
           }
-          while (checkWord != myWord);
+          n++;
         }
+        while (checkWord != myWord);
         d += 2;
       }
-      d = 0;
     }
     // Close the file:
     myFile.close();
@@ -2029,7 +2027,7 @@ void verify_Eprom() {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 256; c++) {
-        word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+        word myWord = (((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF));
 
         if (readWord_Eprom(currWord + c) != myWord) {
           blank++;
@@ -2055,6 +2053,38 @@ void verify_Eprom() {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
+}
+
+void print_Eprom(int numBytes) {
+  char buf[3];
+
+  for (int currByte = 0; currByte < numBytes / 2; currByte += 5) {
+    // 5 words per line
+    for (int c = 0; c < 5; c++) {
+      word currWord = readWord_Eprom(currByte + c);
+
+      // Split word into two bytes
+      byte left_byte = currWord & 0xFF;
+      byte right_byte = ( currWord >> 8 ) & 0xFF;
+
+
+      sprintf (buf, "%x", left_byte);
+      for (int i = 0; i < 2 - strlen(buf); i++) {
+        print_Msg("0");
+      }
+      // Now print the significant bits
+      print_Msg(buf);
+
+      sprintf (buf, "%x", right_byte);
+      for (int i = 0; i < 2 - strlen(buf); i++) {
+        print_Msg("0");
+      }
+      // Now print the significant bits
+      print_Msg(buf);
+    }
+    println_Msg("");
+  }
+  display_Update();
 }
 
 //******************************************

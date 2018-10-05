@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             20-09-2018
-   Version:          1.8
+   Date:             05-10-2018
+   Version:          1.9
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.5
+   Compiled with Arduino 1.8.7
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -35,7 +35,7 @@
    infinest - help with GB Memory cart
 
 **********************************************************************************/
-char ver[5] = "1.8";
+char ver[5] = "1.9";
 
 /******************************************
    Define Starting Point
@@ -683,7 +683,7 @@ unsigned char question_box(const char* question, char answers[7][20], int num_an
   if (enable_OLED) {
     return questionBox_OLED(question, answers, num_answers, default_choice);
   }
-  if (enable_Serial) {
+  else if (enable_Serial) {
     return questionBox_Serial(question, answers, num_answers, default_choice);
   }
 }
@@ -729,10 +729,7 @@ void wait_serial() {
 
 byte questionBox_Serial(const char* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
-  if (filebrowse) {
-    Serial.print("Filebrowser: ");
-  }
-  Serial.println(question);
+  //Serial.println(question);
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
     Serial.print(F(")"));
@@ -1135,7 +1132,7 @@ unsigned char questionBox_OLED(const char* question, char answers[7][20], int nu
 /******************************************
   Filebrowser Module
 *****************************************/
-void fileBrowser(const char browserTitle[]) {
+void fileBrowser(const char* browserTitle) {
   char fileNames[30][26];
   int currFile;
   filebrowse = 1;
@@ -1147,6 +1144,9 @@ void fileBrowser(const char browserTitle[]) {
   char nameStr[26];
 
 browserstart:
+
+  // Print title
+  println_Msg(browserTitle);
 
   // Set currFile back to 0
   currFile = 0;
@@ -1234,7 +1234,7 @@ page:
     sprintf( answers[i], "%s", fileOptions[ ((currPage - 1) * 7 + i)] );
   }
 
-  // Create menu with title "Filebrowser" and 1-7 options to choose from
+  // Create menu with title and 1-7 options to choose from
   unsigned char answer = question_box(browserTitle, answers, count, 0);
 
   // Check if the page has been switched
