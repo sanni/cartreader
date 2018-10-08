@@ -6,17 +6,17 @@
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)  
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
-- Writes custom-made 29F033 SNES repros using original SHVC-1J3M-20 and SHVC-1A3M-30 PCBs    
+- Reflashes some Chinese or custom-made SNES repros with 29F033 or 29LV320 flashroms     
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
 - Reflashes N64 Repros with Spansion S29GL256N, Fujitsu MSP55LV512, Fujitsu MSP55LV100S or Intel 4400L0ZDQ0 flashroms    
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
-- Programs custom made Game Boy (Color) flashcarts with 29F016/29F032/29F033 flashrom   
+- Programs custom-made Game Boy (Color) flashcarts with 29F016/29F032/29F033 flashrom   
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
-- Reads PC engine/TG16 (custom made adapter needed)   
+- Reads PC engine/TG16 (custom-made adapter needed)   
 - Programs Flashroms like 29F016, 29F032 and 29F033(DIP36 to TSOP40 pcb needed), 29F1610, 29L3211, 29LV160 (PSOP44 to DIL44 adapter needed), 29LV320 (TL866 TSOP48 adapter PCB needed) and S29GL032M (connect in byte mode)   
 
 ![image](https://dl.dropboxusercontent.com/s/nc5lblrrf49sgxb/v17_slots.png?dl=1)   
