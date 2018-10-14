@@ -2047,6 +2047,15 @@ void getFramType() {
     println_Msg(F("Type: MN63F81MPN"));
     display_Update();
   }
+  // 29L1100KC-15B0 compat MX29L1101
+  else if ((sdBuffer[7] == 0x8e ) || (sdBuffer[7] == 0x84 ))
+  {
+    flashramType = 1;
+    MN63F81MPN = false;
+    println_Msg(F("Type: 29L1100KC-15B0"));
+    println_Msg(F("(compat. MX29L1101)"));
+    display_Update();
+  }
   // Type unknown
   else {
     for (byte c = 0; c < 8; c++) {
