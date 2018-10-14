@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             05-10-2018
-   Version:          1.9
+   Date:             14-10-2018
+   Version:          2.0
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -32,10 +32,12 @@
    insidegadgets - GBCartRead
    RobinTheHood - GameboyAdvanceRomDumper
    YamaArashi - GBA flashrom bank switch command
-   infinest - help with GB Memory cart
+   infinest - GB Memory Binary Maker
+   moldov - SF Memory Binary Maker
+   vogelfreiheit - N64 flashram fix
 
 **********************************************************************************/
-char ver[5] = "1.9";
+char ver[5] = "2.0";
 
 /******************************************
    Define Starting Point
