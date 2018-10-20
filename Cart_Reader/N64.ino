@@ -1471,8 +1471,8 @@ void writeEeprom() {
 void readEeprom() {
   if ((saveType == 5) || (saveType == 6)) {
 
-    // Wait 0.6ms
-    pulseClock_N64(300);
+    // Wait 50ms or eeprom might lock up
+    pulseClock_N64(26000);
 
     // Get name, add extension and convert to char array for sd lib
     strcpy(fileName, romName);
@@ -1513,8 +1513,8 @@ void readEeprom() {
         for (byte j = 0; j < 64; j += 8) {
           sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
         }
-        // Wait ~0.6ms between pages or eeprom will lock up
-        pulseClock_N64(300);
+        // Wait 50ms between pages or eeprom might lock up
+        pulseClock_N64(26000);
       }
       interrupts();
 
@@ -1540,8 +1540,8 @@ unsigned long verifyEeprom() {
   if ((saveType == 5) || (saveType == 6)) {
     writeErrors = 0;
 
-    // Wait 0.6ms
-    pulseClock_N64(300);
+    // Wait 50ms or eeprom might lock up
+    pulseClock_N64(26000);
 
     print_Msg(F("Verifying against "));
     println_Msg(filePath);
@@ -1566,14 +1566,12 @@ unsigned long verifyEeprom() {
           readData();
           sendStop();
 
-
-
           // OR 8 bits into one byte for a total of 8 bytes
           for (byte j = 0; j < 64; j += 8) {
             sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
           }
-          // Wait ~0.6ms between pages or eeprom will lock up
-          pulseClock_N64(300);
+          // Wait 50ms between pages or eeprom might lock up
+          pulseClock_N64(26000);
         }
         interrupts();
 
