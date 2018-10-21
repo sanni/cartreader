@@ -26,27 +26,29 @@
 ![image](https://dl.dropboxusercontent.com/s/ptswm9c7nhi6pa3/v17_back.png?dl=1)   
 
 #### Thanks to:  
-   MichlK - ROM-Reader for Super Nintendo   
-   Jeff Saltzman - 4-Way Button   
-   Wayne and Layne - Video-Game-Shield menu   
-   skaman - SNES enhancements and SA1 sram support   
-   nocash - Nintendo Power and GBA Eeprom commands and lots of other info   
-   crazynation - N64 bus timing   
-   hkz/themanbehindthecurtain - N64 flashram commands   
-   jago85 - help with N64 stuff   
+   MichlK - ROM-Reader for Super Nintendo    
+   Jeff Saltzman - 4-Way Button    
+   Wayne and Layne - Video-Game-Shield menu    
+   skaman - SNES enhancements, SA1 sram support and GB flash fix    
+   nocash - Nintendo Power and GBA Eeprom commands and lots of other info    
+   crazynation - N64 bus timing     
+   hkz/themanbehindthecurtain - N64 flashram commands    
+   jago85 - help with N64 stuff    
    Andrew Brown/Peter Den Hartog - N64 controller protocol   
    bryc - mempak   
    Shaun Taylor - N64 controller CRC functions   
    Angus Gratton - CRC32   
-   Tamanegi_taro - SA1 fix and PC engine/TG16 support  
-   Snes9x - SuperFX sram fix   
-   zzattack - multigame pcb fix  
+   Tamanegi_taro - SA1 fix and PCE support   
+   Snes9x - SuperFX sram fix    
+   zzattack - multigame pcb fix   
    Pickle - SDD1 fix   
    insidegadgets - GBCartRead   
    RobinTheHood - GameboyAdvanceRomDumper   
-   YamaArashi - GBA flashrom bank switch command    
-   infinest - help with GB Memory cart    
-   
+   YamaArashi - GBA flashrom bank switch command   
+   infinest - GB Memory Binary Maker   
+   moldov - SF Memory Binary Maker   
+   vogelfreiheit - N64 flashram fix    
+     
    ![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
 
 #### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0      
