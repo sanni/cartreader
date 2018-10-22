@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             20-10-2018
-   Version:          2.1
+   Date:             22-10-2018
+   Version:          2.2
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -37,7 +37,7 @@
    vogelfreiheit - N64 flashram fix
 
 **********************************************************************************/
-char ver[5] = "2.1";
+char ver[5] = "2.2";
 
 /******************************************
    Define Starting Point
@@ -138,6 +138,7 @@ SdFile myFile;
 #define mode_MD 11
 #define mode_EPROM 12
 #define mode_PCE 13
+#define mode_SV 14
 
 /******************************************
    Variables
@@ -1358,6 +1359,9 @@ void loop() {
   else if (mode == mode_PCE) {
     pceMenu();
   }
+  else if (mode == mode_SV) {
+    svMenu();
+  }
   else {
     display_Clear();
     println_Msg(F("Menu Error"));
@@ -1375,4 +1379,4 @@ void loop() {
 
 //******************************************
 // End of File
-//******************************************
+//******************************************

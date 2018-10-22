@@ -30,9 +30,10 @@ byte cx4Map = 0;
 // SNES/Nintendo Power SF Memory start menu
 static const char snsMenuItem1[] PROGMEM = "Super Nintendo";
 static const char snsMenuItem2[] PROGMEM = "NPower SF Memory";
-static const char snsMenuItem3[] PROGMEM = "HiROM repro";
-static const char snsMenuItem4[] PROGMEM = "LoROM repro";
-static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4};
+static const char snsMenuItem3[] PROGMEM = "Satellaview";
+static const char snsMenuItem4[] PROGMEM = "HiROM repro";
+static const char snsMenuItem5[] PROGMEM = "LoROM repro";
+static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5};
 
 // SNES menu items
 static const char SnesMenuItem1[] PROGMEM = "Read Rom";
@@ -56,8 +57,8 @@ void snsMenu() {
   // create menu with title and 4 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSNS, 4);
-  snsCart = question_box("Select Cart Type", menuOptions, 4, 0);
+  convertPgm(menuOptionsSNS, 5);
+  snsCart = question_box("Select Cart Type", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsCart)
@@ -79,6 +80,13 @@ void snsMenu() {
     case 2:
       display_Clear();
       display_Update();
+      setup_SV();
+      mode = mode_SV;
+      break;
+
+    case 3:
+      display_Clear();
+      display_Update();
       hiROM = 1;
       setup_Flash8();
       id_Flash8();
@@ -86,7 +94,7 @@ void snsMenu() {
       mode = mode_FLASH8;
       break;
 
-    case 3:
+    case 4:
       display_Clear();
       display_Update();
       hiROM = 0;
@@ -1924,4 +1932,4 @@ boolean eraseSRAM (byte b) {
 
 //******************************************
 // End of File
-//******************************************
+//******************************************
