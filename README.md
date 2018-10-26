@@ -17,7 +17,8 @@
 - Reflashes GBA Repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram)    
 - Reads PC engine/TG16 (custom-made adapter needed)   
-- Programs Flashroms like 29F016, 29F032 and 29F033(DIP36 to TSOP40 pcb needed), 29F1610, 29L3211, 29LV160 (PSOP44 to DIL44 adapter needed), 29LV320 (TL866 TSOP48 adapter PCB needed) and S29GL032M (connect in byte mode)   
+- Programs Flashroms like 29F016, 29F032 and 29F033, 29F1601, 29F1610, 29L3211, 29LV160, 29LV320 and S29GL032M   
+- Programs 27C322 Eproms   
 
 ![image](https://dl.dropboxusercontent.com/s/nc5lblrrf49sgxb/v17_slots.png?dl=1)   
 
