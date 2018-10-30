@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             22-10-2018
-   Version:          2.2
+   Date:             30-10-2018
+   Version:          2.3
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -37,7 +37,7 @@
    vogelfreiheit - N64 flashram fix
 
 **********************************************************************************/
-char ver[5] = "2.2";
+char ver[5] = "2.3";
 
 /******************************************
    Define Starting Point
@@ -71,6 +71,8 @@ char ver[5] = "2.2";
 ******************************************/
 // If set to 1 then the crc32 checksum will be calculated after reading a N64 rom
 boolean n64crc = 1;
+// Enable 16bit flash adapter menu
+//#define enable_flash16
 
 /******************************************
    Libraries
@@ -1379,4 +1381,4 @@ void loop() {
 
 //******************************************
 // End of File
-//******************************************
+//******************************************

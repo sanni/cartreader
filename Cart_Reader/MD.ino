@@ -31,7 +31,7 @@ void mdMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsMD, 5);
-  mainMenu = question_box("MEGA DRIVE Reader", menuOptions, 3, 0);
+  mainMenu = question_box("MEGA DRIVE Reader", menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -90,18 +90,47 @@ void mdMenu() {
       }
       break;
 
-      /*case 3:
-        // Change working dir to root
-        sd.chdir("/");
-        writeFlash_MD();
-        // Reset
-        wait();
-        asm volatile ("  jmp 0");
-        break;
+    case 3:
+      // Change working dir to root
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser("Select file");
+      display_Clear();
+      // Setting CS(PH3) LOW
+      PORTH &= ~(1 << 3);
 
-        case 4:
-        asm volatile ("  jmp 0");
-        break;*/
+      // ID flash
+      resetFlash_MD();
+      idFlash_MD();
+      resetFlash_MD();
+      print_Msg("Flash ID: ");
+      println_Msg(flashid);
+      if (strcmp(flashid, "C2F1") == 0) {
+        println_Msg("MX29F1610 detected");
+        flashSize = 2097152;
+      }
+      else {
+        print_Error(F("Error: Unknown flashrom"), true);
+      }
+      display_Update();
+
+      eraseFlash_MD();
+      resetFlash_MD();
+      blankcheck_MD();
+      write29F1610_MD();
+      resetFlash_MD();
+      delay(1000);
+      resetFlash_MD();
+      delay(1000);
+      verifyFlash_MD();
+      // Set CS(PH3) HIGH
+      PORTH |= (1 << 3);
+      break;
+
+    case 4:
+      // Reset
+      asm volatile ("  jmp 0");
+      break;
   }
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
@@ -202,6 +231,55 @@ word readWord_MD(unsigned long myAddress) {
   // Setting OE(PH6) HIGH
   PORTH |= (1 << 6);
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  return tempWord;
+}
+
+void writeFlash_MD(unsigned long myAddress, word myData) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+  PORTC = myData;
+  PORTA = (myData >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t");
+
+  // Switch WE(PH5) to LOW
+  PORTH &= ~(1 << 5);
+
+  // Leave WE low for at least 60ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch WE(PH5)to HIGH
+  PORTH |= (1 << 5);
+
+  // Leave WE high for at least 50ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+word readFlash_MD(unsigned long myAddress) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  __asm__("nop\n\t");
+
+  // Setting OE(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+
+  __asm__("nop\n\t");
+
+  // Setting OE(PH6) HIGH
+  PORTH |= (1 << 6);
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempWord;
 }
@@ -492,6 +570,209 @@ unsigned long verifySram_MD() {
   }
   // Return 0 if verified ok, or number of errors
   return writeErrors;
+}
+
+//******************************************
+// Flashrom Functions
+//******************************************
+void resetFlash_MD() {
+  // Set data pins to output
+  dataOut_MD();
+
+  // Reset command sequence
+  writeFlash_MD(0x5555, 0xaa);
+  writeFlash_MD(0x2aaa, 0x55);
+  writeFlash_MD(0x5555, 0xf0);
+
+  // Set data pins to input again
+  dataIn_MD();
+}
+
+void write29F1610_MD() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  print_Msg(F("Flashing file "));
+  print_Msg(filePath);
+  println_Msg(F("..."));
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize) {
+      print_Error(F("File size exceeds flash size."), true);
+    }
+    // Set data pins to output
+    dataOut_MD();
+
+    // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
+    int d = 0;
+    for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
+      myFile.read(sdBuffer, 128);
+
+      // Blink led
+      if (currByte % 4096 == 0) {
+        PORTB ^= (1 << 4);
+      }
+
+      // Write command sequence
+      writeFlash_MD(0x5555, 0xaa);
+      writeFlash_MD(0x2aaa, 0x55);
+      writeFlash_MD(0x5555, 0xa0);
+
+      // Write one full page at a time
+      for (byte c = 0; c < 64; c++) {
+        word currWord = ( ( sdBuffer[d] & 0xFF ) << 8 ) | ( sdBuffer[d + 1] & 0xFF );
+        writeFlash_MD(currByte + c, currWord);
+        d += 2;
+      }
+      d = 0;
+
+      // Check if write is complete
+      delayMicroseconds(100);
+      busyCheck_MD();
+    }
+
+    // Set data pins to input again
+    dataIn_MD();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file"));
+    display_Update();
+  }
+}
+
+void idFlash_MD() {
+  // Set data pins to output
+  dataOut_MD();
+
+  // ID command sequence
+  writeFlash_MD(0x5555, 0xaa);
+  writeFlash_MD(0x2aaa, 0x55);
+  writeFlash_MD(0x5555, 0x90);
+
+  // Set data pins to input again
+  dataIn_MD();
+
+  // Read the two id bytes into a string
+  sprintf(flashid, "%02X%02X", readFlash_MD(0) & 0xFF, readFlash_MD(1) & 0xFF);
+}
+
+byte readStatusReg_MD() {
+  // Set data pins to output
+  dataOut_MD();
+
+  // Status reg command sequence
+  writeFlash_MD(0x5555, 0xaa);
+  writeFlash_MD(0x2aaa, 0x55);
+  writeFlash_MD(0x5555, 0x70);
+
+  // Set data pins to input again
+  dataIn_MD();
+
+  // Read the status register
+  byte statusReg = readFlash_MD(0);
+  return statusReg;
+}
+
+void eraseFlash_MD() {
+  // Set data pins to output
+  dataOut_MD();
+
+  // Erase command sequence
+  writeFlash_MD(0x5555, 0xaa);
+  writeFlash_MD(0x2aaa, 0x55);
+  writeFlash_MD(0x5555, 0x80);
+  writeFlash_MD(0x5555, 0xaa);
+  writeFlash_MD(0x2aaa, 0x55);
+  writeFlash_MD(0x5555, 0x10);
+
+  // Set data pins to input again
+  dataIn_MD();
+
+  busyCheck_MD();
+}
+
+void blankcheck_MD() {
+  blank = 1;
+  for (unsigned long currByte = 0; currByte < flashSize / 2; currByte++) {
+    if (readFlash_MD(currByte) != 0xFFFF) {
+      currByte = flashSize / 2;
+      blank = 0;
+    }
+    if (currByte % 4096 == 0) {
+      PORTB ^= (1 << 4);
+    }
+  }
+  if (!blank) {
+    print_Error(F("Error: Not blank"), false);
+  }
+}
+
+void verifyFlash_MD() {
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize) {
+      print_Error(F("File size exceeds flash size."), true);
+    }
+
+    blank = 0;
+    word d = 0;
+    for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
+      if (currByte % 4096 == 0) {
+        PORTB ^= (1 << 4);
+      }
+      //fill sdBuffer
+      myFile.read(sdBuffer, 512);
+      for (int c = 0; c < 256; c++) {
+        word currWord = ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
+
+        if (readFlash_MD(currByte + c) != currWord) {
+          blank++;
+        }
+        d += 2;
+      }
+      d = 0;
+    }
+    if (blank == 0) {
+      println_Msg(F("Flashrom verified OK"));
+      display_Update();
+    }
+    else {
+      print_Msg(F("Error: "));
+      print_Msg(blank);
+      println_Msg(F(" bytes "));
+      print_Error(F("did not verify."), false);
+    }
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file"));
+    display_Update();
+  }
+}
+
+// Delay between write operations based on status register
+void busyCheck_MD() {
+  // Set data pins to input
+  dataIn_MD();
+
+  // Read the status register
+  word statusReg = readFlash_MD(0);
+
+  while ((statusReg | 0xFF7F) != 0xFFFF) {
+    statusReg = readFlash_MD(0);
+  }
+
+  // Set data pins to output
+  dataOut_MD();
 }
 
 //******************************************

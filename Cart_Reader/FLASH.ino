@@ -19,9 +19,9 @@ boolean hiROM = 1;
    Menu
  *****************************************/
 // Flash start menu
-static const char flashMenuItem1[] PROGMEM = "8bit adapter";
-static const char flashMenuItem2[] PROGMEM = "16bit adapter(old)";
-static const char flashMenuItem3[] PROGMEM = "Eprom adapter(beta)";
+static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
+static const char flashMenuItem2[] PROGMEM = "Eprom adapter(beta)";
+static const char flashMenuItem3[] PROGMEM = "16bit Flash adapter";
 static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3};
 
 // 8bit Flash menu items
@@ -57,8 +57,13 @@ void flashMenu() {
   // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
+#ifdef enable_flash16
   convertPgm(menuOptionsFlash, 3);
   flashSlot = question_box("Select adapter PCB", menuOptions, 3, 0);
+#else
+  convertPgm(menuOptionsFlash, 2);
+  flashSlot = question_box("Select adapter PCB", menuOptions, 2, 0);
+#endif
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -76,17 +81,17 @@ void flashMenu() {
     case 1:
       display_Clear();
       display_Update();
-      setup_Flash16();
-      id_Flash16();
-      wait();
-      mode =  mode_FLASH16;
+      setup_Eprom();
+      mode =  mode_EPROM;
       break;
 
     case 2:
       display_Clear();
       display_Update();
-      setup_Eprom();
-      mode =  mode_EPROM;
+      setup_Flash16();
+      id_Flash16();
+      wait();
+      mode =  mode_FLASH16;
       break;
   }
 }

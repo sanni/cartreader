@@ -43,7 +43,7 @@ void svMenu() {
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSVFlash, 3);
   mainMenu = question_box("Satellaview 8M Memory", menuOptions, 3, 0);
-  
+
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
   {
@@ -205,7 +205,7 @@ void writeROM_SV (void) {
   sprintf(checksumStr, "%02X%02X", readBank_SNES(0, 65503), readBank_SNES(0, 65502));
 
   //if CRC is not 8B86, BS-X cart is not inserted. Display error and reset
-  if(strcmp("8B86", checksumStr) != 0)
+  if (strcmp("8B86", checksumStr) != 0)
   {
     display_Clear();
     print_Error(F("Error: Must use BS-X cart"), true);
@@ -241,7 +241,7 @@ void writeROM_SV (void) {
     println_Msg(F("Erasing pack..."));
     display_Update();
     eraseAll_SV();
-    
+
     //Blank check
     //Set pins to input
     dataIn();
@@ -251,7 +251,7 @@ void writeROM_SV (void) {
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        if(0xFF != readBank_SNES(currBank, currByte))
+        if (0xFF != readBank_SNES(currBank, currByte))
         {
           println_Msg(F(""));
           println_Msg(F("Erase failed"));
@@ -272,7 +272,7 @@ void writeROM_SV (void) {
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        
+
         writeBank_SNES(0xC0, 0x0000, 0x10); //Program Byte
         writeBank_SNES(currBank, currByte, myFile.read());
         writeBank_SNES(0xC0, 0x0000, 0x70); //Status Mode
@@ -285,7 +285,7 @@ void writeROM_SV (void) {
     writeBank_SNES(0xC0, 0x0000, 0xFF); //Terminate write
     draw_progressbar(0x100000, 0x100000);
 
-  
+
     //Verify
     dataIn();    //Set pins to input
     controlIn_SNES();
@@ -295,7 +295,7 @@ void writeROM_SV (void) {
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        if(myFile.read() != readBank_SNES(currBank, currByte))
+        if (myFile.read() != readBank_SNES(currBank, currByte))
         {
           println_Msg(F(""));
           println_Msg(F("Verify failed"));
@@ -306,7 +306,7 @@ void writeROM_SV (void) {
         }
       }
     }
-    
+
     // Close the file:
     myFile.close();
     draw_progressbar(0x100000, 0x100000);
@@ -327,7 +327,7 @@ void eraseCheck_SV(void) {
 
   // Read register
   ret = readBank_SNES(0xC0, 0x0004);
-    
+
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
   while ((ret & 0x80) == 0x00) { //Wait until X.bit7 = 1
@@ -354,7 +354,7 @@ void supplyCheck_SV(void) {
 
   // Read register
   ret = readBank_SNES(0xC0, 0x0004);
-    
+
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
   while ((ret & 0x08) == 0x08) { //Wait until X.bit3 = 0
@@ -381,7 +381,7 @@ void writeCheck_SV(void) {
 
   // Read register
   ret = readBank_SNES(0xC0, 0x0000);
-    
+
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
   while ((ret & 0x80) == 0x00) {
@@ -410,12 +410,12 @@ void detectCheck_SV(void) {
 
   // Read register
   ret = readBank_SNES(0xC0, 0x0002);
-    
+
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
   while ((ret & 0x80) == 0x00) {
     i++;
-    if( i > 10000)
+    if ( i > 10000)
     {
       //timeout
       break;
@@ -454,4 +454,3 @@ void eraseAll_SV(void)
 //******************************************
 // End of File
 //******************************************
-
