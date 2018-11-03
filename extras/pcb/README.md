@@ -6,7 +6,7 @@
    
 ![image](https://dl.dropboxusercontent.com/s/msi0bsg2f83z2yt/adapter_pcbs.gif?dl=1)    
 
-#### With the sd_adapter PCB you can transform the microSD module from the parts list into a full size SD module by desoldering all the components and soldering them to this PCB.  
+#### With the sd_adapter PCB you can transform the microSD module from the parts list into a full size SD module by desoldering all the components and soldering them to this PCB. This is optional since you can also just mount the microSD module as is.  
 
 ![image](https://dl.dropboxusercontent.com/s/jcse9iaxm3bbuu6/sd_adapter.pngg?dl=1)    
 
