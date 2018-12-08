@@ -3,7 +3,8 @@
 ![image](https://dl.dropboxusercontent.com/s/sfbfcb031cjlo1z/red.jpg?dl=1)   
 
 The Arduino Cart Reader is aimed at people that either already have experience with Arduino or always wanted to buy an Arduino and are searching for an interesting project to accomplish. All the Arduino source code along with the PCB files and detailed build guides can be found in this github. Happy making. 🔧🔨😊
-    
+
+#### For any questions or issues please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.9001  
 
 #### Features: 😮 
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
@@ -55,5 +56,3 @@ The Arduino Cart Reader is aimed at people that either already have experience w
    vogelfreiheit - N64 flashram fix    
      
    ![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
-
-#### Please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.0 💬      
