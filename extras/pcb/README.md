@@ -1,4 +1,4 @@
-#### cartreader.zip is the main PCB, if you order it from [JLCPCB](https://jlcpcb.com/quote) you can [combine shipping with your parts order from lcsc.com](https://github.com/sanni/cartreader/wiki/Needed-Parts) but if you already ordered the parts or get them from somewhere else it might be cheaper to order the PCB from [Elecrow](https://www.elecrow.com/pcb-manufacturing.html). [Default settings](https://www.dropbox.com/s/06dnus50ikmsmya/pcb16.jpg?dl=0) are fine, just select the color you prefer and off you go.    
+#### cartreader.zip is the main PCB, if you order it from [JLCPCB](https://jlcpcb.com/quote) you can [combine shipping with your parts order from lcsc.com](https://github.com/sanni/cartreader/wiki/Needed-Parts). [Default settings](https://www.dropbox.com/s/06dnus50ikmsmya/pcb16.jpg?dl=0) are fine, just select the color you prefer and off you go.    
 
 ![image](https://dl.dropboxusercontent.com/s/ta7pjoxn9kirtan/v17pcb.png?dl=1)   
 
