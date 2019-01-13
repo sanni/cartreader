@@ -74,13 +74,14 @@ static const char N64CRCMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
 
 // Rom menu
-static const char N64RomItem1[] PROGMEM = "4MB";
-static const char N64RomItem2[] PROGMEM = "8MB";
-static const char N64RomItem3[] PROGMEM = "12MB";
-static const char N64RomItem4[] PROGMEM = "16MB";
-static const char N64RomItem5[] PROGMEM = "32MB";
-static const char N64RomItem6[] PROGMEM = "64MB";
-static const char* const romOptionsN64[] PROGMEM = {N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6};
+static const char N64RomItem1[] PROGMEM = "256KB";
+static const char N64RomItem2[] PROGMEM = "4MB";
+static const char N64RomItem3[] PROGMEM = "8MB";
+static const char N64RomItem4[] PROGMEM = "12MB";
+static const char N64RomItem5[] PROGMEM = "16MB";
+static const char N64RomItem6[] PROGMEM = "32MB";
+static const char N64RomItem7[] PROGMEM = "64MB";
+static const char* const romOptionsN64[] PROGMEM = {N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6, N64RomItem7};
 
 // Save menu
 static const char N64SaveItem1[] PROGMEM = "None";
@@ -1088,38 +1089,43 @@ void printCartInfo_N64() {
     // Set cartsize manually
     unsigned char N64RomMenu;
     // Copy menuOptions out of progmem
-    convertPgm(romOptionsN64, 6);
-    N64RomMenu = question_box("Select ROM size", menuOptions, 6, 0);
+    convertPgm(romOptionsN64, 7);
+    N64RomMenu = question_box("Select ROM size", menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu
     switch (N64RomMenu)
     {
       case 0:
+        // 1MB, will get reduced to 256KB later
+        cartSize = 1;
+        break;
+
+      case 1:
         // 4MB
         cartSize = 4;
         break;
 
-      case 1:
+      case 2:
         // 8MB
         cartSize = 8;
         break;
 
-      case 2:
+      case 3:
         // 12MB
         cartSize = 12;
         break;
 
-      case 3:
+      case 4:
         // 16MB
         cartSize = 16;
         break;
 
-      case 4:
+      case 5:
         // 32MB
         cartSize = 32;
         break;
 
-      case 5:
+      case 6:
         // 64MB
         cartSize = 64;
         break;
@@ -2094,7 +2100,14 @@ readn64rom:
     print_Error(F("SD Error"), true);
   }
 
-  for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
+  unsigned long romSize;
+  // 256KB romSize
+  if (cartSize == 1)
+    romSize = cartSize * 262144;
+  else
+    romSize = cartSize * 1048576;
+
+  for (unsigned long currByte = romBase; currByte < romBase + romSize; currByte += 512) {
     // Blink led
     if (currByte % 16384 == 0)
       PORTB ^= (1 << 4);
@@ -2231,13 +2244,21 @@ void flashRepro_N64() {
       println_Msg(F("Fujitsu MSP55LV512"));
     else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "3901") == 0))
       println_Msg(F("Intel 512M29EW"));
+    else if (strcmp(flashid, "0808") == 0)
+      println_Msg(F("SST 29LE010"));
 
     // Print info
     print_Msg(F("ID: "));
     print_Msg(flashid);
     print_Msg(F(" Size: "));
-    print_Msg(cartSize);
-    println_Msg(F("MB"));
+    if (strcmp(flashid, "0808") == 0) {
+      print_Msg(128);
+      println_Msg(F("KB"));
+    }
+    else {
+      print_Msg(cartSize);
+      println_Msg(F("MB"));
+    }
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Repro Cartridge."));
@@ -2267,10 +2288,16 @@ void flashRepro_N64() {
       display_Update();
 
       // Compare file size to flashrom size
-      if ((fileSize / 1048576) > cartSize) {
-        print_Error(F("File too big"), true);
+      if (cartSize == 1) {
+        if ((fileSize / 1048576 * 4) > cartSize) {
+          print_Error(F("File too big"), true);
+        }
       }
-
+      else {
+        if ((fileSize / 1048576) > cartSize) {
+          print_Error(F("File too big"), true);
+        }
+      }
       // Erase needed sectors
       if (strcmp(flashid, "227E") == 0) {
         // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
@@ -2289,16 +2316,19 @@ void flashRepro_N64() {
         // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
         eraseFlashrom_N64(0x8000);
       }
+      else if (strcmp(flashid, "0808") == 0) {
+        // SST 29LE010, chip erase not needed as eeprom automaticly erases during the write cycle
+      }
 
       // Check if erase was successful
-      if (blankcheckFlashrom_N64()) {
+      if (blankcheckFlashrom_N64() || (strcmp(flashid, "0808") == 0)) {
+        if ((strcmp(flashid, "0808") != 0))
+          println_Msg(F("OK"));
+
         // Write flashrom
-        println_Msg(F("OK"));
         print_Msg(F("Writing "));
         println_Msg(filePath);
         display_Update();
-
-
         if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
           // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
           writeFlashBuffer_N64(0x20000, 128);
@@ -2320,7 +2350,9 @@ void flashRepro_N64() {
           writeIntel4400_N64();
           resetIntel4400_N64();
         }
-
+        else if (strcmp(flashid, "0808") == 0) {
+          writeSST29LE010_N64();
+        }
         // Close the file:
         myFile.close();
 
@@ -2378,6 +2410,18 @@ void resetIntel4400_N64() {
 void resetMSP55LV100_N64(unsigned long flashBase) {
   // Send reset Command
   setAddress_N64(flashBase);
+  writeWord_N64(0xF0F0);
+  delay(100);
+}
+
+//Reset ST29LE010
+void resetST29LE010_N64(unsigned long flashBase) {
+  // Send reset Command
+  setAddress_N64(romBase + 0xAAAA);
+  writeWord_N64(0xAAAA);
+  setAddress_N64(romBase + 0x5554);
+  writeWord_N64(0x5555);
+  setAddress_N64(romBase + 0xAAAA);
   writeWord_N64(0xF0F0);
   delay(100);
 }
@@ -2524,8 +2568,8 @@ void idFlashrom_N64() {
     resetFlashrom_N64(romBase);
   }
 
-  //Test for Fujitsu MSP55LV100S (64MB)
   else  {
+    //Test for Fujitsu MSP55LV100S (64MB)
     // Send flashrom ID command
     setAddress_N64(romBase + (0x555 << 1));
     writeWord_N64(0xAAAA);
@@ -2544,6 +2588,29 @@ void idFlashrom_N64() {
       resetMSP55LV100_N64(romBase);
       cartSize = 64;
       strncpy(flashid , cartID, 5);
+    }
+
+    else {
+      //Test for SST 29LE010
+      //Send flashrom ID command
+      setAddress_N64(romBase + 0xAAAA);
+      writeWord_N64(0xAAAA);
+      setAddress_N64(romBase + 0x5554);
+      writeWord_N64(0x5555);
+      setAddress_N64(romBase + 0xAAAA);
+      writeWord_N64(0x9090);
+
+      setAddress_N64(romBase);
+      // Read 1 byte vendor ID
+      readWord_N64();
+      // Read 2 bytes flashrom ID
+      sprintf(cartID, "%04X", readWord_N64());
+
+      if (strcmp(cartID, "0808") == 0) {
+        resetST29LE010_N64(romBase);
+        cartSize = 1;
+        strncpy(flashid , cartID, 5);
+      }
     }
   }
 }
@@ -2750,6 +2817,28 @@ void eraseFlashrom_N64(unsigned long sectorSize) {
   }
 }
 
+// SST29LE010 erase command
+void eraseSST29LE010_N64() {
+  print_Msg(F("Erasing..."));
+  display_Update();
+
+  //Sending erase command according to datasheet
+  setAddress_N64(romBase + 0xAAAA);
+  writeWord_N64(0xAAAA);
+  setAddress_N64(romBase + 0x5554);
+  writeWord_N64(0x5555);
+  setAddress_N64(romBase + 0xAAAA);
+  writeWord_N64(0x8080);
+  setAddress_N64(romBase + 0xAAAA);
+  writeWord_N64(0xAAAA);
+  setAddress_N64(romBase + 0x5554);
+  writeWord_N64(0x5555);
+  setAddress_N64(romBase + 0xAAAA);
+  writeWord_N64(0x1010);
+
+  delay(20);
+}
+
 boolean blankcheckFlashrom_N64() {
   for (unsigned long currByte = romBase; currByte < romBase + fileSize; currByte += 512) {
     // Blink led
@@ -2761,11 +2850,46 @@ boolean blankcheckFlashrom_N64() {
 
     for (int c = 0; c < 512; c += 2) {
       if (readWord_N64() != 0xFFFF) {
-        return 0;
+        if ((strcmp(flashid, "0808") == 0) && (currByte > romBase + 0x3F) && (currByte < romBase + 0x1080)) {
+          // Gameshark maps this area to the bootcode of the plugged in cartridge
+        }
+        else {
+          return 0;
+        }
       }
     }
   }
   return 1;
+}
+
+// Write SST29LE010
+void writeSST29LE010_N64() {
+  // Each 29LE010 has 1024 pages, each 128 bytes in size
+  for (unsigned long currPage = 0; currPage < 1024; currPage++) {
+    // Fill SD buffer with twice the amount since we flash 2 chips
+    myFile.read(sdBuffer, 256);
+    // Blink led
+    PORTB ^= (1 << 4);
+
+    //Send page write command to both flashroms
+    setAddress_N64(romBase + 0xAAAA);
+    writeWord_N64(0xAAAA);
+    setAddress_N64(romBase + 0x5554);
+    writeWord_N64(0x5555);
+    setAddress_N64(romBase + 0xAAAA);
+    writeWord_N64(0xA0A0);
+
+    // Write 1 page each, one flashrom gets the low byte, the other the high byte.
+    for (unsigned long currByte = 0; currByte < 256; currByte += 2) {
+      // Set address
+      setAddress_N64(romBase + (256 * currPage) + currByte);
+      // Join two bytes into one word
+      word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+      // Send byte data
+      writeWord_N64(currWord);
+    }
+    delay(30);
+  }
 }
 
 // Write Intel flashrom
@@ -3001,7 +3125,12 @@ unsigned long verifyFlashrom_N64() {
           setAddress_N64(romBase + currSector + currSdBuffer + currByte);
           // Compare both
           if (readWord_N64() != currWord) {
-            writeErrors++;
+            if ( (strcmp(flashid, "0808") == 0) && (currSector + currSdBuffer + currByte > 0x3F) && (currSector + currSdBuffer + currByte < 0x1080)) {
+              // Gameshark maps this area to the bootcode of the plugged in cartridge
+            }
+            else {
+              writeErrors++;
+            }
             // Abord if too many errors
             if (writeErrors > 20) {
               print_Msg(F("More than "));

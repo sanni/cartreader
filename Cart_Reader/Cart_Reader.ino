@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             30-10-2018
-   Version:          2.3
+   Date:             13-01-2019
+   Version:          2.4
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -37,7 +37,7 @@
    vogelfreiheit - N64 flashram fix
 
 **********************************************************************************/
-char ver[5] = "2.3";
+char ver[5] = "2.4";
 
 /******************************************
    Define Starting Point
