@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             13-01-2019
-   Version:          2.4
+   Date:             16-01-2018
+   Version:          2.5
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.7
+   Compiled with Arduino 1.8.8
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -37,7 +37,7 @@
    vogelfreiheit - N64 flashram fix
 
 **********************************************************************************/
-char ver[5] = "2.4";
+char ver[5] = "2.5";
 
 /******************************************
    Define Starting Point
