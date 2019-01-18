@@ -46,8 +46,8 @@ boolean MN63F81MPN = false;
   Menu
 *****************************************/
 // N64 start menu
-static const char n64MenuItem1[] PROGMEM = "Cart Slot";
-static const char n64MenuItem2[] PROGMEM = "Controller";
+static const char n64MenuItem1[] PROGMEM = "Game Cartridge";
+static const char n64MenuItem2[] PROGMEM = "Controller Pak";
 static const char n64MenuItem3[] PROGMEM = "Flash Repro";
 static const char n64MenuItem4[] PROGMEM = "Flash Gameshark";
 static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4};
@@ -3042,7 +3042,7 @@ void flashGameshark_N64() {
 
   // Check for SST 29LE010
   if (strcmp(flashid, "0808") == 0) {
-
+    backupGameshark_N64();
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Gameshark cartridge"));
@@ -3151,6 +3151,54 @@ void resetGameshark_N64() {
   setAddress_N64(romBase + 0xAAAA);
   writeWord_N64(0xF0F0);
   delay(100);
+}
+
+// Read rom and save to the SD card
+void backupGameshark_N64() {
+  // create a new folder
+  EEPROM_readAnything(10, foldern);
+  sprintf(fileName, "GS%d", foldern);
+  strcat(fileName, ".z64");
+  sd.mkdir("N64/ROM/Gameshark", true);
+  sd.chdir("N64/ROM/Gameshark");
+
+  display_Clear();
+  print_Msg(F("Saving "));
+  print_Msg(fileName);
+  println_Msg(F("..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  for (unsigned long currByte = romBase + 0xC00000; currByte < (romBase + 0xC00000 + 262144); currByte += 512) {
+    // Blink led
+    if (currByte % 16384 == 0)
+      PORTB ^= (1 << 4);
+
+    // Set the address for the next 512 bytes
+    setAddress_N64(currByte);
+
+    for (int c = 0; c < 512; c += 2) {
+      // split word
+      word myWord = readWord_N64();
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
+
+      // write to buffer
+      sdBuffer[c] = hiByte;
+      sdBuffer[c + 1] = loByte;
+    }
+    myFile.write(sdBuffer, 512);
+  }
+  // Close the file:
+  myFile.close();
 }
 
 // Send chip erase to the two SST29LE010 inside the Gameshark
