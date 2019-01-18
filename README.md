@@ -15,6 +15,7 @@ The Arduino Cart Reader is aimed at people that either already have experience w
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram)   
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
 - Reflashes some Chinese N64 repros with Spansion S29GL256N, Fujitsu MSP55LV512, Fujitsu MSP55LV100S or Intel 4400L0ZDQ0 flashroms    
+- Reflashes N64 Gamesharks with SST 29LE010 eeproms     
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
 - Programs custom-made Game Boy (Color) flashcarts with 29F016/29F032/29F033 flashrom   
