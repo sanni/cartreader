@@ -1,4 +1,4 @@
-# Cartridge Reader Shield for Arduino Mega 2560
+# DIY Cartridge Reader for Arduino Mega 2560
 
 ![image](https://dl.dropboxusercontent.com/s/sfbfcb031cjlo1z/red.jpg?dl=1)   
 
