@@ -1,4 +1,4 @@
-# Combined STL file with all parts (print out of ABS/PLA in any color you like)  
+# Combined STL file with all parts      
 
 ![image](https://dl.dropboxusercontent.com/s/4remnau0kni660i/combined_no_tabs.png?dl=1)   
 
@@ -8,7 +8,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
 
-#### n64sleeve.stl helps with aligning N64 cartridges if the clone slot is not long/wide enough (print with one perimeter for the vertical shell and enable thin wall detection in the slicer)     
+#### n64sleeve.stl helps with aligning N64 cartridges if the clone slot is not long/wide enough   
 ![image](https://dl.dropboxusercontent.com/s/s6jxobazww3sm81/n64sleeve.png?dl=1)   
 
 #### backplate_tabs.stl is the backplate that holds the Arduino    
@@ -23,4 +23,12 @@
 
 ![image](https://dl.dropboxusercontent.com/s/p7v2l37f1c130b4/sidewall.png?dl=1)  
 
-#### The rest of the STL files are alternative designs in case you use the battery add-on.     
+#### The rest of the STL files are alternative designs in case you use the battery add-on.    
+
+#### Print settings for Slic3r Prusa Edition     
+Select the "0.20mm NORMAL" setting that comes with Slic3r and change the following parameters:    
+ensure_vertical_shell_thickness = 0     
+fill_density = 5%    
+first_layer_height = 0.3    
+perimeters = 1    
+thin_walls = 1    
