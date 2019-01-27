@@ -17,7 +17,7 @@
 
 #### sd_spacer.stl holds the RGB led and fits between the SD card and the Cart Reader pcb (print with clear PLA/ABS)    
 
-![image](https://dl.dropboxusercontent.com/s/fn6g1pm88puq8h6/sd_spacer.png?dl=1)  
+![image](https://dl.dropboxusercontent.com/s/2nujdtcrzvrh7hg/sd_spacer.png?dl=1)  
 
 #### sidewall_tabs.stl secures the Arduino Mega to the backplate with five M2x8 screws    
 
