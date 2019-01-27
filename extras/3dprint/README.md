@@ -22,3 +22,5 @@
 #### sidewall_tabs.stl secures the Arduino Mega to the backplate with five M2x8 screws    
 
 ![image](https://dl.dropboxusercontent.com/s/p7v2l37f1c130b4/sidewall.png?dl=1)  
+
+#### The rest of the STL files are alternative designs in case you use the battery add-on.     
