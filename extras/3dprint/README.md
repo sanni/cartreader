@@ -1,4 +1,4 @@
-# Combined STL file with all parts   
+# Combined STL file with all parts (print out of ABS/PLA in any color you like)  
 
 ![image](https://dl.dropboxusercontent.com/s/4remnau0kni660i/combined_no_tabs.png?dl=1)   
 
