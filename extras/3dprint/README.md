@@ -15,7 +15,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/01v4d28lzbp1ue4/backplate16.png?dl=1)    
 
-#### sd_spacer.stl holds the RGB led and fits between the SD card and the Cart Reader pcb    
+#### sd_spacer.stl holds the RGB led and fits between the SD card and the Cart Reader pcb (print with clear PLA/ABS)    
 
 ![image](https://dl.dropboxusercontent.com/s/fn6g1pm88puq8h6/sd_spacer.png?dl=1)  
 
