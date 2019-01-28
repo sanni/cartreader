@@ -220,12 +220,8 @@ void setup_GB() {
       case 2: print_Msg(F("128KB")); break;
       case 3: print_Msg(F("256KB")); break;
       case 4: print_Msg(F("512KB")); break;
-      case 5:
-        print_Msg(F("1MB"));
-        break;
-      case 6:
-        print_Msg(F("2MB"));
-        break;
+      case 5: print_Msg(F("1MB")); break;
+      case 6: print_Msg(F("2MB")); break;
       case 7: print_Msg(F("4MB")); break;
       case 82: print_Msg(F("1.1MB")); break;
       case 83: print_Msg(F("1.2MB")); break;
