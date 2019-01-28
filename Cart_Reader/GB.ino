@@ -221,20 +221,10 @@ void setup_GB() {
       case 3: print_Msg(F("256KB")); break;
       case 4: print_Msg(F("512KB")); break;
       case 5:
-        if (romType == 1 || romType == 2 || romType == 3) {
-          print_Msg(F("1MB"));
-        }
-        else {
-          print_Msg(F("1MB"));
-        }
+        print_Msg(F("1MB"));
         break;
       case 6:
-        if (romType == 1 || romType == 2 || romType == 3) {
-          print_Msg(F("2MB"));
-        }
-        else {
-          print_Msg(F("2MB"));
-        }
+        print_Msg(F("2MB"));
         break;
       case 7: print_Msg(F("4MB")); break;
       case 82: print_Msg(F("1.1MB")); break;
@@ -354,17 +344,19 @@ void getCartInfo_GB() {
   if (romType == 6) {
     sramBanks = 1;
   }
-  if (sramSize == 2) {
-    sramBanks = 1;
-  }
-  if (sramSize == 3) {
-    sramBanks = 4;
-  }
-  if (sramSize == 4) {
-    sramBanks = 16;
-  }
-  if (sramSize == 5) {
-    sramBanks = 8;
+  switch (sramSize) {
+    case 2:
+      sramBanks = 1;
+      break;
+    case 3:
+      sramBanks = 4;
+      break;
+    case 4:
+      sramBanks = 16;
+      break;
+    case 5:
+      sramBanks = 8;
+      break;
   }
 
   // RAM end address
