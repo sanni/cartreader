@@ -894,8 +894,8 @@ void busyCheck29F032(byte c) {
   // Set data pins to input
   dataIn8();
 
-  // Setting OE(PH1) CE(PH6)LOW
-  PORTH &= ~((1 << 1) | (1 << 6));
+  // Setting OE(PH1) OE_SNS(PH3) CE(PH6)LOW
+  PORTH &= ~((1 << 1) | (1 << 3) | (1 << 6));
   // Setting WE(PH4) WE_SNES(PH5) HIGH
   PORTH |=  (1 << 4) | (1 << 5);
 
@@ -905,8 +905,8 @@ void busyCheck29F032(byte c) {
   // Set data pins to output
   dataOut();
 
-  // Setting OE(PH1) HIGH
-  PORTH |= (1 << 1);
+  // Setting OE(PH1) OE_SNS(PH3) HIGH
+  PORTH |= (1 << 1) | (1 << 3);
 }
 /******************************************
   29F1610 flashrom functions
