@@ -49,7 +49,7 @@ const char N64ContMenuItem3[] PROGMEM = "Write ControllerPak";
 const char N64ContMenuItem4[] PROGMEM = "Reset";  
 const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, N64ContMenuItem4};  
 ```
-In an effort to keep the codebase as portable as possible instead of using the functions supplied by the OLED library directly to print out text helper functions like `println_Msg` are being used. So if you want to change to another display library you don't need to change all the code but only the helper functions. 
+In an effort to keep the codebase as portable as possible instead of using the functions supplied by the OLED library directly to print out text, auxiliary functions like `println_Msg` are being used. So if you want to change to another display library you don't need to change all the code but only the helper functions. 
 ```
 void print_Msg(long unsigned int message) {
   if (enable_OLED)
@@ -67,4 +67,4 @@ For development purposes you can route all the text output to the Arduino's Seri
 #define enable_Serial 1   
 ```
 
-To compile and upload the code please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/How-to-flash-the-Arduino-Code-to-your-Cart-Reader).   
+To compile and upload the code please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/How-to-flash-the-Arduino).   
