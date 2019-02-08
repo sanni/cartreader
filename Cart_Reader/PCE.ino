@@ -57,53 +57,43 @@ static const char pceCartMenuItem1[] PROGMEM = "Read Rom";
 static const char pceCartMenuItem2[] PROGMEM = "Reset";
 static const char* const menuOptionspceCart[] PROGMEM = {pceCartMenuItem1, pceCartMenuItem2};
 
-void draw_progressbar(uint32_t processedsize, uint32_t totalsize)
+void draw_progressbar(uint32_t processed, uint32_t total)
 {
-  uint8_t currentstatus, i;
-  static uint8_t previousstatus;
+  uint8_t current, i;
+  static uint8_t previous;
+  uint8_t steps = 20;
 
   //Find progressbar length and draw if processed size is not 0
-  if (processedsize != 0)
+  if (processed == 0)
   {
-
-    // Progress bar
-    if (processedsize >= totalsize)
-    {
-      //if processed size is equal to total process size, finish drawing progress bar
-      currentstatus = 20;
-    }
-    else
-    {
-      //if processed size did not reach total process size, find how many "*" should be drawn
-      currentstatus = processedsize / (totalsize / 20);
-    }
-
-    //Draw "*" if needed
-    if (currentstatus > previousstatus)
-    {
-      for (i = previousstatus; i < currentstatus; i++)
-      {
-        if (i == 19)
-        {
-          //If end of progress bar, finish progress bar by drawing "]"
-          print_Msg(F("]"));
-        }
-        else
-        {
-          print_Msg(F("*"));
-        }
-        //Update display
-        display_Update();
-      }
-      //update previous "*" status
-      previousstatus = currentstatus;
-    }
-  }
-  else
-  {
-    //If processed size is 0, initialize and draw "["
-    previousstatus = 0;
+    previous = 0;
     print_Msg(F("["));
+    display_Update();
+    return;
+  }
+
+  // Progress bar
+  current = (processed >= total) ? steps : processed / (total / steps) ;
+  
+  //Draw "*" if needed
+  if (current > previous)
+  {
+    for (i = previous; i < current; i++)
+    {
+      // steps are 20, so 20 - 1 = 19. 
+      if (i == (19)) 
+      {
+        //If end of progress bar, finish progress bar by drawing "]"
+        print_Msg(F("]"));
+      }
+      else
+      {
+        print_Msg(F("*"));
+      }
+    }
+    //update previous "*" status
+    previous = current;
+    //Update display
     display_Update();
   }
 }
