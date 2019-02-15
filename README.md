@@ -1,10 +1,8 @@
 # DIY Cartridge Reader for Arduino Mega 2560
-
-![image](https://dl.dropboxusercontent.com/s/sfbfcb031cjlo1z/red.jpg?dl=1)   
-
 The Arduino Cart Reader is aimed at people that either already have experience with Arduino or always wanted to buy an Arduino and are searching for an interesting project to accomplish. All the Arduino source code along with the PCB files and detailed build guides can be found in this github. Happy making. 🔧🔨😊
 
-#### For any questions or issues please join the discussion at: http://forum.arduino.cc/index.php?topic=158974.9001  
+For any questions or issues please join the discussion on the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).  
+Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 📚
 
 #### Features: 😮 
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
@@ -25,12 +23,6 @@ The Arduino Cart Reader is aimed at people that either already have experience w
 - Reads PC engine/TG16 (custom-made adapter needed)   
 - Programs Flashroms like 29F016, 29F032 and 29F033, 29F1601, 29F1610, 29L3211, 29LV160, 29LV320 and S29GL032M   
 - Programs 27C322 Eproms   
-
-![image](https://dl.dropboxusercontent.com/s/nc5lblrrf49sgxb/v17_slots.png?dl=1)   
-
-#### Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 📚
-
-![image](https://dl.dropboxusercontent.com/s/ptswm9c7nhi6pa3/v17_back.png?dl=1)   
 
 #### Thanks to: 😍  
    MichlK - ROM-Reader for Super Nintendo    
@@ -55,5 +47,3 @@ The Arduino Cart Reader is aimed at people that either already have experience w
    infinest - GB Memory Binary Maker   
    moldov - SF Memory Binary Maker   
    vogelfreiheit - N64 flashram fix    
-     
-   ![image](https://dl.dropboxusercontent.com/s/t0igdyghvagbrwq/v17_switches.png?dl=1)   
