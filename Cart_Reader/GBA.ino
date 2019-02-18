@@ -547,21 +547,21 @@ void setup_GBA() {
    Low level functions
 *****************************************/
 void setROM_GBA() {
-  // Set address/data pins to OUTPUT
+  // CS_SRAM(PH0)
+  DDRH |= (1 << 0); PORTH |= (1 << 0);
+  // CS_ROM(PH3)
+  DDRH |= (1 << 3); PORTH |= (1 << 3);
+  // WR(PH5)
+  DDRH |= (1 << 5); PORTH |= (1 << 5);
+  // RD(PH6)
+  DDRH |= (1 << 6); PORTH |= (1 << 6);
   // AD0-AD7
   DDRF = 0xFF;
   // AD8-AD15
   DDRK = 0xFF;
   // AD16-AD23
   DDRC = 0xFF;
-
-  // Set Control Pins to Output CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
-  // CLK is N/C and IRQ is conected to GND inside the cartridge
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
-  // Output a high signal on CS_SRAM(PH0) CS_ROM(PH3) WR(PH5) RD(PH6)
-  // At power-on all the control lines are high/disabled
-  PORTH |= (1 << 0)  | (1 << 3) | (1 << 5) | (1 << 6);
-
+  // Wait
   delay(500);
 }
 
