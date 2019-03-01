@@ -858,19 +858,21 @@ void writeFlash_GB(byte MBC) {
       dataOut();
 
       uint16_t currAddr = 0;
+      uint16_t endAddr = 0x3FFF;
 
-      for (int currBank = 1; currBank < romBanks; currBank++) {
+      for (int currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         PORTB ^= (1 << 4);
 
         // Set ROM bank
         writeByte_GB(0x2100, currBank);
 
-        if (currBank > 1) {
+        if (currBank > 0) {
           currAddr = 0x4000;
+          endAddr = 0x7FFF;
         }
 
-        while (currAddr <= 0x7FFF) {
+        while (currAddr <= endAddr) {
           myFile.read(sdBuffer, 512);
 
           for (int currByte = 0; currByte < 512; currByte++) {
