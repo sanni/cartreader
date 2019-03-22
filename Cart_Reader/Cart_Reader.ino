@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             01-03-2019
-   Version:          2.9
+   Date:             22-03-2019
+   Version:          3.0
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.8
+   Compiled with Arduino 1.8.9
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -37,7 +37,7 @@
    vogelfreiheit - N64 flashram fix
 
 **********************************************************************************/
-char ver[5] = "2.9";
+char ver[5] = "3.0";
 
 /******************************************
    Define Starting Point
@@ -89,12 +89,11 @@ boolean n64crc = 1;
 // Graphic I2C LCD
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#define OLED_RESET 4
-Adafruit_SSD1306 display(OLED_RESET);
-// Check if Adafruit_SSD1306.h was setup for 128x64
-#if (SSD1306_LCDHEIGHT != 64)
-#error("Incorrect height defined in Adafruit_SSD1306.h");
-#endif
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+#define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 // Adafruit Clock Generator
 #include <si5351.h>
