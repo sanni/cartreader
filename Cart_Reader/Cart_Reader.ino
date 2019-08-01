@@ -25,7 +25,7 @@
    bryc - mempak
    Shaun Taylor - N64 controller CRC functions
    Angus Gratton - CRC32
-   Tamanegi_taro - SA1 fix and PCE support
+   Tamanegi_taro - SA1 fix, PCE and Satellaview support
    Snes9x - SuperFX sram fix
    zzattack - multigame pcb fix
    Pickle - SDD1 fix
