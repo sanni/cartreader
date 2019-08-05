@@ -4,6 +4,8 @@ The Arduino Cart Reader is aimed at people that either already have experience w
 For any questions or issues please join the discussion on the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).  
 Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 
 
+![image](https://dl.dropboxusercontent.com/s/pznqfawptihfskx/v17_case0.jpg?dl=1) 
+
 #### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
