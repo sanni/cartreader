@@ -25,7 +25,7 @@
 
 #### case_xxx.stl are a replacement for the more simple backplate in case you prefer a full enclosure   
 
-![image](https://dl.dropboxusercontent.com/s/gwr5q1q2gt2un7e/v17_case.png?dl=1)  
+![image](https://dl.dropboxusercontent.com/s/lzgrrkm5yfflll9/v17_case2.png?dl=1) 
 
 #### The rest of the STL files are alternative designs in case you use the battery add-on.    
 
