@@ -355,7 +355,7 @@ void aboutScreen() {
   display.drawBitmap(0, 0, sig, 128, 64, 1);
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2018 Version "));
+  print_Msg(F("2019 Version "));
   println_Msg(ver);
   println_Msg(F(""));
   println_Msg(F(""));
