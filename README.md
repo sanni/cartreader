@@ -25,3 +25,6 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Reads PC engine/TG16 (custom-made adapter needed)   
 - Programs Flashroms like 29F016, 29F032 and 29F033, 29F1601, 29F1610, 29L3211, 29LV160, 29LV320 and S29GL032M   
 - Programs 27C322 Eproms   
+
+#### Video:    
+[![](https://dl.dropboxusercontent.com/s/h2e08skmn9pbi2y/savegameyouprev.jpg?dl=1)](https://www.youtube.com/watch?v=r0J9Dplejjg)   
