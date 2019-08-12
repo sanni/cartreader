@@ -1,11 +1,13 @@
 //******************************************
 // PC Engine & TurboGrafx dump code by tamanegi_taro
-// Revision 1.0.1 April 18th 2018
+// April 18th 2018 Revision 1.0.1 Initial version
+// August 12th 2019 Revision 1.0.2 Added Tennokoe Bank support
 //
 // Special thanks
 // sanni - Arduino cart reader
 // skaman - ROM size detection
 // NO-INTRO - CRC list for game name detection
+// Chris Covell - Tennokoe bank support
 //
 //******************************************
 
@@ -54,8 +56,17 @@ static const char* const menuOptionspce[] PROGMEM = {pceMenuItem1, pceMenuItem2}
 
 // PCE card menu items
 static const char pceCartMenuItem1[] PROGMEM = "Read Rom";
-static const char pceCartMenuItem2[] PROGMEM = "Reset";
-static const char* const menuOptionspceCart[] PROGMEM = {pceCartMenuItem1, pceCartMenuItem2};
+static const char pceCartMenuItem2[] PROGMEM = "Read Tennokoe Bank";
+static const char pceCartMenuItem3[] PROGMEM = "Write Tennokoe Bank";
+static const char pceCartMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionspceCart[] PROGMEM = {pceCartMenuItem1, pceCartMenuItem2, pceCartMenuItem3, pceCartMenuItem4};
+
+// Turbochip menu items
+static const char pceTCMenuItem1[] PROGMEM = "Read Rom";
+static const char pceTCMenuItem2[] PROGMEM = "Reset";
+static const char* const menuOptionspceTC[] PROGMEM = {pceTCMenuItem1, pceTCMenuItem2};
+
+
 
 void draw_progressbar(uint32_t processed, uint32_t total)
 {
@@ -578,6 +589,174 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
 }
 
 
+void read_tennokoe_bank_PCE(void)
+{
+  uint32_t processed_size = 0;
+  uint32_t verify_loop;
+  uint8_t verify_flag = 1;
+  
+  //clear the screen
+  display_Clear();
+  
+  sprintf(fileName, "RAM size: 8KB"); //using filename global variable as string. Initialzed in below anyways.
+  println_Msg(fileName);
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, "BANKRAM");
+  strcat(fileName, ".sav");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "PCE/ROM/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  println_Msg(F("Saving RAM..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't create file on SD"), true);
+  }
+
+  pin_read_write_PCE();  
+
+  //Initialize progress bar by setting processed size as 0
+  draw_progressbar(0, 8 * 1024UL);
+
+  //Unlock Tennokoe Bank RAM
+  write_byte_PCE(0x0D0000, 0x68); //Unlock RAM sequence 1 Bank 68
+  write_byte_PCE(0x0F0000, 0x0); //Unlock RAM sequence 2 Bank 78
+  write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 3 Bank 78
+  write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 4 Bank 78
+  write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 5 Bank 78
+
+  //Read Tennokoe bank RAM
+  read_bank_PCE(0x080000, 0x080000 + 8 * 1024UL, &processed_size, 8 * 1024UL);
+
+  myFile.seekSet(0);    // Go back to file beginning
+  processed_size = 0;
+  
+  //Verify Tennokoe bank RAM
+  for(verify_loop = 0; verify_loop < 8 * 1024UL; verify_loop++)
+  {
+    if(myFile.read() != read_byte_PCE(verify_loop + 0x080000))
+    {
+      verify_flag = 0;
+      draw_progressbar(8 * 1024UL, 8 * 1024UL);
+      break;
+    }
+    draw_progressbar(verify_loop, 8 * 1024UL);
+  }
+
+  //If verify flag is 0, verify failed
+  if(verify_flag == 1)
+  {
+    println_Msg(F("Verify OK..."));
+  }
+  else
+  {
+    println_Msg(F("Verify failed..."));    
+  }
+
+  //Lock Tennokoe Bank RAM 
+  write_byte_PCE(0x0D0000, 0x68); //Lock RAM sequence 1 Bank 68
+  write_byte_PCE(0x0F0001, 0x0); //Lock RAM sequence 2 Bank 78
+  write_byte_PCE(0x0C0001, 0x60); //Lock RAM sequence 3 Bank 60
+
+  pin_init_PCE();
+
+  //Close the file:
+  myFile.close();
+
+}
+
+void write_tennokoe_bank_PCE(void)
+{
+  uint32_t readwrite_loop, verify_loop;
+  uint32_t verify_flag = 1;
+  
+  //Display file Browser and wait user to select a file. Size must be 8KB.
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser("Select RAM file");
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  display_Clear();
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+
+    fileSize = myFile.fileSize();
+    if (fileSize != 8 * 1024UL) {
+      println_Msg(F("File must be 1MB"));
+      display_Update();
+      myFile.close();
+      wait();
+      return;
+    }
+
+    pin_read_write_PCE();  
+  
+    //Unlock Tennokoe Bank RAM
+    write_byte_PCE(0x0D0000, 0x68); //Unlock RAM sequence 1 Bank 68
+    write_byte_PCE(0x0F0000, 0x0); //Unlock RAM sequence 2 Bank 78
+    write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 3 Bank 78
+    write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 4 Bank 78
+    write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 5 Bank 78
+
+    //Write file to Tennokoe BANK RAM
+    for(readwrite_loop = 0; readwrite_loop < 8 * 1024UL; readwrite_loop++)
+    {
+      write_byte_PCE(0x080000 + readwrite_loop, myFile.read());
+      draw_progressbar(readwrite_loop, 8 * 1024UL);
+    }
+
+    myFile.seekSet(0);    // Go back to file beginning
+
+    for(verify_loop = 0; verify_loop < 8 * 1024UL; verify_loop++)
+    {
+      if(myFile.read() != read_byte_PCE(verify_loop + 0x080000))
+      {
+        draw_progressbar(2 * 1024UL, 8 * 1024UL);
+        verify_flag = 0;
+        break;
+      }
+      draw_progressbar(verify_loop, 8 * 1024UL);
+    }
+
+    //If verify flag is 0, verify failed
+    if(verify_flag == 1)
+    {
+      println_Msg(F("Verify OK..."));
+    }
+    else
+    {
+      println_Msg(F("Verify failed..."));    
+    }
+  
+    //Lock Tennokoe Bank RAM 
+    write_byte_PCE(0x0D0000, 0x68); //Lock RAM sequence 1 Bank 68
+    write_byte_PCE(0x0F0001, 0x0); //Lock RAM sequence 2 Bank 78
+    write_byte_PCE(0x0C0001, 0x60); //Lock RAM sequence 3 Bank 60
+  
+    pin_init_PCE();
+
+    // Close the file:
+    myFile.close();
+    println_Msg(F("Finished"));
+    display_Update();
+    wait();
+  }
+  else {
+    print_Error(F("File doesn't exist"), false);
+  }
+}
+
 void read_rom_PCE(void)
 {
   uint32_t rom_size;
@@ -586,11 +765,9 @@ void read_rom_PCE(void)
   //clear the screen
   display_Clear();
   rom_size = detect_rom_size_PCE();
+  
   sprintf(fileName, "Detected size: %dKB", rom_size); //using filename global variable as string. Initialzed in below anyways.
   println_Msg(fileName);
-
-  //debug
-  //return;
 
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, "PCEROM");
@@ -614,7 +791,7 @@ void read_rom_PCE(void)
     print_Error(F("Can't create file on SD"), true);
   }
 
-  pin_read_write_PCE();
+  pin_read_write_PCE();  
 
   //Initialize progress bar by setting processed size as 0
   draw_progressbar(0, rom_size * 1024UL);
@@ -661,32 +838,57 @@ void read_rom_PCE(void)
 void pceMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionspceCart, 2);
 
   if (pce_internal_mode == HUCARD)
   {
-    mainMenu = question_box("PCE HuCARD menu", menuOptions, 2, 0);
+    // Copy menuOptions out of progmem
+    convertPgm(menuOptionspceCart, 4);
+    mainMenu = question_box("PCE HuCARD menu", menuOptions, 4, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (mainMenu)
+    {
+      case 0:
+        display_Clear();
+        // Change working dir to root
+        sd.chdir("/");
+        read_rom_PCE();
+        break;
+      case 1:
+        display_Clear();
+        read_tennokoe_bank_PCE();
+        break;
+      case 2:
+        display_Clear();
+        write_tennokoe_bank_PCE();
+        break;
+      case 3:
+        asm volatile ("  jmp 0");
+        break;
+    }
   }
   else
   {
+    // Copy menuOptions out of progmem
+    convertPgm(menuOptionspceTC, 2);
     mainMenu = question_box("TG TurboChip menu", menuOptions, 2, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (mainMenu)
+    {
+      case 0:
+        display_Clear();
+        // Change working dir to root
+        sd.chdir("/");
+        read_rom_PCE();
+        break;
+  
+      case 1:
+        asm volatile ("  jmp 0");
+        break;
+    }
   }
 
-  // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
-    case 0:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      read_rom_PCE();
-      break;
-
-    case 1:
-      asm volatile ("  jmp 0");
-      break;
-  }
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
