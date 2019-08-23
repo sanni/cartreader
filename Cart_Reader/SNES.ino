@@ -620,7 +620,10 @@ boolean checkcart_SNES() {
   sprintf(checksumStr, "%02X%02X", readBank_SNES(0, 65503), readBank_SNES(0, 65502));
 
   romType = readBank_SNES(0, 0xFFD5);
-  if (romType == 0x35) {
+  if ((romType >> 5) != 1) {  // Detect invalid romType byte due to too long ROM name (22 chars)
+    romType = LO; // LoROM   // Krusty's Super Fun House (U) 1.0 & Contra 3 (U)
+  }
+  else if (romType == 0x35) {
     romType = EX; // Check if ExHiROM
   }
   else if (romType == 0x3A) {
