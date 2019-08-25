@@ -7,16 +7,91 @@
  *****************************************/
 unsigned long sramEnd;
 
+byte eepbit[8];
+int eepSize;
+
+byte eeptemp;
+word addrhi;
+word addrlo;
+
+//***********************************************
+// EEPROM SAVE TYPES
+// 1 = Acclaim Type 1    [24C02]
+// 2 = Acclaim Type 2    [24C02/24C16/24C65]
+// 3 = Capcom/SEGA       [24C01]
+// 4 = EA                [24C01]
+// 5 = Codemasters       [24C08/24C16/24C65]
+//***********************************************
+byte eepType;
+
+//*********************************************************
+// SERIAL EEPROM LOOKUP TABLE
+// Format = {chksum, eepType | eepSize}
+// chksum is located in ROM at 0x18E (0xC7)
+// eepType and eepSize are combined to conserve memory
+//*********************************************************
+static const word PROGMEM eepid [] = {
+// ACCLAIM TYPE 1
+0x5B9F, 0x101,  // NBA Jam (J)
+0x694F, 0x101,  // NBA Jam (UE) (Rev 0)
+0xBFA9, 0x101,  // NBA Jam (UE) (Rev 1)
+// ACCLAIM TYPE 2
+0x16B2, 0x102,  // Blockbuster World Videogame Championship II (U)   [NO HEADER SAVE DATA]
+0xCC3F, 0x102,  // NBA Jam Tournament Edition (W) (Rev 0)            [NO HEADER SAVE DATA]
+0x8AE1, 0x102,  // NBA Jam Tournament Edition (W) (Rev 1)            [NO HEADER SAVE DATA]
+0xDB97, 0x102,  // NBA Jam Tournament Edition 32X (W)
+0x7651, 0x102,  // NFL Quarterback Club (W)
+0xDFE4, 0x102,  // NFL Quarterback Club 32X (W)
+0x3DE6, 0x802,  // NFL Quarterback Club '96 (UE)
+0xCB78, 0x2002, // Frank Thomas Big Hurt Baseball (UE)
+0x6DD9, 0x2002, // College Slam (U)
+// CAPCOM
+0xAD23, 0x83,   // Mega Man:  The Wily Wars (E)
+0xEA80, 0x83,   // Rockman Megaworld (J)
+// SEGA
+0x760F, 0x83,   // Evander "Real Deal" Holyfield Boxing (JU)
+0x95E7, 0x83,   // Greatest Heavyweights of the Ring (E)
+0x0000, 0x83,   // Greatest Heavyweights of the Ring (J)             [BLANK CHECKSUM 0000]
+0x7270, 0x83,   // Greatest Heavyweights of the Ring (U)
+0xBACC, 0x83,   // Honoo no Toukyuuji Dodge Danpei (J)
+0xB939, 0x83,   // MLBPA Sports Talk Baseball (U)                    [BAD HEADER SAVE DATA]
+0x487C, 0x83,   // Ninja Burai Densetsu (J)
+0x740D, 0x83,   // Wonder Boy in Monster World (B)
+0x0278, 0x83,   // Wonder Boy in Monster World (J)
+0x9D79, 0x83,   // Wonder Boy in Monster World (UE)
+// EA
+0x8512, 0x84,   // Bill Walsh College Football (UE)                  [BAD HEADER SAVE DATA]
+0xA107, 0x84,   // John Madden Football '93 (UE)                     [NO HEADER SAVE DATA]
+0x5807, 0x84,   // John Madden Football '93 Championship Edition (U) [NO HEADER SAVE DATA]
+0x2799, 0x84,   // NHLPA Hockey '93 (UE) (Rev 0)                     [NO HEADER SAVE DATA]
+0xFA57, 0x84,   // NHLPA Hockey '93 (UE) (Rev 1)                     [NO HEADER SAVE DATA]
+0x8B9F, 0x84,   // Rings of Power (UE)                               [NO HEADER SAVE DATA]
+// CODEMASTERS
+0x7E65, 0x405,  // Brian Lara Cricket (E)                            [NO HEADER SAVE DATA]
+0x9A5C, 0x2005, // Brian Lara Cricket 96 (E) (Rev 1.0)               [NO HEADER SAVE DATA]
+0xC4EE, 0x2005, // Brian Lara Cricket 96 (E) (Rev 1.1)               [NO HEADER SAVE DATA]
+0x7E50, 0x805,  // Micro Machines 2 (E) (J-Cart)                     [NO HEADER SAVE DATA]
+0x165E, 0x805,  // Micro Machines '96 (E) (J-Cart) (Rev 1.0/1.1)     [NO HEADER SAVE DATA]
+0x168B, 0x405,  // Micro Machines Military (E) (J-Cart)              [NO HEADER SAVE DATA]
+0x12C1, 0x2005, // Shane Warne Cricket (E)                           [NO HEADER SAVE DATA]
+};
+
+byte eepcount = (sizeof(eepid) / sizeof(eepid[0])) / 2;
+byte index;
+word eepdata;
+
 /******************************************
    Menu
  *****************************************/
 // MD menu items
 static const char MDMenuItem1[] PROGMEM = "Read Rom";
-static const char MDMenuItem2[] PROGMEM = "Read Save";
-static const char MDMenuItem3[] PROGMEM = "Write Save";
-static const char MDMenuItem4[] PROGMEM = "Write Flashcart";
-static const char MDMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsMD[] PROGMEM = {MDMenuItem1, MDMenuItem2, MDMenuItem3, MDMenuItem4, MDMenuItem5};
+static const char MDMenuItem2[] PROGMEM = "Read Sram";
+static const char MDMenuItem3[] PROGMEM = "Write Sram";
+static const char MDMenuItem4[] PROGMEM = "Read EEPROM";
+static const char MDMenuItem5[] PROGMEM = "Write EEPROM";
+static const char MDMenuItem6[] PROGMEM = "Write Flashcart";
+static const char MDMenuItem7[] PROGMEM = "Reset";
+static const char* const menuOptionsMD[] PROGMEM = {MDMenuItem1, MDMenuItem2, MDMenuItem3, MDMenuItem4, MDMenuItem5, MDMenuItem6, MDMenuItem7};
 
 // Sega start menu
 void segaMenu() {
@@ -27,11 +102,11 @@ void segaMenu() {
 }
 
 void mdMenu() {
-  // create menu with title and 5 options to choose from
+  // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMD, 5);
-  mainMenu = question_box("MEGA DRIVE Reader", menuOptions, 5, 0);
+  convertPgm(menuOptionsMD, 7);
+  mainMenu = question_box("MEGA DRIVE Reader", menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -47,7 +122,7 @@ void mdMenu() {
     case 1:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         // Change working dir to root
         sd.chdir("/");
         println_Msg(F("Reading Sram..."));
@@ -64,7 +139,7 @@ void mdMenu() {
     case 2:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         // Change working dir to root
         sd.chdir("/");
         // Launch file browser
@@ -91,6 +166,28 @@ void mdMenu() {
       break;
 
     case 3:
+      display_Clear();
+      if (saveType == 4)
+        readEEP_MD();
+      else {
+        print_Error(F("Cart has no EEPROM"), false);
+      }
+      break;
+
+    case 4:
+      display_Clear();
+      if (saveType == 4) {
+        // Launch file browser
+        fileBrowser("Select eep file");
+        display_Clear();
+        writeEEP_MD();
+      }
+      else {
+        print_Error(F("Cart has no EEPROM"), false);
+      }
+      break;
+
+    case 5:
       // Change working dir to root
       filePath[0] = '\0';
       sd.chdir("/");
@@ -127,7 +224,7 @@ void mdMenu() {
       PORTH |= (1 << 3);
       break;
 
-    case 4:
+    case 6:
       // Reset
       asm volatile ("  jmp 0");
       break;
@@ -150,8 +247,8 @@ void setup_MD() {
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output RST(PH0) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6)
-  DDRH |=  (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6)
+  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output
   DDRJ |=  (1 << 0);
@@ -160,8 +257,8 @@ void setup_MD() {
   DDRC = 0x00;
   DDRA = 0x00;
 
-  // Setting RST(PH0) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6) HIGH
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  // Setting RST(PH0) CLK(PH1) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6) HIGH
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Setting TIME(PJ0) HIGH
   PORTJ |= (1 << 0);
@@ -304,35 +401,149 @@ void getCartInfo_MD() {
   dataIn_MD();
 
   cartSize = ((long(readWord_MD(0xD2)) << 16) | readWord_MD(0xD3)) + 1;
+  
+  // Cart Checksum
+  word chksum = readWord_MD(0xC7);
 
-  // Check if cart has sram
-  if ((readWord_MD(0xD8) == 0x5241) && (readWord_MD(0xD9) == 0xF820)) {
-    // Get sram start and end
-    sramBase = ((long(readWord_MD(0xDA)) << 16) | readWord_MD(0xDB));
-    sramEnd = ((long(readWord_MD(0xDC)) << 16) | readWord_MD(0xDD));
-
-    // Check alignment of sram
-    if (sramBase == 0x200001) {
-      // low byte
-      saveType = 1;
-      sramSize = (sramEnd - sramBase + 2) / 2;
-      // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
-      sramBase = sramBase >> 1;
+  // Super Street Fighter 2 Check
+  if (cartSize == 0x400000) {
+    switch(chksum) {
+      case 0xCE25: // Super Street Fighter 2 (J) 40Mbit
+      case 0xE41D: // Super Street Fighter 2 (E) 40Mbit
+      case 0xE017: // Super Street Fighter 2 (U) 40Mbit
+        cartSize = 0x500000;
+        break;
     }
-    else if (sramBase == 0x200000) {
-      // high byte
-      saveType = 2;
-      sramSize = (sramEnd - sramBase + 1) / 2;
-      // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
-      sramBase = sramBase / 2;
-    }
-    else
-      print_Error(F("Unknown Sram Base"), true);
   }
-  else {
-    // Either no save or eeprom save
+
+  // Serial EEPROM Check
+  for (int i = 0; i < eepcount; i++) {
+    index = i * 2;
+    word eepcheck = pgm_read_word(eepid + index);
+    if (eepcheck == chksum) {
+      eepdata = pgm_read_word(eepid + index + 1);
+      eepType = eepdata & 0x7;
+      eepSize = eepdata & 0xFFF8;
+      saveType = 4; // SERIAL EEPROM
+      break;
+    }
+  }
+
+  // Greatest Heavyweights of the Ring (J) has blank chksum 0x0000
+  // Other non-save carts might have the same blank chksum
+  // Check header for Serial EEPROM Data
+  if (chksum == 0x0000) {
+    if (readWord_MD(0xD9) != 0xE840) { // NOT SERIAL EEPROM
+      eepType = 0;
+      eepSize = 0;
+      saveType = 0;
+    }
+  }
+
+  if (saveType != 4) { // NOT SERIAL EEPROM
+    // Check if cart has sram
     saveType = 0;
     sramSize = 0;
+
+    // FIXED CODE FOR SRAM/FRAM/PARALLEL EEPROM
+    // 0x5241F820 SRAM (ODD BYTES/EVEN BYTES)
+    // 0x5241F840 PARALLEL EEPROM - READ AS SRAM
+    // 0x5241E020 SRAM (BOTH BYTES)
+    if (readWord_MD(0xD8) == 0x5241) {
+      word sramType = readWord_MD(0xD9);
+      if ((sramType == 0xF820) || (sramType == 0xF840)) { // SRAM/FRAM ODD/EVEN BYTES
+        // Get sram start and end
+        sramBase = ((long(readWord_MD(0xDA)) << 16) | readWord_MD(0xDB));
+        sramEnd = ((long(readWord_MD(0xDC)) << 16) | readWord_MD(0xDD));
+
+        // Check alignment of sram
+        if ((sramBase == 0x200001) || (sramBase == 0x300001)) { // ADDED 0x300001 FOR HARDBALL '95 (U)
+          // low byte
+          saveType = 1; // ODD
+          sramSize = (sramEnd - sramBase + 2) / 2;
+          // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
+          sramBase = sramBase >> 1;
+        }
+        else if (sramBase == 0x200000) {
+          // high byte
+          saveType = 2; // EVEN
+          sramSize = (sramEnd - sramBase + 1) / 2;
+          // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
+          sramBase = sramBase / 2;
+        }
+        else
+          print_Error(F("Unknown Sram Base"), true);
+      }
+      else if (sramType == 0xE020) { // SRAM BOTH BYTES
+        // Get sram start and end
+        sramBase = ((long(readWord_MD(0xDA)) << 16) | readWord_MD(0xDB));
+        sramEnd = ((long(readWord_MD(0xDC)) << 16) | readWord_MD(0xDD));
+
+        if (sramBase == 0x200001) {
+          saveType = 3; // BOTH
+          sramSize = sramEnd - sramBase + 2;
+          sramBase = sramBase >> 1;
+        }
+        else if (sramBase == 0x200000) {
+          saveType = 3; // BOTH
+          sramSize = sramEnd - sramBase + 1;
+          sramBase = sramBase >> 1;
+        }
+        else
+          print_Error(F("Unknown Sram Base"), true);
+      }
+    }
+    else {
+      // SRAM CARTS WITH BAD/MISSING HEADER SAVE DATA
+      switch(chksum) {
+        case 0xC2DB:  // Winter Challenge (UE)
+          saveType = 1; // ODD
+          sramBase = 0x200001;
+          sramEnd = 0x200FFF;
+          break;
+
+        case 0xD7B6: // Buck Rogers: Countdown to Doomsday (UE)
+        case 0xFE3E: // NBA Live '98 (U)
+        case 0xFDAD: // NFL '94 starring Joe Montana (U)
+        case 0x632E: // PGA Tour Golf (UE) (Rev 1)
+        case 0xD2BA: // PGA Tour Golf (UE) (Rev 2)
+        case 0x44FE: // Super Hydlide (J)
+          saveType = 1; // ODD
+          sramBase = 0x200001;
+          sramEnd = 0x203FFF;
+          break;
+
+        case 0xDB5E: // Might & Magic: Gates to Another World (UE) (Rev 1)
+        case 0x3428: // Starflight (UE) (Rev 0)
+        case 0x43EE: // Starflight (UE) (Rev 1)
+          saveType = 3; // BOTH
+          sramBase = 0x200001;
+          sramEnd = 0x207FFF;
+         break;
+
+        case 0xBF72: // College Football USA '96 (U)
+        case 0x72EF: // FIFA Soccer '97 (UE)
+        case 0xD723: // Hardball III (U)
+        case 0x06C1: // Madden NFL '98 (U)
+        case 0xDB17: // NHL '96 (UE)
+        case 0x5B3A: // NHL '98 (U)
+        case 0x2CF2: // NFL Sports Talk Football '93 starring Joe Montana (UE)
+        case 0xE9B1: // Summer Challenge (U)
+        case 0xEEE8: // Test Drive II: The Duel (U)
+          saveType = 1; // ODD
+          sramBase = 0x200001;
+          sramEnd = 0x20FFFF;
+          break;
+      }
+      if (saveType == 1) {
+        sramSize = (sramEnd - sramBase + 2) / 2;
+        sramBase = sramBase >> 1;
+      }
+      else if (saveType == 3) {
+        sramSize = sramEnd - sramBase + 2;
+        sramBase = sramBase >> 1;
+      }
+    }
   }
 
   // Get name
@@ -362,13 +573,20 @@ void getCartInfo_MD() {
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
   println_Msg(F(" MBit"));
-  print_Msg(F("Sram: "));
-  if (sramSize > 0) {
-    print_Msg(sramSize * 8 / 1024);
+  if (saveType == 4) {
+    print_Msg(F("Serial EEPROM: "));
+    print_Msg(eepSize * 8 / 1024);
     println_Msg(F(" KBit"));
   }
-  else
-    println_Msg(F("None"));
+  else {
+    print_Msg(F("Sram: "));
+    if (sramSize > 0) {
+      print_Msg(sramSize * 8 / 1024);
+      println_Msg(F(" KBit"));
+    }
+    else
+      println_Msg(F("None"));
+  }
   println_Msg(F(" "));
 
   // Wait for user input
@@ -377,6 +595,40 @@ void getCartInfo_MD() {
     display_Update();
     wait();
   }
+}
+
+void writeSSF2Map(unsigned long myAddress, word myData) {
+  dataOut_MD();
+
+  // Set TIME(PJ0) HIGH
+  PORTJ |= (1 << 0);
+
+  // 0x50987E * 2 = 0xA130FD  Bank 6 (0x300000-0x37FFFF)
+  // 0x50987F * 2 = 0xA130FF  Bank 7 (0x380000-0x3FFFFF)
+  PORTL = (myAddress >> 16) & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTF = myAddress & 0xFF;
+  PORTC = myData;
+  PORTA = (myData >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t""nop\n\t");
+
+  // Strobe TIME(PJ0) LOW to latch the data
+  PORTJ &= ~(1 << 0);
+  // Switch WR(PH5) to LOW
+  PORTH &= ~(1 << 5);
+
+  // Leave WR low for at least 200ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch WR(PH5) to HIGH
+  PORTH |= (1 << 5);
+  // Set TIME(PJ0) HIGH
+  PORTJ |= (1 << 0);
+
+  dataIn_MD();
 }
 
 // Read rom and save to the SD card
@@ -409,14 +661,28 @@ void readROM_MD() {
     print_Error(F("SD Error"), true);
   }
 
+  // Prepare SSF2 Banks
+  if (cartSize > 0x400000) {
+    writeSSF2Map(0x50987E, 6); // 0xA130FD
+    writeSSF2Map(0x50987F, 7); // 0xA130FF
+  }
+  byte offsetSSF2Bank = 0;
   word d = 0;
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
     // Blink led
     if (currBuffer % 16384 == 0)
       PORTB ^= (1 << 4);
 
+    if (currBuffer == 0x200000) {
+        writeSSF2Map(0x50987E, 8); // 0xA130FD
+        offsetSSF2Bank = 1;
+    }
+    else if (currBuffer == 0x240000) {
+        writeSSF2Map(0x50987F, 9); // 0xA130FF
+        offsetSSF2Bank = 1;
+    }
     for (int currWord = 0; currWord < 256; currWord++) {
-      word myWord = readWord_MD(currBuffer + currWord);
+      word myWord = readWord_MD(currBuffer + currWord - (offsetSSF2Bank * 0x80000));
       // Split word into two bytes
       // Left
       sdBuffer[d] = (( myWord >> 8 ) & 0xFF);
@@ -429,6 +695,12 @@ void readROM_MD() {
   }
   // Close the file:
   myFile.close();
+
+  // Reset SSF2 Banks
+  if (cartSize > 0x400000) {
+    writeSSF2Map(0x50987E, 6); // 0xA130FD
+    writeSSF2Map(0x50987F, 7); // 0xA130FF
+  }
 }
 
 /******************************************
@@ -512,8 +784,8 @@ void readSram_MD() {
     print_Error(F("SD Error"), true);
   }
 
-  for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 512) {
-    for (int currWord = 0; currWord < 512; currWord++) {
+  for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
+    for (int currWord = 0; currWord < 256; currWord++) {
       word myWord = readWord_MD(currBuffer + currWord);
 
       if (saveType == 2) {
@@ -524,8 +796,15 @@ void readSram_MD() {
         // Only use the lower byte
         sdBuffer[currWord] = (myWord & 0xFF);
       }
+      else { // saveType == 3 (BOTH)
+        sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
+        sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
+      }
     }
-    myFile.write(sdBuffer, 512);
+    if (saveType == 3)
+      myFile.write(sdBuffer, 512);
+    else
+      myFile.write(sdBuffer, 256);
   }
   // Close the file:
   myFile.close();
@@ -773,6 +1052,595 @@ void busyCheck_MD() {
 
   // Set data pins to output
   dataOut_MD();
+}
+
+//******************************************
+// EEPROM Functions
+//******************************************
+void EepromInit(byte eepmode) { // Acclaim Type 2
+  PORTF = 0x00; // ADDR A0-A7
+  PORTK = 0x00; // ADDR A8-A15
+  PORTL = 0x10; // ADDR A16-A23
+  PORTA = 0x00; // DATA D8-D15
+  PORTH |= (1 << 0); // /RES HIGH
+
+  PORTC = eepmode; // EEPROM Switch:  0 = Enable (Read EEPROM), 1 = Disable (Read ROM)
+  PORTH &= ~(1 << 3); // CE LOW
+  PORTH &= ~(1 << 4) & ~(1 << 5); // /UDSW + /LDSW LOW
+  PORTH |= (1 << 6); // OE HIGH
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  PORTH |= (1 << 4) | (1 << 5); // /UDSW + /LDSW HIGH
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+void writeWord_SDA(unsigned long myAddress, word myData) { /* D0 goes to /SDA when only /LWR is asserted */
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+  PORTC = myData;
+  PORTH &= ~(1 << 3); // CE LOW
+  PORTH &= ~(1 << 5); // /LDSW LOW
+  PORTH |= (1 << 4); // /UDSW HIGH
+  PORTH |= (1 << 6); // OE HIGH
+  if (eepSize > 0x100)
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  else
+    delayMicroseconds(100);
+  PORTH |= (1 << 5); // /LDSW HIGH
+  if (eepSize > 0x100)
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  else
+    delayMicroseconds(100);
+}
+
+void writeWord_SCL(unsigned long myAddress, word myData) { /* D0 goes to /SCL when only /UWR is asserted */
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+  PORTC = myData;
+  PORTH &= ~(1 << 3); // CE LOW
+  PORTH &= ~(1 << 4); // /UDSW LOW
+  PORTH |= (1 << 5); // /LDSW HIGH
+  PORTH |= (1 << 6); // OE HIGH
+  if (eepSize > 0x100)
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  else
+    delayMicroseconds(100);
+  PORTH |= (1 << 4); // /UDSW HIGH
+  if (eepSize > 0x100)
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  else
+    delayMicroseconds(100);
+}
+
+void writeWord_CM(unsigned long myAddress, word myData) { // Codemasters
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+  PORTC = myData;
+  PORTA = (myData >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t""nop\n\t");
+
+  // Switch WR(PH4) to LOW
+  PORTH &= ~(1 << 4);
+  // Setting CS(PH3) LOW
+  PORTH &= ~(1 << 3);
+  // Pulse CLK(PH1)
+  PORTH ^= (1 << 1);
+
+  // Leave WR low for at least 200ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pulse CLK(PH1)
+  PORTH ^= (1 << 1);
+  // Setting CS(PH3) HIGH
+  PORTH |= (1 << 3);
+  // Switch WR(PH4) to HIGH
+  PORTH |= (1 << 4);
+
+  // Leave WR high for at least 50ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+// EEPROM COMMANDS
+void EepromStart() {
+  if (eepType == 2) { // Acclaim Type 2
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x00); // scl low
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x01); // scl high
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x00); // scl low
+  }
+  else if (eepType == 4) { // EA
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+    writeWord_MD(0x100000, 0xC0); // sda, scl high
+    writeWord_MD(0x100000, 0x40); // sda low, scl high
+    writeWord_MD(0x100000, 0x00); // START
+  }
+  else if (eepType == 5) { // Codemasters
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+    writeWord_CM(0x180000, 0x02); // sda low, scl high
+    writeWord_CM(0x180000, 0x03); // sda, scl high
+    writeWord_CM(0x180000, 0x02); // sda low, scl high
+    writeWord_CM(0x180000, 0x00); // START
+  }
+  else {
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+    writeWord_MD(0x100000, 0x03); // sda, scl high
+    writeWord_MD(0x100000, 0x02); // sda low, scl high
+    writeWord_MD(0x100000, 0x00); // START
+  }
+}
+
+void EepromSet0() {
+  if (eepType == 2) { // Acclaim Type 2
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x01); // scl high
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x00); // scl low
+  }
+  else if (eepType == 4) { // EA
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+    writeWord_MD(0x100000, 0x40); // sda low, scl high // 0
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+  }
+  else if (eepType == 5) { // Codemasters
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+    writeWord_CM(0x180000, 0x02); // sda low, scl high // 0
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+  }
+  else {
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+    writeWord_MD(0x100000, 0x02); // sda low, scl high // 0
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+  }
+}
+
+void EepromSet1() {
+  if (eepType == 2) { // Acclaim Type 2
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x01); // scl high
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x00); // scl low
+  }
+  else if (eepType == 4) { // EA
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+    writeWord_MD(0x100000, 0xC0); // sda high, scl high // 1 
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+  }
+  else if (eepType == 5) { // Codemasters
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+    writeWord_CM(0x180000, 0x03); // sda high, scl high // 1 
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+  }
+  else {
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x03); // sda high, scl high // 1 
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+  }
+}
+
+
+void EepromDevice() { // 24C02+
+  EepromSet1();
+  EepromSet0();
+  EepromSet1();
+  EepromSet0();
+}
+
+void EepromSetDeviceAddress(word addrhi) { // 24C02+
+  for (int i = 0; i < 3; i++) {
+    if ((addrhi >> 2) & 0x1) // Bit is HIGH
+      EepromSet1();
+    else // Bit is LOW
+      EepromSet0();
+    addrhi <<= 1; // rotate to the next bit
+  }
+}
+
+void EepromStatus() { // ACK
+  byte eepStatus = 1;
+  if (eepType == 1) { // Acclaim Type 1
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x03); // sda high, scl high
+    do {
+      dataIn_MD();
+      eepStatus = ((readWord_MD(0x100000) >> 1) & 0x1);
+      dataOut_MD();
+      delayMicroseconds(4);
+    }
+    while (eepStatus == 1);
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+  }
+  else if (eepType == 2) { // Acclaim Type 2
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x01); // scl high
+    do {
+      dataIn_MD();
+      eepStatus = (readWord_MD(0x100000) & 0x1);
+      dataOut_MD();
+      delayMicroseconds(4);
+    }
+    while (eepStatus == 1);
+    writeWord_SCL(0x100000, 0x00); // scl low
+  }
+  else if (eepType == 3) { // Capcom/Sega
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x03); // sda high, scl high
+    do {
+      dataIn_MD();
+      eepStatus = (readWord_MD(0x100000) & 0x1);
+      dataOut_MD();
+      delayMicroseconds(4);
+    }
+    while (eepStatus == 1);
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+  }
+  else if (eepType == 4) { // EA
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+    writeWord_MD(0x100000, 0xC0); // sda high, scl high
+    do {
+      dataIn_MD();
+      eepStatus = ((readWord_MD(0x100000) >> 7) & 0x1);
+      dataOut_MD();
+      delayMicroseconds(4);
+    }
+    while (eepStatus == 1);
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+  }
+  else if (eepType == 5) { // Codemasters
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+    writeWord_CM(0x180000, 0x03); // sda high, scl high
+    do {
+      dataIn_MD();
+      eepStatus = ((readWord_MD(0x1C0000) >> 7) & 0x1);
+      dataOut_MD();
+      delayMicroseconds(4);
+    }
+    while (eepStatus == 1);
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+  }
+}
+
+void EepromReadMode() {
+  EepromSet1(); // READ
+  EepromStatus(); // ACK
+}
+
+void EepromWriteMode() {
+  EepromSet0(); // WRITE
+  EepromStatus(); // ACK
+}
+
+void EepromReadData() {
+  if (eepType == 1) { // Acclaim Type 1
+    for (int i = 0; i < 8; i++) {
+      writeWord_MD(0x100000, 0x03); // sda high, scl high
+      dataIn_MD();
+      eepbit[i] = ((readWord_MD(0x100000) >> 1) & 0x1); // Read 0x100000 with Mask 0x1 (bit 1)
+      dataOut_MD();
+      writeWord_MD(0x100000, 0x01); // sda high, scl low
+    }
+  }
+  else if (eepType == 2) { // Acclaim Type 2
+    for (int i = 0; i < 8; i++) {
+      writeWord_SDA(0x100000, 0x01); // sda high
+      writeWord_SCL(0x100000, 0x01); // scl high
+      dataIn_MD();
+      eepbit[i] = (readWord_MD(0x100000) & 0x1); // Read 0x100000 with Mask 0x1 (bit 0)
+      dataOut_MD();
+      writeWord_SDA(0x100000, 0x01); // sda high
+      writeWord_SCL(0x100000, 0x00); // scl low
+    }
+  }
+  else if (eepType == 3) { // Capcom/Sega
+    for (int i = 0; i < 8; i++) {
+      writeWord_MD(0x100000, 0x03); // sda high, scl high
+      dataIn_MD();
+      eepbit[i] = (readWord_MD(0x100000) & 0x1); // Read 0x100000 with Mask 0x1 (bit 0)
+      dataOut_MD();
+      writeWord_MD(0x100000, 0x01); // sda high, scl low
+    }
+  }
+  else if (eepType == 4) { // EA
+    for (int i = 0; i < 8; i++) {
+      writeWord_MD(0x100000, 0xC0); // sda high, scl high
+      dataIn_MD();
+      eepbit[i] = ((readWord_MD(0x100000) >> 7) & 0x1); // Read 0x100000 with Mask (bit 7)
+      dataOut_MD();
+      writeWord_MD(0x100000, 0x80); // sda high, scl low
+    }
+  }
+  else if (eepType == 5) { // Codemasters
+    for (int i = 0; i < 8; i++) {
+      writeWord_CM(0x180000, 0x03); // sda high, scl high
+      dataIn_MD();
+      eepbit[i] = ((readWord_MD(0x1C0000) >> 7) & 0x1); // Read 0x1C0000 with Mask 0x1 (bit 7)
+      dataOut_MD();
+      writeWord_CM(0x180000, 0x01); // sda high, scl low
+    }
+  }
+}
+
+void EepromWriteData(byte data) {
+  for (int i = 0; i < 8; i++) {
+    if ((data >> 7) & 0x1) // Bit is HIGH
+      EepromSet1();
+    else // Bit is LOW
+      EepromSet0();
+    data <<= 1; // rotate to the next bit
+  }
+  EepromStatus(); // ACK
+}
+
+void EepromFinish() {
+  if (eepType == 2) { // Acclaim Type 2
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x00); // scl low
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x00); // scl low
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x01); // scl high
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x00); // scl low
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x00); // scl low
+  }
+  else if (eepType == 4) { // EA
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+    writeWord_MD(0x100000, 0xC0); // sda high, scl high
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+  }
+  else if (eepType == 5) { // Codemasters
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+    writeWord_CM(0x180000, 0x03); // sda high, scl high
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+  }
+  else {
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x03); // sda high, scl high
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x00); // sda low, scl low
+  }
+}
+
+void EepromStop() {
+  if (eepType == 2) { // Acclaim Type 2
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x01); // scl high
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x01); // scl high
+    writeWord_SDA(0x100000, 0x01); // sda high
+    writeWord_SCL(0x100000, 0x00); // scl low
+    writeWord_SDA(0x100000, 0x00); // sda low
+    writeWord_SCL(0x100000, 0x00); // scl low // STOP
+  }
+  else if (eepType == 4) { // EA
+    writeWord_MD(0x100000, 0x00); // sda, scl low
+    writeWord_MD(0x100000, 0x40); // sda low, scl high
+    writeWord_MD(0x100000, 0xC0); // sda, scl high
+    writeWord_MD(0x100000, 0x80); // sda high, scl low
+    writeWord_MD(0x100000, 0x00); // STOP
+  }
+  else if (eepType == 5) { // Codemasters
+    writeWord_CM(0x180000, 0x00); // sda low, scl low
+    writeWord_CM(0x180000, 0x02); // sda low, scl high
+    writeWord_CM(0x180000, 0x03); // sda, scl high
+    writeWord_CM(0x180000, 0x01); // sda high, scl low
+    writeWord_CM(0x180000, 0x00); // STOP
+  }
+  else {
+    writeWord_MD(0x100000, 0x00); // sda, scl low
+    writeWord_MD(0x100000, 0x02); // sda low, scl high
+    writeWord_MD(0x100000, 0x03); // sda, scl high
+    writeWord_MD(0x100000, 0x01); // sda high, scl low
+    writeWord_MD(0x100000, 0x00); // STOP
+  }
+}
+
+void EepromSetAddress(word address) {
+  if (eepSize > 0x80) { // 24C02+
+    for (int i = 0; i < 8; i++) {
+      if ((address >> 7) & 0x1) // Bit is HIGH
+        EepromSet1();
+      else // Bit is LOW
+        EepromSet0();
+      address <<= 1; // rotate to the next bit
+    }
+    EepromStatus(); // ACK
+  }
+  else { // 24C01
+    for (int i = 0; i < 7; i++) {
+      if ((address >> 6) & 0x1) // Bit is HIGH
+        EepromSet1();
+      else // Bit is LOW
+        EepromSet0();
+      address <<= 1; // rotate to the next bit
+    }
+  }
+}
+
+void readEepromByte(word address) {
+  addrhi = address >> 8;
+  addrlo = address & 0xFF;
+  dataOut_MD();
+  if (eepType == 2)
+    EepromInit(0); // Enable EEPROM
+  EepromStart(); // START
+  if (eepSize > 0x80) {
+    EepromDevice(); // DEVICE [1010]
+    if (eepSize > 0x800) { // MODE 3 [24C65]
+      EepromSetDeviceAddress(0);
+      EepromWriteMode();
+      EepromSetAddress(addrhi); // ADDR [A15..A8]
+    }
+    else { // MODE 2 [24C02/24C08/24C16]
+      EepromSetDeviceAddress(addrhi); // ADDR [A10..A8]
+      EepromWriteMode();
+    }
+  }
+  EepromSetAddress(addrlo);
+  if (eepSize > 0x80) {
+    EepromStart(); // START
+    EepromDevice(); // DEVICE [1010]
+    if (eepSize > 0x800) // MODE 3 [24C65]
+      EepromSetDeviceAddress(0);
+    else // MODE 2 [24C02/24C08/24C16]
+      EepromSetDeviceAddress(addrhi); // ADDR [A10..A8]
+  }
+  EepromReadMode();
+  EepromReadData();
+  EepromFinish();
+  EepromStop(); // STOP
+  if (eepType == 2)
+    EepromInit(1); // Disable EEPROM
+  // OR 8 bits into byte
+  eeptemp = eepbit[0] << 7 | eepbit[1] << 6 | eepbit[2] << 5 | eepbit[3] << 4 | eepbit[4] << 3 | eepbit[5] << 2 | eepbit[6] << 1 | eepbit[7];
+  sdBuffer[addrlo] = eeptemp;
+}
+
+void writeEepromByte(word address) {
+  addrhi = address >> 8;
+  addrlo = address & 0xFF;
+  eeptemp = sdBuffer[addrlo];
+  dataOut_MD();
+  if (eepType == 2)
+    EepromInit(0); // Enable EEPROM
+  EepromStart(); // START
+  if (eepSize > 0x80) {
+    EepromDevice(); // DEVICE [1010]
+    if (eepSize > 0x800) { // MODE 3 [24C65]
+      EepromSetDeviceAddress(0); // [A2-A0] = 000
+      EepromWriteMode(); // WRITE
+      EepromSetAddress(addrhi); // ADDR [A15-A8]
+    }
+    else { // MODE 2 [24C02/24C08/24C16]
+      EepromSetDeviceAddress(addrhi); // ADDR [A10-A8]
+      EepromWriteMode(); // WRITE
+    }
+    EepromSetAddress(addrlo);
+  }
+  else { // 24C01
+    EepromSetAddress(addrlo);
+    EepromWriteMode(); // WRITE
+  }
+  EepromWriteData(eeptemp);
+  EepromStop(); // STOP
+  if (eepType == 2)
+    EepromInit(1); // Disable EEPROM
+}
+
+// Read EEPROM and save to the SD card
+void readEEP_MD() {
+  dataIn_MD();
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".eep");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(10, foldern);
+  sd.chdir();
+  sprintf(folder, "MD/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  println_Msg(F("Reading..."));
+  display_Update();
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+  if (eepSize > 0x100) { // 24C04+
+    for (word currByte = 0; currByte < eepSize; currByte += 256) {
+      print_Msg(F("*"));
+      display_Update();
+      for (int i = 0; i < 256; i++) {
+        readEepromByte(currByte + i);
+      }
+      myFile.write(sdBuffer, 256);
+    }
+  }
+  else { // 24C01/24C02
+    for (word currByte = 0; currByte < eepSize; currByte++) {
+      if ((currByte != 0) && ((currByte + 1) % 16 == 0)) {
+        print_Msg(F("*"));
+        display_Update();
+      }
+      readEepromByte(currByte);
+    }
+    myFile.write(sdBuffer, eepSize);
+  }
+  // Close the file:
+  myFile.close();
+  println_Msg(F(""));
+  display_Clear();
+  print_Msg(F("Saved to "));
+  print_Msg(folder);
+
+  display_Update();
+}
+
+void writeEEP_MD() {
+  dataOut_MD();
+
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Writing..."));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    if (eepSize > 0x100) { // 24C04+
+      for (word currByte = 0; currByte < eepSize; currByte += 256) {
+        myFile.read(sdBuffer, 256);
+        for (int i = 0; i < 256; i++) {
+          writeEepromByte(currByte + i);
+          delay(50); // DELAY NEEDED
+        }
+        print_Msg(F("."));
+        display_Update();
+      }
+    }
+    else { // 24C01/24C02
+      myFile.read(sdBuffer, eepSize);
+      for (word currByte = 0; currByte < eepSize; currByte++) {
+        writeEepromByte(currByte);
+        print_Msg(F("."));
+        if ((currByte != 0) && ((currByte + 1) % 64 == 0))
+          println_Msg(F(""));
+        display_Update(); // ON SERIAL = delay(100)
+      }
+    }
+    // Close the file:
+    myFile.close();
+    println_Msg(F(""));
+    display_Clear();
+    println_Msg(F("Done"));
+    display_Update();
+  }
+  else {
+    print_Error(F("SD Error"), true);
+  }
+  dataIn_MD();
 }
 
 //******************************************
