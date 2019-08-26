@@ -440,6 +440,18 @@ void getCartInfo_MD() {
     }
   }
 
+  // Codemasters EEPROM Check
+  // Codemasters used the same incorrect header across multiple carts
+  // Carts with checksum 0x165E or 0x168B could be EEPROM or non-EEPROM
+  // Check the first DWORD in ROM (0x444E4C44) to identify the EEPROM carts
+  if ((chksum == 0x165E) || (chksum == 0x168B)) {
+    if (readWord_MD(0x00) != 0x444E) { // NOT SERIAL EEPROM
+      eepType = 0;
+      eepSize = 0;
+      saveType = 0;
+    }
+  }
+
   if (saveType != 4) { // NOT SERIAL EEPROM
     // Check if cart has sram
     saveType = 0;
