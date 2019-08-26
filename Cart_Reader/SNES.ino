@@ -11,6 +11,8 @@
 #define HI 1
 #define LO 0
 
+// optimization-safe nop delay
+#define NOP __asm__ __volatile__ ("nop\n\t")
 /******************************************
    Variables
  *****************************************/
@@ -400,8 +402,11 @@ byte readBank_SNES(byte myBank, word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
-  // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Wait for the Byte to appear on the data bus
+  // Arduino running at 16Mhz -> one nop = 62.5ns 
+  // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
+  // let's be conservative and use 6 x 62.5 = 375ns
+  NOP; NOP; NOP; NOP; NOP; NOP;
 
   // Read
   byte tempByte = PINC;
@@ -410,29 +415,68 @@ byte readBank_SNES(byte myBank, word myAddress) {
 
 void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
 {
-  byte buffer[512];
-
+  byte buffer[1024];
+  
+  uint16_t c = 0;
+  uint16_t currByte = 32768;
+  
   for (int currBank = start; currBank < total; currBank++) {
-    // Dump the bytes to SD 512B at a time
-    for (long currByte = 32768; currByte < 65536; currByte += 512) {
-      for (int c = 0; c < 512; c++) {
-        buffer[c] = readBank_SNES(currBank, currByte + c);
+    PORTL = currBank;
+    currByte = 32768;
+    while (1) {
+      c = 0;
+      while (c < 1024) {
+        PORTF = (currByte & 0xFF);
+        PORTK = ((currByte >> 8) & 0xFF);
+
+        // Wait for the Byte to appear on the data bus
+        // Arduino running at 16Mhz -> one nop = 62.5ns 
+        // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
+        // let's be conservative and use 6 x 62.5 = 375ns
+        NOP; NOP; NOP; NOP; NOP; NOP;
+        
+        buffer[c] = PINC;
+        c++;
+        currByte++;
       }
-      file->write(buffer, 512);
+      file->write(buffer, 1024);
+
+      // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
+      if (currByte == 0) break;
     }
   }
 }
 
 void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
 {
-  byte buffer[512];
-
+  byte buffer[1024];
+  
+  uint16_t c = 0;
+  uint16_t currByte = 0;
+  
   for (int currBank = start; currBank < total; currBank++) {
-    for (long currByte = 0; currByte < 65536; currByte += 512) {
-      for (int c = 0; c < 512; c++) {
-        buffer[c] = readBank_SNES(currBank, currByte + c);
+    PORTL = currBank;
+    currByte = 0;
+    while (1) {
+      c = 0;
+      while (c < 1024) {
+        PORTF = (currByte & 0xFF);
+        PORTK = ((currByte >> 8) & 0xFF);
+
+        // Wait for the Byte to appear on the data bus
+        // Arduino running at 16Mhz -> one nop = 62.5ns 
+        // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
+        // let's be conservative and use 6 x 62.5 = 375ns
+        NOP; NOP; NOP; NOP; NOP; NOP;
+        
+        buffer[c] = PINC;
+        c++;
+        currByte++;
       }
-      file->write(buffer, 512);
+      file->write(buffer, 1024);
+      
+      // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
+      if (currByte == 0) break;
     }
   }
 }
@@ -933,6 +977,9 @@ boolean compare_checksum() {
 
 // Read rom to SD card
 void readROM_SNES() {
+  // get current time
+  unsigned long startTime = millis();
+    
   // Set control
   dataIn();
   controlIn_SNES();
@@ -1120,6 +1167,12 @@ void readROM_SNES() {
 
   // Close the file:
   myFile.close();
+
+  // print elapsed time
+  print_Msg(F("Time elapsed: "));
+  print_Msg((millis() - startTime) / 1000);
+  println_Msg(F("s"));
+  display_Update();
 }
 
 /******************************************
