@@ -130,3 +130,6 @@ Going back to our example cart:
 A8 00 00 MENU:  MBC5, size 2 = 128KB, ROM Block 0, RAM Block 0 (Ignored since SRAM is 000)   
 71 04 00 GAME 1:  MBC3, size 4 = 512KB, SRAM 8KB, ROM Block 1, RAM Block 0   
 48 94 04 GAME 2:  MBC2, size 2 = 128KB, SRAM MBC2, ROM Block 5, RAM Block 1   
+
+#### NBAJAMTE.eep    
+NBA Jam T.E. Rev 0 has faulty code that will erase the EEPROM when the cart is played on the console. Solution: Write the included save file to the cart.  Play the cart on the console as normal.  Create new saves as needed.  When done playing, HOLD THE RESET BUTTON DOWN BEFORE TURNING THE CONSOLE OFF.   
