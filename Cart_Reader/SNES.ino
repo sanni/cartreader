@@ -212,11 +212,11 @@ void snesMenu() {
       print_Msg("Resetting...");
       display_Update();
       delay(3000);  // wait 3 secs to switch to next game
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
 
     case 5:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   println_Msg(F(""));
@@ -262,7 +262,7 @@ void confMenu() {
 
     case 4:
       // Reset
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
 }
@@ -1675,7 +1675,7 @@ unsigned long verifySRAM() {
       print_Msg("Resetting...");
       display_Update();
       delay(3000);  // wait 3 secs
-      asm volatile ("  jmp 0");
+      resetArduino();
     }
     // Close the file:
     myFile.close();

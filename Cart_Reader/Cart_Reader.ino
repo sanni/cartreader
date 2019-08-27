@@ -85,6 +85,7 @@ boolean n64crc = 1;
 #include <SPI.h>
 #include <Wire.h>
 #include <avr/pgmspace.h>
+#include <avr/wdt.h>
 
 // AVR Eeprom
 #include <EEPROM.h>
@@ -374,12 +375,12 @@ void aboutScreen() {
 
       // if the cart readers input button is pressed shortly
       if (b == 1) {
-        asm volatile ("  jmp 0");
+        resetArduino();
       }
 
       // if the cart readers input button is pressed long
       if (b == 3) {
-        asm volatile ("  jmp 0");
+        resetArduino();
       }
 
       // if the button is pressed super long
@@ -390,16 +391,21 @@ void aboutScreen() {
         delay(2000);
         foldern = 0;
         EEPROM_writeAnything(10, foldern);
-        asm volatile ("  jmp 0");
+        resetArduino();
       }
     }
     if (enable_Serial) {
       wait_serial();
-      asm volatile ("  jmp 0");
+      resetArduino();
     }
     rgb.setColor(random(0, 255), random(0, 255), random(0, 255));
     delay(random(50, 100));
   }
+}
+
+void resetArduino() {
+  wdt_enable(WDTO_15MS);
+  while (1);
 }
 
 void mainMenu() {
@@ -577,7 +583,7 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
       display_Update();
       wait();
       if (ignoreError == 0) {
-        asm volatile ("  jmp 0");
+        resetArduino();
       }
       else {
         ignoreError = 0;
@@ -1377,7 +1383,7 @@ void loop() {
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
-    asm volatile ("  jmp 0");
+    resetArduino();
   }
 }
 

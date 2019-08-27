@@ -226,7 +226,7 @@ void mdMenu() {
 
     case 6:
       // Reset
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   println_Msg(F(""));

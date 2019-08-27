@@ -473,11 +473,11 @@ void gbaMenu() {
       println_Msg(F("Press Button..."));
       display_Update();
       wait();
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
 
     case 5:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
 
