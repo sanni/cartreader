@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             25-08-2019
-   Version:          3.2
+   Date:             27-08-2019
+   Version:          3.3
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,9 +35,10 @@
    infinest - GB Memory Binary Maker
    moldov - SF Memory Binary Maker
    vogelfreiheit - N64 flashram fix
+   rama - Snes speedup
 
 **********************************************************************************/
-char ver[5] = "3.2";
+char ver[5] = "3.3";
 
 /******************************************
    Define Starting Point
