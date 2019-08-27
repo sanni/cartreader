@@ -125,7 +125,7 @@ void gbMenu() {
       writeFlash_GB(3);
       // Reset
       wait();
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
 
     case 4:
@@ -135,11 +135,11 @@ void gbMenu() {
       writeFlash_GB(5);
       // Reset
       wait();
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
 
     case 5:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   println_Msg(F(""));

@@ -59,7 +59,7 @@ void svMenu() {
 
     // Reset
     case 2:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
 }

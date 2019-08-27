@@ -78,7 +78,7 @@ void sfmMenu() {
       break;
     // Reset
     case 2:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
 }
@@ -205,7 +205,7 @@ void sfmGameOptions() {
 
     // Reset
     case 4:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   if (gameSubMenu != 3) {

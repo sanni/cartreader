@@ -220,7 +220,7 @@ void flashromMenu8() {
         resetFlash29F032();
       else
         resetFlash29F1610();
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   if (time != 0) {
@@ -318,7 +318,7 @@ void flashromMenu16() {
       display_Clear();
       display_Update();
       resetFlash16();
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   if (time != 0) {
@@ -385,7 +385,7 @@ void epromMenu() {
       time = 0;
       display_Clear();
       display_Update();
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
   if (time != 0) {

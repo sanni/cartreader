@@ -183,7 +183,7 @@ void n64ControllerMenu() {
       break;
 
     case 3:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
 }
@@ -341,7 +341,7 @@ void n64CartMenu() {
       break;
 
     case 4:
-      asm volatile ("  jmp 0");
+      resetArduino();
       break;
   }
 }
@@ -2192,7 +2192,7 @@ calcn64crc:
 
         case 3:
           // Reset
-          asm volatile ("  jmp 0");
+          resetArduino();
           break;
       }
     }

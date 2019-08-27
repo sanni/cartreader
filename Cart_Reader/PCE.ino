@@ -863,7 +863,7 @@ void pceMenu() {
         write_tennokoe_bank_PCE();
         break;
       case 3:
-        asm volatile ("  jmp 0");
+        resetArduino();
         break;
     }
   }
@@ -884,7 +884,7 @@ void pceMenu() {
         break;
   
       case 1:
-        asm volatile ("  jmp 0");
+        resetArduino();
         break;
     }
   }
