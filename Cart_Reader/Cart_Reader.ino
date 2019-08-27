@@ -38,6 +38,9 @@
    rama - Snes speedup
 
 **********************************************************************************/
+
+#include <SdFat.h>
+
 char ver[5] = "3.3";
 
 /******************************************
@@ -117,7 +120,6 @@ typedef enum COLOR_T {
 } color_t;
 
 // SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
-#include <SdFat.h>
 #define chipSelectPin 53
 SdFat sd;
 SdFile myFile;
