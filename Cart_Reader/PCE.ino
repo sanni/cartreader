@@ -115,7 +115,7 @@ void pcsMenu(void) {
   unsigned char pceDev;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionspce, 2);
-  pceDev = question_box("Select device", menuOptions, 2, 0);
+  pceDev = question_box(F("Select device"), menuOptions, 2, 0);
 
   // wait for user choice to come back from the question box menu
   switch (pceDev)
@@ -521,7 +521,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
       flag = CHKSUM_ERROR;
       crc = 0xFFFFFFFFUL; //Initialize CRC
       display_Clear();
-      println_Msg("Calculating chksum...");
+      println_Msg(F("Calculating chksum..."));
       processedsize = 0;
       draw_progressbar(0, rom_size * 1024UL); //Initialize progress bar
 
@@ -549,7 +549,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
         //if checksum search successful, rename the file and end search
         if (strcmp(crc_search, crc_file) == 0)
         {
-          print_Msg("Chksum OK ");
+          print_Msg(F("Chksum OK "));
           println_Msg(crc_file);
           print_Msg(F("Saved to "));
           print_Msg(folder_p);
@@ -576,7 +576,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size)
   }
   else if (flag == CHKSUM_ERROR)
   {
-    print_Msg("Chksum Error ");
+    print_Msg(F("Chksum Error "));
     println_Msg(crc_file);
     print_Msg(F("Saved to "));
     print_Msg(folder_p);
@@ -598,8 +598,7 @@ void read_tennokoe_bank_PCE(void)
   //clear the screen
   display_Clear();
   
-  sprintf(fileName, "RAM size: 8KB"); //using filename global variable as string. Initialzed in below anyways.
-  println_Msg(fileName);
+  println_Msg(F("RAM size: 8KB"));
 
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, "BANKRAM");
@@ -683,7 +682,7 @@ void write_tennokoe_bank_PCE(void)
   //Display file Browser and wait user to select a file. Size must be 8KB.
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser("Select RAM file");
+  fileBrowser(F("Select RAM file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
   display_Clear();
@@ -766,8 +765,9 @@ void read_rom_PCE(void)
   display_Clear();
   rom_size = detect_rom_size_PCE();
   
-  sprintf(fileName, "Detected size: %dKB", rom_size); //using filename global variable as string. Initialzed in below anyways.
-  println_Msg(fileName);
+  print_Msg(F("Detected size: "));
+  print_Msg(rom_size);
+  println_Msg(F("KB"));
 
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, "PCEROM");
@@ -834,7 +834,7 @@ void read_rom_PCE(void)
 
 
 
-// SNES Menu
+// PC Engine Menu
 void pceMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
@@ -843,7 +843,7 @@ void pceMenu() {
   {
     // Copy menuOptions out of progmem
     convertPgm(menuOptionspceCart, 4);
-    mainMenu = question_box("PCE HuCARD menu", menuOptions, 4, 0);
+    mainMenu = question_box(F("PCE HuCARD menu"), menuOptions, 4, 0);
 
     // wait for user choice to come back from the question box menu
     switch (mainMenu)
@@ -871,7 +871,7 @@ void pceMenu() {
   {
     // Copy menuOptions out of progmem
     convertPgm(menuOptionspceTC, 2);
-    mainMenu = question_box("TG TurboChip menu", menuOptions, 2, 0);
+    mainMenu = question_box(F("TG TurboChip menu"), menuOptions, 2, 0);
 
     // wait for user choice to come back from the question box menu
     switch (mainMenu)

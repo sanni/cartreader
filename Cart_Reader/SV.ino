@@ -42,7 +42,7 @@ void svMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSVFlash, 3);
-  mainMenu = question_box("Satellaview 8M Memory", menuOptions, 3, 0);
+  mainMenu = question_box(F("Satellaview 8M Memory"), menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -214,7 +214,7 @@ void writeROM_SV (void) {
   //Display file Browser and wait user to select a file. Size must be 1MB.
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser("Select sfc file");
+  fileBrowser(F("Select sfc file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
   display_Clear();

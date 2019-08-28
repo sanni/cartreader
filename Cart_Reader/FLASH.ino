@@ -62,7 +62,7 @@ void flashMenu() {
   flashSlot = question_box("Select adapter PCB", menuOptions, 3, 0);
 #else
   convertPgm(menuOptionsFlash, 2);
-  flashSlot = question_box("Select adapter PCB", menuOptions, 2, 0);
+  flashSlot = question_box(F("Select adapter PCB"), menuOptions, 2, 0);
 #endif
 
   // wait for user choice to come back from the question box menu
@@ -101,7 +101,7 @@ void flashromMenu8() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsFLASH8, 7);
-  mainMenu = question_box("Flashrom Writer 8", menuOptions, 7, 0);
+  mainMenu = question_box(F("Flashrom Writer 8"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -150,7 +150,7 @@ void flashromMenu8() {
     case 3:
       filePath[0] = '\0';
       sd.chdir("/");
-      fileBrowser("Select file");
+      fileBrowser(F("Select file"));
       display_Clear();
       time = millis();
       if (flashromType == 1)
@@ -239,7 +239,7 @@ void flashromMenu16() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsFLASH16, 7);
-  mainMenu = question_box("Flashrom Writer 16", menuOptions, 7, 0);
+  mainMenu = question_box(F("Flashrom Writer 16"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -274,7 +274,7 @@ void flashromMenu16() {
     case 3:
       filePath[0] = '\0';
       sd.chdir("/");
-      fileBrowser("Select file");
+      fileBrowser(F("Select file"));
       display_Clear();
       time = millis();
       if (strcmp(flashid, "C2F3") == 0) {
@@ -335,7 +335,7 @@ void epromMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsEprom, 6);
-  mainMenu = question_box("Eprom Writer", menuOptions, 6, 0);
+  mainMenu = question_box(F("Eprom Writer"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -357,7 +357,7 @@ void epromMenu() {
     case 2:
       filePath[0] = '\0';
       sd.chdir("/");
-      fileBrowser("Select file");
+      fileBrowser(F("Select file"));
       display_Clear();
       time = millis();
       write_Eprom();
@@ -368,7 +368,7 @@ void epromMenu() {
     case 3:
       filePath[0] = '\0';
       sd.chdir("/");
-      fileBrowser("Verify against");
+      fileBrowser(F("Verify against"));
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Clear();
       time = millis();
@@ -1991,11 +1991,11 @@ void write_Eprom() {
           checkWord = writeWord_Eprom(currWord + c, myWord);
           // Check for fail
           if (n == 25) {
-            print_Msg("Program Error 0x");
+            print_Msg(F("Program Error 0x"));
             println_Msg(currWord + c, HEX);
-            print_Msg("0x");
+            print_Msg(F("0x"));
             print_Msg(readWord_Eprom(currWord + c), HEX);
-            print_Msg(" != 0x");
+            print_Msg(F(" != 0x"));
             println_Msg(myWord, HEX);
             print_Error(F("Press button to reset"), true);
           }

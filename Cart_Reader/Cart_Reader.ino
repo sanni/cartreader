@@ -413,7 +413,7 @@ void mainMenu() {
   unsigned char modeMenu;
   // Copy menuOptions out of progmem
   convertPgm(modeOptions, 7);
-  modeMenu = question_box("Cartridge Reader", menuOptions, 7, 0);
+  modeMenu = question_box(F("Cartridge Reader"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
@@ -692,7 +692,7 @@ void display_Clear() {
   }
 }
 
-unsigned char question_box(const char* question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char question_box(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
   if (enable_OLED) {
     return questionBox_OLED(question, answers, num_answers, default_choice);
   }
@@ -740,7 +740,7 @@ void wait_serial() {
     }*/
 }
 
-byte questionBox_Serial(const char* question, char answers[7][20], int num_answers, int default_choice) {
+byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
   //Serial.println(question);
   for (byte i = 0; i < num_answers; i++) {
@@ -787,9 +787,9 @@ byte questionBox_Serial(const char* question, char answers[7][20], int num_answe
       foldern = foldern + 1;
       EEPROM_writeAnything(10, foldern);
 
-      print_Msg("Imported ");
+      print_Msg(F("Imported "));
       print_Msg(fileSize);
-      print_Msg(" bytes to file ");
+      print_Msg(F(" bytes to file "));
       println_Msg(fileName);
       return 7;
     }
@@ -1018,7 +1018,7 @@ void wait_btn() {
 }
 
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
-unsigned char questionBox_OLED(const char* question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
 
   //clear the screen
   display.clearDisplay();
@@ -1145,7 +1145,7 @@ unsigned char questionBox_OLED(const char* question, char answers[7][20], int nu
 /******************************************
   Filebrowser Module
 *****************************************/
-void fileBrowser(const char* browserTitle) {
+void fileBrowser(const __FlashStringHelper* browserTitle) {
   char fileNames[30][26];
   int currFile;
   filebrowse = 1;

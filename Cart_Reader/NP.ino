@@ -63,7 +63,7 @@ void sfmMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSFM, 3);
-  mainMenu = question_box("SF Memory", menuOptions, 3, 0);
+  mainMenu = question_box(F("SF Memory"), menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -101,7 +101,7 @@ void sfmGameMenu() {
       // Create menu with title and numGames options to choose from
       unsigned char gameSubMenu;
       // wait for user choice to come back from the question box menu
-      gameSubMenu = question_box("Select Game", menuOptionsSFMGames, numGames, 0);
+      gameSubMenu = question_box(F("Select Game"), menuOptionsSFMGames, numGames, 0);
 
       // Switch to game
       send_SFM(gameSubMenu + 0x80);
@@ -156,7 +156,7 @@ void sfmGameOptions() {
   unsigned char gameSubMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSFMGame, 5);
-  gameSubMenu = question_box("SFM Game Menu", menuOptions, 5, 0);
+  gameSubMenu = question_box(F("SFM Game Menu"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gameSubMenu)
@@ -221,7 +221,7 @@ void sfmFlashMenu() {
   unsigned char flashSubMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSFMFlash, 6);
-  flashSubMenu = question_box("SFM Flash Menu", menuOptions, 6, 0);
+  flashSubMenu = question_box(F("SFM Flash Menu"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSubMenu)
@@ -288,7 +288,7 @@ void sfmFlashMenu() {
       filePath[0] = '\0';
       sd.chdir("/");
       // Launch file browser
-      fileBrowser("Select 4MB file");
+      fileBrowser(F("Select 4MB file"));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       flashSize = 2097152;
@@ -431,7 +431,7 @@ void sfmFlashMenu() {
       sd.chdir("/");
 
       // Launch file browser
-      fileBrowser("Select MAP file");
+      fileBrowser(F("Select MAP file"));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Update();
@@ -1476,7 +1476,7 @@ void gbmMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGBM, 7);
-  mainMenu = question_box("GB Memory Menu", menuOptions, 7, 0);
+  mainMenu = question_box(F("GB Memory Menu"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -1559,7 +1559,7 @@ void gbmMenu() {
       filePath[0] = '\0';
       sd.chdir("/");
       // Launch file browser
-      fileBrowser("Select 1MB file");
+      fileBrowser(F("Select 1MB file"));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -1608,7 +1608,7 @@ void gbmMenu() {
       sd.chdir("/");
 
       // Launch file browser
-      fileBrowser("Select MAP file");
+      fileBrowser(F("Select MAP file"));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Update();

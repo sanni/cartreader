@@ -97,7 +97,7 @@ void n64Menu() {
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64, 4);
-  n64Dev = question_box("Select N64 device", menuOptions, 4, 0);
+  n64Dev = question_box(F("Select N64 device"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (n64Dev)
@@ -143,7 +143,7 @@ void n64ControllerMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64Controller, 4);
-  mainMenu = question_box("N64 Controller", menuOptions, 4, 0);
+  mainMenu = question_box(F("N64 Controller"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -171,7 +171,7 @@ void n64ControllerMenu() {
       filePath[0] = '\0';
       sd.chdir("/");
       // Launch file browser
-      fileBrowser("Select mpk file");
+      fileBrowser(F("Select mpk file"));
       display_Clear();
       display_Update();
       writeMPK();
@@ -194,7 +194,7 @@ void n64CartMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64Cart, 5);
-  mainMenu = question_box("N64 Cart Reader", menuOptions, 5, 0);
+  mainMenu = question_box(F("N64 Cart Reader"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -238,7 +238,7 @@ void n64CartMenu() {
       sd.chdir("/");
       if (saveType == 1) {
         // Launch file browser
-        fileBrowser("Select sra file");
+        fileBrowser(F("Select sra file"));
         display_Clear();
 
         writeSram(32768);
@@ -256,7 +256,7 @@ void n64CartMenu() {
       }
       else if (saveType == 4) {
         // Launch file browser
-        fileBrowser("Select fla file");
+        fileBrowser(F("Select fla file"));
         display_Clear();
         getFramType();
         writeFram(flashramType);
@@ -277,7 +277,7 @@ void n64CartMenu() {
       }
       else if ((saveType == 5) || (saveType == 6)) {
         // Launch file browser
-        fileBrowser("Select eep file");
+        fileBrowser(F("Select eep file"));
         display_Clear();
 
         writeEeprom();
@@ -306,7 +306,7 @@ void n64CartMenu() {
       unsigned char N64SaveMenu;
       // Copy menuOptions out of progmem
       convertPgm(saveOptionsN64, 5);
-      N64SaveMenu = question_box("Select save type", menuOptions, 5, 0);
+      N64SaveMenu = question_box(F("Select save type"), menuOptions, 5, 0);
 
       // wait for user choice to come back from the question box menu
       switch (N64SaveMenu)
@@ -753,7 +753,7 @@ void get_button()
   // Buttons (A,B,Z,S,DU,DD,DL,DR,0,0,L,R,CU,CD,CL,CR)
   if (rawStr.substring(0, 16) == "0000000000000000") {
     lastbutton = button;
-    button = "Press a button";
+    button = F("Press a button");
   }
   else
   {
@@ -765,59 +765,59 @@ void get_button()
         switch (i)
         {
           case 7:
-            button = "D-Right";
+            button = F("D-Right");
             break;
 
           case 6:
-            button = "D-Left";
+            button = F("D-Left");
             break;
 
           case 5:
-            button = "D-Down";
+            button = F("D-Down");
             break;
 
           case 4:
-            button = "D-Up";
+            button = F("D-Up");
             break;
 
           case 3:
-            button = "START";
+            button = F("START");
             break;
 
           case 2:
-            button = "Z";
+            button = F("Z");
             break;
 
           case 1:
-            button = "B";
+            button = F("B");
             break;
 
           case 0:
-            button = "A";
+            button = F("A");
             break;
 
           case 15:
-            button = "C-Right";
+            button = F("C-Right");
             break;
 
           case 14:
-            button = "C-Left";
+            button = F("C-Left");
             break;
 
           case 13:
-            button = "C-Down";
+            button = F("C-Down");
             break;
 
           case 12:
-            button = "C-Up";
+            button = F("C-Up");
             break;
 
           case 11:
-            button = "R";
+            button = F("R");
             break;
 
           case 10:
-            button = "L";
+            button = F("L");
             break;
         }
       }
@@ -848,7 +848,7 @@ void readController() {
     display_Update();
     delay(100);
 
-    if (button == "START") {
+    if (button == F("START")) {
       quit = 0;
     }
   }
@@ -1098,7 +1098,7 @@ void printCartInfo_N64() {
     unsigned char N64RomMenu;
     // Copy menuOptions out of progmem
     convertPgm(romOptionsN64, 6);
-    N64RomMenu = question_box("Select ROM size", menuOptions, 6, 0);
+    N64RomMenu = question_box(F("Select ROM size"), menuOptions, 6, 0);
 
     // wait for user choice to come back from the question box menu
     switch (N64RomMenu)
@@ -2150,11 +2150,7 @@ calcn64crc:
       // Copy menuOptions out of progmem
       convertPgm(menuOptionsN64CRC, 4);
 
-      char tempStr3[20];
-      strcpy(tempStr3, "CRC ERROR ");
-      strcat(tempStr3, crcStr);
-
-      CRCMenu = question_box(tempStr3, menuOptions, 4, 1);
+      CRCMenu = question_box(F("CRC ERROR "), menuOptions, 4, 1);
 
       // wait for user choice to come back from the question box menu
       switch (CRCMenu)
@@ -2259,7 +2255,7 @@ void flashRepro_N64() {
     // Launch file browser
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select z64 file");
+    fileBrowser(F("Select z64 file"));
     display_Clear();
     display_Update();
 
@@ -3055,7 +3051,7 @@ void flashGameshark_N64() {
     // Launch file browser
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select z64 file");
+    fileBrowser(F("Select z64 file"));
     display_Clear();
     display_Update();
 

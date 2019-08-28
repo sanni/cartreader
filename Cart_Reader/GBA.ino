@@ -43,7 +43,7 @@ void gbaMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGBA, 6);
-  mainMenu = question_box("GBA Cart Reader", menuOptions, 6, 0);
+  mainMenu = question_box(F("GBA Cart Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -57,7 +57,7 @@ void gbaMenu() {
           unsigned char GBARomMenu;
           // Copy menuOptions out of progmem
           convertPgm(romOptionsGBA, 6);
-          GBARomMenu = question_box("Select ROM size", menuOptions, 6, 0);
+          GBARomMenu = question_box(F("Select ROM size"), menuOptions, 6, 0);
 
           // wait for user choice to come back from the question box menu
           switch (GBARomMenu)
@@ -138,7 +138,7 @@ void gbaMenu() {
         unsigned char GBASaveMenu;
         // Copy menuOptions out of progmem
         convertPgm(saveOptionsGBA, 6);
-        GBASaveMenu = question_box("Select save type", menuOptions, 6, 0);
+        GBASaveMenu = question_box(F("Select save type"), menuOptions, 6, 0);
 
         // wait for user choice to come back from the question box menu
         switch (GBASaveMenu)
@@ -242,7 +242,7 @@ void gbaMenu() {
         unsigned char GBASavesMenu;
         // Copy menuOptions out of progmem
         convertPgm(saveOptionsGBA, 6);
-        GBASavesMenu = question_box("Select save type", menuOptions, 6, 0);
+        GBASavesMenu = question_box(F("Select save type"), menuOptions, 6, 0);
         // wait for user choice to come back from the question box menu
         switch (GBASavesMenu)
         {
@@ -428,7 +428,7 @@ void gbaMenu() {
       unsigned char GBASaveMenu;
       // Copy menuOptions out of progmem
       convertPgm(saveOptionsGBA, 6);
-      GBASaveMenu = question_box("Select save type", menuOptions, 6, 0);
+      GBASaveMenu = question_box(F("Select save type"), menuOptions, 6, 0);
 
       // wait for user choice to come back from the question box menu
       switch (GBASaveMenu)
@@ -1015,7 +1015,7 @@ void writeSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select srm file");
+    fileBrowser(F("Select srm file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
@@ -1170,7 +1170,7 @@ void writeFRAM_GBA (boolean browseFile, unsigned long framSize) {
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select srm file");
+    fileBrowser(F("Select srm file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
@@ -1580,7 +1580,7 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) 
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select fla file");
+    fileBrowser(F("Select fla file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
@@ -1692,7 +1692,7 @@ void writeEeprom_GBA(word eepSize) {
   // Launch Filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser("Select eep file");
+  fileBrowser(F("Select eep file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
   display_Clear();
@@ -2509,7 +2509,7 @@ void flashRepro_GBA() {
     // Launch file browser
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select gba file");
+    fileBrowser(F("Select gba file"));
     display_Clear();
     display_Update();
 

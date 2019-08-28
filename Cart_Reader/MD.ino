@@ -106,7 +106,7 @@ void mdMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsMD, 7);
-  mainMenu = question_box("MEGA DRIVE Reader", menuOptions, 7, 0);
+  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -143,7 +143,7 @@ void mdMenu() {
         // Change working dir to root
         sd.chdir("/");
         // Launch file browser
-        fileBrowser("Select srm file");
+        fileBrowser(F("Select srm file"));
         display_Clear();
         enableSram_MD(1);
         writeSram_MD();
@@ -178,7 +178,7 @@ void mdMenu() {
       display_Clear();
       if (saveType == 4) {
         // Launch file browser
-        fileBrowser("Select eep file");
+        fileBrowser(F("Select eep file"));
         display_Clear();
         writeEEP_MD();
       }
@@ -191,7 +191,7 @@ void mdMenu() {
       // Change working dir to root
       filePath[0] = '\0';
       sd.chdir("/");
-      fileBrowser("Select file");
+      fileBrowser(F("Select file"));
       display_Clear();
       // Setting CS(PH3) LOW
       PORTH &= ~(1 << 3);
@@ -200,10 +200,10 @@ void mdMenu() {
       resetFlash_MD();
       idFlash_MD();
       resetFlash_MD();
-      print_Msg("Flash ID: ");
+      print_Msg(F("Flash ID: "));
       println_Msg(flashid);
       if (strcmp(flashid, "C2F1") == 0) {
-        println_Msg("MX29F1610 detected");
+        println_Msg(F("MX29F1610 detected"));
         flashSize = 2097152;
       }
       else {
