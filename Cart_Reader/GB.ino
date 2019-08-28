@@ -34,7 +34,7 @@ void gbxMenu() {
   unsigned char gbType;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGBx, 3);
-  gbType = question_box("Select Game Boy", menuOptions, 3, 0);
+  gbType = question_box(F("Select Game Boy"), menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gbType)
@@ -67,7 +67,7 @@ void gbMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGB, 6);
-  mainMenu = question_box("GB Cart Reader", menuOptions, 6, 0);
+  mainMenu = question_box(F("GB Cart Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -590,7 +590,7 @@ void writeSRAM_GB() {
 
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select sav file");
+    fileBrowser(F("Select sav file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -712,7 +712,7 @@ void writeFlash_GB(byte MBC) {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser("Select file");
+  fileBrowser(F("Select file"));
   display_Clear();
 
   // Create filepath

@@ -60,7 +60,7 @@ void snsMenu() {
   unsigned char snsCart;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSNS, 5);
-  snsCart = question_box("Select Cart Type", menuOptions, 5, 0);
+  snsCart = question_box(F("Select Cart Type"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsCart)
@@ -114,7 +114,7 @@ void snesMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSNES, 6);
-  mainMenu = question_box("SNES Cart Reader", menuOptions, 6, 0);
+  mainMenu = question_box(F("SNES Cart Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -209,7 +209,7 @@ void snesMenu() {
       // Switch RST(PH0) to LOW
       PORTH &= ~(1 << 0);
       display_Clear();
-      print_Msg("Resetting...");
+      print_Msg(F("Resetting..."));
       display_Update();
       delay(3000);  // wait 3 secs to switch to next game
       resetArduino();
@@ -231,7 +231,7 @@ void confMenu() {
   unsigned char subMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsConf, 5);
-  subMenu = question_box("Choose mapping", menuOptions, 5, 0);
+  subMenu = question_box(F("Choose mapping"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (subMenu)
@@ -1183,7 +1183,7 @@ void writeSRAM (boolean browseFile) {
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser("Select srm file");
+    fileBrowser(F("Select srm file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
@@ -1672,7 +1672,7 @@ unsigned long verifySRAM() {
       // Switch RST(PH0) to LOW
       PORTH &= ~(1 << 0);
       display_Clear();
-      print_Msg("Resetting...");
+      print_Msg(F("Resetting..."));
       display_Update();
       delay(3000);  // wait 3 secs
       resetArduino();
