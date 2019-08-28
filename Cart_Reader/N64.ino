@@ -68,11 +68,10 @@ static const char N64CartMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4, N64CartMenuItem5};
 
 // N64 CRC32 error menu items
-static const char N64CRCMenuItem1[] PROGMEM = "Recalc CRC";
-static const char N64CRCMenuItem2[] PROGMEM = "Redump";
-static const char N64CRCMenuItem3[] PROGMEM = "Ignore";
-static const char N64CRCMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
+static const char N64CRCMenuItem1[] PROGMEM = "Redump";
+static const char N64CRCMenuItem2[] PROGMEM = "Ignore";
+static const char N64CRCMenuItem3[] PROGMEM = "Reset";
+static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3};
 
 // Rom menu
 static const char N64RomItem1[] PROGMEM = "4MB";
@@ -528,25 +527,26 @@ static word addrCRC(word address) {
   return address | crc;
 }
 
-static byte dataCRC(byte * data) {
-  byte ret = 0;
-  for (byte i = 0; i <= 32; i++) {
-    for (byte j = 7; j >= 0; j--) {
-      int tmp = 0;
-      if (ret & 0x80) {
-        tmp = 0x85;
-      }
-      ret <<= 1;
-      if ( i < 32 ) {
-        if (data[i] & (0x01 << j)) {
-          ret |= 0x1;
-        }
-      }
-      ret ^= tmp;
-    }
-  }
-  return ret;
-}
+// unused
+//static byte dataCRC(byte * data) {
+//  byte ret = 0;
+//  for (byte i = 0; i <= 32; i++) {
+//    for (byte j = 7; j >= 0; j--) {
+//      int tmp = 0;
+//      if (ret & 0x80) {
+//        tmp = 0x85;
+//      }
+//      ret <<= 1;
+//      if ( i < 32 ) {
+//        if (data[i] & (0x01 << j)) {
+//          ret |= 0x1;
+//        }
+//      }
+//      ret ^= tmp;
+//    }
+//  }
+//  return ret;
+//}
 
 /******************************************
    N64 Controller Protocol Functions
@@ -554,7 +554,6 @@ static byte dataCRC(byte * data) {
 void N64_send(unsigned char *buffer, char length) {
   // Send these bytes
   char bits;
-  bool bit;
 
   // This routine is very carefully timed by examining the assembly output.
   // Do not change any statements, it could throw the timings off
@@ -1136,7 +1135,7 @@ void printCartInfo_N64() {
   }
 }
 
-// CRC32 lookup table
+// CRC32 lookup table // 256 entries
 static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
   0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -1182,33 +1181,6 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
-
-// Calculate dumped rom's CRC32
-inline uint32_t updateCRC32(uint8_t ch, uint32_t crc) {
-  uint32_t idx = ((crc) ^ (ch)) & 0xff;
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
-  return tab_value ^ ((crc) >> 8);
-}
-
-// Read rom from sd
-uint32_t crc32() {
-  if (myFile.open(fileName, O_READ)) {
-    uint32_t oldcrc32 = 0xFFFFFFFF;
-
-    for (unsigned long currByte = 0; currByte < cartSize * 2048; currByte++) {
-      myFile.read(sdBuffer, 512);
-      for (int c = 0; c < 512; c++) {
-        oldcrc32 = updateCRC32(sdBuffer[c], oldcrc32);
-      }
-    }
-    // Close the file:
-    myFile.close();
-    return ~oldcrc32;
-  }
-  else {
-    print_Error(F("File not found"), true);
-  }
-}
 
 // look-up the calculated crc in the file n64.txt on sd card
 boolean searchCRC(char crcStr[9]) {
@@ -1269,8 +1241,6 @@ boolean searchCRC(char crcStr[9]) {
 void getCartInfo_N64() {
   char tempStr2[2];
   char tempStr[5];
-  char sizeStr[3];
-  char saveStr[2];
 
   // cart not in list
   cartSize = 0;
@@ -2103,36 +2073,94 @@ readn64rom:
     print_Error(F("SD Error"), true);
   }
 
-  for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
+  // get current time
+  unsigned long startTime = millis();
+
+  byte buffer[1024];
+
+  // run combined dumper + crc32 routine for better performance, as N64 ROMs are quite large for an 8bit micro
+  // currently dumps + checksums a 32MB cart in 170 seconds (down from 347 seconds)
+  uint32_t oldcrc32 = 0xFFFFFFFF;
+  uint32_t tab_value = 0;
+  uint8_t idx = 0;
+
+  for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 1024) {
     // Blink led
     if (currByte % 16384 == 0)
       PORTB ^= (1 << 4);
 
-    // Set the address for the next 512 bytes
+    // Set the address for the first 512 bytes to dump
     setAddress_N64(currByte);
+    // Wait 62.5ns (safety)
+    NOP;
 
     for (int c = 0; c < 512; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
+      // Pull read(PH6) low
+      PORTH &= ~(1 << 6);
+      // Wait ~310ns
+      NOP; NOP; NOP; NOP; NOP;
 
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
+      // data on PINK and PINF is valid now, read into sd card buffer
+      buffer[c] =     PINK; // hiByte
+      buffer[c + 1] = PINF; // loByte
+
+      // Pull read(PH6) high
+      PORTH |= (1 << 6);
+      
+      // crc32 update
+      idx = ((oldcrc32) ^ (buffer[c])) & 0xff;
+      tab_value = pgm_read_dword(crc_32_tab + idx);
+      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
+      idx = ((oldcrc32) ^ (buffer[c + 1])) & 0xff;
+      tab_value = pgm_read_dword(crc_32_tab + idx);
+      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
     }
-    myFile.write(sdBuffer, 512);
+
+    // Set the address for the next 512 bytes to dump
+    setAddress_N64(currByte + 512);
+    // Wait 62.5ns (safety)
+    NOP;
+
+    for (int c = 512; c < 1024; c += 2) {
+      // Pull read(PH6) low
+      PORTH &= ~(1 << 6);
+      // Wait ~310ns
+      NOP; NOP; NOP; NOP; NOP;
+
+      // data on PINK and PINF is valid now, read into sd card buffer
+      buffer[c] =     PINK; // hiByte
+      buffer[c + 1] = PINF; // loByte
+
+      // Pull read(PH6) high
+      PORTH |= (1 << 6);
+
+      // crc32 update
+      idx = ((oldcrc32) ^ (buffer[c])) & 0xff;
+      tab_value = pgm_read_dword(crc_32_tab + idx);
+      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
+      idx = ((oldcrc32) ^ (buffer[c + 1])) & 0xff;
+      tab_value = pgm_read_dword(crc_32_tab + idx);
+      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
+    }
+
+    // write out 1024 bytes to file
+    myFile.write(buffer, 1024);
   }
   // Close the file:
   myFile.close();
 
+  // print elapsed time
+  print_Msg(F("Time elapsed: "));
+  print_Msg((millis() - startTime) / 1000);
+  println_Msg(F("s"));
+  display_Update();
+
   if (n64crc) {
-calcn64crc:
-    // Calculate Checksum and convert to string
-    println_Msg(F("Calculating CRC.."));
+    println_Msg(F("Checking CRC.."));
     display_Update();
+    // convert checksum to string
     char crcStr[9];
-    sprintf(crcStr, "%08lx", crc32());
+    sprintf(crcStr, "%08lx", ~oldcrc32);
     // Print checksum
     println_Msg(crcStr);
     display_Update();
@@ -2145,26 +2173,21 @@ calcn64crc:
     else {
       // Dump was bad or unknown
       rgb.setColor(255, 0, 0);
+
+      // let bad crc show a short while
+      delay(3000);
+
       // N64 CRC32 error Menu
       unsigned char CRCMenu;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsN64CRC, 4);
+      convertPgm(menuOptionsN64CRC, 3);
 
-      CRCMenu = question_box(F("CRC ERROR "), menuOptions, 4, 1);
+      CRCMenu = question_box(F("CRC ERROR "), menuOptions, 3, 0);
 
       // wait for user choice to come back from the question box menu
       switch (CRCMenu)
       {
         case 0:
-          // Change to last directory
-          sd.chdir(folder);
-          display_Clear();
-          // Calculate CRC again
-          rgb.setColor(0, 0, 0);
-          goto calcn64crc;
-          break;
-
-        case 1:
           // Change to last directory
           sd.chdir(folder);
           // Delete old file
@@ -2182,11 +2205,11 @@ calcn64crc:
           goto readn64rom;
           break;
 
-        case 2:
+        case 1:
           // Return to N64 menu
           break;
 
-        case 3:
+        case 2:
           // Reset
           resetArduino();
           break;

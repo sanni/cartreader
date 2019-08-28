@@ -11,8 +11,6 @@
 #define HI 1
 #define LO 0
 
-// optimization-safe nop delay
-#define NOP __asm__ __volatile__ ("nop\n\t")
 /******************************************
    Variables
  *****************************************/
@@ -613,8 +611,6 @@ void getCartInfo_SNES() {
 void checkAltConf() {
   char tempStr1[2];
   char tempStr2[5];
-  char sizeStr[3];
-  char bankStr[3];
 
   if (myFile.open("snes.txt", O_READ)) {
     while (myFile.available()) {
