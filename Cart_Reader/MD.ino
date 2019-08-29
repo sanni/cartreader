@@ -310,15 +310,15 @@ word readWord_MD(unsigned long myAddress) {
   PORTL = (myAddress >> 16) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t");
+  NOP;
 
   // Setting CS(PH3) LOW
   PORTH &= ~(1 << 3);
   // Setting OE(PH6) LOW
   PORTH &= ~(1 << 6);
 
-  // Long delay here or there will be read errors
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
+  NOP; NOP; NOP; NOP; NOP; NOP;
 
   // Read
   word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
@@ -327,7 +327,9 @@ word readWord_MD(unsigned long myAddress) {
   PORTH |= (1 << 3);
   // Setting OE(PH6) HIGH
   PORTH |= (1 << 6);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // these 6x nop delays have been here before, unknown what they mean
+  NOP; NOP; NOP; NOP; NOP; NOP;
 
   return tempWord;
 }
@@ -585,6 +587,10 @@ void getCartInfo_MD() {
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
   println_Msg(F(" MBit"));
+  print_Msg(F("ChkS: "));
+  print_Msg((chksum >> 8), HEX);
+  print_Msg((chksum & 0x00ff), HEX);
+  println_Msg(F(""));
   if (saveType == 4) {
     print_Msg(F("Serial EEPROM: "));
     print_Msg(eepSize * 8 / 1024);
@@ -673,6 +679,11 @@ void readROM_MD() {
     print_Error(F("SD Error"), true);
   }
 
+  byte buffer[1024] = { 0 };
+
+  // get current time
+  unsigned long startTime = millis();
+
   // Prepare SSF2 Banks
   if (cartSize > 0x400000) {
     writeSSF2Map(0x50987E, 6); // 0xA130FD
@@ -680,7 +691,13 @@ void readROM_MD() {
   }
   byte offsetSSF2Bank = 0;
   word d = 0;
-  for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(cartSize);
+  draw_progressbar(0, totalProgressBar);
+
+  for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
     // Blink led
     if (currBuffer % 16384 == 0)
       PORTB ^= (1 << 4);
@@ -693,17 +710,40 @@ void readROM_MD() {
         writeSSF2Map(0x50987F, 9); // 0xA130FF
         offsetSSF2Bank = 1;
     }
-    for (int currWord = 0; currWord < 256; currWord++) {
-      word myWord = readWord_MD(currBuffer + currWord - (offsetSSF2Bank * 0x80000));
-      // Split word into two bytes
-      // Left
-      sdBuffer[d] = (( myWord >> 8 ) & 0xFF);
-      // Right
-      sdBuffer[d + 1] = (myWord & 0xFF);
+
+    d = 0;
+
+    for (int currWord = 0; currWord < 512; currWord++) {
+      unsigned long myAddress = currBuffer + currWord - (offsetSSF2Bank * 0x80000);
+      PORTF = myAddress & 0xFF;
+      PORTK = (myAddress >> 8) & 0xFF;
+      PORTL = (myAddress >> 16) & 0xFF;
+
+      // Arduino running at 16Mhz -> one nop = 62.5ns
+      NOP;
+      // Setting CS(PH3) LOW
+      PORTH &= ~(1 << 3);
+      // Setting OE(PH6) LOW
+      PORTH &= ~(1 << 6);
+      // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
+      NOP; NOP; NOP; NOP; NOP; NOP;
+
+      // Read
+      buffer[d]     = PINA;
+      buffer[d + 1] = PINC;
+
+      // Setting CS(PH3) HIGH
+      PORTH |= (1 << 3);
+      // Setting OE(PH6) HIGH
+      PORTH |= (1 << 6);
+
       d += 2;
     }
-    myFile.write(sdBuffer, 512);
-    d = 0;
+    myFile.write(buffer, 1024);
+
+    // update progress bar
+    processedProgressBar += 1024;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
   myFile.close();
@@ -713,6 +753,12 @@ void readROM_MD() {
     writeSSF2Map(0x50987E, 6); // 0xA130FD
     writeSSF2Map(0x50987F, 7); // 0xA130FF
   }
+
+  // print elapsed time
+  print_Msg(F("Time elapsed: "));
+  print_Msg((millis() - startTime));
+  println_Msg(F("s"));
+  display_Update();
 }
 
 /******************************************
