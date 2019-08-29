@@ -232,6 +232,13 @@ char folder[36];
 // Array that holds the data
 byte sdBuffer[512];
 
+// soft reset Arduino: jumps to 0
+// using the watchdog timer would be more elegant but some Mega2560 bootloaders are buggy with it
+void(*resetArduino) (void) = 0;
+
+/* Hoping that sanni will use this progressbar function */
+void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
+
 //******************************************
 // Bitmaps
 //******************************************
@@ -408,9 +415,45 @@ void aboutScreen() {
   }
 }
 
-void resetArduino() {
-  wdt_enable(WDTO_15MS);
-  while (1);
+void draw_progressbar(uint32_t processed, uint32_t total)
+{
+  uint8_t current, i;
+  static uint8_t previous;
+  uint8_t steps = 20;
+
+  //Find progressbar length and draw if processed size is not 0
+  if (processed == 0)
+  {
+    previous = 0;
+    print_Msg(F("["));
+    display_Update();
+    return;
+  }
+
+  // Progress bar
+  current = (processed >= total) ? steps : processed / (total / steps);
+
+  //Draw "*" if needed
+  if (current > previous)
+  {
+    for (i = previous; i < current; i++)
+    {
+      // steps are 20, so 20 - 1 = 19. 
+      if (i == (19))
+      {
+        //If end of progress bar, finish progress bar by drawing "]"
+        print_Msg(F("]"));
+      }
+      else
+      {
+        print_Msg(F("*"));
+      }
+    }
+    //update previous "*" status
+    previous = current;
+    //Update display
+    display_Update();
+  }
 }
 
 void mainMenu() {

@@ -413,11 +413,16 @@ byte readBank_SNES(byte myBank, word myAddress) {
 
 void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
 {
-  byte buffer[1024];
+  byte buffer[1024] = { 0 };
   
   uint16_t c = 0;
   uint16_t currByte = 32768;
-  
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
+  draw_progressbar(0, totalProgressBar);
+
   for (int currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
     currByte = 32768;
@@ -442,16 +447,25 @@ void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
       // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
       if (currByte == 0) break;
     }
+
+    // update progress bar
+    processedProgressBar += 1024;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 }
 
 void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
 {
-  byte buffer[1024];
+  byte buffer[1024] = { 0 };
   
   uint16_t c = 0;
   uint16_t currByte = 0;
   
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
+  draw_progressbar(0, totalProgressBar);
+
   for (int currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
     currByte = 0;
@@ -476,6 +490,10 @@ void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
       // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
       if (currByte == 0) break;
     }
+
+    // update progress bar
+    processedProgressBar += 1024;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 }
 
@@ -956,16 +974,15 @@ boolean compare_checksum() {
   sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
 
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    print_Msg(F("Result: "));
+    print_Msg(F("Checksum OK: "));
     println_Msg(calcsumStr);
-    println_Msg(F("Checksum matches"));
     display_Update();
     return 1;
   }
   else {
-    print_Msg(F("Result: "));
+    print_Msg(F("Checksum Error: "));
     println_Msg(calcsumStr);
-    print_Error(F("Checksum Error"), false);
+    print_Error(F(""), false);
     display_Update();
     return 0;
   }
@@ -973,9 +990,6 @@ boolean compare_checksum() {
 
 // Read rom to SD card
 void readROM_SNES() {
-  // get current time
-  unsigned long startTime = millis();
-    
   // Set control
   dataIn();
   controlIn_SNES();
@@ -1005,6 +1019,9 @@ void readROM_SNES() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("Can't create file on SD"), true);
   }
+
+  // get current time
+  unsigned long startTime = millis();
 
   //Dump Derby Stallion '96 (Japan) Actual Size is 24Mb
   if ((romType == LO) && (numBanks == 128) && (strcmp("CC86", checksumStr) == 0)) {
@@ -1101,7 +1118,7 @@ void readROM_SNES() {
     display_Update();
 
     // 0xC00000-0xDFFFFF
-    print_Msg(F("Part 1"));
+    //print_Msg(F("Part 1"));
     display_Update();
     readHiRomBanks( 192, 224, &myFile );
 
@@ -1115,13 +1132,13 @@ void readROM_SNES() {
       controlIn_SNES();
 
       // 0xE00000-0xEFFFFF
-      print_Msg(F(" 2"));
+      //print_Msg(F(" 2"));
       display_Update();
       readHiRomBanks( 224, 240, &myFile );
 
       if (numBanks > 48) {
         // 0xF00000-0xFFFFFF
-        print_Msg(F(" 3"));
+        //print_Msg(F(" 3"));
         display_Update();
         readHiRomBanks( 240, 256, &myFile );
 
@@ -1135,11 +1152,12 @@ void readROM_SNES() {
         controlIn_SNES();
 
         // 0xF00000-0xFFFFFF
-        print_Msg(F(" 4"));
+        //print_Msg(F(" 4"));
         display_Update();
         readHiRomBanks( 240, 256, &myFile );
       }
-      println_Msg(F(""));
+      //println_Msg(F(""));
+      display_Clear();  // need more space due to the 4 progress bars
 
       // Return mapping registers to initial settings...
       dataOut();
