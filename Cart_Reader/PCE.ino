@@ -36,7 +36,7 @@ void pin_init_PCE(void);
 void setup_cart_PCE(void);
 void reset_cart_PCE(void);
 uint8_t read_byte_PCE(uint32_t address);
-uint8_t write_byte_PCE(uint32_t address, uint8_t data);
+void write_byte_PCE(uint32_t address, uint8_t data);
 uint32_t detect_rom_size_PCE(void);
 void read_bank_PCE(uint32_t address_start, uint32_t address_end, uint32_t *processed_size, uint32_t total_size);
 void read_rom_PCE(void);
@@ -233,7 +233,6 @@ void set_address_PCE(uint32_t address)
 uint8_t read_byte_PCE(uint32_t address)
 {
   uint8_t ret;
-  uint8_t address_byte;
 
   set_address_PCE(address);
 
@@ -265,11 +264,8 @@ uint8_t read_byte_PCE(uint32_t address)
 
 }
 
-uint8_t write_byte_PCE(uint32_t address, uint8_t data)
+void write_byte_PCE(uint32_t address, uint8_t data)
 {
-  uint8_t ret;
-  uint8_t address_byte;
-
   set_address_PCE(address);
 
   // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
@@ -303,10 +299,6 @@ uint8_t write_byte_PCE(uint32_t address, uint8_t data)
 
   // Enable Internal Pullups
   PORTC = 0xFF;
-
-  //return read data
-  return ret;
-
 }
 
 //Confirm the size of ROM - 128Kb, 256Kb, 384Kb, 512Kb, 768Kb or 1024Kb

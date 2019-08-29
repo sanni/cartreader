@@ -146,6 +146,11 @@ SdFile myFile;
 #define mode_SV 14
 
 /******************************************
+   optimization-safe nop delay
+ *****************************************/
+#define NOP __asm__ __volatile__ ("nop\n\t")
+
+/******************************************
    Variables
  *****************************************/
 // Button timing

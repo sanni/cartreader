@@ -449,7 +449,7 @@ void readROM_GB() {
 
 unsigned int calc_checksum_GB (char* fileName, char* folder) {
   unsigned int calcChecksum = 0;
-  int calcFilesize = 0;
+//  int calcFilesize = 0; // unused
   unsigned long i = 0;
   int c = 0;
 
@@ -458,7 +458,7 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
 
   // If file exists
   if (myFile.open(fileName, O_READ)) {
-    calcFilesize = myFile.fileSize() * 8 / 1024 / 1024;
+    //calcFilesize = myFile.fileSize() * 8 / 1024 / 1024; // unused
     for (i = 0; i < (myFile.fileSize() / 512); i++) {
       myFile.read(sdBuffer, 512);
       for (c = 0; c < 512; c++) {
@@ -959,7 +959,7 @@ void writeFlash_GB(byte MBC) {
 
     // Go back to file beginning
     myFile.seekSet(0);
-    unsigned int addr = 0;
+    //unsigned int addr = 0;  // unused
     writeErrors = 0;
 
     // Verify flashrom

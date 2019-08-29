@@ -768,8 +768,6 @@ void getCartInfo_GBA() {
   else {
     char tempStr2[2];
     char tempStr[5];
-    char sizeStr[3];
-    char saveStr[2];
 
     // cart not in list
     cartSize = 0;
