@@ -25,8 +25,6 @@
 /******************************************
    Prototype Declarations
  *****************************************/
-/* Hoping that sanni will use this progressbar function */
-void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 void pcsMenu(void);
 void pceMenu(void);
 
@@ -65,49 +63,6 @@ static const char* const menuOptionspceCart[] PROGMEM = {pceCartMenuItem1, pceCa
 static const char pceTCMenuItem1[] PROGMEM = "Read Rom";
 static const char pceTCMenuItem2[] PROGMEM = "Reset";
 static const char* const menuOptionspceTC[] PROGMEM = {pceTCMenuItem1, pceTCMenuItem2};
-
-
-
-void draw_progressbar(uint32_t processed, uint32_t total)
-{
-  uint8_t current, i;
-  static uint8_t previous;
-  uint8_t steps = 20;
-
-  //Find progressbar length and draw if processed size is not 0
-  if (processed == 0)
-  {
-    previous = 0;
-    print_Msg(F("["));
-    display_Update();
-    return;
-  }
-
-  // Progress bar
-  current = (processed >= total) ? steps : processed / (total / steps) ;
-  
-  //Draw "*" if needed
-  if (current > previous)
-  {
-    for (i = previous; i < current; i++)
-    {
-      // steps are 20, so 20 - 1 = 19. 
-      if (i == (19)) 
-      {
-        //If end of progress bar, finish progress bar by drawing "]"
-        print_Msg(F("]"));
-      }
-      else
-      {
-        print_Msg(F("*"));
-      }
-    }
-    //update previous "*" status
-    previous = current;
-    //Update display
-    display_Update();
-  }
-}
 
 // PCE start menu
 void pcsMenu(void) {

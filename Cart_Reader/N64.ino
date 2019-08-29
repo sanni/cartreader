@@ -2073,17 +2073,23 @@ readn64rom:
     print_Error(F("SD Error"), true);
   }
 
+  byte buffer[1024] = { 0 };
+
   // get current time
   unsigned long startTime = millis();
 
-  byte buffer[1024];
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
+  draw_progressbar(0, totalProgressBar);
 
-  // run combined dumper + crc32 routine for better performance, as N64 ROMs are quite large for an 8bit micro
-  // currently dumps + checksums a 32MB cart in 170 seconds (down from 347 seconds)
+  // prepare crc32
   uint32_t oldcrc32 = 0xFFFFFFFF;
   uint32_t tab_value = 0;
   uint8_t idx = 0;
 
+  // run combined dumper + crc32 routine for better performance, as N64 ROMs are quite large for an 8bit micro
+  // currently dumps + checksums a 32MB cart in 170 seconds (down from 347 seconds)
   for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 1024) {
     // Blink led
     if (currByte % 16384 == 0)
@@ -2108,10 +2114,10 @@ readn64rom:
       PORTH |= (1 << 6);
       
       // crc32 update
-      idx = ((oldcrc32) ^ (buffer[c])) & 0xff;
+      idx = ((oldcrc32) ^ (buffer[c]));
       tab_value = pgm_read_dword(crc_32_tab + idx);
       oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
-      idx = ((oldcrc32) ^ (buffer[c + 1])) & 0xff;
+      idx = ((oldcrc32) ^ (buffer[c + 1]));
       tab_value = pgm_read_dword(crc_32_tab + idx);
       oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
     }
@@ -2143,20 +2149,19 @@ readn64rom:
       oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
     }
 
+    processedProgressBar += 1024;
+    draw_progressbar(processedProgressBar, totalProgressBar);
     // write out 1024 bytes to file
     myFile.write(buffer, 1024);
   }
+
   // Close the file:
   myFile.close();
 
-  // print elapsed time
-  print_Msg(F("Time elapsed: "));
-  print_Msg((millis() - startTime) / 1000);
-  println_Msg(F("s"));
-  display_Update();
+  unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
 
   if (n64crc) {
-    println_Msg(F("Checking CRC.."));
+    print_Msg(F("Check CRC: "));
     display_Update();
     // convert checksum to string
     char crcStr[9];
@@ -2217,7 +2222,10 @@ readn64rom:
     }
     display_Update();
   }
-  println_Msg(F("Done."));
+
+  print_Msg(F("Done ("));
+  print_Msg(timeElapsed); // include elapsed time
+  println_Msg(F("s)"));
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
