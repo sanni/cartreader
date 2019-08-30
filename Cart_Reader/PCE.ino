@@ -541,10 +541,10 @@ void read_tennokoe_bank_PCE(void)
   uint32_t processed_size = 0;
   uint32_t verify_loop;
   uint8_t verify_flag = 1;
-  
+
   //clear the screen
   display_Clear();
-  
+
   println_Msg(F("RAM size: 8KB"));
 
   // Get name, add extension and convert to char array for sd lib
@@ -569,7 +569,7 @@ void read_tennokoe_bank_PCE(void)
     print_Error(F("Can't create file on SD"), true);
   }
 
-  pin_read_write_PCE();  
+  pin_read_write_PCE();
 
   //Initialize progress bar by setting processed size as 0
   draw_progressbar(0, 8 * 1024UL);
@@ -586,11 +586,11 @@ void read_tennokoe_bank_PCE(void)
 
   myFile.seekSet(0);    // Go back to file beginning
   processed_size = 0;
-  
+
   //Verify Tennokoe bank RAM
-  for(verify_loop = 0; verify_loop < 8 * 1024UL; verify_loop++)
+  for (verify_loop = 0; verify_loop < 8 * 1024UL; verify_loop++)
   {
-    if(myFile.read() != read_byte_PCE(verify_loop + 0x080000))
+    if (myFile.read() != read_byte_PCE(verify_loop + 0x080000))
     {
       verify_flag = 0;
       draw_progressbar(8 * 1024UL, 8 * 1024UL);
@@ -600,16 +600,16 @@ void read_tennokoe_bank_PCE(void)
   }
 
   //If verify flag is 0, verify failed
-  if(verify_flag == 1)
+  if (verify_flag == 1)
   {
     println_Msg(F("Verify OK..."));
   }
   else
   {
-    println_Msg(F("Verify failed..."));    
+    println_Msg(F("Verify failed..."));
   }
 
-  //Lock Tennokoe Bank RAM 
+  //Lock Tennokoe Bank RAM
   write_byte_PCE(0x0D0000, 0x68); //Lock RAM sequence 1 Bank 68
   write_byte_PCE(0x0F0001, 0x0); //Lock RAM sequence 2 Bank 78
   write_byte_PCE(0x0C0001, 0x60); //Lock RAM sequence 3 Bank 60
@@ -625,7 +625,7 @@ void write_tennokoe_bank_PCE(void)
 {
   uint32_t readwrite_loop, verify_loop;
   uint32_t verify_flag = 1;
-  
+
   //Display file Browser and wait user to select a file. Size must be 8KB.
   filePath[0] = '\0';
   sd.chdir("/");
@@ -646,8 +646,8 @@ void write_tennokoe_bank_PCE(void)
       return;
     }
 
-    pin_read_write_PCE();  
-  
+    pin_read_write_PCE();
+
     //Unlock Tennokoe Bank RAM
     write_byte_PCE(0x0D0000, 0x68); //Unlock RAM sequence 1 Bank 68
     write_byte_PCE(0x0F0000, 0x0); //Unlock RAM sequence 2 Bank 78
@@ -656,7 +656,7 @@ void write_tennokoe_bank_PCE(void)
     write_byte_PCE(0x0F0000, 0x73); //Unlock RAM sequence 5 Bank 78
 
     //Write file to Tennokoe BANK RAM
-    for(readwrite_loop = 0; readwrite_loop < 8 * 1024UL; readwrite_loop++)
+    for (readwrite_loop = 0; readwrite_loop < 8 * 1024UL; readwrite_loop++)
     {
       write_byte_PCE(0x080000 + readwrite_loop, myFile.read());
       draw_progressbar(readwrite_loop, 8 * 1024UL);
@@ -664,9 +664,9 @@ void write_tennokoe_bank_PCE(void)
 
     myFile.seekSet(0);    // Go back to file beginning
 
-    for(verify_loop = 0; verify_loop < 8 * 1024UL; verify_loop++)
+    for (verify_loop = 0; verify_loop < 8 * 1024UL; verify_loop++)
     {
-      if(myFile.read() != read_byte_PCE(verify_loop + 0x080000))
+      if (myFile.read() != read_byte_PCE(verify_loop + 0x080000))
       {
         draw_progressbar(2 * 1024UL, 8 * 1024UL);
         verify_flag = 0;
@@ -676,20 +676,20 @@ void write_tennokoe_bank_PCE(void)
     }
 
     //If verify flag is 0, verify failed
-    if(verify_flag == 1)
+    if (verify_flag == 1)
     {
       println_Msg(F("Verify OK..."));
     }
     else
     {
-      println_Msg(F("Verify failed..."));    
+      println_Msg(F("Verify failed..."));
     }
-  
-    //Lock Tennokoe Bank RAM 
+
+    //Lock Tennokoe Bank RAM
     write_byte_PCE(0x0D0000, 0x68); //Lock RAM sequence 1 Bank 68
     write_byte_PCE(0x0F0001, 0x0); //Lock RAM sequence 2 Bank 78
     write_byte_PCE(0x0C0001, 0x60); //Lock RAM sequence 3 Bank 60
-  
+
     pin_init_PCE();
 
     // Close the file:
@@ -711,7 +711,7 @@ void read_rom_PCE(void)
   //clear the screen
   display_Clear();
   rom_size = detect_rom_size_PCE();
-  
+
   print_Msg(F("Detected size: "));
   print_Msg(rom_size);
   println_Msg(F("KB"));
@@ -738,7 +738,7 @@ void read_rom_PCE(void)
     print_Error(F("Can't create file on SD"), true);
   }
 
-  pin_read_write_PCE();  
+  pin_read_write_PCE();
 
   //Initialize progress bar by setting processed size as 0
   draw_progressbar(0, rom_size * 1024UL);
@@ -829,7 +829,7 @@ void pceMenu() {
         sd.chdir("/");
         read_rom_PCE();
         break;
-  
+
       case 1:
         resetArduino();
         break;

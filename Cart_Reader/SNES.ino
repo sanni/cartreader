@@ -401,7 +401,7 @@ byte readBank_SNES(byte myBank, word myAddress) {
   PORTK = (myAddress >> 8) & 0xFF;
 
   // Wait for the Byte to appear on the data bus
-  // Arduino running at 16Mhz -> one nop = 62.5ns 
+  // Arduino running at 16Mhz -> one nop = 62.5ns
   // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
   // let's be conservative and use 6 x 62.5 = 375ns
   NOP; NOP; NOP; NOP; NOP; NOP;
@@ -414,7 +414,7 @@ byte readBank_SNES(byte myBank, word myAddress) {
 void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
 {
   byte buffer[1024] = { 0 };
-  
+
   uint16_t c = 0;
   uint16_t currByte = 32768;
 
@@ -433,11 +433,11 @@ void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
         PORTK = ((currByte >> 8) & 0xFF);
 
         // Wait for the Byte to appear on the data bus
-        // Arduino running at 16Mhz -> one nop = 62.5ns 
+        // Arduino running at 16Mhz -> one nop = 62.5ns
         // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
         // let's be conservative and use 6 x 62.5 = 375ns
         NOP; NOP; NOP; NOP; NOP; NOP;
-        
+
         buffer[c] = PINC;
         c++;
         currByte++;
@@ -457,10 +457,10 @@ void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
 void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
 {
   byte buffer[1024] = { 0 };
-  
+
   uint16_t c = 0;
   uint16_t currByte = 0;
-  
+
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
@@ -476,17 +476,17 @@ void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
         PORTK = ((currByte >> 8) & 0xFF);
 
         // Wait for the Byte to appear on the data bus
-        // Arduino running at 16Mhz -> one nop = 62.5ns 
+        // Arduino running at 16Mhz -> one nop = 62.5ns
         // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
         // let's be conservative and use 6 x 62.5 = 375ns
         NOP; NOP; NOP; NOP; NOP; NOP;
-        
+
         buffer[c] = PINC;
         c++;
         currByte++;
       }
       file->write(buffer, 1024);
-      
+
       // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
       if (currByte == 0) break;
     }

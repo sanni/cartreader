@@ -2112,7 +2112,7 @@ readn64rom:
 
       // Pull read(PH6) high
       PORTH |= (1 << 6);
-      
+
       // crc32 update
       idx = ((oldcrc32) ^ (buffer[c]));
       tab_value = pgm_read_dword(crc_32_tab + idx);

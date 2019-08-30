@@ -449,7 +449,7 @@ void readROM_GB() {
 
 unsigned int calc_checksum_GB (char* fileName, char* folder) {
   unsigned int calcChecksum = 0;
-//  int calcFilesize = 0; // unused
+  //  int calcFilesize = 0; // unused
   unsigned long i = 0;
   int c = 0;
 

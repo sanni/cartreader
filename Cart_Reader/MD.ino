@@ -13,6 +13,7 @@ int eepSize;
 byte eeptemp;
 word addrhi;
 word addrlo;
+word chksum;
 
 //***********************************************
 // EEPROM SAVE TYPES
@@ -31,49 +32,49 @@ byte eepType;
 // eepType and eepSize are combined to conserve memory
 //*********************************************************
 static const word PROGMEM eepid [] = {
-// ACCLAIM TYPE 1
-0x5B9F, 0x101,  // NBA Jam (J)
-0x694F, 0x101,  // NBA Jam (UE) (Rev 0)
-0xBFA9, 0x101,  // NBA Jam (UE) (Rev 1)
-// ACCLAIM TYPE 2
-0x16B2, 0x102,  // Blockbuster World Videogame Championship II (U)   [NO HEADER SAVE DATA]
-0xCC3F, 0x102,  // NBA Jam Tournament Edition (W) (Rev 0)            [NO HEADER SAVE DATA]
-0x8AE1, 0x102,  // NBA Jam Tournament Edition (W) (Rev 1)            [NO HEADER SAVE DATA]
-0xDB97, 0x102,  // NBA Jam Tournament Edition 32X (W)
-0x7651, 0x102,  // NFL Quarterback Club (W)
-0xDFE4, 0x102,  // NFL Quarterback Club 32X (W)
-0x3DE6, 0x802,  // NFL Quarterback Club '96 (UE)
-0xCB78, 0x2002, // Frank Thomas Big Hurt Baseball (UE)
-0x6DD9, 0x2002, // College Slam (U)
-// CAPCOM
-0xAD23, 0x83,   // Mega Man:  The Wily Wars (E)
-0xEA80, 0x83,   // Rockman Megaworld (J)
-// SEGA
-0x760F, 0x83,   // Evander "Real Deal" Holyfield Boxing (JU)
-0x95E7, 0x83,   // Greatest Heavyweights of the Ring (E)
-0x0000, 0x83,   // Greatest Heavyweights of the Ring (J)             [BLANK CHECKSUM 0000]
-0x7270, 0x83,   // Greatest Heavyweights of the Ring (U)
-0xBACC, 0x83,   // Honoo no Toukyuuji Dodge Danpei (J)
-0xB939, 0x83,   // MLBPA Sports Talk Baseball (U)                    [BAD HEADER SAVE DATA]
-0x487C, 0x83,   // Ninja Burai Densetsu (J)
-0x740D, 0x83,   // Wonder Boy in Monster World (B)
-0x0278, 0x83,   // Wonder Boy in Monster World (J)
-0x9D79, 0x83,   // Wonder Boy in Monster World (UE)
-// EA
-0x8512, 0x84,   // Bill Walsh College Football (UE)                  [BAD HEADER SAVE DATA]
-0xA107, 0x84,   // John Madden Football '93 (UE)                     [NO HEADER SAVE DATA]
-0x5807, 0x84,   // John Madden Football '93 Championship Edition (U) [NO HEADER SAVE DATA]
-0x2799, 0x84,   // NHLPA Hockey '93 (UE) (Rev 0)                     [NO HEADER SAVE DATA]
-0xFA57, 0x84,   // NHLPA Hockey '93 (UE) (Rev 1)                     [NO HEADER SAVE DATA]
-0x8B9F, 0x84,   // Rings of Power (UE)                               [NO HEADER SAVE DATA]
-// CODEMASTERS
-0x7E65, 0x405,  // Brian Lara Cricket (E)                            [NO HEADER SAVE DATA]
-0x9A5C, 0x2005, // Brian Lara Cricket 96 (E) (Rev 1.0)               [NO HEADER SAVE DATA]
-0xC4EE, 0x2005, // Brian Lara Cricket 96 (E) (Rev 1.1)               [NO HEADER SAVE DATA]
-0x7E50, 0x805,  // Micro Machines 2 (E) (J-Cart)                     [NO HEADER SAVE DATA]
-0x165E, 0x805,  // Micro Machines '96 (E) (J-Cart) (Rev 1.0/1.1)     [NO HEADER SAVE DATA]
-0x168B, 0x405,  // Micro Machines Military (E) (J-Cart)              [NO HEADER SAVE DATA]
-0x12C1, 0x2005, // Shane Warne Cricket (E)                           [NO HEADER SAVE DATA]
+  // ACCLAIM TYPE 1
+  0x5B9F, 0x101,  // NBA Jam (J)
+  0x694F, 0x101,  // NBA Jam (UE) (Rev 0)
+  0xBFA9, 0x101,  // NBA Jam (UE) (Rev 1)
+  // ACCLAIM TYPE 2
+  0x16B2, 0x102,  // Blockbuster World Videogame Championship II (U)   [NO HEADER SAVE DATA]
+  0xCC3F, 0x102,  // NBA Jam Tournament Edition (W) (Rev 0)            [NO HEADER SAVE DATA]
+  0x8AE1, 0x102,  // NBA Jam Tournament Edition (W) (Rev 1)            [NO HEADER SAVE DATA]
+  0xDB97, 0x102,  // NBA Jam Tournament Edition 32X (W)
+  0x7651, 0x102,  // NFL Quarterback Club (W)
+  0xDFE4, 0x102,  // NFL Quarterback Club 32X (W)
+  0x3DE6, 0x802,  // NFL Quarterback Club '96 (UE)
+  0xCB78, 0x2002, // Frank Thomas Big Hurt Baseball (UE)
+  0x6DD9, 0x2002, // College Slam (U)
+  // CAPCOM
+  0xAD23, 0x83,   // Mega Man:  The Wily Wars (E)
+  0xEA80, 0x83,   // Rockman Megaworld (J)
+  // SEGA
+  0x760F, 0x83,   // Evander "Real Deal" Holyfield Boxing (JU)
+  0x95E7, 0x83,   // Greatest Heavyweights of the Ring (E)
+  0x0000, 0x83,   // Greatest Heavyweights of the Ring (J)             [BLANK CHECKSUM 0000]
+  0x7270, 0x83,   // Greatest Heavyweights of the Ring (U)
+  0xBACC, 0x83,   // Honoo no Toukyuuji Dodge Danpei (J)
+  0xB939, 0x83,   // MLBPA Sports Talk Baseball (U)                    [BAD HEADER SAVE DATA]
+  0x487C, 0x83,   // Ninja Burai Densetsu (J)
+  0x740D, 0x83,   // Wonder Boy in Monster World (B)
+  0x0278, 0x83,   // Wonder Boy in Monster World (J)
+  0x9D79, 0x83,   // Wonder Boy in Monster World (UE)
+  // EA
+  0x8512, 0x84,   // Bill Walsh College Football (UE)                  [BAD HEADER SAVE DATA]
+  0xA107, 0x84,   // John Madden Football '93 (UE)                     [NO HEADER SAVE DATA]
+  0x5807, 0x84,   // John Madden Football '93 Championship Edition (U) [NO HEADER SAVE DATA]
+  0x2799, 0x84,   // NHLPA Hockey '93 (UE) (Rev 0)                     [NO HEADER SAVE DATA]
+  0xFA57, 0x84,   // NHLPA Hockey '93 (UE) (Rev 1)                     [NO HEADER SAVE DATA]
+  0x8B9F, 0x84,   // Rings of Power (UE)                               [NO HEADER SAVE DATA]
+  // CODEMASTERS
+  0x7E65, 0x405,  // Brian Lara Cricket (E)                            [NO HEADER SAVE DATA]
+  0x9A5C, 0x2005, // Brian Lara Cricket 96 (E) (Rev 1.0)               [NO HEADER SAVE DATA]
+  0xC4EE, 0x2005, // Brian Lara Cricket 96 (E) (Rev 1.1)               [NO HEADER SAVE DATA]
+  0x7E50, 0x805,  // Micro Machines 2 (E) (J-Cart)                     [NO HEADER SAVE DATA]
+  0x165E, 0x805,  // Micro Machines '96 (E) (J-Cart) (Rev 1.0/1.1)     [NO HEADER SAVE DATA]
+  0x168B, 0x405,  // Micro Machines Military (E) (J-Cart)              [NO HEADER SAVE DATA]
+  0x12C1, 0x2005, // Shane Warne Cricket (E)                           [NO HEADER SAVE DATA]
 };
 
 byte eepcount = (sizeof(eepid) / sizeof(eepid[0])) / 2;
@@ -403,13 +404,13 @@ void getCartInfo_MD() {
   dataIn_MD();
 
   cartSize = ((long(readWord_MD(0xD2)) << 16) | readWord_MD(0xD3)) + 1;
-  
+
   // Cart Checksum
-  word chksum = readWord_MD(0xC7);
+  chksum = readWord_MD(0xC7);
 
   // Super Street Fighter 2 Check
   if (cartSize == 0x400000) {
-    switch(chksum) {
+    switch (chksum) {
       case 0xCE25: // Super Street Fighter 2 (J) 40Mbit
       case 0xE41D: // Super Street Fighter 2 (E) 40Mbit
       case 0xE017: // Super Street Fighter 2 (U) 40Mbit
@@ -509,7 +510,7 @@ void getCartInfo_MD() {
     }
     else {
       // SRAM CARTS WITH BAD/MISSING HEADER SAVE DATA
-      switch(chksum) {
+      switch (chksum) {
         case 0xC2DB:  // Winter Challenge (UE)
           saveType = 1; // ODD
           sramBase = 0x200001;
@@ -533,7 +534,7 @@ void getCartInfo_MD() {
           saveType = 3; // BOTH
           sramBase = 0x200001;
           sramEnd = 0x207FFF;
-         break;
+          break;
 
         case 0xBF72: // College Football USA '96 (U)
         case 0x72EF: // FIFA Soccer '97 (UE)
@@ -651,6 +652,9 @@ void writeSSF2Map(unsigned long myAddress, word myData) {
 
 // Read rom and save to the SD card
 void readROM_MD() {
+  // Checksum
+  uint16_t calcCKS = 0;
+
   // Set control
   dataIn_MD();
 
@@ -703,12 +707,12 @@ void readROM_MD() {
       PORTB ^= (1 << 4);
 
     if (currBuffer == 0x200000) {
-        writeSSF2Map(0x50987E, 8); // 0xA130FD
-        offsetSSF2Bank = 1;
+      writeSSF2Map(0x50987E, 8); // 0xA130FD
+      offsetSSF2Bank = 1;
     }
     else if (currBuffer == 0x240000) {
-        writeSSF2Map(0x50987F, 9); // 0xA130FF
-        offsetSSF2Bank = 1;
+      writeSSF2Map(0x50987F, 9); // 0xA130FF
+      offsetSSF2Bank = 1;
     }
 
     d = 0;
@@ -737,6 +741,10 @@ void readROM_MD() {
       // Setting OE(PH6) HIGH
       PORTH |= (1 << 6);
 
+      // Skip first 256 words
+      if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
+        calcCKS += ((buffer[d] << 8) | buffer[d + 1]);
+      }
       d += 2;
     }
     myFile.write(buffer, 1024);
@@ -756,9 +764,23 @@ void readROM_MD() {
 
   // print elapsed time
   print_Msg(F("Time elapsed: "));
-  print_Msg((millis() - startTime));
+  print_Msg((millis() - startTime) / 1000);
   println_Msg(F("s"));
   display_Update();
+
+  // print Checksum
+  if (chksum == calcCKS) {
+    println_Msg(F("Checksum OK"));
+    display_Update();
+  }
+  else {
+    print_Msg(F("Checksum Error: "));
+    char calcsumStr[5];
+    sprintf(calcsumStr, "%04X", calcCKS);
+    println_Msg(calcsumStr);
+    print_Error(F(""), false);
+    display_Update();
+  }
 }
 
 /******************************************
@@ -1267,19 +1289,19 @@ void EepromSet1() {
   }
   else if (eepType == 4) { // EA
     writeWord_MD(0x100000, 0x80); // sda high, scl low
-    writeWord_MD(0x100000, 0xC0); // sda high, scl high // 1 
+    writeWord_MD(0x100000, 0xC0); // sda high, scl high // 1
     writeWord_MD(0x100000, 0x80); // sda high, scl low
     writeWord_MD(0x100000, 0x00); // sda low, scl low
   }
   else if (eepType == 5) { // Codemasters
     writeWord_CM(0x180000, 0x01); // sda high, scl low
-    writeWord_CM(0x180000, 0x03); // sda high, scl high // 1 
+    writeWord_CM(0x180000, 0x03); // sda high, scl high // 1
     writeWord_CM(0x180000, 0x01); // sda high, scl low
     writeWord_CM(0x180000, 0x00); // sda low, scl low
   }
   else {
     writeWord_MD(0x100000, 0x01); // sda high, scl low
-    writeWord_MD(0x100000, 0x03); // sda high, scl high // 1 
+    writeWord_MD(0x100000, 0x03); // sda high, scl high // 1
     writeWord_MD(0x100000, 0x01); // sda high, scl low
     writeWord_MD(0x100000, 0x00); // sda low, scl low
   }

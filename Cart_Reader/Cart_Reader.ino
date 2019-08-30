@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             27-08-2019
-   Version:          3.3
+   Date:             30-08-2019
+   Version:          3.4
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -35,13 +35,14 @@
    infinest - GB Memory Binary Maker
    moldov - SF Memory Binary Maker
    vogelfreiheit - N64 flashram fix
-   rama - Snes speedup
+   rama - code speedup & improvements
+   Megadrive checksum - Gens-gs
 
 **********************************************************************************/
 
 #include <SdFat.h>
 
-char ver[5] = "3.3";
+char ver[5] = "3.4";
 
 /******************************************
    Define Starting Point
@@ -438,7 +439,7 @@ void draw_progressbar(uint32_t processed, uint32_t total)
   {
     for (i = previous; i < current; i++)
     {
-      // steps are 20, so 20 - 1 = 19. 
+      // steps are 20, so 20 - 1 = 19.
       if (i == (19))
       {
         //If end of progress bar, finish progress bar by drawing "]"
