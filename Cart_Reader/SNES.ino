@@ -118,11 +118,21 @@ void snesMenu() {
   switch (mainMenu)
   {
     case 0:
-      display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      readROM_SNES();
-      compare_checksum();
+      {
+        display_Clear();
+        // Change working dir to root
+        sd.chdir("/");
+        // get current time
+        unsigned long startTime = millis();
+        // start reading from cart
+        readROM_SNES();
+        compare_checksum();
+        // print elapsed time
+        print_Msg(F("Time elapsed: "));
+        print_Msg((millis() - startTime) / 1000);
+        println_Msg(F("s"));
+        display_Update();
+      }
       break;
 
     case 1:
@@ -425,6 +435,10 @@ void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
 
   for (int currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
+
+    // Blink led
+    PORTB ^= (1 << 4);
+
     currByte = 32768;
     while (1) {
       c = 0;
@@ -468,6 +482,10 @@ void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
 
   for (int currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
+
+    // Blink led
+    PORTB ^= (1 << 4);
+
     currByte = 0;
     while (1) {
       c = 0;
@@ -1020,9 +1038,6 @@ void readROM_SNES() {
     print_Error(F("Can't create file on SD"), true);
   }
 
-  // get current time
-  unsigned long startTime = millis();
-
   //Dump Derby Stallion '96 (Japan) Actual Size is 24Mb
   if ((romType == LO) && (numBanks == 128) && (strcmp("CC86", checksumStr) == 0)) {
     // Read Banks 0x00-0x3F for the 1st/2nd MB
@@ -1101,6 +1116,7 @@ void readROM_SNES() {
       controlIn_SNES();
 
       readHiRomBanks( 240, 256, &myFile );
+      if (currMemmap == 2) display_Clear();  // need more space for the progress bars
     }
 
     dataOut();
@@ -1181,12 +1197,6 @@ void readROM_SNES() {
 
   // Close the file:
   myFile.close();
-
-  // print elapsed time
-  print_Msg(F("Time elapsed: "));
-  print_Msg((millis() - startTime) / 1000);
-  println_Msg(F("s"));
-  display_Update();
 }
 
 /******************************************
