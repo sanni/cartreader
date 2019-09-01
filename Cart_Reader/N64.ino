@@ -50,7 +50,8 @@ static const char n64MenuItem1[] PROGMEM = "Game Cartridge";
 static const char n64MenuItem2[] PROGMEM = "Controller Pak";
 static const char n64MenuItem3[] PROGMEM = "Flash Repro";
 static const char n64MenuItem4[] PROGMEM = "Flash Gameshark";
-static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4};
+static const char n64MenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsN64[] PROGMEM = {n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4, n64MenuItem5};
 
 // N64 controller menu items
 static const char N64ContMenuItem1[] PROGMEM = "Test Controller";
@@ -132,6 +133,10 @@ void n64Menu() {
       flashGameshark_N64();
       printCartInfo_N64();
       mode = mode_N64_Cart;
+      break;
+
+    case 4:
+      resetArduino();
       break;
   }
 }
@@ -2160,68 +2165,66 @@ readn64rom:
 
   unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
 
-  if (n64crc) {
-    print_Msg(F("Check CRC: "));
-    display_Update();
-    // convert checksum to string
-    char crcStr[9];
-    sprintf(crcStr, "%08lx", ~oldcrc32);
-    // Print checksum
-    println_Msg(crcStr);
-    display_Update();
+  print_Msg(F("CRC: "));
+  display_Update();
+  // convert checksum to string
+  char crcStr[9];
+  sprintf(crcStr, "%08lx", ~oldcrc32);
+  // Print checksum
+  println_Msg(crcStr);
+  display_Update();
 
-    // Search n64.txt for crc
-    if (searchCRC(crcStr)) {
-      // Dump was a known good rom
-      println_Msg(F("Checksum matches"));
-    }
-    else {
-      // Dump was bad or unknown
-      rgb.setColor(255, 0, 0);
-
-      // let bad crc show a short while
-      delay(3000);
-
-      // N64 CRC32 error Menu
-      unsigned char CRCMenu;
-      // Copy menuOptions out of progmem
-      convertPgm(menuOptionsN64CRC, 3);
-
-      CRCMenu = question_box(F("CRC ERROR "), menuOptions, 3, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (CRCMenu)
-      {
-        case 0:
-          // Change to last directory
-          sd.chdir(folder);
-          // Delete old file
-          if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-            print_Error(F("SD Error"), true);
-          }
-          if (!myFile.remove()) {
-            print_Error(F("Delete Error"), true);
-          }
-          // Dump again
-          display_Clear();
-          println_Msg(F("Reading Rom..."));
-          display_Update();
-          rgb.setColor(0, 0, 0);
-          goto readn64rom;
-          break;
-
-        case 1:
-          // Return to N64 menu
-          break;
-
-        case 2:
-          // Reset
-          resetArduino();
-          break;
-      }
-    }
-    display_Update();
+  // Search n64.txt for crc
+  if (searchCRC(crcStr)) {
+    // Dump was a known good rom
+    println_Msg(F("Checksum matches"));
   }
+  else {
+    // Dump was bad or unknown
+    rgb.setColor(255, 0, 0);
+
+    // let bad crc show a short while
+    delay(3000);
+
+    // N64 CRC32 error Menu
+    unsigned char CRCMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(menuOptionsN64CRC, 3);
+
+    CRCMenu = question_box(F("CRC ERROR "), menuOptions, 3, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (CRCMenu)
+    {
+      case 0:
+        // Change to last directory
+        sd.chdir(folder);
+        // Delete old file
+        if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+          print_Error(F("SD Error"), true);
+        }
+        if (!myFile.remove()) {
+          print_Error(F("Delete Error"), true);
+        }
+        // Dump again
+        display_Clear();
+        println_Msg(F("Reading Rom..."));
+        display_Update();
+        rgb.setColor(0, 0, 0);
+        goto readn64rom;
+        break;
+
+      case 1:
+        // Return to N64 menu
+        break;
+
+      case 2:
+        // Reset
+        resetArduino();
+        break;
+    }
+  }
+  display_Update();
 
   print_Msg(F("Done ("));
   print_Msg(timeElapsed); // include elapsed time

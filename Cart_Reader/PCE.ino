@@ -25,9 +25,6 @@
 /******************************************
    Prototype Declarations
  *****************************************/
-void pcsMenu(void);
-void pceMenu(void);
-
 /* Several PCE dedicated functions */
 void pin_read_write_PCE(void);
 void pin_init_PCE(void);

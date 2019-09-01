@@ -1,15 +1,14 @@
 //******************************************
 // SEGA MEGA DRIVE MODULE
 //******************************************
+// Writes to Sega CD Backup RAM Cart require an extra wire from MRES (B02) to VRES (B27)
 
 /******************************************
    Variables
  *****************************************/
 unsigned long sramEnd;
-
 byte eepbit[8];
 int eepSize;
-
 byte eeptemp;
 word addrhi;
 word addrlo;
@@ -81,28 +80,110 @@ byte eepcount = (sizeof(eepid) / sizeof(eepid[0])) / 2;
 byte index;
 word eepdata;
 
+// CD BACKUP RAM
+unsigned long bramSize = 0;
 /******************************************
    Menu
  *****************************************/
 // MD menu items
-static const char MDMenuItem1[] PROGMEM = "Read Rom";
-static const char MDMenuItem2[] PROGMEM = "Read Sram";
-static const char MDMenuItem3[] PROGMEM = "Write Sram";
-static const char MDMenuItem4[] PROGMEM = "Read EEPROM";
-static const char MDMenuItem5[] PROGMEM = "Write EEPROM";
-static const char MDMenuItem6[] PROGMEM = "Write Flashcart";
-static const char MDMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsMD[] PROGMEM = {MDMenuItem1, MDMenuItem2, MDMenuItem3, MDMenuItem4, MDMenuItem5, MDMenuItem6, MDMenuItem7};
+static const char MDMenuItem1[] PROGMEM = "Game Cartridge";
+static const char MDMenuItem2[] PROGMEM = "SegaCD RamCart";
+static const char MDMenuItem3[] PROGMEM = "Flash Repro";
+static const char MDMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsMD[] PROGMEM = {MDMenuItem1, MDMenuItem2, MDMenuItem3, MDMenuItem4};
+
+// Cart menu items
+static const char MDCartMenuItem1[] PROGMEM = "Read Rom";
+static const char MDCartMenuItem2[] PROGMEM = "Read Sram";
+static const char MDCartMenuItem3[] PROGMEM = "Write Sram";
+static const char MDCartMenuItem4[] PROGMEM = "Read EEPROM";
+static const char MDCartMenuItem5[] PROGMEM = "Write EEPROM";
+static const char MDCartMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsMDCart[] PROGMEM = {MDCartMenuItem1, MDCartMenuItem2, MDCartMenuItem3, MDCartMenuItem4, MDCartMenuItem5, MDCartMenuItem6};
+
+// Sega CD Ram Backup Cartridge menu items
+static const char SCDMenuItem1[] PROGMEM = "Read Backup RAM";
+static const char SCDMenuItem2[] PROGMEM = "Write Backup RAM";
+static const char SCDMenuItem3[] PROGMEM = "Reset";
+static const char* const menuOptionsSCD[] PROGMEM = {SCDMenuItem1, SCDMenuItem2, SCDMenuItem3};
 
 // Sega start menu
-void segaMenu() {
-  display_Clear();
-  display_Update();
-  setup_MD();
-  mode =  mode_MD;
+void mdMenu() {
+  // create menu with title and 3 options to choose from
+  unsigned char mdDev;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsMD, 4);
+  mdDev = question_box(F("Select MD device"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (mdDev)
+  {
+    case 0:
+      display_Clear();
+      display_Update();
+      setup_MD();
+      mode = mode_MD_Cart;
+      break;
+
+    case 1:
+      display_Clear();
+      display_Update();
+      setup_MD();
+      mode =  mode_SEGA_CD;
+      break;
+
+    case 2:
+      display_Clear();
+      display_Update();
+      setup_MD();
+      mode =  mode_MD_Cart;
+      // Change working dir to root
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser(F("Select file"));
+      display_Clear();
+      // Setting CS(PH3) LOW
+      PORTH &= ~(1 << 3);
+
+      // ID flash
+      resetFlash_MD();
+      idFlash_MD();
+      resetFlash_MD();
+      print_Msg(F("Flash ID: "));
+      println_Msg(flashid);
+      if (strcmp(flashid, "C2F1") == 0) {
+        println_Msg(F("MX29F1610 detected"));
+        flashSize = 2097152;
+      }
+      else {
+        print_Error(F("Error: Unknown flashrom"), true);
+      }
+      display_Update();
+
+      eraseFlash_MD();
+      resetFlash_MD();
+      blankcheck_MD();
+      write29F1610_MD();
+      resetFlash_MD();
+      delay(1000);
+      resetFlash_MD();
+      delay(1000);
+      verifyFlash_MD();
+      // Set CS(PH3) HIGH
+      PORTH |= (1 << 3);
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
+      display_Update();
+      wait();
+      break;
+
+    case 3:
+      resetArduino();
+      break;
+  }
 }
 
-void mdMenu() {
+void mdCartMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -189,45 +270,51 @@ void mdMenu() {
       break;
 
     case 5:
-      // Change working dir to root
-      filePath[0] = '\0';
-      sd.chdir("/");
-      fileBrowser(F("Select file"));
-      display_Clear();
-      // Setting CS(PH3) LOW
-      PORTH &= ~(1 << 3);
-
-      // ID flash
-      resetFlash_MD();
-      idFlash_MD();
-      resetFlash_MD();
-      print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
-      if (strcmp(flashid, "C2F1") == 0) {
-        println_Msg(F("MX29F1610 detected"));
-        flashSize = 2097152;
-      }
-      else {
-        print_Error(F("Error: Unknown flashrom"), true);
-      }
-      display_Update();
-
-      eraseFlash_MD();
-      resetFlash_MD();
-      blankcheck_MD();
-      write29F1610_MD();
-      resetFlash_MD();
-      delay(1000);
-      resetFlash_MD();
-      delay(1000);
-      verifyFlash_MD();
-      // Set CS(PH3) HIGH
-      PORTH |= (1 << 3);
-      break;
-
-    case 6:
       // Reset
       resetArduino();
+      break;
+  }
+  println_Msg(F(""));
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+}
+
+void segaCDMenu() {
+  // create menu with title and 3 options to choose from
+  unsigned char scdMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsSCD, 3);
+  scdMenu = question_box(F("SEGA CD RAM"), menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (scdMenu)
+  {
+    case 0:
+      display_Clear();
+      if (bramSize > 0)
+        readBram_MD();
+      else {
+        print_Error(F("Not CD Backup RAM Cart"), false);
+      }
+      break;
+
+    case 1:
+      display_Clear();
+      if (bramSize > 0) {
+        // Launch file browser
+        fileBrowser(F("Select brm file"));
+        display_Clear();
+        writeBram_MD();
+      }
+      else {
+        print_Error(F("Not CD Backup RAM Cart"), false);
+      }
+      break;
+
+    case 2:
+      // Reset
+      asm volatile ("  jmp 0");
       break;
   }
   println_Msg(F(""));
@@ -455,6 +542,12 @@ void getCartInfo_MD() {
     }
   }
 
+  // CD Backup RAM Cart Check
+  // 4 = 128KB (2045 Blocks) Sega CD Backup RAM Cart
+  // 6 = 512KB (8189 Blocks) Ultra CD Backup RAM Cart (Aftermarket)
+  word bramCheck = readWord_MD(0x00);
+  if (((bramCheck == 0x0004) && (chksum == 0x0004)) || ((bramCheck == 0x0006) && (chksum == 0x0006)))
+    bramSize = pow(2, bramCheck) * 0x2000;
   if (saveType != 4) { // NOT SERIAL EEPROM
     // Check if cart has sram
     saveType = 0;
@@ -1710,6 +1803,86 @@ void writeEEP_MD() {
         display_Update(); // ON SERIAL = delay(100)
       }
     }
+    // Close the file:
+    myFile.close();
+    println_Msg(F(""));
+    display_Clear();
+    println_Msg(F("Done"));
+    display_Update();
+  }
+  else {
+    print_Error(F("SD Error"), true);
+  }
+  dataIn_MD();
+}
+
+//******************************************
+// CD Backup RAM Functions
+//******************************************
+void readBram_MD() {
+  dataIn_MD();
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, "Cart.brm");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(10, foldern);
+  sd.chdir();
+  sprintf(folder, "MD/RAM/%d", foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  println_Msg(F("Reading..."));
+  display_Update();
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
+    for (int i = 0; i < 512; i++) {
+      sdBuffer[i] = readWord_MD(0x300000 + currByte + i);
+    }
+    myFile.write(sdBuffer, 512);
+  }
+
+  // Close the file:
+  myFile.close();
+  println_Msg(F(""));
+  display_Clear();
+  print_Msg(F("Saved to "));
+  print_Msg(folder);
+
+  display_Update();
+}
+
+void writeBram_MD() {
+  dataOut_MD();
+
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Writing..."));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+
+    // 0x700000-0x7FFFFF: Writes by /LWR latch D0; 1=RAM write enabled, 0=disabled
+    writeWord_MD(0x380000, 1); // Enable BRAM Writes
+
+    for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
+      myFile.read(sdBuffer, 512);
+      for (int i = 0; i < 512; i++) {
+        writeWord_MD(0x300000 + currByte + i, sdBuffer[i]);
+      }
+    }
+    writeWord_MD(0x380000, 0); // Disable BRAM Writes
     // Close the file:
     myFile.close();
     println_Msg(F(""));

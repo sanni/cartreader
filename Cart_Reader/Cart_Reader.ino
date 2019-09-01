@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             30-08-2019
-   Version:          3.4
+   Date:             01-09-2019
+   Version:          3.5
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -16,7 +16,7 @@
    MichlK - ROM-Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video-Game-Shield menu
-   skaman - SNES enhancements, SA1 sram support,GB flash fix and MD improvements
+   skaman - SNES enhancements, SA1 sram support, GB flash fix, MD improvements, Famicom dumper
    nocash - Nintendo Power and GBA Eeprom commands and lots of other info
    crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
@@ -36,18 +36,18 @@
    moldov - SF Memory Binary Maker
    vogelfreiheit - N64 flashram fix
    rama - code speedup & improvements
-   Megadrive checksum - Gens-gs
+   Gens-gs - Megadrive checksum
 
 **********************************************************************************/
 
 #include <SdFat.h>
 
-char ver[5] = "3.4";
+char ver[5] = "3.5";
 
 /******************************************
    Define Starting Point
 ******************************************/
-// mainMenu, n64Menu, snsMenu, gbxMenu, segaMenu, flashMenu, pceMenu
+// mainMenu, n64Menu, snsMenu, gbxMenu, nesMenu, mdMenu, flashMenu, pceMenu
 #define startMenu mainMenu
 
 /******************************************
@@ -74,10 +74,10 @@ char ver[5] = "3.4";
 /******************************************
    Options
 ******************************************/
-// If set to 1 then the crc32 checksum will be calculated after reading a N64 rom
-boolean n64crc = 1;
 // Enable 16bit flash adapter menu
 //#define enable_flash16
+// Disable splash screen
+#define fast_start
 
 /******************************************
    Libraries
@@ -90,7 +90,23 @@ boolean n64crc = 1;
 
 // AVR Eeprom
 #include <EEPROM.h>
-#include "EEPROMAnything.h"
+template <class T> int EEPROM_writeAnything(int ee, const T& value)
+{
+  const byte* p = (const byte*)(const void*)&value;
+  unsigned int i;
+  for (i = 0; i < sizeof(value); i++)
+    EEPROM.write(ee++, *p++);
+  return i;
+}
+
+template <class T> int EEPROM_readAnything(int ee, T& value)
+{
+  byte* p = (byte*)(void*)&value;
+  unsigned int i;
+  for (i = 0; i < sizeof(value); i++)
+    *p++ = EEPROM.read(ee++);
+  return i;
+}
 
 // Graphic I2C LCD
 #include <Adafruit_GFX.h>
@@ -141,10 +157,13 @@ SdFile myFile;
 #define mode_FLASH16 8
 #define mode_GBA 9
 #define mode_GBM 10
-#define mode_MD 11
+#define mode_MD_Cart 11
 #define mode_EPROM 12
 #define mode_PCE 13
 #define mode_SV 14
+#define mode_NES 15
+#define mode_SMS 16
+#define mode_SEGA_CD 17
 
 /******************************************
    optimization-safe nop delay
@@ -349,22 +368,26 @@ static const unsigned char PROGMEM sig [] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-//For PC Engine
-extern void pcsMenu(void);
-extern void pceMenu(void);
-
 /******************************************
   Menu
 *****************************************/
 // Main menu
-static const char modeItem1[] PROGMEM = "Nintendo 64";
+static const char modeItem1[] PROGMEM = "Add-ons";
 static const char modeItem2[] PROGMEM = "Super Nintendo";
-static const char modeItem3[] PROGMEM = "Game Boy";
-static const char modeItem4[] PROGMEM = "Mega Drive";
-static const char modeItem5[] PROGMEM = "Flashrom Programmer";
-static const char modeItem6[] PROGMEM = "PC Engine/TG16";
-static const char modeItem7[] PROGMEM = "About";
+static const char modeItem3[] PROGMEM = "Mega Drive";
+static const char modeItem4[] PROGMEM = "Nintendo 64";
+static const char modeItem5[] PROGMEM = "Game Boy";
+static const char modeItem6[] PROGMEM = "About";
+static const char modeItem7[] PROGMEM = "Reset";
 static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
+
+// Add-ons submenu
+static const char addonsItem1[] PROGMEM = "PC Engine/TG16";
+static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
+static const char addonsItem3[] PROGMEM = "NES/Famicom";
+static const char addonsItem4[] PROGMEM = "Sega Master System";
+static const char addonsItem5[] PROGMEM = "Reset";
+static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5};
 
 void aboutScreen() {
   display_Clear();
@@ -416,47 +439,6 @@ void aboutScreen() {
   }
 }
 
-void draw_progressbar(uint32_t processed, uint32_t total)
-{
-  uint8_t current, i;
-  static uint8_t previous;
-  uint8_t steps = 20;
-
-  //Find progressbar length and draw if processed size is not 0
-  if (processed == 0)
-  {
-    previous = 0;
-    print_Msg(F("["));
-    display_Update();
-    return;
-  }
-
-  // Progress bar
-  current = (processed >= total) ? steps : processed / (total / steps);
-
-  //Draw "*" if needed
-  if (current > previous)
-  {
-    for (i = previous; i < current; i++)
-    {
-      // steps are 20, so 20 - 1 = 19.
-      if (i == (19))
-      {
-        //If end of progress bar, finish progress bar by drawing "]"
-        print_Msg(F("]"));
-      }
-      else
-      {
-        print_Msg(F("*"));
-      }
-    }
-    //update previous "*" status
-    previous = current;
-    //Update display
-    display_Update();
-  }
-}
-
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
@@ -468,7 +450,7 @@ void mainMenu() {
   switch (modeMenu)
   {
     case 0:
-      n64Menu();
+      addonsMenu();
       break;
 
     case 1:
@@ -476,22 +458,94 @@ void mainMenu() {
       break;
 
     case 2:
-      gbxMenu();
+      mdMenu();
       break;
 
     case 3:
-      segaMenu();
+      n64Menu();
       break;
 
     case 4:
-      flashMenu();
+      gbxMenu();
       break;
+
     case 5:
-      pcsMenu();
-      break;
-    case 6:
       aboutScreen();
       break;
+
+    case 6:
+      resetArduino();
+      break;
+  }
+}
+
+void addonsMenu() {
+  // create menu with title and 5 options to choose from
+  unsigned char addonsMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(addonsOptions, 2);
+  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (addonsMenu)
+  {
+    case 0:
+      pcsMenu();
+      break;
+
+    case 1:
+      flashMenu();
+      break;
+
+    case 2:
+      nesMenu();
+      break;
+
+    case 3:
+      smsMenu();
+      break;
+
+    case 4:
+      resetArduino();
+      break;
+  }
+}
+
+/******************************************
+  Progressbar
+*****************************************/
+void draw_progressbar(uint32_t processed, uint32_t total) {
+  uint8_t current, i;
+  static uint8_t previous;
+  uint8_t steps = 20;
+
+  //Find progressbar length and draw if processed size is not 0
+  if (processed == 0) {
+    previous = 0;
+    print_Msg(F("["));
+    display_Update();
+    return;
+  }
+
+  // Progress bar
+  current = (processed >= total) ? steps : processed / (total / steps);
+
+  //Draw "*" if needed
+  if (current > previous) {
+    for (i = previous; i < current; i++) {
+      // steps are 20, so 20 - 1 = 19.
+      if (i == (19)) {
+        //If end of progress bar, finish progress bar by drawing "]"
+        print_Msg(F("]"));
+      }
+      else {
+        print_Msg(F("*"));
+      }
+    }
+    //update previous "*" status
+    previous = current;
+    //Update display
+    display_Update();
   }
 }
 
@@ -503,8 +557,8 @@ void setup() {
   DDRD &= ~(1 << 7);
   DDRG &= ~(1 << 2);
   // Activate Internal Pullup Resistors
-  //PORTD |= (1 << 7);
-  //PORTG |= (1 << 2);
+  PORTD |= (1 << 7);
+  PORTG |= (1 << 2);
 
   // Read current folder number out of eeprom
   EEPROM_readAnything(10, foldern);
@@ -517,6 +571,8 @@ void setup() {
 
     // Clear the screen buffer.
     display_Clear();
+
+#ifndef fast_start
     delay(100);
 
     // Draw line
@@ -556,6 +612,7 @@ void setup() {
     display.println(ver);
     display_Update();
     delay(200);
+#endif
   }
 
   if (enable_Serial) {
@@ -1412,14 +1469,23 @@ void loop() {
   else if (mode == mode_GBM) {
     gbmMenu();
   }
-  else if (mode == mode_MD) {
-    mdMenu();
+  else if (mode == mode_MD_Cart) {
+    mdCartMenu();
   }
   else if (mode == mode_PCE) {
     pceMenu();
   }
   else if (mode == mode_SV) {
     svMenu();
+  }
+  else if (mode == mode_NES) {
+    nesMenu();
+  }
+  else if (mode == mode_SMS) {
+    smsMenu();
+  }
+  else if (mode == mode_SEGA_CD) {
+    segaCDMenu();
   }
   else {
     display_Clear();
