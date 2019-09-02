@@ -109,7 +109,7 @@ static const char* const menuOptionsSCD[] PROGMEM = {SCDMenuItem1, SCDMenuItem2,
 
 // Sega start menu
 void mdMenu() {
-  // create menu with title and 3 options to choose from
+  // create menu with title and 4 options to choose from
   unsigned char mdDev;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsMD, 4);
@@ -184,10 +184,10 @@ void mdMenu() {
 }
 
 void mdCartMenu() {
-  // create menu with title and 7 options to choose from
+  // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMD, 6);
+  convertPgm(menuOptionsMDCart, 6);
   mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
