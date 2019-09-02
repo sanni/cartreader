@@ -187,8 +187,8 @@ void mdCartMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMD, 7);
-  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 7, 0);
+  convertPgm(menuOptionsMD, 6);
+  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
