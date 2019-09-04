@@ -702,11 +702,11 @@ void getCartInfo_MD() {
   println_Msg(F(" "));
 
   // Wait for user input
-  if (enable_OLED) {
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
+#ifdef enable_OLED
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+#endif
 }
 
 void writeSSF2Map(unsigned long myAddress, word myData) {

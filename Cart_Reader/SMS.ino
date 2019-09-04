@@ -196,11 +196,11 @@ void getCartInfo_SMS() {
   println_Msg(F(" "));
 
   // Wait for user input
-  if (enable_OLED) {
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
+#ifdef enable_OLED
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+#endif
 }
 
 // Read rom and save to the SD card

@@ -626,17 +626,15 @@ void getCartInfo_SNES() {
   display_Update();
 
   // Wait for user input
-  if (enable_OLED) {
-    println_Msg(F(" "));
-    println_Msg(F(" "));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
-
-  else if (enable_Serial) {
-    println_Msg(F(" "));
-  }
+#ifdef enable_OLED
+  println_Msg(F(" "));
+  println_Msg(F(" "));
+  println_Msg(F("Press Button..."));
+  display_Update();
+  wait();
+#else
+  println_Msg(F(" "));
+#endif
 
   // Start manual config
   if (manualConfig == 1) {

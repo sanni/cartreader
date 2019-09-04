@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             01-09-2019
-   Version:          3.5
+   Date:             05-09-2019
+   Version:          3.6
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -39,45 +39,27 @@
    Gens-gs - Megadrive checksum
 
 **********************************************************************************/
-
-#include <SdFat.h>
-
-char ver[5] = "3.5";
-
-/******************************************
-   Define Starting Point
-******************************************/
-// mainMenu, n64Menu, snsMenu, gbxMenu, nesMenu, mdMenu, flashMenu, pceMenu
-#define startMenu mainMenu
-
-/******************************************
-   Define Output
-******************************************/
-// To use the Serial Monitor change
-// enable_OLED to 0 and enable_Serial to 1
-#define enable_OLED 1
-#define enable_Serial 0
-
-/******************************************
-   Define Input
-******************************************/
-// If you are using the old version with only one button add // in front of the next line
-#define enable_Button2
-
-/******************************************
-   Define SD Speed
-******************************************/
-// Change to half speed if you get an sd error or it hangs when writing
-#define sdSpeed SPI_FULL_SPEED
-//#define sdSpeed SPI_HALF_SPEED
+char ver[5] = "3.6";
 
 /******************************************
    Options
 ******************************************/
-// Enable 16bit flash adapter menu
-//#define enable_flash16
-// Disable splash screen
+// Change mainMenu to snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu,
+// flashMenu, nesMenu or smsMenu for single slot Cart Readers
+#define startMenu mainMenu
+
+// Comment out to change to Serial Ouput
+// be sure to change the Arduino Serial Monitor to no line ending
+#define enable_OLED
+
+// Skip OLED start-up animation
 #define fast_start
+
+// Enable the second button
+#define enable_Button2
+
+// Enable old 16-bit flash adapter menu
+//#define enable_flash16
 
 /******************************************
    Libraries
@@ -88,14 +70,21 @@ char ver[5] = "3.5";
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 
+// SD Card
+#include <SdFat.h>
+#define sdSpeed SPI_FULL_SPEED
+// SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
+#define chipSelectPin 53
+SdFat sd;
+SdFile myFile;
+
 // AVR Eeprom
 #include <EEPROM.h>
 // forward declarations for "T" (for non Arduino IDE)
 template <class T> int EEPROM_writeAnything(int ee, const T& value);
 template <class T> int EEPROM_readAnything(int ee, T& value);
 
-template <class T> int EEPROM_writeAnything(int ee, const T& value)
-{
+template <class T> int EEPROM_writeAnything(int ee, const T& value) {
   const byte* p = (const byte*)(const void*)&value;
   unsigned int i;
   for (i = 0; i < sizeof(value); i++)
@@ -103,8 +92,7 @@ template <class T> int EEPROM_writeAnything(int ee, const T& value)
   return i;
 }
 
-template <class T> int EEPROM_readAnything(int ee, T& value)
-{
+template <class T> int EEPROM_readAnything(int ee, T& value) {
   byte* p = (byte*)(void*)&value;
   unsigned int i;
   for (i = 0; i < sizeof(value); i++)
@@ -141,11 +129,6 @@ typedef enum COLOR_T {
   white_color,
 } color_t;
 
-// SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
-#define chipSelectPin 53
-SdFat sd;
-SdFile myFile;
-
 /******************************************
   Defines
  *****************************************/
@@ -169,20 +152,20 @@ SdFile myFile;
 #define mode_SMS 16
 #define mode_SEGA_CD 17
 
-/******************************************
-   optimization-safe nop delay
- *****************************************/
+// optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
+
+// Button timing
+#define debounce 20 // ms debounce period to prevent flickering when pressing or releasing the button
+#define DCgap 250 // max ms between clicks for a double click event
+#define holdTime 2000 // ms hold period: how long to wait for press+hold event
+#define longHoldTime 5000 // ms long hold period: how long to wait for press+hold event
 
 /******************************************
    Variables
  *****************************************/
-// Button timing
-static int debounce = 20; // ms debounce period to prevent flickering when pressing or releasing the button
-static int DCgap = 250; // max ms between clicks for a double click event
-static int holdTime = 2000; // ms hold period: how long to wait for press+hold event
-static int longHoldTime = 5000; // ms long hold period: how long to wait for press+hold event
-// Variables for button 1
+#ifdef enable_OLED
+// Button 1
 boolean buttonVal1 = HIGH; // value read from button
 boolean buttonLast1 = HIGH; // buffered value of the button's previous state
 boolean DCwaiting1 = false; // whether we're waiting for a double click (down)
@@ -194,7 +177,7 @@ boolean ignoreUp1 = false; // whether to ignore the button release because the c
 boolean waitForUp1 = false; // when held, whether to wait for the up event
 boolean holdEventPast1 = false; // whether or not the hold event happened already
 boolean longholdEventPast1 = false;// whether or not the long hold event happened already
-// Variables for button 2
+// Button 2
 boolean buttonVal2 = HIGH; // value read from button
 boolean buttonLast2 = HIGH; // buffered value of the button's previous state
 boolean DCwaiting2 = false; // whether we're waiting for a double click (down)
@@ -206,9 +189,10 @@ boolean ignoreUp2 = false; // whether to ignore the button release because the c
 boolean waitForUp2 = false; // when held, whether to wait for the up event
 boolean holdEventPast2 = false; // whether or not the hold event happened already
 boolean longholdEventPast2 = false;// whether or not the long hold event happened already
-
+#else
 // For incoming serial data
 int incomingByte;
+#endif
 
 // Variables for the menu
 int choice = 0;
@@ -260,7 +244,7 @@ byte sdBuffer[512];
 // using the watchdog timer would be more elegant but some Mega2560 bootloaders are buggy with it
 void(*resetArduino) (void) = 0;
 
-/* Hoping that sanni will use this progressbar function */
+// Progressbar
 void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 
 //******************************************
@@ -393,6 +377,7 @@ static const char addonsItem4[] PROGMEM = "Sega Master System";
 static const char addonsItem5[] PROGMEM = "Reset";
 static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5};
 
+// Info Screen
 void aboutScreen() {
   display_Clear();
   // Draw the Logo
@@ -409,40 +394,40 @@ void aboutScreen() {
   display_Update();
 
   while (1) {
-    if (enable_OLED) {
-      // get input button
-      int b = checkButton();
+#ifdef enable_OLED
+    // get input button
+    int b = checkButton();
 
-      // if the cart readers input button is pressed shortly
-      if (b == 1) {
-        resetArduino();
-      }
-
-      // if the cart readers input button is pressed long
-      if (b == 3) {
-        resetArduino();
-      }
-
-      // if the button is pressed super long
-      if (b == 4) {
-        display_Clear();
-        println_Msg(F("Resetting folder..."));
-        display_Update();
-        delay(2000);
-        foldern = 0;
-        EEPROM_writeAnything(10, foldern);
-        resetArduino();
-      }
-    }
-    if (enable_Serial) {
-      wait_serial();
+    // if the cart readers input button is pressed shortly
+    if (b == 1) {
       resetArduino();
     }
+
+    // if the cart readers input button is pressed long
+    if (b == 3) {
+      resetArduino();
+    }
+
+    // if the button is pressed super long
+    if (b == 4) {
+      display_Clear();
+      println_Msg(F("Resetting folder..."));
+      display_Update();
+      delay(2000);
+      foldern = 0;
+      EEPROM_writeAnything(10, foldern);
+      resetArduino();
+    }
+#else
+    wait_serial();
+    resetArduino();
+#endif
     rgb.setColor(random(0, 255), random(0, 255), random(0, 255));
     delay(random(50, 100));
   }
 }
 
+// All included slots
 void mainMenu() {
   // create menu with title and 6 options to choose from
   unsigned char modeMenu;
@@ -483,12 +468,13 @@ void mainMenu() {
   }
 }
 
+// Everything that needs an adapter
 void addonsMenu() {
   // create menu with title and 5 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 2);
-  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 2, 0);
+  convertPgm(addonsOptions, 5);
+  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu)
@@ -567,71 +553,66 @@ void setup() {
   // Read current folder number out of eeprom
   EEPROM_readAnything(10, foldern);
 
-  if (enable_OLED) {
-    // GLCD
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
+#ifdef enable_OLED
+  // GLCD
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
 
-    // Clear the screen buffer.
-    display_Clear();
+  // Clear the screen buffer.
+  display_Clear();
 
 #ifndef fast_start
-    delay(100);
+  delay(100);
 
-    // Draw line
-    display.drawLine(0, 32, 127, 32, WHITE);
-    display_Update();
-    delay(100);
+  // Draw line
+  display.drawLine(0, 32, 127, 32, WHITE);
+  display_Update();
+  delay(100);
 
-    // Initialize LED
-    rgb.setColor(0, 0, 0);
+  // Initialize LED
+  rgb.setColor(0, 0, 0);
 
-    // Clear the screen.
-    display_Clear();
-    display_Update();
-    delay(25);
+  // Clear the screen.
+  display_Clear();
+  display_Update();
+  delay(25);
 
-    // Draw the Logo
-    display.drawBitmap(28, 0, icon, 72, 64, 1);
-    for (int s = 1; s < 64; s += 2) {
-      // Draw Scanlines
-      display.drawLine(0, s, 127, s, BLACK);
-    }
-    display_Update();
-    delay(50);
+  // Draw the Logo
+  display.drawBitmap(28, 0, icon, 72, 64, 1);
+  for (int s = 1; s < 64; s += 2) {
+    // Draw Scanlines
+    display.drawLine(0, s, 127, s, BLACK);
+  }
+  display_Update();
+  delay(50);
 
-    // Clear the screen.
-    display_Clear();
-    display_Update();
-    delay(25);
+  // Clear the screen.
+  display_Clear();
+  display_Update();
+  delay(25);
 
-    // Draw the Logo
-    display.drawBitmap(28, 0, icon, 72, 64, 1);
-    for (int s = 1; s < 64; s += 2) {
-      // Draw Scanlines
-      display.drawLine(0, s, 127, s, BLACK);
-    }
-    display.setCursor(100, 55);
-    display.println(ver);
-    display_Update();
-    delay(200);
+  // Draw the Logo
+  display.drawBitmap(28, 0, icon, 72, 64, 1);
+  for (int s = 1; s < 64; s += 2) {
+    // Draw Scanlines
+    display.drawLine(0, s, 127, s, BLACK);
+  }
+  display.setCursor(100, 55);
+  display.println(ver);
+  display_Update();
+  delay(200);
 #endif
-  }
 
-  if (enable_Serial) {
-    // Serial Begin
-    Serial.begin(9600);
-    Serial.println(F("Cartridge Reader"));
-    Serial.println(F("2019 sanni"));
-    Serial.println("");
-    // LED Error
-    rgb.setColor(0, 0, 255);
-  }
-  else {
-    // LED Off
-    rgb.setColor(0, 0, 0);
-  }
+#else
+  // Serial Begin
+  Serial.begin(9600);
+  Serial.println(F("Cartridge Reader"));
+  Serial.println(F("2019 sanni"));
+  Serial.println("");
+  // LED Error
+  rgb.setColor(0, 0, 255);
+#endif
 
   // Init SD card
   if (!sd.begin(chipSelectPin, sdSpeed)) {
@@ -639,13 +620,13 @@ void setup() {
     print_Error(F("SD Error"), true);
   }
 
-  if (enable_Serial) {
-    // Print SD Info
-    Serial.print(F("SD Card: "));
-    Serial.print(sd.card()->cardSize() * 512E-9);
-    Serial.print(F("GB FAT"));
-    Serial.println(int(sd.vol()->fatType()));
-  }
+#ifndef enable_OLED
+  // Print SD Info
+  Serial.print(F("SD Card: "));
+  Serial.print(sd.card()->cardSize() * 512E-9);
+  Serial.print(F("GB FAT"));
+  Serial.println(int(sd.vol()->fatType()));
+#endif
 
   startMenu();
 }
@@ -683,137 +664,146 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
   display_Update();
 
   if (forceReset) {
-    if (enable_Serial) {
-      println_Msg(F("Fatal Error, please reset"));
-      while (1);
+#ifdef enable_OLED
+    println_Msg(F(""));
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
+    if (ignoreError == 0) {
+      resetArduino();
     }
     else {
+      ignoreError = 0;
+      display_Clear();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F("  Error Overwrite"));
       display_Update();
-      wait();
-      if (ignoreError == 0) {
-        resetArduino();
-      }
-      else {
-        ignoreError = 0;
-        display_Clear();
-        println_Msg(F(""));
-        println_Msg(F(""));
-        println_Msg(F(""));
-        println_Msg(F("  Error Overwrite"));
-        display_Update();
-        delay(2000);
-      }
+      delay(2000);
     }
+#else
+    println_Msg(F("Fatal Error, please reset"));
+    while (1);
+#endif
   }
 }
 
 void wait() {
-  if (enable_OLED) {
-    wait_btn();
-  }
-  if (enable_Serial) {
-    wait_serial();
-  }
+#ifdef enable_OLED
+  wait_btn();
+#else
+  wait_serial();
+#endif
 }
 
 void print_Msg(const __FlashStringHelper *string) {
-  if (enable_OLED)
-    display.print(string);
-  if (enable_Serial)
-    Serial.print(string);
+#ifdef enable_OLED
+  display.print(string);
+#else
+  Serial.print(string);
+#endif
 }
 
 void print_Msg(const char string[]) {
-  if (enable_OLED)
-    display.print(string);
-  if (enable_Serial)
-    Serial.print(string);
+#ifdef enable_OLED
+  display.print(string);
+#else
+  Serial.print(string);
+#endif
 }
 
 void print_Msg(long unsigned int message) {
-  if (enable_OLED)
-    display.print(message);
-  if (enable_Serial)
-    Serial.print(message);
+#ifdef enable_OLED
+  display.print(message);
+#else
+  Serial.print(message);
+#endif
 }
 
 void print_Msg(byte message, int outputFormat) {
-  if (enable_OLED)
-    display.print(message, outputFormat);
-  if (enable_Serial)
-    Serial.print(message, outputFormat);
+#ifdef enable_OLED
+  display.print(message, outputFormat);
+#else
+  Serial.print(message, outputFormat);
+#endif
 }
 
 void print_Msg(String string) {
-  if (enable_OLED)
-    display.print(string);
-  if (enable_Serial)
-    Serial.print(string);
+#ifdef enable_OLED
+  display.print(string);
+#else
+  Serial.print(string);
+#endif
 }
 
 void println_Msg(String string) {
-  if (enable_OLED)
-    display.println(string);
-  if (enable_Serial)
-    Serial.println(string);
+#ifdef enable_OLED
+  display.println(string);
+#else
+  Serial.println(string);
+#endif
 }
 
 void println_Msg(byte message, int outputFormat) {
-  if (enable_OLED)
-    display.println(message, outputFormat);
-  if (enable_Serial)
-    Serial.println(message, outputFormat);
+#ifdef enable_OLED
+  display.println(message, outputFormat);
+#else
+  Serial.println(message, outputFormat);
+#endif
 }
 
 void println_Msg(const char message[]) {
-  if (enable_OLED)
-    display.println(message);
-  if (enable_Serial)
-    Serial.println(message);
+#ifdef enable_OLED
+  display.println(message);
+#else
+  Serial.println(message);
+#endif
 }
 
 void println_Msg(const __FlashStringHelper *string) {
-  if (enable_OLED)
-    display.println(string);
-  if (enable_Serial)
-    Serial.println(string);
+#ifdef enable_OLED
+  display.println(string);
+#else
+  Serial.println(string);
+#endif
 }
 
 void println_Msg(long unsigned int message) {
-  if (enable_OLED)
-    display.println(message);
-  if (enable_Serial)
-    Serial.println(message);
+#ifdef enable_OLED
+  display.println(message);
+#else
+  Serial.println(message);
+#endif
 }
 
 void display_Update() {
-  if (enable_OLED)
-    display.display();
-  if (enable_Serial)
-    delay(100);
+#ifdef enable_OLED
+  display.display();
+#else
+  delay(100);
+#endif
 }
 
 void display_Clear() {
-  if (enable_OLED) {
-    display.clearDisplay();
-    display.setCursor(0, 0);
-  }
+#ifdef enable_OLED
+  display.clearDisplay();
+  display.setCursor(0, 0);
+#endif
 }
 
 unsigned char question_box(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
-  if (enable_OLED) {
-    return questionBox_OLED(question, answers, num_answers, default_choice);
-  }
-  else if (enable_Serial) {
-    return questionBox_Serial(question, answers, num_answers, default_choice);
-  }
+#ifdef enable_OLED
+  return questionBox_OLED(question, answers, num_answers, default_choice);
+#else
+  return questionBox_Serial(question, answers, num_answers, default_choice);
+#endif
 }
 
 /******************************************
   Serial Out
 *****************************************/
+#ifndef enable_OLED
 void wait_serial() {
   while (Serial.available() == 0) {
   }
@@ -931,6 +921,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
   //Serial.println("");
   return incomingByte;
 }
+#endif
 
 /******************************************
   RGB LED
@@ -964,6 +955,7 @@ void rgbLed(byte Color) {
 /******************************************
   OLED Menu Module
 *****************************************/
+#ifdef enable_OLED
 // Read button state
 int checkButton() {
 #ifdef enable_Button2
@@ -979,6 +971,7 @@ int checkButton() {
 // Read button 1
 int checkButton1() {
   int event = 0;
+
   // Read the state of the button (PD7)
   buttonVal1 = (PIND & (1 << 7));
   // Button pressed down
@@ -1038,6 +1031,7 @@ int checkButton1() {
 // Read button 2
 int checkButton2() {
   int event = 0;
+
   // Read the state of the button (PD7)
   buttonVal2 = (PING & (1 << 2));
   // Button pressed down
@@ -1129,7 +1123,6 @@ void wait_btn() {
 
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
 unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
-
   //clear the screen
   display.clearDisplay();
   display.display();
@@ -1251,6 +1244,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers
   rgb.setColor(0, 0, 0);
   return choice;
 }
+#endif
 
 /******************************************
   Filebrowser Module
