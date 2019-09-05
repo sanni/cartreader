@@ -7,7 +7,7 @@ To enable the Serial Monitor follow the instructions on flashing the Cart_Reader
 **But before you hit upload you need to change one line in the Cart_Reader.ino tab like this:**   
 
 ```
-// Comment out to change to Serial Ouput
+// Comment out to change to Serial Output
 // be sure to change the Arduino Serial Monitor to no line ending
 //#define enable_OLED
 ```
