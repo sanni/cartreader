@@ -39,6 +39,8 @@
    Gens-gs - Megadrive checksum
 
 **********************************************************************************/
+#include <SdFat.h>
+
 char ver[5] = "3.6";
 
 /******************************************
@@ -71,7 +73,6 @@ char ver[5] = "3.6";
 #include <avr/wdt.h>
 
 // SD Card
-#include <SdFat.h>
 #define sdSpeed SPI_FULL_SPEED
 // SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
 #define chipSelectPin 53
@@ -1158,6 +1159,9 @@ unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers
       if ((millis() - idleTime) % 4000 == 0) {
         if (currentColor < 7) {
           currentColor++;
+          if (currentColor == 1) {
+            currentColor = 2; // skip red as that signifies an error to the user
+          }
         }
         else {
           currentColor = 0;

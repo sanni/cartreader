@@ -216,6 +216,11 @@ void snesMenu() {
       DDRH |= (1 << 0);
       // Switch RST(PH0) to LOW
       PORTH &= ~(1 << 0);
+
+      // Note: It is probably not intended to reset CIC or clocks here
+      // But if that's false, uncomment this:
+      // stopSnesClocks_resetCic_resetCart();
+
       display_Clear();
       print_Msg(F("Resetting..."));
       display_Update();
@@ -224,6 +229,7 @@ void snesMenu() {
       break;
 
     case 5:
+      stopSnesClocks_resetCic_resetCart();
       resetArduino();
       break;
   }
@@ -270,9 +276,20 @@ void confMenu() {
 
     case 4:
       // Reset
+      stopSnesClocks_resetCic_resetCart();
       resetArduino();
       break;
   }
+}
+
+void stopSnesClocks_resetCic_resetCart() {
+  DDRG |= (1 << 1);   // Set cicrstPin(PG1) to Output
+  PORTG |= (1 << 1);  // pull high = reset CIC
+  DDRH |= (1 << 0);   // Set RST(PH0) pin to Output
+  PORTH &= ~(1 << 0); // Switch RST(PH0) to LOW
+  clockgen.output_enable(SI5351_CLK1, 0); // CPU clock
+  clockgen.output_enable(SI5351_CLK2, 0); // CIC clock
+  clockgen.output_enable(SI5351_CLK0, 0); // master clock
 }
 
 /******************************************
@@ -285,16 +302,6 @@ void setup_Snes() {
   PORTG |= (1 << 1);
   // Set cichstPin(PG0) to Input
   DDRG &= ~(1 << 0);
-
-  // Adafruit Clock Generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
-  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
-  clockgen.set_freq(307200000ULL, SI5351_CLK2);
-  clockgen.output_enable(SI5351_CLK0, 1);
-  clockgen.output_enable(SI5351_CLK1, 0);
-  clockgen.output_enable(SI5351_CLK2, 1);
 
   // Set Address Pins to Output
   //A0-A7
@@ -327,7 +334,7 @@ void setup_Snes() {
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
 
-  // Set expand(PG5) to Imput
+  // Set expand(PG5) to Input
   DDRG &= ~(1 << 5);
   // Activate Internal Pullup Resistors
   //PORTG |= (1 << 5);
@@ -348,11 +355,25 @@ void setup_Snes() {
   DDRJ |= (1 << 0);
   //PORTJ &= ~(1 << 0);
 
+  // Adafruit Clock Generator
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
+  clockgen.set_freq(357954500ULL, SI5351_CLK1);
+  clockgen.set_freq(307200000ULL, SI5351_CLK2);
+
+  // start outputting master clock, CIC clock
+  clockgen.output_enable(SI5351_CLK1, 0); // no CPU clock yet; seems to affect SA-1 success a lot
+  clockgen.output_enable(SI5351_CLK2, 1); // CIC clock (should go before master clock)
+  clockgen.output_enable(SI5351_CLK0, 1); // master clock
+  delay(8);
+
   // Start CIC by outputting a low signal to cicrstPin(PG1)
-  PORTG  &= ~(1 << 1);
+  PORTG &= ~(1 << 1);
 
   // Wait for CIC reset
-  delay(1000);
+  delay(320);
 
   // Print all the info
   getCartInfo_SNES();
@@ -1310,7 +1331,6 @@ void writeSRAM (boolean browseFile) {
     else if (romType == SA) {
       long lastByte = (long(sramSize) * 128);
       // Enable CPU Clock
-      clockgen.set_freq(357954500ULL, SI5351_CLK1);
       clockgen.output_enable(SI5351_CLK1, 1);
 
       // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
@@ -1689,10 +1709,9 @@ unsigned long verifySRAM() {
       }
       display_Update();
       wait();
-      // Set reset pin to output (PH0)
-      DDRH |= (1 << 0);
-      // Switch RST(PH0) to LOW
-      PORTH &= ~(1 << 0);
+
+      stopSnesClocks_resetCic_resetCart();
+
       display_Clear();
       print_Msg(F("Resetting..."));
       display_Update();
@@ -1808,7 +1827,6 @@ boolean eraseSRAM (byte b) {
   else if (romType == SA) {
     long lastByte = (long(sramSize) * 128);
     // Enable CPU Clock
-    clockgen.set_freq(357954500ULL, SI5351_CLK1);
     clockgen.output_enable(SI5351_CLK1, 1);
 
     // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
