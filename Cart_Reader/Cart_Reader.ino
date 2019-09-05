@@ -48,7 +48,7 @@ char ver[5] = "3.6";
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
 #define startMenu mainMenu
 
-// Comment out to change to Serial Ouput
+// Comment out to change to Serial Output
 // be sure to change the Arduino Serial Monitor to no line ending
 #define enable_OLED
 
