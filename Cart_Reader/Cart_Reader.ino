@@ -547,7 +547,7 @@ void setup() {
   DDRD &= ~(1 << 7);
   DDRG &= ~(1 << 2);
   // Activate Internal Pullup Resistors
-  PORTD |= (1 << 7);
+  //PORTD |= (1 << 7);
   PORTG |= (1 << 2);
 
   // Read current folder number out of eeprom
