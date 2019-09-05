@@ -2459,11 +2459,7 @@ void writeRAM () {
   display_Clear();
 
   if (ramsize == 0) {
-    LED_RED_ON;
-
-    println_Msg(F("RAM SIZE 0K"));
-    display_Update();
-
+    print_Error(F("RAM SIZE 0K"), false);
   }
   else {
     fileBrowser(F("Select RAM File"));
@@ -2472,6 +2468,7 @@ void writeRAM () {
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
+    display_Clear();
     println_Msg(F("Writing File: "));
     println_Msg(filePath);
     println_Msg(fileName);
@@ -2597,9 +2594,7 @@ void writeRAM () {
 
     }
     else {
-      LED_RED_ON;
-      println_Msg(F("SD ERROR"));
-      display_Update();
+      print_Error(F("SD ERROR"), true);
     }
   }
 
