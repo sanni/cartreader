@@ -2,14 +2,15 @@ This Arduino code is written by a beginner for beginners, therefore I tried to c
 
 Source code files:   
 - Cart_Reader.ino is the main file that contains functions and variables being used by multiple submodules and also the main menu     
-- EEPROMAnything.h helps with reading and writing to the Atmega's internal eeprom   
 - FLASH.ino is for reading and writing 29F016, 29F032, 29F033, 29F1610 and 29L3211 flashroms   
 - GB.ino includes everything Game Boy and Game Boy Color   
 - GBA.ino includes everything Game Boy Advance   
 - MD.ino includes everything for the SEGA Mega Drive   
 - N64.ino includes everything Nintendo 64   
+- NES.ino includes everything for the Nintendo Entertainment System
 - NP.ino includes everything for Nintendo Power SF Memory and GB Memory cartridges   
 - PCE.ino includes everything for the PC Engine/TG16   
+- SMS.ino includes everything for the SEGA Master System    
 - SNES.ino includes everything Super Nintendo   
 - SV.ino includes everything for the Super Nintendo Satellaview   
 
@@ -61,10 +62,9 @@ void print_Msg(long unsigned int message) {
 
 For development purposes you can route all the text output to the Arduino's Serial Monitor instead of to the OLED screen. In this case you control the cart reader by typing numbers into the serial monitor corresponding to the action you want to perform. If you are asked to press the button just send a random number.   
 ```
-// If you don't have an OLED screen change  
-// enable_OLED to 0 and enable_Serial to 1   
-#define enable_OLED 0   
-#define enable_Serial 1   
+// Comment out to change to Serial Output
+// be sure to change the Arduino Serial Monitor to no line ending
+//#define enable_OLED
 ```
 
 To compile and upload the code please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/How-to-flash-the-Arduino).   
