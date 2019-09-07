@@ -20,8 +20,8 @@ boolean hiROM = 1;
  *****************************************/
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
-static const char flashMenuItem2[] PROGMEM = "Eprom adapter(beta)";
-static const char flashMenuItem3[] PROGMEM = "16bit Flash adapter";
+static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
+static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
 static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3};
 
 // 8bit Flash menu items
@@ -57,13 +57,8 @@ void flashMenu() {
   // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-#ifdef enable_flash16
   convertPgm(menuOptionsFlash, 3);
   flashSlot = question_box(F("Select adapter PCB"), menuOptions, 3, 0);
-#else
-  convertPgm(menuOptionsFlash, 2);
-  flashSlot = question_box(F("Select adapter PCB"), menuOptions, 2, 0);
-#endif
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -280,7 +275,7 @@ void flashromMenu16() {
       if (strcmp(flashid, "C2F3") == 0) {
         writeFlash16_29F1601();
       }
-      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
+      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0) || (strcmp(flashid, "C2FC") == 0)) {
         writeFlash16_29LV640();
       }
       else {
@@ -555,6 +550,12 @@ void id_Flash16() {
   }
   else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
     println_Msg(F("MX29LV640 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 8388608;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "C2FC") == 0) {
+    println_Msg(F("MX26L6420 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
