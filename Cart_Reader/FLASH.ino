@@ -59,7 +59,7 @@ void flashMenu() {
   // Copy menuOptions out of progmem
 #ifdef enable_flash16
   convertPgm(menuOptionsFlash, 3);
-  flashSlot = question_box("Select adapter PCB", menuOptions, 3, 0);
+  flashSlot = question_box(F("Select adapter PCB"), menuOptions, 3, 0);
 #else
   convertPgm(menuOptionsFlash, 2);
   flashSlot = question_box(F("Select adapter PCB"), menuOptions, 2, 0);
