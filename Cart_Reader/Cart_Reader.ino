@@ -10,7 +10,7 @@
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.9
+   Compiled with Arduino 1.8.9 and Arduino AVR Boards Version 1.6.21
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
