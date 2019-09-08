@@ -746,14 +746,10 @@ void getCartInfo_SFM() {
   print_Msg(F("Sram: "));
   print_Msg(sramSize);
   println_Msg(F("Kbit"));
-
-  // Wait for user input
-#ifdef enable_OLED
+  println_Msg(F("Press Button"));
   display_Update();
+  // Wait for user input
   wait();
-#else
-  println_Msg(F(" "));
-#endif
 }
 
 // Read header information
