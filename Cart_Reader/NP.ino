@@ -1,7 +1,7 @@
 //******************************************
 // NINTENDO POWER  MODULE
 //******************************************
-//  (GB Memory starts at around line 1460)
+//  (GB Memory starts at around line 1743)
 
 /******************************************
    SF Memory Cassette
@@ -108,7 +108,7 @@ void sfmGameMenu() {
       delay(200);
       // Check for successfull switch
       byte timeout = 0;
-      while (readBank_SNES(0, 0x2400) != 0x7D) {
+      while (readBank_SFM(0, 0x2400) != 0x7D) {
         delay(200);
         // Try again
         send_SFM(gameSubMenu + 0x80);
@@ -120,7 +120,7 @@ void sfmGameMenu() {
           print_Msg(F("Game "));
           print_Msg(gameSubMenu + 0x80, HEX);
           println_Msg(F(" Timeout"));
-          println_Msg(readBank_SNES(0, 0x2400), HEX);
+          println_Msg(readBank_SFM(0, 0x2400), HEX);
           println_Msg(F(""));
           print_Error(F("Powercycle SFM cart"), true);
         }
@@ -129,7 +129,7 @@ void sfmGameMenu() {
       strcpy(romName, gameCode[gameSubMenu + 1]);
 
       // Print info
-      getCartInfo_SNES();
+      getCartInfo_SFM();
       mode = mode_SFM_Game;
     }
     else {
@@ -142,7 +142,7 @@ void sfmGameMenu() {
       strcpy(romName, gameCode[0]);
 
       // Print info
-      getCartInfo_SNES();
+      getCartInfo_SFM();
       mode = mode_SFM_Game;
     }
   }
@@ -174,7 +174,7 @@ void sfmGameOptions() {
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
-      readROM_SNES();
+      readROM_SFM();
       compare_checksum();
       break;
 
@@ -459,12 +459,12 @@ void getGames() {
   // Set data pins to input
   dataIn();
   // Set control pins to input
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Check if menu is present
   byte menuString[] = {0x4D, 0x45, 0x4E, 0x55, 0x20, 0x50, 0x52, 0x4F, 0x47, 0x52, 0x41, 0x4D};
   for (int i = 0; i < 12; i++) {
-    if (menuString[i] != readBank_SNES(0xC0, 0x7FC0 + i)) {
+    if (menuString[i] != readBank_SFM(0xC0, 0x7FC0 + i)) {
       hasMenu = false;
     }
   }
@@ -472,22 +472,22 @@ void getGames() {
   if (hasMenu) {
     // Count number of games
     for (word i = 0x0000; i < 0xE000; i += 0x2000) {
-      if (readBank_SNES(0xC6, i) == numGames )
+      if (readBank_SFM(0xC6, i) == numGames )
         numGames++;
     }
 
     // Get game info
     for (int i = 0; i < numGames; i++) {
       // Read starting address and size
-      gameAddress[i] = 0xC0 + readBank_SNES(0xC6, i * 0x2000 + 0x01) * 0x8;
-      gameSize[i] = readBank_SNES(0xC6, i * 0x2000 + 0x03) * 128;
-      saveSize[i] = readBank_SNES(0xC6, i * 0x2000 + 0x05) / 8;
+      gameAddress[i] = 0xC0 + readBank_SFM(0xC6, i * 0x2000 + 0x01) * 0x8;
+      gameSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x03) * 128;
+      saveSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x05) / 8;
 
       //check if hirom
-      if (readBank_SNES(gameAddress[i], 0xFFD5) == 0x31) {
+      if (readBank_SFM(gameAddress[i], 0xFFD5) == 0x31) {
         hirom[i] = true;
       }
-      else if (readBank_SNES(gameAddress[i], 0xFFD5) == 0x21) {
+      else if (readBank_SFM(gameAddress[i], 0xFFD5) == 0x21) {
         hirom[i] = true;
       }
       else {
@@ -495,16 +495,16 @@ void getGames() {
       }
 
       if (hirom[i]) {
-        gameVersion[i] = readBank_SNES(gameAddress[i], 0xFFDB);
+        gameVersion[i] = readBank_SFM(gameAddress[i], 0xFFDB);
       } else {
-        gameVersion[i] = readBank_SNES(gameAddress[i], 0x7FDB);
+        gameVersion[i] = readBank_SFM(gameAddress[i], 0x7FDB);
       }
 
       // Read game code
       byte myByte = 0;
       byte myLength = 0;
       for (int j = 0; j < 9; j++) {
-        myByte = readBank_SNES(0xC6, i * 0x2000 + 0x07 + j);
+        myByte = readBank_SFM(0xC6, i * 0x2000 + 0x07 + j);
         // Remove funny characters
         if (((char(myByte) >= 44 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 9) {
           gameCode[i][myLength] = char(myByte);
@@ -517,7 +517,7 @@ void getGames() {
   }
   else {
     //check if hirom
-    if (readBank_SNES(0xC0, 0xFFD5) == 0x31) {
+    if (readBank_SFM(0xC0, 0xFFD5) == 0x31) {
       hirom[0] = true;
     }
     else {
@@ -525,37 +525,37 @@ void getGames() {
     }
 
     if (hirom[0]) {
-      gameVersion[0] = readBank_SNES(0xC0, 0xFFDB);
+      gameVersion[0] = readBank_SFM(0xC0, 0xFFDB);
       gameCode[0][0] = 'G';
       gameCode[0][1] = 'A';
       gameCode[0][2] = 'M';
       gameCode[0][3] = 'E';
       gameCode[0][4] = '-';
-      gameCode[0][5] = char(readBank_SNES(0xC0, 0xFFB2));
-      gameCode[0][6] = char(readBank_SNES(0xC0, 0xFFB3));
-      gameCode[0][7] = char(readBank_SNES(0xC0, 0xFFB4));
-      gameCode[0][8] = char(readBank_SNES(0xC0, 0xFFB5));
+      gameCode[0][5] = char(readBank_SFM(0xC0, 0xFFB2));
+      gameCode[0][6] = char(readBank_SFM(0xC0, 0xFFB3));
+      gameCode[0][7] = char(readBank_SFM(0xC0, 0xFFB4));
+      gameCode[0][8] = char(readBank_SFM(0xC0, 0xFFB5));
       gameCode[0][9] = '\0';
 
-      byte romSizeExp = readBank_SNES(0xC0, 0xFFD7) - 7;
+      byte romSizeExp = readBank_SFM(0xC0, 0xFFD7) - 7;
       gameSize[0] = 1;
       while (romSizeExp--)
         gameSize[0] *= 2;
     }
     else {
-      gameVersion[0] = readBank_SNES(0xC0, 0x7FDB);
+      gameVersion[0] = readBank_SFM(0xC0, 0x7FDB);
       gameCode[0][0] = 'G';
       gameCode[0][1] = 'A';
       gameCode[0][2] = 'M';
       gameCode[0][3] = 'E';
       gameCode[0][4] = '-';
-      gameCode[0][5] = char(readBank_SNES(0xC0, 0x7FB2));
-      gameCode[0][6] = char(readBank_SNES(0xC0, 0x7FB3));
-      gameCode[0][7] = char(readBank_SNES(0xC0, 0x7FB4));
-      gameCode[0][8] = char(readBank_SNES(0xC0, 0x7FB5));
+      gameCode[0][5] = char(readBank_SFM(0xC0, 0x7FB2));
+      gameCode[0][6] = char(readBank_SFM(0xC0, 0x7FB3));
+      gameCode[0][7] = char(readBank_SFM(0xC0, 0x7FB4));
+      gameCode[0][8] = char(readBank_SFM(0xC0, 0x7FB5));
       gameCode[0][9] = '\0';
 
-      byte romSizeExp = readBank_SNES(0xC0, 0x7FD7) - 7;
+      byte romSizeExp = readBank_SFM(0xC0, 0x7FD7) - 7;
       gameSize[0] = 1;
       while (romSizeExp--)
         gameSize[0] *= 2;
@@ -569,24 +569,10 @@ void getGames() {
 void setup_SFM() {
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
-  // Output a high signal to disable snesCIC if installed
+  // Output a high signal to disable snesCIC
   PORTG |= (1 << 1);
   // Set cichstPin(PG0) to Input
   DDRG &= ~(1 << 0);
-
-  // Adafruit Clock Generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
-  // Half Clock
-  //clockgen.set_freq(1073863600ULL, SI5351_CLK0);
-  // Full Clock
-  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
-  // CIC Clock
-  //clockgen.set_freq(307200000ULL, SI5351_CLK2);
-  clockgen.output_enable(SI5351_CLK0, 1);
-  clockgen.output_enable(SI5351_CLK1, 0);
-  clockgen.output_enable(SI5351_CLK2, 0);
 
   // Set Address Pins to Output
   //A0-A7
@@ -598,27 +584,45 @@ void setup_SFM() {
 
   // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) RD(PH6)
   DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
-  // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Switch RST(PH0) and WR(PH5) to HIGH
+  PORTH |= (1 << 0) | (1 << 5);
+  // Switch CS(PH3) and RD(PH6) to LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
 
   // Set IRQ(PH4) to Input
   DDRH &= ~(1 << 4);
   // Activate Internal Pullup Resistors
-  PORTH |= (1 << 4);
+  //PORTH |= (1 << 4);
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
   // Enable Internal Pullups
-  PORTC = 0xFF;
+  //PORTC = 0xFF;
+
+  // Unused pins
+  // Set CPU Clock(PH1) to Output
+  DDRH |= (1 << 1);
+  //PORTH &= ~(1 << 1);
+
+  // Adafruit Clock Generator
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
+
+  // start outputting master clock
+  clockgen.output_enable(SI5351_CLK1, 0);
+  clockgen.output_enable(SI5351_CLK2, 0);
+  clockgen.output_enable(SI5351_CLK0, 1);
 
   // Wait until all is stable
-  delay(200);
+  delay(500);
 
   // Switch to HiRom All
   byte timeout = 0;
   send_SFM(0x04);
-  delay(100);
-  while (readBank_SNES(0, 0x2400) != 0x2A) {
+  delay(200);
+  while (readBank_SFM(0, 0x2400) != 0x2A) {
     delay(100);
     // Try again
     send_SFM(0x04);
@@ -635,61 +639,344 @@ void setup_SFM() {
 }
 
 /******************************************
+   I/O Functions
+ *****************************************/
+// Switch control pins to write
+void controlOut_SFM() {
+  // Switch RD(PH6) and WR(PH5) to HIGH
+  PORTH |= (1 << 6) | (1 << 5);
+  // Switch CS(PH3) to LOW
+  PORTH &= ~(1 << 3);
+}
+
+// Switch control pins to read
+void controlIn_SFM() {
+  // Switch WR(PH5) to HIGH
+  PORTH |= (1 << 5);
+  // Switch CS(PH3) and RD(PH6) to LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
+}
+
+/******************************************
+   Low level functions
+ *****************************************/
+// Write one byte of data to a location specified by bank and address, 00:0000
+void writeBank_SFM(byte myBank, word myAddress, byte myData) {
+  PORTL = myBank;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTC = myData;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch WR(PH5) to LOW
+  PORTH &= ~(1 << 5);
+
+  // Leave WR low for at least 60ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch WR(PH5) to HIGH
+  PORTH |= (1 << 5);
+
+  // Leave WR high for at least 50ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+// Read one byte of data from a location specified by bank and address, 00:0000
+byte readBank_SFM(byte myBank, word myAddress) {
+  PORTL = myBank;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  byte tempByte = PINC;
+  return tempByte;
+}
+
+/******************************************
+  SNES ROM Functions
+******************************************/
+void getCartInfo_SFM() {
+  // Print start page
+  if (checkcart_SFM() == 0) {
+    // Checksum either corrupt or 0000
+    errorLvl = 1;
+    rgb.setColor(255, 0, 0);
+    display_Clear();
+    println_Msg(F("ERROR"));
+    println_Msg(F("Rom header corrupt"));
+    println_Msg(F("or missing"));
+    display_Update();
+    wait();
+    // Wait() clears errors but in this case we still have an error
+    errorLvl = 1;
+  }
+
+  display_Clear();
+  print_Msg(F("Name: "));
+  println_Msg(romName);
+  println_Msg(F(" "));
+
+  print_Msg(F("Version: 1."));
+  println_Msg(romVersion);
+
+  print_Msg(F("Checksum: "));
+  println_Msg(checksumStr);
+
+  print_Msg(F("Size: "));
+  print_Msg(romSize);
+  println_Msg(F("Mbit "));
+
+  print_Msg(F("Type: "));
+  if (romType == 1)
+    println_Msg(F("HiROM"));
+  else if (romType == 0)
+    println_Msg(F("LoROM"));
+  else
+    println_Msg(romType);
+
+  print_Msg(F("Banks: "));
+  println_Msg(numBanks);
+
+  print_Msg(F("Sram: "));
+  print_Msg(sramSize);
+  println_Msg(F("Kbit"));
+
+  // Wait for user input
+#ifdef enable_OLED
+  display_Update();
+  wait();
+#else
+  println_Msg(F(" "));
+#endif
+}
+
+// Read header information
+boolean checkcart_SFM() {
+  // set control to read
+  dataIn();
+
+  // Get Checksum as string
+  sprintf(checksumStr, "%02X%02X", readBank_SFM(0, 65503), readBank_SFM(0, 65502));
+
+  romType = readBank_SFM(0, 0xFFD5);
+  if ((romType >> 5) != 1) {  // Detect invalid romType byte due to too long ROM name (22 chars)
+    romType = 0; // LoROM   // Krusty's Super Fun House (U) 1.0 & Contra 3 (U)
+  }
+  else {
+    romType &= 1; // Must be LoROM or HiROM
+  }
+
+  // Check RomSize
+  byte romSizeExp = readBank_SFM(0, 65495) - 7;
+  romSize = 1;
+  while (romSizeExp--)
+    romSize *= 2;
+
+  numBanks = (long(romSize) * 1024 * 1024 / 8) / (32768 + (long(romType) * 32768));
+
+  //Check SD card for alt config
+  checkAltConf();
+
+  // Get name
+  byte myByte = 0;
+  byte myLength = 0;
+  for (unsigned int i = 65472; i < 65492; i++) {
+    myByte = readBank_SFM(0, i);
+    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
+      romName[myLength] = char(myByte);
+      myLength++;
+    }
+  }
+  // If name consists out of all japanese characters use game code
+  if (myLength == 0) {
+    // Get rom code
+    romName[0] = 'S';
+    romName[1] = 'H';
+    romName[2] = 'V';
+    romName[3] = 'C';
+    romName[4] = '-';
+    for (unsigned int i = 0; i < 4; i++) {
+      myByte = readBank_SFM(0, 0xFFB2 + i);
+      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 4) {
+        romName[myLength + 5] = char(myByte);
+        myLength++;
+      }
+    }
+    if (myLength == 0) {
+      // Rom code unknown
+      romName[0] = 'U';
+      romName[1] = 'N';
+      romName[2] = 'K';
+      romName[3] = 'N';
+      romName[4] = 'O';
+      romName[5] = 'W';
+      romName[6] = 'N';
+    }
+  }
+
+  // Read sramSizeExp
+  byte sramSizeExp = readBank_SFM(0, 0xFFD8);
+
+  // Calculate sramSize
+  if (sramSizeExp != 0) {
+    sramSizeExp = sramSizeExp + 3;
+    sramSize = 1;
+    while (sramSizeExp--)
+      sramSize *= 2;
+  }
+  else {
+    sramSize = 0;
+  }
+
+  // ROM Version
+  romVersion = readBank_SFM(0, 65499);
+
+  // Test if checksum is equal to reverse checksum
+  if (((word(readBank_SFM(0, 65500)) + (word(readBank_SFM(0, 65501)) * 256)) + (word(readBank_SFM(0, 65502)) + (word(readBank_SFM(0, 65503)) * 256))) == 65535 ) {
+    if (strcmp("0000", checksumStr) == 0) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  // Either rom checksum is wrong or no cart is inserted
+  else {
+    return 0;
+  }
+}
+
+// Read rom to SD card
+void readROM_SFM() {
+  // Set control
+  dataIn();
+  controlIn_SFM();
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".sfc");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "NP/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  //clear the screen
+  display_Clear();
+  println_Msg(F("Creating folder: "));
+  println_Msg(folder);
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't create file on SD"), true);
+  }
+
+  // Check if LoROM or HiROM...
+  if (romType == 0) {
+    println_Msg(F("Dumping LoRom..."));
+    display_Update();
+
+    // Read up to 96 banks starting at bank 0×00.
+    for (int currBank = 0; currBank < numBanks; currBank++) {
+      // Dump the bytes to SD 512B at a time
+      for (long currByte = 32768; currByte < 65536; currByte += 512) {
+        for (int c = 0; c < 512; c++) {
+          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
+        }
+        myFile.write(sdBuffer, 512);
+      }
+    }
+  }
+  // Dump High-type ROM
+  else {
+    println_Msg(F("Dumping HiRom..."));
+    display_Update();
+
+    for (int currBank = 192; currBank < (numBanks + 192); currBank++) {
+      for (long currByte = 0; currByte < 65536; currByte += 512) {
+        for (int c = 0; c < 512; c++) {
+          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
+        }
+        myFile.write(sdBuffer, 512);
+      }
+    }
+  }
+  // Close the file:
+  myFile.close();
+
+  // Signal end of process
+  print_Msg(F("Saved as "));
+  println_Msg(fileName);
+}
+
+/******************************************
    29F1601 flashrom functions (NP)
  *****************************************/
 // Reset the MX29F1601 flashrom, startbank is 0xC0 for first and 0xE0 for second flashrom
 void resetFlash_SFM(int startBank) {
   // Configure control pins
-  controlOut_SNES();
+  controlOut_SFM();
   // Set data pins to output
   dataOut();
 
   // Reset command sequence
   if (romType) {
-    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555L * 2, 0xf0);
+    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SFM(startBank, 0x5555L * 2, 0xf0);
   }
   else {
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xf0);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xf0);
   }
 }
 
 // Print flashrom manufacturer and device ID
 void idFlash_SFM(int startBank) {
   // Configure control pins
-  controlOut_SNES();
+  controlOut_SFM();
   // Set data pins to output
   dataOut();
 
   if (romType) {
     // ID command sequence
-    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555L * 2, 0x90);
+    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SFM(startBank, 0x5555L * 2, 0x90);
 
     // Set data pins to input again
     dataIn();
     // Set control pins to input
-    controlIn_SNES();
+    controlIn_SFM();
 
     // Read the two id bytes into a string
-    sprintf(flashid, "%x%x", readBank_SNES(startBank, 0x00), readBank_SNES(startBank, 0x02));
+    sprintf(flashid, "%x%x", readBank_SFM(startBank, 0x00), readBank_SFM(startBank, 0x02));
   }
   else {
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0x90);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0x90);
 
     // Set data pins to input again
     dataIn();
     // Set control pins to input
-    controlIn_SNES();
+    controlIn_SFM();
 
     // Read the two id bytes into a string
-    sprintf(flashid, "%x%x", readBank_SNES(0, 0x8000), readBank_SNES(0, 0x8000 + 0x02));
+    sprintf(flashid, "%x%x", readBank_SFM(0, 0x8000), readBank_SFM(0, 0x8000 + 0x02));
   }
 }
 
@@ -709,7 +996,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       myFile.seekCur(pos);
 
     // Configure control pins
-    controlOut_SNES();
+    controlOut_SFM();
     // Set data pins to output
     dataOut();
 
@@ -720,18 +1007,18 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
           // Write command sequence
-          writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-          writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-          writeBank_SNES(startBank, 0x5555L * 2, 0xa0);
+          writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+          writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+          writeBank_SFM(startBank, 0x5555L * 2, 0xa0);
 
           for (byte c = 0; c < 128; c++) {
 
             // Write one byte of data
-            writeBank_SNES(currBank, currByte + c, sdBuffer[c]);
+            writeBank_SFM(currBank, currByte + c, sdBuffer[c]);
 
             if (c == 127) {
               // Write the last byte twice or else it won't write at all
-              writeBank_SNES(currBank, currByte + c, sdBuffer[c]);
+              writeBank_SFM(currBank, currByte + c, sdBuffer[c]);
             }
           }
           // Wait until write is finished
@@ -745,17 +1032,17 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
           // Write command sequence
-          writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
-          writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
-          writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xa0);
+          writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
+          writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
+          writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xa0);
 
           for (byte c = 0; c < 128; c++) {
             // Write one byte of data
-            writeBank_SNES(currBank, currByte + c, sdBuffer[c]);
+            writeBank_SFM(currBank, currByte + c, sdBuffer[c]);
 
             if (c == 127) {
               // Write the last byte twice or else it won't write at all
-              writeBank_SNES(currBank, currByte + c, sdBuffer[c]);
+              writeBank_SFM(currBank, currByte + c, sdBuffer[c]);
             }
           }
           // Wait until write is finished
@@ -777,10 +1064,10 @@ void busyCheck_SFM(byte startBank) {
   // Set data pins to input
   dataIn();
   // Set control pins to input and therefore pull CE low and latch status register content
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read register
-  readBank_SNES(startBank, 0x0000);
+  readBank_SFM(startBank, 0x0000);
 
   // Read D7 while D7 = 0
   //1 = B00000001, 1 << 7 = B10000000, PINC = B1XXXXXXX (X = don't care), & = bitwise and
@@ -801,7 +1088,7 @@ void busyCheck_SFM(byte startBank) {
   }
 
   // Configure control pins
-  controlOut_SNES();
+  controlOut_SFM();
   // Set data pins to output
   dataOut();
 }
@@ -810,26 +1097,26 @@ void busyCheck_SFM(byte startBank) {
 void eraseFlash_SFM(int startBank) {
 
   // Configure control pins
-  controlOut_SNES();
+  controlOut_SFM();
   // Set data pins to output
   dataOut();
 
   if (romType) {
     // Erase command sequence
-    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555L * 2, 0x80);
-    writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SNES(startBank, 0x5555L * 2, 0x10);
+    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SFM(startBank, 0x5555L * 2, 0x80);
+    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SFM(startBank, 0x5555L * 2, 0x10);
   }
   else {
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0x80);
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SNES(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SNES(1, 0x8000 + 0x1555L * 2, 0x10);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0x80);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0x10);
   }
 
   // Wait for erase to complete
@@ -842,13 +1129,13 @@ byte blankcheck_SFM(int startBank) {
   // Set data pins to input again
   dataIn();
   // Set control pins to input
-  controlIn_SNES();
+  controlIn_SFM();
 
   byte blank = 1;
   if (romType) {
     for (int currBank = startBank; currBank < startBank + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte++) {
-        if (readBank_SNES(currBank, currByte) != 0xFF) {
+        if (readBank_SFM(currBank, currByte) != 0xFF) {
           currBank =  startBank + numBanks;
           blank = 0;
         }
@@ -858,7 +1145,7 @@ byte blankcheck_SFM(int startBank) {
   else {
     for (int currBank = 0; currBank < numBanks; currBank++) {
       for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte++) {
-        if (readBank_SNES(currBank, currByte) != 0xFF) {
+        if (readBank_SFM(currBank, currByte) != 0xFF) {
           currBank = numBanks;
           blank = 0;
         }
@@ -881,7 +1168,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
     // Set data pins to input
     dataIn();
     // Set control pins to input
-    controlIn_SNES();
+    controlIn_SFM();
 
     if (romType) {
       for (int currBank = startBank; currBank < startBank + numBanks; currBank++) {
@@ -889,7 +1176,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
           // Fill SDBuffer
           myFile.read(sdBuffer, 512);
           for (int c = 0; c < 512; c++) {
-            if (readBank_SNES(currBank, currByte + c) != sdBuffer[c]) {
+            if (readBank_SFM(currBank, currByte + c) != sdBuffer[c]) {
               verified++;
             }
           }
@@ -902,7 +1189,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
           // Fill SDBuffer
           myFile.read(sdBuffer, 512);
           for (int c = 0; c < 512; c++) {
-            if (readBank_SNES(currBank, currByte + c) != sdBuffer[c]) {
+            if (readBank_SFM(currBank, currByte + c) != sdBuffer[c]) {
               verified++;
             }
           }
@@ -926,7 +1213,7 @@ void readFlash_SFM() {
   // Set data pins to input
   dataIn();
   // Set control pins to input
-  controlIn_SNES();
+  controlIn_SFM();
 
   print_Msg(F("Saving as NP/"));
   print_Msg(fileName);
@@ -941,7 +1228,7 @@ void readFlash_SFM() {
     for (int currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
         for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
+          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
         }
         myFile.write(sdBuffer, 512);
       }
@@ -951,7 +1238,7 @@ void readFlash_SFM() {
     for (int currBank = 0; currBank < numBanks; currBank++) {
       for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 512) {
         for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
+          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
         }
         myFile.write(sdBuffer, 512);
       }
@@ -968,17 +1255,17 @@ void readFlash_SFM() {
 void readSectorProtection_SFM(byte startBank) {
 
   // Configure control pins
-  controlOut_SNES();
+  controlOut_SFM();
   // Set data pins to output
   dataOut();
 
   // Display Sector Protection Status
-  writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-  writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(startBank, 0x5555L * 2, 0x90);
+  writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+  writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(startBank, 0x5555L * 2, 0x90);
 
   // Configure control pins
-  controlIn_SNES();
+  controlIn_SFM();
   // Set data pins to output
   dataIn();
   display_Clear();
@@ -986,7 +1273,7 @@ void readSectorProtection_SFM(byte startBank) {
     print_Msg(F("Sector: 0x"));
     print_Msg(startBank + i, HEX);
     print_Msg(F(" Sector Protect: 0x"));
-    println_Msg(readBank_SNES(startBank + i, 0x04), HEX);
+    println_Msg(readBank_SFM(startBank + i, 0x04), HEX);
   }
   display_Update();
 }
@@ -995,28 +1282,28 @@ void readSectorProtection_SFM(byte startBank) {
 void printMapping() {
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset to defaults
-  writeBank_SNES(0xC0, 0x0000, 0x38);
-  writeBank_SNES(0xC0, 0x0000, 0xd0);
+  writeBank_SFM(0xC0, 0x0000, 0x38);
+  writeBank_SFM(0xC0, 0x0000, 0xd0);
   // Read Extended Status Register (GSR and PSR)
-  writeBank_SNES(0xC0, 0x0000, 0x71);
+  writeBank_SFM(0xC0, 0x0000, 0x71);
   // Page Buffer Swap
-  writeBank_SNES(0xC0, 0x0000, 0x72);
+  writeBank_SFM(0xC0, 0x0000, 0x72);
   // Read Page Buffer
-  writeBank_SNES(0xC0, 0x0000, 0x75);
+  writeBank_SFM(0xC0, 0x0000, 0x75);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read the mapping out of the first chip
   char buffer[3];
 
   for (int currByte = 0xFF00; currByte < 0xFF50; currByte += 10) {
     for (int c = 0; c < 10; c++) {
-      itoa (readBank_SNES(0xC0, currByte + c), buffer, 16);
+      itoa (readBank_SFM(0xC0, currByte + c), buffer, 16);
       for (int i = 0; i < 2 - strlen(buffer); i++) {
         print_Msg("0");
       }
@@ -1029,21 +1316,21 @@ void printMapping() {
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset Flash
-  writeBank_SNES(0xC0, 0x5555L * 2, 0xaa);
-  writeBank_SNES(0xC0, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(0xC0, 0x5555L * 2, 0xf0);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
 
   // Reset Flash
-  writeBank_SNES(0xE0, 0x5555L * 2, 0xaa);
-  writeBank_SNES(0xE0, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(0xE0, 0x5555L * 2, 0xf0);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 }
 
 // Read the current mapping from the hidden "page buffer"
@@ -1051,21 +1338,21 @@ void readMapping() {
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset to defaults
-  writeBank_SNES(0xC0, 0x0000, 0x38);
-  writeBank_SNES(0xC0, 0x0000, 0xd0);
+  writeBank_SFM(0xC0, 0x0000, 0x38);
+  writeBank_SFM(0xC0, 0x0000, 0xd0);
   // Read Extended Status Register (GSR and PSR)
-  writeBank_SNES(0xC0, 0x0000, 0x71);
+  writeBank_SFM(0xC0, 0x0000, 0x71);
   // Page Buffer Swap
-  writeBank_SNES(0xC0, 0x0000, 0x72);
+  writeBank_SFM(0xC0, 0x0000, 0x72);
   // Read Page Buffer
-  writeBank_SNES(0xC0, 0x0000, 0x75);
+  writeBank_SFM(0xC0, 0x0000, 0x75);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Get name, add extension and convert to char array for sd lib
   EEPROM_readAnything(10, foldern);
@@ -1085,30 +1372,30 @@ void readMapping() {
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
-    myFile.write(readBank_SNES(0xC0, currByte));
+    myFile.write(readBank_SFM(0xC0, currByte));
   }
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset to defaults
-  writeBank_SNES(0xE0, 0x0000, 0x38);
-  writeBank_SNES(0xE0, 0x0000, 0xd0);
+  writeBank_SFM(0xE0, 0x0000, 0x38);
+  writeBank_SFM(0xE0, 0x0000, 0xd0);
   // Read Extended Status Register (GSR and PSR)
-  writeBank_SNES(0xE0, 0x0000, 0x71);
+  writeBank_SFM(0xE0, 0x0000, 0x71);
   // Page Buffer Swap
-  writeBank_SNES(0xE0, 0x0000, 0x72);
+  writeBank_SFM(0xE0, 0x0000, 0x72);
   // Read Page Buffer
-  writeBank_SNES(0xE0, 0x0000, 0x75);
+  writeBank_SFM(0xE0, 0x0000, 0x75);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
-    myFile.write(readBank_SNES(0xE0, currByte));
+    myFile.write(readBank_SFM(0xE0, currByte));
   }
 
   // Close the file:
@@ -1116,21 +1403,21 @@ void readMapping() {
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset Flash
-  writeBank_SNES(0xC0, 0x5555L * 2, 0xaa);
-  writeBank_SNES(0xC0, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(0xC0, 0x5555L * 2, 0xf0);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
 
   // Reset Flash
-  writeBank_SNES(0xE0, 0x5555L * 2, 0xaa);
-  writeBank_SNES(0xE0, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(0xE0, 0x5555L * 2, 0xf0);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Signal end of process
   print_Msg(F("Saved to NP/"));
@@ -1148,23 +1435,23 @@ void eraseMapping(byte startBank) {
 
       // Switch to write
       dataOut();
-      controlOut_SNES();
+      controlOut_SFM();
 
       // Prepare to erase/write Page Buffer
-      writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-      writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-      writeBank_SNES(startBank, 0x5555L * 2, 0x77);
+      writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+      writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+      writeBank_SFM(startBank, 0x5555L * 2, 0x77);
       // Erase Page Buffer
-      writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-      writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-      writeBank_SNES(startBank, 0x5555L * 2, 0xe0);
+      writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+      writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+      writeBank_SFM(startBank, 0x5555L * 2, 0xe0);
 
       // Wait until complete
       busyCheck_SFM(startBank);
 
       // Switch to read
       dataIn();
-      controlIn_SNES();
+      controlIn_SFM();
     }
     else {
       print_Error(F("Error: Wrong Flash ID"), true);
@@ -1181,71 +1468,71 @@ byte blankcheckMapping_SFM() {
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset to defaults
-  writeBank_SNES(0xC0, 0x0000, 0x38);
-  writeBank_SNES(0xC0, 0x0000, 0xd0);
+  writeBank_SFM(0xC0, 0x0000, 0x38);
+  writeBank_SFM(0xC0, 0x0000, 0xd0);
   // Read Extended Status Register (GSR and PSR)
-  writeBank_SNES(0xC0, 0x0000, 0x71);
+  writeBank_SFM(0xC0, 0x0000, 0x71);
   // Page Buffer Swap
-  writeBank_SNES(0xC0, 0x0000, 0x72);
+  writeBank_SFM(0xC0, 0x0000, 0x72);
   // Read Page Buffer
-  writeBank_SNES(0xC0, 0x0000, 0x75);
+  writeBank_SFM(0xC0, 0x0000, 0x75);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
-    if (readBank_SNES(0xC0, currByte) != 0xFF) {
+    if (readBank_SFM(0xC0, currByte) != 0xFF) {
       blank = 0;
     }
   }
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset to defaults
-  writeBank_SNES(0xE0, 0x0000, 0x38);
-  writeBank_SNES(0xE0, 0x0000, 0xd0);
+  writeBank_SFM(0xE0, 0x0000, 0x38);
+  writeBank_SFM(0xE0, 0x0000, 0xd0);
   // Read Extended Status Register (GSR and PSR)
-  writeBank_SNES(0xE0, 0x0000, 0x71);
+  writeBank_SFM(0xE0, 0x0000, 0x71);
   // Page Buffer Swap
-  writeBank_SNES(0xE0, 0x0000, 0x72);
+  writeBank_SFM(0xE0, 0x0000, 0x72);
   // Read Page Buffer
-  writeBank_SNES(0xE0, 0x0000, 0x75);
+  writeBank_SFM(0xE0, 0x0000, 0x75);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
-    if (readBank_SNES(0xE0, currByte) != 0xFF) {
+    if (readBank_SFM(0xE0, currByte) != 0xFF) {
       blank = 0;
     }
   }
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Reset Flash
-  writeBank_SNES(0xC0, 0x5555L * 2, 0xaa);
-  writeBank_SNES(0xC0, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(0xC0, 0x5555L * 2, 0xf0);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
 
   // Reset Flash
-  writeBank_SNES(0xE0, 0x5555L * 2, 0xaa);
-  writeBank_SNES(0xE0, 0x2AAAL * 2, 0x55);
-  writeBank_SNES(0xE0, 0x5555L * 2, 0xf0);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   return blank;
 }
@@ -1260,7 +1547,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
 
       // Switch to write
       dataOut();
-      controlOut_SNES();
+      controlOut_SFM();
 
       // Open file on sd card
       if (myFile.open(filePath, O_READ)) {
@@ -1272,21 +1559,21 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
         // Write to Page Buffer
         for (unsigned long currByte = 0xFF00; currByte < 0xFFFF; currByte += 128) {
           // Prepare to erase/write Page Buffer
-          writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-          writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-          writeBank_SNES(startBank, 0x5555L * 2, 0x77);
+          writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+          writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+          writeBank_SFM(startBank, 0x5555L * 2, 0x77);
           // Write Page Buffer Command
-          writeBank_SNES(startBank, 0x5555L * 2, 0xaa);
-          writeBank_SNES(startBank, 0x2AAAL * 2, 0x55);
-          writeBank_SNES(startBank, 0x5555L * 2, 0x99);
+          writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+          writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+          writeBank_SFM(startBank, 0x5555L * 2, 0x99);
 
           myFile.read(sdBuffer, 128);
 
           for (byte c = 0; c < 128; c++) {
-            writeBank_SNES(startBank, currByte + c, sdBuffer[c]);
+            writeBank_SFM(startBank, currByte + c, sdBuffer[c]);
             // Write last byte twice
             if (c == 127) {
-              writeBank_SNES(startBank, currByte + c, sdBuffer[c]);
+              writeBank_SFM(startBank, currByte + c, sdBuffer[c]);
             }
           }
           busyCheck_SFM(startBank);
@@ -1302,7 +1589,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
 
       // Switch to read
       dataIn();
-      controlIn_SNES();
+      controlIn_SFM();
     }
     else {
       print_Error(F("Error: Wrong Flash ID"), true);
@@ -1328,7 +1615,7 @@ boolean unlockHirom() {
     print_Msg(F("Enable Write..."));
     display_Update();
     send_SFM(0x02);
-    if (readBank_SNES(0, 0x2401) == 0x4) {
+    if (readBank_SFM(0, 0x2401) == 0x4) {
       println_Msg(F("OK"));
       display_Update();
       return 1;
@@ -1350,40 +1637,40 @@ boolean unlockHirom() {
 byte send_SFM(byte command) {
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
   // Write command
-  writeBank_SNES(0, 0x2400, 0x09);
+  writeBank_SFM(0, 0x2400, 0x09);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read status
-  sfmReady = readBank_SNES(0, 0x2400);
+  sfmReady = readBank_SFM(0, 0x2400);
 
   // Switch to write
   dataOut();
-  controlOut_SNES();
+  controlOut_SFM();
 
-  writeBank_SNES(0, 0x2401, 0x28);
-  writeBank_SNES(0, 0x2401, 0x84);
+  writeBank_SFM(0, 0x2401, 0x28);
+  writeBank_SFM(0, 0x2401, 0x84);
 
   // NP_CMD_06h, send this only if above read has returned 7Dh, not if it's already returning 2Ah
   if (sfmReady == 0x7D) {
-    writeBank_SNES(0, 0x2400, 0x06);
-    writeBank_SNES(0, 0x2400, 0x39);
+    writeBank_SFM(0, 0x2400, 0x06);
+    writeBank_SFM(0, 0x2400, 0x39);
   }
 
   // Write the command
-  writeBank_SNES(0, 0x2400, command);
+  writeBank_SFM(0, 0x2400, command);
 
   // Switch to read
   dataIn();
-  controlIn_SNES();
+  controlIn_SFM();
 
   // Read status
-  sfmReady = readBank_SNES(0, 0x2400);
+  sfmReady = readBank_SFM(0, 0x2400);
   return sfmReady;
 }
 

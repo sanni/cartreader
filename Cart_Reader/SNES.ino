@@ -19,7 +19,6 @@ int romSpeed = 0;      // 0 = SlowROM, 3 = FastROM
 int romChips = 0;      // 0 = ROM only, 1 = ROM & RAM, 2 = ROM & Save RAM,  3 = ROM & DSP1, 4 = ROM & RAM & DSP1, 5 = ROM & Save RAM & DSP1, 19 = ROM & SFX
 // 227 = ROM & RAM & GameBoy data, 243 = CX4, 246 = ROM & DSP2
 byte romSizeExp = 0;   // ROM-Size Exponent
-int cartCountry = 255;
 boolean NP = false;
 byte cx4Type = 0;
 byte cx4Map = 0;
@@ -846,7 +845,7 @@ boolean checkcart_SNES() {
   }
 
   // Check Cart Country
-  cartCountry = readBank_SNES(0, 65497);
+  //int cartCountry = readBank_SNES(0, 65497);
 
   // ROM Version
   romVersion = readBank_SNES(0, 65499);
