@@ -39,10 +39,8 @@ Reading flash into file flash.bin
 Finally you can split the flash.bin file into the individual roms and the menu using the NP Split program:    
 https://github.com/sanni/cartreader/tree/master/extras/npsplit    
 
-To flash something new you need to erase both the flash and the mapping first before you send the write command. You also need to provide mapping.map and flash.bin files on your own.    
-
-You can create those files with the SF Memory Binary Maker: https://github.com/moldov/SF-Memory-Binary-Maker     
-In this case rename SHVC-MENU.bin you got from NP Split into menu.sfc and copy it next to the .exe. You can also use a Hex Editor to cut-out the first 512KB of your original flash dump and rename it to menu.sfc instead.     
+To flash something new you need to provide a mapping.map and a flash.bin file either from your backup, from another NP cart or you can create those files with the SF Memory Binary Maker: https://github.com/moldov/SF-Memory-Binary-Maker     
+In the second case rename SHVC-MENU.bin you got from NP Split into menu.sfc and copy it next to the .exe. You can also use a Hex Editor to cut-out the first 512KB of your original flash dump and rename it to menu.sfc instead.     
 In SF Memory Binary Maker you got two options: either create a standalone map file from a single rom up to 4MB or you can add multiple roms and create a combined .bin and .map file. The sum of all the roms together can't exceed 3.5MB however since you still need 512KB for the menu.   
 
 You should end up with a map and bin file, rename both so their filename is very short and without any special characters and copy them to the root of the SD card. Switch the NP cart into HIROM ALL, unlock WP, erase the mapping, erase the flash and then write the mapping and write the flash.   
