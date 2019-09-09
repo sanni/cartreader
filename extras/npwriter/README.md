@@ -24,9 +24,9 @@ Success.
 ```    
 
 Before you write anything you should always do a backup of your rom and mapping.    
-So next send "h" and then send a filename like "original.map" to save your carts original mapping.    
+So next send "h" and then send a filename like "mapping.map" to save your carts original mapping.    
 ```   
-Reading mapping into file original.map
+Reading mapping into file mapping.map
 Done.
 ```    
 
@@ -43,6 +43,8 @@ To flash something new you need to erase both the flash and the mapping first be
 
 You can create those files with the SF Memory Binary Maker: https://github.com/moldov/SF-Memory-Binary-Maker     
 In this case rename SHVC-MENU.bin you got from NP Split into menu.sfc and copy it next to the .exe. You can also use a Hex Editor to cut-out the first 512KB of your original flash dump and rename it to menu.sfc instead.     
-In SF Memory Binary Maker you got two options either create a standalone map file from a single rom up to 4MB or you can add multiple roms and create a combined .bin and .map file. The sum of all the roms together can't exceed 3.5MB however since you still need 512KB for the menu.   
+In SF Memory Binary Maker you got two options: either create a standalone map file from a single rom up to 4MB or you can add multiple roms and create a combined .bin and .map file. The sum of all the roms together can't exceed 3.5MB however since you still need 512KB for the menu.   
+
+You should end up with a map and bin file, rename both so their filename is very short and without any special characters and copy them to the root of the SD card. Switch the NP cart into HIROM ALL, unlock WP, erase the mapping, erase the flash and then write the mapping and write the flash.   
 
 ![](https://dl.dropboxusercontent.com/s/7ptv5hdf4iwi0lb/npwriter10.jpg?dl=1)    
