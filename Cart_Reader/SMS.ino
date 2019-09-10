@@ -152,31 +152,32 @@ void getCartInfo_SMS() {
   // Rom size
   switch (readByte_SMS(0x7fff) & 0xFF) {
     case 0xa:
-      cartSize =  8 * 1024;
+      // Adding UL gets rid of integer overflow compiler warning
+      cartSize =  8 * 1024UL;
       break;
     case 0xb:
-      cartSize =  16 * 1024;
+      cartSize =  16 * 1024UL;
       break;
     case 0xc:
-      cartSize =  32 * 1024;
+      cartSize =  32 * 1024UL;
       break;
     case 0xd:
-      cartSize =  48 * 1024;
+      cartSize =  48 * 1024UL;
       break;
     case 0xe:
-      cartSize =  64 * 1024;
+      cartSize =  64 * 1024UL;
       break;
     case 0xf:
-      cartSize =  128 * 1024;
+      cartSize =  128 * 1024UL;
       break;
     case 0x0:
-      cartSize =  256 * 1024;
+      cartSize =  256 * 1024UL;
       break;
     case 0x1:
-      cartSize =  512 * 1024;
+      cartSize =  512 * 1024UL;
       break;
     case 0x2:
-      cartSize =  512 * 1024;
+      cartSize =  512 * 1024UL;
       break;
   }
 
