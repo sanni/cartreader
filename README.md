@@ -4,7 +4,7 @@ This Cart Reader is aimed at people that either already have experience with Ard
 For any questions or issues please join the discussion on the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).  
 Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 
 
-![image](https://dl.dropboxusercontent.com/s/pznqfawptihfskx/v17_case0.jpg?dl=1) 
+![image](https://dl.dropboxusercontent.com/s/mibcigvdexhesj8/toppage.jpg?dl=1) 
 
 #### Features:  
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
