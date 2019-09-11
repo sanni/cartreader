@@ -195,10 +195,18 @@ void mdCartMenu() {
   {
     case 0:
       display_Clear();
-      // Change working dir to root
-      sd.chdir("/");
-      readROM_MD();
-      //compare_checksum_MD();
+
+      // common ROM read fail state: no cart inserted - tends to report impossibly large cartSize
+      // largest known game so far is supposedly "Paprium" at 10MB, so cap sanity check at 16MB
+      if (cartSize != 0 && cartSize <= 16777216) {
+        // Change working dir to root
+        sd.chdir("/");
+        readROM_MD();
+        //compare_checksum_MD();
+      }
+      else {
+        print_Error(F("Cart has no ROM"), false);
+      }
       break;
 
     case 1:
