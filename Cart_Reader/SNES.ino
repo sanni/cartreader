@@ -49,7 +49,7 @@ static const char confMenuItem2[] PROGMEM = "4MB LoRom 256K Sram";
 static const char confMenuItem3[] PROGMEM = "4MB HiRom 64K Sram";
 static const char confMenuItem4[] PROGMEM = "6MB ExRom 256K Sram";
 static const char confMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsConf[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
+static const char* const menuOptionsConfManual[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
 
 // SNES start menu
 void snsMenu() {
@@ -118,19 +118,25 @@ void snesMenu() {
   {
     case 0:
       {
-        display_Clear();
-        // Change working dir to root
-        sd.chdir("/");
-        // get current time
-        unsigned long startTime = millis();
-        // start reading from cart
-        readROM_SNES();
-        compare_checksum();
-        // print elapsed time
-        print_Msg(F("Time elapsed: "));
-        print_Msg((millis() - startTime) / 1000);
-        println_Msg(F("s"));
-        display_Update();
+        if (numBanks > 0) {
+          display_Clear();
+          // Change working dir to root
+          sd.chdir("/");
+          // get current time
+          unsigned long startTime = millis();
+          // start reading from cart
+          readROM_SNES();
+          compare_checksum();
+          // print elapsed time
+          print_Msg(F("Time elapsed: "));
+          print_Msg((millis() - startTime) / 1000);
+          println_Msg(F("s"));
+          display_Update();
+        }
+        else {
+          display_Clear();
+          print_Error(F("Does not have ROM"), false);
+        }
       }
       break;
 
@@ -239,11 +245,11 @@ void snesMenu() {
 }
 
 // Menu for manual configuration
-void confMenu() {
+void confMenuManual() {
   // create menu with title and 5 options to choose from
   unsigned char subMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsConf, 5);
+  convertPgm(menuOptionsConfManual, 5);
   subMenu = question_box(F("Choose mapping"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
@@ -658,7 +664,7 @@ void getCartInfo_SNES() {
 
   // Start manual config
   if (manualConfig == 1) {
-    confMenu();
+    confMenuManual();
   }
 }
 
@@ -834,7 +840,8 @@ boolean checkcart_SNES() {
   }
 
   // Calculate sramSize
-  if (sramSizeExp != 0) {
+  // Fail states usually have sramSizeExp at 255 (no cart inserted, SA-1 failure, etc)
+  if (sramSizeExp != 0 && sramSizeExp != 255) {
     sramSizeExp = sramSizeExp + 3;
     sramSize = 1;
     while (sramSizeExp--)

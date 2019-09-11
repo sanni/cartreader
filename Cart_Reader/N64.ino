@@ -298,6 +298,7 @@ void n64CartMenu() {
         }
       }
       else {
+        display_Clear();
         print_Error(F("Savetype Error"), false);
       }
       println_Msg(F("Press Button..."));
