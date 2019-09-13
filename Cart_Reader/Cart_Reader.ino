@@ -248,7 +248,7 @@ void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 //******************************************
 // Bitmaps
 //******************************************
-static const unsigned char PROGMEM icon [] = {
+static const uint8_t PROGMEM icon [] = {
   0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF,
   0xFF, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0x00, 0x00, 0x0F, 0xFF, 0xF8, 0x00, 0x00, 0x0F, 0xFF,
@@ -287,7 +287,7 @@ static const unsigned char PROGMEM icon [] = {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x80, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x80
 };
 
-static const unsigned char PROGMEM sig [] = {
+static const uint8_t PROGMEM sig [] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -986,7 +986,7 @@ int checkButton1() {
   }
   // Button released
   else if (buttonVal1 == HIGH && buttonLast1 == LOW && (millis() - downTime1) > debounce) {
-    if (not ignoreUp1) {
+    if (!ignoreUp1) {
       upTime1 = millis();
       if (DConUp1 == false) DCwaiting1 = true;
       else {
@@ -1005,7 +1005,7 @@ int checkButton1() {
   // Test for hold
   if (buttonVal1 == LOW && (millis() - downTime1) >= holdTime) {
     // Trigger "normal" hold
-    if (not holdEventPast1) {
+    if (!holdEventPast1) {
       event = 3;
       waitForUp1 = true;
       ignoreUp1 = true;
@@ -1016,7 +1016,7 @@ int checkButton1() {
     }
     // Trigger "long" hold
     if ((millis() - downTime1) >= longHoldTime) {
-      if (not longholdEventPast1) {
+      if (!longholdEventPast1) {
         event = 4;
         longholdEventPast1 = true;
       }
@@ -1046,7 +1046,7 @@ int checkButton2() {
   }
   // Button released
   else if (buttonVal2 == HIGH && buttonLast2 == LOW && (millis() - downTime2) > debounce) {
-    if (not ignoreUp2) {
+    if (!ignoreUp2) {
       upTime2 = millis();
       if (DConUp2 == false) DCwaiting2 = true;
       else {
@@ -1065,7 +1065,7 @@ int checkButton2() {
   // Test for hold
   if (buttonVal2 == LOW && (millis() - downTime2) >= holdTime) {
     // Trigger "normal" hold
-    if (not holdEventPast2) {
+    if (!holdEventPast2) {
       event = 3;
       waitForUp2 = true;
       ignoreUp2 = true;
@@ -1076,7 +1076,7 @@ int checkButton2() {
     }
     // Trigger "long" hold
     if ((millis() - downTime2) >= longHoldTime) {
-      if (not longholdEventPast2) {
+      if (!longholdEventPast2) {
         event = 4;
         longholdEventPast2 = true;
       }
