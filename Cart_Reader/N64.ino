@@ -1422,6 +1422,9 @@ void writeEeprom() {
         noInterrupts();
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
+          // Blink led
+          PORTB ^= (1 << 4);
+
           // Wait ~50ms between page writes or eeprom will have write errors
           pulseClock_N64(26000);
 
@@ -1442,6 +1445,7 @@ void writeEeprom() {
       myFile.close();
       println_Msg(F("Done"));
       display_Update();
+      delay(600);
     }
     else {
       print_Error(F("SD Error"), true);
@@ -1483,6 +1487,9 @@ void readEeprom() {
       noInterrupts();
 
       for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
+        // Blink led
+        PORTB ^= (1 << 4);
+
         // Send read command
         sendData(0x04);
         // Send Page number
@@ -1528,6 +1535,7 @@ unsigned long verifyEeprom() {
     // Wait 50ms or eeprom might lock up
     pulseClock_N64(26000);
 
+    display_Clear();
     print_Msg(F("Verifying against "));
     println_Msg(filePath);
     display_Update();
@@ -1540,6 +1548,9 @@ unsigned long verifyEeprom() {
         noInterrupts();
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
+          // Blink led
+          PORTB ^= (1 << 4);
+
           // Send read command
           sendData(0x04);
           // Send Page number
