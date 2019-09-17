@@ -1188,6 +1188,16 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
+// improved strcmp function that ignores case to prevent checksum comparison issues
+int strcicmp(char const *a, char const *b)
+{
+    for (;; a++, b++) {
+        int d = tolower((unsigned char)*a) - tolower((unsigned char)*b);
+        if (d != 0 || !*a)
+            return d;
+    }
+}
+
 // look-up the calculated crc in the file n64.txt on sd card
 boolean searchCRC(char crcStr[9]) {
   boolean result = 0;
@@ -1209,7 +1219,7 @@ boolean searchCRC(char crcStr[9]) {
       }
 
       // Check if string is a match
-      if (strcmp(tempStr1, crcStr) == 0) {
+      if (strcicmp(tempStr1, crcStr) == 0) {
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
 
