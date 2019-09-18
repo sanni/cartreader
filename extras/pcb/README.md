@@ -2,7 +2,11 @@
 
 ![image](https://dl.dropboxusercontent.com/s/ta7pjoxn9kirtan/v17pcb.png?dl=1)   
 
-#### flash_adapter.zip is an add-on for writing flashroms like the 29F032, 29L3211, 29LV160, [PCB thickness needs to be changed to 1.2mm](https://www.dropbox.com/s/va1c72073cqfy90/pcb12.jpg?dl=0), this is very important or else it won't fit into the SNES slot.   
+#### nes_adapter.zip is an add-on for reading NES carts, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot. 
+
+![image](https://dl.dropboxusercontent.com/s/z2atlcly642sewj/nes_adapter.png?dl=1)   
+
+#### flash_adapter.zip is an add-on for writing flashroms like the 29F032, 29L3211, 29LV160, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot.   
    
 ![image](https://dl.dropboxusercontent.com/s/afrfmiuwvmvg9px/flash_adapter.png?dl=1)   
 
