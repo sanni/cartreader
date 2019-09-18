@@ -1,8 +1,6 @@
 //******************************************
 // NES MODULE
 //******************************************
-// unfinished and untested
-
 // mostly copy&pasted from "Famicom Dumper" 2019-08-31 by skaman
 // also based on "CoolArduino" by HardWareMan
 // Pinout changes: LED and CIRAM_A10
