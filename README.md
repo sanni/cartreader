@@ -7,6 +7,7 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 ![image](https://dl.dropboxusercontent.com/s/nk0eo146bpljk6s/v17_carts.png?dl=1)     
 
 #### Features:  
+- Reads NES roms, use this [database](http://bootgod.dyndns.org:7777/search.php?browse=A) to get mapper and size setting    
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
 - Reads and writes SNES Satellaview 8M Memory packs    
