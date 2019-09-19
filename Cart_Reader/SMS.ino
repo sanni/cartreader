@@ -15,7 +15,6 @@ static const char SMSMenuItem1[] PROGMEM = "Read Rom";
 static const char SMSMenuItem2[] PROGMEM = "Reset";
 static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2};
 
-
 void smsMenu() {
   // create menu with title and 2 options to choose from
   unsigned char mainMenu;
@@ -56,7 +55,7 @@ void setup_SMS() {
   DDRK = 0xFF;
 
   // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) OE(PH6)
-  DDRH |=  (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
 
   // Setting RST(PH0) CS(PH3) WR(PH5) OE(PH6) HIGH
   PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
@@ -71,7 +70,7 @@ void setup_SMS() {
   writeByte_SMS(0xFFFE, 1);
   writeByte_SMS(0xFFFF, 2);
 
-  delay(200);
+  delay(400);
 
   // Print all the info
   getCartInfo_SMS();
@@ -80,79 +79,67 @@ void setup_SMS() {
 /******************************************
   Low level functions
 *****************************************/
-void writeByte_SMS(unsigned long myAddress, byte myData) {
+void writeByte_SMS(word myAddress, byte myData) {
+  // Set Data Pins (D0-D15) to Output
+  DDRC = 0xFF;
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
-  // Set Data Pins (D0-D15) to Output
-  DDRC = 0xFF;
   // Output data
   PORTC = myData;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
-  __asm__("nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Setting CS(PH3) LOW
-  PORTH &= ~(1 << 3);
-  // Switch WR(PH5) to LOW
-  PORTH &= ~(1 << 5);
+  // Switch CS(PH3) and WR(PH5) to LOW
+  PORTH &= ~((1 << 3) | (1 << 5));
 
-  // Leave WR low for at least 200ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Leave WE low for at least 60ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch WR(PH5) to HIGH
-  PORTH |= (1 << 5);
-  // Setting CS(PH3) HIGH
-  PORTH |= (1 << 3);
+  // Switch CS(PH3) and WR(PH5) to HIGH
+  PORTH |= (1 << 3) | (1 << 5);
 
-  // Leave WR high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  // Leave WE high for at least 50ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Set Data Pins (D0-D15) to Input
   DDRC = 0x00;
 }
 
-byte readByte_SMS(unsigned long myAddress) {
-  byte tempByte;
+byte readByte_SMS(word myAddress) {
+  // Set Data Pins (D0-D15) to Input
+  DDRC = 0x00;
 
   // Set Address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
-  // Set Data Pins (D0-D15) to Input
-  DDRC = 0x00;
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t");
+  // Switch CS(PH3) and OE(PH6) to LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
 
-  // Setting CS(PH3) LOW
-  PORTH &= ~(1 << 3);
-  // Setting OE(PH6) LOW
-  PORTH &= ~(1 << 6);
-
-  // Long delay here or there will be read errors
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
-  tempByte = PINC;
+  byte tempByte = PINC;
 
-  // Setting OE(PH6) HIGH
-  PORTH |= (1 << 6);
-  // Setting CS(PH3) HIGH
-  PORTH |= (1 << 3);
+  // Switch CS(PH3) and OE(PH6) to HIGH
+  PORTH |= (1 << 3) | (1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempByte;
 }
 
-unsigned char hex2bcd (unsigned char x) {
-  unsigned char y;
-  y = (x / 10) << 4;
-  y = y | (x % 10);
-  return (y);
-}
+//unsigned char hex2bcd (unsigned char x) {
+//  unsigned char y;
+//  y = (x / 10) << 4;
+//  y = y | (x % 10);
+//return (y);
+//}
 
 byte readNibble(byte data, byte number) {
   return ((data >> (number * 4)) & 0xf);
@@ -192,6 +179,12 @@ void getCartInfo_SMS() {
     case 0x2:
       cartSize =  512 * 1024UL;
       break;
+    default:
+      cartSize =  48 * 1024UL;
+      // LED Error
+      rgb.setColor(0, 0, 255);
+      break;
+
   }
 
   // Read TMR Sega string
@@ -206,12 +199,15 @@ void getCartInfo_SMS() {
   print_Msg(F("Name: "));
   println_Msg(romName);
   print_Msg(F("Size: "));
-  print_Msg(cartSize * 8 / 1024 );
-  println_Msg(F(" KBit"));
+  print_Msg(cartSize / 1024);
+  println_Msg(F("KB"));
   println_Msg(F(" "));
 
-  if (strcmp(romName, "TMR SEGA") != 0)
-    print_Error(F("Not working yet"), true);
+  if (strcmp(romName, "TMR SEGA") != 0) {
+    print_Error(F("Not working yet"), false);
+    sprintf(romName, "ERROR");
+    cartSize =  48 * 1024UL;
+  }
 
   // Wait for user input
 #ifdef enable_OLED
@@ -247,21 +243,20 @@ void readROM_SMS() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
   }
-  unsigned long bankSize = 16 * 1024UL;
-  for (unsigned long currBank = 0x00; currBank < (cartSize / bankSize); currBank++) {
+  word bankSize = 16 * 1024UL;
+  for (byte currBank = 0x0; currBank < (cartSize / bankSize); currBank++) {
     // Write current 16KB bank to slot 2 register 0xFFFF
     writeByte_SMS(0xFFFF, currBank);
 
     // Blink led
     PORTB ^= (1 << 4);
     // Read 16KB from slot 2 which starts at 0x8000
-    for (unsigned long currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
+    for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
         sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
       }
       myFile.write(sdBuffer, 512);
-      //printSdBuffer();
     }
   }
   // Close the file:

@@ -1191,11 +1191,11 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
 // improved strcmp function that ignores case to prevent checksum comparison issues
 int strcicmp(char const *a, char const *b)
 {
-    for (;; a++, b++) {
-        int d = tolower((unsigned char)*a) - tolower((unsigned char)*b);
-        if (d != 0 || !*a)
-            return d;
-    }
+  for (;; a++, b++) {
+    int d = tolower((unsigned char) * a) - tolower((unsigned char) * b);
+    if (d != 0 || !*a)
+      return d;
+  }
 }
 
 // look-up the calculated crc in the file n64.txt on sd card
