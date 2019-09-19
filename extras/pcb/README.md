@@ -2,7 +2,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/ta7pjoxn9kirtan/v17pcb.png?dl=1)   
 
-#### nes_adapter.zip is an add-on for reading NES carts, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot. 
+#### nes_adapter.zip is an add-on for reading NES carts, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot. You can order a 2.5mm 72pin NES slot [here](https://www.aliexpress.com/item/32827561164.html).     
 
 ![image](https://dl.dropboxusercontent.com/s/z2atlcly642sewj/nes_adapter.png?dl=1)   
 
