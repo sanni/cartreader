@@ -51,15 +51,17 @@ void setup_SMS() {
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
-  //A8-A15
+  //A8-A14
   DDRK = 0xFF;
+  //A15
+  DDRH |= (1 << 3);
 
   // Set Control Pins to Output RST(PH0) WR(PH5) OE(PH6)
   DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
   // CE(PL1)
   DDRL |= (1 << 1);
 
-  // Setting RST(PH0)  WR(PH5) OE(PH6) HIGH
+  // Setting RST(PH0) WR(PH5) OE(PH6) HIGH
   PORTH |= (1 << 0) | (1 << 5) | (1 << 6);
   // CE(PL1)
   PORTL |= (1 << 1);
@@ -92,6 +94,7 @@ void writeByte_SMS(word myAddress, byte myData) {
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
+  PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
   // Output data
   PORTC = myData;
 
@@ -124,6 +127,7 @@ byte readByte_SMS(word myAddress) {
   // Set Address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
+  PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 

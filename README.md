@@ -23,6 +23,7 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes some Chinese GBA repros with Intel 4000L0YBQ0, Macronix MX29GL128E or Fujitsu MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
+- Reads Sega Master System roms (only default mapper and no SRAM supported so far)     
 - Reads PC engine/TG16 (custom-made adapter needed)   
 - Programs Flashroms like 29F016, 29F032 and 29F033, 29F1601, 29F1610, 29L3211, 29LV160, 29LV320 and S29GL032M   
 - Programs 27C322 Eproms   

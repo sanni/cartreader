@@ -6,6 +6,10 @@
 
 ![image](https://dl.dropboxusercontent.com/s/z2atlcly642sewj/nes_adapter.png?dl=1)   
 
+#### sms_adapter.zip is an add-on for reading Sega Master System carts. You can order a 2.54mm 50pin SMS slot [here](https://www.aliexpress.com/item/32818469880.html).     
+
+![image](https://dl.dropboxusercontent.com/s/r6lavgoaccjtrz7/sms_adapter.png?dl=1)   
+
 #### flash_adapter.zip is an add-on for writing flashroms like the 29F032, 29L3211, 29LV160, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot.   
    
 ![image](https://dl.dropboxusercontent.com/s/afrfmiuwvmvg9px/flash_adapter.png?dl=1)   
