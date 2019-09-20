@@ -6,7 +6,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/z2atlcly642sewj/nes_adapter.png?dl=1)   
 
-#### sms_adapter.zip is an add-on for reading Sega Master System carts. You can order a 2.54mm 50pin SMS slot [here](https://www.aliexpress.com/item/32818469880.html). Ignore the SMD footprint on the PCB, the adapter does not need any components. You can bridge R5 to connect the reset pin though.   
+#### sms_adapter.zip is an add-on for reading Sega Master System carts. You can order a 2.54mm 50pin SMS slot [here](https://www.aliexpress.com/item/32818469880.html). Ignore the SMD footprint on the PCB, the adapter does not need any components.    
 
 ![image](https://dl.dropboxusercontent.com/s/r6lavgoaccjtrz7/sms_adapter.png?dl=1)   
 
