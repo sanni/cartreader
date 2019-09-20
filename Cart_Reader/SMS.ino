@@ -86,7 +86,7 @@ void setup_SMS() {
   Low level functions
 *****************************************/
 void writeByte_SMS(word myAddress, byte myData) {
-  // Set Data Pins (D0-D15) to Output
+  // Set Data Pins (D0-D7) to Output
   DDRC = 0xFF;
 
   // Set address
@@ -100,7 +100,7 @@ void writeByte_SMS(word myAddress, byte myData) {
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Switch CE(PL1) and WR(PH5) to LOW
-  PORTL &= ~(1 << 1) ;
+  PORTL &= ~(1 << 1);
   PORTH &= ~(1 << 5);
 
   // Leave WE low for at least 60ns
@@ -113,12 +113,12 @@ void writeByte_SMS(word myAddress, byte myData) {
   // Leave WE high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Set Data Pins (D0-D15) to Input
+  // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
 }
 
 byte readByte_SMS(word myAddress) {
-  // Set Data Pins (D0-D15) to Input
+  // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
 
   // Set Address
