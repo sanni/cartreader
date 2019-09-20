@@ -54,17 +54,23 @@ void setup_SMS() {
   //A8-A15
   DDRK = 0xFF;
 
-  // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) OE(PH6)
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) WR(PH5) OE(PH6)
+  DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
+  // CE(PL1)
+  DDRL |= (1 << 1);
 
-  // Setting RST(PH0) CS(PH3) WR(PH5) OE(PH6) HIGH
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Setting RST(PH0)  WR(PH5) OE(PH6) HIGH
+  PORTH |= (1 << 0) | (1 << 5) | (1 << 6);
+  // CE(PL1)
+  PORTL |= (1 << 1);
 
   // ROM has 16KB banks which can be mapped to one of three slots via register writes
   // Register Slot Address space
   // $fffd    0    $0000-$3fff
   // $fffe    1    $4000-$7fff
   // $ffff    2    $8000-$bfff
+  // Disable sram
+  writeByte_SMS(0xFFFC, 0);
   // Map first 3 banks so we can read-out the header info
   writeByte_SMS(0xFFFD, 0);
   writeByte_SMS(0xFFFE, 1);
@@ -82,6 +88,7 @@ void setup_SMS() {
 void writeByte_SMS(word myAddress, byte myData) {
   // Set Data Pins (D0-D15) to Output
   DDRC = 0xFF;
+
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -92,14 +99,16 @@ void writeByte_SMS(word myAddress, byte myData) {
   // Wait till output is stable
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch CS(PH3) and WR(PH5) to LOW
-  PORTH &= ~((1 << 3) | (1 << 5));
+  // Switch CE(PL1) and WR(PH5) to LOW
+  PORTL &= ~(1 << 1) ;
+  PORTH &= ~(1 << 5);
 
   // Leave WE low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch CS(PH3) and WR(PH5) to HIGH
-  PORTH |= (1 << 3) | (1 << 5);
+  // Switch CE(PL1) and WR(PH5) to HIGH
+  PORTH |= (1 << 5);
+  PORTL |= (1 << 1);
 
   // Leave WE high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
@@ -118,16 +127,18 @@ byte readByte_SMS(word myAddress) {
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch CS(PH3) and OE(PH6) to LOW
-  PORTH &= ~((1 << 3) | (1 << 6));
+  // Switch CE(PL1) and OE(PH6) to LOW
+  PORTL &= ~(1 << 1);
+  PORTH &= ~(1 << 6);
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
   byte tempByte = PINC;
 
-  // Switch CS(PH3) and OE(PH6) to HIGH
-  PORTH |= (1 << 3) | (1 << 6);
+  // Switch CE(PL1) and OE(PH6) to HIGH
+  PORTH |= (1 << 6);
+  PORTL |= (1 << 1);
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
