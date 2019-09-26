@@ -6,6 +6,10 @@
 
 ![image](https://dl.dropboxusercontent.com/s/z2atlcly642sewj/nes_adapter.png?dl=1)   
 
+#### famicom_adapter.zip is an add-on for reading Famicom carts, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot. You can order a 2.5mm 72pin NES slot [here](https://www.aliexpress.com/item/32827561164.html).     
+
+![image](https://dl.dropboxusercontent.com/s/w89ivzvuzk6hf5b/famicom_adapter.png?dl=1)   
+
 #### sms_adapter.zip is an add-on for reading Sega Master System carts. You can order a 2.54mm 50pin SMS slot [here](https://www.aliexpress.com/item/32818469880.html). Ignore the SMD footprints on the PCB, the adapter does not need any components.    
 
 ![image](https://dl.dropboxusercontent.com/s/r6lavgoaccjtrz7/sms_adapter.png?dl=1)   
