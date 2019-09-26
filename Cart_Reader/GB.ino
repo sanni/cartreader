@@ -17,7 +17,8 @@ uint16_t sramEndAddress = 0;
 static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
 static const char gbxMenuItem3[] PROGMEM = "NPower GB Memory";
-static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3};
+static const char gbxMenuItem4[] PROGMEM = "GB Smart";
+static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4};
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
@@ -33,8 +34,8 @@ void gbxMenu() {
   // create menu with title and 3 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 3);
-  gbType = question_box(F("Select Game Boy"), menuOptions, 3, 0);
+  convertPgm(menuOptionsGBx, 4);
+  gbType = question_box(F("Select Game Boy"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gbType)
@@ -58,6 +59,13 @@ void gbxMenu() {
       display_Update();
       setup_GBM();
       mode =  mode_GBM;
+      break;
+
+    case 3:
+      display_Clear();
+      display_Update();
+      setup_GBSmart();
+      mode = mode_GB_GBSmart;
       break;
   }
 }

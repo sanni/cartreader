@@ -149,6 +149,9 @@ typedef enum COLOR_T {
 #define mode_NES 15
 #define mode_SMS 16
 #define mode_SEGA_CD 17
+#define mode_GB_GBSmart 18
+#define mode_GB_GBSmart_Flash 19
+#define mode_GB_GBSmart_Game 20
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
@@ -1485,6 +1488,15 @@ void loop() {
   }
   else if (mode == mode_SEGA_CD) {
     segaCDMenu();
+  }
+  else if (mode == mode_GB_GBSmart) {
+    gbSmartMenu();
+  }
+  else if (mode == mode_GB_GBSmart_Flash) {
+    gbSmartFlashMenu();
+  }
+  else if (mode == mode_GB_GBSmart_Game) {
+    gbSmartGameOptions();
   }
   else {
     display_Clear();
