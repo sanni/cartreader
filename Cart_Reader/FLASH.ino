@@ -12,7 +12,7 @@ byte secondID = 1;
 unsigned long time;
 unsigned long blank;
 unsigned long sectorSize;
-byte bufferSize;
+uint16_t bufferSize;
 boolean hiROM = 1;
 
 /******************************************
@@ -106,10 +106,7 @@ void flashromMenu8() {
       println_Msg(F("Blankcheck"));
       display_Update();
       time = millis();
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
       blankcheck_Flash();
       break;
 
@@ -119,26 +116,21 @@ void flashromMenu8() {
       println_Msg(F("Please wait..."));
       display_Update();
       time = millis();
-      if (flashromType == 1) {
-        eraseFlash29F032();
+
+      switch (flashromType) {
+        case 1: eraseFlash29F032(); break;
+        case 2: eraseFlash29F1610(); break;
+        case 3: eraseFlash28FXXX(); break;
       }
-      else {
-        eraseFlash29F1610();
-      }
+
       println_Msg(F("Flashrom erased"));
       display_Update();
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
       break;
 
     case 2:
       time = millis();
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
       readFlash();
       break;
 
@@ -148,30 +140,39 @@ void flashromMenu8() {
       fileBrowser(F("Select file"));
       display_Clear();
       time = millis();
-      if (flashromType == 1)
-        writeFlash29F032();
-      else if (flashromType == 2) {
-        if (strcmp(flashid, "C2F3") == 0)
-          writeFlash29F1601();
-        else if ((strcmp(flashid, "C2F1") == 0) || (strcmp(flashid, "C2F9") == 0))
-          writeFlash29F1610();
-        else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
-          writeFlash29LV640();
-        else if (strcmp(flashid, "017E") == 0) {
-          // sector size, write buffer size
-          writeFlash29GL(sectorSize, bufferSize);
-        }
+
+      switch (flashromType) {
+        case 1:
+          writeFlash29F032();
+          break;
+        case 2:
+          if (strcmp(flashid, "C2F3") == 0)
+            writeFlash29F1601();
+          else if ((strcmp(flashid, "C2F1") == 0) || (strcmp(flashid, "C2F9") == 0))
+            writeFlash29F1610();
+          else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) ||
+                   (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) ||
+                   (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
+            writeFlash29LV640();
+          else if (strcmp(flashid, "017E") == 0) {
+            // sector size, write buffer size
+            writeFlash29GL(sectorSize, bufferSize);
+          }
+          else if ((strcmp(flashid, "0458") == 0) || (strcmp(flashid, "0158") == 0))
+            writeFlash29F800();
+
+          break;
+        case 3:
+          writeFlash28FXXX();
+          break;
       }
+
       delay(100);
+
       // Reset twice just to be sure
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
+      resetFlash8();
+
       verifyFlash();
       break;
 
@@ -179,20 +180,18 @@ void flashromMenu8() {
       time = 0;
       display_Clear();
       println_Msg(F("ID Flashrom"));
-      if (flashromType == 1)
-        idFlash29F032();
-      else
-        idFlash29F1610();
+      switch (flashromType) {
+        case 1: idFlash29F032(); break;
+        case 2: idFlash29F1610(); break;
+        case 3: idFlash28FXXX(); break;
+      }
 
       println_Msg(F(""));
       printFlash(40);
       println_Msg(F(""));
       display_Update();
 
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
       break;
 
     case 5:
@@ -200,10 +199,7 @@ void flashromMenu8() {
       display_Clear();
       println_Msg(F("Print first 70Bytes"));
       display_Update();
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
       printFlash(70);
       break;
 
@@ -211,10 +207,7 @@ void flashromMenu8() {
       time = 0;
       display_Clear();
       display_Update();
-      if (flashromType == 1)
-        resetFlash29F032();
-      else
-        resetFlash29F1610();
+      resetFlash8();
       resetArduino();
       break;
   }
@@ -468,6 +461,16 @@ idtheflash:
     flashSize = 4194304;
     flashromType = 1;
   }
+  else if (strcmp(flashid, "0458") == 0) {
+    println_Msg(F("MBM29F800BA detected"));
+    flashSize = 1048576;
+    flashromType = 2;
+  }
+  else if (strcmp(flashid, "0158") == 0) {
+    println_Msg(F("AM29F800BB detected"));
+    flashSize = 1048576;
+    flashromType = 2;
+  }
   else if (strcmp(flashid, "017E") == 0) {
     // S29GL032M
     if (readByte_Flash(28) == 0x1A) {
@@ -486,11 +489,26 @@ idtheflash:
     println_Msg(F("ATTENTION 3.3V"));
     flashromType = 2;
   }
-  else if (secondID) {
+  else if (strcmp(flashid, "B088") == 0) {
+    // LH28F016SUT
+    println_Msg(F("LH28F016SUT detected"));
+    println_Msg(F("ATTENTION 3/5 setting"));
+    flashSize = 2097152;
+    sectorSize = 65536;
+    bufferSize = 256;
+    flashromType = 3;
+  }
+  else if (secondID == 1) {
     // Backup first ID read-out
     strncpy(vendorID, flashid, 5);
     // Read ID a second time using a different command
     idFlash29F1610();
+    secondID = 2;
+    goto idtheflash;
+  }
+  else if (secondID == 2) {
+    // test if 28FXXX series flash
+    idFlash28FXXX();
     secondID = 0;
     goto idtheflash;
   }
@@ -509,10 +527,8 @@ idtheflash:
   println_Msg(" ");
   println_Msg(F("Press Button..."));
   display_Update();
-  if (flashromType == 1)
-    resetFlash29F032();
-  else
-    resetFlash29F1610();
+
+  resetFlash8();
 }
 
 void id_Flash16() {
@@ -1246,6 +1262,159 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
 }
 
 /******************************************
+  29F800 functions
+*****************************************/
+void writeFlash29F800() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Set data pins to output
+    dataOut();
+
+    // Fill sdBuffer
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
+      myFile.read(sdBuffer, 512);
+      // Blink led
+      if (currByte % 2048 == 0)
+        PORTB ^= (1 << 4);
+
+      for (int c = 0; c < 512; c++) {
+        // Write command sequence
+        writeByte_Flash(0x5555 << 1, 0xaa);
+        writeByte_Flash(0x2aaa << 1, 0x55);
+        writeByte_Flash(0x5555 << 1, 0xa0);
+        // Write current byte
+        writeByte_Flash(currByte + c, sdBuffer[c]);
+        busyCheck29F032(sdBuffer[c]);
+      }
+    }
+
+    // Set data pins to input again
+    dataIn8();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD"));
+    display_Update();
+  }
+}
+
+/******************************************
+  28FXXX series flashrom functions
+*****************************************/
+void idFlash28FXXX() {
+  dataOut();
+  writeByte_Flash(0x0, 0x90);
+
+  dataIn8();
+
+  // Read the two id bytes into a string
+  sprintf(flashid, "%02X%02X", readByte_Flash(0), readByte_Flash(1));
+}
+
+void resetFlash28FXXX() {
+  dataOut();
+  writeByte_Flash(0x0, 0xff);
+
+  dataIn();
+  delay(500);
+}
+
+uint8_t statusFlash28FXXX() {
+  dataOut();
+
+  writeByte_Flash(0x0, 0x70);
+  dataIn8();
+  return readByte_Flash(0x0);
+}
+
+void eraseFlash28FXXX() {
+  // only can erase block by block
+  for (uint32_t ba = 0; ba < flashSize; ba += sectorSize)
+  {
+    dataOut();
+    writeByte_Flash(0x0, 0x20);
+    writeByte_Flash(ba, 0xd0);
+
+    dataIn8();
+    while ((readByte_Flash(ba) & 0x80) == 0x00);
+
+    // blink LED
+    PORTB ^= (1 << 4);
+  }
+}
+
+void writeFlash28FXXX() {
+  if ((strcmp(flashid, "B088") == 0))
+    writeFlashLH28F0XX();
+}
+
+void writeFlashLH28F0XX() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  println_Msg(F("Flashing file "));
+  println_Msg(filePath);
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_Error(F("File size exceeds flash size."), true);
+
+    // Fill sdBuffer
+    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
+      myFile.read(sdBuffer, 512);
+      // Blink led
+      if (currByte % 2048 == 0)
+        PORTB ^= (1 << 4);
+
+      for (int c = 0; c < 512; c += bufferSize) {
+        // sequence load to page
+        dataOut();
+        writeByte_Flash(0x0, 0xe0);
+        writeByte_Flash(0x0, bufferSize - 1); // BCL
+        writeByte_Flash(0x0, 0x00); // BCH should be 0x00
+
+        for (int d = 0; d < bufferSize; d++)
+          writeByte_Flash(d, sdBuffer[c + d]);
+
+        // start flashing page
+        writeByte_Flash(0x0, 0x0c);
+        writeByte_Flash(0x0, bufferSize - 1); // BCL
+        writeByte_Flash(currByte + c, 0x00); // BCH should be 0x00
+
+        // waiting for finishing
+        dataIn8();
+        while ((readByte_Flash(currByte + c) & 0x80) == 0x00);
+      }
+    }
+
+    dataIn8();
+
+    // Close the file:
+    myFile.close();
+  }
+  else {
+    println_Msg(F("Can't open file on SD"));
+    display_Update();
+  }
+}
+
+/******************************************
   Common flashrom functions
 *****************************************/
 void blankcheck_Flash() {
@@ -1361,6 +1530,14 @@ void printFlash(int numBytes) {
     println_Msg("");
   }
   display_Update();
+}
+
+void resetFlash8() {
+  switch (flashromType) {
+    case 1: resetFlash29F032(); break;
+    case 2: resetFlash29F1610(); break;
+    case 3: resetFlash28FXXX(); break;
+  }
 }
 
 /******************************************
