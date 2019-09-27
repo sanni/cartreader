@@ -26,6 +26,7 @@ void smsMenu() {
   {
     case 0:
       display_Clear();
+      mode = mode_SMS;
       setup_SMS();
       // Change working dir to root
       sd.chdir("/");
@@ -229,6 +230,8 @@ void getCartInfo_SMS() {
   display_Update();
   wait();
 #endif
+  // Turn off LED
+  rgb.setColor(0, 0, 0);
 }
 
 // Read rom and save to the SD card
