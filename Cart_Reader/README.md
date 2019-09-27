@@ -1,19 +1,5 @@
 This Arduino code is written by a beginner for beginners, therefore I tried to comment every line of code. To an experienced coder this probably will seem very wrong but it really helps if you're just starting out.   
 
-Source code files:   
-- Cart_Reader.ino is the main file that contains functions and variables being used by multiple submodules and also the main menu     
-- FLASH.ino is for reading and writing 29F016, 29F032, 29F033, 29F1610 and 29L3211 flashroms   
-- GB.ino includes everything Game Boy and Game Boy Color   
-- GBA.ino includes everything Game Boy Advance   
-- MD.ino includes everything for the SEGA Mega Drive   
-- N64.ino includes everything Nintendo 64   
-- NES.ino includes everything for the Nintendo Entertainment System
-- NP.ino includes everything for Nintendo Power SF Memory and GB Memory cartridges   
-- PCE.ino includes everything for the PC Engine/TG16   
-- SMS.ino includes everything for the SEGA Master System    
-- SNES.ino includes everything Super Nintendo   
-- SV.ino includes everything for the Super Nintendo Satellaview   
-
 Every submodule has it's own setup_XX() function that configures the needed pins and a submenu that lets you choose what you want to do. 
 The code directly addresses the pins via the DDR, PIN and PORT registers.   
 Please also refer to the [pinout Excel sheet](https://github.com/sanni/cartreader/blob/master/pinout.xls).    
