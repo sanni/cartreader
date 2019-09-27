@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             20-09-2019
-   Version:          3.9
+   Date:             27-09-2019
+   Version:          4.0
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -43,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "3.9";
+char ver[5] = "4.0";
 
 /******************************************
    Options
@@ -373,9 +373,9 @@ static const char modeItem7[] PROGMEM = "Reset";
 static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
 
 // Add-ons submenu
-static const char addonsItem1[] PROGMEM = "PC Engine/TG16";
+static const char addonsItem1[] PROGMEM = "NES/Famicom";
 static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
-static const char addonsItem3[] PROGMEM = "NES/Famicom";
+static const char addonsItem3[] PROGMEM = "PC Engine/TG16";
 static const char addonsItem4[] PROGMEM = "Sega Master System";
 static const char addonsItem5[] PROGMEM = "Reset";
 static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5};
@@ -483,7 +483,7 @@ void addonsMenu() {
   switch (addonsMenu)
   {
     case 0:
-      pcsMenu();
+      nesMenu();
       break;
 
     case 1:
@@ -491,7 +491,7 @@ void addonsMenu() {
       break;
 
     case 2:
-      nesMenu();
+      pcsMenu();
       break;
 
     case 3:

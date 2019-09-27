@@ -25,7 +25,7 @@ static const char gbSmartGameMenuItem4[] PROGMEM = "Switch Game";
 static const char gbSmartGameMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsGBSmartGame[] PROGMEM = {gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, gbSmartGameMenuItem5};
 
-typedef struct 
+typedef struct
 {
   uint8_t start_bank;
   uint8_t rom_type;
@@ -87,7 +87,7 @@ void setup_GBSmart()
   gameMenuStartBank = 0x02;
   hasMenu = true;
   numGames = 0;
-  
+
   display_Clear();
   display_Update();
 }
@@ -95,7 +95,7 @@ void setup_GBSmart()
 void gbSmartMenu()
 {
   uint8_t mainMenu;
-  
+
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGBSmart, 3);
   mainMenu = question_box(F("GB Smart"), menuOptions, 3, 0);
@@ -104,20 +104,20 @@ void gbSmartMenu()
   switch (mainMenu)
   {
     case 0:
-    {
-      gbSmartGameMenu();
-      break;
-    }
+      {
+        gbSmartGameMenu();
+        break;
+      }
     case 1:
-    {
-      mode = mode_GB_GBSmart_Flash;
-      break;
-    }
+      {
+        mode = mode_GB_GBSmart_Flash;
+        break;
+      }
     default:
-    {
-      asm volatile ("  jmp 0");
-      break;
-    }
+      {
+        asm volatile ("  jmp 0");
+        break;
+      }
   }
 }
 
@@ -131,51 +131,51 @@ void gbSmartGameOptions()
   switch (gameSubMenu)
   {
     case 0: // Read Game
-    {
-      display_Clear();
-      sd.chdir("/");
-      readROM_GB();
-      compare_checksum_GB();
-      break;
-    }
+      {
+        display_Clear();
+        sd.chdir("/");
+        readROM_GB();
+        compare_checksum_GB();
+        break;
+      }
     case 1: // Read SRAM
-    {
-      display_Clear();
-      sd.chdir("/");
-      readSRAM_GB();
-      break;
-    }
+      {
+        display_Clear();
+        sd.chdir("/");
+        readSRAM_GB();
+        break;
+      }
     case 2: // Write SRAM
-    {
-      display_Clear();
-      sd.chdir("/");
-      writeSRAM_GB();
-      uint32_t wrErrors = verifySRAM_GB();
-      if (wrErrors == 0)
       {
-        println_Msg(F("Verified OK"));
-        display_Update();
+        display_Clear();
+        sd.chdir("/");
+        writeSRAM_GB();
+        uint32_t wrErrors = verifySRAM_GB();
+        if (wrErrors == 0)
+        {
+          println_Msg(F("Verified OK"));
+          display_Update();
+        }
+        else
+        {
+          print_Msg(F("Error: "));
+          print_Msg(wrErrors);
+          println_Msg(F(" bytes"));
+          print_Error(F("did not verify."), false);
+        }
+        break;
       }
-      else
-      {
-        print_Msg(F("Error: "));
-        print_Msg(wrErrors);
-        println_Msg(F(" bytes"));
-        print_Error(F("did not verify."), false);
-      }
-      break;
-    }
     case 3: // Switch Game
-    {
-      gameMenuStartBank = 0x02;
-      gbSmartGameMenu();
-      break;
-    }
+      {
+        gameMenuStartBank = 0x02;
+        gbSmartGameMenu();
+        break;
+      }
     default:
-    {
-      asm volatile ("  jmp 0");
-      break;
-    }
+      {
+        asm volatile ("  jmp 0");
+        break;
+      }
   }
 
   if (gameSubMenu != 3)
@@ -193,7 +193,7 @@ void gbSmartGameMenu()
 gb_smart_load_more_games:
   if (gameMenuStartBank > 0xfe)
     gameMenuStartBank = 0x02;
-  
+
   gbSmartGetGames();
 
   if (hasMenu)
@@ -216,11 +216,11 @@ gb_smart_load_more_games:
 
   // copy romname
   strcpy(romName, gbSmartGames[gameSubMenu].title);
-      
+
   // select a game
   gbSmartRemapStartBank(gbSmartGames[gameSubMenu].start_bank, gbSmartGames[gameSubMenu].rom_size, gbSmartGames[gameSubMenu].sram_size);
   getCartInfo_GB();
-  
+
   mode = mode_GB_GBSmart_Game;
 }
 
@@ -234,49 +234,49 @@ void gbSmartFlashMenu()
   switch (flashSubMenu)
   {
     case 0:
-    {
-      // read flash
-      display_Clear();
-      sd.chdir("/");
+      {
+        // read flash
+        display_Clear();
+        sd.chdir("/");
 
-      EEPROM_readAnything(10, foldern);
-      sprintf(fileName, "GBS%d.bin", foldern);
-      sd.mkdir("GB/GBS", true);
-      sd.chdir("GB/GBS");
-      foldern = foldern + 1;
-      EEPROM_writeAnything(10, foldern);
+        EEPROM_readAnything(10, foldern);
+        sprintf(fileName, "GBS%d.bin", foldern);
+        sd.mkdir("GB/GBS", true);
+        sd.chdir("GB/GBS");
+        foldern = foldern + 1;
+        EEPROM_writeAnything(10, foldern);
 
-      gbSmartReadFlash();
-      break; 
-    }
+        gbSmartReadFlash();
+        break;
+      }
     case 1:
-    {
-      // write flash
-      display_Clear();
+      {
+        // write flash
+        display_Clear();
 
-      println_Msg(F("Attention"));
-      println_Msg(F("This will erase your"));
-      println_Msg(F("GB Smart Cartridge."));
-      println_Msg(F(""));
-      println_Msg(F("Press Button"));
-      println_Msg(F("to continue"));
-      display_Update();
-      wait();
+        println_Msg(F("Attention"));
+        println_Msg(F("This will erase your"));
+        println_Msg(F("GB Smart Cartridge."));
+        println_Msg(F(""));
+        println_Msg(F("Press Button"));
+        println_Msg(F("to continue"));
+        display_Update();
+        wait();
 
-      display_Clear();
-      filePath[0] = '\0';
-      sd.chdir("/");
-      fileBrowser(F("Select 4MB file"));
-      
-      sprintf(filePath, "%s/%s", filePath, fileName);
-      gbSmartWriteFlash();
-      break;
-    }
+        display_Clear();
+        filePath[0] = '\0';
+        sd.chdir("/");
+        fileBrowser(F("Select 4MB file"));
+
+        sprintf(filePath, "%s/%s", filePath, fileName);
+        gbSmartWriteFlash();
+        break;
+      }
     default:
-    {
-      mode = mode_GB_GBSmart;
-      return;
-    }
+      {
+        mode = mode_GB_GBSmart;
+        return;
+      }
   }
 
   println_Msg(F(""));
@@ -288,13 +288,13 @@ void gbSmartFlashMenu()
 void gbSmartGetGames()
 {
   static const byte menu_title[] = {0x47, 0x42, 0x31, 0x36, 0x4d};
-  
+
   // reset remap setting
   gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);
 
   uint16_t i;
   uint8_t myByte, myLength;
-  
+
   // check if contain menu
   hasMenu = true;
   dataIn_GB();
@@ -306,13 +306,13 @@ void gbSmartGetGames()
       break;
     }
   }
-  
+
   if (hasMenu)
-  {    
+  {
     for (i = gameMenuStartBank, numGames = 0; i < gbSmartBanks && numGames < GB_SMART_GAMES_PER_PAGE; )
     {
       myLength = 0;
-      
+
       // switch bank
       dataOut();
       writeByte_GB(0x2100, i);
@@ -331,7 +331,7 @@ void gbSmartGetGames()
       for (uint8_t j = 0; j < 15; j++)
       {
         myByte = readByte_GB(0x4134 + j);
-        
+
         if (((char(myByte) >= 0x30 && char(myByte) <= 0x39) ||
              (char(myByte) >= 0x41 && char(myByte) <= 0x7a)))
           gbSmartGames[numGames].title[myLength++] = char(myByte);
@@ -346,7 +346,7 @@ void gbSmartGetGames()
       myByte = (2 << gbSmartGames[numGames].rom_size);
       i += myByte;
       numGames++;
-gb_smart_get_game_loop_end:; 
+gb_smart_get_game_loop_end:;
     }
 
     gameMenuStartBank = i;
@@ -357,7 +357,7 @@ gb_smart_get_game_loop_end:;
     for (uint8_t j = 0; j < 15; j++)
     {
       myByte = readByte_GB(0x0134 + j);
-        
+
       if (((char(myByte) >= 0x30 && char(myByte) <= 0x39) ||
            (char(myByte) >= 0x41 && char(myByte) <= 0x7a)))
         gbSmartGames[0].title[myLength++] = char(myByte);
@@ -380,14 +380,14 @@ void gbSmartReadFlash()
   print_Msg(fileName);
   println_Msg(F("..."));
   display_Update();
-  
+
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_Error(F("Can't create file on SD"), true);
 
   // reset flash to read array state
   for (int i = 0x00; i < gbSmartBanks; i += gbSmartBanksPerFlashChip)
     gbSmartResetFlash(i);
-  
+
   // remaps mmc to full access
   gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);
 
@@ -414,7 +414,7 @@ void gbSmartReadFlash()
         sdBuffer[c] = readByte_GB(addr + c);
 
       myFile.write(sdBuffer, 512);
-    }    
+    }
   }
 
   // back to initial state
@@ -431,10 +431,10 @@ void gbSmartWriteFlash()
   for (int bank = 0x00; bank < gbSmartBanks; bank += gbSmartBanksPerFlashChip)
   {
     display_Clear();
-    
+
     print_Msg(F("Erasing..."));
     display_Update();
-    
+
     gbSmartEraseFlash(bank);
     gbSmartResetFlash(bank);
 
@@ -443,7 +443,7 @@ void gbSmartWriteFlash()
     display_Update();
 
     if (!gbSmartBlankCheckingFlash(bank))
-      print_Error(F("Could not erase flash"), true);    
+      print_Error(F("Could not erase flash"), true);
 
     println_Msg(F("Passed"));
     display_Update();
@@ -466,7 +466,7 @@ void gbSmartWriteFlash()
   }
   else
   {
-    print_Msg(F("Error: ")); 
+    print_Msg(F("Error: "));
     print_Msg(writeErrors);
     println_Msg(F(" bytes "));
     print_Error(F("did not verify."), true);
@@ -487,7 +487,7 @@ void gbSmartWriteFlash(uint32_t start_bank)
   print_Msg(start_bank, HEX);
   print_Msg(F("..."));
   display_Update();
-  
+
   // handle bank 0x00 on 0x0000
   gbSmartWriteFlashFromMyFile(0x0000);
 
@@ -496,7 +496,7 @@ void gbSmartWriteFlash(uint32_t start_bank)
   {
     dataOut();
     writeByte_GB(0x2100, bank);
-    
+
     gbSmartWriteFlashFromMyFile(0x4000);
   }
 
@@ -524,10 +524,10 @@ void gbSmartWriteFlashFromMyFile(uint32_t addr)
     gbSmartWriteFlashByte(addr, 0x0c);
     gbSmartWriteFlashByte(addr, 0xff);
     gbSmartWriteFlashByte(addr + i, 0x00);  // BCH should be 0x00
-        
-     // waiting for finishing
-     dataIn_GB();
-     while ((readByte_GB(addr + i) & 0x80) == 0x00);
+
+    // waiting for finishing
+    dataIn_GB();
+    while ((readByte_GB(addr + i) & 0x80) == 0x00);
   }
 
   // blink LED
@@ -553,7 +553,7 @@ uint32_t gbSmartVerifyFlash()
     for (uint16_t addr = 0x0000; addr <= 0x3fff; addr += 512)
     {
       myFile.read(sdBuffer, 512);
-      
+
       for (uint16_t c = 0; c < 512; c++)
       {
         if (readByte_GB(addr + c) != sdBuffer[c])
@@ -571,13 +571,13 @@ uint32_t gbSmartVerifyFlash()
       for (uint16_t addr = 0x4000; addr <= 0x7fff; addr += 512)
       {
         myFile.read(sdBuffer, 512);
-        
+
         for (uint16_t c = 0; c < 512; c++)
         {
           if (readByte_GB(addr + c) != sdBuffer[c])
             verified++;
         }
-      }    
+      }
     }
 
     // back to initial state
@@ -637,22 +637,22 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
 
   dataIn_GB();
   while ((readByte_GB(0x0000) & 0x80) == 0x00);
-    
+
   // blink LED
-  PORTB ^= (1 << 4);  
+  PORTB ^= (1 << 4);
 
   // rest of flash block
   for (uint32_t ba = gbSmartBanksPerFlashBlock; ba < gbSmartBanksPerFlashChip; ba += gbSmartBanksPerFlashBlock)
   {
     dataOut();
     writeByte_GB(0x2100, ba);
-    
+
     gbSmartWriteFlashByte(0x4000, 0x20);
     gbSmartWriteFlashByte(0x4000, 0xd0);
 
     dataIn_GB();
     while ((readByte_GB(0x4000) & 0x80) == 0x00);
-    
+
     // blink LED
     PORTB ^= (1 << 4);
   }
@@ -674,10 +674,10 @@ void gbSmartWriteFlashByte(uint32_t myAddress, uint8_t myData)
   __asm__("nop\n\tnop\n\tnop\n\tnop\n\t");
 
   // Pull FLASH_WE (PH4) high
-  PORTH |= (1 << 4);  
+  PORTH |= (1 << 4);
 
   // pull high for another 250ns
-  __asm__("nop\n\tnop\n\tnop\n\tnop\n\t");  
+  __asm__("nop\n\tnop\n\tnop\n\tnop\n\t");
 }
 
 // rom_start_bank = 0x00 means back to original state
@@ -686,7 +686,7 @@ void gbSmartRemapStartBank(uint8_t rom_start_bank, uint8_t rom_size, uint8_t sra
   rom_start_bank &= 0xfe;
 
   dataOut();
-  
+
   // clear base bank setting
   writeByte_GB(0x1000, 0xa5);
   writeByte_GB(0x7000, 0x00);

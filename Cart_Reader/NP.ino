@@ -1,7 +1,7 @@
 //******************************************
 // NINTENDO POWER  MODULE
 //******************************************
-//  (GB Memory starts at around line 1743)
+//  (GB Memory starts at around line 1740)
 
 /******************************************
    SF Memory Cassette
