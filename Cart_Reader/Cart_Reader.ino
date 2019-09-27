@@ -37,6 +37,8 @@
    vogelfreiheit - N64 flashram fix
    rama - code speedup & improvements
    Gens-gs - Megadrive checksum
+   Modman - N64 checksum comparison fix
+   splash5 - EMS GB Smart cart support
 
 **********************************************************************************/
 #include <SdFat.h>
