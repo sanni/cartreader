@@ -12,17 +12,17 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
 - Reads and writes SNES Satellaview 8M Memory packs    
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
-- Reflashes some Chinese or custom-made SNES repros with 29F033 or 29LV320 flashroms     
+- Reflashes some Chinese or custom-made SNES repros with AM29F032, MBM29F033 or MX29LV320 flashroms     
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Proto carts are not supported yet  
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
-- Reflashes some Chinese N64 repros with S29GL128N, S29GL256N, MSP55LV512, MSP55LV100S, MX29LV640, 512M29EW or 4400L0ZDQ0 flashroms    
+- Reflashes some Chinese N64 repros with S29GL128N, S29GL256N, MSP55LV512, MSP55LV100S, MX29LV640, i512M29EW or i4400L0ZDQ0 flashroms    
 - Reflashes N64 Gamesharks with SST 29LE010 eeproms     
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
-- Programs custom-made Game Boy (Color) flashcarts with 29F016/29F032/29F033 flashrom   
+- Programs custom-made Game Boy (Color) flashcarts with AM29F016, AM29F032, MBM29F033 flashrom   
 - Programs EMS GB Smart 32M flash carts    
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
-- Reflashes some Chinese GBA repros with 4000L0YBQ0, MX29GL128E or MSP55LV128 flashroms    
+- Reflashes some Chinese GBA repros with i4000L0YBQ0, MX29GL128E or MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
 - Reads Sega Master System roms (only default mapper and no SRAM supported so far)     
 - Reads PC engine/TG16 (custom-made adapter needed)   
