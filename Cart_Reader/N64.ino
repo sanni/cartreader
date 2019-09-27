@@ -1424,13 +1424,13 @@ void readMPK() {
   sd.chdir("N64/MPK");
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(fileName, "%d", foldern);
   strcat(fileName, ".mpk");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1980,14 +1980,14 @@ void readEeprom() {
     strcat(fileName, ".eep");
 
     // create a new folder for the save file
-    EEPROM_readAnything(10, foldern);
+    EEPROM_readAnything(0, foldern);
     sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(10, foldern);
+    EEPROM_writeAnything(0, foldern);
 
     // Open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2174,14 +2174,14 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
 
   // create a new folder for the save file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2581,7 +2581,7 @@ void readRom_N64() {
   strcat(fileName, ".Z64");
 
   // create a new folder
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -2594,7 +2594,7 @@ void readRom_N64() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
 readn64rom:
   // Open file on sd card
@@ -3710,7 +3710,7 @@ void resetGameshark_N64() {
 // Read rom and save to the SD card
 void backupGameshark_N64() {
   // create a new folder
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(fileName, "GS%d", foldern);
   strcat(fileName, ".z64");
   sd.mkdir("N64/ROM/Gameshark", true);
@@ -3724,7 +3724,7 @@ void backupGameshark_N64() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

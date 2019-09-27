@@ -250,14 +250,14 @@ void sfmFlashMenu() {
         numBanks = 64;
 
         // Get name, add extension and convert to char array for sd lib
-        EEPROM_readAnything(10, foldern);
+        EEPROM_readAnything(0, foldern);
         sprintf(fileName, "SFM%d", foldern);
         strcat(fileName, ".bin");
         sd.mkdir("NP", true);
         sd.chdir("NP");
         // write new folder number back to eeprom
         foldern = foldern + 1;
-        EEPROM_writeAnything(10, foldern);
+        EEPROM_writeAnything(0, foldern);
 
         // Read flash
         readFlash_SFM();
@@ -1351,7 +1351,7 @@ void readMapping() {
   controlIn_SFM();
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(fileName, "NP%d", foldern);
   strcat(fileName, ".MAP");
   sd.mkdir("NP", true);
@@ -1359,7 +1359,7 @@ void readMapping() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2035,14 +2035,14 @@ void readROM_GBM(word numBanks) {
   display_Update();
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(fileName, "GBM%d", foldern);
   strcat(fileName, ".bin");
   sd.mkdir("NP", true);
   sd.chdir("NP");
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2421,14 +2421,14 @@ void readMapping_GBM() {
   display_Update();
 
   // Get name, add extension and convert to char array for sd lib
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(fileName, "GBM%d", foldern);
   strcat(fileName, ".map");
   sd.mkdir("NP", true);
   sd.chdir("NP");
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

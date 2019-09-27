@@ -1010,7 +1010,7 @@ boolean compare_checksum() {
   strcat(fileName, ".sfc");
 
   // last used rom folder
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "SNES/ROM/%s/%d", romName, foldern - 1);
 
   char calcsumStr[5];
@@ -1042,7 +1042,7 @@ void readROM_SNES() {
   strcat(fileName, ".sfc");
 
   // create a new folder for the save file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "SNES/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -1056,7 +1056,7 @@ void readROM_SNES() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1405,14 +1405,14 @@ void readSRAM () {
   strcat(fileName, ".srm");
 
   // create a new folder for the save file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "SNES/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

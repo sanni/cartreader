@@ -74,7 +74,7 @@ void readROM_SV() {
   strcpy(fileName, "MEMPACK.sfc");
 
   // create a new folder for the save file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "SNES/ROM/%s/%d", "MEMPACK", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -88,7 +88,7 @@ void readROM_SV() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

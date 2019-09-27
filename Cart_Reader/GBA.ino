@@ -868,7 +868,7 @@ void readROM_GBA() {
   strcat(fileName, ".gba");
 
   // create a new folder for the rom file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "GBA/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -882,7 +882,7 @@ void readROM_GBA() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -918,7 +918,7 @@ boolean compare_checksum_GBA () {
   strcat(fileName, ".gba");
 
   // last used rom folder
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "GBA/ROM/%s/%d", romName, foldern - 1);
   sd.chdir(folder);
 
@@ -968,7 +968,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
     strcat(fileName, ".srm");
 
     // create a new folder for the save file
-    EEPROM_readAnything(10, foldern);
+    EEPROM_readAnything(0, foldern);
     sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
@@ -980,7 +980,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
     display_Update();
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(10, foldern);
+    EEPROM_writeAnything(0, foldern);
   }
 
   //open file on sd card
@@ -1099,7 +1099,7 @@ void readFRAM_GBA (unsigned long framSize) {
   strcat(fileName, ".srm");
 
   // create a new folder for the save file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -1111,7 +1111,7 @@ void readFRAM_GBA (unsigned long framSize) {
   display_Update();
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1502,7 +1502,7 @@ void readFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) {
     strcat(fileName, ".fla");
 
     // create a new folder for the save file
-    EEPROM_readAnything(10, foldern);
+    EEPROM_readAnything(0, foldern);
 
     sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
@@ -1516,7 +1516,7 @@ void readFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) {
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(10, foldern);
+    EEPROM_writeAnything(0, foldern);
   }
 
   //open file on sd card
@@ -1731,7 +1731,7 @@ void readEeprom_GBA(word eepSize) {
   strcat(fileName, ".eep");
 
   // create a new folder for the save file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
 
   sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
@@ -1745,7 +1745,7 @@ void readEeprom_GBA(word eepSize) {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

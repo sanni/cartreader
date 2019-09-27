@@ -397,7 +397,7 @@ void readROM_GB() {
   strcat(fileName, ".GB");
 
   // create a new folder for the rom file
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "GB/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -410,7 +410,7 @@ void readROM_GB() {
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -498,7 +498,7 @@ boolean compare_checksum_GB() {
   strcat(fileName, ".GB");
 
   // last used rom folder
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "GB/ROM/%s/%d", romName, foldern - 1);
 
   char calcsumStr[5];
@@ -529,14 +529,14 @@ void readSRAM_GB() {
     strcat(fileName, ".sav");
 
     // create a new folder for the save file
-    EEPROM_readAnything(10, foldern);
+    EEPROM_readAnything(0, foldern);
     sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
-    EEPROM_writeAnything(10, foldern);
+    EEPROM_writeAnything(0, foldern);
 
     //open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
