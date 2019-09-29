@@ -82,6 +82,9 @@ word eepdata;
 
 // CD BACKUP RAM
 unsigned long bramSize = 0;
+
+// REALTEC MAPPER
+boolean realtec = 0;
 /******************************************
    Menu
  *****************************************/
@@ -201,7 +204,10 @@ void mdCartMenu() {
       if (cartSize != 0 && cartSize <= 16777216) {
         // Change working dir to root
         sd.chdir("/");
-        readROM_MD();
+        if (realtec)
+          readRealtec_MD();
+        else
+          readROM_MD();
         //compare_checksum_MD();
       }
       else {
@@ -679,6 +685,15 @@ void getCartInfo_MD() {
       romName[myLength] = char(sdBuffer[i]);
       myLength++;
     }
+  }
+
+  // Realtec Mapper Check
+  word realtecCheck1 = readWord_MD(0x3F080); // 0x7E100 "SEGA" (BootROM starts at 0x7E000)
+  word realtecCheck2 = readWord_MD(0x3F081);
+  if ((realtecCheck1 == 0x5345) && (realtecCheck2 == 0x4741)) {
+    realtec = 1;
+    strcpy(romName, "Realtec");
+    cartSize = 0x80000;
   }
 
   display_Clear();
@@ -1902,6 +1917,80 @@ void writeBram_MD() {
     print_Error(F("SD Error"), true);
   }
   dataIn_MD();
+}
+
+//******************************************
+// Realtec Mapper Functions
+//******************************************
+void writeRealtec(unsigned long address, byte value) { // Realtec 0x404000 (UPPER)/0x400000 (LOWER)
+  dataOut_MD();
+  PORTF = address & 0xFF; // 0x00 ADDR A0-A7
+  PORTK = (address >> 8) & 0xFF; // ADDR A8-A15
+  PORTL = (address >> 16) & 0xFF; //0x20 ADDR A16-A23
+  PORTA = 0x00; // DATA D8-D15
+  PORTH |= (1 << 0); // /RES HIGH
+
+  PORTH |= (1 << 3); // CE HIGH
+  PORTC = value;
+  PORTH &= ~(1 << 4) & ~(1 << 5); // /UDSW + /LDSW LOW
+  PORTH |= (1 << 4) | (1 << 5); // /UDSW + /LDSW HIGH
+  dataIn_MD();
+}
+
+void readRealtec_MD() {
+  // Set control
+  dataIn_MD();
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".MD");
+
+  // create a new folder
+  EEPROM_readAnything(10, foldern);
+  sprintf(folder, "MD/ROM/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(10, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  // Realtec Registers
+  writeWord_MD(0x201000, 4); // Number of 128K Blocks 0x402000 (0x201000)
+  writeRealtec(0x200000, 1); // ROM Lower Address 0x400000 (0x200000)
+  writeRealtec(0x202000, 0); // ROM Upper Address 0x404000 (0x202000)
+
+  word d = 0;
+  for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
+    // Blink led
+    if (currBuffer % 16384 == 0)
+      PORTB ^= (1 << 4);
+
+    for (int currWord = 0; currWord < 256; currWord++) {
+      word myWord = readWord_MD(currBuffer + currWord);
+      // Split word into two bytes
+      // Left
+      sdBuffer[d] = (( myWord >> 8 ) & 0xFF);
+      // Right
+      sdBuffer[d + 1] = (myWord & 0xFF);
+      d += 2;
+    }
+    myFile.write(sdBuffer, 512);
+    d = 0;
+  }
+  // Close the file:
+  myFile.close();
 }
 
 //******************************************
