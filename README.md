@@ -9,7 +9,7 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
 - Portable if fitted with battery add-on or suitable power bank  
-- Easy to modify open-source code, write your own extensions and share them with the world   
+- Easy to modify open-source code, write your own extensions and share them with others      
 
 #### Supported Systems:    
 - Reads NES and Famicom cartridges    
