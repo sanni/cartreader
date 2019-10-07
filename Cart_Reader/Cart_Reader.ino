@@ -204,14 +204,18 @@ char menuOptions[7][20];
 boolean ignoreError = 0;
 
 // File browser
-char fileName[26];
-char filePath[50];
+#define FILENAME_LENGTH 32
+#define FILEPATH_LENGTH 64
+#define FILEOPTS_LENGTH 20
+
+char fileName[FILENAME_LENGTH];
+char filePath[FILEPATH_LENGTH];
 byte currPage;
 byte lastPage;
 byte numPages;
 boolean root = 0;
 boolean filebrowse = 0;
-char fileOptions[30][20];
+char fileOptions[30][FILEOPTS_LENGTH];
 
 // Common
 char romName[17];
@@ -1256,7 +1260,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers
   Filebrowser Module
 *****************************************/
 void fileBrowser(const __FlashStringHelper* browserTitle) {
-  char fileNames[30][26];
+  char fileNames[30][FILENAME_LENGTH];
   int currFile;
   filebrowse = 1;
 
@@ -1264,7 +1268,7 @@ void fileBrowser(const __FlashStringHelper* browserTitle) {
   filePath[0] = '\0';
 
   // Temporary char array for filename
-  char nameStr[26];
+  char nameStr[FILENAME_LENGTH];
 
 browserstart:
 
@@ -1280,7 +1284,7 @@ browserstart:
   while (myFile.openNext(sd.vwd(), O_READ)) {
 
     // Get name of file
-    myFile.getName(nameStr, 27);
+    myFile.getName(nameStr, FILENAME_LENGTH);
 
     // Ignore if hidden
     if (myFile.isHidden()) {
@@ -1288,21 +1292,17 @@ browserstart:
     // Indicate a directory.
     else if (myFile.isDir()) {
       // Copy full dirname into fileNames
-      sprintf(fileNames[currFile], "%s%s", "/", nameStr);
-      // Truncate to 19 letters for LCD
-      nameStr[19] = '\0';
+      snprintf(fileNames[currFile], FILENAME_LENGTH, "%s%s", "/", nameStr);
       // Copy short string into fileOptions
-      sprintf(fileOptions[currFile], "%s%s", "/", nameStr);
+      snprintf(fileOptions[currFile], FILEOPTS_LENGTH, "%s%s", "/", nameStr);
       currFile++;
     }
     // It's just a file
     else if (myFile.isFile()) {
       // Copy full filename into fileNames
-      sprintf(fileNames[currFile], "%s", nameStr);
-      // Truncate to 19 letters for LCD
-      nameStr[19] = '\0';
+      snprintf(fileNames[currFile], FILENAME_LENGTH, "%s", nameStr);
       // Copy short string into fileOptions
-      sprintf(fileOptions[currFile], "%s", nameStr);
+      snprintf(fileOptions[currFile], FILEOPTS_LENGTH, "%s", nameStr);
       currFile++;
     }
     myFile.close();
@@ -1354,7 +1354,7 @@ page:
 
   for (byte i = 0; i < 8; i++ ) {
     // Copy short string into fileOptions
-    sprintf( answers[i], "%s", fileOptions[ ((currPage - 1) * 7 + i)] );
+    snprintf( answers[i], FILEOPTS_LENGTH, "%s", fileOptions[ ((currPage - 1) * 7 + i)] );
   }
 
   // Create menu with title and 1-7 options to choose from
@@ -1383,31 +1383,31 @@ page:
   switch (answer)
   {
     case 0:
-      strcpy(fileName, fileNames[0 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[0 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 1:
-      strcpy(fileName, fileNames[1 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[1 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 2:
-      strcpy(fileName, fileNames[2 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[2 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 3:
-      strcpy(fileName, fileNames[3 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[3 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 4:
-      strcpy(fileName, fileNames[4 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[4 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 5:
-      strcpy(fileName, fileNames[5 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[5 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 6:
-      strcpy(fileName, fileNames[6 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[6 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 7:
