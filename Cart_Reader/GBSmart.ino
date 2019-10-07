@@ -220,6 +220,7 @@ gb_smart_load_more_games:
   // select a game
   gbSmartRemapStartBank(gbSmartGames[gameSubMenu].start_bank, gbSmartGames[gameSubMenu].rom_size, gbSmartGames[gameSubMenu].sram_size);
   getCartInfo_GB();
+  showCartInfo_GB();
 
   mode = mode_GB_GBSmart_Game;
 }
