@@ -4,10 +4,10 @@
 // WonderSwan cartridge pinout
 // C40: /RST   : PH0
 // C45: /CART? : PH3 (L when accessing cartridge (ROM/SRAM/PORT))
-// C42: /MMC   : PH4 (access port on cartridge when both /CART and /MMC = L)
+// C42: /MMC   : PH4 (access port on cartridge with both /CART and /MMC = L)
 // C44: /WE    : PH5
 // C43: /OE    : PH6
-// C47: CLK    : PE3 (384KHz in real device)
+// C47: CLK    : PE3 (384KHz on real device)
 // C41: /IO?   : PE4
 // C46: INT    : PG5 (for RTC alarm interrupt)
 
@@ -267,6 +267,7 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
     dataIn_WS();
     for (uint32_t addr = 0; addr < 0x10000; addr += 512)
     {
+      // blink LED
       if ((addr & ((1 << 14) - 1)) == 0)
         PORTB ^= (1 << 4);
 
@@ -319,6 +320,7 @@ void readSRAM_WS()
     dataIn_WS();
     for (uint32_t addr = 0; addr < bank_size; addr += 512)
     {
+      // blink LED
       if ((addr & ((1 << 14) - 1)) == 0)
         PORTB ^= (1 << 4);
 
@@ -419,6 +421,7 @@ void writeSRAM_WS()
 
       for (uint32_t addr = 0; addr < bank_size && myFile.available(); addr += 512)
       {
+        // blink LED
         if ((addr & ((1 << 14) - 1)) == 0)
           PORTB ^= (1 << 4);
 
@@ -471,6 +474,7 @@ void readEEPROM_WS()
   {
     for (uint32_t j = 0; j < bufSize; j += 2)
     {
+      // blink LED
       if ((j & 0x1f) == 0x00)
         PORTB ^= (1 << 4);
       
@@ -514,6 +518,7 @@ void verifyEEPROM_WS()
 
       for (uint32_t j = 0; j < bufSize; j += 2)
       {
+        // blink LED
         if ((j & 0x1f) == 0x00)
           PORTB ^= (1 << 4);
       
@@ -582,6 +587,7 @@ void writeEEPROM_WS()
         
       for (uint32_t j = 0; j < bufSize; j += 2)
       {
+        // blink LED
         if ((j & 0x1f) == 0x00)
           PORTB ^= (1 << 4);
 
@@ -764,7 +770,7 @@ void unprotectEEPROM()
 }
 
 // generate data for port 0xc4 to 0xc8
-// return value is number of CLKs need to pulse
+// number of CLK pulses needed for each instruction is 1 + (16/32) + 2
 void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t addr, uint8_t l_data, uint8_t h_data)
 {
   uint32_t *ptr = (uint32_t*)instruction;

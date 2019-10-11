@@ -154,6 +154,7 @@ typedef enum COLOR_T {
 #define mode_GB_GBSmart 18
 #define mode_GB_GBSmart_Flash 19
 #define mode_GB_GBSmart_Game 20
+#define mode_WS 21
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
@@ -381,8 +382,9 @@ static const char addonsItem1[] PROGMEM = "NES/Famicom";
 static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
 static const char addonsItem3[] PROGMEM = "PC Engine/TG16";
 static const char addonsItem4[] PROGMEM = "Sega Master System";
+static const char addonsItem6[] PROGMEM = "WonderSwan";
 static const char addonsItem5[] PROGMEM = "Reset";
-static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5};
+static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem6, addonsItem5};
 
 // Info Screen
 void aboutScreen() {
@@ -480,8 +482,8 @@ void addonsMenu() {
   // create menu with title and 5 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 5);
-  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 5, 0);
+  convertPgm(addonsOptions, 6);
+  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu)
@@ -503,6 +505,10 @@ void addonsMenu() {
       break;
 
     case 4:
+      setup_WS();
+      break;
+
+    default:
       resetArduino();
       break;
   }
@@ -1499,6 +1505,9 @@ void loop() {
   }
   else if (mode == mode_GB_GBSmart_Game) {
     gbSmartGameOptions();
+  }
+  else if (mode == mode_WS) {
+    wsMenu();
   }
   else {
     display_Clear();
