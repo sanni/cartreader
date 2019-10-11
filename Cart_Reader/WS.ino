@@ -8,7 +8,7 @@
 // C44: /WE    : PH5
 // C43: /OE    : PH6
 // C47: CLK    : PE3 (384KHz on real device)
-// C41: /IO?   : PE4
+// C41: /IO?   : PE4 (only use when unlocking MMC)
 // C46: INT    : PG5 (for RTC alarm interrupt)
 
 /******************************************
@@ -53,7 +53,7 @@ void setup_WS()
   display_Clear();
   
   // unlock MMC
-  if (!unlockBandai2003_WS())
+  if (!unlockMMC2003_WS())
     print_Error(F("Can't initial MMC"), true);
 
   if (getCartInfo_WS() != 0xea)
@@ -770,7 +770,7 @@ void unprotectEEPROM()
 }
 
 // generate data for port 0xc4 to 0xc8
-// number of CLK pulses needed for each instruction is 1 + (16/32) + 2
+// number of CLK pulses needed for each instruction is 1 + (16 or 32) + 3
 void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t addr, uint8_t l_data, uint8_t h_data)
 {
   uint32_t *ptr = (uint32_t*)instruction;
@@ -825,7 +825,7 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
 
 // 2003 MMC need to be unlock,
 // or it will reject all reading and bank switching
-boolean unlockBandai2003_WS()
+boolean unlockMMC2003_WS()
 {
   dataOut_WS();
 
