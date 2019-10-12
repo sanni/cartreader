@@ -20,10 +20,22 @@ static const char wsMenuItem3[] PROGMEM = "Write Save";
 static const char wsMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsWS[] PROGMEM = {wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItem4};
 
+/******************************************
+ * Developer Name
+*****************************************/
+static const char wsDevNameXX[] PROGMEM = "XXX";
+static const char wsDevName01[] PROGMEM = "BAN";
+static const char wsDevName12[] PROGMEM = "KNM";
+static const char wsDevName18[] PROGMEM = "KGT";
+static const char wsDevName1D[] PROGMEM = "BEC";
+static const char wsDevName24[] PROGMEM = "0MN";
+static const char wsDevName28[] PROGMEM = "SQR";
+static const char wsDevName31[] PROGMEM = "VGD";
+
 static uint8_t wsGameOrientation = 0;
 static uint8_t wsGameHasRTC = 0;
 static uint16_t wsGameChecksum = 0;
-static uint8_t wsEepromShiftReg[5];
+static uint8_t wsEepromShiftReg[2];
 
 void setup_WS()
 {
@@ -140,18 +152,93 @@ uint8_t getCartInfo_WS()
   for (uint32_t i = 0; i < 16; i += 2)
     *((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
 
-  // developer and cartID
-  snprintf(cartID, 5, "%02X%02X", sdBuffer[6], sdBuffer[8]);
+  wsGameChecksum = *(uint16_t*)(sdBuffer + 14);
+
+  // some game has wrong info in header
+  // patch here
+  switch (wsGameChecksum)
+  {
+    // games with 256kbits SRAM installed
+    case 0xe600:  // BAN007
+    case 0x8eed:  // BANC16
+    {
+      sdBuffer[11] = 0x02;
+      break;
+    }
+    // games missing 'COLOR' flag
+    case 0x26db:  // SQRC01
+    {
+      sdBuffer[7] = 0x01;
+      break;
+    }
+    case 0x7f73:  // BAN030
+    {
+      // missing developerId and cartId
+      sdBuffer[6] = 0x01;
+      sdBuffer[8] = 0x30;
+      break;
+    }
+    case 0x0000:
+    {
+      // developerId/cartId/checksum are all filled with 0x00 in wonderwitch based games
+      if (readWord_WS(0xf0000) == 0x4c45 && readWord_WS(0xf0002) == 0x5349 && readWord_WS(0xf0004) == 0x0041)
+      {
+        // looking for "<Ini" string
+        if (readWord_WS(0xec456) == 0x493c && readWord_WS(0xec458) == 0x696e)
+        {
+          // wonderwitch SWJ-7AC003
+          sdBuffer[6] = 0x7a;
+          sdBuffer[8] = 0xc3;
+          // TODO check OS version and fill into version field
+        }
+        // looking for "<Ini" string
+        else if (readWord_WS(0x839d8) == 0x493c && readWord_WS(0x839da) == 0x696e)
+        {
+          if (readWord_WS(0x93246) == 0x4a2f && readWord_WS(0x93248) == 0x5353 && readWord_WS(0x9324a) == 0x2e32)
+          {
+            // jss2
+            // TODO check jss version
+            sdBuffer[6] = 0xff; // WWGP
+            sdBuffer[8] = 0x1a; // 2001A
+            sdBuffer[7] = 0x01; // color only
+
+            if (readWord_WS(0x93e9c) == 0x4648 && readWord_WS(0x93e9e) == 0x0050)
+            {
+              // WWGP2001A3 -> HFP Version
+              sdBuffer[9] = 0x03;
+              wsGameChecksum = 0x4870;              
+            }
+            else
+            {
+              // TODO other version
+            }          
+          }
+          else if (readWord_WS(0xe4260) == 0x6b64 && readWord_WS(0xe4262) == 0x696e)
+          {
+            // dknight
+            sdBuffer[6] = 0xff; // WWGP
+            sdBuffer[8] = 0x2b; // 2002B
+            sdBuffer[7] = 0x01; // color only
+            sdBuffer[9] = 0x00;
+            wsGameChecksum = 0x8b1c;
+          }
+        }
+      }
+      break;
+    }
+  }
+  
   romType = sdBuffer[7]; // wsc only = 1
   romVersion = sdBuffer[9];
   romSize = sdBuffer[10];
   sramSize = sdBuffer[11];
   wsGameOrientation = (sdBuffer[12] & 0x01);
   wsGameHasRTC = (sdBuffer[13] & 0x01);
-  wsGameChecksum = *(uint16_t*)(sdBuffer + 14);
+
+  snprintf(vendorID, 4, "%02X", sdBuffer[6]);
+  snprintf(cartID, 4, "%c%02X", ((romType & 0x01) ? 'C' : '0'), sdBuffer[8]);
   snprintf(checksumStr, 5, "%04X", wsGameChecksum);
-  
-  strncpy(romName, cartID, sizeof(romName) - 1);
+  snprintf(romName, 17, "%s%s", vendorID, cartID);
 
   switch (romSize)
   {
@@ -194,7 +281,7 @@ void showCartInfo_WS()
   println_Msg(F("WonderSwan Cart Info"));
   
   print_Msg(F("Game: "));
-  println_Msg(cartID);
+  println_Msg(romName);
 
   print_Msg(F("Rom Size: "));
   if (cartSize == 0x00)
@@ -307,7 +394,7 @@ void readSRAM_WS()
   uint32_t bank_size = (sramSize << 7);
   uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
 
-  if (end_bank > 0)
+  if (bank_size > 0x10000)
       bank_size = 0x10000;
   
   uint16_t bank = 0;
@@ -349,7 +436,7 @@ void verifySRAM_WS()
     uint16_t bank = 0;
     uint32_t write_errors = 0;
     
-    if (end_bank > 0)
+    if (bank_size > 0x10000)
        bank_size = 0x10000;
 
     do
@@ -410,7 +497,7 @@ void writeSRAM_WS()
     uint32_t bank_size = (sramSize << 7);
     uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
 
-    if (end_bank > 0)
+    if (bank_size > 0x10000)
         bank_size = 0x10000;
   
     uint16_t bank = 0;
@@ -478,12 +565,12 @@ void readEEPROM_WS()
       if ((j & 0x1f) == 0x00)
         PORTB ^= (1 << 4);
       
-      generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1), 0x00, 0x00);
+      generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
 
       dataOut_WS();
-      writeByte_WSPort(0xc6, wsEepromShiftReg[2]);
-      writeByte_WSPort(0xc7, wsEepromShiftReg[3]);
-      writeByte_WSPort(0xc8, wsEepromShiftReg[4]);
+      writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
+      writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+      writeByte_WSPort(0xc8, 0x10);
 
       // MMC will shift out from port 0xc7 to 0xc6
       // and shift in 16bits into port 0xc5 to 0xc4
@@ -522,12 +609,12 @@ void verifyEEPROM_WS()
         if ((j & 0x1f) == 0x00)
           PORTB ^= (1 << 4);
       
-        generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1), 0x00, 0x00);
+        generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
 
         dataOut_WS();
-        writeByte_WSPort(0xc6, wsEepromShiftReg[2]);
-        writeByte_WSPort(0xc7, wsEepromShiftReg[3]);
-        writeByte_WSPort(0xc8, wsEepromShiftReg[4]);
+        writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
+        writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+        writeByte_WSPort(0xc8, 0x10);
 
         // MMC will shift out from port 0xc7 to 0xc6
         // and shift in 16bits into port 0xc5 to 0xc4
@@ -591,14 +678,14 @@ void writeEEPROM_WS()
         if ((j & 0x1f) == 0x00)
           PORTB ^= (1 << 4);
 
-        generateEepromInstruction_WS(wsEepromShiftReg, 0x1, ((i + j) >> 1), sdBuffer[j], sdBuffer[j + 1]);
+        generateEepromInstruction_WS(wsEepromShiftReg, 0x1, ((i + j) >> 1));
         
         dataOut_WS();
-        writeByte_WSPort(0xc6, wsEepromShiftReg[2]);
-        writeByte_WSPort(0xc7, wsEepromShiftReg[3]);
-        writeByte_WSPort(0xc4, wsEepromShiftReg[0]);
-        writeByte_WSPort(0xc5, wsEepromShiftReg[1]);
-        writeByte_WSPort(0xc8, wsEepromShiftReg[4]);
+        writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
+        writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+        writeByte_WSPort(0xc4, sdBuffer[j]);
+        writeByte_WSPort(0xc5, sdBuffer[j + 1]);
+        writeByte_WSPort(0xc8, 0x20);
 
         // MMC will shift out from port 0xc7 to 0xc4
         pulseCLK_WS(1 + 32 + 3);
@@ -651,7 +738,7 @@ boolean compareChecksum_WS(const char *wsFilePath)
   myFile.close();
 
   checksum &= 0x0000ffff;
-  calLength = *((uint16_t*)(sdBuffer + 512 - 2));
+  calLength = wsGameChecksum;
 
   // don't know why formating string "%04X(%04X)" always output "xxxx(0000)"
   // so split into two snprintf 
@@ -758,69 +845,43 @@ uint16_t readWord_WS(uint32_t addr)
 
 void unprotectEEPROM()
 {
-  generateEepromInstruction_WS(wsEepromShiftReg, 0x0, 0x3, 0x00, 0x00);
+  generateEepromInstruction_WS(wsEepromShiftReg, 0x0, 0x3);
   
   dataOut_WS();
-  writeByte_WSPort(0xc6, wsEepromShiftReg[2]);
-  writeByte_WSPort(0xc7, wsEepromShiftReg[3]);
-  writeByte_WSPort(0xc8, wsEepromShiftReg[4]);
+  writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
+  writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+  writeByte_WSPort(0xc8, 0x40);
 
   // MMC will shift out port 0xc7 to 0xc6 to EEPROM
   pulseCLK_WS(1 + 16 + 3);
 }
 
-// generate data for port 0xc4 to 0xc8
+// generate data for port 0xc6 to 0xc7
 // number of CLK pulses needed for each instruction is 1 + (16 or 32) + 3
-void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t addr, uint8_t l_data, uint8_t h_data)
+void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t addr)
 {
-  uint32_t *ptr = (uint32_t*)instruction;
   uint8_t addr_bits = (sramSize > 1 ? 10 : 6);
-  *ptr = 0x00000001; // initial with a start bit
-  
-  switch (opcode)
+  uint16_t *ptr = (uint16_t*)instruction;
+  *ptr = 0x0001; // initial with a start bit
+
+  if (opcode == 0)
   {
-    case 0x00:
-    {
-      addr &= 0x0003;
-      *ptr <<= 2; // opcode = 0x0
-      *ptr = ((*ptr << 2) | addr);  
-      *ptr <<= (addr_bits - 2);
-      *ptr <<= 16;
-
-      if (addr == 0x01)
-      {
-        // WRAL: fill every byte in eeprom with same data
-        instruction[0] = l_data;
-        instruction[1] = h_data;
-        instruction[4] = 0x20;
-      }
-      else
-      {
-        instruction[4] = 0x40;  
-      }
-
-      break;
-    }
-    case 1: // WRITE
-    {
-      *ptr = ((*ptr << 2) | opcode);       // 2bits  opcode
-      *ptr = ((*ptr << addr_bits) | addr); // address bits
-      *ptr <<= 16;
-      instruction[0] = l_data;
-      instruction[1] = h_data;
-      instruction[4] = 0x20;
-      break;
-    }
-    case 2: // READ
-    case 3: // ERASE
-    {
-      *ptr = ((*ptr << 2) | opcode);       // 2bits  opcode
-      *ptr = ((*ptr << addr_bits) | addr); // address bits
-      *ptr <<= 16;
-      instruction[4] = (opcode == 2 ? 0x10 : 0x20);
-      break;
-    }
+    // 2bits opcode = 0x00
+    *ptr <<= 2;
+    // 2bits ext cmd (from addr)
+    *ptr <<= 2;
+    *ptr |= (addr & 0x0003);
+    *ptr <<= (addr_bits - 2);    
   }
+  else
+  {
+    // 2bits opcode
+    *ptr <<= 2;
+    *ptr |= (opcode & 0x03);
+    // address bits
+    *ptr <<= addr_bits;
+    *ptr |= (addr & ((1 << addr_bits) - 1));
+  }  
 }
 
 // 2003 MMC need to be unlock,
