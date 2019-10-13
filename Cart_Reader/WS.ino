@@ -2,14 +2,41 @@
 // WonderSwan MODULE
 //******************************************
 // WonderSwan cartridge pinout
-// C40: /RST   : PH0
-// C45: /CART? : PH3 (L when accessing cartridge (ROM/SRAM/PORT))
-// C42: /MMC   : PH4 (access port on cartridge with both /CART and /MMC = L)
-// C44: /WE    : PH5
-// C43: /OE    : PH6
-// C47: CLK    : PE3 (384KHz on real device)
-// C41: /IO?   : PE4 (only use when unlocking MMC)
-// C46: INT    : PG5 (for RTC alarm interrupt)
+// 48P 1.25mm pitch connector
+// C1, C48     : GND
+// C24, C25    : VDD (+3.3v)
+// C16-C23     : D7-D0
+// C34-C39     : D8-D13
+// C14-C15     : D15-D14
+// C26-C29     : A(-1)-A2
+// C10-C13     : A6-A3
+// C30-C33     : A18-A15
+// C2,C3,C4,C5 : A14,A9,A10,A8
+// C6,C7,C8,C9 : A7,A12,A13,A11
+// C40         : /RST
+// C41         : /IO? (only use when unlocking MMC)
+// C42         : /MMC (access port on cartridge with both /CART and /MMC = L)
+// C43         : /OE
+// C44         : /WE
+// C45         : /CART? (L when accessing cartridge (ROM/SRAM/PORT))
+// C46         : INT (for RTC alarm interrupt)
+// C47         : CLK (384KHz on wonderswan)
+// ------------------------------------------
+// how to connect to CartReader
+// ------------------------------------------
+// /RST   : PH0
+// /CART? : PH3
+// /MMC   : PH4
+// /WE    : PH5
+// /OE    : PH6
+// CLK    : PE3
+// /IO?   : PE4 
+// INT    : PG5
+// A(-1)-A6: PF0-PF7
+// A7-A14:  PK0-PK7
+// A15-A18: PL0-PL3
+// D0-D7  : PC0-PC7
+// D8-D15 : PA0-PA7
 
 /******************************************
   Menu
@@ -17,8 +44,8 @@
 static const char wsMenuItem1[] PROGMEM = "Read Rom";
 static const char wsMenuItem2[] PROGMEM = "Read Save";
 static const char wsMenuItem3[] PROGMEM = "Write Save";
-static const char wsMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsWS[] PROGMEM = {wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItem4};
+static const char wsMenuItemReset[] PROGMEM = "Reset";
+static const char* const menuOptionsWS[] PROGMEM = {wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItemReset};
 
 /******************************************
  * Developer Name
@@ -31,6 +58,8 @@ static const char wsDevName1D[] PROGMEM = "BEC";
 static const char wsDevName24[] PROGMEM = "0MN";
 static const char wsDevName28[] PROGMEM = "SQR";
 static const char wsDevName31[] PROGMEM = "VGD";
+static const char wsDevName7A[] PROGMEM = "7AC";
+static const char wsDevNameFF[] PROGMEM = "WWGP";
 
 static uint8_t wsGameOrientation = 0;
 static uint8_t wsGameHasRTC = 0;
@@ -79,8 +108,8 @@ void wsMenu()
 {
   uint8_t mainMenu;
 
-  convertPgm(menuOptionsWS, 4);
-  mainMenu = question_box(F("WonderSwan Menu"), menuOptions, 4, 0);
+  convertPgm(menuOptionsWS, 6);
+  mainMenu = question_box(F("WonderSwan Menu"), menuOptions, 6, 0);
 
   switch (mainMenu)
   {
@@ -139,7 +168,7 @@ void wsMenu()
   }
   
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  println_Msg(F("Press Button..."));  
   
   display_Update();
   wait(); 
@@ -183,21 +212,20 @@ uint8_t getCartInfo_WS()
       // developerId/cartId/checksum are all filled with 0x00 in wonderwitch based games
       if (readWord_WS(0xf0000) == 0x4c45 && readWord_WS(0xf0002) == 0x5349 && readWord_WS(0xf0004) == 0x0041)
       {
-        // looking for "<Ini" string
-        if (readWord_WS(0xec456) == 0x493c && readWord_WS(0xec458) == 0x696e)
+        // check wonderwitch BIOS
+        if (readWord_WS(0xfff5e) == 0x006c && readWord_WS(0xfff60) == 0x5b1b)
         {
           // wonderwitch SWJ-7AC003
           sdBuffer[6] = 0x7a;
-          sdBuffer[8] = 0xc3;
+          sdBuffer[8] = 0x03;
           // TODO check OS version and fill into version field
         }
-        // looking for "<Ini" string
-        else if (readWord_WS(0x839d8) == 0x493c && readWord_WS(0x839da) == 0x696e)
+        // check service menu
+        else if (readWord_WS(0xfff22) == 0x006c && readWord_WS(0xfff24) == 0x5b1b)
         {
           if (readWord_WS(0x93246) == 0x4a2f && readWord_WS(0x93248) == 0x5353 && readWord_WS(0x9324a) == 0x2e32)
           {
             // jss2
-            // TODO check jss version
             sdBuffer[6] = 0xff; // WWGP
             sdBuffer[8] = 0x1a; // 2001A
             sdBuffer[7] = 0x01; // color only
@@ -210,7 +238,7 @@ uint8_t getCartInfo_WS()
             }
             else
             {
-              // TODO other version
+              // TODO check other jss2 version
             }          
           }
           else if (readWord_WS(0xe4260) == 0x6b64 && readWord_WS(0xe4262) == 0x696e)
@@ -235,8 +263,8 @@ uint8_t getCartInfo_WS()
   wsGameOrientation = (sdBuffer[12] & 0x01);
   wsGameHasRTC = (sdBuffer[13] & 0x01);
 
-  snprintf(vendorID, 4, "%02X", sdBuffer[6]);
-  snprintf(cartID, 4, "%c%02X", ((romType & 0x01) ? 'C' : '0'), sdBuffer[8]);
+  snprintf(vendorID, 5, "%02X", sdBuffer[6]);
+  snprintf(cartID, 5, "%c%02X", ((romType & 0x01) ? 'C' : '0'), sdBuffer[8]);
   snprintf(checksumStr, 5, "%04X", wsGameChecksum);
   snprintf(romName, 17, "%s%s", vendorID, cartID);
 
@@ -306,8 +334,8 @@ void showCartInfo_WS()
 
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
-
-  println_Msg(F("Press Button..."));
+  
+  println_Msg(F("Press Button..."));  
   display_Update();
   wait();
 }
@@ -380,9 +408,9 @@ void readSRAM_WS()
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_Msg(F("Saving "));
   print_Msg(folder);
-  println_Msg(F("/.."));
+  println_Msg(F("/..."));
   display_Update();
 
   foldern++;
@@ -413,7 +441,7 @@ void readSRAM_WS()
 
       // SRAM data on D0-D7, with A-1 to select high/low byte
       for (uint32_t w = 0; w < 512; w++)
-        sdBuffer[w] = readWord_WS(0x10000 + addr + w);
+        sdBuffer[w] = readByte_WS(0x10000 + addr + w);
 
        myFile.write(sdBuffer, 512);
     }
@@ -428,6 +456,7 @@ void readSRAM_WS()
 void verifySRAM_WS()
 {
   print_Msg(F("Verifying... "));
+  display_Update();
   
   if (myFile.open(filePath, O_READ))
   {
@@ -452,7 +481,7 @@ void verifySRAM_WS()
         // SRAM data on D0-D7, with A-1 to select high/low byte
         for (uint32_t w = 0; w < 512; w++)
         {
-          if ((readWord_WS(0x10000 + addr + w) & 0x00ff) != sdBuffer[w])
+          if (readByte_WS(0x10000 + addr + w) != sdBuffer[w])
             write_errors++;
         }
       }
@@ -487,9 +516,9 @@ void writeSRAM_WS()
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
-  print_Msg(F("Writing from "));
+  print_Msg(F("Writing "));
   print_Msg(filePath);
-  println_Msg(F(".."));
+  println_Msg(F("..."));
   display_Update();
 
   if (myFile.open(filePath, O_READ))
@@ -516,7 +545,7 @@ void writeSRAM_WS()
 
         // SRAM data on D0-D7, with A-1 to select high/low byte
         for (uint32_t w = 0; w < 512; w++)
-          writeWord_WS(0x10000 + addr + w, sdBuffer[w]);
+          writeByte_WS(0x10000 + addr + w, sdBuffer[w]);
       }
     } while (++bank < end_bank);
 
@@ -543,9 +572,9 @@ void readEEPROM_WS()
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_Msg(F("Saving "));
   print_Msg(folder);
-  println_Msg(F("/.."));
+  println_Msg(F("/..."));
   display_Update();
 
   foldern++;
@@ -592,6 +621,7 @@ void readEEPROM_WS()
 void verifyEEPROM_WS()
 {
   print_Msg(F("Verifying... "));
+  display_Update();
     
   if (myFile.open(filePath, O_READ))
   {
@@ -658,9 +688,9 @@ void writeEEPROM_WS()
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
-  print_Msg(F("Writing from "));
+  print_Msg(F("Writing "));
   print_Msg(filePath);
-  println_Msg(F(".."));
+  println_Msg(F("..."));
   display_Update();
 
   if (myFile.open(filePath, O_READ))
@@ -722,6 +752,14 @@ boolean compareChecksum_WS(const char *wsFilePath)
 
   uint32_t calLength = myFile.fileSize() - 512;
   uint32_t checksum = 0;
+
+  if (strncmp(romName, "7A003", 6) == 0)
+  {
+    // only calcuate last 128Kbytes for wonderwitch (OS and BIOS region)
+    myFile.seekCur(myFile.fileSize() - 131072);
+    calLength = 131072 - 512;
+  }
+  
   for (uint32_t i = 0; i < calLength; i += 512)
   {
     myFile.read(sdBuffer, 512);
@@ -836,6 +874,41 @@ uint16_t readWord_WS(uint32_t addr)
   NOP; NOP; NOP;
 
   uint16_t ret = ((PINA << 8) | PINC);
+
+  // switch CART(PH3) and OE(PH6) to HIGH
+  PORTH |= (1 << 3) | (1 << 6);
+
+  return ret;  
+}
+
+void writeByte_WS(uint32_t addr, uint8_t data)
+{
+  PORTF = addr & 0xff;
+  PORTK = (addr >> 8) & 0xff;
+  PORTL = (addr >> 16) & 0x0f;
+
+  PORTC = data;
+  
+  // switch CART(PH3) and WE(PH5) to LOW
+  PORTH &= ~((1 << 3) | (1 << 5));
+  NOP;
+
+  // switch CART(PH3) and WE(PH5) to HIGH
+  PORTH |= (1 << 3) | (1 << 5);
+  NOP; NOP;
+}
+
+uint8_t readByte_WS(uint32_t addr)
+{
+  PORTF = addr & 0xff;
+  PORTK = (addr >> 8) & 0xff;
+  PORTL = (addr >> 16) & 0x0f;
+  
+  // switch CART(PH3) and OE(PH6) to LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
+  NOP; NOP; NOP;
+
+  uint8_t ret = PINC;
 
   // switch CART(PH3) and OE(PH6) to HIGH
   PORTH |= (1 << 3) | (1 << 6);
