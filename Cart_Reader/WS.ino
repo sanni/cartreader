@@ -108,8 +108,8 @@ void wsMenu()
 {
   uint8_t mainMenu;
 
-  convertPgm(menuOptionsWS, 6);
-  mainMenu = question_box(F("WonderSwan Menu"), menuOptions, 6, 0);
+  convertPgm(menuOptionsWS, 4);
+  mainMenu = question_box(F("WonderSwan Menu"), menuOptions, 4, 0);
 
   switch (mainMenu)
   {
@@ -187,7 +187,8 @@ uint8_t getCartInfo_WS()
   // patch here
   switch (wsGameChecksum)
   {
-    // games with 256kbits SRAM installed
+    // games with wrong save type/size
+    // 256kbits sram
     case 0xe600:  // BAN007
     case 0x8eed:  // BANC16
     {
