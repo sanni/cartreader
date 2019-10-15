@@ -44,8 +44,9 @@
 static const char wsMenuItem1[] PROGMEM = "Read Rom";
 static const char wsMenuItem2[] PROGMEM = "Read Save";
 static const char wsMenuItem3[] PROGMEM = "Write Save";
-static const char wsMenuItemReset[] PROGMEM = "Reset";
-static const char* const menuOptionsWS[] PROGMEM = {wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItemReset};
+static const char wsMenuItem4[] PROGMEM = "Reset";
+static const char wsMenuItem5[] PROGMEM = "Write WitchOS";
+static const char* const menuOptionsWS[] PROGMEM = {wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItem4, wsMenuItem5};
 
 /******************************************
  * Developer Name
@@ -61,10 +62,13 @@ static const char wsDevName31[] PROGMEM = "VGD";
 static const char wsDevName7A[] PROGMEM = "7AC";
 static const char wsDevNameFF[] PROGMEM = "WWGP";
 
+static const uint8_t wwLaunchCode[] PROGMEM = { 0xea, 0x00, 0x00, 0x00, 0xe0, 0x00, 0xff, 0xff };
+
 static uint8_t wsGameOrientation = 0;
 static uint8_t wsGameHasRTC = 0;
 static uint16_t wsGameChecksum = 0;
 static uint8_t wsEepromShiftReg[2];
+static boolean wsWitch = false;
 
 void setup_WS()
 {
@@ -106,10 +110,10 @@ void setup_WS()
 
 void wsMenu()
 {
-  uint8_t mainMenu;
+  uint8_t mainMenu = (wsWitch ? 5 : 4);
 
-  convertPgm(menuOptionsWS, 4);
-  mainMenu = question_box(F("WonderSwan Menu"), menuOptions, 4, 0);
+  convertPgm(menuOptionsWS, mainMenu);
+  mainMenu = question_box(F("WS Menu"), menuOptions, mainMenu, 0);
 
   switch (mainMenu)
   {
@@ -160,8 +164,14 @@ void wsMenu()
       
       break;
     }
+    case 4:
+    {
+      writeWitchOS_WS();
+      break;
+    }
     default:
     {
+      // reset
       asm volatile ("  jmp 0");
       break;
     }
@@ -182,6 +192,7 @@ uint8_t getCartInfo_WS()
     *((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
 
   wsGameChecksum = *(uint16_t*)(sdBuffer + 14);
+  wsWitch = false;
 
   // some game has wrong info in header
   // patch here
@@ -216,10 +227,24 @@ uint8_t getCartInfo_WS()
         // check wonderwitch BIOS
         if (readWord_WS(0xfff5e) == 0x006c && readWord_WS(0xfff60) == 0x5b1b)
         {
+          // check flashchip
+          // should be a MBM29DL400TC
+          dataOut_WS();
+          writeWord_WS(0x80aaa, 0xaaaa);
+          writeWord_WS(0x80555, 0x5555);
+          writeWord_WS(0x80aaa, 0x9090);
+
+          dataIn_WS();
+          if (readWord_WS(0x80000) == 0x0004 && readWord_WS(0x80002) == 0x220c)
+            wsWitch = true;
+
+          dataOut_WS();
+          writeWord_WS(0x80000, 0xf0f0);
+          dataIn_WS();
+
           // wonderwitch SWJ-7AC003
           sdBuffer[6] = 0x7a;
           sdBuffer[8] = 0x03;
-          // TODO check OS version and fill into version field
         }
         // check service menu
         else if (readWord_WS(0xfff22) == 0x006c && readWord_WS(0xfff24) == 0x5b1b)
@@ -307,7 +332,7 @@ void showCartInfo_WS()
 {
   display_Clear();
 
-  println_Msg(F("WonderSwan Cart Info"));
+  println_Msg(F("WS Cart Info"));
   
   print_Msg(F("Game: "));
   println_Msg(romName);
@@ -737,6 +762,136 @@ void writeEEPROM_WS()
   }
 }
 
+void writeWitchOS_WS()
+{
+  // make sure that OS sectors not protected
+  dataOut_WS();
+  writeWord_WS(0x80aaa, 0xaaaa);
+  writeWord_WS(0x80555, 0x5555);
+  writeWord_WS(0xe0aaa, 0x9090);
+
+  dataIn_WS();
+  if (readWord_WS(0xe0004) || readWord_WS(0xe4004) || readWord_WS(0xec004) || readWord_WS(0xee004))
+  {
+    display_Clear();
+    print_Error(F("OS sectors are protected!"), false);
+  }
+  else
+  {
+    filePath[0] = 0;
+    sd.chdir("/");
+    fileBrowser(F("Select fbin file"));
+    snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
+
+    display_Clear();
+
+    if (myFile.open(filePath, O_READ))
+    {
+      println_Msg(F("Erasing OS..."));
+      display_Update();
+      eraseWitchFlashSector_WS(0xe0000);
+      eraseWitchFlashSector_WS(0xe4000);
+      eraseWitchFlashSector_WS(0xec000);
+      eraseWitchFlashSector_WS(0xee000);
+
+      print_Msg(F("Flashing OS "));
+      print_Msg(filePath);
+      println_Msg(F("..."));
+      display_Update();
+
+      uint32_t fbin_length = myFile.fileSize();
+      uint32_t i, bytes_read;
+      uint16_t pd;
+      uint8_t key;
+
+      // OS size seems limit to 64KBytes
+      // last 16 bytes contains jmpf code and block count (written by BIOS)
+      if (fbin_length > 65520)
+        fbin_length = 65520;
+
+      // enter fast program mode
+      dataOut_WS();
+      writeWord_WS(0x80aaa, 0xaaaa);
+      writeWord_WS(0x80555, 0x5555);
+      writeWord_WS(0x80aaa, 0x2020);
+
+      // 128bytes per block
+      for (i = 0; i < fbin_length; i += 128)
+      {
+        // blink LED
+        if ((i & 0x3ff) == 0)
+          PORTB ^= (1 << 4);
+
+        // reset key
+        key = 0xff;
+        bytes_read = myFile.read(sdBuffer, 128);
+
+        for (uint32_t j = 0; j < bytes_read; j += 2)
+        {
+          // for each decoded[n] = encoded[n] ^ key
+          // where key = encoded[n - 1]
+          // key = 0xff when n = 0, 0 <= n < 128
+          pd = ((sdBuffer[j] ^ key) | ((sdBuffer[j + 1] ^ sdBuffer[j]) << 8));
+          key = sdBuffer[j + 1];
+
+          fastProgramWitchFlash_WS(0xe0000 + i + j, pd);
+        }
+      }
+
+      // write jmpf instruction and block counts at 0xe0000
+      memcpy_P(sdBuffer, wwLaunchCode, 8);
+      *((uint16_t*)(sdBuffer + 6)) = ((i >> 7) & 0xffff);
+
+      for (uint32_t i = 0; i < 8; i += 2)
+        fastProgramWitchFlash_WS(0xefff0 + i, *((uint16_t*)(sdBuffer + i)));
+
+      // leave fast program mode
+      dataOut_WS();
+      writeWord_WS(0xe0000, 0x9090);
+      writeWord_WS(0xe0000, 0xf0f0);
+
+      myFile.close();
+
+      println_Msg(F("Done"));
+    }
+    else
+    {
+      print_Error(F("File doesn't exist"), false);
+    }
+  }
+
+  dataOut_WS();
+  writeWord_WS(0x80000, 0xf0f0);
+}
+
+void fastProgramWitchFlash_WS(uint32_t addr, uint16_t data)
+{
+  dataOut_WS();
+
+  writeWord_WS(addr, 0xa0a0);
+  writeWord_WS(addr, data);
+
+  dataIn_WS();
+  while (readWord_WS(addr) != data);
+}
+
+void eraseWitchFlashSector_WS(uint32_t sector_addr)
+{
+  // blink LED
+  PORTB ^= (1 << 4);
+
+  dataOut_WS();
+  writeWord_WS(0x80aaa, 0xaaaa);
+  writeWord_WS(0x80555, 0x5555);
+  writeWord_WS(0x80aaa, 0x8080);
+  writeWord_WS(0x80aaa, 0xaaaa);
+  writeWord_WS(0x80555, 0x5555);
+  writeWord_WS(sector_addr, 0x3030);
+
+  dataIn_WS();
+  while ((readWord_WS(sector_addr) & 0x0080) == 0x0000);
+}
+
 boolean compareChecksum_WS(const char *wsFilePath)
 {
   if (wsFilePath == NULL)
@@ -754,7 +909,7 @@ boolean compareChecksum_WS(const char *wsFilePath)
   uint32_t calLength = myFile.fileSize() - 512;
   uint32_t checksum = 0;
 
-  if (strncmp(romName, "7A003", 6) == 0)
+  if (wsWitch)
   {
     // only calcuate last 128Kbytes for wonderwitch (OS and BIOS region)
     myFile.seekCur(myFile.fileSize() - 131072);
@@ -1083,6 +1238,8 @@ void dataIn_WS()
 {
   DDRC = 0x00;
   DDRA = 0x00;
+  PORTC = 0xff;
+  PORTA = 0xff;
 }
 
 void dataOut_WS()

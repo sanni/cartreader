@@ -666,7 +666,7 @@ void dataIn() {
 // Converts a progmem array into a ram array
 void convertPgm(const char* const pgmOptions[], byte numArrays) {
   for (int i = 0; i < numArrays; i++) {
-    strcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i])));
+    strlcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i])), 20);
   }
 }
 
