@@ -219,9 +219,18 @@ uint8_t getCartInfo_WS()
       sdBuffer[8] = 0x30;
       break;
     }
+    case 0xeafd:  //BANC33
+    {
+      // enable GPIO and set to LOW
+      dataOut_WS();
+      writeByte_WSPort(0xcc, 0x03);
+      writeByte_WSPort(0xcd, 0x00);
+      break;
+    }
     case 0x0000:
     {
       // developerId/cartId/checksum are all filled with 0x00 in wonderwitch based games
+      dataIn_WS();
       if (readWord_WS(0xf0000) == 0x4c45 && readWord_WS(0xf0002) == 0x5349 && readWord_WS(0xf0004) == 0x0041)
       {
         // check wonderwitch BIOS
@@ -289,7 +298,7 @@ uint8_t getCartInfo_WS()
   wsGameOrientation = (sdBuffer[12] & 0x01);
   wsGameHasRTC = (sdBuffer[13] & 0x01);
 
-  snprintf(vendorID, 5, "%02X", sdBuffer[6]);
+  getDeveloperName(sdBuffer[6], vendorID, 5);
   snprintf(cartID, 5, "%c%02X", ((romType & 0x01) ? 'C' : '0'), sdBuffer[8]);
   snprintf(checksumStr, 5, "%04X", wsGameChecksum);
   snprintf(romName, 17, "%s%s", vendorID, cartID);
@@ -366,10 +375,21 @@ void showCartInfo_WS()
   wait();
 }
 
+void getDeveloperName(uint8_t id, char *buf, size_t length)
+{
+  if (buf == NULL)
+    return;
+
+  switch (id)
+  {
+    default: snprintf(buf, length, "%02X", id);
+  }
+}
+
 void readROM_WS(char *outPathBuf, size_t bufferSize)
 {
   // generate fullname of rom file
-  snprintf(fileName, FILENAME_LENGTH, "%s.ws", romName);
+  snprintf(fileName, FILENAME_LENGTH, "%s.ws%c", romName, ((romType & 1) ? 'c' : '\0'));
 
   // create a new folder for storing rom file
   EEPROM_readAnything(0, foldern);
@@ -405,6 +425,10 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
     dataOut_WS();
     writeByte_WSPort(0xc2, bank);
 
+    // blink LED on cartridge (only for BANC33)
+    if (wsGameChecksum == 0xeafd)
+      writeByte_WSPort(0xcd, (bank & 0x03));
+
     dataIn_WS();
     for (uint32_t addr = 0; addr < 0x10000; addr += 512)
     {
@@ -412,11 +436,18 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
       if ((addr & ((1 << 14) - 1)) == 0)
         PORTB ^= (1 << 4);
 
-       for (uint32_t w = 0; w < 512; w += 2)
-         *((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
+      for (uint32_t w = 0; w < 512; w += 2)
+        *((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
 
-       myFile.write(sdBuffer, 512);
+      myFile.write(sdBuffer, 512);
     }
+  }
+
+  // turn off LEDs (only for BANC33)
+  if (wsGameChecksum == 0xeafd)
+  {
+    dataOut_WS();
+    writeByte_WSPort(0xcd, 0x00);
   }
 
   myFile.close();
