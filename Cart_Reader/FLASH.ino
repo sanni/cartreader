@@ -1425,6 +1425,7 @@ void writeFlashE28FXXXJ3A() {
   }
 
   uint32_t block_addr;
+  uint32_t block_addr_mask = ~(sectorSize - 1);
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
@@ -1434,7 +1435,7 @@ void writeFlashE28FXXXJ3A() {
     if (currByte % 2048 == 0)
       PORTB ^= (1 << 4);
 
-    block_addr = currByte / sectorSize;
+    block_addr = currByte & block_addr_mask;
 
     for (uint32_t c = 0; c < 512; c += bufferSize) {
       // write to buffer start
