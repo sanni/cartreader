@@ -48,20 +48,6 @@ static const char wsMenuItem4[] PROGMEM = "Reset";
 static const char wsMenuItem5[] PROGMEM = "Write WitchOS";
 static const char* const menuOptionsWS[] PROGMEM = {wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItem4, wsMenuItem5};
 
-/******************************************
- * Developer Name
-*****************************************/
-static const char wsDevNameXX[] PROGMEM = "XXX";
-static const char wsDevName01[] PROGMEM = "BAN";
-static const char wsDevName12[] PROGMEM = "KNM";
-static const char wsDevName18[] PROGMEM = "KGT";
-static const char wsDevName1D[] PROGMEM = "BEC";
-static const char wsDevName24[] PROGMEM = "0MN";
-static const char wsDevName28[] PROGMEM = "SQR";
-static const char wsDevName31[] PROGMEM = "VGD";
-static const char wsDevName7A[] PROGMEM = "7AC";
-static const char wsDevNameFF[] PROGMEM = "WWGP";
-
 static const uint8_t wwLaunchCode[] PROGMEM = { 0xea, 0x00, 0x00, 0x00, 0xe0, 0x00, 0xff, 0xff };
 
 static uint8_t wsGameOrientation = 0;
@@ -384,10 +370,28 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
   if (buf == NULL)
     return;
 
+  char *devName = NULL;
+
   switch (id)
   {
-    default: snprintf(buf, length, "%02X", id);
+    case 0x01: devName = PSTR("BAN"); break;
+    case 0x12: devName = PSTR("KNM"); break;
+    case 0x18: devName = PSTR("KGT"); break;
+    case 0x1d: devName = PSTR("BEC"); break;
+    case 0x24: devName = PSTR("OMN"); break;
+    case 0x28: devName = PSTR("SQR"); break;
+    case 0x31: devName = PSTR("VGD"); break;
+    // TODO add more developer
+    
+    // custom developerId
+    case 0x7a: devName = PSTR("7AC"); break;  // wonderwitch
+    case 0xff: devName = PSTR("WWGP"); break; // WWGP series (jss2, dknight)
+    
+    // if not found, use id
+    default:   snprintf(buf, length, "%02X", id); return;
   }
+
+  strlcpy_P(buf, devName, length);
 }
 
 void readROM_WS(char *outPathBuf, size_t bufferSize)
@@ -1157,7 +1161,7 @@ boolean unlockMMC2003_WS()
 
   // initialize all control pin state
   // RST(PH0) and CLK(PE3) to LOW
-  // CART(PH3) MMC(PH4) WE(PH5) OE(PH6) IO(PE4) to HIGH
+  // CART(PH3) MMC(PH4) WE(PH5) OE(PH6) to HIGH
   PORTH &= ~(1 << 0);
   PORTE &= ~(1 << 3);
   PORTH |= ((1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
