@@ -86,12 +86,16 @@ void setup_WS()
   // controls
   DDRH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
   PORTH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
-  
-  DDRE |= ((1 << 3) | (1 << 4));
-  PORTE |= (1 << 4);
+
+  // CLK outputs LOW
+  DDRE |= (1 << 3);
   PORTE &= ~(1 << 3);
 
-  // interrupt pin with internal pull-up
+  // IO? as input with internal pull-up enabled
+  DDRE &= ~(1 << 4);
+  PORTE |= (1 << 4);
+
+  // INT as input with internal pull-up enabled
   DDRG &= ~(1 << 5);
   PORTG |= (1 << 5);
 
@@ -1146,6 +1150,7 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
 
 // 2003 MMC need to be unlock,
 // or it will reject all reading and bank switching
+// All signals' timing are analyzed by using LogicAnalyzer
 boolean unlockMMC2003_WS()
 {
   dataOut_WS();
@@ -1156,7 +1161,6 @@ boolean unlockMMC2003_WS()
   PORTH &= ~(1 << 0);
   PORTE &= ~(1 << 3);
   PORTH |= ((1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
-  PORTE |= (1 << 4);
   
   // switch RST(PH0) to HIGH
   PORTH |= (1 << 0);
@@ -1165,57 +1169,17 @@ boolean unlockMMC2003_WS()
   PORTC = 0xff;
   PORTA = 0x00;  
 
-  // port = 0x5a?
   PORTF = 0x0a;
   PORTL = 0x05;
   pulseCLK_WS(5);
 
-  // port = 0xa5?
   PORTF = 0x05;
   PORTL = 0x0a;
   pulseCLK_WS(4);
 
-   // IO(PE4) to LOW
-  PORTE &= ~(1 << 4);
-  pulseCLK_WS(6);
-
-  // IO(PE4) to HIGH
-  PORTE |= (1 << 4);
-  pulseCLK_WS(1);
-
-  // IO(PE4) to LOW
-  PORTE &= ~(1 << 4);
-  pulseCLK_WS(1);
-
-  // IO(PE4) to HIGH
-  PORTE |= (1 << 4);
-  pulseCLK_WS(1);
-
-  // IO(PE4) to LOW
-  PORTE &= ~(1 << 4);
-  pulseCLK_WS(3);
-
-  // IO(PE4) to HIGH
-  PORTE |= (1 << 4);
-  pulseCLK_WS(1);
-
-  // IO(PE4) to LOW
-  PORTE &= ~(1 << 4);
-  pulseCLK_WS(1);
-
-  // IO(PE4) to HIGH
-  PORTE |= (1 << 4);
-  pulseCLK_WS(1);
-
-  // IO(PE4) to LOW
-  PORTE &= ~(1 << 4);
-  pulseCLK_WS(3);
-
-  // IO(PE4) to HIGH
-  PORTE |= (1 << 4);
-
-  // pulse CLK once
-  pulseCLK_WS(1);
+  // MMC is outputing something on IO? pin synchronized with CLK
+  // so still need to pulse CLK until everything is ok
+  pulseCLK_WS(19);
 
   // unlock procedure finished
   // see if we can set bank number to MMC
