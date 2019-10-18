@@ -1,7 +1,7 @@
 //******************************************
-// WonderSwan MODULE
+// WS MODULE
 //******************************************
-// WonderSwan cartridge pinout
+// Cartridge pinout
 // 48P 1.25mm pitch connector
 // C1, C48     : GND
 // C24, C25    : VDD (+3.3v)
@@ -20,7 +20,7 @@
 // C44         : /WE
 // C45         : /CART? (L when accessing cartridge (ROM/SRAM/PORT))
 // C46         : INT (for RTC alarm interrupt)
-// C47         : CLK (384KHz on wonderswan)
+// C47         : CLK (384KHz on WS)
 // ------------------------------------------
 // how to connect to CartReader
 // ------------------------------------------
@@ -219,11 +219,11 @@ uint8_t getCartInfo_WS()
     }
     case 0x0000:
     {
-      // developerId/cartId/checksum are all filled with 0x00 in wonderwitch based games
+      // developerId/cartId/checksum are all filled with 0x00 in witch based games
       dataIn_WS();
       if (readWord_WS(0xf0000) == 0x4c45 && readWord_WS(0xf0002) == 0x5349 && readWord_WS(0xf0004) == 0x0041)
       {
-        // check wonderwitch BIOS
+        // check witch BIOS
         if (readWord_WS(0xfff5e) == 0x006c && readWord_WS(0xfff60) == 0x5b1b)
         {
           // check flashchip
@@ -241,7 +241,7 @@ uint8_t getCartInfo_WS()
           writeWord_WS(0x80000, 0xf0f0);
           dataIn_WS();
 
-          // wonderwitch SWJ-7AC003
+          // 7AC003
           sdBuffer[6] = 0x7a;
           sdBuffer[8] = 0x03;
         }
@@ -341,7 +341,7 @@ void showCartInfo_WS()
     println_Msg(romSize, HEX);
   else
   {
-    print_Msg(cartSize / 131072);
+    print_Msg((cartSize >> 17));
     println_Msg(F(" Mb"));
   }
 
@@ -349,8 +349,8 @@ void showCartInfo_WS()
   switch (saveType)
   {
     case 0: println_Msg(F("None")); break;
-    case 1: print_Msg(F("Sram ")); print_Msg(sramSize); println_Msg(F("Kb")); break;
-    case 2: print_Msg(F("Eeprom ")); print_Msg(sramSize); println_Msg(F("Kb")); break;
+    case 1: print_Msg(F("Sram ")); print_Msg(sramSize); println_Msg(F(" Kb")); break;
+    case 2: print_Msg(F("Eeprom ")); print_Msg(sramSize); println_Msg(F(" Kb")); break;
     default: println_Msg(sramSize, HEX); break;
   }
 
@@ -384,7 +384,7 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
     // TODO add more developer
     
     // custom developerId
-    case 0x7a: devName = PSTR("7AC"); break;  // wonderwitch
+    case 0x7a: devName = PSTR("7AC"); break;  // witch
     case 0xff: devName = PSTR("WWGP"); break; // WWGP series (jss2, dknight)
     
     // if not found, use id
