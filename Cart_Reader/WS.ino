@@ -58,11 +58,11 @@ static boolean wsWitch = false;
 
 void setup_WS()
 {
-  // A0 - A7
+  // A-1 - A6
   DDRF = 0xff;
-  // A8 - A15
+  // A7 - A14
   DDRK = 0xff;
-  // A16 - A23
+  // A15 - A22
   DDRL = 0xff;
 
   // D0 - D15
@@ -1159,8 +1159,6 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
 // All signals' timing are analyzed by using LogicAnalyzer
 boolean unlockMMC2003_WS()
 {
-  dataOut_WS();
-
   // initialize all control pin state
   // RST(PH0) and CLK(PE3) to LOW
   // CART(PH3) MMC(PH4) WE(PH5) OE(PH6) to HIGH
@@ -1171,24 +1169,21 @@ boolean unlockMMC2003_WS()
   // switch RST(PH0) to HIGH
   PORTH |= (1 << 0);
 
-  // data = 0x00ff
-  PORTC = 0xff;
-  PORTA = 0x00;  
-
   PORTF = 0x0a;
   PORTL = 0x05;
-  pulseCLK_WS(5);
+  pulseCLK_WS(3);
 
   PORTF = 0x05;
   PORTL = 0x0a;
   pulseCLK_WS(4);
 
   // MMC is outputing something on IO? pin synchronized with CLK
-  // so still need to pulse CLK until everything is ok
-  pulseCLK_WS(19);
+  // so still need to pulse CLK until MMC is ok to work
+  pulseCLK_WS(18);
 
   // unlock procedure finished
   // see if we can set bank number to MMC
+  dataOut_WS();
   writeByte_WSPort(0xc2, 0xaa);
   writeByte_WSPort(0xc3, 0x55);
 
