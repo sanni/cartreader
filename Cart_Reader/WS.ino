@@ -198,8 +198,9 @@ uint8_t getCartInfo_WS()
     }
     // games missing 'COLOR' flag
     case 0x26db:  // SQRC01
+    case 0xbfdf:  // SUMC07
     {
-      sdBuffer[7] = 0x01;
+      sdBuffer[7] |= 0x01;
       break;
     }
     case 0x7f73:  // BAN030
@@ -281,7 +282,7 @@ uint8_t getCartInfo_WS()
     }
   }
   
-  romType = sdBuffer[7]; // wsc only = 1
+  romType = (sdBuffer[7] & 0x01); // wsc only = 1
   romVersion = sdBuffer[9];
   romSize = sdBuffer[10];
   sramSize = sdBuffer[11];
@@ -289,7 +290,7 @@ uint8_t getCartInfo_WS()
   wsGameHasRTC = (sdBuffer[13] & 0x01);
 
   getDeveloperName(sdBuffer[6], vendorID, 5);
-  snprintf(cartID, 5, "%c%02X", ((romType & 0x01) ? 'C' : '0'), sdBuffer[8]);
+  snprintf(cartID, 5, "%c%02X", (romType ? 'C' : '0'), sdBuffer[8]);
   snprintf(checksumStr, 5, "%04X", wsGameChecksum);
   snprintf(romName, 17, "%s%s", vendorID, cartID);
 
@@ -375,6 +376,7 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
   switch (id)
   {
     case 0x01: devName = PSTR("BAN"); break;
+    case 0x0b: devName = PSTR("SUM"); break;
     case 0x12: devName = PSTR("KNM"); break;
     case 0x18: devName = PSTR("KGT"); break;
     case 0x1d: devName = PSTR("BEC"); break;
