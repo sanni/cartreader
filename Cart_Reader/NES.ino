@@ -894,7 +894,9 @@ setmapper:
   for (int i = 0; i < mapcount; i++) {
     index = i * 7;
     mapselect = pgm_read_byte(mapsize + index);
+    Serial.print("[");
     Serial.print(mapselect);
+    Serial.print("]");
     if (i < mapcount - 1) {
       if ((i != 0) && ((i + 1) % 10 == 0))
         Serial.println(F(""));

@@ -77,7 +77,7 @@ static const word PROGMEM eepid [] = {
 };
 
 byte eepcount = (sizeof(eepid) / sizeof(eepid[0])) / 2;
-byte index;
+int index;
 word eepdata;
 
 // CD BACKUP RAM
