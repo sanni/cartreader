@@ -185,6 +185,10 @@ void setup_GB() {
 
   // Print start page
   getCartInfo_GB();
+  showCartInfo_GB();
+}
+
+void showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
     println_Msg(F("GB Cart Info"));

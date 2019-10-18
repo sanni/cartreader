@@ -154,6 +154,7 @@ typedef enum COLOR_T {
 #define mode_GB_GBSmart 18
 #define mode_GB_GBSmart_Flash 19
 #define mode_GB_GBSmart_Game 20
+#define mode_WS 21
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
@@ -204,14 +205,18 @@ char menuOptions[7][20];
 boolean ignoreError = 0;
 
 // File browser
-char fileName[26];
-char filePath[50];
+#define FILENAME_LENGTH 32
+#define FILEPATH_LENGTH 64
+#define FILEOPTS_LENGTH 20
+
+char fileName[FILENAME_LENGTH];
+char filePath[FILEPATH_LENGTH];
 byte currPage;
 byte lastPage;
 byte numPages;
 boolean root = 0;
 boolean filebrowse = 0;
-char fileOptions[30][20];
+char fileOptions[30][FILEOPTS_LENGTH];
 
 // Common
 char romName[17];
@@ -377,8 +382,9 @@ static const char addonsItem1[] PROGMEM = "NES/Famicom";
 static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
 static const char addonsItem3[] PROGMEM = "PC Engine/TG16";
 static const char addonsItem4[] PROGMEM = "Sega Master System";
+static const char addonsItem6[] PROGMEM = "WonderSwan";
 static const char addonsItem5[] PROGMEM = "Reset";
-static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5};
+static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem6, addonsItem5};
 
 // Info Screen
 void aboutScreen() {
@@ -476,8 +482,8 @@ void addonsMenu() {
   // create menu with title and 5 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 5);
-  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 5, 0);
+  convertPgm(addonsOptions, 6);
+  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu)
@@ -499,6 +505,10 @@ void addonsMenu() {
       break;
 
     case 4:
+      setup_WS();
+      break;
+
+    default:
       resetArduino();
       break;
   }
@@ -656,7 +666,7 @@ void dataIn() {
 // Converts a progmem array into a ram array
 void convertPgm(const char* const pgmOptions[], byte numArrays) {
   for (int i = 0; i < numArrays; i++) {
-    strcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i])));
+    strlcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i])), 20);
   }
 }
 
@@ -1256,7 +1266,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers
   Filebrowser Module
 *****************************************/
 void fileBrowser(const __FlashStringHelper* browserTitle) {
-  char fileNames[30][26];
+  char fileNames[30][FILENAME_LENGTH];
   int currFile;
   filebrowse = 1;
 
@@ -1264,7 +1274,7 @@ void fileBrowser(const __FlashStringHelper* browserTitle) {
   filePath[0] = '\0';
 
   // Temporary char array for filename
-  char nameStr[26];
+  char nameStr[FILENAME_LENGTH];
 
 browserstart:
 
@@ -1280,7 +1290,7 @@ browserstart:
   while (myFile.openNext(sd.vwd(), O_READ)) {
 
     // Get name of file
-    myFile.getName(nameStr, 27);
+    myFile.getName(nameStr, FILENAME_LENGTH);
 
     // Ignore if hidden
     if (myFile.isHidden()) {
@@ -1288,21 +1298,17 @@ browserstart:
     // Indicate a directory.
     else if (myFile.isDir()) {
       // Copy full dirname into fileNames
-      sprintf(fileNames[currFile], "%s%s", "/", nameStr);
-      // Truncate to 19 letters for LCD
-      nameStr[19] = '\0';
+      snprintf(fileNames[currFile], FILENAME_LENGTH, "%s%s", "/", nameStr);
       // Copy short string into fileOptions
-      sprintf(fileOptions[currFile], "%s%s", "/", nameStr);
+      snprintf(fileOptions[currFile], FILEOPTS_LENGTH, "%s%s", "/", nameStr);
       currFile++;
     }
     // It's just a file
     else if (myFile.isFile()) {
       // Copy full filename into fileNames
-      sprintf(fileNames[currFile], "%s", nameStr);
-      // Truncate to 19 letters for LCD
-      nameStr[19] = '\0';
+      snprintf(fileNames[currFile], FILENAME_LENGTH, "%s", nameStr);
       // Copy short string into fileOptions
-      sprintf(fileOptions[currFile], "%s", nameStr);
+      snprintf(fileOptions[currFile], FILEOPTS_LENGTH, "%s", nameStr);
       currFile++;
     }
     myFile.close();
@@ -1354,7 +1360,7 @@ page:
 
   for (byte i = 0; i < 8; i++ ) {
     // Copy short string into fileOptions
-    sprintf( answers[i], "%s", fileOptions[ ((currPage - 1) * 7 + i)] );
+    snprintf( answers[i], FILEOPTS_LENGTH, "%s", fileOptions[ ((currPage - 1) * 7 + i)] );
   }
 
   // Create menu with title and 1-7 options to choose from
@@ -1383,31 +1389,31 @@ page:
   switch (answer)
   {
     case 0:
-      strcpy(fileName, fileNames[0 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[0 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 1:
-      strcpy(fileName, fileNames[1 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[1 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 2:
-      strcpy(fileName, fileNames[2 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[2 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 3:
-      strcpy(fileName, fileNames[3 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[3 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 4:
-      strcpy(fileName, fileNames[4 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[4 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 5:
-      strcpy(fileName, fileNames[5 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[5 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 6:
-      strcpy(fileName, fileNames[6 + ((currPage - 1) * 7)]);
+      strncpy(fileName, fileNames[6 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
     case 7:
@@ -1499,6 +1505,9 @@ void loop() {
   }
   else if (mode == mode_GB_GBSmart_Game) {
     gbSmartGameOptions();
+  }
+  else if (mode == mode_WS) {
+    wsMenu();
   }
   else {
     display_Clear();

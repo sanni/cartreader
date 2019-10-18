@@ -158,7 +158,8 @@ void flashromMenu8() {
             // sector size, write buffer size
             writeFlash29GL(sectorSize, bufferSize);
           }
-          else if ((strcmp(flashid, "0458") == 0) || (strcmp(flashid, "0158") == 0))
+          else if ((strcmp(flashid, "0458") == 0) || (strcmp(flashid, "0158") == 0) ||
+                   (strcmp(flashid, "01AB") == 0))
             writeFlash29F800();
 
           break;
@@ -466,10 +467,20 @@ idtheflash:
     flashSize = 1048576;
     flashromType = 2;
   }
+  else if (strcmp(flashid, "01AB") == 0) {
+    println_Msg(F("AM29F400AB detected"));
+    flashSize = 131072 * 4;
+    flashromType = 2;
+  }
   else if (strcmp(flashid, "0158") == 0) {
     println_Msg(F("AM29F800BB detected"));
     flashSize = 1048576;
     flashromType = 2;
+  }
+  else if (strcmp(flashid, "01A3") == 0) {
+    println_Msg(F("AM29LV033C detected"));
+    flashSize = 131072 * 32;
+    flashromType = 1;
   }
   else if (strcmp(flashid, "017E") == 0) {
     // S29GL032M
@@ -496,6 +507,32 @@ idtheflash:
     flashSize = 2097152;
     sectorSize = 65536;
     bufferSize = 256;
+    flashromType = 3;
+  }
+  else if ((strcmp(flashid, "8916") == 0) ||
+           (strcmp(flashid, "8917") == 0) ||
+           (strcmp(flashid, "8918") == 0)) {
+    // E28FXXXJ3A
+    print_Msg(F("E28F"));
+
+    switch (flashid[3]) {
+      case '6':
+        flashSize = 131072 * 32;
+        print_Msg(F("320"));
+        break;
+      case '7':
+        flashSize = 131072 * 64;
+        print_Msg(F("640"));
+        break;
+      case '8':
+        flashSize = 131072 * 128;
+        print_Msg(F("128"));
+        break;
+    }
+
+    println_Msg(F("J3A detected"));
+    sectorSize = 131072;
+    bufferSize = 32;
     flashromType = 3;
   }
   else if (secondID == 1) {
@@ -1345,7 +1382,7 @@ void eraseFlash28FXXX() {
   for (uint32_t ba = 0; ba < flashSize; ba += sectorSize)
   {
     dataOut();
-    writeByte_Flash(0x0, 0x20);
+    writeByte_Flash(ba, 0x20);
     writeByte_Flash(ba, 0xd0);
 
     dataIn8();
@@ -1357,61 +1394,114 @@ void eraseFlash28FXXX() {
 }
 
 void writeFlash28FXXX() {
-  if ((strcmp(flashid, "B088") == 0))
-    writeFlashLH28F0XX();
-}
-
-void writeFlashLH28F0XX() {
-  // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_Msg(F("Flashing file "));
   println_Msg(filePath);
   display_Update();
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
-
-    // Fill sdBuffer
-    for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
-      myFile.read(sdBuffer, 512);
-      // Blink led
-      if (currByte % 2048 == 0)
-        PORTB ^= (1 << 4);
-
-      for (int c = 0; c < 512; c += bufferSize) {
-        // sequence load to page
-        dataOut();
-        writeByte_Flash(0x0, 0xe0);
-        writeByte_Flash(0x0, bufferSize - 1); // BCL
-        writeByte_Flash(0x0, 0x00); // BCH should be 0x00
-
-        for (int d = 0; d < bufferSize; d++)
-          writeByte_Flash(d, sdBuffer[c + d]);
-
-        // start flashing page
-        writeByte_Flash(0x0, 0x0c);
-        writeByte_Flash(0x0, bufferSize - 1); // BCL
-        writeByte_Flash(currByte + c, 0x00); // BCH should be 0x00
-
-        // waiting for finishing
-        dataIn8();
-        while ((readByte_Flash(currByte + c) & 0x80) == 0x00);
-      }
+    if ((strcmp(flashid, "B088") == 0))
+      writeFlashLH28F0XX();
+    else if ((strcmp(flashid, "8916") == 0) ||
+             (strcmp(flashid, "8917") == 0) ||
+             (strcmp(flashid, "8918") == 0)) {
+      writeFlashE28FXXXJ3A();
     }
 
-    dataIn8();
-
-    // Close the file:
     myFile.close();
   }
   else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
+}
+
+void writeFlashE28FXXXJ3A() {
+  fileSize = myFile.fileSize();
+  if (fileSize > flashSize) {
+    print_Error(F("File size exceeds flash size."), false);
+    return;
+  }
+
+  uint32_t block_addr;
+  uint32_t block_addr_mask = ~(sectorSize - 1);
+
+  // Fill sdBuffer
+  for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
+    myFile.read(sdBuffer, 512);
+
+    // Blink led
+    if (currByte % 2048 == 0)
+      PORTB ^= (1 << 4);
+
+    block_addr = currByte & block_addr_mask;
+
+    for (uint32_t c = 0; c < 512; c += bufferSize) {
+      // write to buffer start
+      dataOut();
+      writeByte_Flash(block_addr, 0xe8);
+
+      // waiting for buffer available
+      dataIn8();
+      while ((readByte_Flash(block_addr) & 0x80) == 0x00);
+      dataOut();
+
+      // set write byte count
+      writeByte_Flash(block_addr, bufferSize - 1);
+
+      // filling buffer
+      for (uint32_t d = 0; d < bufferSize; d++)
+        writeByte_Flash(currByte + c + d, sdBuffer[c + d]);
+
+      // start flashing page
+      writeByte_Flash(block_addr, 0xd0);
+
+      // waiting for finishing
+      dataIn8();
+      while ((readByte_Flash(block_addr) & 0x80) == 0x00);
+    }
+  }
+
+  dataIn8();
+}
+
+void writeFlashLH28F0XX() {
+  fileSize = myFile.fileSize();
+  if (fileSize > flashSize) {
+    print_Error(F("File size exceeds flash size."), false);
+    return;
+  }
+
+  // Fill sdBuffer
+  for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
+    myFile.read(sdBuffer, 512);
+    // Blink led
+    if (currByte % 2048 == 0)
+      PORTB ^= (1 << 4);
+
+    for (uint32_t c = 0; c < 512; c += bufferSize) {
+      // sequence load to page
+      dataOut();
+      writeByte_Flash(0x0, 0xe0);
+      writeByte_Flash(0x0, bufferSize - 1); // BCL
+      writeByte_Flash(0x0, 0x00); // BCH should be 0x00
+
+      for (uint32_t d = 0; d < bufferSize; d++)
+        writeByte_Flash(d, sdBuffer[c + d]);
+
+      // start flashing page
+      writeByte_Flash(0x0, 0x0c);
+      writeByte_Flash(0x0, bufferSize - 1); // BCL
+      writeByte_Flash(currByte + c, 0x00); // BCH should be 0x00
+
+      // waiting for finishing
+      dataIn8();
+      while ((readByte_Flash(currByte + c) & 0x80) == 0x00);
+    }
+  }
+
+  dataIn8();
 }
 
 /******************************************
