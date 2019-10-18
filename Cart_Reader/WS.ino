@@ -378,7 +378,7 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
     case 0x12: devName = PSTR("KNM"); break;
     case 0x18: devName = PSTR("KGT"); break;
     case 0x1d: devName = PSTR("BEC"); break;
-    case 0x24: devName = PSTR("OMN"); break;
+    case 0x24: devName = PSTR("OMM"); break;
     case 0x28: devName = PSTR("SQR"); break;
     case 0x31: devName = PSTR("VGD"); break;
     // TODO add more developer
