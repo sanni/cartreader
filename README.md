@@ -20,7 +20,7 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Reflashes some Chinese or custom-made SNES repros with AM29F032, MBM29F033 or MX29LV320 flashroms     
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Proto carts are not supported yet  
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
-- Reflashes some Chinese N64 repros with S29GL128N, S29GL256N, MSP55LV512, MSP55LV100S, MX29LV640, i512M29EW or i4400L0ZDQ0 flashroms    
+- Reflashes some Chinese N64 repros with S29GL128N, S29GL256N, MSP55LV512, MSP55LV100S, MX29LV640, i512M29EW or i4400L0ZDQ0 flashroms   
 - Reflashes N64 Gamesharks with SST 29LE010 eeproms     
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
@@ -30,8 +30,9 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, MX29GL128E or MSP55LV128 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
 - Reads Sega Master System roms (only default mapper and no SRAM supported so far)     
-- Reads PC engine/TG16 (custom-made adapter needed)   
-- Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB and LH28F016SUT    
+- Reads PC engine/TG16 cartridges (custom-made adapter needed)   
+- Reads WonderSwan cartridges (custom-made adapter needed)   
+- Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C    
 - Programs M27C322 eproms    
 
 
