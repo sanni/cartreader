@@ -2482,6 +2482,9 @@ void flashRepro_GBA() {
       else if ((romType == 0x1) || (romType == 0x4)) {
         println_Msg(F("Fujitsu MSP55LV128N"));
       }
+      else if ((romType == 0x89)) {
+        println_Msg(F("Intel PC28F256M29"));
+      }
       else {
         println_Msg(romType);
         print_Error(F("Unknown manufacturer"), true);
@@ -2543,8 +2546,9 @@ void flashRepro_GBA() {
         //else {
         println_Msg(F("Erasing..."));
         display_Update();
-        if (romType == 0xC2) {
+        if ((romType == 0xC2) || (romType == 0x89)) {
           //MX29GL128E
+          //PC28F256M29 (0x89)
           sectorEraseMX29GL128E_GBA();
         }
         else if ((romType == 0x1) || (romType == 0x4)) {
@@ -2568,8 +2572,9 @@ void flashRepro_GBA() {
         writeIntel4000_GBA();
       }
       else if (strcmp(flashid, "227E") == 0) {
-        if (romType == 0xC2) {
-          //MX29GL128E
+        if ((romType == 0xC2) || (romType == 0x89)) {
+          //MX29GL128E (0xC2)
+          //PC28F256M29 (0x89)
           writeMX29GL128E_GBA();
         }
         else if ((romType == 0x1) || (romType == 0x4)) {
