@@ -30,8 +30,8 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128 or PC28F256M29 flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
 - Reads Sega Master System roms (only default mapper and no SRAM supported so far)     
-- Reads PC engine/TG16 cartridges (custom-made adapter needed)   
-- Reads WonderSwan cartridges (custom-made adapter needed)   
+- Reads PC engine/TG16 cartridges (user-made adapter needed, see pinout.xls)   
+- Reads WonderSwan cartridges (user-made adapter needed, see pinout.xls)   
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C    
 - Programs M27C322 eproms    
 
