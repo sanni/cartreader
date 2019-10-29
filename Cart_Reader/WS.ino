@@ -21,22 +21,6 @@
 // C45         : /CART? (L when accessing cartridge (ROM/SRAM/PORT))
 // C46         : INT (for RTC alarm interrupt)
 // C47         : CLK (384KHz on WS)
-// ------------------------------------------
-// how to connect to CartReader
-// ------------------------------------------
-// /RST   : PH0
-// /CART? : PH3
-// /MMC   : PH4
-// /WE    : PH5
-// /OE    : PH6
-// CLK    : PE3
-// /IO?   : PE4 
-// INT    : PG5
-// A(-1)-A6: PF0-PF7
-// A7-A14:  PK0-PK7
-// A15-A18: PL0-PL3
-// D0-D7  : PC0-PC7
-// D8-D15 : PA0-PA7
 
 /******************************************
   Menu
