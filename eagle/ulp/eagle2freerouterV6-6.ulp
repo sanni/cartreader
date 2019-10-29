@@ -1,0 +1,1027 @@
+//=====================================
+// Specctra DSN descriptor generator for CadSoft-Eagle board designs.
+// Acknowledging an earlier design by Thomas Kaeubler and Alfons Wirtz
+// Thanks to David Varley for finding the right Resolution settings.
+// Completely new design started in summer 2012 optimized for Freerouter
+// DSN resolution optimized for Eagle V6 internal units.
+// Documentation and software: www.FreeRouting.net, English forum, Technical support.
+// Send bugs and comments to info@virtualsilicon.ch
+
+/* Modification history
+29 May 2013 - Fixed the Resolution settings to avoid generating short 'mismatch' airwires.
+29 May 2013 - Added the ability to remove polygons before routing to avoid breaking their consistency and generating airwires.
+30 Sept 2013 - Fixed naming of the file that gets DRU values to work correctly on MacBook Pro
+30 Sept 2013 - Default disable drawing of of a potential huge amount of small component outline vectors
+30 Dec 2013 - Add default via in case of single layer to set scope for autorouter.
+14 Jan 2014 - Removed the cumbersome intermediate file to get design rules, use the XML in the BRD file instead (requires Eagle V6).
+26 Jan 2014 - Bug fix in reading dimensionless numbers from the BRD file.
+8 March 2014 - arc2line routine ignores microscopic curves
+13 April 2014 - Added missing via-via clearance.
+19 April 2014 - Corrected PAD size calculation for single layer routing on bottom layer, without a top layer
+*/
+
+//=====================================
+string version = "19-4-2014";
+
+// User modifiable parameters ********************************************************
+string via_protect = ""; // Lock via's, polygons and wires per signal name before routing
+string poly_protect = ""; // Change the relevant string with a list of signals to be locked
+string poly_drop = ""; // Remove named polygons before routing to avoid breaking up in Eagle
+string wire_protect = ""; // For instance "GND, N$1". Use "*" for all elements.
+// To protect individual wires, set the style of those wires to WIRE_STYLE_SHORTDASH in Eagle.
+int u_layer_start = 110, u_layer_end = 120; // layer scan area to define single layer wire or via restricts
+// Draw in one of these user layers polygons, rectangles or circles to define the restricted areas
+// The NAME of the layer defines the applicable signal layer. Example layer 110: wire_restrict_layer=12
+// The restricts in layer 110 are incorporated in the DSN description of keepouts on layer 12 (if it exists).
+int Outline = 0; // Determine the level of component outlines displayed; 0 = Do not display at all.
+// Component outlines (layers 21 and 51) have no influence on routing and are often drawn as many short lines,
+//  which can overload Freerouter. Set to "1" it tries to connect lines, with 2 it draws all details individually.
+// End of user modifiable parameters **************************************************
+
+// General globals
+enum {false,true}; int Units; // conversion factor between Eagle internal units and current grid
+string T1 = "  ", T2 = "    ", T3 = "      ", T4 = "        "; // tab stops for output formatting
+
+// Clearance parameters
+real default_wire_width, default_via_size, default_drill_size, default_clearance;
+real min_pad_t, rv_pad_t, max_pad_t, min_pad_i, rv_pad_i, max_pad_i, min_pad_b, rv_pad_b, max_pad_b;
+real min_via_inner, min_via_outer;
+real clearance_wire_pad, clearance_wire_smd, clearance_wire_via, clearance_pad_pad, clearance_pad_via;
+real clearance_via_via, clearance_smd_pad, clearance_smd_via, clearance_smd_smd, dim_clearance;
+
+// Global wire list elements with wire & arc structure description, p[0] is the wire counter
+int x1[], y1[], x2[], y2[], p[], rad[], xc[], yc[], width[], arcx1[], arcy1[];
+real a[], a1[], a2[], linkl, U2G; // linkl is the yet smallest 'glue' distance, U2G = Unit to current GRID multiplier
+int margin = 10000; //Max 'glue' distance  of close wire ends (in internal units)
+
+// DRU, layer and default via data
+string dr_name[], dr_value[], layer_def, DSN_output_file; // design rules extracted from the board XML file
+string DRU_data[];
+int B_layers[], Lnum, Vnum, default_via_nbr, Pnum, Snum; // Board layer numbers, layer, via and pad signature pointers 
+string L_names[], V_list[], V_name[], P_list[], P_name[], S_list[], S_name[]; // Board layer names, via and pad signature lists
+
+
+
+/* Support routines ********************************************************
+
+The via_sig, pad_sig and smd_sig routines build their signature lists to classify via and pad objects
+The W_xxx routines are used in describing Padstack elements
+The wire manipulation routines convert arcs and reconstruct closed shapes
+*/
+
+void ERROR(string msg) {
+	dlgMessageBox(":"+msg);
+	exit(0);
+	return;
+}
+
+string via_sig(int shape, int dia, int drill, int start, int end) {
+// builds a unique via type table, using a signature string 26-01-13
+	string s, t; char listed = false; int count = 1;
+	sprintf(t, "%d:%d:%d:%d:%d", shape, dia, drill, start, end);
+	// check if this signature was already listed
+	for (int i = 1; i <=Vnum; i++) {
+		s = V_list[i]; if (strtol(s) == shape) count++;
+		if (s == t) return V_name[i];
+	}
+	Vnum++; V_list[Vnum] = t; // write the next unique via signature
+	switch(shape) {
+		case VIA_SHAPE_SQUARE: s = "Square"; break;
+		case VIA_SHAPE_ROUND: s = "Round"; break;
+		case VIA_SHAPE_OCTAGON: s = "Octagon"; break;
+	}	
+	sprintf(V_name[Vnum], "\"%s%d$%f\"", s, count, U2G * drill);
+	return V_name[Vnum];
+}
+
+string pad_sig (int shape, int dia, int drill, int elong, real angl) {
+// create a table of the thru hole pad types, using a signature string 26-01-13
+	string s, t; int count = 0;
+	sprintf(t, "%d:%d:%d:%d:%f", shape, dia, drill, elong, angl);
+	// check if this signature was already listed
+	for (int i = 1; i <=Pnum; i++) {
+		s = P_list[i]; if (strtol(s) == shape) count++;
+		if (t == s) return P_name[i];
+	}
+	Pnum++; P_list[Pnum] = t; count++; // add the next unique TH pad signature
+	switch(shape) {
+		case PAD_SHAPE_SQUARE:	s = "Square"; break;
+		case PAD_SHAPE_ROUND:	s = "Round"; break;
+		case PAD_SHAPE_OCTAGON: s = "Octagon"; break;
+		case PAD_SHAPE_LONG: 	s = "Oblong"; break; 
+		case PAD_SHAPE_OFFSET:	s = "Offset"; break;
+	}
+	sprintf(P_name[Pnum], "\"%s%d\"", s, count);
+	return P_name[Pnum];
+}
+
+string smd_sig (int rns, int x, int y, int layer, real angl) {
+// create a table of the types of SMD pads that are used. 13-4-13
+	string s, t; int count = 0;
+	sprintf(t, "%d:%d:%d:%d:%f", rns, x, y, layer, angl);
+	// check if this signature was already listed
+	for (int i = 1; i <=Snum; i++) {
+		s = S_list[i]; count++;
+		if (t == s) return S_name[i];
+	}
+	Snum++; S_list[Snum] = t; count++; // add the next unique smd signature
+	sprintf(S_name[Snum], "\"SMD_%d\"", count);
+	return S_name[Snum];
+}
+
+string W_Circle(string lname, real dia) {
+// draws a circle
+	string t;
+	sprintf(t, T3 + "(shape (circle %s %f 0 0))\n", lname, dia);
+	return t;
+}
+
+string W_Quart(real x, real y, real rad, real rot) {
+// draws an offset rotated quart circle counterclockwise in 16 segments
+	string s, t; if (rad == 0) return t; // no rounded corners
+	real lx, ly, ang; rot *= PI/180; // to radians
+	for (int i=1; i <=16; i++) {
+		ang = PI * i / 32; // starting point (i=0) not drawn
+		lx = x * cos(rot) + rad * cos (ang + rot);
+		ly = y * sin(rot) + rad * sin (ang + rot);
+		sprintf(s, " %f %f", lx, ly); t += s;
+	}
+	return t;
+}
+
+string W_Octagon(string lname, real dia, real rotate) {
+// draws a rotated octagon from 8 straight wire segements
+	string s, t;
+	real step = PI/4, rad = dia * 0.5411961, ang, dx, dy;
+	sprintf (t, T3 + "(shape (polygon %s 0 ", lname);
+	for ( int i=0; i<8; i++) {
+		ang = step * i + PI/8 + rotate * PI/180;
+		dx = rad * cos(ang), dy = rad * sin(ang);
+		sprintf(s, " %f %f", dx, dy); t += s;
+	}
+	return t + "))\n";
+}
+
+string W_SMDpad(string lname, real dx, real dy, real rot, real rdness) {
+// write an SMDpad with variable roundness and rotation 13-4-13
+	string s, t; int i = 0, k, adj[]; // coordinate buffers
+	if (min(dx,dy)<=0) return ""; // no real surface
+	if (rdness==100 && dx<=dy) {adj[0] = -1; adj[2] = -1;}; // cut last curve point if curve follows
+	if (rdness==100 && dy<=dx) {adj[1] = -1; adj[3] = -1;}; 
+	real agl, crad = min(dx,dy) * rdness/200; // rounding angle and radius
+	real cx = dx/2 - crad, cy = dy/2 - crad; // center of round corners
+	if (!cx) agl = PI/2; else agl = atan(cy/cx); // starting angle of first corner center
+	real brad = sqrt(cx*cx+cy*cy); // radius corners centers from center
+	real ax[] = {agl, PI-agl, PI+agl, -agl}; // angles in quadrant 0-3
+	rot *= PI/180; // in radian
+	sprintf (t, T3 + "(shape (polygon %s 0", lname);
+	for (k=0; k<=3; k++) {
+		real tx = brad * cos(ax[k]+rot), ty = brad * sin(ax[k]+rot); // rounding centers x,y
+		if (rdness==0) {sprintf(s, " %f %f", tx, ty); t +=s;} //no rounded corners
+		else {
+			for (int j=0; j<=5+adj[k]; j++) {
+				real ang = j * PI/10 + k * PI/2 + rot;
+				real rx = crad * cos(ang), ry = crad * sin(ang);
+				sprintf(s, " %f %f", tx+rx, ty+ry); t +=s;
+			}
+		}		
+	}
+	return t + "))\n";
+} 
+
+string W_Rect(string lname, real x, real y, real rotate) {
+// draws a rotated rectangle
+	string s, t;
+	if (rotate == 0 || rotate == 180.0) {
+		sprintf (t, T3 + "(shape (rect %s %f %f %f %f))\n", lname, -x/2, -y/2, x/2, y/2);
+		return t;
+	}
+	real step = PI/4, rad = sqrt(x*x + y*y)/2, ang[], dx, dy;
+	ang[0] = atan(y/x); ang[4] = ang[0];
+	ang[1]=PI-ang[0]; ang[2]=PI+ang[0]; ang[3]=2*PI-ang[0];
+	rotate *= PI/180;
+	sprintf (t, T3 + "(shape (polygon %s 0 ", lname);
+	for ( int i=0; i<5; i++) {
+		dx = rad * cos(ang[i]+rotate), dy = rad * sin(ang[i]+rotate);
+		sprintf(s, "%f %f ", dx, dy); t += s;
+	}
+	return t + "))\n";
+}
+
+string W_Pshape(string lname, real dia, real elong, char offset, real r) {
+// draws elongated and offset TRUhole pads 08-05-2013
+	string t;
+	real x = dia * elong/100, sx = -x/2, ex = x/2;
+	if (offset) {sx = 0; ex = x;}
+	r *= PI/180;
+	if (r) {
+		sprintf (t, T3 + "(shape (path %s %f %f %f %f %f (aperture_type round)))\n",
+			lname, dia, sx*cos(r), sx*sin(r), ex*cos(r), ex*sin(r));
+		return t;
+	}
+	sprintf (t, T3 + "(shape (path %s %f %f %f %f %f (aperture_type round)))\n",
+		lname, dia, sx, 0.0, ex, 0.0); return t;
+}
+
+// object boundery calculation routines when scanning the wire segment array
+ 
+real xmin, xmax, ymin, ymax; 
+char b_status = false; // indicates if boundary calculation is on or not.
+
+void get_boundary(char state) {
+// end/disable envelope calculation using globals xmin, xmax, ymin, ymax
+	if(b_status && state) return; // nothing to do, calculation already turned on.
+	if (state) {xmin = ymin = REAL_MAX; xmax = ymax = -REAL_MAX;} // boundary counters initialized
+	b_status = state;
+	return;
+}
+
+void calc_boundary(real x,real y) {
+// calculates a rectangular shape envelope from processed coordinates
+	if (!b_status) return;
+	xmin = min(x, xmin); xmax = max(x, xmax);
+	ymin = min(y, ymin); ymax = max(y, ymax); return;
+}
+
+// Wire segment manipulation routines.
+
+int glue(int x, int y) {
+// check if a segment has (the smallest) glueing distance. Update 13-01-13
+	if (linkl == 0.0) return false; //already found an exact match
+	int dx = x2[0]-x, dy = y2[0]-y; if (!dx && !dy) {linkl = 0.0; return true;} // exact match
+	real rdx = dx, rdy = dy, len = sqrt(rdx * rdx + rdy * rdy);
+	if (len >= min(margin, linkl)) return false;
+	linkl = len; return true;
+}
+
+void swap (int i) { // operates on the global wire list
+// swaps start and end of a segment or arc to put the start point in (x1, y1). Update 14-12-12
+	int xt = x1[i], yt = y1[i];
+	x1[i] = x2[i]; y1[i] = y2[i]; x2[i] = xt; y2[i] = yt;
+	return;
+}
+
+int new_seg (void){
+// check for an unassigned segment in the global wire list. Update 14-12-12
+	int new = 0, j;
+	linkl = REAL_MAX;
+	for (j=1; j<=p[0]; j++) {
+		if (!p[j]) { // check only unallocated segments
+		if (glue(x1[j],y1[j])) new = j;
+		if (glue(x2[j],y2[j])) new = -j; //negative value indicates swap
+		}
+	}
+	return new; // Index number of the next link found, otherwise 0
+}
+
+string write_arc2line(int i) {
+// decompose one arc in straight segments that fit the curve. Update 07-01-13
+	if (rad[i]< margin) return ""; //ignore very small curves
+	string s, t;
+	real rtio = rad[i], xloc, yloc, angl; rtio = margin/rtio;
+	real delta = asin(sqrt(rtio)); // optimal angle step
+	if ((a2[i]-a1[i])/delta > 128) delta = (a2[i]-a1[i]) / 128; // limit extreme number of segments	
+    real XC = U2G * xc[i], YC= U2G * yc[i], R = U2G * rad[i], A, AS = a1[i] + delta;
+	if (arcy1[i]!=y1[i] || arcx1[i]!=x1[i]) {AS = a2[i] - delta; delta = -delta;} // start at angle2
+	for (A = AS; (A > a1[i] && A < a2[i]) ; A += delta) {
+		xloc = XC + R * cos(A); yloc = YC + R * sin(A);
+		sprintf (s, "%f %f", xloc, yloc); t += s + " ";
+		calc_boundary(xloc, yloc);
+	}
+	return t;
+}
+
+ void load_one_wire (UL_WIRE W) {
+// Load a single wire / arc in the global wire array. Update 12-01-13
+	int i = p[0] + 1;
+	x1[i]=W.x1; y1[i]=W.y1; x2[i]=W.x2; y2[i]=W.y2; rad[i]=0; width[i] = W.width;
+	if (W.arc) { // Calculate starting point and direction for curves
+		rad[i]=W.arc.radius; xc[i]=W.arc.xc; yc[i]=W.arc.yc; arcx1[i] = W.arc.x1, arcy1[i] = W.arc.y1;
+		a1[i]=W.arc.angle1*PI/180; a2[i]=W.arc.angle2*PI/180;
+	}
+	p[0] = i; p[i] = -1; // set the pointer to the current line and point to itself to terminate
+	return;
+}
+
+void load_layer_wires(UL_WIRE W, int L) {
+// Load wires / arcs in the global wire array. 12-01-13
+// p[0] is the wire counter, normally started at 0
+	int i = p[0];
+	if (W.layer == L) {
+		i++; p[i] = 0; // set this line as not allocated
+		x1[i]=W.x1; y1[i]=W.y1; x2[i]=W.x2; y2[i]=W.y2; width[i] = W.width; rad[i] = 0;
+		if (W.arc) {
+			rad[i]=W.arc.radius; xc[i]=W.arc.xc; yc[i]=W.arc.yc; arcx1[i] = W.arc.x1, arcy1[i] = W.arc.y1;
+			a1[i]=W.arc.angle1*PI/180; a2[i]=W.arc.angle2*PI/180;
+		}
+		p[0] = i;
+	}
+	return;
+}
+
+void process_wires (void) {
+	// Detect closed shapes and code them as separate objects starting with a negative index p[i]
+	// p[i] = 0 means unallocated. p[i] < 0 is start of chain. p[seg] points to next segment or itself (= last)
+	for (int i=1; i<= p[0]; i++) {
+		// get an unallocated segment and declare (x2, y2) the end point
+		int from, j;
+		if (!p[i]) {p[i] = -i; from = i; x2[0] = x2[from]; y2[0]=y2[from];} // (x2[0], y2[0]) looks for next segment
+		for (j = new_seg(); j;) { // Get a new segment
+			if (j < 0) {j = abs(j); swap(j);} // As new segment starts with (X2 Y2), Swap (X1 Y1) and (X2 Y2)
+			if (p[from] < 0) p[from] = -j; else p[from] = j; // preserve start segment indication
+			from = p[j] = j; x2[0] = x2[j]; y2[0] = y2[j];// mark the new from segment
+			j = new_seg(); //  Get the next segment. If j = 0, look for the next chain
+		}
+	} // all open and closed shapes coded
+	return;
+}
+
+string write_wire_shape (string pre, string post, char add_size) {
+// transform segment lists into shapes. Segment number in p[0]. Updated 12-01-13
+	string s, t, z;
+	int i, j, go; enum{false, true};
+	real xloc, yloc;
+	for (i=1; i<= p[0]; i++) {
+		if (p[i]<0) {
+			j = i, go = true; t += pre; p[j] = -p[j]; // delete start segment marker
+			if (add_size) {sprintf(s, " %f ", U2G * width[j]); t += s;}
+			while (go) {
+				xloc = U2G * x1[j]; yloc = U2G * y1[j]; calc_boundary(xloc,yloc);
+				sprintf(s, "%f %f", xloc, yloc); t += s + " ";
+				if (rad[j]) t += write_arc2line(j); // If there is a curvature, it is an arc
+				if (p[j]==j || j>p[0]) go = false; else j = p[j]; // check for end of a chain
+			}
+			sprintf(s, " %f %f", U2G * x2[j], U2G * y2[j]); t += s; t += post; // final element of the chain
+		}
+	}
+	p[0] = 0; // after output, reset line counter
+	return t;
+}
+
+/* Eagle board data collection and processing routines **************************************
+	The design rules are obtained from the XML data in the BRD description.
+	Layer_structure decodes the EAGLE layer stack, calculates the possible via types
+	and captures the layer names.
+	read_board_pads_and_vias does what it says...
+	The array B_layers (index 1-Lnum, [0] not used) has the sequence of the layer NUMBERS
+	from the top down. LN2name() converts a layer number into a name.
+*/
+
+void get_designrules (void) {
+// This works only for the newer versions of Eagle that have designrules in the .brd file 15-01-2014
+	if (!board) ERROR("No board, run this ULP in a Board window!");
+	board(B) {
+	// read the complete Board description and extract the designrules
+		string brd_data, dr_lines[], par_list[]; int d_rule_count;
+		if (!fileread(brd_data, B.name)) ERROR("Can't read the .BRD file!");
+		if (!xmlelements(dr_lines, brd_data, "eagle/drawing/board/designrules")) ERROR("No designrules stored in the .BRD file!");
+		// The designrules section is in dr_lines[0]. Extract the parameter list
+		d_rule_count = xmlelements(par_list, dr_lines[0], "designrules/param");
+		if (!d_rule_count) ERROR("No parameters found in the designrules!");
+		// extract the name and value tag data pairs 
+		for (int i; i < d_rule_count; i++) {
+			dr_name[i] = xmlattribute(par_list[i], "param", "name");
+			dr_value[i] = xmlattribute(par_list[i], "param", "value");
+		} // Done reading
+		// Determine the current internal unit to grid factor
+		switch (B.grid.unit) {
+			case GRID_UNIT_MIC:		U2G = u2mic(1); break;
+			case GRID_UNIT_MM:		U2G = u2mm(1); break;
+			case GRID_UNIT_MIL:		U2G = u2mil(1); break;
+			case GRID_UNIT_INCH:	U2G = u2inch(1);
+		}
+		// Create the output file
+		string T = "";
+		DSN_output_file = filesetext(B.name + T, ".dsn");
+	}
+}
+
+real par_value(string parm) {
+// convert parameter values of the dr_value string to current board units 15-01-2014.
+	string scale; int i;
+	while (dr_name[i]) {
+		if (parm == dr_name[i]) { // parameter name found
+			if (parm == "layerSetup") {layer_def = dr_value[i]; return 1;} // keep the string and exit
+			scale = strupr(strsub(dr_value[i], strlen(dr_value[i])-2)); //look at last two characters
+			if (scale == "MM") return U2G * mm2u(strtod(dr_value[i])); //mm
+			if (scale == "IL") return U2G * mil2u(strtod(dr_value[i])); // mil
+			if (scale == "CH") return U2G * inch2u(strtod(dr_value[i])); // inch
+			if (scale == "IC") return U2G * mic2u(strtod(dr_value[i])); //micron
+			// remain values without dimension
+			return strtod(dr_value[i]);
+		}
+		i++;
+	}
+	ERROR("Can't find parameter " + parm);
+	return -1;	 // no convertible value found, an error
+}
+
+int layer_structure (string L) { // 18-01-13, updated 30-12-13 to mark single layer board
+// Analyses the EAGLE layer description, assuming correct syntax provided by EAGLE
+// TBV, BBV: Top & Bottom blind Via. sp is stack pointer that parses the round brackets
+// Globals B_layers[] and L_names[] have the layer numbers and names starting at index 1.
+// T & B blind vias stored in array. Round bracket vias decoded using a FILO stack.
+	char TBV = false, BBV = false;
+	int i, j = 1, k, tbv[], bbv[], sp, N, NLast, stack[];
+	int vsize = default_via_size/U2G, dsize = default_drill_size/U2G;
+	do {
+		if (isdigit(L[i])) { // process one and two digit numbers, store blind via information
+			if (isdigit(L[i+1])) {N = strtol(" " + L[i+1]) + 10; i += 2;}
+			else {N = strtol(" " + L[i]); i++;}; // N is now a one or two digit number
+			if (TBV) {tbv[j] = N; TBV = false; i++;} // store number, remove trailing ":"
+			else 
+			if (BBV) {bbv[j-1] = N, BBV = false; i++;}
+			else {B_layers[j] = N; NLast = N; j++; for (k=0; k<=i; k++) if (stack[k]<0) stack[k]=N;} // write the via starts if any
+		}
+		else switch (L[i]) {
+			case '[': TBV = true; i++; break;
+			case ':': BBV = true; i++; break; // encountered a bottom-up blind via
+			case '(': stack[sp]= -1; sp++; i++; break; // Mark via starts
+			case ')': sp--; i++; // write last entry from stack in signature
+				via_sig(VIA_SHAPE_ROUND, vsize, dsize, stack[sp], NLast); break;
+			default: i++; // ignore the ] + and * characters
+			} 		
+	} while (i <= strlen(L));
+	// Done decoding!
+	for (i=1; i<j; i++) { // write the signature for the default blind vias
+		if (tbv[i]) via_sig(VIA_SHAPE_ROUND, vsize, dsize, B_layers[i], tbv[i]);
+		if (bbv[i]) via_sig(VIA_SHAPE_ROUND, vsize, dsize, bbv[i], B_layers[i]);
+	}
+	default_via_nbr = Vnum; // number of via defaults,needed to generate tru hole via pads later
+	// All default vias in V_list[]!
+	board(B) { // Get the layer names from the board definition 
+		for (i=1; i<j; i++) {B.layers(L) {if (L.number == B_layers[i]) sprintf(L_names[i], "\"%d#%s\"", L.number, L.name);}}
+	}
+	return j-1; // Return the number of layers on the board.
+}
+
+void read_board_pads_and_vias(void) { // 19-01-28
+// Get pads from the library and vias from the nets, defaults are already loaded
+	board(B) {
+		B.libraries(L) {
+			L.packages(P) {
+				P.contacts(C){
+					if (C.pad) {
+						pad_sig (C.pad.shape[LAYER_TOP], C.pad.diameter[LAYER_TOP],
+							C.pad.drill, C.pad.elongation, C.pad.angle);
+					}
+					if (C.smd) {
+						smd_sig (C.smd.roundness, C.smd.dx, C.smd.dy, C.smd.layer, C.smd.angle); 
+					}
+				}
+			}
+		}
+		B.signals(N) {
+			N.vias(V) {
+				via_sig(V.shape[LAYER_VIAS], V.diameter[LAYER_TOP], V.drill, V.start, V.end);
+			}
+		}
+	}
+	return;
+}
+
+string LN2name(int nmbr) {
+// provides the name of the layer indicated by number
+
+	for (int i=1; i <=Lnum; i++) {
+		if (B_layers[i] == nmbr) return L_names[i];
+	}
+	return "signal";
+}
+
+/* SPECCTRA descriptor generators ******************************************************
+	SPECCTRA section	First level			Second level	comments
+	-------------------------------------------------------------------------
+	(parser				Parser_d()
+	(resolution			Resolution_d()
+	(unit													in Resolution_d()
+	(structure								Layer_d()
+											Boundary_d()
+											Keepout_d()
+											Via_d()
+											Rule_d()		using print_cl
+	(placement			Placement_d()
+	(library								Image_d()		using single_image_d
+											Padstack_d()
+	(network			Network_d()
+	(wiring				Wiring_d()
+	--------------------------------------------------------
+*/
+string Parser_d(void) {
+// SPECCTRA PCB & Parser descriptor 1-11-12
+	string s, t, bname;
+	board(B) {bname = B.name;};
+	t = "(PCB \"" + bname + "\"\n";
+	t += "  (parser\n";
+	t += "    (string_quote \")\n";
+	t += "    (space_in_quoted_tokens on)\n";
+	t += "    (host_cad CadSoft)\n";
+	sprintf (s, "    (host_version \'Eagle V %1d.%1d", EAGLE_VERSION, EAGLE_RELEASE);
+	t += s + " - Using " + filename(argv[0]) + ", version " + version + ", on ";
+	t += t2string(time()) + "')\n"; 
+	t += "    (case_sensitive off)\n    (via_rotate_first on)\n  )\n";
+	return t;
+}	
+
+string Resolution_d(void) {
+// SPECCTRA Resolution & Unit descriptor; DO NOT CHANGE VALUES 29-5-2013
+	int Units; string t;
+	board(B) {Units = B.grid.unit;}
+	switch (Units) {
+		case GRID_UNIT_MM:
+		return "  (resolution mm 100000)\n  (unit mm)\n";
+		case GRID_UNIT_MIL:
+		return "  (resolution mil 2540)\n  (unit mil)\n";
+		case GRID_UNIT_INCH:
+		return "  (resolution inch 2540000)\n  (unit inch)\n";
+		case GRID_UNIT_MIC:
+		return "  (resolution mic 100)\n  (unit mic)\n";
+		default: return ""; // error
+	}
+}
+
+string Layer_d() {
+// SPECCTRA layer descriptor 1-11-12
+	// Power layer notion removed in EAGLE 6
+	string s, t;
+	for (int i = 1; i <= Lnum; i++) {
+		sprintf (s, T2 + "(layer %s (type signal))\n", L_names[i]);
+		t += s;
+	}
+	return t;
+}
+
+string Boundary_d(void) {
+// SPECCTRA Boundary descriptor Updated 10-05-13
+	string s, t, ct;
+	board (B) {
+		B.circles(C) {
+			if (C.layer == LAYER_DIMENSION) { // Full circles are complete boundaries by themselves
+				get_boundary(true); // start PCB boundary calculation
+				real rad = C.radius * U2G, cx = C.x * U2G, cy = C.y * U2G;
+				calc_boundary(cx-rad,cy-rad); calc_boundary(cx+rad,cy+rad);
+				ct += T2 + "(boundary\n      (path signal 0 ";
+				for (int i = 0; i < 256; i++){
+					sprintf(s, "%f %f ", cx + cos(i*PI/128) * rad, cy + sin(i*PI/128) * rad); ct += s;
+				}
+				ct += ")\n" + T3 + "(clearance_class boundary)\n    )\n";
+			}
+		}
+		B.wires(W) { // find shapes composed of multiple wires, that can include arcs
+			if (W.layer == LAYER_DIMENSION) {
+				load_layer_wires(W, W.layer);
+			}
+		}
+	}
+	process_wires();
+	if (p[0]) get_boundary(true); // enable PCB outline calculation only if wires exist
+	s = write_wire_shape("    (boundary\n      (path signal 0 ", ")\n      (clearance_class boundary)\n    )\n", false);
+	get_boundary(false); //turn off further envelope calculation and write the PCB boundary envelope first
+	if (xmax-xmin==0 || ymax-ymin==0) ERROR("No PCB outline defined!");
+	sprintf(t, "    (boundary\n      (rect pcb %f %f %f %f))\n", xmin, ymin, xmax, ymax);
+	return t + ct + s; // write the rectangular DSN PCB workspace with circle and wire based signal boundaries
+}
+
+string Keepout_d(void) {
+// SPECCTRA Keepout descriptor
+	string s, Lname, KOname, t;
+		string TopLayer = LN2name(LAYER_TOP), BotLayer = LN2name(LAYER_BOTTOM);
+	board(B) {
+		B.layers(L) {
+			// run through all board layers to draw keepouts drawn in the board.
+			char in_range = true;
+			switch (L.number) {
+				case LAYER_TKEEPOUT: Lname = TopLayer; KOname = "place_keepout"; break;
+				case LAYER_BKEEPOUT: Lname = BotLayer; KOname = "place_keepout"; break;
+				case LAYER_TRESTRICT: Lname = TopLayer; KOname = "wire_keepout"; break;
+				case LAYER_BRESTRICT: Lname = BotLayer; KOname = "wire_keepout"; break;
+				case LAYER_VRESTRICT: Lname = "signal"; KOname = "via_keepout"; break;
+				default: in_range = false;
+				}
+				// Individual layer restricts. Check for layers between 'u_layer_start' and 'u_layer_end'
+				if (L.number>=u_layer_start && L.number<=u_layer_end && L.used) {
+					KOname = ""; string num[]; strsplit(num, L.name,'=');
+					Lname = LN2name(strtol(num[1])); // will return 'signal' if the layer number is not defined
+					if(strstr(L.name,"wire_restrict_layer")>=0) KOname = "wire_keepout";
+					if(strstr(L.name,"via_restrict_layer")>=0) KOname = "via_keepout";
+					if (KOname && Lname != "signal") in_range = true;
+				}
+			if (in_range) {
+				B.wires(W) {
+					if (W.layer == L.number) load_layer_wires(W, L.number);
+				}
+				process_wires();
+				string pre = T2 + "(" + KOname + "(path " + Lname + " 0 ";
+				t += write_wire_shape (pre, "))\n", false);
+				B.circles(C) {
+					if (C.layer == L.number) {
+						sprintf(s, T2 + "(%s(circ %s %f %f %f))\n", KOname, Lname, U2G * C.radius * 2, U2G * C.x, U2G * C.y);
+						t += s;
+					}
+				}
+				B.rectangles(R) {
+					if (R.layer == L.number) {
+						sprintf(s, T2 + "(%s(rect %s %f %f %f %f))\n", KOname, Lname, U2G * R.x1, U2G * R.y1, U2G * R.x2, U2G * R.y2);
+						t += s;			
+					}
+				}
+				B.polygons(PO) {
+					if (PO.layer == L.number) {
+						sprintf(s, T2 + "(%s(polygon %s %f", KOname, Lname, PO.width * U2G); t += s;
+						PO.wires(W) {
+							sprintf(s, " %f %f", U2G * W.x1, U2G * W.y1); t += s;
+						}
+						t += "))\n";
+					}
+				}	
+			}
+		}
+		B.holes(H) {
+			sprintf(s, "    (keepout (circ signal %f %f %f))\n", U2G * H.drill + 2 * dim_clearance, U2G * H.x, U2G * H.y);
+			t += s;
+		}
+	} return t;
+}
+
+string Via_d(void) {
+// SPECCTRA Via and Control descriptor, part of the 'structure' section. Updated 30-12-13, fix single layer default via.
+	string s, t = "    (via\n";
+	if (!Vnum || Lnum == 1) {  //none defined, create a default even for single layer to make the autorouter work.
+		via_sig(VIA_SHAPE_ROUND, default_via_size/U2G, default_drill_size/U2G, 0, 0); // call sets Vnum to 1
+		sprintf(V_name[Vnum], "\"ViaDefault$%f\"", default_drill_size);
+	}
+	for (int i = 1; i<=Vnum; i++) t += T3 + V_name[i] + "\n";
+	t += T2 + ")\n"; 
+	t += T2 + "(control\n" + T3 + "(via_at_smd on)\n";
+	return t + T2 + ")\n";
+}
+
+string print_cl(real cl_val, string cl_type) {
+// Used in rule descriptor
+	string t;
+	if (cl_val > 0 && cl_val != default_clearance) sprintf(t, "    (rule (clearance %f (type %s)))\n", cl_val, cl_type); 
+	return t;
+}
+
+string Rule_d(void) {
+// SPECCTRA Rule descriptor
+	string s, t;
+	sprintf(t, "    (rule (width %f)(clearance %f))\n", default_wire_width, default_clearance);
+	sprintf(s, "    (rule (clearance %f (type default_boundary)))\n", dim_clearance);
+	t += s;
+	t += print_cl(clearance_wire_pad, "wire_pin");
+	t += print_cl(clearance_wire_smd, "wire_smd");
+	t += print_cl(clearance_wire_via, "wire_via");
+	t += print_cl(clearance_pad_pad, "pin_pin"); 
+	t += print_cl(clearance_pad_via, "pin_via");
+	t += print_cl(clearance_via_via, "via_via");
+	t += print_cl(clearance_smd_pad, "smd_pin");
+	t += print_cl(clearance_smd_via, "smd_via"); 
+	t += print_cl(clearance_smd_smd, "smd_smd");
+	t += print_cl(dim_clearance, "area_wire");
+	t += print_cl(dim_clearance, "area_via");
+	return t;
+}
+
+string Placement_d(void) {
+// SPECCTRA placement descriptor
+	string t = "  (placement\n    (place_control (flip_style rotate_first))\n";
+	string s;
+	board(B) {
+		B.elements(C) {
+			t += "    (component ";
+			t += "\"" + C.package.name + "$" + C.package.library + "\"\n";
+			sprintf(s, "      (place \"%s\" %f %f ", C.name, C.x * U2G, C.y * U2G);
+			t += s;
+			if (C.mirror) {t += "Back";}
+			else {t += "Front";}
+			sprintf(s, " %f)\n    )\n", C.angle);
+			t += s;
+		}
+	}
+	return t + "  )\n";
+}
+
+string single_image_d(UL_PACKAGE P) {
+// Generates single package for the SPECCTRA image descriptor 30-9-13
+	string s, t, Lname, KOname;
+	sprintf(t, T2 + "(image \"%s$%s\"\n", P.name, P.library);
+	board(B) {
+		B.layers(L) {
+			// run through all package layers to draw outlines and keepouts
+			char in_range = true;
+			switch (L.number) {
+				case LAYER_TKEEPOUT: Lname = LN2name(LAYER_TOP); KOname = "place_keepout"; break;
+				case LAYER_BKEEPOUT: Lname = LN2name(LAYER_BOTTOM); KOname = "place_keepout"; break;
+				case LAYER_TRESTRICT: Lname = LN2name(LAYER_TOP); KOname = "wire_keepout"; break;
+				case LAYER_BRESTRICT: Lname = LN2name(LAYER_BOTTOM); KOname = "wire_keepout"; break;
+				case LAYER_VRESTRICT: Lname = "signal"; KOname = "via_keepout"; break;
+				case LAYER_TPLACE: Lname = "signal"; KOname = "outline"; break;
+				default: in_range = false;
+			}
+			if (in_range) {
+				string pre = T3 + "(" + KOname + "(path " + Lname + " 0 ";
+				P.wires(W) {
+					if (KOname == "outline" && Outline == 1) {
+						load_layer_wires(W, L.number); // try to stitch all outline segments together
+						process_wires();
+						t += write_wire_shape (pre, "))\n", false);
+					}
+					if (KOname == "outline" && Outline == 2) {
+						load_one_wire(W); // capture detailed package design by drawing individual wires
+						t += write_wire_shape (pre, "))\n", false); // and write each line separately...
+					}
+					if (KOname != "outline") {  // any keepout layer
+						load_layer_wires(W, L.number); // capture all wires in this keepout layer
+						process_wires();
+						t += write_wire_shape (pre, "))\n", false);
+					}
+				}
+				P.circles(C) {
+					if (C.layer == L.number) {
+						sprintf(s, T3 + "(%s(circ %s %f %f %f))\n", KOname, Lname, U2G * C.radius * 2, U2G * C.x, U2G * C.y);
+						t += s;
+					}
+				}
+				P.rectangles(R) {
+					if (R.layer == L.number) {
+						sprintf(s, T3 + "(%s(rect %s %f %f %f %f))\n", KOname, Lname, U2G * R.x1, U2G * R.y1, U2G * R.x2, U2G * R.y2);
+						t += s;
+					}
+				}
+				P.polygons(PO) {
+					if (PO.layer == L.number) {
+						sprintf(s, T2 + "(%s(polygon %s 0", KOname, Lname); t += s;
+						PO.wires(W) {
+							sprintf(s, " %f %f", U2G * W.x1, U2G * W.y1); t += s;
+						}
+						t += "))\n";
+					}
+				}
+			}
+		}
+		P.holes(H) {
+			sprintf(s, T3 + "(keepout (circ signal %f %f %f))\n", U2G * H.drill +  2 * dim_clearance, U2G * H.x, U2G * H.y);
+			t += s + T3 + "(clearance_class boundary)\n";
+		}
+		P.contacts(C) {
+			string pname;
+			if (C.pad) {
+				int act_pad_shape = max(C.pad.shape[LAYER_TOP], C.pad.shape[LAYER_BOTTOM]); // single layer can be bottom only!
+				int act_pad_dia = max(C.pad.diameter[LAYER_TOP], C.pad.diameter[LAYER_BOTTOM]);
+				pname = pad_sig (act_pad_shape, act_pad_dia, C.pad.drill, C.pad.elongation, C.pad.angle);
+				sprintf(s, T3 + "(pin %s \"%s\" %f %f)\n", pname, C.name, U2G * C.x, U2G * C.y);
+				t += s;
+			}
+			if (C.smd) {
+				pname = smd_sig (C.smd.roundness, C.smd.dx, C.smd.dy, C.smd.layer, C.smd.angle);
+				sprintf(s, T3 + "(pin %s \"%s\" %f %f)\n", pname, C.name, U2G * C.x, U2G * C.y);
+				t += s;
+			}
+		}
+	}
+	return t += T2 + ")\n";
+}
+
+string Images_d(void) {
+// SPECCTRA image descriptor
+	string t;
+	board(B) {
+		B.libraries(Lib) {
+			Lib.packages(P) {
+				t += single_image_d(P);
+			}
+		}
+	}
+	return t;
+}
+
+string Padstack_d() {
+// SPECCTRA padstack descriptor, updated 30-12-13 to list one padstack layer for single layer boards
+	string s, t, pmem[], vmem[], last_line = T3 + "(attach off)\n" + T2 + ")\n";
+	real top_dia, inner_dia, bottom_dia, dia, x, y, drill, elong, rotate; int i, j, offset;
+	
+	// create the default padstack
+	sprintf(s, T2 + "(padstack \"ViaDefault$%f\"\n", default_drill_size); t += s;
+	t += W_Circle("signal", default_via_size) + last_line;
+	
+	// Create the via defined pad descriptors
+		for (i=1; i <= Vnum; i++) {
+			strsplit(vmem, V_list[i],':'); //extract via data members from the via list
+			int start = strtol(vmem[3]), end = strtol(vmem[4]);
+			if (start + end == 0) continue;  // Skip a ViaDefault that does not specify layers
+			sprintf(s, T2 + "(padstack %s\n", V_name[i]); t += s;
+			dia = strtol(vmem[1])*U2G; inner_dia = strtol(vmem[2])*U2G + 2 * min_via_inner;
+			for (j=1; j<=Lnum; j++) {
+				if (start > B_layers[j] || end < B_layers[j]) continue; // out of range
+				int L = B_layers[j]; char outer_layer = (L == B_layers[1] || L == B_layers[Lnum]);
+				if (outer_layer) {
+					if (strstr(V_name[i], "Round")>=0)  t += W_Circle(L_names[j], dia);
+					if (strstr(V_name[i], "Square")>=0)  t += W_Rect(L_names[j], dia, dia, 0);
+					if (strstr(V_name[i], "Octagon")>=0)  t += W_Octagon(L_names[j], dia, 0);
+				}
+				else t += W_Circle(L_names[j], inner_dia); //inner layer via parts are round 
+			}
+			t += last_line;
+		} // all pad_vias are written
+		
+	// process pads obtained with the 'read_board_pads_and_vias()' module.
+	i = 1; // process smd pads
+	while (i<=Snum) {
+		strsplit(pmem, S_list[i], ':');  // get pad elements
+		x = strtol(pmem[1]) * U2G; y = strtol(pmem[2]) * U2G; rotate = strtod(pmem[4]);
+		string lname = LN2name(strtol(pmem[3])); int rdness = strtol(pmem[0]);
+		sprintf(s, T2 + "(padstack %s\n", S_name[i]); t += s; // write pad name
+		t += W_SMDpad(lname, x, y, rotate, rdness);
+		t += last_line; i++; 
+	}
+	i = 1; // process thru hole pads
+	while (i<=Pnum) {
+		strsplit(pmem, P_list[i], ':'); offset = false; // Get pad elements
+		dia = strtol(pmem[1]) * U2G; rotate = strtod(pmem[4]); elong = strtod(pmem[3]);
+		drill = strtol(pmem[2])*U2G;  // calculate pad via diameter for separate layers
+// Future option, accommodate different top and bottom dimensions
+//		top_dia = min(max(drill + 2 * min_pad_t, drill * (1 + 2 * rv_pad_t)), max_pad_t);
+//		inner_dia = min(max(drill + 2 * min_pad_i, drill * (1 + 2 * rv_pad_i)), max_pad_i);
+//		bottom_dia = min(max(drill + 2 * min_pad_b, drill * (1 + 2 * rv_pad_b)), max_pad_b);
+		j = 2; string inner_layers = ""; // inner layer pad descriptors, if layers > 2
+		while (Lnum>2 && j<Lnum) {
+			inner_layers += W_Circle(L_names[j], dia);
+			j++;
+		}
+		// generate the top and bottom layer descriptors			
+		sprintf(s, T2 + "(padstack %s\n", P_name[i]); t += s; // write pad name
+		switch(strtol(pmem[0])) {
+			case PAD_SHAPE_SQUARE:
+				t += W_Rect(L_names[1], dia, dia, rotate) + inner_layers;
+				if (Lnum >1) t += W_Rect(L_names[Lnum], dia, dia, rotate);
+				break;
+			case PAD_SHAPE_ROUND:
+				t += W_Circle(L_names[1], dia) + inner_layers;
+				if (Lnum >1) t += W_Circle(L_names[Lnum], dia);
+				break;
+			case PAD_SHAPE_OCTAGON:
+				t += W_Octagon(L_names[1], dia, rotate) + inner_layers;
+				if (Lnum >1) t += W_Octagon(L_names[Lnum], dia, rotate);
+				break;
+			case PAD_SHAPE_OFFSET:
+				offset = true;
+			case PAD_SHAPE_LONG:
+				t += W_Pshape(L_names[1], dia, elong, offset, rotate);
+				t += inner_layers;
+				if (Lnum >1) t += W_Pshape(L_names[Lnum], dia, elong, offset, rotate);
+		}
+		t += last_line; i++;
+	}
+	return t;
+}
+			
+string Network_d() {
+// SPECCTRA network descriptor 28-12-12
+	int i, j, net_class_number[];
+	string s, t = T1 + "(network\n", net_names[];
+	board(B) {
+		B.signals(S) {// Loop through nets
+			sprintf(s, T2 + "(net \"%s\"\n" + T3 + "(pins", S.name); t += s;
+			S.contactrefs(R) {
+				sprintf(s, " \"%s\"-\"%s\"", R.element.name, R.contact.name); t += s;
+			}
+			t += ")\n" + T2 + ")\n";
+			net_names[j] = S.name;
+			net_class_number[j] = S.class.number;
+			++j;
+		}
+		B.classes(CL) { // Loop through classes
+			if ((CL.width == 0) && (CL.clearance == 0)) continue; // Default classes not written
+			sprintf(s, T2 + "(class \"%s\"\n" + T3, CL.name); t += s;
+			for(i = 0; i < j; ++i) {
+				if (net_class_number[i] == CL.number) { // Net list for this class
+					sprintf(s, " \"%s\"", net_names[i]); t += s;
+				}
+			}
+			t += "\n" + T3 + "(rule\n"; // Width and clearance rules for this class
+			if (CL.width != 0) {
+				real w_width = CL.width;
+				if (w_width <= 0) w_width = default_wire_width; // If not set
+				sprintf(s, T4 + "(width %f)\n", U2G * w_width); t += s;
+			}
+			if (CL.clearance != 0) {
+				real clearance = CL.clearance;
+				if (clearance <= 0) clearance = default_clearance; // If not set
+				sprintf(s, T4 + "(clearance %f)\n", U2G * clearance); t += s;
+			}
+            t += T3 + ")\n" + T2 + ")\n";
+		}
+	}
+	return t + T1 + ")\n";
+}
+
+string Wiring_d() {
+// SPECCTRA wiring descriptor
+	string Vname, s, t = T1 + "(wiring\n"; int protect;
+	board(B) {		         
+		B.signals(N) {
+			N.wires(W) {
+				if ((W.layer >= 1) && (W.layer <= 16)) {
+				load_one_wire(W);
+				sprintf(s, T2 + "(wire\n" + T3 + "(path %s %f ", LN2name(W.layer), U2G * W.width);
+				t += write_wire_shape(s, ") \n", false);
+				sprintf(s, "      (net \"%s\")", N.name); t += s;
+				protect = max(strstr(wire_protect + ",", N.name + ","), strstr(wire_protect, "*"));
+				if (protect>=0 || (W.style == WIRE_STYLE_SHORTDASH)) t += " (type protect)"; t += "\n    )\n"; 
+				}
+			}
+      		N.polygons(P) {
+        		if ((P.layer >= 1) && (P.layer <= 16)) {
+					protect = max(strstr(poly_drop + ",", N.name + ","), strstr(poly_drop, "*"));
+					if (protect >=0) {
+						sprintf(s, T2 + "# Polygon with signal %s in layer %d removed on user request\n", N.name, P.layer);
+						t += s;
+					}
+					else {
+						P.wires(W) {
+							load_layer_wires(W, W.layer);
+						}
+						process_wires();
+						sprintf(s,"    (wire\n      (poly %s %f ", LN2name(P.layer), U2G * P.width);
+						t += write_wire_shape(s, ") \n", false);
+						sprintf(s, "      (net \"%s\")", N.name); t += s;
+						protect = max(strstr(poly_protect + ",", N.name + ","), strstr(poly_protect, "*"));
+						// This only protects a poly from moving, not from breaking up by other signal wires!
+						if (protect>=0) t += " (type protect)"; t += "\n    )\n";
+					}
+        		}
+      		}
+			N.vias(V) {
+				Vname = via_sig(V.shape[LAYER_TOP], V.diameter[LAYER_TOP], V.drill, V.start, V.end);
+				sprintf(s, T2 + "(via\n" + T3 + Vname + " %f %f\n" + T3 + "(net \"%s\")",
+					U2G * V.x, U2G * V.y, N.name);
+				t += s;
+				protect = max(strstr(via_protect + ",", N.name + ","), strstr(via_protect, "*"));
+				// add here the alternative polygon check on a special via layer
+				if (protect>=0) t += " (type protect)"; t += "\n" + T2 + ")\n"; 
+			}	    
+		}
+	}
+	return t + "  )\n";
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ULP execution starts here
+#require 6.00.00;
+string msg = ";<center>Eagle2freerouter.ulp version " + version;
+msg += "<br><br><b>If you changed the DRC parameters, save your board before proceeding</b>";
+if (dlgMessageBox(msg, "Create DSN file", "Stop") == 1) exit(0);
+get_designrules();  // get the DRC parameters from the .brd file
+if (par_value("layerSetup")< 0) ERROR("layer definition not found in BRD file");
+default_wire_width = par_value("msWidth");
+default_clearance = par_value("mdWireWire");
+clearance_wire_pad = par_value("mdWirePad");
+clearance_wire_via = par_value("mdWireVia");
+clearance_wire_smd = clearance_wire_pad;
+clearance_pad_pad = par_value("mdPadPad");
+clearance_pad_via = par_value("mdPadVia");
+clearance_via_via = par_value("mdViaVia");
+clearance_smd_pad = par_value("mdSmdPad");
+clearance_smd_via = par_value("mdSmdVia");
+clearance_smd_smd = par_value("mdSmdSmd");
+dim_clearance = par_value("mdCopperDimension");
+default_drill_size = par_value("msDrill");
+min_pad_t = par_value("rlMinPadTop"); rv_pad_t = par_value("rvPadTop"); max_pad_t = par_value("rlMaxPadTop");
+min_pad_i = par_value("rlMinPadInner"); rv_pad_i = par_value("rvPadInner"); max_pad_i = par_value("rlMaxPadInner");
+min_pad_b = par_value("rlMinPadBottom"); rv_pad_b = par_value("rvPadBottom"); max_pad_b = par_value("rlMaxPadBottom");
+min_via_inner = par_value("rlMinViaInner");
+min_via_outer = par_value("rlMinViaOuter");
+default_via_size = default_drill_size + 2 * min_via_outer;
+
+// Generating the DSN descriptors. Updated 30-9-2013
+if (strlen(DSN_output_file)) {
+	Lnum = layer_structure(layer_def);	// Generate layer and via numbers and names
+	read_board_pads_and_vias();
+	output(DSN_output_file) {
+		printf(Parser_d());				// SPECCTRA PCB and Parser section with descriptors
+		printf(Resolution_d()); 		// SPECCTRA Resolution and Unit section with descriptors
+		printf(T1 + "(structure\n");	// Open SPECCTRA structure section
+		printf(Layer_d());				// Layer descriptor
+		printf(Boundary_d());			// SPECCTRA Boundary descriptor
+		printf(Keepout_d());			// SPECCTRA Keepout descriptor
+		printf(Via_d());				// Via and Control descriptors
+		printf(Rule_d());				// Rule descriptor
+		printf(T1 + ")\n");				// Close SPECCTRA Structure section
+		printf(Placement_d());			// SPECCTRA Placement section and descriptors
+		printf(T1 + "(library\n");		// Open SPECCTRA library section
+		printf(Images_d());				// SPECCTRA image descriptor
+		printf(Padstack_d());			// SPECCTRA Padstack descriptor
+		printf(T1 + ")\n");				// Close SPECCTRA library section
+		printf(Network_d());			// SPECCTRA Network section and descriptors
+		printf(Wiring_d());				// SPECCTRA Wiring and net.via descriptors
+		printf(")");					// Closing bracket to complete SPECCTRA PCB description
+		};
+		dlgDialog("DSN output file location:") {
+		string dummy;
+		dlgLabel(DSN_output_file);
+		dlgPushButton("-done") exit(0);
+		};
+	}
+	else ERROR("No DSN output file generated");
+exit(0);
