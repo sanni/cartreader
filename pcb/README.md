@@ -14,7 +14,7 @@
 
 ![image](https://dl.dropboxusercontent.com/s/r6lavgoaccjtrz7/sms_adapter.png?dl=1)   
 
-#### wonderswan_adapter.zip is an add-on for reading WonderSwan carts. [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1), this is very important or else it won't fit into the SNES slot. C1 and C2 are optional.
+#### wonderswan_adapter.zip is an add-on for reading WonderSwan carts. [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1), this is very important or else it won't fit into the SNES slot. (Optional) Install C1 and C2 with 10uF/16v 1210 package tantalum capacitor.
 
 ![image](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1)   
 
