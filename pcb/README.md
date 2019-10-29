@@ -14,9 +14,9 @@
 
 ![image](https://dl.dropboxusercontent.com/s/r6lavgoaccjtrz7/sms_adapter.png?dl=1)   
 
-#### wonderswan_adapter.zip is an add-on for reading WonderSwan carts. [PCB thickness needs to be changed to 1.2mm], this is very important or else it won't fit into the SNES slot.   
+#### wonderswan_adapter.zip is an add-on for reading WonderSwan carts. [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1), this is very important or else it won't fit into the SNES slot. C1 and C2 are optional.
 
-![image]( https://www.dropbox.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1 )   
+![image](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1)   
 
 #### flash_adapter.zip is an add-on for writing flashroms like the 29F032, 29L3211, 29LV160, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot.   
    
