@@ -12,4 +12,5 @@ All PCBs were autorouted with FreeRouting for which you need the [Java 8 RE](htt
 - In Windows Explorer execute FreeRouting1.jar in ulp dir and open the XXX_adapter.dsn file you created in the previous step.     
 - Let it autoroute for some hours, once finished choose Export Eagle Session script.     
 - Back in Eagle in the Board view go File -> Execute Script and select the XXX_adapter.scr you just exported.     
-- Finally go File -> Cam Processor, File -> Open -> Job and select Elecrow_Gerber_Generater_DrillAlign.cam, then Process Job to export the Gerber files.    
+- Next go File -> Cam Processor, File -> Open -> Job and select Elecrow_Gerber_Generater_DrillAlign.cam, then Process Job to export the Gerber files.    
+- Finally inspect your gerber files with [GerberLogix](https://www.easylogix.de/products_detail.php?prog_id=1) before uploading them to JLCPCB.      
