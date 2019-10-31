@@ -101,8 +101,9 @@ static const char MDCartMenuItem2[] PROGMEM = "Read Sram";
 static const char MDCartMenuItem3[] PROGMEM = "Write Sram";
 static const char MDCartMenuItem4[] PROGMEM = "Read EEPROM";
 static const char MDCartMenuItem5[] PROGMEM = "Write EEPROM";
-static const char MDCartMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsMDCart[] PROGMEM = {MDCartMenuItem1, MDCartMenuItem2, MDCartMenuItem3, MDCartMenuItem4, MDCartMenuItem5, MDCartMenuItem6};
+static const char MDCartMenuItem6[] PROGMEM = "Cycle cart";
+static const char MDCartMenuItem7[] PROGMEM = "Reset";
+static const char* const menuOptionsMDCart[] PROGMEM = {MDCartMenuItem1, MDCartMenuItem2, MDCartMenuItem3, MDCartMenuItem4, MDCartMenuItem5, MDCartMenuItem6, MDCartMenuItem7};
 
 // Sega CD Ram Backup Cartridge menu items
 static const char SCDMenuItem1[] PROGMEM = "Read Backup RAM";
@@ -190,8 +191,8 @@ void mdCartMenu() {
   // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMDCart, 6);
-  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 6, 0);
+  convertPgm(menuOptionsMDCart, 7);
+  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -282,8 +283,22 @@ void mdCartMenu() {
         print_Error(F("Cart has no EEPROM"), false);
       }
       break;
-
+      
     case 5:
+      // For multi-game carts
+      // Set reset pin to output (PH0)
+      DDRH |= (1 << 0);
+      // Switch RST(PH0) to LOW
+      PORTH &= ~(1 << 0);
+
+      display_Clear();
+      print_Msg(F("Resetting..."));
+      display_Update();
+      delay(3000);  // wait 3 secs to switch to next game
+      resetArduino();
+      break;
+
+    case 6:
       // Reset
       resetArduino();
       break;
@@ -776,7 +791,7 @@ void readROM_MD() {
 
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
-  strcat(fileName, ".MD");
+  strcat(fileName, ".BIN");
 
   // create a new folder
   EEPROM_readAnything(0, foldern);
