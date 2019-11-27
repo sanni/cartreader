@@ -2,15 +2,15 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             12.11.2019
-   Version:          4.1
+   Date:             27.11.2019
+   Version:          4.2
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
    Clockgen:        https://github.com/etherkit/Si5351Arduino
    RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
 
-   Compiled with Arduino 1.8.9 and Arduino AVR Boards Version 1.6.21
+   Compiled with Arduino 1.8.10
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -43,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "4.1";
+char ver[5] = "4.2";
 
 /******************************************
    Options

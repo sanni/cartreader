@@ -1314,14 +1314,14 @@ setram:
 // Mapper 4 includes both MMC3 AND MMC6
 // RAM is mapped differently between MMC3 and MMC6
 void checkMMC6() { // Detect MMC6 Carts - read PRG 0x3E00A ("STARTROPICS")
-    write_prg_byte(0x8000, 6); // PRG Bank 0 ($8000-$9FFF)
-    write_prg_byte(0x8001, 0x1F); // 0x3E000
-    prgchk0 = read_prg_byte(0x800A);
-    prgchk1 = read_prg_byte(0x800B);
-    prgchk2 = read_prg_byte(0x800C);
-    prgchk3 = read_prg_byte(0x800D);
-    if ((prgchk0 == 0x53) && (prgchk1 == 0x54) && (prgchk2 == 0x41) && (prgchk3 == 0x52))
-      mmc6 = true; // MMC6 Cart
+  write_prg_byte(0x8000, 6); // PRG Bank 0 ($8000-$9FFF)
+  write_prg_byte(0x8001, 0x1F); // 0x3E000
+  prgchk0 = read_prg_byte(0x800A);
+  prgchk1 = read_prg_byte(0x800B);
+  prgchk2 = read_prg_byte(0x800C);
+  prgchk3 = read_prg_byte(0x800D);
+  if ((prgchk0 == 0x53) && (prgchk1 == 0x54) && (prgchk2 == 0x41) && (prgchk3 == 0x52))
+    mmc6 = true; // MMC6 Cart
 }
 
 void checkStatus_NES() {
@@ -2705,7 +2705,7 @@ void writeRAM() {
         case 0: // 2K/4K
           for (word address = 0x0; address < (0x800 * ramsize); address += 512) { // 2K/4K
             sdFile.read(sdBuffer, 512);
-            for (int x = 0; x < 512; x++){
+            for (int x = 0; x < 512; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]); // SWITCH MUST BE IN OFF POSITION
             }
           }
@@ -2737,7 +2737,7 @@ void writeRAM() {
             write_prg_byte(0xA001, 0x30); // PRG RAM PROTECT - Enable reading/writing to RAM at $7000-$71FF
             for (word address = 0x1000; address < 0x1200; address += 512) { // 512B
               sdFile.read(sdBuffer, 512);
-              for (int x = 0; x < 512; x++){
+              for (int x = 0; x < 512; x++) {
                 write_wram_byte(base + address + x, sdBuffer[x]);
               }
             }
@@ -2745,17 +2745,17 @@ void writeRAM() {
             write_prg_byte(0xA001, 0xC0); // PRG RAM PROTECT - Enable reading/writing to RAM at $7200-$73FF
             for (word address = 0x1200; address < 0x1400; address += 512) { // 512B
               sdFile.read(sdBuffer, 512);
-              for (int x = 0; x < 512; x++){
+              for (int x = 0; x < 512; x++) {
                 write_wram_byte(base + address + x, sdBuffer[x]);
               }
             }
             write_prg_byte(0x8000, 0x6); // PRG RAM DISABLE
-          }    
+          }
           else { // MMC3 8K
             write_prg_byte(0xA001, 0x80); // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
             for (word address = 0; address < 0x2000; address += 512) { // 8K
               sdFile.read(sdBuffer, 512);
-              for (int x = 0; x < 512; x++){
+              for (int x = 0; x < 512; x++) {
                 write_prg_byte(base + address + x, sdBuffer[x]);
               }
             }
@@ -2821,7 +2821,7 @@ void writeRAM() {
             write_ram_byte(0xF800, 0x40); // PRG RAM WRITE ENABLE
             for (word address = 0; address < 0x2000; address += 512) { // 8K
               sdFile.read(sdBuffer, 512);
-              for (int x = 0; x < 512; x++){
+              for (int x = 0; x < 512; x++) {
                 write_prg_byte(base + address + x, sdBuffer[x]);
               }
             }
@@ -2834,7 +2834,7 @@ void writeRAM() {
           write_prg_byte(0x7EF9, 0xA3); // PRG RAM ENABLE 1
           for (word address = 0x1F00; address < 0x2000; address += 512) { // PRG RAM 1K ($7F00-$7FFF)
             sdFile.read(sdBuffer, 128);
-            for (int x = 0; x < 128; x++){
+            for (int x = 0; x < 128; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]);
             }
           }
@@ -3139,7 +3139,7 @@ void NESmaker_ID() { // Read Flash ID
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xF0); // Software ID Exit
-  if(strcmp(flashID, "BFB7") == 0) // SST 39SF040
+  if (strcmp(flashID, "BFB7") == 0) // SST 39SF040
     flashfound = 1;
 }
 

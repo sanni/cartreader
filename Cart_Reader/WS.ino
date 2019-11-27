@@ -70,14 +70,14 @@ void setup_WS()
   PORTG |= (1 << 5);
 
   display_Clear();
-  
+
   // unlock MMC
   if (!unlockMMC2003_WS())
     print_Error(F("Can't initial MMC"), true);
 
   if (getCartInfo_WS() != 0xea)
     print_Error(F("Rom header read error"), true);
-  
+
   showCartInfo_WS();
   mode = mode_WS;
 }
@@ -92,70 +92,70 @@ void wsMenu()
   switch (mainMenu)
   {
     case 0:
-    {
-      // Read Rom
-      sd.chdir("/");
-      readROM_WS(filePath, FILEPATH_LENGTH);
-      sd.chdir("/");
-      compareChecksum_WS(filePath);
-      break;
-    }
+      {
+        // Read Rom
+        sd.chdir("/");
+        readROM_WS(filePath, FILEPATH_LENGTH);
+        sd.chdir("/");
+        compareChecksum_WS(filePath);
+        break;
+      }
     case 1:
-    {
-      // Read Save
-      sd.chdir("/");
-      switch (saveType)
       {
-        case 0: println_Msg(F("No save for this game")); break;
-        case 1: readSRAM_WS(); break;
-        case 2: readEEPROM_WS(); break;
-        default: println_Msg(F("Unknow save type")); break;
+        // Read Save
+        sd.chdir("/");
+        switch (saveType)
+        {
+          case 0: println_Msg(F("No save for this game")); break;
+          case 1: readSRAM_WS(); break;
+          case 2: readEEPROM_WS(); break;
+          default: println_Msg(F("Unknow save type")); break;
+        }
+
+        break;
       }
-      
-      break;
-    }
     case 2:
-    {
-      // Write Save
-      sd.chdir("/");
-      switch (saveType)
       {
-        case 0: println_Msg(F("No save for this game")); break;
-        case 1:
+        // Write Save
+        sd.chdir("/");
+        switch (saveType)
         {
-          writeSRAM_WS();
-          verifySRAM_WS(); 
-          break;
+          case 0: println_Msg(F("No save for this game")); break;
+          case 1:
+            {
+              writeSRAM_WS();
+              verifySRAM_WS();
+              break;
+            }
+          case 2:
+            {
+              writeEEPROM_WS();
+              verifyEEPROM_WS();
+              break;
+            }
+          default: println_Msg(F("Unknow save type")); break;
         }
-        case 2:
-        {
-          writeEEPROM_WS();
-          verifyEEPROM_WS();
-          break;
-        }
-        default: println_Msg(F("Unknow save type")); break;
+
+        break;
       }
-      
-      break;
-    }
     case 4:
-    {
-      writeWitchOS_WS();
-      break;
-    }
+      {
+        writeWitchOS_WS();
+        break;
+      }
     default:
-    {
-      // reset
-      asm volatile ("  jmp 0");
-      break;
-    }
+      {
+        // reset
+        asm volatile ("  jmp 0");
+        break;
+      }
   }
-  
+
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));  
-  
+  println_Msg(F("Press Button..."));
+
   display_Update();
-  wait(); 
+  wait();
 }
 
 uint8_t getCartInfo_WS()
@@ -163,7 +163,7 @@ uint8_t getCartInfo_WS()
   dataIn_WS();
 
   for (uint32_t i = 0; i < 16; i += 2)
-    *((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
+    * ((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
 
   wsGameChecksum = *(uint16_t*)(sdBuffer + 14);
   wsWitch = false;
@@ -176,96 +176,96 @@ uint8_t getCartInfo_WS()
     // 256kbits sram
     case 0xe600:  // BAN007
     case 0x8eed:  // BANC16
-    {
-      sdBuffer[11] = 0x02;
-      break;
-    }
+      {
+        sdBuffer[11] = 0x02;
+        break;
+      }
     // games missing 'COLOR' flag
     case 0x26db:  // SQRC01
     case 0xbfdf:  // SUMC07
-    {
-      sdBuffer[7] |= 0x01;
-      break;
-    }
-    case 0x7f73:  // BAN030
-    {
-      // missing developerId and cartId
-      sdBuffer[6] = 0x01;
-      sdBuffer[8] = 0x30;
-      break;
-    }
-    case 0xeafd:  //BANC33
-    {
-      // enable GPIO and set to LOW
-      dataOut_WS();
-      writeByte_WSPort(0xcc, 0x03);
-      writeByte_WSPort(0xcd, 0x00);
-      break;
-    }
-    case 0x0000:
-    {
-      // developerId/cartId/checksum are all filled with 0x00 in witch based games
-      dataIn_WS();
-      if (readWord_WS(0xf0000) == 0x4c45 && readWord_WS(0xf0002) == 0x5349 && readWord_WS(0xf0004) == 0x0041)
       {
-        // check witch BIOS
-        if (readWord_WS(0xfff5e) == 0x006c && readWord_WS(0xfff60) == 0x5b1b)
-        {
-          // check flashchip
-          // should be a MBM29DL400TC
-          dataOut_WS();
-          writeWord_WS(0x80aaa, 0xaaaa);
-          writeWord_WS(0x80555, 0x5555);
-          writeWord_WS(0x80aaa, 0x9090);
-
-          dataIn_WS();
-          if (readWord_WS(0x80000) == 0x0004 && readWord_WS(0x80002) == 0x220c)
-            wsWitch = true;
-
-          dataOut_WS();
-          writeWord_WS(0x80000, 0xf0f0);
-          dataIn_WS();
-
-          // 7AC003
-          sdBuffer[6] = 0x7a;
-          sdBuffer[8] = 0x03;
-        }
-        // check service menu
-        else if (readWord_WS(0xfff22) == 0x006c && readWord_WS(0xfff24) == 0x5b1b)
-        {
-          if (readWord_WS(0x93246) == 0x4a2f && readWord_WS(0x93248) == 0x5353 && readWord_WS(0x9324a) == 0x2e32)
-          {
-            // jss2
-            sdBuffer[6] = 0xff; // WWGP
-            sdBuffer[8] = 0x1a; // 2001A
-            sdBuffer[7] = 0x01; // color only
-
-            if (readWord_WS(0x93e9c) == 0x4648 && readWord_WS(0x93e9e) == 0x0050)
-            {
-              // WWGP2001A3 -> HFP Version
-              sdBuffer[9] = 0x03;
-              wsGameChecksum = 0x4870;              
-            }
-            else
-            {
-              // TODO check other jss2 version
-            }          
-          }
-          else if (readWord_WS(0xe4260) == 0x6b64 && readWord_WS(0xe4262) == 0x696e)
-          {
-            // dknight
-            sdBuffer[6] = 0xff; // WWGP
-            sdBuffer[8] = 0x2b; // 2002B
-            sdBuffer[7] = 0x01; // color only
-            sdBuffer[9] = 0x00;
-            wsGameChecksum = 0x8b1c;
-          }
-        }
+        sdBuffer[7] |= 0x01;
+        break;
       }
-      break;
-    }
+    case 0x7f73:  // BAN030
+      {
+        // missing developerId and cartId
+        sdBuffer[6] = 0x01;
+        sdBuffer[8] = 0x30;
+        break;
+      }
+    case 0xeafd:  //BANC33
+      {
+        // enable GPIO and set to LOW
+        dataOut_WS();
+        writeByte_WSPort(0xcc, 0x03);
+        writeByte_WSPort(0xcd, 0x00);
+        break;
+      }
+    case 0x0000:
+      {
+        // developerId/cartId/checksum are all filled with 0x00 in witch based games
+        dataIn_WS();
+        if (readWord_WS(0xf0000) == 0x4c45 && readWord_WS(0xf0002) == 0x5349 && readWord_WS(0xf0004) == 0x0041)
+        {
+          // check witch BIOS
+          if (readWord_WS(0xfff5e) == 0x006c && readWord_WS(0xfff60) == 0x5b1b)
+          {
+            // check flashchip
+            // should be a MBM29DL400TC
+            dataOut_WS();
+            writeWord_WS(0x80aaa, 0xaaaa);
+            writeWord_WS(0x80555, 0x5555);
+            writeWord_WS(0x80aaa, 0x9090);
+
+            dataIn_WS();
+            if (readWord_WS(0x80000) == 0x0004 && readWord_WS(0x80002) == 0x220c)
+              wsWitch = true;
+
+            dataOut_WS();
+            writeWord_WS(0x80000, 0xf0f0);
+            dataIn_WS();
+
+            // 7AC003
+            sdBuffer[6] = 0x7a;
+            sdBuffer[8] = 0x03;
+          }
+          // check service menu
+          else if (readWord_WS(0xfff22) == 0x006c && readWord_WS(0xfff24) == 0x5b1b)
+          {
+            if (readWord_WS(0x93246) == 0x4a2f && readWord_WS(0x93248) == 0x5353 && readWord_WS(0x9324a) == 0x2e32)
+            {
+              // jss2
+              sdBuffer[6] = 0xff; // WWGP
+              sdBuffer[8] = 0x1a; // 2001A
+              sdBuffer[7] = 0x01; // color only
+
+              if (readWord_WS(0x93e9c) == 0x4648 && readWord_WS(0x93e9e) == 0x0050)
+              {
+                // WWGP2001A3 -> HFP Version
+                sdBuffer[9] = 0x03;
+                wsGameChecksum = 0x4870;
+              }
+              else
+              {
+                // TODO check other jss2 version
+              }
+            }
+            else if (readWord_WS(0xe4260) == 0x6b64 && readWord_WS(0xe4262) == 0x696e)
+            {
+              // dknight
+              sdBuffer[6] = 0xff; // WWGP
+              sdBuffer[8] = 0x2b; // 2002B
+              sdBuffer[7] = 0x01; // color only
+              sdBuffer[9] = 0x00;
+              wsGameChecksum = 0x8b1c;
+            }
+          }
+        }
+        break;
+      }
   }
-  
+
   romType = (sdBuffer[7] & 0x01); // wsc only = 1
   romVersion = sdBuffer[9];
   romSize = sdBuffer[10];
@@ -291,7 +291,7 @@ uint8_t getCartInfo_WS()
     case 0x09: cartSize = 131072 * 128; break;
     default: cartSize = 0; break;
   }
-  
+
   switch (sramSize)
   {
     case 0x00: saveType = 0; sramSize = 0; break;
@@ -317,7 +317,7 @@ void showCartInfo_WS()
   display_Clear();
 
   println_Msg(F("WS Cart Info"));
-  
+
   print_Msg(F("Game: "));
   println_Msg(romName);
 
@@ -344,8 +344,8 @@ void showCartInfo_WS()
 
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
-  
-  println_Msg(F("Press Button..."));  
+
+  println_Msg(F("Press Button..."));
   display_Update();
   wait();
 }
@@ -368,11 +368,11 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
     case 0x28: devName = PSTR("SQR"); break;
     case 0x31: devName = PSTR("VGD"); break;
     // TODO add more developer
-    
+
     // custom developerId
     case 0x7a: devName = PSTR("7AC"); break;  // witch
     case 0xff: devName = PSTR("WWGP"); break; // WWGP series (jss2, dknight)
-    
+
     // if not found, use id
     default:   snprintf(buf, length, "%02X", id); return;
   }
@@ -431,7 +431,7 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
         PORTB ^= (1 << 4);
 
       for (uint32_t w = 0; w < 512; w += 2)
-        *((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
+        * ((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
 
       myFile.write(sdBuffer, 512);
     }
@@ -474,8 +474,8 @@ void readSRAM_WS()
   uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
 
   if (bank_size > 0x10000)
-      bank_size = 0x10000;
-  
+    bank_size = 0x10000;
+
   uint16_t bank = 0;
 
   do
@@ -494,7 +494,7 @@ void readSRAM_WS()
       for (uint32_t w = 0; w < 512; w++)
         sdBuffer[w] = readByte_WS(0x10000 + addr + w);
 
-       myFile.write(sdBuffer, 512);
+      myFile.write(sdBuffer, 512);
     }
   } while (++bank < end_bank);
 
@@ -508,16 +508,16 @@ void verifySRAM_WS()
 {
   print_Msg(F("Verifying... "));
   display_Update();
-  
+
   if (myFile.open(filePath, O_READ))
   {
     uint32_t bank_size = (sramSize << 7);
     uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
     uint16_t bank = 0;
     uint32_t write_errors = 0;
-    
+
     if (bank_size > 0x10000)
-       bank_size = 0x10000;
+      bank_size = 0x10000;
 
     do
     {
@@ -578,8 +578,8 @@ void writeSRAM_WS()
     uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
 
     if (bank_size > 0x10000)
-        bank_size = 0x10000;
-  
+      bank_size = 0x10000;
+
     uint16_t bank = 0;
     dataOut_WS();
     do
@@ -636,7 +636,7 @@ void readEEPROM_WS()
 
   uint32_t eepromSize = (sramSize << 7);
   uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
-  
+
   for (uint32_t i = 0; i < eepromSize; i += bufSize)
   {
     for (uint32_t j = 0; j < bufSize; j += 2)
@@ -644,7 +644,7 @@ void readEEPROM_WS()
       // blink LED
       if ((j & 0x1f) == 0x00)
         PORTB ^= (1 << 4);
-      
+
       generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
 
       dataOut_WS();
@@ -673,13 +673,13 @@ void verifyEEPROM_WS()
 {
   print_Msg(F("Verifying... "));
   display_Update();
-    
+
   if (myFile.open(filePath, O_READ))
   {
     uint32_t write_errors = 0;
     uint32_t eepromSize = (sramSize << 7);
     uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
-    
+
     for (uint32_t i = 0; i < eepromSize; i += bufSize)
     {
       myFile.read(sdBuffer, bufSize);
@@ -689,7 +689,7 @@ void verifyEEPROM_WS()
         // blink LED
         if ((j & 0x1f) == 0x00)
           PORTB ^= (1 << 4);
-      
+
         generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
 
         dataOut_WS();
@@ -706,7 +706,7 @@ void verifyEEPROM_WS()
           write_errors++;
 
         if (readByte_WSPort(0xc5) != sdBuffer[j + 1])
-          write_errors++;        
+          write_errors++;
       }
     }
 
@@ -723,7 +723,7 @@ void verifyEEPROM_WS()
       print_Msg(write_errors);
       println_Msg(F(" bytes "));
       print_Error(F("did not verify."), false);
-    }    
+    }
   }
   else
   {
@@ -748,11 +748,11 @@ void writeEEPROM_WS()
   {
     uint32_t eepromSize = (sramSize << 7);
     uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
-    
+
     for (uint32_t i = 0; i < eepromSize; i += bufSize)
     {
       myFile.read(sdBuffer, bufSize);
-        
+
       for (uint32_t j = 0; j < bufSize; j += 2)
       {
         // blink LED
@@ -760,7 +760,7 @@ void writeEEPROM_WS()
           PORTB ^= (1 << 4);
 
         generateEepromInstruction_WS(wsEepromShiftReg, 0x1, ((i + j) >> 1));
-        
+
         dataOut_WS();
         writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
         writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
@@ -772,7 +772,9 @@ void writeEEPROM_WS()
         pulseCLK_WS(1 + 32 + 3);
 
         dataIn_WS();
-        do { pulseCLK_WS(128); }
+        do {
+          pulseCLK_WS(128);
+        }
         while ((readByte_WSPort(0xc8) & 0x02) == 0x00);
       }
     }
@@ -921,7 +923,7 @@ boolean compareChecksum_WS(const char *wsFilePath)
 {
   if (wsFilePath == NULL)
     return 0;
-  
+
   println_Msg(F("Calculating Checksum"));
   display_Update();
 
@@ -940,7 +942,7 @@ boolean compareChecksum_WS(const char *wsFilePath)
     myFile.seekCur(myFile.fileSize() - 131072);
     calLength = 131072 - 512;
   }
-  
+
   for (uint32_t i = 0; i < calLength; i += 512)
   {
     myFile.read(sdBuffer, 512);
@@ -960,7 +962,7 @@ boolean compareChecksum_WS(const char *wsFilePath)
   calLength = wsGameChecksum;
 
   // don't know why formating string "%04X(%04X)" always output "xxxx(0000)"
-  // so split into two snprintf 
+  // so split into two snprintf
   char result[11];
   snprintf(result, 5, "%04X", calLength);
   snprintf(result + 4, 11 - 4, "(%04X)", checksum);
@@ -998,7 +1000,7 @@ void writeByte_WSPort(uint8_t port, uint8_t data)
   // switch WE(PH5) to HIGH
   PORTH |= (1 << 5);
   NOP; NOP;
-  
+
   // switch CART(PH3), MMC(PH4) to HIGH
   PORTH |= ((1 << 3) | (1 << 4));
 }
@@ -1019,7 +1021,7 @@ uint8_t readByte_WSPort(uint8_t port)
 
   // switch OE(PH6) to HIGH
   PORTH |= (1 << 6);
-  
+
   // switch CART(PH3), MMC(PH4) to HIGH
   PORTH |= ((1 << 3) | (1 << 4));
 
@@ -1034,7 +1036,7 @@ void writeWord_WS(uint32_t addr, uint16_t data)
 
   PORTC = data & 0xff;
   PORTA = (data >> 8);
-  
+
   // switch CART(PH3) and WE(PH5) to LOW
   PORTH &= ~((1 << 3) | (1 << 5));
   NOP;
@@ -1049,7 +1051,7 @@ uint16_t readWord_WS(uint32_t addr)
   PORTF = addr & 0xff;
   PORTK = (addr >> 8) & 0xff;
   PORTL = (addr >> 16) & 0x0f;
-  
+
   // switch CART(PH3) and OE(PH6) to LOW
   PORTH &= ~((1 << 3) | (1 << 6));
   NOP; NOP; NOP;
@@ -1059,7 +1061,7 @@ uint16_t readWord_WS(uint32_t addr)
   // switch CART(PH3) and OE(PH6) to HIGH
   PORTH |= (1 << 3) | (1 << 6);
 
-  return ret;  
+  return ret;
 }
 
 void writeByte_WS(uint32_t addr, uint8_t data)
@@ -1069,7 +1071,7 @@ void writeByte_WS(uint32_t addr, uint8_t data)
   PORTL = (addr >> 16) & 0x0f;
 
   PORTC = data;
-  
+
   // switch CART(PH3) and WE(PH5) to LOW
   PORTH &= ~((1 << 3) | (1 << 5));
   NOP;
@@ -1084,7 +1086,7 @@ uint8_t readByte_WS(uint32_t addr)
   PORTF = addr & 0xff;
   PORTK = (addr >> 8) & 0xff;
   PORTL = (addr >> 16) & 0x0f;
-  
+
   // switch CART(PH3) and OE(PH6) to LOW
   PORTH &= ~((1 << 3) | (1 << 6));
   NOP; NOP; NOP;
@@ -1094,13 +1096,13 @@ uint8_t readByte_WS(uint32_t addr)
   // switch CART(PH3) and OE(PH6) to HIGH
   PORTH |= (1 << 3) | (1 << 6);
 
-  return ret;  
+  return ret;
 }
 
 void unprotectEEPROM()
 {
   generateEepromInstruction_WS(wsEepromShiftReg, 0x0, 0x3);
-  
+
   dataOut_WS();
   writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
   writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
@@ -1125,7 +1127,7 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
     // 2bits ext cmd (from addr)
     *ptr <<= 2;
     *ptr |= (addr & 0x0003);
-    *ptr <<= (addr_bits - 2);    
+    *ptr <<= (addr_bits - 2);
   }
   else
   {
@@ -1135,7 +1137,7 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
     // address bits
     *ptr <<= addr_bits;
     *ptr |= (addr & ((1 << addr_bits) - 1));
-  }  
+  }
 }
 
 // 2003 MMC need to be unlock,
@@ -1149,7 +1151,7 @@ boolean unlockMMC2003_WS()
   PORTH &= ~(1 << 0);
   PORTE &= ~(1 << 3);
   PORTH |= ((1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
-  
+
   // switch RST(PH0) to HIGH
   PORTH |= (1 << 0);
 
@@ -1190,7 +1192,7 @@ boolean unlockMMC2003_WS()
 void pulseCLK_WS(uint8_t count)
 {
   register uint8_t tic;
-  
+
   // about 384KHz, 50% duty cycle
   asm volatile
   ("L0_%=:\n\t"

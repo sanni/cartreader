@@ -283,7 +283,7 @@ void mdCartMenu() {
         print_Error(F("Cart has no EEPROM"), false);
       }
       break;
-      
+
     case 5:
       // For multi-game carts
       // Set reset pin to output (PH0)

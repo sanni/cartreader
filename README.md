@@ -12,7 +12,8 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Easy to modify open-source code, write your own extensions and share them with others      
 
 #### Supported Systems:    
-- Reads NES and Famicom cartridges    
+- Reads NES, Famicom and Family Basic cartridges including save    
+- Supports Mapper 30/NESmaker and flashes INL NM30 boards        
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
 - Reads and writes SNES Satellaview 8M Memory packs    
