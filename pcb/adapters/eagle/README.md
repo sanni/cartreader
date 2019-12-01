@@ -1,4 +1,4 @@
-With these files you can easily make your own adapters.    
+With these Eagle files you can easily make your own PCB variants.    
 For best compatibility be sure to use the win32 version of Eagle 7.6.0 downloaded from [here](http://eagle.autodesk.com/eagle/software-versions/2).    
 All PCBs were autorouted with FreeRouting for which you need the [Java 8 RE](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).    
 
