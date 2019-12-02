@@ -1,3 +1,11 @@
+#### Print settings for Slic3r Prusa Edition     
+Select the "0.20mm NORMAL" setting that comes with Slic3r and change the following parameters:    
+ensure_vertical_shell_thickness = 0     
+fill_density = 5%    
+first_layer_height = 0.3    
+perimeters = 1    
+thin_walls = 1    
+
 # Combined STL file with all parts      
 
 ![image](https://dl.dropboxusercontent.com/s/4remnau0kni660i/combined_no_tabs.png?dl=1)   
@@ -28,11 +36,3 @@
 ![image](https://dl.dropboxusercontent.com/s/lzgrrkm5yfflll9/v17_case2.png?dl=1) 
 
 #### The rest of the STL files are alternative designs in case you use the battery add-on.    
-
-#### Print settings for Slic3r Prusa Edition     
-Select the "0.20mm NORMAL" setting that comes with Slic3r and change the following parameters:    
-ensure_vertical_shell_thickness = 0     
-fill_density = 5%    
-first_layer_height = 0.3    
-perimeters = 1    
-thin_walls = 1    
