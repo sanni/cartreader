@@ -1,4 +1,4 @@
-#### Print settings for Slic3r Prusa Edition     
+# Print settings for Slic3r Prusa Edition     
 Select the "0.20mm NORMAL" setting that comes with Slic3r and change the following parameters:    
 ensure_vertical_shell_thickness = 0     
 fill_density = 5%    
