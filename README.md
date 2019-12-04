@@ -1,3 +1,5 @@
+![image](https://dl.dropboxusercontent.com/s/w39fnwop0yypt8a/free.png?dl=1)  
+
 # DIY Cartridge Reader for Arduino Mega 2560
 This Cart Reader is aimed at people that either already have experience with Arduino or always wanted to buy an Arduino and are searching for an interesting project to accomplish. All the Arduino source code along with the PCB files and detailed build guides can be found in this github. Happy making. 🔧🔨😊
 
