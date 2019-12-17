@@ -1,6 +1,7 @@
 //******************************************
 // SNES Satellaview 8M Memory pack code by tamanegi_taro
 // Revision 1.0.0 October 22nd 2018
+// Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
 
 /******************************************
@@ -33,88 +34,69 @@ void eraseAll_SV(void);
 // SV flash menu items
 static const char svFlashMenuItem1[] PROGMEM = "Read Memory Pack";
 static const char svFlashMenuItem2[] PROGMEM = "Write Memory Pack";
-static const char svFlashMenuItem3[] PROGMEM = "Back";
-static const char* const menuOptionsSVFlash[] PROGMEM = {svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3};
+static const char svFlashMenuItem3[] PROGMEM = "Read BS-X Sram";
+static const char svFlashMenuItem4[] PROGMEM = "Write BS-X Sram";
+static const char svFlashMenuItem5[] PROGMEM = "Back";
+static const char* const menuOptionsSVFlash[] PROGMEM = {svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, svFlashMenuItem5};
 
 
 void svMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSVFlash, 3);
-  mainMenu = question_box(F("Satellaview 8M Memory"), menuOptions, 3, 0);
+  convertPgm(menuOptionsSVFlash, 5);
+  mainMenu = question_box(F("Satellaview 8M Memory"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
   {
     // Read memory pack
     case 0:
+      // Change working dir to root
+      sd.chdir("/");
       readROM_SV();
       break;
 
     // Write memory pack
     case 1:
+      // Change working dir to root
+      sd.chdir("/");
       writeROM_SV();
       break;
 
-    // Reset
+    // Read BS-X Sram
     case 2:
+      // Change working dir to root
+      sd.chdir("/");
+      readSRAM_SV();
+      break;
+
+    // Write BS-X Sram
+    case 3:
+      // Change working dir to root
+      sd.chdir("/");
+      writeSRAM_SV();
+      unsigned long wrErrors;
+      wrErrors = verifySRAM_SV();
+      if (wrErrors == 0) {
+        println_Msg(F("Verified OK"));
+        display_Update();
+      }
+      else {
+        print_Msg(F("Error: "));
+        print_Msg(wrErrors);
+        println_Msg(F(" bytes "));
+        print_Error(F("did not verify."), false);
+      }
+      wait();
+      break;
+
+    // Reset
+    case 4:
       resetArduino();
       break;
   }
 }
-
-// Read memory pack to SD card
-void readROM_SV() {
-  // Set control
-  dataIn();
-  controlIn_SNES();
-
-  // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "MEMPACK.sfc");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/ROM/%s/%d", "MEMPACK", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  //clear the screen
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
-  }
-
-  // Read Banks
-  for (int currBank = 0x40; currBank < 0x50; currBank++) {
-    // Dump the bytes to SD 512B at a time
-    for (long currByte = 0; currByte < 65536; currByte += 512) {
-      draw_progressbar((currBank - 0x40) * 0x10000 + currByte, 0x100000);
-      for (int c = 0; c < 512; c++) {
-        sdBuffer[c] = readBank_SNES(currBank, currByte + c);
-      }
-      myFile.write(sdBuffer, 512);
-    }
-  }
-  draw_progressbar(0x100000, 0x100000); //Finish drawing progress bar
-
-  // Close the file:
-  myFile.close();
-  println_Msg(F("Read pack completed"));
-  display_Update();
-  wait();
-}
-
 
 /******************************************
    Setup
@@ -196,13 +178,245 @@ void setup_SV() {
   delay(1000);
 }
 
+/******************************************
+   Low level functions
+ *****************************************/
+// Write one byte of data to a location specified by bank and address, 00:0000
+void writeBank_SV(byte myBank, word myAddress, byte myData) {
+  PORTL = myBank;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTC = myData;
 
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Wait till output is stable
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch WR(PH5) to LOW
+  PORTH &= ~(1 << 5);
+
+  // Leave WR low for at least 60ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch WR(PH5) to HIGH
+  PORTH |= (1 << 5);
+
+  // Leave WR high for at least 50ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+// Read one byte of data from a location specified by bank and address, 00:0000
+byte readBank_SV(byte myBank, word myAddress) {
+  PORTL = myBank;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  byte tempByte = PINC;
+  return tempByte;
+}
+
+/******************************************
+   SatellaView BS-X Sram functions
+ *****************************************/
+void readSRAM_SV () {
+  // set control
+  controlIn_SNES();
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, "BSX.srm");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "SNES/SAVE/BSX/%d", foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+  int sramBanks = 0;
+
+  readBank_SV(0x10, 0); // Preconfigure to fix corrupt 1st byte
+  // Sram size
+  long lastByte = (long(sramSize) * 0x80);
+
+  //startBank = 0x10; endBank = 0x17; CS low
+  for (byte BSBank = 0x10; BSBank < 0x18; BSBank++) {
+    //startAddr = 0x5000
+    for (long currByte = 0x5000; currByte < 0x6000; currByte += 512) {
+      for (unsigned long c = 0; c < 512; c++) {
+        sdBuffer[c] = readBank_SV(BSBank, currByte + c);
+      }
+      myFile.write(sdBuffer, 512);
+    }
+  }
+  // Close the file:
+  myFile.close();
+
+  // Signal end of process
+  display_Clear();
+  print_Msg(F("Saved to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+  wait();
+}
+
+void writeSRAM_SV() {
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select srm file"));
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  //clear the screen
+  display_Clear();
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Set pins to output
+    dataOut();
+
+    // Set RST RD WR to High and CS to Low
+    controlOut_SNES();
+
+    long lastByte = (long(sramSize) * 0x80);
+
+    println_Msg(F("Writing sram..."));
+    display_Update();
+
+    // Write to sram bank
+    for (byte currBank = 0x10; currBank < 0x18; currBank++) {
+      //startAddr = 0x5000
+      for (long currByte = 0x5000; currByte < 0x6000; currByte += 512) {
+        myFile.read(sdBuffer, 512);
+        for (unsigned long c = 0; c < 512; c++) {
+          //startBank = 0x10; CS low
+          writeBank_SV(currBank, currByte + c, sdBuffer[c]);
+        }
+      }
+      draw_progressbar(((currBank - 0x10) * 0x1000), 32768);
+    }
+    // Finish progressbar
+    draw_progressbar(32768, 32768);
+    delay(100);
+    // Set pins to input
+    dataIn();
+
+    // Close the file:
+    myFile.close();
+    println_Msg("");
+    println_Msg(F("SRAM writing finished"));
+    display_Update();
+  }
+  else {
+    print_Error(F("File doesnt exist"), false);
+  }
+}
+
+// Check if the SRAM was written without any error
+unsigned long verifySRAM_SV() {
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Variable for errors
+    writeErrors = 0;
+
+    // Set control
+    controlIn_SNES();
+
+    int sramBanks = 0;
+    // Sram size
+    long lastByte = (long(sramSize) * 0x80);
+
+    //startBank = 0x10; endBank = 0x17; CS low
+    for (byte BSBank = 0x10; BSBank < 0x18; BSBank++) {
+      //startAddr = 0x5000
+      for (long currByte = 0x5000; currByte < 0x6000; currByte += 512) {
+        //fill sdBuffer
+        myFile.read(sdBuffer, 512);
+        for (unsigned long c = 0; c < 512; c++) {
+          if ((readBank_SV(BSBank, currByte + c)) != sdBuffer[c]) {
+            writeErrors++;
+          }
+        }
+      }
+    }
+    // Close the file:
+    myFile.close();
+    return writeErrors;
+  }
+  else {
+    print_Error(F("Can't open file"), false);
+  }
+}
+
+/******************************************
+   SatellaView 8M Memory Pack functions
+ *****************************************/
+// Read memory pack to SD card
+void readROM_SV() {
+  // Set control
+  dataIn();
+  controlIn_SNES();
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, "MEMPACK.bs");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "SNES/ROM/%s/%d", "MEMPACK", foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  //clear the screen
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't create file on SD"), true);
+  }
+
+  // Read Banks
+  for (int currBank = 0x40; currBank < 0x50; currBank++) {
+    // Dump the bytes to SD 512B at a time
+    for (long currByte = 0; currByte < 65536; currByte += 512) {
+      draw_progressbar((currBank - 0x40) * 0x10000 + currByte, 0x100000);
+      for (int c = 0; c < 512; c++) {
+        sdBuffer[c] = readBank_SV(currBank, currByte + c);
+      }
+      myFile.write(sdBuffer, 512);
+    }
+  }
+  draw_progressbar(0x100000, 0x100000); //Finish drawing progress bar
+
+  // Close the file:
+  myFile.close();
+  println_Msg(F("Read pack completed"));
+  display_Update();
+  wait();
+}
 
 void writeROM_SV (void) {
   // Get Checksum as string to make sure that BS-X cart is inserted
   dataIn();
   controlIn_SNES();
-  sprintf(checksumStr, "%02X%02X", readBank_SNES(0, 65503), readBank_SNES(0, 65502));
+  sprintf(checksumStr, "%02X%02X", readBank_SV(0, 65503), readBank_SV(0, 65502));
 
   //if CRC is not 8B86, BS-X cart is not inserted. Display error and reset
   if (strcmp("8B86", checksumStr) != 0)
@@ -214,7 +428,7 @@ void writeROM_SV (void) {
   //Display file Browser and wait user to select a file. Size must be 1MB.
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select sfc file"));
+  fileBrowser(F("Select BS file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
   display_Clear();
@@ -234,8 +448,8 @@ void writeROM_SV (void) {
     //Disable 8M memory pack write protection
     dataOut();
     controlOut_SNES();
-    writeBank_SNES(0x0C, 0x5000, 0x80); //Modify write enable register
-    writeBank_SNES(0x0E, 0x5000, 0x80); //Commit register modification
+    writeBank_SV(0x0C, 0x5000, 0x80); //Modify write enable register
+    writeBank_SV(0x0E, 0x5000, 0x80); //Commit register modification
 
     //Erase memory pack
     println_Msg(F("Erasing pack..."));
@@ -251,7 +465,7 @@ void writeROM_SV (void) {
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        if (0xFF != readBank_SNES(currBank, currByte))
+        if (0xFF != readBank_SV(currBank, currByte))
         {
           println_Msg(F(""));
           println_Msg(F("Erase failed"));
@@ -273,16 +487,16 @@ void writeROM_SV (void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
 
-        writeBank_SNES(0xC0, 0x0000, 0x10); //Program Byte
-        writeBank_SNES(currBank, currByte, myFile.read());
-        writeBank_SNES(0xC0, 0x0000, 0x70); //Status Mode
+        writeBank_SV(0xC0, 0x0000, 0x10); //Program Byte
+        writeBank_SV(currBank, currByte, myFile.read());
+        writeBank_SV(0xC0, 0x0000, 0x70); //Status Mode
         writeCheck_SV();
       }
     }
 
-    writeBank_SNES(0xC0, 0x0000, 0x70); //Status Mode
+    writeBank_SV(0xC0, 0x0000, 0x70); //Status Mode
     writeCheck_SV();
-    writeBank_SNES(0xC0, 0x0000, 0xFF); //Terminate write
+    writeBank_SV(0xC0, 0x0000, 0xFF); //Terminate write
     draw_progressbar(0x100000, 0x100000);
 
 
@@ -295,7 +509,7 @@ void writeROM_SV (void) {
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        if (myFile.read() != readBank_SNES(currBank, currByte))
+        if (myFile.read() != readBank_SV(currBank, currByte))
         {
           println_Msg(F(""));
           println_Msg(F("Verify failed"));
@@ -326,7 +540,7 @@ void eraseCheck_SV(void) {
   controlIn_SNES();
 
   // Read register
-  ret = readBank_SNES(0xC0, 0x0004);
+  ret = readBank_SV(0xC0, 0x0004);
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
@@ -340,7 +554,7 @@ void eraseCheck_SV(void) {
     // Leave CE low for at least 50ns
     __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
     // Read register
-    ret = readBank_SNES(0xC0, 0x0004);
+    ret = readBank_SV(0xC0, 0x0004);
   }
   // Switch to write
   dataOut();
@@ -353,7 +567,7 @@ void supplyCheck_SV(void) {
   controlIn_SNES();
 
   // Read register
-  ret = readBank_SNES(0xC0, 0x0004);
+  ret = readBank_SV(0xC0, 0x0004);
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
@@ -367,7 +581,7 @@ void supplyCheck_SV(void) {
     // Leave CE low for at least 50ns
     __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
     // Read register
-    ret = readBank_SNES(0xC0, 0x0004);
+    ret = readBank_SV(0xC0, 0x0004);
   }
   // Switch to write
   dataOut();
@@ -380,7 +594,7 @@ void writeCheck_SV(void) {
   controlIn_SNES();
 
   // Read register
-  ret = readBank_SNES(0xC0, 0x0000);
+  ret = readBank_SV(0xC0, 0x0000);
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
@@ -394,7 +608,7 @@ void writeCheck_SV(void) {
     // Leave CE low for at least 50ns
     __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
     // Read register
-    ret = readBank_SNES(0xC0, 0x0000);
+    ret = readBank_SV(0xC0, 0x0000);
   }
   // Switch to write
   dataOut();
@@ -409,7 +623,7 @@ void detectCheck_SV(void) {
   controlIn_SNES();
 
   // Read register
-  ret = readBank_SNES(0xC0, 0x0002);
+  ret = readBank_SV(0xC0, 0x0002);
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
@@ -429,7 +643,7 @@ void detectCheck_SV(void) {
     // Leave CE low for at least 50ns
     __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
     // Read register
-    ret = readBank_SNES(0xC0, 0x0002);
+    ret = readBank_SV(0xC0, 0x0002);
   }
   // Switch to write
   dataOut();
@@ -441,14 +655,14 @@ void eraseAll_SV(void)
 {
   dataOut();
   controlOut_SNES();
-  writeBank_SNES(0xC0, 0x0000, 0x50); //Clear Status Registers
-  writeBank_SNES(0xC0, 0x0000, 0x71); //Status Mode
+  writeBank_SV(0xC0, 0x0000, 0x50); //Clear Status Registers
+  writeBank_SV(0xC0, 0x0000, 0x71); //Status Mode
   supplyCheck_SV();
-  writeBank_SNES(0xC0, 0x0000, 0xA7); //Chip Erase
-  writeBank_SNES(0xC0, 0x0000, 0xD0); //Confirm
-  writeBank_SNES(0xC0, 0x0000, 0x71); //Status Mode
+  writeBank_SV(0xC0, 0x0000, 0xA7); //Chip Erase
+  writeBank_SV(0xC0, 0x0000, 0xD0); //Confirm
+  writeBank_SV(0xC0, 0x0000, 0x71); //Status Mode
   eraseCheck_SV();
-  writeBank_SNES(0xC0, 0x0000, 0xFF); //Teriminate
+  writeBank_SV(0xC0, 0x0000, 0xFF); //Teriminate
 }
 
 //******************************************
