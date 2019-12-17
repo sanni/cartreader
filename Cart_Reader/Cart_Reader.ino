@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             27.11.2019
-   Version:          4.2
+   Date:             17.12.2019
+   Version:          4.3
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -16,7 +16,7 @@
    MichlK - ROM-Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video-Game-Shield menu
-   skaman - SNES enhancements, SA1 sram support, GB flash fix, MD improvements, Famicom dumper
+   skaman - SNES enhancements, SA1/BSX sram support, GB flash fix, MD improvements, Famicom dumper
    nocash - Nintendo Power and GBA Eeprom commands and lots of other info
    crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
@@ -43,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "4.2";
+char ver[5] = "4.3";
 
 /******************************************
    Options

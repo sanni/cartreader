@@ -29,7 +29,7 @@ byte cx4Map = 0;
 // SNES/Nintendo Power SF Memory start menu
 static const char snsMenuItem1[] PROGMEM = "Super Nintendo";
 static const char snsMenuItem2[] PROGMEM = "NPower SF Memory";
-static const char snsMenuItem3[] PROGMEM = "Satellaview";
+static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "HiROM repro";
 static const char snsMenuItem5[] PROGMEM = "LoROM repro";
 static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5};
