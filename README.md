@@ -1,4 +1,4 @@
-![image](https://dl.dropboxusercontent.com/s/w39fnwop0yypt8a/free.png?dl=1)  
+![image](https://dl.dropboxusercontent.com/s/w39fnwop0yypt8a/free.png?dl=1)   ![image](https://dl.dropboxusercontent.com/s/94j412n2inh681p/c3378c2cb507ebb.pn?dl=1)
 
 # DIY Cartridge Reader for Arduino Mega 2560
 This Cart Reader is aimed at people that either already have experience with Arduino or always wanted to buy an Arduino and are searching for an interesting project to accomplish. All the Arduino source code along with the PCB files and detailed build guides can be found in this github. Happy making. 🔧🔨😊
@@ -18,7 +18,7 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Supports Mapper 30/NESmaker and flashes INL NM30 boards        
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
-- Reads and writes SNES Satellaview 8M Memory packs    
+- Reads and writes SNES Satellaview 8M Memory packs (BS-X cartridge and Adafruit Clock Generator needed)   
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
 - Reflashes some Chinese or custom-made SNES repros with AM29F032, MBM29F033 or MX29LV320 flashroms     
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Proto carts are not supported yet  
