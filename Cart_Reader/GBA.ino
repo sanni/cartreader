@@ -2486,7 +2486,8 @@ void flashRepro_GBA() {
         println_Msg(F("Intel PC28F256M29"));
       }
       else {
-        println_Msg(romType);
+        print_Msg(F("romType: 0x"));
+        println_Msg(romType, HEX);
         print_Error(F("Unknown manufacturer"), true);
       }
     }
