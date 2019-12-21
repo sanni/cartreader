@@ -2485,6 +2485,9 @@ void flashRepro_GBA() {
       else if ((romType == 0x89)) {
         println_Msg(F("Intel PC28F256M29"));
       }
+      else if ((romType == 0x20)) {
+        println_Msg(F("ST M29W128GH"));
+      }
       else {
         print_Msg(F("romType: 0x"));
         println_Msg(romType, HEX);
@@ -2547,7 +2550,7 @@ void flashRepro_GBA() {
         //else {
         println_Msg(F("Erasing..."));
         display_Update();
-        if ((romType == 0xC2) || (romType == 0x89)) {
+        if ((romType == 0xC2) || (romType == 0x89) || (romType == 0x20)) {
           //MX29GL128E
           //PC28F256M29 (0x89)
           sectorEraseMX29GL128E_GBA();
@@ -2573,7 +2576,7 @@ void flashRepro_GBA() {
         writeIntel4000_GBA();
       }
       else if (strcmp(flashid, "227E") == 0) {
-        if ((romType == 0xC2) || (romType == 0x89)) {
+        if ((romType == 0xC2) || (romType == 0x89) || (romType == 0x20)) {
           //MX29GL128E (0xC2)
           //PC28F256M29 (0x89)
           writeMX29GL128E_GBA();
