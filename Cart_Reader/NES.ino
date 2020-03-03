@@ -2101,17 +2101,17 @@ void readCHR() {
         case 23: // 128K
           // Detect VRC4e Carts - read PRG 0x1FFF6 (DATE)
           // Boku Dracula-kun = 890810, Tiny Toon = 910809
+          // Crisis Force = 910701, Parodius Da! = 900916
           write_prg_byte(0x8000, 15);
           prgchk0 = read_prg_byte(0x9FF6);
-          prgchk1 = read_prg_byte(0x9FF7);
-          if ((prgchk0 == 0x30) && (prgchk1 == 0x38)) { // Check for "08" in middle of date
+          if (prgchk0 == 0x30) { // Check for "0" in middle of date
             vrc4e = true; // VRC4e Cart
           }
           banks = int_pow(2, chrsize) * 4;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0xF); // CHR Bank Lower 4 bits
             if (vrc4e == true)
-              write_prg_byte(0xB004, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4e (Boku Dracula-kun/Tiny Toon)
+              write_prg_byte(0xB004, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4e
             else
               write_prg_byte(0xB001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC2b/VRC4f
             for (word address = 0x0; address < 0x400; address += 512) {
