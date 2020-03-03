@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             21.12.2019
-   Version:          4.4
+   Date:             03.03.2020
+   Version:          4.5
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -38,12 +38,12 @@
    rama - code speedup & improvements
    Gens-gs - Megadrive checksum
    Modman - N64 checksum comparison fix
-   splash5 - EMS GB Smart cart support
+   splash5 - EMS GB Smart cart support, Wonderswan module
 
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "4.4";
+char ver[5] = "4.5";
 
 /******************************************
    Options
