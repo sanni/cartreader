@@ -362,6 +362,8 @@ void setup_Snes() {
 
   // Adafruit Clock Generator
   clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  // Use multimeter with frequency counter (probe between SNES Pin 56 and GND) and adjust correction until you measure exactly 3.072Mhz
+  //clockgen.set_correction(-200000, SI5351_PLL_INPUT_XO);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
   clockgen.set_freq(2147727200ULL, SI5351_CLK0);
