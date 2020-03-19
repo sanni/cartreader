@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             17.03.2020
-   Version:          4.6
+   Date:             19.03.2020
+   Version:          4.7
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -43,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "4.6";
+char ver[5] = "4.7";
 
 /******************************************
    Options
@@ -57,7 +57,7 @@ char ver[5] = "4.6";
 #define enable_OLED
 
 // Skip OLED start-up animation
-#define fast_start
+//#define fast_start
 
 // Enable the second button
 #define enable_Button2
