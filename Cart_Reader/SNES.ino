@@ -361,29 +361,36 @@ void setup_Snes() {
   //PORTJ &= ~(1 << 0);
 
   // Adafruit Clock Generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
-  // Use multimeter with frequency counter (probe between SNES Pin 56 and GND) and adjust correction until you measure exactly 3.072Mhz
-  //clockgen.set_correction(-200000, SI5351_PLL_INPUT_XO);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
-  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
-  clockgen.set_freq(357954500ULL, SI5351_CLK1);
-  clockgen.set_freq(307200000ULL, SI5351_CLK2);
+  // last number is the clock correction factor which is custom for each clock generator
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, -16000);
 
-  // start outputting master clock, CIC clock
+  // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
+  clockgen.set_freq(100000000ULL, SI5351_CLK1); // CPU
+  clockgen.set_freq(100000000ULL, SI5351_CLK2); // CIC
+  clockgen.set_freq(400000000ULL, SI5351_CLK0); // EXT
+
+  // Start outputting master clock, CIC clock
   clockgen.output_enable(SI5351_CLK1, 0); // no CPU clock yet; seems to affect SA-1 success a lot
   clockgen.output_enable(SI5351_CLK2, 1); // CIC clock (should go before master clock)
   clockgen.output_enable(SI5351_CLK0, 1); // master clock
-  delay(8);
+
+  // Wait for clock generator
+  clockgen.update_status();
+  delay(500);
 
   // Start CIC by outputting a low signal to cicrstPin(PG1)
   PORTG &= ~(1 << 1);
 
   // Wait for CIC reset
-  delay(320);
+  delay(500);
 
   // Print all the info
   getCartInfo_SNES();
+
+  //Set clocks to standard or else SA-1 sram writing will fail
+  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
+  clockgen.set_freq(357954500ULL, SI5351_CLK1);
+  clockgen.set_freq(307200000ULL, SI5351_CLK2);
 }
 
 /******************************************
@@ -733,15 +740,31 @@ void checkAltConf() {
   myFile.close();
 }
 
-// Read header information
+// Read header
 boolean checkcart_SNES() {
   // set control to read
   dataIn();
 
-  // Get Checksum as string
-  sprintf(checksumStr, "%02X%02X", readBank_SNES(0, 65503), readBank_SNES(0, 65502));
+  uint16_t c = 0;
+  uint16_t headerStart = 0xFFC0;
+  uint16_t currByte = headerStart;
+  byte snesHeader[64] = { 0 };
+  PORTL = 0;
+  while (c < 64) {
+    PORTF = (currByte & 0xFF);
+    PORTK = ((currByte >> 8) & 0xFF);
 
-  romType = readBank_SNES(0, 0xFFD5);
+    NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP;
+
+    snesHeader[c] = PINC;
+    c++;
+    currByte++;
+  }
+
+  // Get Checksum as string
+  sprintf(checksumStr, "%02X%02X", snesHeader[0xFFDF - headerStart], snesHeader[0xFFDE - headerStart]);
+
+  romType = snesHeader[0xFFD5 - headerStart];
   if ((romType >> 5) != 1) {  // Detect invalid romType byte due to too long ROM name (22 chars)
     romType = LO; // LoROM   // Krusty's Super Fun House (U) 1.0 & Contra 3 (U)
   }
@@ -756,10 +779,10 @@ boolean checkcart_SNES() {
   }
 
   // Check RomSpeed
-  romSpeed = (readBank_SNES(0, 65493) >> 4);
+  romSpeed = (snesHeader[0xFFD5 - headerStart] >> 4);
 
   // Check RomChips
-  romChips = readBank_SNES(0, 65494);
+  romChips = snesHeader[0xFFD6 - headerStart];
 
   if (romChips == 69) {
     romSize = 48;
@@ -767,7 +790,7 @@ boolean checkcart_SNES() {
     romType = HI;
   }
   else if (romChips == 243) {
-    cx4Type = readBank_SNES(0, 65481) & 0xF;
+    cx4Type = snesHeader[0xFFC9 - headerStart] & 0xF;
     if (cx4Type == 2) { // X2
       romSize = 12;
       numBanks = 48;
@@ -787,7 +810,7 @@ boolean checkcart_SNES() {
   }
   else {
     // Check RomSize
-    byte romSizeExp = readBank_SNES(0, 65495) - 7;
+    byte romSizeExp = snesHeader[0xFFD7 - headerStart] - 7;
     romSize = 1;
     while (romSizeExp--)
       romSize *= 2;
@@ -806,8 +829,8 @@ boolean checkcart_SNES() {
   // Get name
   byte myByte = 0;
   byte myLength = 0;
-  for (unsigned int i = 65472; i < 65492; i++) {
-    myByte = readBank_SNES(0, i);
+  for (unsigned int i = 0xFFC0; i < 0xFFD4; i++) {
+    myByte = snesHeader[i - headerStart];
     if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
       romName[myLength] = char(myByte);
       myLength++;
@@ -822,7 +845,7 @@ boolean checkcart_SNES() {
     romName[3] = 'C';
     romName[4] = '-';
     for (unsigned int i = 0; i < 4; i++) {
-      myByte = readBank_SNES(0, 0xFFB2 + i);
+      myByte = snesHeader[0xFFB2 + i - headerStart];
       if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 4) {
         romName[myLength + 5] = char(myByte);
         myLength++;
@@ -844,8 +867,8 @@ boolean checkcart_SNES() {
   byte sramSizeExp;
   if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {
     // SuperFX
-    if (readBank_SNES(0, 0x7FDA) == 0x33) {
-      sramSizeExp = readBank_SNES(0, 0x7FBD);
+    if (snesHeader[0x7FDA - headerStart] == 0x33) {
+      sramSizeExp = snesHeader[0x7FBD - headerStart];
     }
     else {
       if (strncmp(romName, "STARFOX2", 8) == 0) {
@@ -858,7 +881,7 @@ boolean checkcart_SNES() {
   }
   else {
     // No SuperFX
-    sramSizeExp = readBank_SNES(0, 0xFFD8);
+    sramSizeExp = snesHeader[0xFFD8 - headerStart];
   }
 
   // Calculate sramSize
@@ -874,13 +897,13 @@ boolean checkcart_SNES() {
   }
 
   // Check Cart Country
-  //int cartCountry = readBank_SNES(0, 65497);
+  //int cartCountry = snesHeader[0xFFD9 - headerStart];
 
   // ROM Version
-  romVersion = readBank_SNES(0, 65499);
+  romVersion = snesHeader[0xFFDB - headerStart];
 
   // Test if checksum is equal to reverse checksum
-  if (((word(readBank_SNES(0, 65500)) + (word(readBank_SNES(0, 65501)) * 256)) + (word(readBank_SNES(0, 65502)) + (word(readBank_SNES(0, 65503)) * 256))) == 65535 ) {
+  if (((word(snesHeader[0xFFDC - headerStart]) + (word(snesHeader[0xFFDD - headerStart]) * 256)) + (word(snesHeader[0xFFDE - headerStart]) + (word(snesHeader[0xFFDF - headerStart]) * 256))) == 65535 ) {
     if (strcmp("0000", checksumStr) == 0) {
       return 0;
     }
