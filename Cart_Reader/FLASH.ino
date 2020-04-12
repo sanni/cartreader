@@ -22,7 +22,8 @@ boolean hiROM = 1;
 static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
 static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
 static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
-static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3};
+static const char flashMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4};
 
 // 8bit Flash menu items
 static const char flash8MenuItem1[] PROGMEM = "Blankcheck";
@@ -57,8 +58,8 @@ void flashMenu() {
   // create menu with title and 3 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 3);
-  flashSlot = question_box(F("Select adapter PCB"), menuOptions, 3, 0);
+  convertPgm(menuOptionsFlash, 4);
+  flashSlot = question_box(F("Select adapter PCB"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot)
@@ -87,6 +88,10 @@ void flashMenu() {
       id_Flash16();
       wait();
       mode =  mode_FLASH16;
+      break;
+      
+    case 3:
+      resetArduino();
       break;
   }
 }

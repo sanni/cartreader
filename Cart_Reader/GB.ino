@@ -18,7 +18,8 @@ static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
 static const char gbxMenuItem3[] PROGMEM = "NPower GB Memory";
 static const char gbxMenuItem4[] PROGMEM = "GB Smart";
-static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4};
+static const char gbxMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5};
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
@@ -31,11 +32,11 @@ static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GB
 
 // Start menu for both GB and GBA
 void gbxMenu() {
-  // create menu with title and 3 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 4);
-  gbType = question_box(F("Select Game Boy"), menuOptions, 4, 0);
+  convertPgm(menuOptionsGBx, 5);
+  gbType = question_box(F("Select Game Boy"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gbType)
@@ -66,6 +67,10 @@ void gbxMenu() {
       display_Update();
       setup_GBSmart();
       mode = mode_GB_GBSmart;
+      break;
+
+    case 4:
+      resetArduino();
       break;
   }
 }

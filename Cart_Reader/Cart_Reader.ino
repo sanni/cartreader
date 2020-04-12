@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             19.03.2020
-   Version:          4.7
+   Date:             12.04.2020
+   Version:          4.8
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -43,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "4.7";
+char ver[5] = "4.8";
 
 /******************************************
    Options
@@ -393,7 +393,7 @@ void aboutScreen() {
   display.drawBitmap(0, 0, sig, 128, 64, 1);
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2019 Version "));
+  print_Msg(F("2020 Version "));
   println_Msg(ver);
   println_Msg(F(""));
   println_Msg(F(""));
@@ -621,7 +621,7 @@ void setup() {
   // Serial Begin
   Serial.begin(9600);
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2019 sanni"));
+  Serial.println(F("2020 sanni"));
   Serial.println("");
   // LED Error
   rgb.setColor(0, 0, 255);
