@@ -96,11 +96,11 @@ static const char* const saveOptionsN64[] PROGMEM = {N64SaveItem1, N64SaveItem2,
 
 // N64 start menu
 void n64Menu() {
-  // create menu with title and 3 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64, 4);
-  n64Dev = question_box(F("Select N64 device"), menuOptions, 4, 0);
+  convertPgm(menuOptionsN64, 5);
+  n64Dev = question_box(F("Select N64 device"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (n64Dev)

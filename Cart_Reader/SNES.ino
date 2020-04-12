@@ -32,7 +32,8 @@ static const char snsMenuItem2[] PROGMEM = "NPower SF Memory";
 static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "HiROM repro";
 static const char snsMenuItem5[] PROGMEM = "LoROM repro";
-static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5};
+static const char snsMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6};
 
 // SNES menu items
 static const char SnesMenuItem1[] PROGMEM = "Read Rom";
@@ -53,11 +54,11 @@ static const char* const menuOptionsConfManual[] PROGMEM = {confMenuItem1, confM
 
 // SNES start menu
 void snsMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 6 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSNS, 5);
-  snsCart = question_box(F("Select Cart Type"), menuOptions, 5, 0);
+  convertPgm(menuOptionsSNS, 6);
+  snsCart = question_box(F("Select Cart Type"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsCart)
@@ -101,6 +102,10 @@ void snsMenu() {
       id_Flash8();
       wait();
       mode = mode_FLASH8;
+      break;
+
+    case 5:
+      resetArduino();
       break;
   }
 }

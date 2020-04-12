@@ -47,7 +47,8 @@ uint8_t pce_internal_mode; //0 - HuCARD, 1 - TurboChip
 // PCE start menu
 static const char pceMenuItem1[] PROGMEM = "HuCARD";
 static const char pceMenuItem2[] PROGMEM = "Turbochip";
-static const char* const menuOptionspce[] PROGMEM = {pceMenuItem1, pceMenuItem2};
+static const char pceMenuItem3[] PROGMEM = "Reset";
+static const char* const menuOptionspce[] PROGMEM = {pceMenuItem1, pceMenuItem2, pceMenuItem3};
 
 // PCE card menu items
 static const char pceCartMenuItem1[] PROGMEM = "Read Rom";
@@ -66,8 +67,8 @@ void pcsMenu(void) {
   // create menu with title and 3 options to choose from
   unsigned char pceDev;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionspce, 2);
-  pceDev = question_box(F("Select device"), menuOptions, 2, 0);
+  convertPgm(menuOptionspce, 3);
+  pceDev = question_box(F("Select device"), menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (pceDev)
@@ -88,6 +89,10 @@ void pcsMenu(void) {
       pce_internal_mode = TURBOCHIP;
       setup_cart_PCE();
       mode = mode_PCE;
+      break;
+
+    case 2:
+      resetArduino();
       break;
   }
 }
