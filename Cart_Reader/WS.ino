@@ -72,14 +72,48 @@ void setup_WS()
   display_Clear();
 
   // unlock MMC
-  if (!unlockMMC2003_WS())
-    print_Error(F("Can't initial MMC"), true);
+  //  if (!unlockMMC2003_WS())
+  //    print_Error(F("Can't initial MMC"), true);
 
-  if (getCartInfo_WS() != 0xea)
-    print_Error(F("Rom header read error"), true);
+  //  if (getCartInfo_WS() != 0xea)
+  //    print_Error(F("Rom header read error"), true);
+
+  display.println("Initializing...");
+  display.display();
+
+  do {
+    unlockMMC2003_WS();
+  }
+  while (!headerCheck());
+
+  getCartInfo_WS();
 
   showCartInfo_WS();
   mode = mode_WS;
+}
+
+boolean headerCheck() {
+  dataIn_WS();
+
+  for (uint32_t i = 0; i < 16; i += 2)
+    * ((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
+
+  uint8_t startByte = sdBuffer[0];
+  if (startByte == 0xEA) { // Start should be 0xEA
+    uint8_t zeroByte = sdBuffer[5];
+    if (zeroByte == 0) { // Zero Byte
+      uint8_t systemByte = sdBuffer[7];
+      if (systemByte < 2) { // System < 2
+        uint8_t revisionByte = sdBuffer[9];
+        if ((revisionByte < 7) || (revisionByte == 0x80)) { // Known Revisions: 0 to 6 and 0x80
+          uint8_t sizeByte = sdBuffer[10];
+          if (sizeByte < 10) // Rom Size < 10
+            return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 void wsMenu()
@@ -109,7 +143,7 @@ void wsMenu()
           case 0: println_Msg(F("No save for this game")); break;
           case 1: readSRAM_WS(); break;
           case 2: readEEPROM_WS(); break;
-          default: println_Msg(F("Unknow save type")); break;
+          default: println_Msg(F("Unknown save type")); break;
         }
 
         break;
@@ -133,7 +167,7 @@ void wsMenu()
               verifyEEPROM_WS();
               break;
             }
-          default: println_Msg(F("Unknow save type")); break;
+          default: println_Msg(F("Unknown save type")); break;
         }
 
         break;
@@ -162,8 +196,8 @@ uint8_t getCartInfo_WS()
 {
   dataIn_WS();
 
-  for (uint32_t i = 0; i < 16; i += 2)
-    * ((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
+  //  for (uint32_t i = 0; i < 16; i += 2)
+  //    *((uint16_t*)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
 
   wsGameChecksum = *(uint16_t*)(sdBuffer + 14);
   wsWitch = false;
@@ -299,6 +333,7 @@ uint8_t getCartInfo_WS()
     case 0x02: saveType = 1; sramSize = 256; break;
     case 0x03: saveType = 1; sramSize = 1024; break;
     case 0x04: saveType = 1; sramSize = 2048; break;
+    case 0x05: saveType = 1; sramSize = 4096; break;
     case 0x10: saveType = 2; sramSize = 1; break;
     case 0x20: saveType = 2; sramSize = 16; break;
     case 0x50: saveType = 2; sramSize = 8; break;
@@ -339,7 +374,7 @@ void showCartInfo_WS()
     default: println_Msg(sramSize, HEX); break;
   }
 
-  print_Msg(F("Vesion: 1."));
+  print_Msg(F("Version: 1."));
   println_Msg(romVersion, HEX);
 
   print_Msg(F("Checksum: "));
