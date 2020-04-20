@@ -89,7 +89,7 @@ void flashMenu() {
       wait();
       mode =  mode_FLASH16;
       break;
-      
+
     case 3:
       resetArduino();
       break;
