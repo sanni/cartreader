@@ -7,7 +7,7 @@ perimeters = 1
 thin_walls = 1    
 
 # Print settings for Cura 4.x    
-Select the Draft 0.2mm profile and change build plate adhesion to skirt.  
+You can use the Draft 0.2mm profile but you might want to change the build plate adhesion settings.  
 For the N64 sleeve you need to enable the special mode "Spiralize outer Contour" or else the walls will be too thick.  
 
 # Combined STL file with all parts      
