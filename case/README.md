@@ -8,7 +8,7 @@ thin_walls = 1
 
 # Print settings for Cura 4.x    
 You can use the Draft 0.2mm profile but you might want to change the build plate adhesion settings since the default seems a bit [too much](https://www.dropbox.com/s/qu8fvjsh33bxjeh/curaprint.jpg?dl=0).  
-For the N64 sleeve you need to enable the special mode "Spiralize outer Contour" or else the walls will be too thick.  
+For the N64 sleeve you need to enable the special mode "Spiralize outer Contour" or else the walls might end up too thick.  
 
 # Combined STL file with all parts      
 #### combined.stl has all the needed parts combined into one STL file in case you use a 3D print service that calculates by volume.    
@@ -44,4 +44,4 @@ For the N64 sleeve you need to enable the special mode "Spiralize outer Contour"
 
 # Battery addon 
 
-#### The ***_battery.stl files are alternative designs in case you use the battery add-on and replace the similary named default stls.    
+#### The xxx_battery.stl files are alternative designs in case you use the battery add-on and replace the similary named default stls.    
