@@ -11,6 +11,7 @@ You can use the Draft 0.2mm profile but you might want to change the build plate
 For the N64 sleeve you need to enable the special mode "Spiralize outer Contour" or else the walls will be too thick.  
 
 # Combined STL file with all parts      
+#### combined.stl has all the needed parts combined into one STL file in case you use a 3D print service that calculates by volume.    
 
 ![image](https://dl.dropboxusercontent.com/s/zbrvq9lf6w6ye3l/combined.png?dl=1)   
 
@@ -35,8 +36,12 @@ For the N64 sleeve you need to enable the special mode "Spiralize outer Contour"
 
 ![image](https://dl.dropboxusercontent.com/s/p7v2l37f1c130b4/sidewall.png?dl=1)  
 
+# Full enclosure addon   
+
 #### The case_xxx.stl files are a replacement for backplate_simple.stl in case you prefer a full enclosure, you will still need the other stls though.   
 
 ![image](https://dl.dropboxusercontent.com/s/lzgrrkm5yfflll9/v17_case2.png?dl=1) 
+
+# Battery addon 
 
 #### The ***_battery.stl files are alternative designs in case you use the battery add-on and replace the similary named default stls.    
