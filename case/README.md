@@ -12,7 +12,7 @@ For the N64 sleeve you need to enable the special mode "Spiralize outer Contour"
 
 # Combined STL file with all parts      
 
-![image](https://dl.dropboxusercontent.com/s/4remnau0kni660i/combined_no_tabs.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/zbrvq9lf6w6ye3l/combined.png?dl=1)   
 
 # Separate STL files for each part    
 
