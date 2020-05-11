@@ -22,9 +22,4 @@
    
 ![image](https://dl.dropboxusercontent.com/s/ldmtkjv7xsgtwyg/27c322_adapter.png?dl=1)   
 
-#### With the sd_adapter PCB you can transform the microSD module from the parts list into a full size SD module by desoldering all the components and soldering them to this PCB. This is optional since you can also just mount the microSD module as is.  
-
-![image](https://dl.dropboxusercontent.com/s/jcse9iaxm3bbuu6/sd_adapter.pngg?dl=1)    
-
-
 For [Oshpark](https://oshpark.com/) you need to [rename filename.GML to filename.GKO](https://www.dropbox.com/s/0rcvhalgeu11sf8/rename.jpg?dl=0) or it won't find the board outline. Oshpark is great for ordering the smaller PCBs but very expensive for larger boards.   
