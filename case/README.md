@@ -35,8 +35,8 @@ For the N64 sleeve you need to enable the special mode "Spiralize outer Contour"
 
 ![image](https://dl.dropboxusercontent.com/s/p7v2l37f1c130b4/sidewall.png?dl=1)  
 
-#### case_xxx.stl are a replacement for the more simple backplate in case you prefer a full enclosure   
+#### The case_xxx.stl files are a replacement for backplate_simple.stl in case you prefer a full enclosure, you will still need the other stls though.   
 
 ![image](https://dl.dropboxusercontent.com/s/lzgrrkm5yfflll9/v17_case2.png?dl=1) 
 
-#### The rest of the STL files are alternative designs in case you use the battery add-on.    
+#### The ***_battery.stl files are alternative designs in case you use the battery add-on and replace the similary named default stls.    
