@@ -20,16 +20,17 @@ For the N64 sleeve you need to enable the special mode "Spiralize outer Contour"
 
 ![image](https://dl.dropboxusercontent.com/s/07slhy8pi9ujiri/snes_spacer.png?dl=1)   
 
-#### n64sleeve.stl helps with aligning N64 cartridges if the clone slot is not long/wide enough   
-![image](https://dl.dropboxusercontent.com/s/s6jxobazww3sm81/n64sleeve.png?dl=1)   
+#### n64sleeve.stl helps with aligning N64 cartridges       
+![image](https://dl.dropboxusercontent.com/s/8muv7x1fiz2n169/n64sleeve.png?dl=1)   
 
-#### backplate_tabs.stl is the backplate that holds the Arduino    
+#### backplate_simple.stl is the backplate that holds the Arduino    
 
-![image](https://dl.dropboxusercontent.com/s/01v4d28lzbp1ue4/backplate16.png?dl=1)    
+![image](https://dl.dropboxusercontent.com/s/10pbg2umbp6ylv5/backplate_simple.png?dl=1)    
 
 #### sd_spacer.stl or microsd_spacer hold the RGB led and fit between the SD card and the Cart Reader pcb (print with clear PLA/ABS)    
 
-![image](https://dl.dropboxusercontent.com/s/2nujdtcrzvrh7hg/sd_spacer.png?dl=1)  
+![image](https://dl.dropboxusercontent.com/s/2nujdtcrzvrh7hg/sd_spacer.png?dl=1) 
+![image](https://dl.dropboxusercontent.com/s/ch045dkev7al9v7/msdspacer.png?dl=1)
 
 #### sidewall_tabs.stl secures the Arduino Mega to the backplate with five M2x8 screws    
 
