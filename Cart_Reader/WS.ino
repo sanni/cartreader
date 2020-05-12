@@ -69,8 +69,6 @@ void setup_WS()
   DDRG &= ~(1 << 5);
   PORTG |= (1 << 5);
 
-  display_Clear();
-
   // unlock MMC
   //  if (!unlockMMC2003_WS())
   //    print_Error(F("Can't initial MMC"), true);
@@ -78,8 +76,8 @@ void setup_WS()
   //  if (getCartInfo_WS() != 0xea)
   //    print_Error(F("Rom header read error"), true);
 
-  display.println("Initializing...");
-  display.display();
+  println_Msg(F("Initializing..."));
+  display_Update();
 
   do {
     unlockMMC2003_WS();
@@ -89,7 +87,6 @@ void setup_WS()
   getCartInfo_WS();
 
   showCartInfo_WS();
-  mode = mode_WS;
 }
 
 boolean headerCheck() {
