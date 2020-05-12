@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             20.04.2020
-   Version:          4.9
+   Date:             12.05.2020
+   Version:          5.0
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -38,12 +38,12 @@
    rama - code speedup & improvements
    Gens-gs - Megadrive checksum
    Modman - N64 checksum comparison fix
-   splash5 - EMS GB Smart cart support, Wonderswan module
+   splash5 - EMS GB Smart cart support, Wonderswan module, NGP module
 
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "4.9";
+char ver[5] = "5.0";
 
 /******************************************
    Options
@@ -155,6 +155,7 @@ typedef enum COLOR_T {
 #define mode_GB_GBSmart_Flash 19
 #define mode_GB_GBSmart_Game 20
 #define mode_WS 21
+#define mode_NGP 22
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
@@ -382,9 +383,10 @@ static const char addonsItem1[] PROGMEM = "NES/Famicom";
 static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
 static const char addonsItem3[] PROGMEM = "PC Engine/TG16";
 static const char addonsItem4[] PROGMEM = "Sega Master System";
-static const char addonsItem6[] PROGMEM = "WonderSwan";
-static const char addonsItem5[] PROGMEM = "Reset";
-static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem6, addonsItem5};
+static const char addonsItem5[] PROGMEM = "WonderSwan";
+static const char addonsItem6[] PROGMEM = "NeoGeo Pocket";
+static const char addonsItem7[] PROGMEM = "Reset";
+static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, addonsItem6, addonsItem7};
 
 // Info Screen
 void aboutScreen() {
@@ -479,11 +481,11 @@ void mainMenu() {
 
 // Everything that needs an adapter
 void addonsMenu() {
-  // create menu with title and 5 options to choose from
+  // create menu with title and 7 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 6);
-  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 6, 0);
+  convertPgm(addonsOptions, 7);
+  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu)
@@ -505,10 +507,20 @@ void addonsMenu() {
       break;
 
     case 4:
+      display_Clear();
+      display_Update();
       setup_WS();
+      mode = mode_WS;
       break;
 
-    default:
+    case 5:
+      display_Clear();
+      display_Update();
+      setup_NGP();
+      mode = mode_NGP;
+      break;
+
+    case 6:
       resetArduino();
       break;
   }
@@ -1508,6 +1520,9 @@ void loop() {
   }
   else if (mode == mode_WS) {
     wsMenu();
+  }
+  else if (mode == mode_NGP) {
+    ngpMenu();
   }
   else {
     display_Clear();
