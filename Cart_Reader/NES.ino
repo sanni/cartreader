@@ -1596,7 +1596,16 @@ void readPRG() {
         }
         break;
 
-      case 21:
+      case 21:  // 256K
+        banks = int_pow(2, prgsize) * 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0xA000, i);
+          for (word address = 0x2000; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+
       case 22:
       case 23:
       case 25:
@@ -2077,7 +2086,7 @@ void readCHR() {
           banks = int_pow(2, chrsize) * 4;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0xF); // CHR Bank Lower 4 bits
-            if (banks == 128)
+            if (chrsize == 5) // Check CHR Size to determine VRC4a (128K) or VRC4c (256K)
               write_prg_byte(0xB002, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4a (Wai Wai World 2)
             else  // banks == 256
               write_prg_byte(0xB040, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4c (Ganbare Goemon Gaiden 2)
