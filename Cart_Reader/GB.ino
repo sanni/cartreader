@@ -165,21 +165,16 @@ void gbMenu() {
    Setup
  *****************************************/
 void setup_GB() {
-  // Set RST(PH0) to Input
-  DDRH &= ~(1 << 0);
-  // Activate Internal Pullup Resistors
-  PORTH |= (1 << 0);
-
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
   //A8-A15
   DDRK = 0xFF;
 
-  // Set Control Pins to Output CS(PH3) WR(PH5) RD(PH6)
-  DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) RD(PH6)
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
   // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
@@ -294,6 +289,28 @@ void dataIn_GB() {
 }
 
 byte readByte_GB(word myAddress) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch RD(PH6) to LOW
+  PORTH &= ~(1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  byte tempByte = PINC;
+
+  // Switch and RD(PH6) to HIGH
+  PORTH |= (1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  return tempByte;
+}
+
+byte readByteSRAM_GB(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
@@ -575,7 +592,7 @@ void readSRAM_GB() {
       for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress += 64) {
         uint8_t readData[64];
         for (uint8_t i = 0; i < 64; i++) {
-          readData[i] = readByte_GB(sramAddress + i);
+          readData[i] = readByteSRAM_GB(sramAddress + i);
         }
         myFile.write(readData, 64);
       }
@@ -702,7 +719,7 @@ unsigned long verifySRAM_GB() {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
           for (int c = 0; c < 64; c++) {
-            if (readByte_GB(sramAddress + c) != sdBuffer[c]) {
+            if (readByteSRAM_GB(sramAddress + c) != sdBuffer[c]) {
               writeErrors++;
             }
           }
