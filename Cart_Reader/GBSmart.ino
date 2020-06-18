@@ -53,6 +53,28 @@ uint16_t gameMenuStartBank;
 extern boolean hasMenu;
 extern byte numGames;
 
+byte readByte_GBS(word myAddress) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Switch CS(PH3) and RD(PH6) to LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  byte tempByte = PINC;
+
+  // Switch CS(PH3) and RD(PH6) to HIGH
+  PORTH |= (1 << 3) | (1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  return tempByte;
+}
+
 void setup_GBSmart()
 {
   // take from setup_GB
@@ -82,7 +104,7 @@ void setup_GBSmart()
   getCartInfo_GB();
 
   for (byte i = 0; i < 0x30; i++)
-    signature[i] = readByte_GB(0x0104 + i);
+    signature[i] = readByte_GBS(0x0104 + i);
 
   gameMenuStartBank = 0x02;
   hasMenu = true;
@@ -301,7 +323,7 @@ void gbSmartGetGames()
   dataIn_GB();
   for (i = 0; i < 5; i++)
   {
-    if (readByte_GB(0x0134 + i) != menu_title[i])
+    if (readByte_GBS(0x0134 + i) != menu_title[i])
     {
       hasMenu = false;
       break;
@@ -322,7 +344,7 @@ void gbSmartGetGames()
       // read signature
       for (uint8_t j = 0x00; j < 0x30; j++)
       {
-        if (readByte_GB(0x4104 + j) != signature[j])
+        if (readByte_GBS(0x4104 + j) != signature[j])
         {
           i += 0x02;
           goto gb_smart_get_game_loop_end;
@@ -331,7 +353,7 @@ void gbSmartGetGames()
 
       for (uint8_t j = 0; j < 15; j++)
       {
-        myByte = readByte_GB(0x4134 + j);
+        myByte = readByte_GBS(0x4134 + j);
 
         if (((char(myByte) >= 0x30 && char(myByte) <= 0x39) ||
              (char(myByte) >= 0x41 && char(myByte) <= 0x7a)))
@@ -340,9 +362,9 @@ void gbSmartGetGames()
 
       gbSmartGames[numGames].title[myLength] = 0x00;
       gbSmartGames[numGames].start_bank = i;
-      gbSmartGames[numGames].rom_type = readByte_GB(0x4147);
-      gbSmartGames[numGames].rom_size = readByte_GB(0x4148);
-      gbSmartGames[numGames].sram_size = readByte_GB(0x4149);
+      gbSmartGames[numGames].rom_type = readByte_GBS(0x4147);
+      gbSmartGames[numGames].rom_size = readByte_GBS(0x4148);
+      gbSmartGames[numGames].sram_size = readByte_GBS(0x4149);
 
       myByte = (2 << gbSmartGames[numGames].rom_size);
       i += myByte;
@@ -357,7 +379,7 @@ gb_smart_get_game_loop_end:;
     dataIn_GB();
     for (uint8_t j = 0; j < 15; j++)
     {
-      myByte = readByte_GB(0x0134 + j);
+      myByte = readByte_GBS(0x0134 + j);
 
       if (((char(myByte) >= 0x30 && char(myByte) <= 0x39) ||
            (char(myByte) >= 0x41 && char(myByte) <= 0x7a)))
@@ -366,9 +388,9 @@ gb_smart_get_game_loop_end:;
 
     gbSmartGames[0].title[myLength] = 0x00;
     gbSmartGames[0].start_bank = 0x00;
-    gbSmartGames[0].rom_type = readByte_GB(0x0147);
-    gbSmartGames[0].rom_size = readByte_GB(0x0148);
-    gbSmartGames[0].sram_size = readByte_GB(0x0149);
+    gbSmartGames[0].rom_type = readByte_GBS(0x0147);
+    gbSmartGames[0].rom_size = readByte_GBS(0x0148);
+    gbSmartGames[0].sram_size = readByte_GBS(0x0149);
 
     numGames = 1;
     gameMenuStartBank = 0xfe;
@@ -397,7 +419,7 @@ void gbSmartReadFlash()
   for (uint16_t addr = 0x0000; addr <= 0x3fff; addr += 512)
   {
     for (uint16_t c = 0; c < 512; c++)
-      sdBuffer[c] = readByte_GB(addr + c);
+      sdBuffer[c] = readByte_GBS(addr + c);
 
     myFile.write(sdBuffer, 512);
   }
@@ -412,7 +434,7 @@ void gbSmartReadFlash()
     for (uint16_t addr = 0x4000; addr <= 0x7fff; addr += 512)
     {
       for (uint16_t c = 0; c < 512; c++)
-        sdBuffer[c] = readByte_GB(addr + c);
+        sdBuffer[c] = readByte_GBS(addr + c);
 
       myFile.write(sdBuffer, 512);
     }
@@ -528,7 +550,7 @@ void gbSmartWriteFlashFromMyFile(uint32_t addr)
 
     // waiting for finishing
     dataIn_GB();
-    while ((readByte_GB(addr + i) & 0x80) == 0x00);
+    while ((readByte_GBS(addr + i) & 0x80) == 0x00);
   }
 
   // blink LED
@@ -557,7 +579,7 @@ uint32_t gbSmartVerifyFlash()
 
       for (uint16_t c = 0; c < 512; c++)
       {
-        if (readByte_GB(addr + c) != sdBuffer[c])
+        if (readByte_GBS(addr + c) != sdBuffer[c])
           verified++;
       }
     }
@@ -575,7 +597,7 @@ uint32_t gbSmartVerifyFlash()
 
         for (uint16_t c = 0; c < 512; c++)
         {
-          if (readByte_GB(addr + c) != sdBuffer[c])
+          if (readByte_GBS(addr + c) != sdBuffer[c])
             verified++;
         }
       }
@@ -598,7 +620,7 @@ byte gbSmartBlankCheckingFlash(uint8_t flash_start_bank)
   dataIn_GB();
   for (uint16_t addr = 0x0000; addr <= 0x3fff; addr++)
   {
-    if (readByte_GB(addr) != 0xff)
+    if (readByte_GBS(addr) != 0xff)
       return 0;
   }
 
@@ -611,7 +633,7 @@ byte gbSmartBlankCheckingFlash(uint8_t flash_start_bank)
     dataIn_GB();
     for (uint16_t addr = 0x4000; addr <= 0x7fff; addr++)
     {
-      if (readByte_GB(addr) != 0xff)
+      if (readByte_GBS(addr) != 0xff)
         return 0;
     }
   }
@@ -637,7 +659,7 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
   gbSmartWriteFlashByte(0x0000, 0xd0);
 
   dataIn_GB();
-  while ((readByte_GB(0x0000) & 0x80) == 0x00);
+  while ((readByte_GBS(0x0000) & 0x80) == 0x00);
 
   // blink LED
   PORTB ^= (1 << 4);
@@ -652,7 +674,7 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
     gbSmartWriteFlashByte(0x4000, 0xd0);
 
     dataIn_GB();
-    while ((readByte_GB(0x4000) & 0x80) == 0x00);
+    while ((readByte_GBS(0x4000) & 0x80) == 0x00);
 
     // blink LED
     PORTB ^= (1 << 4);
