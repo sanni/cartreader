@@ -22,6 +22,7 @@ byte romSizeExp = 0;   // ROM-Size Exponent
 boolean NP = false;
 byte cx4Type = 0;
 byte cx4Map = 0;
+boolean altconf = 0;
 
 /******************************************
   Menu
@@ -41,8 +42,9 @@ static const char SnesMenuItem2[] PROGMEM = "Read Save";
 static const char SnesMenuItem3[] PROGMEM = "Write Save";
 static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
 static const char SnesMenuItem5[] PROGMEM = "Cycle cart";
-static const char SnesMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6};
+static const char SnesMenuItem6[] PROGMEM = "Force cart type";
+static const char SnesMenuItem7[] PROGMEM = "Reset";
+static const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, SnesMenuItem7};
 
 // Manual config menu items
 static const char confMenuItem1[] PROGMEM = "Use header info";
@@ -115,8 +117,8 @@ void snesMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSNES, 6);
-  mainMenu = question_box(F("SNES Cart Reader"), menuOptions, 6, 0);
+  convertPgm(menuOptionsSNES, 7);
+  mainMenu = question_box(F("SNES Cart Reader"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -239,6 +241,12 @@ void snesMenu() {
       break;
 
     case 5:
+      confMenuManual();
+      display_Clear();
+      display_Update();
+      break;
+
+    case 6:
       stopSnesClocks_resetCic_resetCart();
       resetArduino();
       break;
@@ -665,7 +673,11 @@ void getCartInfo_SNES() {
   else
     println_Msg(F(""));
 
-  print_Msg(F("Rom Size: "));
+
+  if (altconf)
+    print_Msg(F("Rom Size: "));
+  else
+    print_Msg(F("ROM Size: "));
   print_Msg(romSize);
   println_Msg(F("Mbit"));
 
@@ -705,6 +717,7 @@ void getCartInfo_SNES() {
 void checkAltConf() {
   char tempStr1[2];
   char tempStr2[5];
+  altconf = 0;
 
   if (myFile.open("snes.txt", O_READ)) {
     while (myFile.available()) {
@@ -724,20 +737,20 @@ void checkAltConf() {
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
 
-        // Read next two bytes into a string
-        romSize = myFile.read() - 48;
-        romSize = romSize * 10 +  myFile.read() - 48;
+        // Read file size
+        romSize = (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
 
-        // Add next two bytes to the string
-        numBanks  = myFile.read() - 48;
-        numBanks  =  numBanks  * 10 +  myFile.read() - 48;
+        // Read number of banks
+        numBanks  = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
+
+        altconf = 1;
       }
-      // If no match empty string advance by 8 and try again
+      // If no match empty string advance by 9 and try again
       else {
-        myFile.seekSet(myFile.curPosition() + 8);
+        myFile.seekSet(myFile.curPosition() + 9);
       }
     }
   }
