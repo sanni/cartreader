@@ -575,8 +575,11 @@ void getCartInfo_MD() {
   // 4 = 128KB (2045 Blocks) Sega CD Backup RAM Cart
   // 6 = 512KB (8189 Blocks) Ultra CD Backup RAM Cart (Aftermarket)
   word bramCheck = readWord_MD(0x00);
-  if (((bramCheck == 0x0004) && (chksum == 0x0004)) || ((bramCheck == 0x0006) && (chksum == 0x0006)))
-    bramSize = pow(2, bramCheck) * 0x2000;
+  if (   (((bramCheck & 0xFF) == 0x04) && ((chksum & 0xFF) == 0x04))
+      || (((bramCheck & 0xFF) == 0x06) && ((chksum & 0xFF) == 0x06))) {
+    unsigned long p = 1 << (bramCheck & 0xFF);
+    bramSize = p * 0x2000L;
+  }
   if (saveType != 4) { // NOT SERIAL EEPROM
     // Check if cart has sram
     saveType = 0;
@@ -720,8 +723,10 @@ void getCartInfo_MD() {
   print_Msg_PaddedHexByte(bramCheck >> 8);
   print_Msg_PaddedHexByte(bramCheck & 0x00ff);
   println_Msg(F(""));
-  print_Msg(F("bramSize(KB): "));
-  println_Msg(bramSize>>10);
+  if (bramSize > 0) {
+    print_Msg(F("bramSize(KB): "));
+    println_Msg(bramSize >> 10);
+  }
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
   println_Msg(F(" MBit"));
