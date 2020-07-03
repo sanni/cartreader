@@ -762,6 +762,12 @@ void print_Msg(String string) {
 #endif
 }
 
+void print_Msg_PaddedHexByte(byte message) {
+  if (message < 16) print_Msg(0, HEX);
+  print_Msg(message, HEX);
+}
+
+
 void println_Msg(String string) {
 #ifdef enable_OLED
   display.println(string);
