@@ -219,7 +219,7 @@ void mdCartMenu() {
     case 1:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3) || (saveType == 5)) {
         // Change working dir to root
         sd.chdir("/");
         println_Msg(F("Reading Sram..."));
@@ -236,7 +236,7 @@ void mdCartMenu() {
     case 2:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3) || (saveType == 5)) {
         // Change working dir to root
         sd.chdir("/");
         // Launch file browser
@@ -603,6 +603,10 @@ void getCartInfo_MD() {
           sramSize = (sramEnd - sramBase + 2) / 2;
           // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
           sramBase = sramBase >> 1;
+          if (chksum == 0x5D33 && sramEnd == 0x203FFF) { // Dragon Slayer Eiyuu Densetsu
+            // the high byte read as zero
+            saveType = 5; // BOTH
+          }
         }
         else if (sramBase == 0x200000) {
           // high byte
@@ -969,6 +973,14 @@ void writeSram_MD() {
         writeWord_MD(currByte, ((myFile.read() << 8 ) & 0xFF));
       }
     }
+    // Write to both bytes
+    else if (saveType == 5) {
+      for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
+        word w0 = (myFile.read() & 0xFF); // skip
+        word w1 = (myFile.read() & 0xFF);
+        writeWord_MD(currByte, w1);
+      }
+    }
     else
       print_Error(F("Unknown save type"), false);
 
@@ -1018,12 +1030,16 @@ void readSram_MD() {
         // Only use the lower byte
         sdBuffer[currWord] = (myWord & 0xFF);
       }
-      else { // saveType == 3 (BOTH)
+      else if (saveType == 3) { // BOTH
         sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
         sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
       }
+      else if (saveType == 5) { // duplicate the lower byte
+        sdBuffer[(currWord * 2) + 0] = (myWord & 0xFF);
+        sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
+      }
     }
-    if (saveType == 3)
+    if (saveType == 3 || saveType == 5)
       myFile.write(sdBuffer, 512);
     else
       myFile.write(sdBuffer, 256);
