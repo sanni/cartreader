@@ -767,6 +767,13 @@ void print_Msg_PaddedHexByte(byte message) {
   print_Msg(message, HEX);
 }
 
+void print_Msg_PaddedHex32(unsigned long message) {
+  print_Msg_PaddedHexByte((message >> 24) & 0xFF);
+  print_Msg_PaddedHexByte((message >> 16) & 0xFF);
+  print_Msg_PaddedHexByte((message >>  8) & 0xFF);
+  print_Msg_PaddedHexByte((message >>  0) & 0xFF);
+}
+
 
 void println_Msg(String string) {
 #ifdef enable_OLED
