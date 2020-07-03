@@ -716,12 +716,18 @@ void getCartInfo_MD() {
   println_Msg(F(" "));
   print_Msg(F("Name: "));
   println_Msg(romName);
+  print_Msg(F("bramCheck: "));
+  print_Msg_PaddedHexByte(bramCheck >> 8);
+  print_Msg_PaddedHexByte(bramCheck & 0x00ff);
+  println_Msg(F(""));
+  print_Msg(F("bramSize(KB): "));
+  println_Msg(bramSize>>10);
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
   println_Msg(F(" MBit"));
   print_Msg(F("ChkS: "));
-  print_Msg((chksum >> 8), HEX);
-  print_Msg((chksum & 0x00ff), HEX);
+  print_Msg_PaddedHexByte((chksum >> 8));
+  print_Msg_PaddedHexByte((chksum & 0x00ff));
   println_Msg(F(""));
   if (saveType == 4) {
     print_Msg(F("Serial EEPROM: "));
