@@ -2,6 +2,10 @@
 // GB SMART MODULE
 // Supports 32M cart with LH28F016SUT flash
 //******************************************
+
+#include "options.h"
+#ifdef enable_GBX
+
 #define GB_SMART_GAMES_PER_PAGE  6
 
 /******************************************
@@ -771,3 +775,5 @@ uint8_t gbSmartGetResizeParam(uint8_t rom_size, uint8_t sram_size)
 
   return (sram_size | rom_size);
 }
+
+#endif

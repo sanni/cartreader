@@ -2,6 +2,9 @@
 // GAME BOY ADVANCE MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_GBX
+
 /******************************************
    Variables
  *****************************************/
@@ -2635,6 +2638,8 @@ void flashRepro_GBA() {
     print_Error(F("Unknown Flash ID"), true);
   }
 }
+
+#endif
 
 //******************************************
 // End of File
