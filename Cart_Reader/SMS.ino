@@ -14,10 +14,11 @@
  *****************************************/
 // MD menu items
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
-static const char SMSMenuItem2[] PROGMEM = "Read SRAM";
-static const char SMSMenuItem3[] PROGMEM = "Toggle Retrode Mode";
-static const char SMSMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4};
+static const char SMSMenuItem2[] PROGMEM = "Read from SRAM";
+static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
+static const char SMSMenuItem4[] PROGMEM = "Toggle Retrode Mode";
+static const char SMSMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4, SMSMenuItem5};
 
 // Set retrode_mode to true when using a retrode SMS/GG adapter
 static bool retrode_mode = false;
@@ -26,8 +27,9 @@ void _smsMenu() {
   // create menu with title and 2 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSMS, 3);
-  mainMenu = question_box(retrode_mode ? F("SMS/GG Retrode:YES") : F("SMS/GG Retrode:NO"), menuOptions, 3, 0);
+  int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
+  convertPgm(menuOptionsSMS, noptions);
+  mainMenu = question_box(retrode_mode ? F("SMS/GG Retrode:YES") : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -51,10 +53,19 @@ void _smsMenu() {
       break;
 
     case 2:
-      retrode_mode = !retrode_mode;
+      display_Clear();
+      mode = mode_SMS;
+      setup_SMS();
+      // Change working dir to root
+      sd.chdir("/");
+      writeSRAM_SMS();
       break;
 
     case 3:
+      retrode_mode = !retrode_mode;
+      break;
+
+    case 4:
       // Reset
       resetArduino();
       break;
@@ -427,6 +438,64 @@ void readSRAM_SMS() {
   myFile.close();
 }
 
+void writeSRAM_SMS() {
+  display_Clear();
+
+  if (false) {
+    print_Error(F("DISABLED"), false);
+  }
+  else {
+    fileBrowser(F("Select file"));
+
+    sd.chdir();
+    sprintf(filePath, "%s/%s", filePath, fileName);
+
+    display_Clear();
+    println_Msg(F("Restoring from "));
+    println_Msg(filePath);
+    println_Msg(fileName);
+    display_Update();
+
+    if (myFile.open(filePath, O_READ)) {
+      // Get SRAM size from file, with a maximum of 32KB
+      uint32_t sramSize = myFile.fileSize();
+      if (sramSize > (32 * 1024)) {
+        sramSize = 32 * 1024;
+      }
+      print_Msg(F("sramSize: "));
+      print_Msg(sramSize);
+      println_Msg(F(""));
+      word bankSize = 16 * 1024;
+      for (word address = 0x0; address < sramSize; address += 512) {
+        byte currBank = address >= bankSize ? 1 : 0;
+        word page_address = address - (currBank * bankSize);
+        writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
+        // Blink led
+        PORTB ^= (1 << 4);
+        myFile.read(sdBuffer, 512);
+        for (int x = 0; x < 512; x++) {
+          writeByte_SMS(0x8000 + page_address + x, sdBuffer[x]);
+        }
+      }
+      myFile.close();
+
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      println_Msg(F(""));
+      println_Msg(F("DONE"));
+      display_Update();
+    }
+    else {
+      print_Error(F("SD ERROR"), true);
+    }
+  }
+
+  display_Clear();
+
+  sd.chdir(); // root
+  filePath[0] = '\0'; // Reset filePath
+}
 #endif
 
 //******************************************
