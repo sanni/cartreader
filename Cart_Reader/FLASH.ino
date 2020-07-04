@@ -2,6 +2,9 @@
 // FLASHROM MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_FLASH
+
 /******************************************
    Variables
  *****************************************/
@@ -2369,6 +2372,8 @@ void print_Eprom(int numBytes) {
   }
   display_Update();
 }
+
+#endif
 
 //******************************************
 // End of File

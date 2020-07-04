@@ -2,6 +2,9 @@
 // NGP MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_NGP
+
 static const char ngpMenuItem1[] PROGMEM = "Read Rom";
 static const char ngpMenuItemReset[] PROGMEM = "Reset";
 static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItemReset};
@@ -236,3 +239,5 @@ uint8_t readByte_NGP(uint32_t addr) {
 
   return data;
 }
+
+#endif

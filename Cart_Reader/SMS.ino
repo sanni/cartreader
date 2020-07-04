@@ -2,6 +2,9 @@
 // SEGA MASTER SYSTEM MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_MD
+
 /******************************************
    Variables
  *****************************************/
@@ -423,6 +426,8 @@ void readSRAM_SMS() {
   // Close the file:
   myFile.close();
 }
+
+#endif
 
 //******************************************
 // End of File
