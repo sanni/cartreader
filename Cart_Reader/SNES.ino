@@ -3,6 +3,7 @@
 //******************************************
 
 #include "options.h"
+#ifdef enable_SNES
 
 /******************************************
   Defines
@@ -2099,6 +2100,8 @@ boolean eraseSRAM (byte b) {
   }
   display_Update();
 }
+
+#endif
 
 //******************************************
 // End of File

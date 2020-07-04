@@ -4,6 +4,9 @@
 // Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
 
+#include "options.h"
+#ifdef enable_SV
+
 /******************************************
    Satellaview 8M Memory Pack
 ******************************************/
@@ -664,6 +667,8 @@ void eraseAll_SV(void)
   eraseCheck_SV();
   writeBank_SV(0xC0, 0x0000, 0xFF); //Teriminate
 }
+
+#endif
 
 //******************************************
 // End of File

@@ -5,6 +5,9 @@
 // also based on "CoolArduino" by HardWareMan
 // Pinout changes: LED and CIRAM_A10
 
+#include "options.h"
+#ifdef enable_NES
+
 //Line Content
 //26   Supported Mappers
 //101  Defines
@@ -3279,6 +3282,8 @@ void writeFLASH() {
   sd.chdir(); // root
   filePath[0] = '\0'; // Reset filePath
 }
+
+#endif
 
 //******************************************
 // End of File
