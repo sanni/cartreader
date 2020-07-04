@@ -11,25 +11,25 @@
  *****************************************/
 // MD menu items
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
-static const char SMSMenuItem2[] PROGMEM = "Read Rom Retrode";
-static const char SMSMenuItem3[] PROGMEM = "Reset";
-static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3};
+static const char SMSMenuItem2[] PROGMEM = "Read SRAM";
+static const char SMSMenuItem3[] PROGMEM = "Toggle Retrode Mode";
+static const char SMSMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4};
 
 // Set retrode_mode to true when using a retrode SMS/GG adapter
 static bool retrode_mode = false;
 
-void smsMenu() {
+void _smsMenu() {
   // create menu with title and 2 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSMS, 3);
-  mainMenu = question_box(F("Sega Master System"), menuOptions, 3, 0);
+  mainMenu = question_box(retrode_mode ? F("SMS/GG Retrode:YES") : F("SMS/GG Retrode:NO"), menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
   {
     case 0:
-      retrode_mode = false;
       display_Clear();
       mode = mode_SMS;
       setup_SMS();
@@ -39,16 +39,19 @@ void smsMenu() {
       break;
 
     case 1:
-      retrode_mode = true;
       display_Clear();
       mode = mode_SMS;
       setup_SMS();
       // Change working dir to root
       sd.chdir("/");
-      readROM_SMS();
+      readSRAM_SMS();
       break;
 
     case 2:
+      retrode_mode = !retrode_mode;
+      break;
+
+    case 3:
       // Reset
       resetArduino();
       break;
@@ -58,6 +61,10 @@ void smsMenu() {
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
+}
+
+void smsMenu() {
+  for (;;) _smsMenu();
 }
 
 /******************************************
@@ -354,6 +361,53 @@ void readROM_SMS() {
   for (byte currBank = 0x0; currBank < (cartSize / bankSize); currBank++) {
     // Write current 16KB bank to slot 2 register 0xFFFF
     writeByte_SMS(0xFFFF, currBank);
+
+    // Blink led
+    PORTB ^= (1 << 4);
+    // Read 16KB from slot 2 which starts at 0x8000
+    for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
+      // Fill SD buffer
+      for (int currByte = 0; currByte < 512; currByte++) {
+        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
+      }
+      myFile.write(sdBuffer, 512);
+    }
+  }
+  // Close the file:
+  myFile.close();
+}
+
+// Read SRAM and save to the SD card
+void readSRAM_SMS() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".SAV");
+
+  // create a new folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+  // Write the whole 32KB
+  // When there is only 8KB of SRAM, the contents should be duplicated
+  word bankSize = 16 * 1024UL;
+  for (byte currBank = 0x0; currBank < 2; currBank++) {
+    writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
 
     // Blink led
     PORTB ^= (1 << 4);
