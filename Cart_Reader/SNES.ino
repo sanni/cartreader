@@ -2,7 +2,7 @@
 // SUPER NINTENDO MODULE
 //******************************************
 
-#define enable_FLASH
+#include "options.h"
 
 /******************************************
   Defines

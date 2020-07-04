@@ -3,7 +3,7 @@
 //******************************************
 //  (GB Memory starts at around line 1740)
 
-#define enable_FLASH
+#include "options.h"
 
 /******************************************
    SF Memory Cassette
