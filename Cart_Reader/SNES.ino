@@ -1312,6 +1312,7 @@ void writeSRAM (boolean browseFile) {
     // Set RST RD WR to High and CS to Low
     controlOut_SNES();
 
+    int sramBanks = 0;
     // LoRom
     if (romType == LO) {
       // Sram size
