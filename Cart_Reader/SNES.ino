@@ -2,6 +2,8 @@
 // SUPER NINTENDO MODULE
 //******************************************
 
+#define enable_FLASH
+
 /******************************************
   Defines
  *****************************************/
@@ -86,6 +88,7 @@ void snsMenu() {
       mode = mode_SV;
       break;
 
+#ifdef enable_FLASH
     case 3:
       display_Clear();
       display_Update();
@@ -105,6 +108,7 @@ void snsMenu() {
       wait();
       mode = mode_FLASH8;
       break;
+#endif
 
     case 5:
       resetArduino();
