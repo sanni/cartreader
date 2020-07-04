@@ -3,7 +3,7 @@
 //******************************************
 // Writes to Sega CD Backup RAM Cart require an extra wire from MRES (B02) to VRES (B27)
 
-#define enable_FLASH
+#include "options.h"
 
 /******************************************
    Variables
