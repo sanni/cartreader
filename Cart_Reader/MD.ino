@@ -3,6 +3,9 @@
 //******************************************
 // Writes to Sega CD Backup RAM Cart require an extra wire from MRES (B02) to VRES (B27)
 
+#include "options.h"
+#ifdef enable_MD
+
 /******************************************
    Variables
  *****************************************/
@@ -136,6 +139,7 @@ void mdMenu() {
       mode =  mode_SEGA_CD;
       break;
 
+#ifdef enable_FLASH
     case 2:
       display_Clear();
       display_Update();
@@ -180,6 +184,7 @@ void mdMenu() {
       display_Update();
       wait();
       break;
+#endif
 
     case 3:
       resetArduino();
@@ -219,7 +224,7 @@ void mdCartMenu() {
     case 1:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3) || (saveType == 5)) {
         // Change working dir to root
         sd.chdir("/");
         println_Msg(F("Reading Sram..."));
@@ -236,7 +241,7 @@ void mdCartMenu() {
     case 2:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3) || (saveType == 5)) {
         // Change working dir to root
         sd.chdir("/");
         // Launch file browser
@@ -575,8 +580,11 @@ void getCartInfo_MD() {
   // 4 = 128KB (2045 Blocks) Sega CD Backup RAM Cart
   // 6 = 512KB (8189 Blocks) Ultra CD Backup RAM Cart (Aftermarket)
   word bramCheck = readWord_MD(0x00);
-  if (((bramCheck == 0x0004) && (chksum == 0x0004)) || ((bramCheck == 0x0006) && (chksum == 0x0006)))
-    bramSize = pow(2, bramCheck) * 0x2000;
+  if (   (((bramCheck & 0xFF) == 0x04) && ((chksum & 0xFF) == 0x04))
+      || (((bramCheck & 0xFF) == 0x06) && ((chksum & 0xFF) == 0x06))) {
+    unsigned long p = 1 << (bramCheck & 0xFF);
+    bramSize = p * 0x2000L;
+  }
   if (saveType != 4) { // NOT SERIAL EEPROM
     // Check if cart has sram
     saveType = 0;
@@ -600,6 +608,10 @@ void getCartInfo_MD() {
           sramSize = (sramEnd - sramBase + 2) / 2;
           // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
           sramBase = sramBase >> 1;
+          if (chksum == 0x5D33 && sramEnd == 0x203FFF) { // Dragon Slayer Eiyuu Densetsu
+            // the high byte read as zero
+            saveType = 5; // BOTH
+          }
         }
         else if (sramBase == 0x200000) {
           // high byte
@@ -716,12 +728,20 @@ void getCartInfo_MD() {
   println_Msg(F(" "));
   print_Msg(F("Name: "));
   println_Msg(romName);
+  print_Msg(F("bramCheck: "));
+  print_Msg_PaddedHexByte(bramCheck >> 8);
+  print_Msg_PaddedHexByte(bramCheck & 0x00ff);
+  println_Msg(F(""));
+  if (bramSize > 0) {
+    print_Msg(F("bramSize(KB): "));
+    println_Msg(bramSize >> 10);
+  }
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
   println_Msg(F(" MBit"));
   print_Msg(F("ChkS: "));
-  print_Msg((chksum >> 8), HEX);
-  print_Msg((chksum & 0x00ff), HEX);
+  print_Msg_PaddedHexByte((chksum >> 8));
+  print_Msg_PaddedHexByte((chksum & 0x00ff));
   println_Msg(F(""));
   if (saveType == 4) {
     print_Msg(F("Serial EEPROM: "));
@@ -958,6 +978,14 @@ void writeSram_MD() {
         writeWord_MD(currByte, ((myFile.read() << 8 ) & 0xFF));
       }
     }
+    // Write to both bytes
+    else if (saveType == 5) {
+      for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
+        word w0 = (myFile.read() & 0xFF); // skip
+        word w1 = (myFile.read() & 0xFF);
+        writeWord_MD(currByte, w1);
+      }
+    }
     else
       print_Error(F("Unknown save type"), false);
 
@@ -1007,12 +1035,16 @@ void readSram_MD() {
         // Only use the lower byte
         sdBuffer[currWord] = (myWord & 0xFF);
       }
-      else { // saveType == 3 (BOTH)
+      else if (saveType == 3) { // BOTH
         sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
         sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
       }
+      else if (saveType == 5) { // duplicate the lower byte
+        sdBuffer[(currWord * 2) + 0] = (myWord & 0xFF);
+        sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
+      }
     }
-    if (saveType == 3)
+    if (saveType == 3 || saveType == 5)
       myFile.write(sdBuffer, 512);
     else
       myFile.write(sdBuffer, 256);
@@ -1062,6 +1094,7 @@ unsigned long verifySram_MD() {
   return writeErrors;
 }
 
+#ifdef enable_FLASH
 //******************************************
 // Flashrom Functions
 //******************************************
@@ -1248,6 +1281,7 @@ void verifyFlash_MD() {
     display_Update();
   }
 }
+#endif
 
 // Delay between write operations based on status register
 void busyCheck_MD() {
@@ -2007,6 +2041,8 @@ void readRealtec_MD() {
   // Close the file:
   myFile.close();
 }
+
+#endif
 
 //******************************************
 // End of File

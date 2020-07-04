@@ -3,6 +3,9 @@
 //******************************************
 //  (GB Memory starts at around line 1740)
 
+#include "options.h"
+#ifdef enable_NP
+
 /******************************************
    SF Memory Cassette
 ******************************************/
@@ -216,6 +219,7 @@ void sfmGameOptions() {
   }
 }
 
+#ifdef enable_FLASH
 void sfmFlashMenu() {
   // create menu with title and 6 options to choose from
   unsigned char flashSubMenu;
@@ -453,6 +457,7 @@ void sfmFlashMenu() {
     wait();
   }
 }
+#endif
 
 // Read the games from the menu area
 void getGames() {
@@ -2614,6 +2619,8 @@ void writeMapping_GBM() {
     print_Error(F("Can't open file"), false);
   }
 }
+
+#endif
 
 //******************************************
 // End of File

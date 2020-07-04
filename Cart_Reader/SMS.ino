@@ -2,6 +2,9 @@
 // SEGA MASTER SYSTEM MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_MD
+
 /******************************************
    Variables
  *****************************************/
@@ -11,15 +14,22 @@
  *****************************************/
 // MD menu items
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
-static const char SMSMenuItem2[] PROGMEM = "Reset";
-static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2};
+static const char SMSMenuItem2[] PROGMEM = "Read from SRAM";
+static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
+static const char SMSMenuItem4[] PROGMEM = "Toggle Retrode Mode";
+static const char SMSMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4, SMSMenuItem5};
 
-void smsMenu() {
+// Set retrode_mode to true when using a retrode SMS/GG adapter
+static bool retrode_mode = false;
+
+void _smsMenu() {
   // create menu with title and 2 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSMS, 2);
-  mainMenu = question_box(F("Sega Master System"), menuOptions, 2, 0);
+  int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
+  convertPgm(menuOptionsSMS, noptions);
+  mainMenu = question_box(retrode_mode ? F("SMS/GG Retrode:YES") : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -34,14 +44,41 @@ void smsMenu() {
       break;
 
     case 1:
+      display_Clear();
+      mode = mode_SMS;
+      setup_SMS();
+      // Change working dir to root
+      sd.chdir("/");
+      readSRAM_SMS();
+      break;
+
+    case 2:
+      display_Clear();
+      mode = mode_SMS;
+      setup_SMS();
+      // Change working dir to root
+      sd.chdir("/");
+      writeSRAM_SMS();
+      break;
+
+    case 3:
+      retrode_mode = !retrode_mode;
+      break;
+
+    case 4:
       // Reset
       resetArduino();
       break;
   }
+  println_Msg(retrode_mode ? F("Retrode Mode On") : F("Retrode Mode Off"));
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
+}
+
+void smsMenu() {
+  for (;;) _smsMenu();
 }
 
 /******************************************
@@ -56,15 +93,35 @@ void setup_SMS() {
   //A15
   DDRH |= (1 << 3);
 
-  // Set Control Pins to Output RST(PH0) WR(PH5) OE(PH6)
-  DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
-  // CE(PL1)
-  DDRL |= (1 << 1);
+  if (retrode_mode) {
+    // Revert changes from the other mode
+    PORTH &= ~((1 << 0) | (1 << 3) | (1 << 5));
+    PORTL &= ~(1 << 1);
+    DDRH &= ~((1 << 0) | (1 << 5));
+    DDRL &= ~((1 << 1));
+    // Set Control Pins to Output OE(PH6)
+    DDRH |= (1 << 6);
+    // WR(PL5) and RD(PL6)
+    DDRL |= (1 << 5) | (1 << 6);
 
-  // Setting RST(PH0) WR(PH5) OE(PH6) HIGH
-  PORTH |= (1 << 0) | (1 << 5) | (1 << 6);
-  // CE(PL1)
-  PORTL |= (1 << 1);
+    // Setting OE(PH6) HIGH
+    PORTH |= (1 << 6);
+    // Setting WR(PL5) and RD(PL6) HIGH
+    PORTL |= (1 << 5) | (1 << 6);
+  } else {
+    // Revert changes from the other mode
+    PORTL &= ~((1 << 5) | (1 << 6));
+    DDRL &= ~((1 << 5) | (1 << 6));
+    // Set Control Pins to Output RST(PH0) WR(PH5) OE(PH6)
+    DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
+    // CE(PL1)
+    DDRL |= (1 << 1);
+
+    // Setting RST(PH0) WR(PH5) OE(PH6) HIGH
+    PORTH |= (1 << 0) | (1 << 5) | (1 << 6);
+    // CE(PL1)
+    PORTL |= (1 << 1);
+  }
 
   // ROM has 16KB banks which can be mapped to one of three slots via register writes
   // Register Slot Address space
@@ -88,61 +145,111 @@ void setup_SMS() {
   Low level functions
 *****************************************/
 void writeByte_SMS(word myAddress, byte myData) {
-  // Set Data Pins (D0-D7) to Output
-  DDRC = 0xFF;
+  if (retrode_mode) {
+    // Set Data Pins (D8-D15) to Output
+    DDRA = 0xFF;
+  } else {
+    // Set Data Pins (D0-D7) to Output
+    DDRC = 0xFF;
+  }
 
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
-  PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
+  if (!retrode_mode) {
+    // CE(PH3) and OE(PH6) are connected
+    PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
+  }
+
   // Output data
-  PORTC = myData;
+  if (retrode_mode) {
+    PORTA = myData;
+  } else {
+    PORTC = myData;
+  }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch CE(PL1) and WR(PH5) to LOW
-  PORTL &= ~(1 << 1);
-  PORTH &= ~(1 << 5);
+  if (retrode_mode) {
+    // Switch WR(PL5) and OE/CE(PH6) to LOW
+    PORTL &= ~(1 << 5);
+    PORTH &= ~(1 << 6);
+  } else {
+    // Switch CE(PL1) and WR(PH5) to LOW
+    PORTL &= ~(1 << 1);
+    PORTH &= ~(1 << 5);
+  }
 
-  // Leave WE low for at least 60ns
+  // Leave WR low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch CE(PL1) and WR(PH5) to HIGH
-  PORTH |= (1 << 5);
-  PORTL |= (1 << 1);
+  if (retrode_mode) {
+    // Switch WR(PL5) and OE/CE(PH6) to HIGH
+    PORTH |= (1 << 6);
+    PORTL |= (1 << 5);
+  } else {
+    // Switch CE(PL1) and WR(PH5) to HIGH
+    PORTH |= (1 << 5);
+    PORTL |= (1 << 1);
+  }
 
-  // Leave WE high for at least 50ns
+  // Leave WR high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Set Data Pins (D0-D7) to Input
-  DDRC = 0x00;
+  if (retrode_mode) {
+    // Set Data Pins (D8-D15) to Input
+    DDRA = 0x00;
+  } else {
+    // Set Data Pins (D0-D7) to Input
+    DDRC = 0x00;
+  }
 }
 
 byte readByte_SMS(word myAddress) {
-  // Set Data Pins (D0-D7) to Input
-  DDRC = 0x00;
+  if (retrode_mode) {
+    // Set Data Pins (D8-D15) to Input
+    DDRA = 0x00;
+  } else {
+    // Set Data Pins (D0-D7) to Input
+    DDRC = 0x00;
+  }
 
   // Set Address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
-  PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
+  if (!retrode_mode) {
+    // CE(PH3) and OE(PH6) are connected
+    PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
+  }
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Switch CE(PL1) and OE(PH6) to LOW
-  PORTL &= ~(1 << 1);
-  PORTH &= ~(1 << 6);
+  if (retrode_mode) {
+    // Switch RD(PL6) and OE(PH6) to LOW
+    PORTL &= ~(1 << 6);
+    PORTH &= ~(1 << 6);
+  } else {
+    // Switch CE(PL1) and OE(PH6) to LOW
+    PORTL &= ~(1 << 1);
+    PORTH &= ~(1 << 6);
+  }
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
-  byte tempByte = PINC;
+  byte tempByte = retrode_mode ? PINA : PINC;
 
-  // Switch CE(PL1) and OE(PH6) to HIGH
-  PORTH |= (1 << 6);
-  PORTL |= (1 << 1);
+  if (retrode_mode) {
+    // Switch RD(PL6) and OE(PH6) to HIGH
+    PORTH |= (1 << 6);
+    PORTL |= (1 << 6);
+  } else {
+    // Switch CE(PL1) and OE(PH6) to HIGH
+    PORTH |= (1 << 6);
+    PORTL |= (1 << 1);
+  }
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
@@ -186,7 +293,11 @@ void getCartInfo_SMS() {
       cartSize =  128 * 1024UL;
       break;
     case 0x0:
-      cartSize =  256 * 1024UL;
+      if (retrode_mode) {
+        cartSize =  512 * 1024UL;
+      } else {
+        cartSize =  256 * 1024UL;
+      }
       break;
     case 0x1:
       cartSize =  512 * 1024UL;
@@ -279,6 +390,113 @@ void readROM_SMS() {
   // Close the file:
   myFile.close();
 }
+
+// Read SRAM and save to the SD card
+void readSRAM_SMS() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".SAV");
+
+  // create a new folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+  // Write the whole 32KB
+  // When there is only 8KB of SRAM, the contents should be duplicated
+  word bankSize = 16 * 1024UL;
+  for (byte currBank = 0x0; currBank < 2; currBank++) {
+    writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
+
+    // Blink led
+    PORTB ^= (1 << 4);
+    // Read 16KB from slot 2 which starts at 0x8000
+    for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
+      // Fill SD buffer
+      for (int currByte = 0; currByte < 512; currByte++) {
+        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
+      }
+      myFile.write(sdBuffer, 512);
+    }
+  }
+  // Close the file:
+  myFile.close();
+}
+
+void writeSRAM_SMS() {
+  display_Clear();
+
+  if (false) {
+    print_Error(F("DISABLED"), false);
+  }
+  else {
+    fileBrowser(F("Select file"));
+
+    sd.chdir();
+    sprintf(filePath, "%s/%s", filePath, fileName);
+
+    display_Clear();
+    println_Msg(F("Restoring from "));
+    println_Msg(filePath);
+    println_Msg(fileName);
+    display_Update();
+
+    if (myFile.open(filePath, O_READ)) {
+      // Get SRAM size from file, with a maximum of 32KB
+      uint32_t sramSize = myFile.fileSize();
+      if (sramSize > (32 * 1024)) {
+        sramSize = 32 * 1024;
+      }
+      print_Msg(F("sramSize: "));
+      print_Msg(sramSize);
+      println_Msg(F(""));
+      word bankSize = 16 * 1024;
+      for (word address = 0x0; address < sramSize; address += 512) {
+        byte currBank = address >= bankSize ? 1 : 0;
+        word page_address = address - (currBank * bankSize);
+        writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
+        // Blink led
+        PORTB ^= (1 << 4);
+        myFile.read(sdBuffer, 512);
+        for (int x = 0; x < 512; x++) {
+          writeByte_SMS(0x8000 + page_address + x, sdBuffer[x]);
+        }
+      }
+      myFile.close();
+
+      // Blink led
+      PORTB ^= (1 << 4);
+
+      println_Msg(F(""));
+      println_Msg(F("DONE"));
+      display_Update();
+    }
+    else {
+      print_Error(F("SD ERROR"), true);
+    }
+  }
+
+  display_Clear();
+
+  sd.chdir(); // root
+  filePath[0] = '\0'; // Reset filePath
+}
+#endif
 
 //******************************************
 // End of File

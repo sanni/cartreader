@@ -2,6 +2,9 @@
 // SUPER NINTENDO MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_SNES
+
 /******************************************
   Defines
  *****************************************/
@@ -86,6 +89,7 @@ void snsMenu() {
       mode = mode_SV;
       break;
 
+#ifdef enable_FLASH
     case 3:
       display_Clear();
       display_Update();
@@ -105,6 +109,7 @@ void snsMenu() {
       wait();
       mode = mode_FLASH8;
       break;
+#endif
 
     case 5:
       resetArduino();
@@ -1312,6 +1317,7 @@ void writeSRAM (boolean browseFile) {
     // Set RST RD WR to High and CS to Low
     controlOut_SNES();
 
+    int sramBanks = 0;
     // LoRom
     if (romType == LO) {
       // Sram size
@@ -2094,6 +2100,8 @@ boolean eraseSRAM (byte b) {
   }
   display_Update();
 }
+
+#endif
 
 //******************************************
 // End of File

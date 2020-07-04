@@ -5,6 +5,9 @@
 // also based on "CoolArduino" by HardWareMan
 // Pinout changes: LED and CIRAM_A10
 
+#include "options.h"
+#ifdef enable_NES
+
 //Line Content
 //26   Supported Mappers
 //101  Defines
@@ -2163,17 +2166,13 @@ void readCHR() {
 
         case 26: // 128K/256K
           banks = int_pow(2, chrsize) * 4;
-          write_prg_byte(0xB003, 0); // PPU Banking Mode 0
-          for (int i = 0; i < banks; i += 8) {
-            write_prg_byte(0xD000, i); // CHR Bank 0
+          write_prg_byte(0xB003, 0x00);
+          for (int i = 0; i < banks; i += 4) {
+            write_prg_byte(0xD000, i + 0); // CHR Bank 0
             write_prg_byte(0xD002, i + 1); // CHR Bank 1
             write_prg_byte(0xD001, i + 2); // CHR Bank 2
             write_prg_byte(0xD003, i + 3); // CHR Bank 3
-            write_reg_byte(0xE000, i + 4); // CHR Bank 4 [WRITE RAM SAFE]
-            write_reg_byte(0xE002, i + 5); // CHR Bank 5 [WRITE RAM SAFE]
-            write_reg_byte(0xE001, i + 6); // CHR Bank 6 [WRITE RAM SAFE]
-            write_reg_byte(0xE003, i + 7); // CHR Bank 7 [WRITE RAM SAFE]
-            for (word address = 0x0; address < 0x2000; address += 512) { // 1K Banks
+            for (word address = 0x0; address < 0x1000; address += 512) { // 1K Banks
               dumpCHR(address);
             }
           }
@@ -3283,6 +3282,8 @@ void writeFLASH() {
   sd.chdir(); // root
   filePath[0] = '\0'; // Reset filePath
 }
+
+#endif
 
 //******************************************
 // End of File

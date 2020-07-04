@@ -2,6 +2,9 @@
 // GAME BOY MODULE
 //******************************************
 
+#include "options.h"
+#ifdef enable_GBX
+
 /******************************************
    Variables
  *****************************************/
@@ -1061,6 +1064,8 @@ void writeFlash_GB(byte MBC) {
     display_Update();
   }
 }
+
+#endif
 
 //******************************************
 // End of File
