@@ -73,6 +73,11 @@ void setup_SMS() {
   DDRH |= (1 << 3);
 
   if (retrode_mode) {
+    // Revert changes from the other mode
+    PORTH &= ~((1 << 0) | (1 << 3) | (1 << 5));
+    PORTL &= ~(1 << 1);
+    DDRH &= ~((1 << 0) | (1 << 5));
+    DDRL &= ~((1 << 1));
     // Set Control Pins to Output OE(PH6)
     DDRH |= (1 << 6);
     // WR(PL5) and RD(PL6)
@@ -80,12 +85,12 @@ void setup_SMS() {
 
     // Setting OE(PH6) HIGH
     PORTH |= (1 << 6);
-    //PORTH &= ~(1 << 6); // set OE LOW
     // Setting WR(PL5) and RD(PL6) HIGH
     PORTL |= (1 << 5) | (1 << 6);
-    // RD(PL6)
-    //PORTL &= ~(1 << 6); // set RE LOW
   } else {
+    // Revert changes from the other mode
+    PORTL &= ~((1 << 5) | (1 << 6));
+    DDRL &= ~((1 << 5) | (1 << 6));
     // Set Control Pins to Output RST(PH0) WR(PH5) OE(PH6)
     DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
     // CE(PL1)
