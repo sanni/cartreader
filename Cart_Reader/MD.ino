@@ -3,6 +3,8 @@
 //******************************************
 // Writes to Sega CD Backup RAM Cart require an extra wire from MRES (B02) to VRES (B27)
 
+#define enable_FLASH
+
 /******************************************
    Variables
  *****************************************/
@@ -136,6 +138,7 @@ void mdMenu() {
       mode =  mode_SEGA_CD;
       break;
 
+#ifdef enable_FLASH
     case 2:
       display_Clear();
       display_Update();
@@ -180,6 +183,7 @@ void mdMenu() {
       display_Update();
       wait();
       break;
+#endif
 
     case 3:
       resetArduino();
@@ -1089,6 +1093,7 @@ unsigned long verifySram_MD() {
   return writeErrors;
 }
 
+#ifdef enable_FLASH
 //******************************************
 // Flashrom Functions
 //******************************************
@@ -1275,6 +1280,7 @@ void verifyFlash_MD() {
     display_Update();
   }
 }
+#endif
 
 // Delay between write operations based on status register
 void busyCheck_MD() {
