@@ -581,7 +581,7 @@ void getCartInfo_MD() {
   // 6 = 512KB (8189 Blocks) Ultra CD Backup RAM Cart (Aftermarket)
   word bramCheck = readWord_MD(0x00);
   if (   (((bramCheck & 0xFF) == 0x04) && ((chksum & 0xFF) == 0x04))
-      || (((bramCheck & 0xFF) == 0x06) && ((chksum & 0xFF) == 0x06))) {
+         || (((bramCheck & 0xFF) == 0x06) && ((chksum & 0xFF) == 0x06))) {
     unsigned long p = 1 << (bramCheck & 0xFF);
     bramSize = p * 0x2000L;
   }

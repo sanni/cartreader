@@ -2,8 +2,8 @@
                     Cartridge Reader for Arduino Mega2560
 
    Author:           sanni
-   Date:             30.06.2020
-   Version:          5.3
+   Date:             06.07.2020
+   Version:          5.4
 
    SD  lib:         https://github.com/greiman/SdFat
    LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
@@ -18,11 +18,9 @@
    Wayne and Layne - Video-Game-Shield menu
    skaman - SNES enhancements, SA1/BSX sram support, GB flash fix, MD improvements, Famicom dumper, WS improvements
    nocash - Nintendo Power and GBA Eeprom commands and lots of other info
-   crazynation - N64 bus timing
    hkz/themanbehindthecurtain - N64 flashram commands
    jago85 - help with N64 stuff
    Andrew Brown/Peter Den Hartog - N64 controller protocol
-   bryc - mempak
    Shaun Taylor - N64 controller CRC functions
    Angus Gratton - CRC32
    Tamanegi_taro - SA1 fix, PCE and Satellaview support
@@ -38,12 +36,13 @@
    rama - code speedup & improvements
    Gens-gs - Megadrive checksum
    Modman - N64 checksum comparison fix
-   splash5 - EMS GB Smart cart support, Wonderswan module, NGP module
+   splash5 - EMS GB Smart cart, Wonderswan and NGP module
+   jiyunomegami - Retrode Game Gear adapter support and code improvements
 
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "5.3";
+char ver[5] = "5.4";
 
 #include "options.h"
 

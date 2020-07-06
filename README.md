@@ -32,8 +32,9 @@ Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wi
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128, PC28F256M29 or M29W128GH flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
-- Reads Sega Master System roms (only default mapper and no SRAM supported so far)     
-- Reads PC engine/TG16 cartridges (compatible to Retrode 2 TG16 plugin adapter)   
+- Reads Sega Master System roms and saves (using Retrode or Raphnet adapter)       
+- Reads Sega Game Gear roms and saves(using Retrode adapter)    
+- Reads PC engine/TG16 cartridges (using Retrode TG16 adapter)   
 - Reads WonderSwan cartridges    
 - Reads NeoGeo Pocket cartridges   
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C    
