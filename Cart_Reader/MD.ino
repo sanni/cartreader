@@ -10,9 +10,7 @@
    Variables
  *****************************************/
 unsigned long sramEnd;
-byte eepbit[8];
 int eepSize;
-byte eeptemp;
 word addrhi;
 word addrlo;
 word chksum;
@@ -80,7 +78,6 @@ static const word PROGMEM eepid [] = {
 };
 
 byte eepcount = (sizeof(eepid) / sizeof(eepid[0])) / 2;
-int index;
 word eepdata;
 
 // CD BACKUP RAM
@@ -542,7 +539,7 @@ void getCartInfo_MD() {
 
   // Serial EEPROM Check
   for (int i = 0; i < eepcount; i++) {
-    index = i * 2;
+    int index = i * 2;
     word eepcheck = pgm_read_word(eepid + index);
     if (eepcheck == chksum) {
       eepdata = pgm_read_word(eepid + index + 1);
