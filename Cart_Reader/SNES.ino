@@ -75,12 +75,14 @@ void snsMenu() {
       mode = mode_SNES;
       break;
 
+#ifdef enable_NP
     case 1:
       display_Clear();
       display_Update();
       setup_SFM();
       mode = mode_SFM;
       break;
+#endif
 
     case 2:
       display_Clear();
