@@ -150,7 +150,7 @@ void mdLoadConf() {
           // [segaSram16bit] 1   ; 0=no, 1=yes, 2=y+large
           // 0: Output each byte once. Not supported by most emulators.
           // 1: Duplicate each byte. Usable by Kega Fusion.
-          // 2: Output everything from 0x200000 to 0x20FFFF. Like an everdrive srm file.
+          // 2: Duplicate each byte. Pad with 0xFF so that the file size is 64KB.
           segaSram16bit = atoi(value);
           if (segaSram16bit != 0 && segaSram16bit != 1 && segaSram16bit != 2) {
             segaSram16bit = DEFAULT_VALUE_segaSram16bit;
