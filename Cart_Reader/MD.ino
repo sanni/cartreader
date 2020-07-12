@@ -790,11 +790,6 @@ void getCartInfo_MD() {
         sramBase = sramBase >> 1;
       }
     }
-    if (segaSram16bit == 2) { // 64KB
-      sramBase = 0x200000;
-      sramEnd = 0x20FFFF;
-      sramSize = 1UL << 15; // sramSize is the number of 2 byte words
-    }
   }
 
   // Get name
@@ -1159,6 +1154,17 @@ void readSram_MD() {
       myFile.write(sdBuffer, 512);
     else
       myFile.write(sdBuffer, 256);
+  }
+  if (segaSram16bit == 2) {
+    // pad to 64KB
+    for (int i = 0; i < 512; i++) {
+      sdBuffer[i] = 0xFF;
+    }
+    unsigned long padsize = (1UL << 16) - (sramSize << 1);
+    unsigned long padblockcount = padsize >> 9; // number of 512 byte blocks
+    for (int i = 0; i < padblockcount; i++) {
+      myFile.write(sdBuffer, 512);
+    }
   }
   // Close the file:
   myFile.close();
