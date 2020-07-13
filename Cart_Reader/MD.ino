@@ -1071,19 +1071,27 @@ void writeSram_MD() {
           // skip high byte
           myFile.read();
         }
-        byte data = (myFile.read() & 0xFF);
+        word data = myFile.read() & 0xFF;
         writeWord_MD(currByte, data);
       }
     }
     // Write to the upper byte
     else if (saveType == 2) {
       for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        byte data = ((myFile.read() << 8 ) & 0xFF);
+        word data = (myFile.read() << 8) & 0xFF00;
         writeWord_MD(currByte, data);
         if (segaSram16bit > 0) {
           // skip low byte
           myFile.read();
         }
+      }
+    }
+    // Write to both bytes
+    else if (saveType == 3) {
+      for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
+        word data = (myFile.read() << 8) & 0xFF00;
+        data |= (myFile.read() & 0xFF);
+        writeWord_MD(currByte, data);
       }
     }
     else
@@ -1186,31 +1194,30 @@ unsigned long verifySram_MD() {
         
         if (saveType == 2) {
           // Only use the upper byte
-          if (segaSram16bit > 0) {
-            sdBuffer[(currWord * 2) + 0] = (( myWord >> 8 ) & 0xFF);
-            sdBuffer[(currWord * 2) + 1] = (( myWord >> 8 ) & 0xFF);
-          } else {
-            sdBuffer[currWord] = (( myWord >> 8 ) & 0xFF);
-          }
+          sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
         }
         else if (saveType == 1) {
           // Only use the lower byte
-          if (segaSram16bit > 0) {
-            sdBuffer[(currWord * 2) + 0] = (myWord & 0xFF);
-            sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
-          } else {
-            sdBuffer[currWord] = (myWord & 0xFF);
-          }
+          sdBuffer[currWord * 2] = (myWord & 0xFF);
         }
         else if (saveType == 3) { // BOTH
-          sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
+          sdBuffer[(currWord * 2) + 0] = (( myWord >> 8 ) & 0xFF);
           sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
         }
       }
-      int size = (saveType == 3 || segaSram16bit > 0) ? 512 : 256;
+      int step = saveType == 3 ? 1 : 2;
       // Check sdBuffer content against file on sd card
-      for (int i = 0; i < size; i++) {
-        if (myFile.read() != sdBuffer[i]) {
+      for (int i = 0; i < 512; i += step) {
+        if (saveType == 1 && segaSram16bit > 0) {
+          // skip high byte
+          myFile.read();
+        }
+        byte b = myFile.read();
+        if (saveType == 2 && segaSram16bit > 0) {
+          // skip low byte
+          myFile.read();
+        }
+        if (b != sdBuffer[i]) {
           writeErrors++;
         }
       }
