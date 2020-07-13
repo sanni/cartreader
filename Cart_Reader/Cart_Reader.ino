@@ -825,6 +825,11 @@ void print_Msg_PaddedHexByte(byte message) {
   print_Msg(message, HEX);
 }
 
+void print_Msg_PaddedHex16(word message) {
+  print_Msg_PaddedHexByte((message >>  8) & 0xFF);
+  print_Msg_PaddedHexByte((message >>  0) & 0xFF);
+}
+
 void print_Msg_PaddedHex32(unsigned long message) {
   print_Msg_PaddedHexByte((message >> 24) & 0xFF);
   print_Msg_PaddedHexByte((message >> 16) & 0xFF);
