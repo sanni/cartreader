@@ -399,6 +399,10 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
+// used by MD and NES modules
+byte eepbit[8];
+byte eeptemp;
+
 /******************************************
   Menu
 *****************************************/
@@ -1577,9 +1581,11 @@ void loop() {
     gbmMenu();
   }
 #endif
+#ifdef enable_MD
   else if (mode == mode_MD_Cart) {
     mdCartMenu();
   }
+#endif
 #ifdef enable_PCE
   else if (mode == mode_PCE) {
     pceMenu();
