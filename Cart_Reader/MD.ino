@@ -85,6 +85,85 @@ unsigned long bramSize = 0;
 
 // REALTEC MAPPER
 boolean realtec = 0;
+
+#define DEFAULT_VALUE_segaSram16bit 0
+int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
+
+/******************************************
+   Configuration
+ *****************************************/
+void mdLoadConf() {
+  if (myFile.open("md.txt", O_READ)) {
+    char line[64];
+    int n;
+    int i;
+    while ((n = myFile.fgets(line, sizeof(line)-1)) > 0) {
+      // preprocess
+      for (i = 0; i < n; i++) {
+        if (line[i] == ';') {
+          // comments
+          line[i] = '\0';
+          n = i;
+          break;
+        } else if (line[i] == '\n' || line[i] == '\r') {
+          // EOL
+          line[n] = '\0';
+          n = i;
+          break;
+        }
+      }
+      //print_Msg(F("read line: "));
+      //println_Msg(line);
+      if (line[0] == '[') {
+        char *name;
+        char *value;
+        i = 1;
+        name = line + i;
+        for (; i < sizeof(line); i++) {
+          if (line[i] == ']') {
+            line[i] = '\0';
+            i++;
+            break;
+          }
+        }
+        if (line[i] != '\0') {
+          for (; i < sizeof(line); i++) {
+            if (line[i] != ' ') {
+              value = line + i;
+              i++;
+              break;
+            }
+          }
+          for (; i < sizeof(line) && line[i] != '\0'; i++) {
+            if (line[i] == ' ') {
+              line[i] = '\0';
+              break;
+            }
+          }
+        }
+        //print_Msg(F("read name: "));
+        //println_Msg(name);
+        //print_Msg(F("value: "));
+        //println_Msg(value);
+        if (!strcmp("segaSram16bit", name)) {
+          // Retrode compatible setting
+          // [segaSram16bit] 1   ; 0=no, 1=yes, 2=y+large
+          // 0: Output each byte once. Not supported by most emulators.
+          // 1: Duplicate each byte. Usable by Kega Fusion.
+          // 2: Duplicate each byte. Pad with 0xFF so that the file size is 64KB.
+          segaSram16bit = atoi(value);
+          if (segaSram16bit != 0 && segaSram16bit != 1 && segaSram16bit != 2) {
+            segaSram16bit = DEFAULT_VALUE_segaSram16bit;
+          }
+          print_Msg(F("segaSram16bit: "));
+          println_Msg(segaSram16bit);
+        }
+      }
+    }
+    myFile.close();
+  }
+}
+
 /******************************************
    Menu
  *****************************************/
@@ -221,7 +300,7 @@ void mdCartMenu() {
     case 1:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3) || (saveType == 5)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         // Change working dir to root
         sd.chdir("/");
         println_Msg(F("Reading Sram..."));
@@ -238,7 +317,7 @@ void mdCartMenu() {
     case 2:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3) || (saveType == 5)) {
+      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         // Change working dir to root
         sd.chdir("/");
         // Launch file browser
@@ -358,6 +437,8 @@ void segaCDMenu() {
    Setup
  *****************************************/
 void setup_MD() {
+  mdLoadConf();
+
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
@@ -597,7 +678,10 @@ void getCartInfo_MD() {
         // Get sram start and end
         sramBase = ((long(readWord_MD(0xDA)) << 16) | readWord_MD(0xDB));
         sramEnd = ((long(readWord_MD(0xDC)) << 16) | readWord_MD(0xDD));
-
+        if (sramBase == 0x20000020 && sramEnd == 0x00010020) { // Fix for Psy-o-blade
+          sramBase = 0x200001;
+          sramEnd = 0x203fff;
+        }
         // Check alignment of sram
         if ((sramBase == 0x200001) || (sramBase == 0x300001)) { // ADDED 0x300001 FOR HARDBALL '95 (U)
           // low byte
@@ -605,10 +689,6 @@ void getCartInfo_MD() {
           sramSize = (sramEnd - sramBase + 2) / 2;
           // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
           sramBase = sramBase >> 1;
-          if (chksum == 0x5D33 && sramEnd == 0x203FFF) { // Dragon Slayer Eiyuu Densetsu
-            // the high byte read as zero
-            saveType = 5; // BOTH
-          }
         }
         else if (sramBase == 0x200000) {
           // high byte
@@ -617,8 +697,18 @@ void getCartInfo_MD() {
           // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
           sramBase = sramBase / 2;
         }
-        else
+        else {
+          print_Msg(("sramType: "));
+          print_Msg_PaddedHex16(sramType);
+          println_Msg(F(""));
+          print_Msg(("sramBase: "));
+          print_Msg_PaddedHex32(sramBase);
+          println_Msg(F(""));
+          print_Msg(("sramEnd: "));
+          print_Msg_PaddedHex32(sramEnd);
+          println_Msg(F(""));
           print_Error(F("Unknown Sram Base"), true);
+        }
       }
       else if (sramType == 0xE020) { // SRAM BOTH BYTES
         // Get sram start and end
@@ -635,8 +725,18 @@ void getCartInfo_MD() {
           sramSize = sramEnd - sramBase + 1;
           sramBase = sramBase >> 1;
         }
-        else
+        else {
+          print_Msg(("sramType: "));
+          print_Msg_PaddedHex16(sramType);
+          println_Msg(F(""));
+          print_Msg(("sramBase: "));
+          print_Msg_PaddedHex32(sramBase);
+          println_Msg(F(""));
+          print_Msg(("sramEnd: "));
+          print_Msg_PaddedHex32(sramEnd);
+          println_Msg(F(""));
           print_Error(F("Unknown Sram Base"), true);
+        }
       }
     }
     else {
@@ -725,10 +825,11 @@ void getCartInfo_MD() {
   println_Msg(F(" "));
   print_Msg(F("Name: "));
   println_Msg(romName);
-  print_Msg(F("bramCheck: "));
-  print_Msg_PaddedHexByte(bramCheck >> 8);
-  print_Msg_PaddedHexByte(bramCheck & 0x00ff);
-  println_Msg(F(""));
+  if (bramCheck != 0x00FF) {
+    print_Msg(F("bramCheck: "));
+    print_Msg_PaddedHex16(bramCheck);
+    println_Msg(F(""));
+  }
   if (bramSize > 0) {
     print_Msg(F("bramSize(KB): "));
     println_Msg(bramSize >> 10);
@@ -966,21 +1067,31 @@ void writeSram_MD() {
     // Write to the lower byte
     if (saveType == 1) {
       for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        writeWord_MD(currByte, (myFile.read() & 0xFF));
+        if (segaSram16bit > 0) {
+          // skip high byte
+          myFile.read();
+        }
+        word data = myFile.read() & 0xFF;
+        writeWord_MD(currByte, data);
       }
     }
     // Write to the upper byte
     else if (saveType == 2) {
       for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        writeWord_MD(currByte, ((myFile.read() << 8 ) & 0xFF));
+        word data = (myFile.read() << 8) & 0xFF00;
+        writeWord_MD(currByte, data);
+        if (segaSram16bit > 0) {
+          // skip low byte
+          myFile.read();
+        }
       }
     }
     // Write to both bytes
-    else if (saveType == 5) {
+    else if (saveType == 3) {
       for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        word w0 = (myFile.read() & 0xFF); // skip
-        word w1 = (myFile.read() & 0xFF);
-        writeWord_MD(currByte, w1);
+        word data = (myFile.read() << 8) & 0xFF00;
+        data |= (myFile.read() & 0xFF);
+        writeWord_MD(currByte, data);
       }
     }
     else
@@ -1026,25 +1137,42 @@ void readSram_MD() {
 
       if (saveType == 2) {
         // Only use the upper byte
-        sdBuffer[currWord] = (( myWord >> 8 ) & 0xFF);
+        if (segaSram16bit > 0) {
+          sdBuffer[(currWord * 2) + 0] = (( myWord >> 8 ) & 0xFF);
+          sdBuffer[(currWord * 2) + 1] = (( myWord >> 8 ) & 0xFF);
+        } else {
+          sdBuffer[currWord] = (( myWord >> 8 ) & 0xFF);
+        }
       }
       else if (saveType == 1) {
         // Only use the lower byte
-        sdBuffer[currWord] = (myWord & 0xFF);
+        if (segaSram16bit > 0) {
+          sdBuffer[(currWord * 2) + 0] = (myWord & 0xFF);
+          sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
+        } else {
+          sdBuffer[currWord] = (myWord & 0xFF);
+        }
       }
       else if (saveType == 3) { // BOTH
         sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
         sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
       }
-      else if (saveType == 5) { // duplicate the lower byte
-        sdBuffer[(currWord * 2) + 0] = (myWord & 0xFF);
-        sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
-      }
     }
-    if (saveType == 3 || saveType == 5)
+    if (saveType == 3 || segaSram16bit > 0)
       myFile.write(sdBuffer, 512);
     else
       myFile.write(sdBuffer, 256);
+  }
+  if (segaSram16bit == 2) {
+    // pad to 64KB
+    for (int i = 0; i < 512; i++) {
+      sdBuffer[i] = 0xFF;
+    }
+    unsigned long padsize = (1UL << 16) - (sramSize << 1);
+    unsigned long padblockcount = padsize >> 9; // number of 512 byte blocks
+    for (int i = 0; i < padblockcount; i++) {
+      myFile.write(sdBuffer, 512);
+    }
   }
   // Close the file:
   myFile.close();
@@ -1060,22 +1188,36 @@ unsigned long verifySram_MD() {
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
-    for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 512) {
-      for (int currWord = 0; currWord < 512; currWord++) {
+    for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
+      for (int currWord = 0; currWord < 256; currWord++) {
         word myWord = readWord_MD(currBuffer + currWord);
-
+        
         if (saveType == 2) {
           // Only use the upper byte
-          sdBuffer[currWord] = (( myWord >> 8 ) & 0xFF);
+          sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);
         }
         else if (saveType == 1) {
           // Only use the lower byte
-          sdBuffer[currWord] = (myWord & 0xFF);
+          sdBuffer[currWord * 2] = (myWord & 0xFF);
+        }
+        else if (saveType == 3) { // BOTH
+          sdBuffer[(currWord * 2) + 0] = (( myWord >> 8 ) & 0xFF);
+          sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
         }
       }
+      int step = saveType == 3 ? 1 : 2;
       // Check sdBuffer content against file on sd card
-      for (int i = 0; i < 512; i++) {
-        if (myFile.read() != sdBuffer[i]) {
+      for (int i = 0; i < 512; i += step) {
+        if (saveType == 1 && segaSram16bit > 0) {
+          // skip high byte
+          myFile.read();
+        }
+        byte b = myFile.read();
+        if (saveType == 2 && segaSram16bit > 0) {
+          // skip low byte
+          myFile.read();
+        }
+        if (b != sdBuffer[i]) {
           writeErrors++;
         }
       }
