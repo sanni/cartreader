@@ -938,7 +938,7 @@ setmapper:
   mapfound = false;
   Serial.println(F("SUPPORTED MAPPERS:"));
   for (int i = 0; i < mapcount; i++) {
-    index = i * 7;
+    int index = i * 7;
     mapselect = pgm_read_byte(mapsize + index);
     Serial.print("[");
     Serial.print(mapselect);
@@ -958,7 +958,7 @@ setmapper:
   Serial.println(newmap);
   newmapper = newmap.toInt();
   for (int i = 0; i < mapcount; i++) {
-    index = i * 7;
+    int index = i * 7;
     mapselect = pgm_read_byte(mapsize + index);
     if (newmapper == mapselect)
       mapfound = true;
@@ -976,7 +976,7 @@ setmapper:
 
 void checkMapperSize() {
   for (int i = 0; i < mapcount; i++) {
-    index = i * 7;
+    int index = i * 7;
     byte mapcheck = pgm_read_byte(mapsize + index);
     if (mapcheck == mapper) {
       prglo = pgm_read_byte(mapsize + index + 1);
