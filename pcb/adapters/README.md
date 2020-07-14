@@ -1,5 +1,8 @@
-To order adapter PCBs go to https://jlcpcb.com/ and click the "Quote now" button then upload the *_adapter.zip file by clicking the "Add your Gerber file" button. It will take a while. Then in the settings below you will find "PCB Thickness" which is set to 1.6, you need to set it to 1.2 for most of the adapters or the adapter will not fit inside the SNES/N64 cart slot. The other settings are fine by default. Next, click the "Save to cart" button and if you want to order another adapter type click on "Add new item" button and upload the next zip file, set the thickness to 1.2mm again if needed, add to cart, and so on.     
-You should get a free shipping coupon if this is your first order and you sign up on this page: https://jlcpcb.com/cheapest-PCB-way
+To order adapter PCBs go to https://jlcpcb.com/ and click the "Quote now" button then upload the *_adapter.zip file of the adapter you want by clicking the "Add your Gerber file" button. It will take a while. Then in the settings below you will find "PCB Thickness" which is set to 1.6, you need to set it to 1.2 for most of the adapters or the adapter will not fit inside the SNES/N64 cart slot.    
+The other settings are fine by default. Next, click the "Save to cart" button and if you want to order another adapter type click on "Add new item" button and upload the next zip file, set the thickness to 1.2mm again if needed, add to cart, and so on.     
+You should get a free shipping coupon if this is your first order and you sign up on this page: https://jlcpcb.com/cheapest-PCB-way      
+
+You can also order from [Oshpark](https://oshpark.com/) but you need to either [rename *_adapter.GML to *_adapter.GKO](https://www.dropbox.com/s/0rcvhalgeu11sf8/rename.jpg?dl=0) inside the *_adapter.zip or upload the *_adapter.brd from the [eagle design files directory](https://github.com/sanni/cartreader/tree/master/pcb/eagle%20design%20files) instead or the Oshpark website will display an error. Oshpark is great for ordering the smaller PCBs but very expensive for larger boards.   
 
 #### nes_adapter.zip is an add-on for reading NES carts, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot. You can order a 2.5mm 72pin NES slot [here](https://www.aliexpress.com/item/32827561164.html).     
 
@@ -29,4 +32,4 @@ You should get a free shipping coupon if this is your first order and you sign u
    
 ![image](https://dl.dropboxusercontent.com/s/ldmtkjv7xsgtwyg/27c322_adapter.png?dl=1)   
 
-For [Oshpark](https://oshpark.com/) you need to [rename filename.GML to filename.GKO](https://www.dropbox.com/s/0rcvhalgeu11sf8/rename.jpg?dl=0) or it won't find the board outline. Oshpark is great for ordering the smaller PCBs but very expensive for larger boards.   
+gba_adapter.zip and md_adapter.zip are only needed if you got an older Cart Reader version that only has a SNES and N64 slot and is missing the GBA and Mega Drive/Genesis slots.    
