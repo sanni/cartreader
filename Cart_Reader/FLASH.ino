@@ -470,6 +470,11 @@ idtheflash:
     flashSize = 4194304;
     flashromType = 1;
   }
+  else if (strcmp(flashid, "04D5") == 0) {
+    println_Msg(F("MBM29F080C detected"));
+    flashSize = 1048576;
+    flashromType = 1;
+  }
   else if (strcmp(flashid, "0458") == 0) {
     println_Msg(F("MBM29F800BA detected"));
     flashSize = 1048576;
