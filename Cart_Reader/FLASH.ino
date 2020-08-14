@@ -962,7 +962,8 @@ void writeFlash29F032() {
   }
 }
 
-void busyCheck29F032(byte c) {
+int busyCheck29F032(uint32_t addr, byte c) {
+  int ret = 0;
   // Set data pins to input
   dataIn8();
 
@@ -972,13 +973,32 @@ void busyCheck29F032(byte c) {
   PORTH |=  (1 << 4) | (1 << 5);
 
   //When the Embedded Program algorithm is complete, the device outputs the datum programmed to D7
-  while ((PINC & 0x80) != (c & 0x80)) {}
+  for (;;) {
+    uint8_t d = readByte_Flash(addr);
+    if ((d & 0x80) == (c & 0x80)) {
+      break;
+    }
+    if ((d & 0x20) == 0x20) {
+      // From the datasheet:
+      // DQ 5 will indicate if the program or erase time has exceeded the specified limits (internal pulse count).
+      // Under these conditions DQ 5 will produce a “1”.
+      // This is a failure condition which indicates that the program or erase cycle was not successfully completed.
+      // Note : DQ 7 is rechecked even if DQ 5 = “1” because DQ 7 may change simultaneously with DQ 5 .
+      if ((d & 0x80) == (c & 0x80)) {
+        break;
+      } else {
+        ret = 1;
+        break;
+      }
+    }
+  }
 
   // Set data pins to output
   dataOut();
 
   // Setting OE(PH1) OE_SNS(PH3) HIGH
   PORTH |= (1 << 1) | (1 << 3);
+  return ret;
 }
 /******************************************
   29F1610 flashrom functions
@@ -1345,7 +1365,7 @@ void writeFlash29F800() {
         writeByte_Flash(0x5555 << 1, 0xa0);
         // Write current byte
         writeByte_Flash(currByte + c, sdBuffer[c]);
-        busyCheck29F032(sdBuffer[c]);
+        busyCheck29F032(currByte + c, sdBuffer[c]);
       }
     }
 
