@@ -933,21 +933,58 @@ void writeFlash29F032() {
     // Set data pins to output
     dataOut();
 
+    // Retry writing, for when /RESET is not connected (floating)
+    int dq5failcnt = 0;
+    int noread = 0;
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
-      myFile.read(sdBuffer, 512);
+      // if (currByte >= 0) {
+      //   print_Msg(currByte);
+      //   print_Msg(F(" "));
+      //   print_Msg(dq5failcnt);
+      //   println_Msg(F(""));
+      // }
+      if (!noread) {
+        myFile.read(sdBuffer, 512);
+      }
       // Blink led
       if (currByte % 2048 == 0)
         PORTB ^= (1 << 4);
 
+      noInterrupts();
+      int blockfailcnt = 0;
       for (int c = 0; c < 512; c++) {
+        uint8_t datum = sdBuffer[c];
+        dataIn8();
+        uint8_t d = readByte_Flash(currByte + c);
+        dataOut();
+        if (d == datum || datum == 0xFF) {
+          continue;
+        }
         // Write command sequence
         writeByte_Flash(0x555, 0xaa);
         writeByte_Flash(0x2aa, 0x55);
         writeByte_Flash(0x555, 0xa0);
         // Write current byte
-        writeByte_Flash(currByte + c, sdBuffer[c]);
-        busyCheck29F032(sdBuffer[c]);
+        writeByte_Flash(currByte + c, datum);
+        if (busyCheck29F032(currByte + c, datum)) {
+          dq5failcnt++;
+          blockfailcnt++;
+        }
+      }
+      interrupts();
+      if (blockfailcnt > 0) {
+        print_Msg(F("Failures at "));
+        print_Msg(currByte);
+        print_Msg(F(": "));
+        print_Msg(blockfailcnt);
+        println_Msg(F(""));
+        dq5failcnt -= blockfailcnt;
+        currByte -= 512;
+        delay(100);
+        noread = 1;
+      } else {
+        noread = 0;
       }
     }
     // Set data pins to input again
