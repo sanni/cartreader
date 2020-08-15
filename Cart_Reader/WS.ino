@@ -210,6 +210,7 @@ uint8_t getCartInfo_WS()
     // 256kbits sram
     case 0xe600:  // BAN007
     case 0x8eed:  // BANC16
+    case 0xee90:  // WIZC01
       {
         sdBuffer[11] = 0x02;
         break;
@@ -395,14 +396,46 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
   switch (id)
   {
     case 0x01: devName = PSTR("BAN"); break;
+    case 0x02: devName = PSTR("TAT"); break;
+    case 0x03: devName = PSTR("TMY"); break;
+    case 0x04: devName = PSTR("KEX"); break;
+    case 0x05: devName = PSTR("DTE"); break;
+    case 0x06: devName = PSTR("AAE"); break;
+    case 0x07: devName = PSTR("MDE"); break;
+    case 0x08: devName = PSTR("NHB"); break;
+    case 0x0a: devName = PSTR("CCJ"); break;
     case 0x0b: devName = PSTR("SUM"); break;
+    case 0x0c: devName = PSTR("SUN"); break;
+    case 0x0d: devName = PSTR("PAW"); break;
+    case 0x0e: devName = PSTR("BPR"); break;
+    case 0x10: devName = PSTR("JLC"); break;
+    case 0x11: devName = PSTR("MGA"); break;
     case 0x12: devName = PSTR("KNM"); break;
+    case 0x16: devName = PSTR("KBS"); break;
+    case 0x17: devName = PSTR("BTM"); break;
     case 0x18: devName = PSTR("KGT"); break;
+    case 0x19: devName = PSTR("SRV"); break;
+    case 0x1a: devName = PSTR("CFT"); break;
+    case 0x1b: devName = PSTR("MGH"); break;
     case 0x1d: devName = PSTR("BEC"); break;
+    case 0x1e: devName = PSTR("NAP"); break;
+    case 0x1f: devName = PSTR("BVL"); break;
+    case 0x20: devName = PSTR("ATN"); break;
+    case 0x21: devName = PSTR("KDX"); break; // KDK for Memories of Festa?
+    case 0x22: devName = PSTR("HAL"); break;
+    case 0x23: devName = PSTR("YKE"); break;
     case 0x24: devName = PSTR("OMM"); break;
+    case 0x25: devName = PSTR("LAY"); break;
+    case 0x26: devName = PSTR("KDK"); break;
+    case 0x27: devName = PSTR("SHL"); break;
     case 0x28: devName = PSTR("SQR"); break;
+    case 0x2b: devName = PSTR("TMC"); break;
+    case 0x2d: devName = PSTR("NMC"); break;
+    case 0x2e: devName = PSTR("SES"); break;
+    case 0x2f: devName = PSTR("HTR"); break;
     case 0x31: devName = PSTR("VGD"); break;
-    // TODO add more developer
+    case 0x33: devName = PSTR("WIZ"); break;
+    case 0x36: devName = PSTR("CPC"); break;
 
     // custom developerId
     case 0x7a: devName = PSTR("7AC"); break;  // witch
@@ -1255,8 +1288,11 @@ void dataIn_WS()
 {
   DDRC = 0x00;
   DDRA = 0x00;
-  PORTC = 0xff;
-  PORTA = 0xff;
+
+  // some game's ROM chip needs internal-pullup be disabled to work properly
+  // ex: Mobile Suit Gundam Vol.2 - JABURO (MX23L6410MC-12 Mask ROM)
+  PORTC = 0x00;
+  PORTA = 0x00;
 }
 
 void dataOut_WS()
