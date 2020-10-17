@@ -1021,6 +1021,7 @@ int busyCheck29F032(uint32_t addr, byte c) {
       // Under these conditions DQ 5 will produce a “1”.
       // This is a failure condition which indicates that the program or erase cycle was not successfully completed.
       // Note : DQ 7 is rechecked even if DQ 5 = “1” because DQ 7 may change simultaneously with DQ 5 .
+      d = readByte_Flash(addr);
       if ((d & 0x80) == (c & 0x80)) {
         break;
       } else {
