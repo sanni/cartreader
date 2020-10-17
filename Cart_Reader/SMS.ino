@@ -16,12 +16,13 @@
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
 static const char SMSMenuItem2[] PROGMEM = "Read from SRAM";
 static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
-static const char SMSMenuItem4[] PROGMEM = "Toggle Retrode Mode";
+static const char SMSMenuItem4[] PROGMEM = "Change Retrode Mode";
 static const char SMSMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4, SMSMenuItem5};
 
 // Set retrode_mode to true when using a retrode SMS/GG adapter
 static bool retrode_mode = false;
+static bool retrode_mode_sms = false; // true: SMS/Mark3 false: GG
 
 void _smsMenu() {
   // create menu with title and 2 options to choose from
@@ -29,7 +30,7 @@ void _smsMenu() {
   // Copy menuOptions out of progmem
   int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
   convertPgm(menuOptionsSMS, noptions);
-  mainMenu = question_box(retrode_mode ? F("SMS/GG Retrode:YES") : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
+  mainMenu = question_box(retrode_mode ? (retrode_mode_sms ? F("Retrode:SMS") : F("Retrode:GG")) : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -62,7 +63,17 @@ void _smsMenu() {
       break;
 
     case 3:
-      retrode_mode = !retrode_mode;
+      if (!retrode_mode && !retrode_mode_sms) {
+        // first state (default)
+        retrode_mode = true; // Change to GG
+      } else if (retrode_mode && !retrode_mode_sms) {
+        // second state
+        retrode_mode_sms = true; // Change to SMS
+      } else {
+        // third state, reset to the first state
+        retrode_mode = false;
+        retrode_mode_sms = false;
+      }
       break;
 
     case 4:
@@ -70,7 +81,7 @@ void _smsMenu() {
       resetArduino();
       break;
   }
-  println_Msg(retrode_mode ? F("Retrode Mode On") : F("Retrode Mode Off"));
+  println_Msg(retrode_mode ? (retrode_mode_sms ? F("Retrode Mode SMS") : F("Retrode Mode GG")) : F("Retrode Mode Off"));
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
@@ -145,7 +156,7 @@ void setup_SMS() {
   Low level functions
 *****************************************/
 void writeByte_SMS(word myAddress, byte myData) {
-  if (retrode_mode) {
+  if (retrode_mode && !retrode_mode_sms) {
     // Set Data Pins (D8-D15) to Output
     DDRA = 0xFF;
   } else {
@@ -162,7 +173,7 @@ void writeByte_SMS(word myAddress, byte myData) {
   }
 
   // Output data
-  if (retrode_mode) {
+  if (retrode_mode && !retrode_mode_sms) {
     PORTA = myData;
   } else {
     PORTC = myData;
@@ -198,7 +209,7 @@ void writeByte_SMS(word myAddress, byte myData) {
   // Leave WR high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  if (retrode_mode) {
+  if (retrode_mode && !retrode_mode_sms) {
     // Set Data Pins (D8-D15) to Input
     DDRA = 0x00;
   } else {
@@ -208,7 +219,7 @@ void writeByte_SMS(word myAddress, byte myData) {
 }
 
 byte readByte_SMS(word myAddress) {
-  if (retrode_mode) {
+  if (retrode_mode && !retrode_mode_sms) {
     // Set Data Pins (D8-D15) to Input
     DDRA = 0x00;
   } else {
@@ -239,7 +250,7 @@ byte readByte_SMS(word myAddress) {
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Read
-  byte tempByte = retrode_mode ? PINA : PINC;
+  byte tempByte = (retrode_mode && !retrode_mode_sms) ? PINA : PINC;
 
   if (retrode_mode) {
     // Switch RD(PL6) and OE(PH6) to HIGH
@@ -293,11 +304,7 @@ void getCartInfo_SMS() {
       cartSize =  128 * 1024UL;
       break;
     case 0x0:
-      if (retrode_mode) {
-        cartSize =  512 * 1024UL;
-      } else {
-        cartSize =  256 * 1024UL;
-      }
+      cartSize =  256 * 1024UL;
       break;
     case 0x1:
       cartSize =  512 * 1024UL;
@@ -313,11 +320,40 @@ void getCartInfo_SMS() {
 
   }
 
-  // Read TMR Sega string
+  // Read TMR SEGA string
   for (byte i = 0; i < 8; i++) {
     romName[i] = char(readByte_SMS(0x7ff0 + i));
   }
   romName[8] = '\0';
+
+  // Attempt to detect cart size by checking if TMR SEGA is mirrored
+  unsigned long mirror_offset = cartSize;
+  char romName2[9];
+  while (mirror_offset < 1024 * 1024UL) {
+    byte bank = 1 + (mirror_offset / (16 * 1024UL));
+    writeByte_SMS(0xFFFE, bank);
+    for (byte i = 0; i < 8; i++) {
+      romName2[i] = char(readByte_SMS(0x7ff0 + i));
+    }
+    romName2[8] = '\0';
+    // print_Msg(F("Name2: "));
+    // println_Msg(romName2);
+    // print_Msg(F("from bank "));
+    // print_Msg(bank);
+    // print_Msg(F(" offset "));
+    // print_Msg_PaddedHex32(mirror_offset + 0x7ff0);
+    // println_Msg(F(""));
+    if (strcmp(romName2, romName) == 0) {
+      break;
+    }
+    if (cartSize == 48 * 1024UL) {
+      cartSize = 64 * 1024UL;
+    } else {
+      cartSize *= 2;
+    }
+    mirror_offset = cartSize;
+  }
+  writeByte_SMS(0xFFFE, 1);
 
   display_Clear();
   println_Msg(F("Cart Info"));
@@ -384,6 +420,21 @@ void readROM_SMS() {
       for (int currByte = 0; currByte < 512; currByte++) {
         sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
       }
+      // hexdump for debugging:
+      // if (currBank == 0 && currBuffer == 0) {
+      //   for (word xi = 0; xi < 0x100; xi++) {
+      //     if (xi%16==0) {
+      //       print_Msg_PaddedHex16(xi);
+      //       print_Msg(F(" "));
+      //     }
+      //     print_Msg_PaddedHexByte(sdBuffer[xi]);
+      //     if (xi>0&&((xi+1)%16)==0) {
+      //       println_Msg(F(""));
+      //     } else {
+      //       print_Msg(F(" "));
+      //     }
+      //   }
+      // }
       myFile.write(sdBuffer, 512);
     }
   }
