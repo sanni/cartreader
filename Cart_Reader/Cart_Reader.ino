@@ -1,16 +1,17 @@
 /**********************************************************************************
                     Cartridge Reader for Arduino Mega2560
 
-   Author:           sanni
-   Date:             06.07.2020
-   Version:          5.4
+   Date:             28.10.2020
+   Version:          5.5
 
-   SD  lib:         https://github.com/greiman/SdFat
-   LCD lib:         https://github.com/adafruit/Adafruit_SSD1306
-   Clockgen:        https://github.com/etherkit/Si5351Arduino
-   RGB Tools lib:   https://github.com/joushx/Arduino-RGB-Tools
+   SD lib: https://github.com/greiman/SdFat
+   LCD lib: https://github.com/adafruit/Adafruit_SSD1306
+   GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library
+   BusIO: https://github.com/adafruit/Adafruit_BusIO
+   RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools
+   SI5351 lib: https://github.com/etherkit/Si5351Arduino
 
-   Compiled with Arduino 1.8.12
+   Compiled with Arduino 1.8.13
 
    Thanks to:
    MichlK - ROM-Reader for Super Nintendo
@@ -42,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "5.4";
+char ver[5] = "5.5";
 
 #include "options.h"
 
@@ -192,7 +193,7 @@ boolean ignoreError = 0;
 // File browser
 #define FILENAME_LENGTH 32
 #define FILEPATH_LENGTH 64
-#define FILEOPTS_LENGTH 20
+#define FILEOPTS_LENGTH 18
 
 char fileName[FILENAME_LENGTH];
 char filePath[FILEPATH_LENGTH];
@@ -201,7 +202,6 @@ byte lastPage;
 byte numPages;
 boolean root = 0;
 boolean filebrowse = 0;
-char fileOptions[30][FILEOPTS_LENGTH];
 
 // Common
 char romName[17];
@@ -1390,16 +1390,12 @@ browserstart:
     else if (myFile.isDir()) {
       // Copy full dirname into fileNames
       snprintf(fileNames[currFile], FILENAME_LENGTH, "%s%s", "/", nameStr);
-      // Copy short string into fileOptions
-      snprintf(fileOptions[currFile], FILEOPTS_LENGTH, "%s%s", "/", nameStr);
       currFile++;
     }
     // It's just a file
     else if (myFile.isFile()) {
       // Copy full filename into fileNames
       snprintf(fileNames[currFile], FILENAME_LENGTH, "%s", nameStr);
-      // Copy short string into fileOptions
-      snprintf(fileOptions[currFile], FILEOPTS_LENGTH, "%s", nameStr);
       currFile++;
     }
     myFile.close();
@@ -1451,7 +1447,7 @@ page:
 
   for (byte i = 0; i < 8; i++ ) {
     // Copy short string into fileOptions
-    snprintf( answers[i], FILEOPTS_LENGTH, "%s", fileOptions[ ((currPage - 1) * 7 + i)] );
+    snprintf( answers[i], FILEOPTS_LENGTH, "%s", fileNames[ ((currPage - 1) * 7 + i)] );
   }
 
   // Create menu with title and 1-7 options to choose from

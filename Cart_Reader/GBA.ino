@@ -2060,8 +2060,13 @@ void idFlashrom_GBA() {
       resetMX29GL128E_GBA();
     }
     else {
+      println_Msg(F("Error"));
+      println_Msg(F(""));
+      println_Msg(F("Unknown Flash"));
+      print_Msg(F("Flash ID: "));
       println_Msg(flashid);
-      print_Error(F("Unknown Flashid"), true);
+      println_Msg(F(""));
+      print_Error(F("Check voltage"), true);
     }
   }
 }
@@ -2508,7 +2513,7 @@ void flashRepro_GBA() {
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Repro Cartridge."));
-    println_Msg(F("Please use 3.3V!"));
+    println_Msg(F(""));
     println_Msg("");
     println_Msg(F("Press Button"));
     display_Update();
@@ -2633,9 +2638,13 @@ void flashRepro_GBA() {
     }
   }
   else {
-    print_Msg(F("ID: "));
+    println_Msg(F("Error"));
+    println_Msg(F(""));
+    println_Msg(F("Unknown Flash"));
+    print_Msg(F("Flash ID: "));
     println_Msg(flashid);
-    print_Error(F("Unknown Flash ID"), true);
+    println_Msg(F(""));
+    print_Error(F("Check voltage"), true);
   }
 }
 

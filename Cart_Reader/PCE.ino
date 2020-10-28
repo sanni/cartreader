@@ -585,7 +585,7 @@ void read_tennokoe_bank_PCE(int bank_index)
   println_Msg(F("RAM bank size: 2KB"));
 
   // Get name, add extension and convert to char array for sd lib
-  sprintf(fileName, "BANKRAM%d.sav", bank_index+1);
+  sprintf(fileName, "BANKRAM%d.sav", bank_index + 1);
 
   // create a new folder for the save file
   EEPROM_readAnything(0, foldern);
@@ -603,7 +603,7 @@ void read_tennokoe_bank_PCE(int bank_index)
   // write new folder number back to eeprom
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
-  
+
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("Can't create file on SD"), true);
@@ -620,7 +620,7 @@ void read_tennokoe_bank_PCE(int bank_index)
     data_input_PCE();
 
     //Read Tennokoe bank RAM
-    read_bank_PCE_RAM(0x080000 + 2048UL*bank_index, block_index);
+    read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
 
     //Lock Tennokoe Bank RAM
     data_output_PCE();
@@ -726,7 +726,7 @@ void write_tennokoe_bank_PCE(int bank_index)
       unlock_tennokoe_bank_RAM();
       data_input_PCE();
       //Read Tennokoe bank RAM
-      read_bank_PCE_RAM(0x080000 + 2048UL*bank_index, block_index);
+      read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
       //Lock Tennokoe Bank RAM
       data_output_PCE();
       lock_tennokoe_bank_RAM();
@@ -750,7 +750,7 @@ void write_tennokoe_bank_PCE(int bank_index)
       println_Msg(F(" bytes "));
       print_Error(F("did not verify."), false);
     }
-    
+
     pin_init_PCE();
 
     // Close the file:
@@ -862,8 +862,8 @@ void pceMenu() {
 
   if (pce_internal_mode == HUCARD || pce_internal_mode == HUCARD_NOSWAP)
   {
-    sprintf(pceCartMenuItem2, "Read RAM Bank %d", tennokoe_bank_index+1);
-    sprintf(pceCartMenuItem3, "Write RAM Bank %d", tennokoe_bank_index+1);
+    sprintf(pceCartMenuItem2, "Read RAM Bank %d", tennokoe_bank_index + 1);
+    sprintf(pceCartMenuItem3, "Write RAM Bank %d", tennokoe_bank_index + 1);
     strcpy(menuOptionspceCart[0], pceCartMenuItem1);
     strcpy(menuOptionspceCart[1], pceCartMenuItem2);
     strcpy(menuOptionspceCart[2], pceCartMenuItem3);
