@@ -60,5 +60,6 @@ Needed libraries(already included in the portable Arduino IDE under Releases)
 SD lib: https://github.com/greiman/SdFat  
 LCD lib: https://github.com/adafruit/Adafruit_SSD1306       
 GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library    
+BusIO: https://github.com/adafruit/Adafruit_BusIO    
 RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools  
 SI5351 lib: https://github.com/etherkit/Si5351Arduino  

@@ -16,20 +16,15 @@
 #define enable_Button2
 
 // define enable_XXX to enable
+#define enable_FLASH
+#define enable_GBX
 #define enable_MD
-#define enable_SMS
-
-#define enable_PCE
-
+#define enable_N64
 #define enable_NES
+#define enable_NGP
+#define enable_NP
+#define enable_PCE
+#define enable_SMS
 #define enable_SNES
 #define enable_SV
-#define enable_NP
-#define enable_GBX
-#define enable_N64
-
 #define enable_WS
-
-#define enable_NGP
-
-#define enable_FLASH

@@ -97,7 +97,7 @@ void mdLoadConf() {
     char line[64];
     int n;
     int i;
-    while ((n = myFile.fgets(line, sizeof(line)-1)) > 0) {
+    while ((n = myFile.fgets(line, sizeof(line) - 1)) > 0) {
       // preprocess
       for (i = 0; i < n; i++) {
         if (line[i] == ';') {
@@ -1191,7 +1191,7 @@ unsigned long verifySram_MD() {
     for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
       for (int currWord = 0; currWord < 256; currWord++) {
         word myWord = readWord_MD(currBuffer + currWord);
-        
+
         if (saveType == 2) {
           // Only use the upper byte
           sdBuffer[currWord * 2] = (( myWord >> 8 ) & 0xFF);

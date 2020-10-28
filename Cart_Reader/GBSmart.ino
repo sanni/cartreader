@@ -54,8 +54,13 @@ GBSmartGameInfo gbSmartGames[GB_SMART_GAMES_PER_PAGE];
 byte signature[48];
 uint16_t gameMenuStartBank;
 
+#ifdef enable_NP
 extern boolean hasMenu;
 extern byte numGames;
+#else
+boolean hasMenu;
+byte numGames;
+#endif
 
 byte readByte_GBS(word myAddress) {
   PORTF = myAddress & 0xFF;
