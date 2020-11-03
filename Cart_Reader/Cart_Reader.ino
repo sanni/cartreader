@@ -193,7 +193,7 @@ boolean ignoreError = 0;
 // File browser
 #define FILENAME_LENGTH 32
 #define FILEPATH_LENGTH 64
-#define FILEOPTS_LENGTH 18
+#define FILEOPTS_LENGTH 20
 
 char fileName[FILENAME_LENGTH];
 char filePath[FILEPATH_LENGTH];
