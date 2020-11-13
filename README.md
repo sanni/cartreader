@@ -6,7 +6,7 @@ This Cart Reader is aimed at people that either already have experience with Ard
 For any questions or issues please join the discussion on the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).  
 Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 
 
-![image](https://dl.dropboxusercontent.com/s/63y178mzs1x4se5/cart_reader.png.png?dl=1)
+![image](https://dl.dropboxusercontent.com/s/0udh1gkl7kem90v/cartbatttop.jpg?dl=1) 
 
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
