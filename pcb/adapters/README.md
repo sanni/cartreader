@@ -16,11 +16,11 @@ You can also order from [Oshpark](https://oshpark.com/) but you need to either [
 
 ![image](https://dl.dropboxusercontent.com/s/r6lavgoaccjtrz7/sms_adapter.png?dl=1)   
 
-#### wonderswan_adapter.zip is an add-on for reading WonderSwan carts. [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1), this is very important or else it won't fit into the SNES slot. (Optional) Install C1 and C2 with 10uF/16v 1210 package tantalum capacitor.
+#### wonderswan_adapter.zip is an add-on for reading WonderSwan carts. [PCB thickness needs to be changed to 1.2mm](https://www.dropbox.com/s/va1c72073cqfy90/pcb12.jpg?dl=0), this is very important or else it won't fit into the SNES slot. (Optional) Install C1 and C2 with 10uF/16v 1210 package tantalum capacitor.
 
 ![image](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1)   
 
-#### ngp_adapter.zip is an add-on for reading NeoGeo Pocket carts. [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/755249v8smcuoft/wonderswan_adapter.png?dl=1), this is very important or else it won't fit into the SNES slot. 
+#### ngp_adapter.zip is an add-on for reading NeoGeo Pocket carts. [PCB thickness needs to be changed to 1.2mm](https://www.dropbox.com/s/va1c72073cqfy90/pcb12.jpg?dl=0), this is very important or else it won't fit into the SNES slot. 
 
 ![image](https://dl.dropboxusercontent.com/s/yvutwme8n7d4tiy/ngp_adapter.png?dl=1)   
 
