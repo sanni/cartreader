@@ -5,7 +5,7 @@ This Cart Reader is aimed at people that either already have experience with Ard
 
 [![image](https://dl.dropboxusercontent.com/s/0udh1gkl7kem90v/cartbatttop.jpg?dl=1)](https://dl.dropboxusercontent.com/s/p1s0selosoxr86f/1.jpg?dl=1)   
 
-For any questions or issues please join the discussion on the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).  
+For any questions or issues please use the [Discussions](https://github.com/sanni/cartreader/discussions) or [Issues](https://github.com/sanni/cartreader/issues) feature here on github or visit the thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
 Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 
 
 [![image](https://dl.dropboxusercontent.com/s/pswyr93ttrn0bbm/cartbatttop2.jpg?dl=1)](https://dl.dropboxusercontent.com/s/a54y5fhqaj4iiki/2.jpg?dl=1)   
