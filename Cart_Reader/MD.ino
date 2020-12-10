@@ -607,6 +607,16 @@ void getCartInfo_MD() {
   // Cart Checksum
   chksum = readWord_MD(0xC7);
 
+  // Zero Wing Check
+  if (cartSize == 0x80000) {
+    switch (chksum) {
+      case 0xD07D: //Zero Wing (J) 8Mbit
+        cartSize = 0x100000; //1MB instead of 512KB
+        chksum = 0xF204;
+        break;
+    }
+  }
+
   // Super Street Fighter 2 Check
   if (cartSize == 0x400000) {
     switch (chksum) {
