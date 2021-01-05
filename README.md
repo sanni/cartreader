@@ -1,12 +1,12 @@
 ![image](https://dl.dropboxusercontent.com/s/w39fnwop0yypt8a/free.png?dl=1)   ![image](https://dl.dropboxusercontent.com/s/94j412n2inh681p/c3378c2cb507ebb.pn?dl=1)
 
 # DIY Cartridge Reader for Arduino Mega 2560
-This Cart Reader is aimed at people that either already have experience with Arduino or always wanted to buy an Arduino and are searching for an interesting project to accomplish. All the Arduino source code along with the PCB files and detailed build guides can be found in this github. Happy making. 🔧🔨😊
+This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper. All the Arduino source code along with the PCB design files and detailed build guides can be found in this Github. Happy making. 🔧🔨😊
 
 [![image](https://dl.dropboxusercontent.com/s/0udh1gkl7kem90v/cartbatttop.jpg?dl=1)](https://dl.dropboxusercontent.com/s/p1s0selosoxr86f/1.jpg?dl=1)   
 
-For any questions or issues please use the [Discussions](https://github.com/sanni/cartreader/discussions) or [Issues](https://github.com/sanni/cartreader/issues) feature here on github or visit the thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
-Be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too. 
+For any questions or issues please use the [Discussions](https://github.com/sanni/cartreader/discussions) or [Issues](https://github.com/sanni/cartreader/issues) feature here on Github or visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
+Also be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki).    
 
 [![image](https://dl.dropboxusercontent.com/s/pswyr93ttrn0bbm/cartbatttop2.jpg?dl=1)](https://dl.dropboxusercontent.com/s/a54y5fhqaj4iiki/2.jpg?dl=1)   
 
