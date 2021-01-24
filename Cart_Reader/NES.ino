@@ -956,22 +956,13 @@ char* getDatabaseFieldFromRow(const char* dbstr, uint8_t fieldnum)
 
 unsigned char getNibbleFromChar(char num)
 {
-    if(num >= '0' && num <= '9')
+    char ret_char = num & 0x0F;
+    if(num > '9')
     {
-        return (num - '0');
+        ret_char += 9;
     }
-    else if(num >= 'A' && num <= 'F')
-    {
-        return (num - 'A' + 10);
-    }
-    else if(num >= 'a' && num <= 'f')
-    {
-        return (num - 'a' + 10);
-    }
-    else
-    {
-        return 0;
-    }
+
+    return ret_char;
 }
 
 unsigned char getByteFromChars(char msn, char lsn)
