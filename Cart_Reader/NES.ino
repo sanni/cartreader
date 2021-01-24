@@ -726,7 +726,7 @@ void outputNES() {
 
   uint32_t prg_crc32;
   File prg_crc32_file;
-  if(sd.open(filePRG, O_READ))
+  if(prg_crc32_file.open(filePRG, O_READ))
   {
     prg_crc32 = crc32(prg_crc32_file, 1024 * prg);
     prg_crc32_file.close();
@@ -736,7 +736,7 @@ void outputNES() {
   if(chr > 0)
   {
     File chr_crc32_file;
-    if(sd.open(fileCHR, O_READ))
+    if(prg_crc32_file.open(fileCHR, O_READ))
     {
       chr_crc32 = crc32(chr_crc32_file, 1024 * chr);
       chr_crc32_file.close();
