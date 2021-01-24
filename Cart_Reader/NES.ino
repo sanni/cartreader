@@ -835,7 +835,7 @@ unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_
   {
     return NULL;
   }
-  
+
   File nesDb;
   char* temp_line;
   int i;
@@ -845,7 +845,7 @@ unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_
     return NULL;
   }
 
-  temp_line = malloc(temp_line, 256 * sizeof(char));
+  temp_line = malloc(256 * sizeof(char));
   while(nesDb.available())
   {
     i = 0;
