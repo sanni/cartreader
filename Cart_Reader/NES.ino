@@ -724,7 +724,7 @@ void CreateRAMFileInSD() {
 void outputNES() {
   display_Clear();
 
-  uint32_t prg_crc32;
+  uint32_t prg_crc32 = 0;
   File prg_crc32_file;
   if(prg_crc32_file.open(filePRG, O_READ))
   {
@@ -831,6 +831,11 @@ void CartFinish() {
 
 unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32)
 {
+  if(prg_size == 0)
+  {
+    return NULL;
+  }
+  
   File nesDb;
   char* temp_line;
   int i;
