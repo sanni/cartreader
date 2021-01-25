@@ -861,6 +861,8 @@ unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_
       i++;
     } while(nesDb.available() && temp_char != 0 && temp_char != '\n');
 
+    i--;
+
     if(temp_line[i] == '\n')
     {
       temp_line[i] = 0;
