@@ -725,20 +725,24 @@ void outputNES() {
   display_Clear();
 
   uint32_t prg_crc32 = 0;
+  uint32_t prg_size_bytes = 0;
   File prg_crc32_file;
   if(prg_crc32_file.open(filePRG, O_READ))
   {
-    prg_crc32 = crc32(prg_crc32_file, 1024 * prg);
+    prg_size_bytes = 1024 * prg;
+    prg_crc32 = crc32(prg_crc32_file, prg_size_bytes);
     prg_crc32_file.close();
   }
 
   uint32_t chr_crc32 = 0;
+  uint32_t chr_size_bytes = 0;
   if(chr > 0)
   {
     File chr_crc32_file;
     if(prg_crc32_file.open(fileCHR, O_READ))
     {
-      chr_crc32 = crc32(chr_crc32_file, 1024 * chr);
+      chr_size_bytes = 1024 * chr;
+      chr_crc32 = crc32(chr_crc32_file, chr_size_bytes);
       chr_crc32_file.close();
     }
   }
