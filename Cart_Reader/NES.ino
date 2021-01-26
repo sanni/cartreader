@@ -18,11 +18,11 @@
 //586  CRC Functions
 //645  File Functions
 //819  NES 2.0 Header Functions
-//1095 Config Functions
-//1691 ROM Functions
-//2789 RAM Functions
-//3224 Eeprom Functions
-//3414 NESmaker Flash Cart Functions
+//1100 Config Functions
+//1696 ROM Functions
+//2794 RAM Functions
+//3229 Eeprom Functions
+//3419 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -963,6 +963,9 @@ unsigned char getByteFromChars(char msn, char lsn) {
   return return_char;
 }
 
+// IMPORTANT: The byte array returned from this function MUST
+// be passed to free() when ready to be disposed of, in
+// order to avoid a memory leak.
 unsigned char* strToBytes(const char* bytestr) {
   uint8_t str_length;
   uint8_t byte_length;
@@ -1076,6 +1079,9 @@ char* getGameTitleFromDatabaseRow(const char* crctest) {
   return game_title_str;
 }
 
+// IMPORTANT: The byte array returned from this function MUST
+// be passed to free() when ready to be disposed of, in
+// order to avoid a memory leak.
 unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
   char* nes_header_str = getDatabaseFieldFromRow(crctest, 5);
   if (nes_header_str == NULL) {
