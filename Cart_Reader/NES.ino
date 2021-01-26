@@ -12,16 +12,17 @@
 //26   Supported Mappers
 //101  Defines
 //131  Variables
-//189  Menu
-//308  Setup
-//337  Low Level Functions
-//584  CRC Functions
-//639  File Functions
-//801  Config Functions
-//1397 ROM Functions
-//2490 RAM Functions
-//2925 Eeprom Functions
-//3115 NESmaker Flash Cart Functions
+//191  Menu
+//310  Setup
+//339  Low Level Functions
+//586  CRC Functions
+//645  File Functions
+//819  NES 2.0 Header Functions
+//1095 Config Functions
+//1691 ROM Functions
+//2789 RAM Functions
+//3224 Eeprom Functions
+//3414 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -169,6 +170,8 @@ boolean flashfound = false; // NESmaker 39SF040 Flash Cart
 File sdFile;
 char fileCount[3];
 File nesFile;
+uint32_t prg_crc32;
+uint32_t chr_crc32;
 char filePRG[] = "PRG.bin";
 char fileCHR[] = "CHR.bin";
 char fileNES[] = "CART.nes";
@@ -621,7 +624,7 @@ uint32_t crc32EEP(File &file, uint32_t &charcnt) {
   return ~oldcrc32;
 }
 
-void calcCRC(char* checkFile, unsigned long filesize) {
+void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy) {
   uint32_t crc;
   crcFile = sd.open(checkFile);
   if (filesize < 1024)
@@ -630,6 +633,10 @@ void calcCRC(char* checkFile, unsigned long filesize) {
     crc = crc32(crcFile, filesize);
   crcFile.close();
   sprintf(tempCRC, "%08lX", crc);
+
+  if (crcCopy != NULL) {
+    *crcCopy = crc;
+  }
 
   print_Msg(F("CRC: "));
   println_Msg(tempCRC);
@@ -724,31 +731,8 @@ void CreateRAMFileInSD() {
 void outputNES() {
   display_Clear();
 
-  uint32_t prg_crc32 = 0;
-  uint32_t prg_size_bytes = 0;
-  File prg_crc32_file;
-  if(prg_crc32_file.open(filePRG, O_READ))
-  {
-    prg_size_bytes = 1024 * prg;
-    prg_crc32 = crc32(prg_crc32_file, prg_size_bytes);
-    prg_crc32_file.close();
-  }
-
-  uint32_t chr_crc32 = 0;
-  uint32_t chr_size_bytes = 0;
-  if(chr > 0)
-  {
-    File chr_crc32_file;
-    if(prg_crc32_file.open(fileCHR, O_READ))
-    {
-      chr_size_bytes = 1024 * chr;
-      chr_crc32 = crc32(chr_crc32_file, chr_size_bytes);
-      chr_crc32_file.close();
-    }
-  }
-
   unsigned char* nes_header_bytes = getNESHeaderForFileInfo(1024 * prg, 1024 * chr, prg_crc32, chr_crc32);
-  
+
   LED_RED_ON;
   LED_GREEN_ON;
   LED_BLUE_ON;
@@ -775,10 +759,13 @@ void outputNES() {
     print_Error(F("SD Error"), true);
   }
 
-  if(nes_header_bytes != NULL)
+  if (nes_header_bytes != NULL)
   {
     nesFile.write(nes_header_bytes, 16);
     free(nes_header_bytes);
+    display_Clear();
+    println_Msg(F("SET HEADER"));
+    display_Update();
   }
 
   size_t n;
@@ -805,11 +792,12 @@ void outputNES() {
   nesFile.flush();
   nesFile.close();
 
+  display_Clear();
   println_Msg(F("NES FILE OUTPUT!"));
   println_Msg(F(""));
   display_Update();
 
-  calcCRC(fileNES, (prg + chr) * 1024);
+  calcCRC(fileNES, (prg + chr) * 1024, NULL);
   LED_RED_OFF;
   LED_GREEN_OFF;
   LED_BLUE_OFF;
@@ -833,303 +821,275 @@ void CartFinish() {
    NES 2.0 Header Functions
  *****************************************/
 
-unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32)
-{
-  if(prg_size == 0)
-  {
+unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32) {
+  if (prg_size == 0) {
     return NULL;
   }
 
-  File nesDb;
   char* temp_line;
+  char* nes20_header;
   int i;
-  
-  if(!nesDb.open("nes20db.txt", O_READ))
-  {
+
+  if (!sdFile.open("/nes20db.txt", FILE_READ)) {
     return NULL;
+  } else {
+    display_Clear();
+    println_Msg(F("SEARCHING DB"));
+    display_Update();
   }
 
   temp_line = malloc(256 * sizeof(char));
-  while(nesDb.available())
-  {
-    i = 0;
-    char temp_char;
-    do
-    {
-      temp_char = nesDb.read();
-      temp_line[i] = temp_char;
-      i++;
-    } while(nesDb.available() && temp_char != 0 && temp_char != '\n');
-
-    i--;
-
-    if(temp_line[i] == '\n')
-    {
-      temp_line[i] = 0;
-    }
+  while (sdFile.available()) {
+    // We're reading fixed-length lines
+    // padded with null characters
+    sdFile.read(temp_line, 256);
 
     size_t prg_size_db;
     size_t chr_size_db;
     uint32_t prg_crc32_db;
     uint32_t chr_crc32_db;
 
+    // Match PRG and CHR sizes first, then
+    // match PRG CRC32 and, if the CHR size
+    // is greater than zero, the CHR CRC32
+    // as well.
     prg_size_db = getPRGSizeFromDatabaseRow(temp_line);
-    if(prg_size == prg_size_db)
-    {
+    if (prg_size == prg_size_db) {
       chr_size_db = getCHRSizeFromDatabaseRow(temp_line);
-      if(chr_size == chr_size_db)
-      {
+      if (chr_size == chr_size_db) {
         prg_crc32_db = getPRGCRC32FromDatabaseRow(temp_line);
-        if(prg_crc32 == prg_crc32_db)
-        {
-          if(chr_size == 0)
-          {
-            nesDb.close();
-            return getNES20HeaderBytesFromDatabaseRow(temp_line);
-          }
-          else if(chr_crc32 == chr_crc32_db)
-          {
-            nesDb.close();
-            return getNES20HeaderBytesFromDatabaseRow(temp_line);
+        if (prg_crc32 == prg_crc32_db) {
+          if (chr_size == 0) {
+            nes20_header = getNES20HeaderBytesFromDatabaseRow(temp_line);
+            free(temp_line);
+            sdFile.close();
+            return nes20_header;
+          } else {
+            chr_crc32_db = getCHRCRC32FromDatabaseRow(temp_line);
+            if (chr_crc32 == chr_crc32_db) {
+              nes20_header = getNES20HeaderBytesFromDatabaseRow(temp_line);
+              free(temp_line);
+              sdFile.close();
+              return nes20_header;
+            }
           }
         }
       }
     }
   }
 
-  nesDb.close();
+  free(temp_line);
+  sdFile.close();
   return NULL;
 }
 
-char* getDatabaseFieldFromRow(const char* dbstr, uint8_t fieldnum)
-{
-    uint8_t field_start_pos = 0;
-    uint8_t field_end_pos = 1;
-    uint8_t current_field = 0;
-    char* return_field;
+// IMPORTANT: The string returned from this function MUST
+// be passed to free() when ready to be disposed of, in
+// order to avoid a memory leak.
+char* getDatabaseFieldFromRow(const char* dbstr, uint8_t fieldnum) {
+  uint8_t field_start_pos = 0;
+  uint8_t field_end_pos = 1;
+  uint8_t current_field = 0;
+  char* return_field;
 
-    if(dbstr == NULL || fieldnum > 5)
-    {
-        return NULL;
+  // Field order, beginning with field 0:
+  // PRG Size, CHR Size, PRG CRC32, CHR CRC32, Game Title, NES 2.0 Header (as ASCII)
+  //
+  // Each entry is on its own line, with a field delimeter of ^^
+  // I'm assuming that nothing will ever use ^^ in a game title, but it's possible
+  // that could be wrong, in which case a different field delimeter would need
+  // to be used, and the logic here updated.
+  if (dbstr == NULL || fieldnum > 5) {
+    return NULL;
+  }
+
+  if (dbstr[0] == 0 || dbstr[0] == '\n') {
+    return NULL;
+  }
+
+  for (; field_end_pos < 255 && current_field < fieldnum; field_end_pos++) {
+    if (field_start_pos < 254 && dbstr[field_start_pos] == '^' && dbstr[field_start_pos + 1] == '^') {
+      current_field++;
+      field_start_pos = field_end_pos;
+      field_end_pos = field_start_pos + 1;
     }
 
-    if(dbstr[0] == 0 || dbstr[0] == '\n')
-    {
-        return NULL;
+    if (current_field < fieldnum && dbstr[field_end_pos - 1] == '^' && dbstr[field_end_pos] == '^' || dbstr[field_end_pos] == 0 || dbstr[field_end_pos] == '\n') {
+      current_field++;
+      field_start_pos = field_end_pos + 1;
+      field_end_pos = field_start_pos + 1;
     }
+  }
 
-    for(;field_end_pos < 255 && current_field < fieldnum; field_end_pos++)
-    {
-        if(field_start_pos < 254 && dbstr[field_start_pos] == '^' && dbstr[field_start_pos + 1] == '^')
-        {
-            current_field++;
-            field_start_pos = field_end_pos;
-            field_end_pos = field_start_pos + 1;
-        }
+  field_end_pos = field_start_pos;
 
-        if(current_field < fieldnum && dbstr[field_end_pos - 1] == '^' && dbstr[field_end_pos] == '^' || dbstr[field_end_pos] == 0 || dbstr[field_end_pos] == '\n')
-        {
-            current_field++;
-            field_start_pos = field_end_pos + 1;
-            field_end_pos = field_start_pos + 1;
-        }
-    }
+  while ((dbstr[field_end_pos - 1] != '^' || dbstr[field_end_pos] != '^') && dbstr[field_end_pos] != 0 && dbstr[field_end_pos] != '\n') {
+    field_end_pos++;
+  }
 
-    field_end_pos = field_start_pos;
+  if (dbstr[field_end_pos] == '^') {
+    field_end_pos = field_end_pos - 2;
+  } else {
+    field_end_pos = field_end_pos - 1;
+  }
 
-    while((dbstr[field_end_pos - 1] != '^' || dbstr[field_end_pos] != '^') && dbstr[field_end_pos] != 0 && dbstr[field_end_pos] != '\n')
-    {
-        field_end_pos++;
-    }
+  if ((field_end_pos - field_start_pos + 2) == 0) {
+    return NULL;
+  }
 
-    if(dbstr[field_end_pos] == '^')
-    {
-        field_end_pos = field_end_pos - 2;
-    }
-    else
-    {
-        field_end_pos = field_end_pos - 1;
-    }
+  return_field = (char*)malloc((field_end_pos - field_start_pos + 2) * sizeof(char));
 
-    if((field_end_pos - field_start_pos + 2) == 0)
-    {
-        return NULL;
-    }
+  memcpy(return_field, &dbstr[field_start_pos], field_end_pos - field_start_pos + 1);
 
-    return_field = (char*)malloc((field_end_pos - field_start_pos + 2) * sizeof(char));
+  return_field[(field_end_pos - field_start_pos) + 1] = 0;
 
-    memcpy(return_field, &dbstr[field_start_pos], field_end_pos - field_start_pos + 1);
-
-    return_field[(field_end_pos - field_start_pos) + 1] = 0;
-
-    return return_field;
+  return return_field;
 }
 
-unsigned char getNibbleFromChar(char num)
-{
-    char ret_char = num & 0x0F;
-    if(num > '9')
-    {
-        ret_char += 9;
-    }
+unsigned char getNibbleFromChar(char num) {
+  char ret_char = num & 0x0F;
+  if (num > '9') {
+    ret_char += 9;
+  }
 
-    return ret_char;
+  return ret_char;
 }
 
-unsigned char getByteFromChars(char msn, char lsn)
-{
-    unsigned char return_char;
-    return_char = (getNibbleFromChar(msn) << 4);
-    return_char |= getNibbleFromChar(lsn);
+unsigned char getByteFromChars(char msn, char lsn) {
+  unsigned char return_char;
+  return_char = (getNibbleFromChar(msn) << 4);
+  return_char |= getNibbleFromChar(lsn);
 
-    return return_char;
+  return return_char;
 }
 
-unsigned char* strToBytes(const char* bytestr)
-{
-    uint8_t str_length;
-    uint8_t byte_length;
-    uint8_t str_idx;
-    uint8_t byte_idx = 0;
-    unsigned char* byte_arr;
+unsigned char* strToBytes(const char* bytestr) {
+  uint8_t str_length;
+  uint8_t byte_length;
+  uint8_t str_idx;
+  uint8_t byte_idx = 0;
+  unsigned char* byte_arr;
 
-    if(bytestr == NULL)
-    {
-        return NULL;
+  if (bytestr == NULL) {
+    return NULL;
+  }
+
+  str_length = (uint8_t)strlen(bytestr);
+
+  if (str_length % 2 != 0) {
+    return NULL;
+  }
+
+  byte_length = str_length / 2;
+
+  byte_arr = (unsigned char*)malloc(byte_length * sizeof(unsigned char));
+
+  for (str_idx = 0; str_idx < str_length && bytestr[str_idx] != 0; str_idx = str_idx + 2) {
+    if (!isxdigit(bytestr[str_idx]) || !isxdigit(bytestr[str_idx + 1])) {
+      free(byte_arr);
+      return NULL;
     }
 
-    str_length = (uint8_t)strlen(bytestr);
+    byte_arr[byte_idx] = getByteFromChars(bytestr[str_idx], bytestr[str_idx + 1]);
+    byte_idx++;
+  }
 
-    if(str_length % 2 != 0)
-    {
-        return NULL;
-    }
-
-    byte_length = str_length / 2;
-
-    byte_arr = (unsigned char*)malloc(byte_length * sizeof(unsigned char));
-
-    for(str_idx = 0; str_idx < str_length && bytestr[str_idx] != 0; str_idx = str_idx + 2)
-    {
-        if(!isxdigit(bytestr[str_idx]) || !isxdigit(bytestr[str_idx + 1]))
-        {
-            free(byte_arr);
-            return NULL;
-        }
-
-        byte_arr[byte_idx] = getByteFromChars(bytestr[str_idx], bytestr[str_idx + 1]);
-        byte_idx++;
-    }
-
-    return byte_arr;
+  return byte_arr;
 }
 
-uint32_t crc32FromBytes(const unsigned char* bytearr)
-{
-    if(bytearr == NULL)
-    {
-        return 0;
-    }
+uint32_t crc32FromBytes(const unsigned char* bytearr) {
+  if (bytearr == NULL) {
+    return 0;
+  }
 
-    return (uint32_t)(((uint32_t)bytearr[0] << 24) | ((uint32_t)bytearr[1] << 16) | ((uint32_t)bytearr[2] << 8) | (uint32_t)bytearr[3]);
+  return (uint32_t)(((uint32_t)bytearr[0] << 24) | ((uint32_t)bytearr[1] << 16) | ((uint32_t)bytearr[2] << 8) | (uint32_t)bytearr[3]);
 }
 
-size_t getPRGSizeFromDatabaseRow(const char* crctest)
-{
-    char* prg_size_str = getDatabaseFieldFromRow(crctest, 0);
-    if(prg_size_str == NULL)
-    {
-        return 0;
-    }
+size_t getPRGSizeFromDatabaseRow(const char* crctest) {
+  char* prg_size_str = getDatabaseFieldFromRow(crctest, 0);
+  if (prg_size_str == NULL) {
+    return 0;
+  }
 
-    size_t return_size = (size_t)atoi(prg_size_str);
-    free(prg_size_str);
+  size_t return_size = (size_t)atoi(prg_size_str);
+  free(prg_size_str);
 
-    return return_size;
+  return return_size;
 }
 
-size_t getCHRSizeFromDatabaseRow(const char* crctest)
-{
-    char* chr_size_str = getDatabaseFieldFromRow(crctest, 1);
-    if(chr_size_str == NULL)
-    {
-        return 0;
-    }
+size_t getCHRSizeFromDatabaseRow(const char* crctest) {
+  char* chr_size_str = getDatabaseFieldFromRow(crctest, 1);
+  if (chr_size_str == NULL) {
+    return 0;
+  }
 
-    size_t return_size = (size_t)atoi(chr_size_str);
-    free(chr_size_str);
+  size_t return_size = (size_t)atoi(chr_size_str);
+  free(chr_size_str);
 
-    return return_size;
+  return return_size;
 }
 
-uint32_t getPRGCRC32FromDatabaseRow(const char* crctest)
-{
-    char* prg_crc32_str = getDatabaseFieldFromRow(crctest, 2);
-    if(prg_crc32_str == NULL)
-    {
-        return 0;
-    }
+uint32_t getPRGCRC32FromDatabaseRow(const char* crctest) {
+  char* prg_crc32_str = getDatabaseFieldFromRow(crctest, 2);
+  if (prg_crc32_str == NULL) {
+    return 0;
+  }
 
-    unsigned char* prg_crc32_bytes = strToBytes(prg_crc32_str);
-    free(prg_crc32_str);
+  unsigned char* prg_crc32_bytes = strToBytes(prg_crc32_str);
+  free(prg_crc32_str);
 
-    if(prg_crc32_bytes == NULL)
-    {
-        return 0;
-    }
+  if (prg_crc32_bytes == NULL) {
+    return 0;
+  }
 
-    uint32_t prg_crc32 = crc32FromBytes(prg_crc32_bytes);
-    free(prg_crc32_bytes);
+  uint32_t prg_crc32 = crc32FromBytes(prg_crc32_bytes);
+  free(prg_crc32_bytes);
 
-    return prg_crc32;
+  return prg_crc32;
 }
 
-uint64_t getCHRCRC32FromDatabaseRow(const char* crctest)
-{
-    char* chr_crc32_str = getDatabaseFieldFromRow(crctest, 3);
-    if(chr_crc32_str == NULL)
-    {
-        return 0;
-    }
+uint64_t getCHRCRC32FromDatabaseRow(const char* crctest) {
+  char* chr_crc32_str = getDatabaseFieldFromRow(crctest, 3);
+  if (chr_crc32_str == NULL) {
+    return 0;
+  }
 
-    unsigned char* chr_crc32_bytes = strToBytes(chr_crc32_str);
-    free(chr_crc32_str);
+  unsigned char* chr_crc32_bytes = strToBytes(chr_crc32_str);
+  free(chr_crc32_str);
 
-    if(chr_crc32_bytes == NULL)
-    {
-        return 0;
-    }
+  if (chr_crc32_bytes == NULL) {
+    return 0;
+  }
 
-    uint32_t chr_crc32 = crc32FromBytes(chr_crc32_bytes);
-    free(chr_crc32_bytes);
+  uint32_t chr_crc32 = crc32FromBytes(chr_crc32_bytes);
+  free(chr_crc32_bytes);
 
-    return chr_crc32;
+  return chr_crc32;
 }
 
-char* getGameTitleFromDatabaseRow(const char* crctest)
-{
-    char* game_title_str = getDatabaseFieldFromRow(crctest, 4);
+// IMPORTANT: As with getDatabaseFieldFromRow(), the string
+// returned from this function must be passed to free() after
+// it's no longer needed in order to avoid a memory leak.
+char* getGameTitleFromDatabaseRow(const char* crctest) {
+  char* game_title_str = getDatabaseFieldFromRow(crctest, 4);
 
-    return game_title_str;
+  return game_title_str;
 }
 
-unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest)
-{
-    char* nes_header_str = getDatabaseFieldFromRow(crctest, 5);
-    if(nes_header_str == NULL)
-    {
-        return NULL;
-    }
+unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
+  char* nes_header_str = getDatabaseFieldFromRow(crctest, 5);
+  if (nes_header_str == NULL) {
+    return NULL;
+  }
 
-    unsigned char* nes_header_bytes = strToBytes(nes_header_str);
-    free(nes_header_str);
+  unsigned char* nes_header_bytes = strToBytes(nes_header_str);
+  free(nes_header_str);
 
-    if(nes_header_bytes == NULL)
-    {
-        return NULL;
-    }
+  if (nes_header_bytes == NULL) {
+    return NULL;
+  }
 
-    return nes_header_bytes;
+  return nes_header_bytes;
 }
 
 /******************************************
@@ -2262,7 +2222,7 @@ void readPRG() {
     println_Msg(F(""));
     display_Update();
 
-    calcCRC(fileName, prg * 1024);
+    calcCRC(fileName, prg * 1024, &prg_crc32);
   }
   set_address(0);
   PHI2_HI;
@@ -2817,7 +2777,7 @@ void readCHR() {
       println_Msg(F(""));
       display_Update();
 
-      calcCRC(fileName, chr * 1024);
+      calcCRC(fileName, chr * 1024, &chr_crc32);
     }
   }
   set_address(0);
@@ -3010,9 +2970,9 @@ void readRAM() {
       display_Update();
 
       if ((mapper == 16) || (mapper == 159))
-        calcCRC(fileName, eepsize);
+        calcCRC(fileName, eepsize, NULL);
       else
-        calcCRC(fileName, ram * 1024);
+        calcCRC(fileName, ram * 1024, NULL);
     }
   }
   set_address(0);
