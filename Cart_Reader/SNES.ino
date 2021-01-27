@@ -4,6 +4,7 @@
 
 #include "options.h"
 #ifdef enable_SNES
+#include "snes_clk.h"
 
 /******************************************
   Defines
@@ -382,7 +383,12 @@ void setup_Snes() {
 
   // Adafruit Clock Generator
   // last number is the clock correction factor which is custom for each clock generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, -16000);
+  int32_t clock_offset = readClockOffset();
+  if (clock_offset > INT32_MIN) {
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+  } else {
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, -16000);
+  }
 
   // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
   clockgen.set_freq(100000000ULL, SI5351_CLK1); // CPU
