@@ -15,7 +15,7 @@ int32_t readClockOffset() {
 	clock_file.close();
 	if(i == -1) {
 		free(clock_buf);
-		return 0;
+		return INT32_MIN;
 	} else if(i < 16) {
 		clock_buf[i] = 0;
 	}
