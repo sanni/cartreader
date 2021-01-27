@@ -4,6 +4,7 @@
 
 #include "options.h"
 #ifdef enable_NP
+#include "snes_clk.h"
 
 /******************************************
    SF Memory Clock Source
@@ -605,7 +606,12 @@ void setup_SFM() {
   //PORTH &= ~(1 << 1);
 
   // Adafruit Clock Generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  int32_t clock_offset = readClockOffset();
+  if (clock_offset > INT32_MIN) {
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+  } else {
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, -16000);
+  }
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
   clockgen.set_freq(2147727200ULL, SI5351_CLK0);
