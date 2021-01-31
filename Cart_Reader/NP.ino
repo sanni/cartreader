@@ -610,7 +610,7 @@ void setup_SFM() {
   if (clock_offset > INT32_MIN) {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, -16000);
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);

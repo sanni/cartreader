@@ -387,7 +387,7 @@ void setup_Snes() {
   if (clock_offset > INT32_MIN) {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, -16000);
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
 
   // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
