@@ -16,13 +16,13 @@
 //311  Setup
 //340  Low Level Functions
 //587  CRC Functions
-//646  File Functions
-//828  NES 2.0 Header Functions
-//1109 Config Functions
-//1705 ROM Functions
-//2803 RAM Functions
-//3232 Eeprom Functions
-//3428 NESmaker Flash Cart Functions
+//647  File Functions
+//831  NES 2.0 Header Functions
+//1112 Config Functions
+//1708 ROM Functions
+//2806 RAM Functions
+//3235 Eeprom Functions
+//3431 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -625,9 +625,10 @@ uint32_t crc32EEP(File &file, uint32_t &charcnt) {
   return ~oldcrc32;
 }
 
-void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy) {
+void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy, unsigned long offset) {
   uint32_t crc;
   crcFile = sd.open(checkFile);
+  crcFile.seek(offset);
   if (filesize < 1024)
     crc = crc32EEP(crcFile, filesize);
   else
@@ -732,6 +733,7 @@ void CreateRAMFileInSD() {
 void outputNES() {
   display_Clear();
   char* outputFile;
+  unsigned long crcOffset = 0;
 
   unsigned char* nes_header_bytes = getNESHeaderForFileInfo(1024 * prg, 1024 * chr, prg_crc32, chr_crc32);
 
@@ -751,6 +753,7 @@ void outputNES() {
 
   if(nes_header_bytes != NULL) {
     outputFile = fileNES;
+    crcOffset = 16;
   } else {
     outputFile = fileBIN;
   }
@@ -806,7 +809,7 @@ void outputNES() {
   println_Msg(F(""));
   display_Update();
 
-  calcCRC(outputFile, (prg + chr) * 1024, NULL);
+  calcCRC(outputFile, (prg + chr) * 1024, NULL, crcOffset);
   LED_RED_OFF;
   LED_GREEN_OFF;
   LED_BLUE_OFF;
@@ -2237,7 +2240,7 @@ void readPRG() {
     println_Msg(F(""));
     display_Update();
 
-    calcCRC(fileName, prg * 1024, &prg_crc32);
+    calcCRC(fileName, prg * 1024, &prg_crc32, 0);
   }
   set_address(0);
   PHI2_HI;
@@ -2792,7 +2795,7 @@ void readCHR() {
       println_Msg(F(""));
       display_Update();
 
-      calcCRC(fileName, chr * 1024, &chr_crc32);
+      calcCRC(fileName, chr * 1024, &chr_crc32, 0);
     }
   }
   set_address(0);
@@ -2985,9 +2988,9 @@ void readRAM() {
       display_Update();
 
       if ((mapper == 16) || (mapper == 159))
-        calcCRC(fileName, eepsize, NULL);
+        calcCRC(fileName, eepsize, NULL, 0);
       else
-        calcCRC(fileName, ram * 1024, NULL);
+        calcCRC(fileName, ram * 1024, NULL, 0);
     }
   }
   set_address(0);
