@@ -12,17 +12,17 @@
 //26   Supported Mappers
 //101  Defines
 //131  Variables
-//191  Menu
-//310  Setup
-//339  Low Level Functions
-//586  CRC Functions
-//645  File Functions
-//819  NES 2.0 Header Functions
-//1100 Config Functions
-//1696 ROM Functions
-//2794 RAM Functions
-//3229 Eeprom Functions
-//3419 NESmaker Flash Cart Functions
+//192  Menu
+//311  Setup
+//340  Low Level Functions
+//587  CRC Functions
+//646  File Functions
+//828  NES 2.0 Header Functions
+//1109 Config Functions
+//1705 ROM Functions
+//2803 RAM Functions
+//3232 Eeprom Functions
+//3428 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -175,6 +175,7 @@ uint32_t chr_crc32;
 char filePRG[] = "PRG.bin";
 char fileCHR[] = "CHR.bin";
 char fileNES[] = "CART.nes";
+char fileBIN[] = "CART.bin";
 
 // Cartridge Config
 byte mapper;
@@ -730,6 +731,7 @@ void CreateRAMFileInSD() {
 
 void outputNES() {
   display_Clear();
+  char* outputFile;
 
   unsigned char* nes_header_bytes = getNESHeaderForFileInfo(1024 * prg, 1024 * chr, prg_crc32, chr_crc32);
 
@@ -746,8 +748,15 @@ void outputNES() {
     print_Error(F("SD Error"), true);
 
   }
-  if (!sd.exists(fileNES)) {
-    nesFile = sd.open(fileNES, O_RDWR | O_CREAT);
+
+  if(nes_header_bytes != NULL) {
+    outputFile = fileNES;
+  } else {
+    outputFile = fileBIN;
+  }
+
+  if (!sd.exists(outputFile)) {
+    nesFile = sd.open(outputFile, O_RDWR | O_CREAT);
   }
   if (!nesFile) {
     LED_GREEN_OFF;
@@ -797,7 +806,7 @@ void outputNES() {
   println_Msg(F(""));
   display_Update();
 
-  calcCRC(fileNES, (prg + chr) * 1024, NULL);
+  calcCRC(outputFile, (prg + chr) * 1024, NULL);
   LED_RED_OFF;
   LED_GREEN_OFF;
   LED_BLUE_OFF;
