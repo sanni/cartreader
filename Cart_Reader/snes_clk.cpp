@@ -1,5 +1,6 @@
 #include "snes_clk.h"
 #include <SdFat.h>
+#include "atoi32.h"
 
 int32_t readClockOffset() {
 	File clock_file;
@@ -38,7 +39,7 @@ int32_t readClockOffset() {
 		}
 	}
 
-	clock_offset = (int32_t)atoi(clock_buf);
+	clock_offset = atoi32_signed(clock_buf);
 	free(clock_buf);
 
 	return clock_offset;
