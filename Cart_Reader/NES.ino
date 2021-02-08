@@ -7,22 +7,23 @@
 
 #include "options.h"
 #ifdef enable_NES
+#include "atoi32.h"
 
 //Line Content
-//26   Supported Mappers
-//101  Defines
-//131  Variables
-//192  Menu
-//311  Setup
-//340  Low Level Functions
-//587  CRC Functions
-//647  File Functions
-//831  NES 2.0 Header Functions
-//1112 Config Functions
-//1708 ROM Functions
-//2806 RAM Functions
-//3235 Eeprom Functions
-//3431 NESmaker Flash Cart Functions
+//28   Supported Mappers
+//103  Defines
+//133  Variables
+//194  Menu
+//313  Setup
+//342  Low Level Functions
+//589  CRC Functions
+//649  File Functions
+//844  NES 2.0 Header Functions
+//1125 Config Functions
+//1721 ROM Functions
+//2819 RAM Functions
+//3248 Eeprom Functions
+//3444 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -1037,7 +1038,7 @@ uint32_t getPRGSizeFromDatabaseRow(const char* crctest) {
     return 0;
   }
 
-  uint32_t return_size = (uint32_t)atoi(prg_size_str);
+  uint32_t return_size = atoi32_unsigned(prg_size_str);
   free(prg_size_str);
 
   return return_size;
@@ -1049,7 +1050,7 @@ uint32_t getCHRSizeFromDatabaseRow(const char* crctest) {
     return 0;
   }
 
-  uint32_t return_size = (uint32_t)atoi(chr_size_str);
+  uint32_t return_size = atoi32_unsigned(chr_size_str);
   free(chr_size_str);
 
   return return_size;
