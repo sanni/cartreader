@@ -7,22 +7,23 @@
 
 #include "options.h"
 #ifdef enable_NES
+#include "atoi32.h"
 
 //Line Content
-//26   Supported Mappers
-//101  Defines
-//131  Variables
-//192  Menu
-//311  Setup
-//340  Low Level Functions
-//587  CRC Functions
-//647  File Functions
-//831  NES 2.0 Header Functions
-//1112 Config Functions
-//1708 ROM Functions
-//2806 RAM Functions
-//3235 Eeprom Functions
-//3431 NESmaker Flash Cart Functions
+//28   Supported Mappers
+//103  Defines
+//133  Variables
+//194  Menu
+//313  Setup
+//342  Low Level Functions
+//589  CRC Functions
+//649  File Functions
+//844  NES 2.0 Header Functions
+//1125 Config Functions
+//1721 ROM Functions
+//2819 RAM Functions
+//3248 Eeprom Functions
+//3444 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -734,8 +735,15 @@ void outputNES() {
   display_Clear();
   char* outputFile;
   unsigned long crcOffset = 0;
+  uint32_t prg_size_bytes = 1024 * (uint32_t)prg;
+  uint32_t chr_size_bytes = 1024 * (uint32_t)chr;
+  int has_header = 0;
 
-  unsigned char* nes_header_bytes = getNESHeaderForFileInfo(1024 * prg, 1024 * chr, prg_crc32, chr_crc32);
+  unsigned char* nes_header_bytes = getNESHeaderForFileInfo(prg_size_bytes, chr_size_bytes, prg_crc32, chr_crc32);
+
+  if (nes_header_bytes != NULL) {
+    has_header = 1;
+  }
 
   LED_RED_ON;
   LED_GREEN_ON;
@@ -751,7 +759,7 @@ void outputNES() {
 
   }
 
-  if(nes_header_bytes != NULL) {
+  if (has_header) {
     outputFile = fileNES;
     crcOffset = 16;
   } else {
@@ -771,7 +779,7 @@ void outputNES() {
     print_Error(F("SD Error"), true);
   }
 
-  if (nes_header_bytes != NULL)
+  if (has_header)
   {
     nesFile.write(nes_header_bytes, 16);
     free(nes_header_bytes);
@@ -805,7 +813,11 @@ void outputNES() {
   nesFile.close();
 
   display_Clear();
-  println_Msg(F("NES FILE OUTPUT!"));
+  if (has_header) {
+    println_Msg(F("NES FILE OUTPUT!"));
+  } else {
+    println_Msg(F("BIN FILE OUTPUT!"));
+  }
   println_Msg(F(""));
   display_Update();
 
@@ -833,7 +845,7 @@ void CartFinish() {
    NES 2.0 Header Functions
  *****************************************/
 
-unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32) {
+unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32) {
   if (prg_size == 0) {
     return NULL;
   }
@@ -856,8 +868,8 @@ unsigned char* getNESHeaderForFileInfo(size_t prg_size, size_t chr_size, uint32_
     // padded with null characters
     sdFile.read(temp_line, 256);
 
-    size_t prg_size_db;
-    size_t chr_size_db;
+    uint32_t prg_size_db;
+    uint32_t chr_size_db;
     uint32_t prg_crc32_db;
     uint32_t chr_crc32_db;
 
@@ -1020,25 +1032,25 @@ uint32_t crc32FromBytes(const unsigned char* bytearr) {
   return (uint32_t)(((uint32_t)bytearr[0] << 24) | ((uint32_t)bytearr[1] << 16) | ((uint32_t)bytearr[2] << 8) | (uint32_t)bytearr[3]);
 }
 
-size_t getPRGSizeFromDatabaseRow(const char* crctest) {
+uint32_t getPRGSizeFromDatabaseRow(const char* crctest) {
   char* prg_size_str = getDatabaseFieldFromRow(crctest, 0);
   if (prg_size_str == NULL) {
     return 0;
   }
 
-  size_t return_size = (size_t)atoi(prg_size_str);
+  uint32_t return_size = atoi32_unsigned(prg_size_str);
   free(prg_size_str);
 
   return return_size;
 }
 
-size_t getCHRSizeFromDatabaseRow(const char* crctest) {
+uint32_t getCHRSizeFromDatabaseRow(const char* crctest) {
   char* chr_size_str = getDatabaseFieldFromRow(crctest, 1);
   if (chr_size_str == NULL) {
     return 0;
   }
 
-  size_t return_size = (size_t)atoi(chr_size_str);
+  uint32_t return_size = atoi32_unsigned(chr_size_str);
   free(chr_size_str);
 
   return return_size;
