@@ -15,7 +15,7 @@ int32_t atoi32_signed(const char* input_string) {
     i = 1;
   }
 
-  int64_t return_val = 0;
+  int32_t return_val = 0;
 
   while (input_string[i] != '\0') {
     if (input_string[i] >= '0' && input_string[i] <= '9') {
@@ -39,7 +39,7 @@ uint32_t atoi32_unsigned(const char* input_string) {
 
   int i = 0;
 
-  uint64_t return_val = 0;
+  uint32_t return_val = 0;
 
   while (input_string[i] != '\0') {
     if (input_string[i] >= '0' && input_string[i] <= '9') {
