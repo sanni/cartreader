@@ -313,28 +313,6 @@ byte readByte_GB(word myAddress) {
   return tempByte;
 }
 
-byte readByteSRAM_GB(word myAddress) {
-  PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-
-  // Switch CS(PH3) and RD(PH6) to LOW
-  PORTH &= ~((1 << 3) | (1 << 6));
-
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-
-  // Read
-  byte tempByte = PINC;
-
-  // Switch CS(PH3) and RD(PH6) to HIGH
-  PORTH |= (1 << 3) | (1 << 6);
-
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-
-  return tempByte;
-}
-
 void writeByte_GB(int myAddress, uint8_t myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -352,6 +330,56 @@ void writeByte_GB(int myAddress, uint8_t myData) {
 
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
+
+  // Leave WE high for at least 50ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+byte readByteSRAM_GB(word myAddress) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pull CS(PH3) LOW
+  PORTH &= ~(1 << 3);
+  // Pull RD(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Read
+  byte tempByte = PINC;
+
+  // Pull CS(PH3) HIGH
+  PORTH |= (1 << 3);
+  // Pull RD(PH6) HIGH
+  PORTH |=  (1 << 6);
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  return tempByte;
+}
+
+void writeByteSRAM_GB(int myAddress, uint8_t myData) {
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTC = myData;
+
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pull CS(PH3) LOW
+  PORTH &= ~(1 << 3);
+  // Pull WR(PH5) low
+  PORTH &= ~(1 << 5);
+
+  // Leave WE low for at least 60ns
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+  // Pull WR(PH5) HIGH
+  PORTH |= (1 << 5);
+  // Pull CS(PH3) HIGH
+  PORTH |= (1 << 3);
 
   // Leave WE high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
@@ -654,15 +682,7 @@ void writeSRAM_GB() {
 
         // Write RAM
         for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress++) {
-          // Pull CS(PH3) LOW
-          PORTH &= ~(1 << 3);
-          // Write to RAM
-          writeByte_GB(sramAddress, myFile.read());
-          asm volatile("nop");
-          asm volatile("nop");
-          asm volatile("nop");
-          // Pull CS(PH3) HIGH
-          PORTH |= (1 << 3) ;
+          writeByteSRAM_GB(sramAddress, myFile.read());
         }
       }
       // Disable RAM
