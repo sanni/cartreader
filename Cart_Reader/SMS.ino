@@ -312,6 +312,10 @@ void getCartInfo_SMS() {
     case 0x2:
       cartSize =  512 * 1024UL;
       break;
+    case 0x3:
+      // 0x3 is (only?) used in The Pro Yakyuu '91 (Game Gear)
+      cartSize =  128 * 1024UL;
+      break;
     default:
       cartSize =  48 * 1024UL;
       // LED Error
