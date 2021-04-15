@@ -4,6 +4,7 @@
 
 #include "options.h"
 #ifdef enable_N64
+#include "snes_clk.h"
 
 /******************************************
   Defines
@@ -233,7 +234,11 @@ void n64CartMenu() {
       else if ((saveType == 5) || (saveType == 6)) {
         println_Msg(F("Reading Eep..."));
         display_Update();
+#ifdef clockgen_installed
         readEeprom();
+#else
+        readEeprom_CLK();
+#endif
       }
       else {
         print_Error(F("Savetype Error"), false);
@@ -291,8 +296,14 @@ void n64CartMenu() {
         fileBrowser(F("Select eep file"));
         display_Clear();
 
+#ifdef clockgen_installed
         writeEeprom();
         writeErrors = verifyEeprom();
+#else
+        writeEeprom_CLK();
+        writeErrors = verifyEeprom_CLK();
+#endif
+
         if (writeErrors == 0) {
           println_Msg(F("Eeprom verified OK"));
           display_Update();
@@ -388,10 +399,28 @@ void setup_N64_Cart() {
   PORTC &= ~(1 << 0);
   PORTC |= (1 << 1);
 
+#ifdef clockgen_installed
+  // Adafruit Clock Generator
+  // last number is the clock correction factor which is custom for each clock generator
+  int32_t clock_offset = readClockOffset();
+  if (clock_offset > INT32_MIN) {
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+  } else {
+    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  }
+
+  // Set Eeprom clock to 2Mhz
+  clockgen.set_freq(200000000ULL, SI5351_CLK1);
+
+  // Start outputting Eeprom clock
+  clockgen.output_enable(SI5351_CLK1, 1); // Eeprom clock
+
+#else
   // Set Eeprom Clock Pin(PH1) to Output
   DDRH |= (1 << 1);
   // Output a high signal
   PORTH |= (1 << 1);
+#endif
 
   // Set Eeprom Data Pin(PH4) to Input
   DDRH &= ~(1 << 4);
@@ -400,6 +429,11 @@ void setup_N64_Cart() {
 
   // Set sram base address
   sramBase = 0x08000000;
+
+#ifdef clockgen_installed
+  // Wait for clock generator
+  clockgen.update_status();
+#endif
 
   // Wait until all is stable
   delay(300);
@@ -1805,7 +1839,7 @@ void idCart() {
 }
 
 /******************************************
-  Eeprom functions
+  Eeprom functions (without Adafruit clockgen)
 *****************************************/
 // Send a clock pulse of 2us length, 50% duty, 500kHz
 void pulseClock_N64(unsigned int times) {
@@ -1818,7 +1852,7 @@ void pulseClock_N64(unsigned int times) {
 }
 
 // Send one byte of data to eeprom
-void sendData(byte data) {
+void sendData_CLK(byte data) {
   for (byte i = 0; i < 8; i++) {
     // pull data line low
     N64_LOW;
@@ -1842,7 +1876,7 @@ void sendData(byte data) {
 }
 
 // Send stop bit to eeprom
-void sendStop() {
+void sendStop_CLK() {
   N64_LOW;
   pulseClock_N64(2);
   N64_HIGH;
@@ -1850,7 +1884,7 @@ void sendStop() {
 }
 
 // Capture 8 bytes in 64 bits into bit array tempBits
-void readData() {
+void readData_CLK() {
   for (byte i = 0; i < 64; i++) {
 
     // pulse clock until we get response from eeprom
@@ -1867,6 +1901,253 @@ void readData() {
     // wait for line to go high again
     while (!N64_QUERY) {
       pulseClock_N64(1);
+    }
+  }
+}
+
+// Write Eeprom to cartridge
+void writeEeprom_CLK() {
+  if ((saveType == 5) || (saveType == 6)) {
+
+    // Create filepath
+    sprintf(filePath, "%s/%s", filePath, fileName);
+    println_Msg(F("Writing..."));
+    println_Msg(filePath);
+    display_Update();
+
+    // Open file on sd card
+    if (myFile.open(filePath, O_READ)) {
+
+      for (byte i = 0; i < (eepPages / 64); i++) {
+        myFile.read(sdBuffer, 512);
+        // Disable interrupts for more uniform clock pulses
+        noInterrupts();
+
+        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
+          // Blink led
+          PORTB ^= (1 << 4);
+
+          // Wait ~50ms between page writes or eeprom will have write errors
+          pulseClock_N64(26000);
+
+          // Send write command
+          sendData_CLK(0x05);
+          // Send page number
+          sendData_CLK(pageNumber + (i * 64));
+          // Send data to write
+          for (byte j = 0; j < 8; j++) {
+            sendData_CLK(sdBuffer[(pageNumber * 8) + j]);
+          }
+          sendStop_CLK();
+        }
+        interrupts();
+      }
+
+      // Close the file:
+      myFile.close();
+      println_Msg(F("Done"));
+      display_Update();
+      delay(600);
+    }
+    else {
+      print_Error(F("SD Error"), true);
+    }
+  }
+  else {
+    print_Error(F("Savetype Error"), true);
+  }
+}
+
+// Dump Eeprom to SD
+void readEeprom_CLK() {
+  if ((saveType == 5) || (saveType == 6)) {
+
+    // Wait 50ms or eeprom might lock up
+    pulseClock_N64(26000);
+
+    // Get name, add extension and convert to char array for sd lib
+    strcpy(fileName, romName);
+    strcat(fileName, ".eep");
+
+    // create a new folder for the save file
+    EEPROM_readAnything(0, foldern);
+    sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
+    sd.mkdir(folder, true);
+    sd.chdir(folder);
+
+    // write new folder number back to eeprom
+    foldern = foldern + 1;
+    EEPROM_writeAnything(0, foldern);
+
+    // Open file on sd card
+    if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+      print_Error(F("Can't create file on SD"), true);
+    }
+
+    for (byte i = 0; i < (eepPages / 64); i++) {
+      // Disable interrupts for more uniform clock pulses
+      noInterrupts();
+
+      for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
+        // Blink led
+        PORTB ^= (1 << 4);
+
+        // Send read command
+        sendData_CLK(0x04);
+        // Send Page number
+        sendData_CLK(pageNumber + (i * 64));
+        // Send stop bit
+        sendStop_CLK();
+
+        // read data
+        readData_CLK();
+        sendStop_CLK();
+
+        // OR 8 bits into one byte for a total of 8 bytes
+        for (byte j = 0; j < 64; j += 8) {
+          sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
+        }
+        // Wait 50ms between pages or eeprom might lock up
+        pulseClock_N64(26000);
+      }
+      interrupts();
+
+      // Write 64 pages at once to the SD card
+      myFile.write(sdBuffer, 512);
+    }
+    // Close the file:
+    myFile.close();
+    //clear the screen
+    display_Clear();
+    print_Msg(F("Saved to "));
+    print_Msg(folder);
+    println_Msg(F("/"));
+    display_Update();
+  }
+  else {
+    print_Error(F("Savetype Error"), true);
+  }
+}
+
+// Check if a write succeeded, returns 0 if all is ok and number of errors if not
+unsigned long verifyEeprom_CLK() {
+  if ((saveType == 5) || (saveType == 6)) {
+    writeErrors = 0;
+
+    // Wait 50ms or eeprom might lock up
+    pulseClock_N64(26000);
+
+    display_Clear();
+    print_Msg(F("Verifying against "));
+    println_Msg(filePath);
+    display_Update();
+
+    // Open file on sd card
+    if (myFile.open(filePath, O_READ)) {
+
+      for (byte i = 0; i < (eepPages / 64); i++) {
+        // Disable interrupts for more uniform clock pulses
+        noInterrupts();
+
+        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
+          // Blink led
+          PORTB ^= (1 << 4);
+
+          // Send read command
+          sendData_CLK(0x04);
+          // Send Page number
+          sendData_CLK(pageNumber + (i * 64));
+          // Send stop bit
+          sendStop_CLK();
+
+          // read data
+          readData_CLK();
+          sendStop_CLK();
+
+          // OR 8 bits into one byte for a total of 8 bytes
+          for (byte j = 0; j < 64; j += 8) {
+            sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
+          }
+          // Wait 50ms between pages or eeprom might lock up
+          pulseClock_N64(26000);
+        }
+        interrupts();
+
+        // Check sdBuffer content against file on sd card
+        for (int c = 0; c < 512; c++) {
+          if (myFile.read() != sdBuffer[c]) {
+            writeErrors++;
+          }
+        }
+      }
+      // Close the file:
+      myFile.close();
+    }
+    else {
+      // SD Error
+      writeErrors = 999999;
+      print_Error(F("SD Error"), true);
+    }
+    // Return 0 if verified ok, or number of errors
+    return writeErrors;
+  }
+  else {
+    print_Error(F("Savetype Error"), true);
+  }
+}
+
+/******************************************
+  Eeprom functions (with Adafruit clockgen)
+*****************************************/
+// Send one byte of data to eeprom
+void sendData(byte data) {
+  for (byte i = 0; i < 8; i++) {
+    // pull data line low
+    N64_LOW;
+
+    // if current bit is 1, pull high after ~1us
+    if (data >> 7) {
+      __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+      N64_HIGH;
+      __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    }
+    // if current bit is 0 pull high after ~3us
+    else {
+      __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+      N64_HIGH;
+      __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    }
+
+    // rotate to the next bit
+    data <<= 1;
+  }
+}
+
+// Send stop bit to eeprom
+void sendStop() {
+  N64_LOW;
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  N64_HIGH;
+  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+}
+
+// Capture 8 bytes in 64 bits into bit array tempBits
+void readData() {
+  for (byte i = 0; i < 64; i++) {
+
+    // wait until we get response from eeprom
+    while (N64_QUERY) {
+    }
+
+    // Skip over the 1us low part of a high bit, Arduino running at 16Mhz -> one nop = 62.5ns
+    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+
+    // Read bit
+    tempBits[i] = N64_QUERY;
+
+    // wait for line to go high again
+    while (!N64_QUERY) {
+      __asm__("nop\n\t");
     }
   }
 }
@@ -1893,8 +2174,10 @@ void writeEeprom() {
           // Blink led
           PORTB ^= (1 << 4);
 
-          // Wait ~50ms between page writes or eeprom will have write errors
-          pulseClock_N64(26000);
+          // Wait ~50ms between page writes or eeprom will have write errors, Arduino running at 16Mhz -> one nop = 62.5ns
+          for (long i = 0; i < 115000; i++) {
+            __asm__("nop\n\t");
+          }
 
           // Send write command
           sendData(0x05);
@@ -1927,10 +2210,6 @@ void writeEeprom() {
 // Dump Eeprom to SD
 void readEeprom() {
   if ((saveType == 5) || (saveType == 6)) {
-
-    // Wait 50ms or eeprom might lock up
-    pulseClock_N64(26000);
-
     // Get name, add extension and convert to char array for sd lib
     strcpy(fileName, romName);
     strcat(fileName, ".eep");
@@ -1973,8 +2252,10 @@ void readEeprom() {
         for (byte j = 0; j < 64; j += 8) {
           sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
         }
-        // Wait 50ms between pages or eeprom might lock up
-        pulseClock_N64(26000);
+        // Wait ~600us between pages
+        for (int i = 0; i < 2000; i++) {
+          __asm__("nop\n\t");
+        }
       }
       interrupts();
 
@@ -1999,9 +2280,6 @@ void readEeprom() {
 unsigned long verifyEeprom() {
   if ((saveType == 5) || (saveType == 6)) {
     writeErrors = 0;
-
-    // Wait 50ms or eeprom might lock up
-    pulseClock_N64(26000);
 
     display_Clear();
     print_Msg(F("Verifying against "));
@@ -2034,8 +2312,10 @@ unsigned long verifyEeprom() {
           for (byte j = 0; j < 64; j += 8) {
             sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
           }
-          // Wait 50ms between pages or eeprom might lock up
-          pulseClock_N64(26000);
+          // Wait ~600us between pages
+          for (int i = 0; i < 2000; i++) {
+            __asm__("nop\n\t");
+          }
         }
         interrupts();
 

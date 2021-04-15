@@ -15,6 +15,9 @@
 // Enable the second button
 #define enable_Button2
 
+// Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
+//#define clockgen_installed
+
 // define enable_XXX to enable
 #define enable_FLASH
 #define enable_GBX
