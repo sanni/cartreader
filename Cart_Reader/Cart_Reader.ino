@@ -1,8 +1,8 @@
 /**********************************************************************************
                     Cartridge Reader for Arduino Mega2560
 
-   Date:             31.01.2021
-   Version:          5.6
+   Date:             15.04.2021
+   Version:          5.7
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -43,7 +43,7 @@
 **********************************************************************************/
 #include <SdFat.h>
 
-char ver[5] = "5.6";
+char ver[5] = "5.7";
 
 #include "options.h"
 
@@ -1201,10 +1201,12 @@ void wait_btn() {
     int b = checkButton();
 
 #ifdef enable_N64
+#ifndef clockgen_installed
     // Send some clock pulses to the Eeprom in case it locked up
     if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
       pulseClock_N64(1);
     }
+#endif
 #endif
 
     // if the cart readers input button is pressed shortly
