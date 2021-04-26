@@ -168,9 +168,9 @@ char flashID[5];
 boolean flashfound = false; // NESmaker 39SF040 Flash Cart
 
 // Files
-File sdFile;
+FsFile sdFile;
 char fileCount[3];
-File nesFile;
+FsFile nesFile;
 uint32_t prg_crc32;
 uint32_t chr_crc32;
 char filePRG[] = "PRG.bin";
@@ -589,7 +589,7 @@ int int_pow(int base, int exp) { // Power for int
 /******************************************
    CRC Functions
  *****************************************/
-File crcFile;
+FsFile crcFile;
 char tempCRC[9];
 
 inline uint32_t updateCRC32(uint8_t ch, uint32_t crc) {
@@ -598,7 +598,7 @@ inline uint32_t updateCRC32(uint8_t ch, uint32_t crc) {
   return tab_value ^ ((crc) >> 8);
 }
 
-uint32_t crc32(File &file, uint32_t &charcnt) {
+uint32_t crc32(FsFile &file, uint32_t &charcnt) {
   uint32_t oldcrc32 = 0xFFFFFFFF;
   charcnt = 0;
   while (file.available()) {
@@ -612,7 +612,7 @@ uint32_t crc32(File &file, uint32_t &charcnt) {
   return ~oldcrc32;
 }
 
-uint32_t crc32EEP(File &file, uint32_t &charcnt) {
+uint32_t crc32EEP(FsFile &file, uint32_t &charcnt) {
   uint32_t oldcrc32 = 0xFFFFFFFF;
   charcnt = 0;
   while (file.available()) {

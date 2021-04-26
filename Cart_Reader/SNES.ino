@@ -482,7 +482,7 @@ byte readBank_SNES(byte myBank, word myAddress) {
   return tempByte;
 }
 
-void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
+void readLoRomBanks( unsigned int start, unsigned int total, FsFile *file)
 {
   byte buffer[1024] = { 0 };
 
@@ -529,7 +529,7 @@ void readLoRomBanks( unsigned int start, unsigned int total, SdFile *file)
   }
 }
 
-void readHiRomBanks( unsigned int start, unsigned int total, SdFile *file)
+void readHiRomBanks( unsigned int start, unsigned int total, FsFile *file)
 {
   byte buffer[1024] = { 0 };
 
