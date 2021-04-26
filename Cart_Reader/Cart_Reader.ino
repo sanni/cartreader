@@ -2,7 +2,7 @@
                     Cartridge Reader for Arduino Mega2560
 
    Date:             26.04.2021
-   Version:          6.0
+   Version:          6.1
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -39,10 +39,11 @@
    Modman - N64 checksum comparison fix
    splash5 - EMS GB Smart cart, Wonderswan and NGP module
    jiyunomegami - Retrode Game Gear adapter support and code improvements
+   Kreeblah - NES database
 
 **********************************************************************************/
 
-char ver[5] = "6.0";
+char ver[5] = "6.1";
 
 /******************************************
    Libraries
@@ -52,10 +53,9 @@ char ver[5] = "6.0";
 
 // SD Card
 #include "SdFat.h"
-#define SD_FAT_TYPE 0
-SdFat sd;
-SdFile myFile;
-SdFile myDir;
+SdFs sd;
+FsFile myDir;
+FsFile myFile;
 
 // Basic Libs
 #include <SPI.h>
@@ -433,7 +433,7 @@ void aboutScreen() {
   display.drawBitmap(0, 0, sig, 128, 64, 1);
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2020 Version "));
+  print_Msg(F("2021 Version "));
   println_Msg(ver);
   println_Msg(F(""));
   println_Msg(F(""));
@@ -691,7 +691,7 @@ void setup() {
   // Serial Begin
   Serial.begin(9600);
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2020 sanni"));
+  Serial.println(F("2021 sanni"));
   Serial.println("");
   // LED Error
   rgb.setColor(0, 0, 255);

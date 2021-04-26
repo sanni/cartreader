@@ -425,7 +425,7 @@ void read_bank_PCE_RAM(uint32_t address_start, int block_index)
 }
 
 //Get line from file and convert upper case to lower case
-void skip_line(SdFile* readfile)
+void skip_line(FsFile* readfile)
 {
   int i = 0;
   char str_buf;
@@ -446,7 +446,7 @@ void skip_line(SdFile* readfile)
 }
 
 //Get line from file and convert upper case to lower case
-void get_line(char* str_buf, SdFile* readfile, uint8_t maxi)
+void get_line(char* str_buf, FsFile* readfile, uint8_t maxi)
 {
   int i = 0;
 
@@ -487,7 +487,7 @@ uint32_t calculate_crc32(int n, unsigned char c[], uint32_t r)
 
 void crc_search(char *file_p, char *folder_p, uint32_t rom_size, uint32_t crc)
 {
-  SdFile rom, script;
+  FsFile rom, script;
   uint32_t r, processedsize;
   char gamename[100];
   char crc_file[9], crc_search[9];
