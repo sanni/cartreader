@@ -527,7 +527,14 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size, uint32_t crc)
           print_Msg(F(".pce"));
           flag = CHKSUM_OK;
           strcat(gamename, ".pce");
-          rom.rename(sd.vwd(), gamename);
+
+          // Open filepath directory
+          if (!myDir.open(folder_p)) {
+            display_Clear();
+            print_Error(F("SD Error"), true);
+          }
+          rom.rename(&myDir, gamename);
+          myDir.close();
           break;
         }
       }

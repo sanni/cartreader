@@ -1,8 +1,8 @@
 /**********************************************************************************
                     Cartridge Reader for Arduino Mega2560
 
-   Date:             15.04.2021
-   Version:          5.7
+   Date:             26.04.2021
+   Version:          6.0
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -41,27 +41,27 @@
    jiyunomegami - Retrode Game Gear adapter support and code improvements
 
 **********************************************************************************/
-#include <SdFat.h>
 
-char ver[5] = "5.7";
-
-#include "options.h"
+char ver[5] = "6.0";
 
 /******************************************
    Libraries
  *****************************************/
+// Options
+#include "options.h"
+
+// SD Card
+#include "SdFat.h"
+#define SD_FAT_TYPE 0
+SdFat sd;
+SdFile myFile;
+SdFile myDir;
+
 // Basic Libs
 #include <SPI.h>
 #include <Wire.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
-
-// SD Card
-#define sdSpeed SPI_FULL_SPEED
-// SD Card (Pin 50 = MISO, Pin 51 = MOSI, Pin 52 = SCK, Pin 53 = SS)
-#define chipSelectPin 53
-SdFat sd;
-SdFile myFile;
 
 // AVR Eeprom
 #include <EEPROM.h>
@@ -698,7 +698,7 @@ void setup() {
 #endif
 
   // Init SD card
-  if (!sd.begin(chipSelectPin, sdSpeed)) {
+  if (!sd.begin(SdSpiConfig(SS, DEDICATED_SPI))) {
     display_Clear();
     print_Error(F("SD Error"), true);
   }
@@ -1363,8 +1363,9 @@ void fileBrowser(const __FlashStringHelper* browserTitle) {
   int currFile;
   filebrowse = 1;
 
-  // Empty filePath string
-  filePath[0] = '\0';
+  // Root
+  filePath[0] = '/';
+  filePath[1] = '\0';
 
   // Temporary char array for filename
   char nameStr[FILENAME_LENGTH];
@@ -1379,8 +1380,14 @@ browserstart:
   currPage = 1;
   lastPage = 1;
 
+  // Open filepath directory
+  if (!myDir.open(filePath)) {
+    display_Clear();
+    print_Error(F("SD Error"), true);
+  }
+
   // Read in File as long as there are files
-  while (myFile.openNext(sd.vwd(), O_READ)) {
+  while (myFile.openNext(&myDir, O_READ)) {
 
     // Get name of file
     myFile.getName(nameStr, FILENAME_LENGTH);
@@ -1402,6 +1409,7 @@ browserstart:
     }
     myFile.close();
   }
+  myDir.close();
 
   // "Calculate number of needed pages"
   if (currFile < 8)
@@ -1463,11 +1471,9 @@ page:
 
   // Check if we are supposed to go back to the root dir
   if (root) {
-    // Empty filePath string
-    filePath[0] = '\0';
-    // Rewind filesystem
-    //sd.vwd()->rewind();
     // Change working dir to root
+    filePath[0] = '/';
+    filePath[1] = '\0';
     sd.chdir("/");
     // Start again
     root = 0;
