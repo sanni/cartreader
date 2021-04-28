@@ -1,9 +1,9 @@
 #include "snes_clk.h"
-#include <SdFat.h>
+#include "SdFat.h"
 #include "atoi32.h"
 
 int32_t readClockOffset() {
-  File clock_file;
+  FsFile clock_file;
   unsigned char* clock_buf;
   int16_t i;
   int32_t clock_offset;
