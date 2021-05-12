@@ -16,7 +16,7 @@ unsigned long time;
 unsigned long blank;
 unsigned long sectorSize;
 uint16_t bufferSize;
-boolean hiROM = 1;
+byte hiROM = 1;
 
 /******************************************
    Menu
@@ -746,15 +746,21 @@ void dataIn16() {
  *****************************************/
 void writeByte_Flash(unsigned long myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
-  if (hiROM) {
+  if (hiROM == 1) {
     PORTK = (myAddress >> 8) & 0xFF;
     PORTL = (myAddress >> 16) & 0xFF;
   }
-  else {
+  else if (hiROM == 0) {
     PORTK = (myAddress >> 8) & 0x7F;
     // Set A15(PK7) HIGH to disable SRAM
     PORTK |= (1 << 7);
     PORTL = (myAddress >> 15) & 0xFF;
+  }
+  if (hiROM == 4) {
+    PORTK = (myAddress >> 8) & 0xFF;
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Set A23(PL7) HIGH to enable high part of ExHiROM
+    PORTL |= (1 << 7);
   }
   PORTC = myData;
 
@@ -777,15 +783,21 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
 
 byte readByte_Flash(unsigned long myAddress) {
   PORTF = myAddress & 0xFF;
-  if (hiROM) {
+  if (hiROM == 1) {
     PORTK = (myAddress >> 8) & 0xFF;
     PORTL = (myAddress >> 16) & 0xFF;
   }
-  else {
+  else if (hiROM == 0) {
     PORTK = (myAddress >> 8) & 0x7F;
     // Set A15(PK7) HIGH to disable SRAM
     PORTK |= (1 << 7);
     PORTL = (myAddress >> 15) & 0xFF;
+  }
+  else if (hiROM == 4) {
+    PORTK = (myAddress >> 8) & 0xFF;
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Set A23(PL7) HIGH to enable high part of ExHiROM
+    PORTL |= (1 << 7);
   }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
