@@ -98,6 +98,12 @@ static const char N64SaveItem4[] PROGMEM = "SRAM";
 static const char N64SaveItem5[] PROGMEM = "FLASHRAM";
 static const char* const saveOptionsN64[] PROGMEM = {N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5};
 
+// Repro menu
+static const char N64ReproItem1[] PROGMEM = "no buffer";
+static const char N64ReproItem2[] PROGMEM = "32 byte";
+static const char N64ReproItem3[] PROGMEM = "128 byte";
+static const char* const reproOptionsN64[] PROGMEM = {N64ReproItem1, N64ReproItem2, N64ReproItem3};
+
 // N64 start menu
 void n64Menu() {
   // create menu with title and 5 options to choose from
@@ -3045,117 +3051,187 @@ void flashRepro_N64() {
     println_Msg(F("Press Button"));
     display_Update();
     wait();
-
-    // Launch file browser
-    filePath[0] = '\0';
-    sd.chdir("/");
-    fileBrowser(F("Select z64 file"));
-    display_Clear();
-    display_Update();
-
-    // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
-
-    // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
-      // Get rom size from file
-      fileSize = myFile.fileSize();
-      print_Msg(F("File size: "));
-      print_Msg(fileSize / 1048576);
-      println_Msg(F("MB"));
-      display_Update();
-
-      // Compare file size to flashrom size
-      if ((fileSize / 1048576) > cartSize) {
-        print_Error(F("File too big"), true);
-      }
-
-      // Erase needed sectors
-      if (strcmp(flashid, "227E") == 0) {
-        // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
-        eraseFlashrom_N64(0x20000);
-      }
-      else if (strcmp(flashid, "7E7E") == 0) {
-        // Fujitsu MSP55LV100S
-        eraseMSP55LV100_N64();
-      }
-      else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
-        // Intel 4400L0ZDQ0
-        eraseIntel4400_N64();
-        resetIntel4400_N64();
-      }
-      else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
-        // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
-        eraseFlashrom_N64(0x8000);
-      }
-
-      // Check if erase was successful
-      if (blankcheckFlashrom_N64()) {
-        // Write flashrom
-        println_Msg(F("OK"));
-        print_Msg(F("Writing "));
-        println_Msg(filePath);
-        display_Update();
-
-
-        if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
-          // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
-          writeFlashBuffer_N64(0x20000, 128);
-        }
-        else if (strcmp(flashid, "227E") == 0) {
-          // Spansion S29GL128N/S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
-          writeFlashBuffer_N64(0x20000, 32);
-        }
-        else if (strcmp(flashid, "7E7E") == 0) {
-          //Fujitsu MSP55LV100S
-          writeMSP55LV100_N64(0x20000);
-        }
-        else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
-          // Macronix MX29LV640 without buffer
-          writeFlashrom_N64();
-        }
-        else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
-          // Intel 4400L0ZDQ0
-          writeIntel4400_N64();
-          resetIntel4400_N64();
-        }
-
-        // Close the file:
-        myFile.close();
-
-        // Verify
-        print_Msg(F("Verifying..."));
-        display_Update();
-        writeErrors = verifyFlashrom_N64();
-        if (writeErrors == 0) {
-          println_Msg(F("OK"));
-          display_Update();
-        }
-        else {
-          print_Msg(writeErrors);
-          print_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
-        }
-      }
-      else {
-        // Close the file
-        myFile.close();
-        print_Error(F("failed"), false);
-      }
-    }
-    else {
-      print_Error(F("Can't open file"), false);
-    }
   }
-  // If the ID is unknown show error message
   else {
+
     print_Msg(F("Vendor: "));
     println_Msg(vendorID);
     print_Msg(F("ID: "));
     print_Msg(flashid);
     print_Msg(F(" "));
     println_Msg(cartID);
-    print_Error(F("Unknown flashrom"), false);
+    println_Msg(F("Unknown flashrom"));
+    println_Msg(F(" "));
+    println_Msg(F("Press button for"));
+    println_Msg(F("manual config"));
+    display_Update();
+    wait();
+
+    // Set cartsize manually
+    unsigned char N64RomMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(romOptionsN64, 6);
+    N64RomMenu = question_box(F("Select REPRO size"), menuOptions, 6, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (N64RomMenu)
+    {
+      case 0:
+        // 4MB
+        cartSize = 4;
+        break;
+
+      case 1:
+        // 8MB
+        cartSize = 8;
+        break;
+
+      case 2:
+        // 12MB
+        cartSize = 12;
+        break;
+
+      case 3:
+        // 16MB
+        cartSize = 16;
+        break;
+
+      case 4:
+        // 32MB
+        cartSize = 32;
+        break;
+
+      case 5:
+        // 64MB
+        cartSize = 64;
+        break;
+    }
+
+    // Set flashid manually
+    unsigned char N64ReproMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(reproOptionsN64, 3);
+    N64ReproMenu = question_box(F("Select flash buffer"), menuOptions, 3, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (N64ReproMenu)
+    {
+      case 0:
+        // no buffer
+        sprintf(flashid, "%s", "22C9");
+        break;
+
+      case 1:
+        // 32 byte buffer
+        sprintf(flashid, "%s", "227E");
+        break;
+
+      case 2:
+        // 128 byte buffer
+        sprintf(flashid, "%s", "227E");
+        sprintf(cartID, "%s", "3901");
+        break;
+    }
+  }
+
+  // Launch file browser
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select z64 file"));
+  display_Clear();
+  display_Update();
+
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    print_Msg(F("File size: "));
+    print_Msg(fileSize / 1048576);
+    println_Msg(F("MB"));
+    display_Update();
+
+    // Compare file size to flashrom size
+    if ((fileSize / 1048576) > cartSize) {
+      print_Error(F("File too big"), true);
+    }
+
+    // Erase needed sectors
+    if (strcmp(flashid, "227E") == 0) {
+      // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
+      eraseFlashrom_N64(0x20000);
+    }
+    else if (strcmp(flashid, "7E7E") == 0) {
+      // Fujitsu MSP55LV100S
+      eraseMSP55LV100_N64();
+    }
+    else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
+      // Intel 4400L0ZDQ0
+      eraseIntel4400_N64();
+      resetIntel4400_N64();
+    }
+    else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+      // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
+      eraseFlashrom_N64(0x8000);
+    }
+
+    // Check if erase was successful
+    if (blankcheckFlashrom_N64()) {
+      // Write flashrom
+      println_Msg(F("OK"));
+      print_Msg(F("Writing "));
+      println_Msg(filePath);
+      display_Update();
+
+      if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
+        // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
+        writeFlashBuffer_N64(0x20000, 128);
+      }
+      else if (strcmp(flashid, "227E") == 0) {
+        // Spansion S29GL128N/S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
+        writeFlashBuffer_N64(0x20000, 32);
+      }
+      else if (strcmp(flashid, "7E7E") == 0) {
+        //Fujitsu MSP55LV100S
+        writeMSP55LV100_N64(0x20000);
+      }
+      else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+        // Macronix MX29LV640 without buffer
+        writeFlashrom_N64();
+      }
+      else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
+        // Intel 4400L0ZDQ0
+        writeIntel4400_N64();
+        resetIntel4400_N64();
+      }
+
+      // Close the file:
+      myFile.close();
+
+      // Verify
+      print_Msg(F("Verifying..."));
+      display_Update();
+      writeErrors = verifyFlashrom_N64();
+      if (writeErrors == 0) {
+        println_Msg(F("OK"));
+        display_Update();
+      }
+      else {
+        print_Msg(writeErrors);
+        print_Msg(F(" bytes "));
+        print_Error(F("did not verify."), false);
+      }
+    }
+    else {
+      // Close the file
+      myFile.close();
+      print_Error(F("failed"), false);
+    }
+  }
+  else {
+    print_Error(F("Can't open file"), false);
   }
 
   println_Msg(F("Press Button..."));
