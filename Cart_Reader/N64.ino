@@ -101,8 +101,9 @@ static const char* const saveOptionsN64[] PROGMEM = {N64SaveItem1, N64SaveItem2,
 // Repro menu
 static const char N64ReproItem1[] PROGMEM = "no buffer";
 static const char N64ReproItem2[] PROGMEM = "32 byte";
-static const char N64ReproItem3[] PROGMEM = "128 byte";
-static const char* const reproOptionsN64[] PROGMEM = {N64ReproItem1, N64ReproItem2, N64ReproItem3};
+static const char N64ReproItem3[] PROGMEM = "64 byte";
+static const char N64ReproItem4[] PROGMEM = "128 byte";
+static const char* const reproOptionsN64[] PROGMEM = {N64ReproItem1, N64ReproItem2, N64ReproItem3, N64ReproItem4};
 
 // N64 start menu
 void n64Menu() {
@@ -3053,17 +3054,19 @@ void flashRepro_N64() {
     wait();
   }
   else {
-
-    print_Msg(F("Vendor: "));
-    println_Msg(vendorID);
+    println_Msg(F("Unknown flashrom"));
     print_Msg(F("ID: "));
+    print_Msg(vendorID);
+    print_Msg(F(" "));
     print_Msg(flashid);
     print_Msg(F(" "));
     println_Msg(cartID);
-    println_Msg(F("Unknown flashrom"));
     println_Msg(F(" "));
     println_Msg(F("Press button for"));
     println_Msg(F("manual config"));
+    println_Msg(F("This will erase your"));
+    println_Msg(F("Repro Cartridge."));
+    println_Msg(F("Attention: Use 3.3V!"));
     display_Update();
     wait();
 
@@ -3110,8 +3113,8 @@ void flashRepro_N64() {
     // Set flashid manually
     unsigned char N64ReproMenu;
     // Copy menuOptions out of progmem
-    convertPgm(reproOptionsN64, 3);
-    N64ReproMenu = question_box(F("Select flash buffer"), menuOptions, 3, 0);
+    convertPgm(reproOptionsN64, 4);
+    N64ReproMenu = question_box(F("Select flash buffer"), menuOptions, 4, 0);
 
     // wait for user choice to come back from the question box menu
     switch (N64ReproMenu)
@@ -3127,6 +3130,12 @@ void flashRepro_N64() {
         break;
 
       case 2:
+        // 64 byte buffer
+        sprintf(flashid, "%s", "227E");
+        sprintf(cartID, "%s", "2200");
+        break;
+
+      case 3:
         // 128 byte buffer
         sprintf(flashid, "%s", "227E");
         sprintf(cartID, "%s", "3901");
@@ -3188,6 +3197,10 @@ void flashRepro_N64() {
       if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
         // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
         writeFlashBuffer_N64(0x20000, 128);
+      }
+      else if ((strcmp(cartID, "2200") == 0) && (strcmp(flashid, "227E") == 0)) {
+        // ST M29W128GH(16MB) with 0x20000 sector size and 64 byte buffer
+        writeFlashBuffer_N64(0x20000, 64);
       }
       else if (strcmp(flashid, "227E") == 0) {
         // Spansion S29GL128N/S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
