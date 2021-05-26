@@ -1,8 +1,8 @@
 /**********************************************************************************
                     Cartridge Reader for Arduino Mega2560
 
-   Date:             26.04.2021
-   Version:          6.1
+   Date:             26.05.2021
+   Version:          6.2
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -43,7 +43,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "6.1";
+char ver[5] = "6.2";
 
 /******************************************
    Libraries
