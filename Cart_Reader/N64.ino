@@ -3013,6 +3013,8 @@ readn64rom:
    N64 Repro Flashrom Functions
  *****************************************/
 void flashRepro_N64() {
+  unsigned long sectorSize;
+  byte bufferSize;
   // Check flashrom ID's
   idFlashrom_N64();
 
@@ -3085,8 +3087,7 @@ void flashRepro_N64() {
     sprintf(flashid, "%s", "CONF");
     sprintf(cartID, "%s", "CONF");
 
-    unsigned long sectorSize;
-    byte bufferSize;
+
 
     // Set cartsize manually
     unsigned char N64RomMenu;
@@ -3150,13 +3151,11 @@ void flashRepro_N64() {
       case 2:
         // 64 byte buffer
         bufferSize = 64;
-
         break;
 
       case 3:
         // 128 byte buffer
         bufferSize = 128;
-
         break;
     }
 
@@ -3218,7 +3217,7 @@ void flashRepro_N64() {
     // Erase needed sectors
     if (strcmp(flashid, "227E") == 0) {
       // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
-      eraseFlashrom_N64(0x20000);
+      eraseSector_N64(0x20000);
     }
     else if (strcmp(flashid, "7E7E") == 0) {
       // Fujitsu MSP55LV100S
@@ -3231,10 +3230,10 @@ void flashRepro_N64() {
     }
     else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
       // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
-      eraseFlashrom_N64(0x8000);
+      eraseSector_N64(0x8000);
     }
     else {
-      eraseFlashrom_N64(sectorSize);
+      eraseFlashrom_N64();
     }
 
     // Check if erase was successful
@@ -3660,11 +3659,42 @@ void eraseMSP55LV100_N64() {
   }
 }
 
+// Common chip erase command
+void eraseFlashrom_N64() {
+  print_Msg(F("Chip erase..."));
+  display_Update();
+
+  // Send Erase Command
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x80);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(romBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(romBase + (0x555 << 1));
+  writeWord_N64(0x10);
+
+  // Read the status register
+  setAddress_N64(romBase);
+  word statusReg = readWord_N64();
+  while ((statusReg | 0xFF7F) != 0xFFFF) {
+    setAddress_N64(romBase);
+    statusReg = readWord_N64();
+    // Blink led
+    PORTB ^= (1 << 4);
+    delay(500);
+  }
+}
+
 // Common sector erase command
-void eraseFlashrom_N64(unsigned long sectorSize) {
+void eraseSector_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
 
-  print_Msg(F("Erasing..."));
+  print_Msg(F("Sector erase..."));
   display_Update();
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
