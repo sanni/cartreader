@@ -98,12 +98,19 @@ static const char N64SaveItem4[] PROGMEM = "SRAM";
 static const char N64SaveItem5[] PROGMEM = "FLASHRAM";
 static const char* const saveOptionsN64[] PROGMEM = {N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5};
 
-// Repro menu
-static const char N64ReproItem1[] PROGMEM = "no buffer";
-static const char N64ReproItem2[] PROGMEM = "32 byte";
-static const char N64ReproItem3[] PROGMEM = "64 byte";
-static const char N64ReproItem4[] PROGMEM = "128 byte";
-static const char* const reproOptionsN64[] PROGMEM = {N64ReproItem1, N64ReproItem2, N64ReproItem3, N64ReproItem4};
+// Repro write buffer menu
+static const char N64BufferItem1[] PROGMEM = "no buffer";
+static const char N64BufferItem2[] PROGMEM = "32 Byte";
+static const char N64BufferItem3[] PROGMEM = "64 Byte";
+static const char N64BufferItem4[] PROGMEM = "128 Byte";
+static const char* const bufferOptionsN64[] PROGMEM = {N64BufferItem1, N64BufferItem2, N64BufferItem3, N64BufferItem4};
+
+// Repro sector size menu
+static const char N64SectorItem1[] PROGMEM = "8 KByte";
+static const char N64SectorItem2[] PROGMEM = "32 KByte";
+static const char N64SectorItem3[] PROGMEM = "64 KByte";
+static const char N64SectorItem4[] PROGMEM = "128 KByte";
+static const char* const sectorOptionsN64[] PROGMEM = {N64SectorItem1, N64SectorItem2, N64SectorItem3, N64SectorItem4};
 
 // N64 start menu
 void n64Menu() {
@@ -3022,6 +3029,9 @@ void flashRepro_N64() {
     else if ((strcmp(flashid, "227E") == 0)  && (strcmp(cartID, "2101") == 0)) {
       print_Msg(F("Spansion S29GL128N"));
     }
+    else if ((strcmp(flashid, "227E") == 0)  && (strcmp(cartID, "2100") == 0)) {
+      print_Msg(F("ST M29W128GL"));
+    }
     else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
       print_Msg(F("Macronix MX29LV640"));
       if (cartSize == 16)
@@ -3070,11 +3080,19 @@ void flashRepro_N64() {
     display_Update();
     wait();
 
+    // clear IDs
+    sprintf(vendorID, "%s", "CONF");
+    sprintf(flashid, "%s", "CONF");
+    sprintf(cartID, "%s", "CONF");
+
+    unsigned long sectorSize;
+    byte bufferSize;
+
     // Set cartsize manually
     unsigned char N64RomMenu;
     // Copy menuOptions out of progmem
     convertPgm(romOptionsN64, 6);
-    N64RomMenu = question_box(F("Select REPRO size"), menuOptions, 6, 0);
+    N64RomMenu = question_box(F("Select flash size"), menuOptions, 6, 0);
 
     // wait for user choice to come back from the question box menu
     switch (N64RomMenu)
@@ -3110,35 +3128,65 @@ void flashRepro_N64() {
         break;
     }
 
-    // Set flashid manually
-    unsigned char N64ReproMenu;
+    // Set flash buffer manually
+    unsigned char N64BufferMenu;
     // Copy menuOptions out of progmem
-    convertPgm(reproOptionsN64, 4);
-    N64ReproMenu = question_box(F("Select flash buffer"), menuOptions, 4, 0);
+    convertPgm(bufferOptionsN64, 4);
+    N64BufferMenu = question_box(F("Select buffer size"), menuOptions, 4, 0);
 
     // wait for user choice to come back from the question box menu
-    switch (N64ReproMenu)
+    switch (N64BufferMenu)
     {
       case 0:
         // no buffer
-        sprintf(flashid, "%s", "22C9");
+        bufferSize = 0;
         break;
 
       case 1:
         // 32 byte buffer
-        sprintf(flashid, "%s", "227E");
+        bufferSize = 32;
         break;
 
       case 2:
         // 64 byte buffer
-        sprintf(flashid, "%s", "227E");
-        sprintf(cartID, "%s", "2200");
+        bufferSize = 64;
+
         break;
 
       case 3:
         // 128 byte buffer
-        sprintf(flashid, "%s", "227E");
-        sprintf(cartID, "%s", "3901");
+        bufferSize = 128;
+
+        break;
+    }
+
+    // Set sector size manually
+    unsigned char N64SectorMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(sectorOptionsN64, 4);
+    N64SectorMenu = question_box(F("Select sector size"), menuOptions, 4, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (N64SectorMenu)
+    {
+      case 0:
+        // 8KB sectors
+        sectorSize = 0x2000;
+        break;
+
+      case 1:
+        // 32KB sectors
+        sectorSize = 0x8000;
+        break;
+
+      case 2:
+        // 64KB sectors
+        sectorSize = 0x10000;
+        break;
+
+      case 3:
+        // 128KB sectors
+        sectorSize = 0x20000;
         break;
     }
   }
@@ -3185,6 +3233,9 @@ void flashRepro_N64() {
       // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
       eraseFlashrom_N64(0x8000);
     }
+    else {
+      eraseFlashrom_N64(sectorSize);
+    }
 
     // Check if erase was successful
     if (blankcheckFlashrom_N64()) {
@@ -3198,7 +3249,7 @@ void flashRepro_N64() {
         // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
         writeFlashBuffer_N64(0x20000, 128);
       }
-      else if ((strcmp(cartID, "2200") == 0) && (strcmp(flashid, "227E") == 0)) {
+      else if ((strcmp(cartID, "2100") == 0) && (strcmp(flashid, "227E") == 0)) {
         // ST M29W128GH(16MB) with 0x20000 sector size and 64 byte buffer
         writeFlashBuffer_N64(0x20000, 64);
       }
@@ -3211,13 +3262,19 @@ void flashRepro_N64() {
         writeMSP55LV100_N64(0x20000);
       }
       else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
-        // Macronix MX29LV640 without buffer
-        writeFlashrom_N64();
+        // Macronix MX29LV640 without buffer and 0x8000 sector size
+        writeFlashrom_N64(0x8000);
       }
       else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
         // Intel 4400L0ZDQ0
         writeIntel4400_N64();
         resetIntel4400_N64();
+      }
+      else if (bufferSize == 0) {
+        writeFlashrom_N64(sectorSize);
+      }
+      else {
+        writeFlashBuffer_N64(sectorSize, bufferSize);
       }
 
       // Close the file:
@@ -3398,6 +3455,13 @@ void idFlashrom_N64() {
     resetFlashrom_N64(romBase);
   }
 
+  // ST M29W128GL(16MB) with one flashrom chip
+  else if ((strcmp(cartID, "2100") == 0) && (strcmp(flashid, "227E") == 0)) {
+    cartSize = 16;
+    // Reset flashrom
+    resetFlashrom_N64(romBase);
+  }
+
   // Intel 512M29EW(64MB) with one flashrom chip
   else if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
     cartSize = 64;
@@ -3433,6 +3497,9 @@ void idFlashrom_N64() {
       cartSize = 64;
       strncpy(flashid , cartID, 5);
     }
+  }
+  if ((strcmp(flashid, "1240") == 0) && (strcmp(cartID, "1240") == 0)) {
+    print_Error(F("Please reseat cartridge"), true);
   }
 }
 
@@ -3828,10 +3895,10 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
 }
 
 // Write MX29LV640 flashrom without write buffer
-void writeFlashrom_N64() {
+void writeFlashrom_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
 
-  for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x8000) {
+  for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
     PORTB ^= (1 << 4);
 
@@ -3841,7 +3908,7 @@ void writeFlashrom_N64() {
     }
 
     // Write to flashrom
-    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x8000; currSdBuffer += 512) {
+    for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
       // Fill SD buffer
       myFile.read(sdBuffer, 512);
       for (int currByte = 0; currByte < 512; currByte += 2) {
