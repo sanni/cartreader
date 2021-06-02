@@ -209,7 +209,7 @@ unsigned long sramSize = 0;
 int romType = 0;
 byte saveType;
 word romSize = 0;
-byte numBanks = 128;
+word numBanks = 128;
 char checksumStr[5];
 bool errorLvl = 0;
 byte romVersion = 0;
