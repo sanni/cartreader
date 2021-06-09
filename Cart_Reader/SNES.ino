@@ -58,28 +58,30 @@ static const char confMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsConfManual[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
 
 // Repro menu items
-static const char reproMenuItem1[] PROGMEM = "LoROM repro";
-static const char reproMenuItem2[] PROGMEM = "HiROM repro P0";
-static const char reproMenuItem3[] PROGMEM = "HiROM repro P1";
-static const char reproMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsRepro[] PROGMEM = {reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4};
+static const char reproMenuItem1[] PROGMEM = "LoRom (P0)";
+static const char reproMenuItem2[] PROGMEM = "HiRom (P0)";
+static const char reproMenuItem3[] PROGMEM = "ExLoRom (P1)";
+static const char reproMenuItem4[] PROGMEM = "ExHiRom (P1)";
+static const char reproMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsRepro[] PROGMEM = {reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5};
 
 // SNES repro menu
 void reproMenu() {
   // create menu with title and 6 options to choose from
   unsigned char snsRepro;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsRepro, 4);
-  snsRepro = question_box(F("Select Repro Type"), menuOptions, 4, 0);
+  convertPgm(menuOptionsRepro, 5);
+  snsRepro = question_box(F("Select Repro Type"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsRepro)
   {
 #ifdef enable_FLASH
     case 0:
+      // LoRom
       display_Clear();
       display_Update();
-      hiROM = 0;
+      mapping = 0;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -87,9 +89,10 @@ void reproMenu() {
       break;
 
     case 1:
+      // HiRom
       display_Clear();
       display_Update();
-      hiROM = 1;
+      mapping = 1;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -97,9 +100,21 @@ void reproMenu() {
       break;
 
     case 2:
+      // ExLoRom
       display_Clear();
       display_Update();
-      hiROM = 4;
+      mapping = 2;
+      setup_Flash8();
+      id_Flash8();
+      wait();
+      mode = mode_FLASH8;
+      break;
+
+    case 3:
+      // ExHiRom
+      display_Clear();
+      display_Update();
+      mapping = 3;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -107,7 +122,7 @@ void reproMenu() {
       break;
 #endif
 
-    case 3:
+    case 4:
       resetArduino();
       break;
   }

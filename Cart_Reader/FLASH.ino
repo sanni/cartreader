@@ -1,5 +1,6 @@
 //******************************************
 // FLASHROM MODULE
+// (also includes SNES repro functions)
 //******************************************
 
 #include "options.h"
@@ -16,7 +17,7 @@ unsigned long time;
 unsigned long blank;
 unsigned long sectorSize;
 uint16_t bufferSize;
-byte hiROM = 1;
+byte mapping = 1;
 
 /******************************************
    Menu
@@ -70,7 +71,7 @@ void flashMenu() {
     case 0:
       display_Clear();
       display_Update();
-      hiROM = 1;
+      mapping = 1;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -745,23 +746,56 @@ void dataIn16() {
    Low level functions
  *****************************************/
 void writeByte_Flash(unsigned long myAddress, byte myData) {
+  // A0-A7
   PORTF = myAddress & 0xFF;
-  if (hiROM == 1) {
+
+  // standard for flash adapter and SNES HiRom
+  if (mapping == 1) {
+    // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
   }
-  else if (hiROM == 0) {
+  // for SNES LoRom
+  else if (mapping == 0) {
+    // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
-    // Set A15(PK7) HIGH to disable SRAM
+    // Set SNES A15(PK7) HIGH to disable SRAM
     PORTK |= (1 << 7);
+    // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
   }
-  if (hiROM == 4) {
-    PORTK = (myAddress >> 8) & 0xFF;
-    PORTL = (myAddress >> 16) & 0xFF;
-    // Set A23(PL7) HIGH to enable high part of ExHiROM
-    PORTL |= (1 << 7);
+  // for SNES ExLoRom repro
+  else if (mapping == 2) {
+    // A8-A14
+    PORTK = (myAddress >> 8) & 0x7F;
+    // Set SNES A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
+    // A15-A22
+    PORTL = (myAddress >> 15) & 0xFF;
+    // Flip A22(PL7) to reverse P0 and P1 roms
+    PORTL ^= (1 << PL7);
   }
+  // for SNES ExHiRom repro
+  else if (mapping == 3) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A22
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Set PL7 to inverse of PL6 to reverse P0 and P1 roms
+    if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
+      // if PL6 is 0 set PL7 to 1
+      PORTL |= (1 << 7);
+    }
+    else if (((myAddress >> 16) & 0xFF) & 0x40) {
+      // if PL6 is 1 set PL7 to 0
+      PORTL &= ~ (1 << 7);
+    }
+    // Switch SNES BA6(PL6) to HIGH to disable SRAM
+    PORTL |= (1 << 6);
+  }
+
+  // Data
   PORTC = myData;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
@@ -782,22 +816,53 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
 }
 
 byte readByte_Flash(unsigned long myAddress) {
+  // A0-A7
   PORTF = myAddress & 0xFF;
-  if (hiROM == 1) {
+
+  // standard for flash adapter and SNES HiRom
+  if (mapping == 1) {
+    // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
   }
-  else if (hiROM == 0) {
+  // for SNES LoRom
+  else if (mapping == 0) {
+    // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
-    // Set A15(PK7) HIGH to disable SRAM
+    // Set SNES A15(PK7) HIGH to disable SRAM
     PORTK |= (1 << 7);
+    // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
   }
-  else if (hiROM == 4) {
+  // for SNES ExLoRom repro
+  else if (mapping == 2) {
+    // A8-A14
+    PORTK = (myAddress >> 8) & 0x7F;
+    // Set SNES A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
+    // A15-A22
+    PORTL = (myAddress >> 15) & 0xFF;
+    // Flip A22(PL7) to reverse P0 and P1 roms
+    PORTL ^= (1 << PL7);
+  }
+  // for SNES ExHiRom repro
+  else if (mapping == 3) {
+    // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A22
     PORTL = (myAddress >> 16) & 0xFF;
-    // Set A23(PL7) HIGH to enable high part of ExHiROM
-    PORTL |= (1 << 7);
+    // Set PL7 to inverse of PL6 to reverse P0 and P1 roms
+    if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
+      // if PL6 is 0 set PL7 to 1
+      PORTL |= (1 << 7);
+    }
+    else if (((myAddress >> 16) & 0xFF) & 0x40) {
+      // if PL6 is 1 set PL7 to 0
+      PORTL &= ~ (1 << 7);
+    }
+    // Switch SNES BA6(PL6) to HIGH to disable SRAM
+    PORTL |= (1 << 6);
   }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
