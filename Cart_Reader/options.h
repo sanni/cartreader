@@ -1,6 +1,6 @@
-/******************************************
-   Options
-******************************************/
+//******************************************
+// OPTIONS
+//******************************************
 // Change mainMenu to snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu,
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
 #define startMenu mainMenu
