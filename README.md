@@ -24,7 +24,7 @@ Also be sure to check the guides in the [Wiki](https://github.com/sanni/cartread
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, DSP, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
 - Reads and writes SNES Satellaview 8M Memory packs (BS-X cartridge and Adafruit Clock Generator needed)   
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
-- Reflashes some Chinese or custom-made SNES repros with AM29F032, MBM29F033 or MX29LV320 flashroms     
+- Reflashes some Chinese or custom-made SNES repros with AM29F032, MBM29F033, MX29LV320 or MX29LV640 flashroms     
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Eeprom needs Adafruit Clockgen by default, Proto carts are not supported yet    
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
 - Reflashes some Chinese N64 repros with S29GL type flashroms   
