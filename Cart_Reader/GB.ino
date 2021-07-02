@@ -28,8 +28,8 @@ static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2,
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
-static const char GBMenuItem4[] PROGMEM = "Flash MBC3 cart";
-static const char GBMenuItem5[] PROGMEM = "Flash MBC5 cart";
+static const char GBMenuItem4[] PROGMEM = "Flash Cart";
+static const char GBMenuItem5[] PROGMEM = "Flash Cart and Save";
 static const char GBMenuItem6[] PROGMEM = "Reset";
 static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5, GBMenuItem6};
 
@@ -145,7 +145,7 @@ void gbMenu() {
       sd.chdir("/");
       fileBrowser(F("Select file"));
       display_Clear();
-      writeFlash_GB(3);
+      writeFlash_GB();
       // Reset
       wait();
       resetArduino();
@@ -160,7 +160,50 @@ void gbMenu() {
       sd.chdir("/");
       fileBrowser(F("Select file"));
       display_Clear();
-      writeFlash_GB(5);
+      writeFlash_GB();
+      getCartInfo_GB();
+      // Does cartridge have SRAM
+      if (sramEndAddress > 0) {
+        // Remove file name ending
+        int pos=-1;
+        while (fileName[++pos]!='\0') {
+          if (fileName[pos]=='.') {
+            fileName[pos]='\0';
+            break;
+          }
+        }
+        sprintf(filePath, "/GB/SAVE/%s/", fileName);
+        if (sd.exists(filePath)) {
+          println_Msg(F("Save folder found"));
+          EEPROM_readAnything(0, foldern);
+          for (int i=foldern;i>=0;i--) {
+            sprintf(filePath, "/GB/SAVE/%s/%d/%s.SAV", fileName, i, fileName);
+            if (sd.exists(filePath)) {
+              print_Msg(F("Save slot "));
+              print_Msg(i);
+              println_Msg(F(" found."));
+              sprintf(filePath, "/GB/SAVE/%s/%d", fileName, i);
+              sprintf(fileName, "%s.SAV", fileName);
+              writeSRAM_GB();
+              unsigned long wrErrors;
+              wrErrors = verifySRAM_GB();
+              if (wrErrors == 0) {
+                println_Msg(F("Verified OK"));
+                display_Update();
+              }
+              else {
+                print_Msg(F("Error: "));
+                print_Msg(wrErrors);
+                println_Msg(F(" bytes "));
+                print_Error(F("did not verify."), false);
+              }
+            }
+          }
+        }
+      }
+      else {
+        print_Error(F("Cart has no Sram"), false);
+      }
       // Reset
       wait();
       resetArduino();
@@ -773,7 +816,7 @@ unsigned long verifySRAM_GB() {
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-void writeFlash_GB(byte MBC) {
+void writeFlash_GB() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -853,9 +896,18 @@ void writeFlash_GB(byte MBC) {
     else {
       print_Msg(F("Flash ID: "));
       println_Msg(flashid);
+      println_Msg(F("S29GL032M90TCIR4"));
+      print_Msg(F("Banks: "));
+      print_Msg(romBanks);
+      println_Msg(F("/256"));
+      display_Update();
+    }
+    /*else {
+      print_Msg(F("Flash ID: "));
+      println_Msg(flashid);
       display_Update();
       print_Error(F("Unknown flashrom"), true);
-    }
+    }*/
     dataOut();
 
     // Reset flash
@@ -916,104 +968,57 @@ void writeFlash_GB(byte MBC) {
       }
     }
 
-    if (MBC == 3) {
-      println_Msg(F("Writing flash MBC3"));
-      display_Update();
+    println_Msg(F("Writing flash MBC3/MBC5"));
+    display_Update();
 
-      // Write flash
-      dataOut();
+    // Write flash
+    dataOut();
 
-      uint16_t currAddr = 0;
-      uint16_t endAddr = 0x3FFF;
+    uint16_t currAddr = 0;
+    uint16_t endAddr = 0x3FFF;
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
-        // Blink led
-        PORTB ^= (1 << 4);
+    for (int currBank = 0; currBank < romBanks; currBank++) {
+      // Blink led
+      PORTB ^= (1 << 4);
 
-        // Set ROM bank
-        writeByte_GB(0x2100, currBank);
+      // Set ROM bank
+      writeByte_GB(0x2100, currBank);
+      // 0x2A8000 fix
+      writeByte_GB(0x4000, 0x0);
 
-        if (currBank > 0) {
-          currAddr = 0x4000;
-          endAddr = 0x7FFF;
-        }
-
-        while (currAddr <= endAddr) {
-          myFile.read(sdBuffer, 512);
-
-          for (int currByte = 0; currByte < 512; currByte++) {
-            // Write command sequence
-            writeByte_GB(0x555, 0xaa);
-            writeByte_GB(0x2aa, 0x55);
-            writeByte_GB(0x555, 0xa0);
-            // Write current byte
-            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
-
-            // Set data pins to input
-            dataIn();
-
-            // Setting CS(PH3) and OE/RD(PH6) LOW
-            PORTH &= ~((1 << 3) | (1 << 6));
-
-            // Busy check
-            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-            }
-
-            // Switch CS(PH3) and OE/RD(PH6) to HIGH
-            PORTH |= (1 << 3) | (1 << 6);
-
-            // Set data pins to output
-            dataOut();
-          }
-          currAddr += 512;
-        }
+      if (currBank > 0) {
+        currAddr = 0x4000;
+        endAddr = 0x7FFF;
       }
-    }
 
-    else if (MBC == 5) {
-      println_Msg(F("Writing flash MBC5"));
-      display_Update();
+      while (currAddr <= endAddr) {
+        myFile.read(sdBuffer, 512);
 
-      // Write flash
-      dataOut();
+        for (int currByte = 0; currByte < 512; currByte++) {
+          // Write command sequence
+          writeByte_GB(0x555, 0xaa);
+          writeByte_GB(0x2aa, 0x55);
+          writeByte_GB(0x555, 0xa0);
+          // Write current byte
+          writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
-        // Blink led
-        PORTB ^= (1 << 4);
+          // Set data pins to input
+          dataIn();
 
-        // Set ROM bank
-        writeByte_GB(0x2000, currBank);
-        // 0x2A8000 fix
-        writeByte_GB(0x4000, 0x0);
+          // Setting CS(PH3) and OE/RD(PH6) LOW
+          PORTH &= ~((1 << 3) | (1 << 6));
 
-        for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-          myFile.read(sdBuffer, 512);
-
-          for (int currByte = 0; currByte < 512; currByte++) {
-            // Write command sequence
-            writeByte_GB(0x555, 0xaa);
-            writeByte_GB(0x2aa, 0x55);
-            writeByte_GB(0x555, 0xa0);
-            // Write current byte
-            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
-
-            // Set data pins to input
-            dataIn();
-
-            // Setting CS(PH3) and OE/RD(PH6) LOW
-            PORTH &= ~((1 << 3) | (1 << 6));
-
-            // Busy check
-            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-            }
-
-            // Switch CS(PH3) and OE/RD(PH6) to HIGH
-            PORTH |= (1 << 3) | (1 << 6);
-
-            // Set data pins to output
-            dataOut();
+          // Busy check
+          while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
           }
+
+          // Switch CS(PH3) and OE/RD(PH6) to HIGH
+          PORTH |= (1 << 3) | (1 << 6);
+
+          // Set data pins to output
+          dataOut();
         }
+        currAddr += 512;
       }
     }
 
