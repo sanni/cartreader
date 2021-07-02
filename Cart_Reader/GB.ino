@@ -115,6 +115,8 @@ void gbMenu() {
       if (sramEndAddress > 0) {
         // Change working dir to root
         sd.chdir("/");
+        filePath[0] = '\0';
+        fileBrowser(F("Select sav file"));
         writeSRAM_GB();
         unsigned long wrErrors;
         wrErrors = verifySRAM_GB();
@@ -138,6 +140,11 @@ void gbMenu() {
       // Change working dir to root
       sd.chdir("/");
       //MBC3
+      // Launch filebrowser
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser(F("Select file"));
+      display_Clear();
       writeFlash_GB(3);
       // Reset
       wait();
@@ -148,6 +155,11 @@ void gbMenu() {
       // Change working dir to root
       sd.chdir("/");
       //MBC5
+      // Launch filebrowser
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser(F("Select file"));
+      display_Clear();
       writeFlash_GB(5);
       // Reset
       wait();
@@ -652,10 +664,6 @@ void readSRAM_GB() {
 void writeSRAM_GB() {
   // Does cartridge have SRAM
   if (sramEndAddress > 0) {
-
-    filePath[0] = '\0';
-    sd.chdir("/");
-    fileBrowser(F("Select sav file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -766,12 +774,6 @@ unsigned long verifySRAM_GB() {
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
 void writeFlash_GB(byte MBC) {
-  // Launch filebrowser
-  filePath[0] = '\0';
-  sd.chdir("/");
-  fileBrowser(F("Select file"));
-  display_Clear();
-
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
 
