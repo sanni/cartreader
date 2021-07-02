@@ -173,15 +173,16 @@ void gbMenu() {
           }
         }
         sprintf(filePath, "/GB/SAVE/%s/", fileName);
+        bool saveFound=false;
         if (sd.exists(filePath)) {
-          println_Msg(F("Save folder found"));
           EEPROM_readAnything(0, foldern);
           for (int i=foldern;i>=0;i--) {
             sprintf(filePath, "/GB/SAVE/%s/%d/%s.SAV", fileName, i, fileName);
             if (sd.exists(filePath)) {
-              print_Msg(F("Save slot "));
+              print_Msg(F("Save number "));
               print_Msg(i);
               println_Msg(F(" found."));
+              saveFound=true;
               sprintf(filePath, "/GB/SAVE/%s/%d", fileName, i);
               sprintf(fileName, "%s.SAV", fileName);
               writeSRAM_GB();
@@ -197,8 +198,12 @@ void gbMenu() {
                 println_Msg(F(" bytes "));
                 print_Error(F("did not verify."), false);
               }
+              break;
             }
           }
+        }
+        if (!saveFound) {
+          println_Msg(F("Error: No save found."));
         }
       }
       else {
