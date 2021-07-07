@@ -987,7 +987,8 @@ void writeFlash_GB() {
       PORTB ^= (1 << 4);
 
       // Set ROM bank
-      writeByte_GB(0x2100, currBank);
+      writeByte_GB(0x2100, currBank); //MBC5
+      writeByte_GB(0x2000, currBank); //MBC3
       // 0x2A8000 fix
       writeByte_GB(0x4000, 0x0);
 
