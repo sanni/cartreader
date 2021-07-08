@@ -9,7 +9,8 @@ static const char ngpMenuItem1[] PROGMEM = "Read Rom";
 static const char ngpMenuItemReset[] PROGMEM = "Reset";
 static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItemReset};
 
-char ngpRomVersion[5];
+char ngpRomVersion[3];
+uint8_t ngpSystemType;
 
 void setup_NGP() {
   // A0 - A7
@@ -51,7 +52,6 @@ void setup_NGP() {
 }
 
 void ngpMenu() {
-
   uint8_t mainMenu;
 
   convertPgm(menuOptionsNGP, 2);
@@ -94,9 +94,35 @@ bool getCartInfo_NGP() {
 
   switch (romSize)
   {
-    case 0x2c98:
-      cartSize = 1048576;
-      break;
+      // 4 Mbits
+      // Toshiba
+      case 0xab98:
+        cartSize = 524288;
+        break;
+      // Toshiba ?
+      case 0x4c20:
+        cartSize = 524288;
+        break;      
+
+      // 8 Mbits
+      // Toshiba
+      case 0x2c98:
+        cartSize = 1048576;
+        break;
+      // Samsung
+      case 0x2cec:
+        cartSize = 1048576;
+        break;
+
+      // 16 Mbits
+      // Toshiba
+      case 0x2f98:
+        cartSize = 2097152;
+        break;
+      // Samsung
+      case 0x2fec:
+        cartSize = 2097152;
+        break;     
   }
 
   // reset to read mode
@@ -115,7 +141,8 @@ bool getCartInfo_NGP() {
     return false;
 
   snprintf(cartID, 5, "%02X%02X", readByte_NGP(0x000021), readByte_NGP(0x000020));
-  snprintf(ngpRomVersion, 5, "%02X%02X", readByte_NGP(0x000023), readByte_NGP(0x000022));
+  snprintf(ngpRomVersion, 3, "%02X", readByte_NGP(0x000022));
+  ngpSystemType = readByte_NGP(0x000023);
 
   for (uint32_t i = 0; i < 17; i++)
     romName[i] = readByte_NGP(0x24 + i);
@@ -134,13 +161,21 @@ void showCartInfo_NGP() {
   print_Msg(F("GameID: "));
   println_Msg(cartID);
 
-  print_Msg(F("Rom Size: "));
-  print_Msg((cartSize >> 17));
-  println_Msg(F(" Mb"));
-
   print_Msg(F("Version: "));
   println_Msg(ngpRomVersion);
 
+  print_Msg(F("System: "));
+  if (ngpSystemType == 0)
+      println_Msg("NGPMonochrome");
+  else if (ngpSystemType == 16)
+      println_Msg("NGPColor");
+  else
+      println_Msg("Unknown");
+
+  print_Msg(F("Rom Size: "));
+  print_Msg((cartSize >> 17));
+  println_Msg(F(" MB"));
+  
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
@@ -194,7 +229,6 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
 
   myFile.close();
 }
-
 
 void writeByte_NGP(uint32_t addr, uint8_t data) {
   PORTF = addr & 0xff;
