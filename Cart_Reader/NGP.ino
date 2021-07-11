@@ -166,15 +166,15 @@ void showCartInfo_NGP() {
 
   print_Msg(F("System: "));
   if (ngpSystemType == 0)
-      println_Msg("NGPMonochrome");
+      println_Msg(F("NGPMonochrome"));
   else if (ngpSystemType == 16)
-      println_Msg("NGPColor");
+      println_Msg(F("NGPColor"));
   else
-      println_Msg("Unknown");
+      println_Msg(F("Unknown"));
 
   print_Msg(F("Rom Size: "));
   print_Msg((cartSize >> 17));
-  println_Msg(F(" MB"));
+  println_Msg(F(" Mbits"));
   
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
