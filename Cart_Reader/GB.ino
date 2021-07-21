@@ -946,6 +946,7 @@ void identifyFlash_GB() {
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
+// identifyFlash_GB() needs to be run before this!
 bool writeFlash_GB() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -963,6 +964,27 @@ bool writeFlash_GB() {
     romBanks = 2; // Default 32K
     if (romSize >= 1) { // Calculate rom size
       romBanks = 2 << romSize;
+    }
+
+    if (romBanks<=flashBanks) {
+      print_Msg(F("Using "));
+      print_Msg(romBanks);
+      print_Msg(F("/"));
+      print_Msg(flashBanks);
+      println_Msg(F(" Banks"));
+      display_Update();
+    } else {
+      println_Msg(F("Error: Flash has too few banks!"));
+      print_Msg(F("Has "));
+      print_Msg(flashBanks);
+      println_Msg(F(" banks,")
+      print_Msg(F("but needs "));
+      print_Msg(romBanks);
+      println_Msg(F("."));
+      println_Msg(F("Press button..."));
+      display_Update();
+      wait();
+      resetArduino();
     }
 
     // Set data pins to output
@@ -1037,7 +1059,7 @@ bool writeFlash_GB() {
       }
     }
 
-    println_Msg(F("Writing flash MBC3/MBC5"));
+    println_Msg(F("Writing flash MBC3/5"));
     display_Update();
 
     // Write flash
