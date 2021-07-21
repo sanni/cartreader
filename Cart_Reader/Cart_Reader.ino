@@ -219,6 +219,9 @@ char flashid[5];
 char vendorID[5];
 unsigned long fileSize;
 unsigned long sramBase;
+unsigned long flashBanks;
+bool flashX16Mode;
+bool flashSwitchLastBits;
 
 // Variable to count errors
 unsigned long writeErrors;
