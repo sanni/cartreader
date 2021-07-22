@@ -1517,6 +1517,7 @@ bool writeCFI_GB() {
 
           // Switch CS(PH3) and OE/RD(PH6) to HIGH
           PORTH |= (1 << 3) | (1 << 6);
+          __asm__("nop\n\tnop\n\tnop\n\t"); // Waste a few CPU cycles to remove write errors
 
           // Set data pins to output
           dataOut();
