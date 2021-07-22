@@ -1755,7 +1755,7 @@ boolean searchCRC(char crcStr[9]) {
     return result;
   }
   else {
-    print_Error(F("N64.txt missing"), true);
+    print_Error(F("n64.txt missing"), true);
   }
 }
 
@@ -1813,7 +1813,7 @@ void getCartInfo_N64() {
     myFile.close();
   }
   else {
-    print_Error(F("N64.txt missing"), true);
+    print_Error(F("n64.txt missing"), true);
   }
 }
 
