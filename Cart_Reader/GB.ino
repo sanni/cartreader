@@ -977,7 +977,7 @@ bool writeFlash_GB() {
       println_Msg(F("Error: Flash has too few banks!"));
       print_Msg(F("Has "));
       print_Msg(flashBanks);
-      println_Msg(F(" banks,")
+      println_Msg(F(" banks,"));
       print_Msg(F("but needs "));
       print_Msg(romBanks);
       println_Msg(F("."));
