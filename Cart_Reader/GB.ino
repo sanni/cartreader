@@ -58,7 +58,7 @@ void gbxMenu() {
       mode =  mode_GB;
       break;
 
-    case 2:
+    case 1:
       display_Clear();
       display_Update();
       setup_GBA();
