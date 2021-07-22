@@ -28,8 +28,8 @@ static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2,
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
-static const char GBMenuItem4[] PROGMEM = "Flash MBC3 cart";
-static const char GBMenuItem5[] PROGMEM = "Flash MBC5 cart";
+static const char GBMenuItem4[] PROGMEM = "Flash Cart";
+static const char GBMenuItem5[] PROGMEM = "Flash Cart and Save";
 static const char GBMenuItem6[] PROGMEM = "Reset";
 static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4, GBMenuItem5, GBMenuItem6};
 
@@ -115,6 +115,8 @@ void gbMenu() {
       if (sramEndAddress > 0) {
         // Change working dir to root
         sd.chdir("/");
+        filePath[0] = '\0';
+        fileBrowser(F("Select sav file"));
         writeSRAM_GB();
         unsigned long wrErrors;
         wrErrors = verifySRAM_GB();
@@ -138,7 +140,19 @@ void gbMenu() {
       // Change working dir to root
       sd.chdir("/");
       //MBC3
-      writeFlash_GB(3);
+      // Launch filebrowser
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser(F("Select file"));
+      display_Clear();
+      identifyFlash_GB();
+      if (!writeFlash_GB()) {
+        display_Clear();
+        println_Msg(F("Flashing failed, time out!"));
+        println_Msg(F("Press button..."));
+        display_Update();
+        wait();
+      }
       // Reset
       wait();
       resetArduino();
@@ -148,7 +162,68 @@ void gbMenu() {
       // Change working dir to root
       sd.chdir("/");
       //MBC5
-      writeFlash_GB(5);
+      // Launch filebrowser
+      filePath[0] = '\0';
+      sd.chdir("/");
+      fileBrowser(F("Select file"));
+      display_Clear();
+      identifyFlash_GB();
+      if (!writeFlash_GB()) {
+        display_Clear();
+        println_Msg(F("Flashing failed, time out!"));
+        println_Msg(F("Press button..."));
+        display_Update();
+        wait();
+        resetArduino();
+      }
+      getCartInfo_GB();
+      // Does cartridge have SRAM
+      if (sramEndAddress > 0) {
+        // Remove file name ending
+        int pos=-1;
+        while (fileName[++pos]!='\0') {
+          if (fileName[pos]=='.') {
+            fileName[pos]='\0';
+            break;
+          }
+        }
+        sprintf(filePath, "/GB/SAVE/%s/", fileName);
+        bool saveFound=false;
+        if (sd.exists(filePath)) {
+          EEPROM_readAnything(0, foldern);
+          for (int i=foldern;i>=0;i--) {
+            sprintf(filePath, "/GB/SAVE/%s/%d/%s.SAV", fileName, i, fileName);
+            if (sd.exists(filePath)) {
+              print_Msg(F("Save number "));
+              print_Msg(i);
+              println_Msg(F(" found."));
+              saveFound=true;
+              sprintf(filePath, "/GB/SAVE/%s/%d", fileName, i);
+              sprintf(fileName, "%s.SAV", fileName);
+              writeSRAM_GB();
+              unsigned long wrErrors;
+              wrErrors = verifySRAM_GB();
+              if (wrErrors == 0) {
+                println_Msg(F("Verified OK"));
+                display_Update();
+              }
+              else {
+                print_Msg(F("Error: "));
+                print_Msg(wrErrors);
+                println_Msg(F(" bytes "));
+                print_Error(F("did not verify."), false);
+              }
+              break;
+            }
+          }
+        }
+        if (!saveFound) {
+          println_Msg(F("Error: No save found."));
+        }
+      }
+      else {
+        print_Error(F("Cart has no Sram"), false);
+      }
       // Reset
       wait();
       resetArduino();
@@ -652,10 +727,6 @@ void readSRAM_GB() {
 void writeSRAM_GB() {
   // Does cartridge have SRAM
   if (sramEndAddress > 0) {
-
-    filePath[0] = '\0';
-    sd.chdir("/");
-    fileBrowser(F("Select sav file"));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -762,16 +833,121 @@ unsigned long verifySRAM_GB() {
   }
 }
 
+/*
+ * Flash chips can either be in x8 mode or x16 mode and sometimes the two
+ * least significant bits on flash cartridges' data lines are swapped.
+ * This function reads a byte and compensates for the differences.
+ * This is only necessary for commands to the flash, not for data read from the flash, the MBC or SRAM.
+ * 
+ * address needs to be the x8 mode address of the flash register that should be read.
+*/
+byte readByteCompensated(int address) {
+  byte data = readByte_GB(address >> (flashX16Mode ? 1 : 0));
+  if (flashSwitchLastBits) {
+    return (data & 0b11111100) | ((data<<1) & 0b10) | ((data>>1) & 0b01);
+  }
+  return data;
+}
+
+/*
+ * Flash chips can either be in x8 mode or x16 mode and sometimes the two
+ * least significant bits on flash cartridges' data lines are swapped.
+ * This function writes a byte and compensates for the differences.
+ * This is only necessary for commands to the flash, not for data written to the flash, the MBC or SRAM.
+ * .
+ * address needs to be the x8 mode address of the flash register that should be read.
+*/
+byte writeByteCompensated(int address, byte data) {
+  if (flashSwitchLastBits) {
+    data = (data & 0b11111100) | ((data<<1) & 0b10) | ((data>>1) & 0b01);
+  }
+  writeByte_GB(address >> (flashX16Mode ? 1 : 0), data);
+}
+
+void startCFIMode(boolean x16Mode) {
+  if (x16Mode) {
+    writeByte_GB(0x555, 0xf0); //x16 mode reset command
+    delay(500);
+    writeByte_GB(0x555, 0xf0); //Double reset to get out of possible Autoselect + CFI mode
+    delay(500);
+    writeByte_GB(0x55, 0x98);  //x16 CFI Query command
+  } else {
+    writeByte_GB(0xAAA, 0xf0); //x8  mode reset command
+    delay(100);
+    writeByte_GB(0xAAA, 0xf0); //Double reset to get out of possible Autoselect + CFI mode
+    delay(100);
+    writeByte_GB(0xAA, 0x98);  //x8 CFI Query command
+  }
+}
+
+/* Identify the different flash chips.
+ * Sets the global variables flashBanks, flashX16Mode and flashSwitchLastBits
+*/
+void identifyFlash_GB() {
+  // Reset flash
+  display_Clear();
+  dataOut();
+  writeByte_GB(0x6000, 0); // Set ROM Mode
+  writeByte_GB(0x2000, 0); // Set Bank to 0
+  writeByte_GB(0x3000, 0);
+
+  startCFIMode(false); // Trying x8 mode first
+
+  dataIn_GB();
+  display_Clear();
+  // Try x8 mode first
+  char cfiQRYx8[7];
+  char cfiQRYx16[7];
+  sprintf(cfiQRYx8, "%02X%02X%02X", readByte_GB(0x20), readByte_GB(0x22), readByte_GB(0x24));
+  sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12)); // some devices use x8-style CFI Query command even though they are in x16 command mode
+  if (strcmp(cfiQRYx8, "515259")==0) { // QRY in x8 mode
+    println_Msg(F("Normal CFI x8 Mode"));
+    flashX16Mode = false;
+    flashSwitchLastBits = false;
+  } else if (strcmp(cfiQRYx8, "52515A")==0) { // QRY in x8 mode with switched last bit
+    println_Msg(F("Switched CFI x8 Mode"));
+    flashX16Mode = false;
+    flashSwitchLastBits = true;
+  } else if (strcmp(cfiQRYx16, "515259")==0) { // QRY in x16 mode
+    println_Msg(F("Normal CFI x16 Mode"));
+    flashX16Mode = true;
+    flashSwitchLastBits = false;
+  } else if (strcmp(cfiQRYx16, "52515A")==0) { // QRY in x16 mode with switched last bit
+    println_Msg(F("Switched CFI x16 Mode"));
+    flashX16Mode = true;
+    flashSwitchLastBits = true;
+  } else {
+    startCFIMode(true); // Try x16 mode next
+    sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));
+    if (strcmp(cfiQRYx16, "515259")==0) { // QRY in x16 mode
+      println_Msg(F("Normal CFI x16 Mode"));
+      flashX16Mode = true;
+      flashSwitchLastBits = false;
+    } else if (strcmp(cfiQRYx16, "52515A")==0) { // QRY in x16 mode with switched last bit
+      println_Msg(F("Switched CFI x16 Mode"));
+      flashX16Mode = true;
+      flashSwitchLastBits = true;
+    } else {
+      println_Msg(F("CFI Query failed!"));
+      display_Update();
+      wait();
+      return 0;
+    }
+  }
+  dataIn_GB();
+  flashBanks = 1<<(readByteCompensated(0x4E) - 14);// - flashX16Mode);
+  dataOut();
+
+  // Reset flash
+  writeByteCompensated(0xAAA, 0xf0);
+  delay(100);
+}
+
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-void writeFlash_GB(byte MBC) {
-  // Launch filebrowser
-  filePath[0] = '\0';
-  sd.chdir("/");
-  fileBrowser(F("Select file"));
-  display_Clear();
-
+// identifyFlash_GB() needs to be run before this!
+bool writeFlash_GB() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -790,6 +966,27 @@ void writeFlash_GB(byte MBC) {
       romBanks = 2 << romSize;
     }
 
+    if (romBanks<=flashBanks) {
+      print_Msg(F("Using "));
+      print_Msg(romBanks);
+      print_Msg(F("/"));
+      print_Msg(flashBanks);
+      println_Msg(F(" Banks"));
+      display_Update();
+    } else {
+      println_Msg(F("Error: Flash has too few banks!"));
+      print_Msg(F("Has "));
+      print_Msg(flashBanks);
+      println_Msg(F(" banks,")
+      print_Msg(F("but needs "));
+      print_Msg(romBanks);
+      println_Msg(F("."));
+      println_Msg(F("Press button..."));
+      display_Update();
+      wait();
+      resetArduino();
+    }
+
     // Set data pins to output
     dataOut();
 
@@ -800,60 +997,8 @@ void writeFlash_GB(byte MBC) {
     delay(100);
 
     // Reset flash
-    writeByte_GB(0x555, 0xf0);
+    writeByteCompensated(0xAAA, 0xf0);
     delay(100);
-
-    // ID command sequence
-    writeByte_GB(0x555, 0xaa);
-    writeByte_GB(0x2aa, 0x55);
-    writeByte_GB(0x555, 0x90);
-
-    dataIn_GB();
-
-    // Read the two id bytes into a string
-    sprintf(flashid, "%02X%02X", readByte_GB(0), readByte_GB(1));
-
-    if (strcmp(flashid, "04D4") == 0) {
-      println_Msg(F("MBM29F033C"));
-      print_Msg(F("Banks: "));
-      print_Msg(romBanks);
-      println_Msg(F("/256"));
-      display_Update();
-    }
-    else if (strcmp(flashid, "0141") == 0) {
-      println_Msg(F("AM29F032B"));
-      print_Msg(F("Banks: "));
-      print_Msg(romBanks);
-      println_Msg(F("/256"));
-      display_Update();
-    }
-    else if (strcmp(flashid, "01AD") == 0) {
-      println_Msg(F("AM29F016B"));
-      print_Msg(F("Banks: "));
-      print_Msg(romBanks);
-      println_Msg(F("/128"));
-      display_Update();
-    }
-    else if (strcmp(flashid, "04AD") == 0) {
-      println_Msg(F("AM29F016D"));
-      print_Msg(F("Banks: "));
-      print_Msg(romBanks);
-      println_Msg(F("/128"));
-      display_Update();
-    }
-    else if (strcmp(flashid, "01D5") == 0) {
-      println_Msg(F("AM29F080B"));
-      print_Msg(F("Banks: "));
-      print_Msg(romBanks);
-      println_Msg(F("/64"));
-      display_Update();
-    }
-    else {
-      print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
-      display_Update();
-      print_Error(F("Unknown flashrom"), true);
-    }
     dataOut();
 
     // Reset flash
@@ -864,12 +1009,12 @@ void writeFlash_GB(byte MBC) {
     display_Update();
 
     // Erase flash
-    writeByte_GB(0x555, 0xaa);
-    writeByte_GB(0x2aa, 0x55);
-    writeByte_GB(0x555, 0x80);
-    writeByte_GB(0x555, 0xaa);
-    writeByte_GB(0x2aa, 0x55);
-    writeByte_GB(0x555, 0x10);
+    writeByteCompensated(0xAAA, 0xaa);
+    writeByteCompensated(0x555, 0x55);
+    writeByteCompensated(0xAAA, 0x80);
+    writeByteCompensated(0xAAA, 0xaa);
+    writeByteCompensated(0x555, 0x55);
+    writeByteCompensated(0xAAA, 0x10);
 
     dataIn_GB();
 
@@ -914,110 +1059,77 @@ void writeFlash_GB(byte MBC) {
       }
     }
 
-    if (MBC == 3) {
-      println_Msg(F("Writing flash MBC3"));
-      display_Update();
+    println_Msg(F("Writing flash MBC3/5"));
+    display_Update();
 
-      // Write flash
-      dataOut();
+    // Write flash
+    dataOut();
 
-      uint16_t currAddr = 0;
-      uint16_t endAddr = 0x3FFF;
+    uint16_t currAddr = 0;
+    uint16_t endAddr = 0x3FFF;
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
-        // Blink led
-        PORTB ^= (1 << 4);
+    for (int currBank = 0; currBank < romBanks; currBank++) {
+      // Blink led
+      PORTB ^= (1 << 4);
 
-        // Set ROM bank
-        writeByte_GB(0x2100, currBank);
+      // Set ROM bank
+      writeByte_GB(0x2100, currBank);
+      // 0x2A8000 fix
+      writeByte_GB(0x4000, 0x0);
 
-        if (currBank > 0) {
-          currAddr = 0x4000;
-          endAddr = 0x7FFF;
-        }
-
-        while (currAddr <= endAddr) {
-          myFile.read(sdBuffer, 512);
-
-          for (int currByte = 0; currByte < 512; currByte++) {
-            // Write command sequence
-            writeByte_GB(0x555, 0xaa);
-            writeByte_GB(0x2aa, 0x55);
-            writeByte_GB(0x555, 0xa0);
-            // Write current byte
-            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
-
-            // Set data pins to input
-            dataIn();
-
-            // Setting CS(PH3) and OE/RD(PH6) LOW
-            PORTH &= ~((1 << 3) | (1 << 6));
-
-            // Busy check
-            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-            }
-
-            // Switch CS(PH3) and OE/RD(PH6) to HIGH
-            PORTH |= (1 << 3) | (1 << 6);
-
-            // Set data pins to output
-            dataOut();
-          }
-          currAddr += 512;
-        }
+      if (currBank > 0) {
+        currAddr = 0x4000;
+        endAddr = 0x7FFF;
       }
-    }
 
-    else if (MBC == 5) {
-      println_Msg(F("Writing flash MBC5"));
-      display_Update();
+      while (currAddr <= endAddr) {
+        myFile.read(sdBuffer, 512);
 
-      // Write flash
-      dataOut();
+        for (int currByte = 0; currByte < 512; currByte++) {
+          // Write command sequence
+          writeByteCompensated(0xAAA, 0xaa);
+          writeByteCompensated(0x555, 0x55);
+          writeByteCompensated(0xAAA, 0xa0);
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
-        // Blink led
-        PORTB ^= (1 << 4);
+          // Write current byte
+          writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
-        // Set ROM bank
-        writeByte_GB(0x2000, currBank);
-        // 0x2A8000 fix
-        writeByte_GB(0x4000, 0x0);
+          // Set data pins to input
+          dataIn();
 
-        for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-          myFile.read(sdBuffer, 512);
+          // Setting CS(PH3) and OE/RD(PH6) LOW
+          PORTH &= ~((1 << 3) | (1 << 6));
 
-          for (int currByte = 0; currByte < 512; currByte++) {
-            // Write command sequence
-            writeByte_GB(0x555, 0xaa);
-            writeByte_GB(0x2aa, 0x55);
-            writeByte_GB(0x555, 0xa0);
-            // Write current byte
-            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
-
-            // Set data pins to input
-            dataIn();
-
-            // Setting CS(PH3) and OE/RD(PH6) LOW
-            PORTH &= ~((1 << 3) | (1 << 6));
-
-            // Busy check
-            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
+          // Busy check
+          short i=0;
+          while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
+            i++;
+            if (i>500) {
+              if (currAddr<0x4000) { // This happens when trying to flash an MBC5 as if it was an MBC3. Retry to flash as MBC5, starting from last successfull byte.
+                currByte--;
+                currAddr+=0x4000;
+                endAddr = 0x7FFF;
+                break;
+              } else { // If a timeout happens while trying to flash MBC5-style, flashing failed.
+                return false;
+              }
             }
-
-            // Switch CS(PH3) and OE/RD(PH6) to HIGH
-            PORTH |= (1 << 3) | (1 << 6);
-
-            // Set data pins to output
-            dataOut();
           }
+
+          // Switch CS(PH3) and OE/RD(PH6) to HIGH
+          PORTH |= (1 << 3) | (1 << 6);
+
+          // Set data pins to output
+          dataOut();
         }
+        currAddr += 512;
       }
     }
 
     // Set data pins to input again
     dataIn_GB();
 
+    display_Clear();
     println_Msg(F("Verifying"));
     display_Update();
 
@@ -1083,6 +1195,7 @@ void writeFlash_GB(byte MBC) {
     println_Msg(F("Can't open file"));
     display_Update();
   }
+  return true;
 }
 
 #endif
