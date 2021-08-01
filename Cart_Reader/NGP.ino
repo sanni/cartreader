@@ -94,35 +94,35 @@ bool getCartInfo_NGP() {
 
   switch (romSize)
   {
-      // 4 Mbits
-      // Toshiba
-      case 0xab98:
-        cartSize = 524288;
-        break;
-      // Toshiba ?
-      case 0x4c20:
-        cartSize = 524288;
-        break;      
+    // 4 Mbits
+    // Toshiba
+    case 0xab98:
+      cartSize = 524288;
+      break;
+    // Toshiba ?
+    case 0x4c20:
+      cartSize = 524288;
+      break;
 
-      // 8 Mbits
-      // Toshiba
-      case 0x2c98:
-        cartSize = 1048576;
-        break;
-      // Samsung
-      case 0x2cec:
-        cartSize = 1048576;
-        break;
+    // 8 Mbits
+    // Toshiba
+    case 0x2c98:
+      cartSize = 1048576;
+      break;
+    // Samsung
+    case 0x2cec:
+      cartSize = 1048576;
+      break;
 
-      // 16 Mbits
-      // Toshiba
-      case 0x2f98:
-        cartSize = 2097152;
-        break;
-      // Samsung
-      case 0x2fec:
-        cartSize = 2097152;
-        break;     
+    // 16 Mbits
+    // Toshiba
+    case 0x2f98:
+      cartSize = 2097152;
+      break;
+    // Samsung
+    case 0x2fec:
+      cartSize = 2097152;
+      break;
   }
 
   // reset to read mode
@@ -166,16 +166,16 @@ void showCartInfo_NGP() {
 
   print_Msg(F("System: "));
   if (ngpSystemType == 0)
-      println_Msg(F("NGPMonochrome"));
+    println_Msg(F("NGPMonochrome"));
   else if (ngpSystemType == 16)
-      println_Msg(F("NGPColor"));
+    println_Msg(F("NGPColor"));
   else
-      println_Msg(F("Unknown"));
+    println_Msg(F("Unknown"));
 
   print_Msg(F("Rom Size: "));
   print_Msg((cartSize >> 17));
   println_Msg(F(" Mbits"));
-  
+
   println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();

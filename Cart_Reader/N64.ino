@@ -76,10 +76,11 @@ static const char N64CartMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsN64Cart[] PROGMEM = {N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4, N64CartMenuItem5};
 
 // N64 CRC32 error menu items
-static const char N64CRCMenuItem1[] PROGMEM = "Redump";
-static const char N64CRCMenuItem2[] PROGMEM = "Ignore";
-static const char N64CRCMenuItem3[] PROGMEM = "Reset";
-static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3};
+static const char N64CRCMenuItem1[] PROGMEM = "No";
+static const char N64CRCMenuItem2[] PROGMEM = "Yes and keep old";
+static const char N64CRCMenuItem3[] PROGMEM = "Yes and delete old";
+static const char N64CRCMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
 
 // Rom menu
 static const char N64RomItem1[] PROGMEM = "4MB";
@@ -2830,6 +2831,7 @@ void readRom_N64() {
   strcpy(fileName, romName);
   strcat(fileName, ".Z64");
 
+redumpnewfolder:
   // create a new folder
   EEPROM_readAnything(0, foldern);
   sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
@@ -2846,7 +2848,7 @@ void readRom_N64() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-readn64rom:
+redumpsamefolder:
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
@@ -2952,25 +2954,49 @@ readn64rom:
   if (searchCRC(crcStr)) {
     // Dump was a known good rom
     println_Msg(F("Checksum matches"));
+    print_Msg(F("Done ("));
+    print_Msg(timeElapsed); // include elapsed time
+    println_Msg(F("s)"));
+    println_Msg(F(""));
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
   }
   else {
     // Dump was bad or unknown
+    errorLvl = 1;
     rgb.setColor(255, 0, 0);
-
-    // let bad crc show a short while
-    delay(3000);
+    println_Msg(F("Checksum not found"));
+    println_Msg(F("in N64.txt"));
+    println_Msg(F(""));
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
 
     // N64 CRC32 error Menu
     unsigned char CRCMenu;
     // Copy menuOptions out of progmem
-    convertPgm(menuOptionsN64CRC, 3);
+    convertPgm(menuOptionsN64CRC, 4);
 
-    CRCMenu = question_box(F("CRC ERROR "), menuOptions, 3, 0);
+    CRCMenu = question_box(F("Redump cartridge?"), menuOptions, 4, 0);
 
     // wait for user choice to come back from the question box menu
     switch (CRCMenu)
     {
       case 0:
+        // Return to N64 menu
+        display_Clear();
+        break;
+
+      case 1:
+        // Dump again into new folder
+        display_Clear();
+        rgb.setColor(0, 0, 0);
+        goto redumpnewfolder;
+        break;
+
+      case 2:
+        // Dump again into same folder
         // Change to last directory
         sd.chdir(folder);
         // Delete old file
@@ -2985,28 +3011,15 @@ readn64rom:
         println_Msg(F("Reading Rom..."));
         display_Update();
         rgb.setColor(0, 0, 0);
-        goto readn64rom;
+        goto redumpsamefolder;
         break;
 
-      case 1:
-        // Return to N64 menu
-        break;
-
-      case 2:
+      case 3:
         // Reset
         resetArduino();
         break;
     }
   }
-  display_Update();
-
-  print_Msg(F("Done ("));
-  print_Msg(timeElapsed); // include elapsed time
-  println_Msg(F("s)"));
-  println_Msg(F(""));
-  println_Msg(F("Press Button..."));
-  display_Update();
-  wait();
 }
 
 /******************************************
