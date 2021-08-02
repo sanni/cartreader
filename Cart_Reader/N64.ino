@@ -1705,6 +1705,35 @@ int strcicmp(char const * a, char const * b)
   }
 }
 
+#ifdef slowcrc
+// Calculate dumped rom's CRC32
+inline uint32_t updateCRC64(uint8_t ch, uint32_t crc) {
+  uint32_t idx = ((crc) ^ (ch)) & 0xff;
+  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
+  return tab_value ^ ((crc) >> 8);
+}
+
+// Calculate rom's CRC32 from SD
+uint32_t crc64() {
+  if (myFile.open(fileName, O_READ)) {
+    uint32_t oldcrc32 = 0xFFFFFFFF;
+
+    for (unsigned long currByte = 0; currByte < cartSize * 2048; currByte++) {
+      myFile.read(sdBuffer, 512);
+      for (int c = 0; c < 512; c++) {
+        oldcrc32 = updateCRC64(sdBuffer[c], oldcrc32);
+      }
+    }
+    // Close the file:
+    myFile.close();
+    return ~oldcrc32;
+  }
+  else {
+    print_Error(F("File not found"), true);
+  }
+}
+#endif
+
 // look-up the calculated crc in the file n64.txt on sd card
 boolean searchCRC(char crcStr[9]) {
   boolean result = 0;
@@ -2854,6 +2883,49 @@ redumpsamefolder:
     print_Error(F("SD Error"), true);
   }
 
+  // dumping rom slow
+#ifdef slowcrc
+  // get current time
+  unsigned long startTime = millis();
+
+  for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
+    // Blink led
+    if (currByte % 16384 == 0)
+      PORTB ^= (1 << 4);
+
+    // Set the address for the next 512 bytes
+    setAddress_N64(currByte);
+
+    for (int c = 0; c < 512; c += 2) {
+      // split word
+      word myWord = readWord_N64();
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
+
+      // write to buffer
+      sdBuffer[c] = hiByte;
+      sdBuffer[c + 1] = loByte;
+    }
+    myFile.write(sdBuffer, 512);
+  }
+  // Close the file:
+  myFile.close();
+
+  // Calculate Checksum and convert to string
+  println_Msg(F("Calculating CRC.."));
+  display_Update();
+  char crcStr[9];
+  sprintf(crcStr, "%08lx", crc64());
+  // Print checksum
+  println_Msg(crcStr);
+  display_Update();
+
+  // end time
+  unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
+#endif
+
+  // dumping rom fast
+#ifdef fastcrc
   byte buffer[1024] = { 0 };
 
   // get current time
@@ -2949,6 +3021,7 @@ redumpsamefolder:
   // Print checksum
   println_Msg(crcStr);
   display_Update();
+#endif
 
   // Search n64.txt for crc
   if (searchCRC(crcStr)) {

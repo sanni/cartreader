@@ -18,6 +18,10 @@
 // Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
 #define clockgen_installed
 
+// Define CRC method for dumping N64 ROMs
+#define fastcrc //crc will be calculated during dumping from memory
+//#define slowcrc // crc will be calculated after dumping from SD card
+
 // define enable_XXX to enable
 #define enable_FLASH
 #define enable_GBX
