@@ -16,7 +16,7 @@
 
    Compiled with Arduino 1.8.13
 
-   Code included from other projects:
+   Thanks to:
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
