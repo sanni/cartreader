@@ -1,6 +1,9 @@
 /**********************************************************************************
                     Cartridge Reader for Arduino Mega2560
 
+   This project represents a community-driven effort to provide
+   an easy to build and easy to modify cartridge dumper.
+
    Date:             02.08.2021
    Version:          6.6
 
@@ -13,33 +16,20 @@
 
    Compiled with Arduino 1.8.13
 
-   Thanks to:
-   MichlK - ROM-Reader for Super Nintendo
+   Code included from other projects:
+   MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
-   Wayne and Layne - Video-Game-Shield menu
-   skaman - SNES enhancements, SA1/BSX sram support, GB flash fix, MD improvements, Famicom dumper, WS improvements
-   nocash - Nintendo Power and GBA Eeprom commands and lots of other info
-   hkz/themanbehindthecurtain - N64 flashram commands
-   jago85 - help with N64 stuff
-   Andrew Brown/Peter Den Hartog - N64 controller protocol
+   Wayne and Layne - Video Game Shield menu
+   hkz & themanbehindthecurtain - N64 flashram commands
+   Andrew Brown & Peter Den Hartog - N64 controller protocol
    Shaun Taylor - N64 controller CRC functions
    Angus Gratton - CRC32
-   Tamanegi_taro - SA1 fix, PCE and Satellaview support
    Snes9x - SuperFX sram fix
-   zzattack - multigame pcb fix
-   Pickle - SDD1 fix
    insidegadgets - GBCartRead
    RobinTheHood - GameboyAdvanceRomDumper
-   YamaArashi - GBA flashrom bank switch command
-   infinest - GB Memory Binary Maker
-   moldov - SF Memory Binary Maker
-   vogelfreiheit - N64 flashram fix
-   rama - code speedup & improvements
    Gens-gs - Megadrive checksum
-   Modman - N64 checksum comparison fix
-   splash5 - EMS GB Smart cart, Wonderswan and NGP module
-   jiyunomegami - Retrode Game Gear adapter support and code improvements
-   Kreeblah - NES database
+
+   And a special Thank You to all contributors on Github and the Arduino forum.
 
 **********************************************************************************/
 
