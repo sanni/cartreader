@@ -20,6 +20,7 @@
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
+   skaman - Cart ROM READER SNES ENHANCED & Famicom Cart Dumper
    hkz & themanbehindthecurtain - N64 flashram commands
    Andrew Brown & Peter Den Hartog - N64 controller protocol
    Shaun Taylor - N64 controller CRC functions
