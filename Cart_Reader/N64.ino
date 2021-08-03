@@ -3033,6 +3033,10 @@ redumpsamefolder:
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
+    // This saves a tt file with rom info next to the dumped rom
+#ifdef savesummarytotxt
+    savesummary_N64(1, crcStr, timeElapsed);
+#endif
     wait();
   }
   else {
@@ -3044,6 +3048,10 @@ redumpsamefolder:
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
+    // This saves a tt file with rom info next to the dumped rom
+#ifdef savesummarytotxt
+    savesummary_N64(0, crcStr, timeElapsed);
+#endif
     wait();
 
     // N64 CRC32 error Menu
@@ -3093,6 +3101,69 @@ redumpsamefolder:
         break;
     }
   }
+}
+
+// Save an info.txt with information on the dumped rom to the SD card
+void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElapsed) {
+  // Open file on sd card
+  if (!myFile.open("N64/ROM/n64log.txt", O_RDWR | O_CREAT | O_APPEND)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  //Write the info
+  myFile.print(F("Name: "));
+  myFile.println(romName);
+
+  myFile.print(F("ID: "));
+  myFile.println(cartID);
+
+  myFile.print(F("Size: "));
+  myFile.print(cartSize);
+
+  myFile.println(F("MB"));
+  myFile.print(F("Save: "));
+
+  switch (saveType) {
+    case 1:
+      myFile.println(F("Sram"));
+      break;
+    case 4:
+      myFile.println(F("Flashram"));
+      break;
+    case 5:
+      myFile.println(F("4K Eeprom"));
+      break;
+    case 6:
+      myFile.println(F("16K Eeprom"));
+      break;
+    default:
+      myFile.println(F("unknown"));
+      break;
+  }
+
+  myFile.print(F("Version: 1."));
+  myFile.println(romVersion);
+
+  myFile.print(F("Saved To: "));
+  myFile.println(folder);
+  myFile.print(F("CRC: "));
+  myFile.println(crcStr);
+
+  if (checkfound) {
+    // Dump was a known good rom
+    myFile.println(F("Checksum matches"));
+  }
+  else {
+    myFile.println(F("Checksum not found"));
+  }
+
+  myFile.print(F("Time: "));
+  myFile.println(timeElapsed);
+
+  myFile.println(F(" "));
+
+  // Close the file:
+  myFile.close();
 }
 
 /******************************************
