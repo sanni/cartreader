@@ -1,5 +1,5 @@
 //******************************************
-// OPTIONS
+// GLOBAL OPTIONS
 //******************************************
 // Change mainMenu to snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu,
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
@@ -8,21 +8,15 @@
 // Comment out to change to Serial Output
 // be sure to change the Arduino Serial Monitor to no line ending
 #define enable_OLED
-
 // Skip OLED start-up animation
 //#define fast_start
-
 // Enable the second button
 #define enable_Button2
 
-// Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
-#define clockgen_installed
-
-// Define CRC method for dumping N64 ROMs
-#define fastcrc //crc will be calculated during dumping from memory
-//#define slowcrc // crc will be calculated after dumping from SD card
-
-// define enable_XXX to enable
+//******************************************
+// ENABLED MODULES
+//******************************************
+// add // before #define to disable a module
 #define enable_FLASH
 #define enable_GBX
 #define enable_MD
@@ -35,3 +29,17 @@
 #define enable_SNES
 #define enable_SV
 #define enable_WS
+
+//******************************************
+// N64 OPTIONS
+//******************************************
+// Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
+// add // and disable CLK1 switch if you don't have the clockgen installed or if you want to read a repros save
+#define clockgen_installed
+
+// Define CRC method for dumping N64 ROMs, slow seems to be more compatible with some SD cards
+#define fastcrc //crc will be calculated during dumping from memory
+//#define slowcrc // crc will be calculated after dumping from SD card
+
+// saves a n64log.txt file with rom info in /N64/ROMS
+#define savesummarytotxt
