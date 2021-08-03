@@ -41,5 +41,5 @@
 #define fastcrc //crc will be calculated during dumping from memory
 //#define slowcrc // crc will be calculated after dumping from SD card
 
-// saves a n64log.txt file with rom info in /N64/ROMS
+// saves a n64log.txt file with rom info in /N64/ROM
 #define savesummarytotxt
