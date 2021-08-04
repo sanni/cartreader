@@ -38,8 +38,7 @@
 #define clockgen_installed
 
 // Define CRC method for dumping N64 ROMs, slow seems to be more compatible with some SD cards
-#define fastcrc //crc will be calculated during dumping from memory
-//#define slowcrc // crc will be calculated after dumping from SD card
+//#define slowcrc // crc will be calculated after dumping from SD card instead of during dumping from memory
 
 // saves a n64log.txt file with rom info in /N64/ROM
 #define savesummarytotxt
