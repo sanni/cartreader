@@ -476,6 +476,9 @@ void adIn_N64() {
   DDRF = 0x00;
   //A8-A15
   DDRK = 0x00;
+  //Enable internal pull-up resistors
+  //PORTF = 0xFF;
+  //PORTK = 0xFF;
 }
 
 // Set Cartridge address
@@ -2922,10 +2925,8 @@ redumpsamefolder:
 
   // end time
   unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
-#endif
-
+#else
   // dumping rom fast
-#ifdef fastcrc
   byte buffer[1024] = { 0 };
 
   // get current time
