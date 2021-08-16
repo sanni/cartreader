@@ -11,6 +11,8 @@ static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItemRe
 
 char ngpRomVersion[3];
 uint8_t ngpSystemType;
+uint8_t manufacturerID;
+uint8_t deviceID;
 
 void setup_NGP() {
   // A0 - A7
@@ -36,14 +38,14 @@ void setup_NGP() {
 
   if (getCartInfo_NGP())
   {
-    showCartInfo_NGP();
+    printCartInfo_NGP();
   }
   else
   {
     println_Msg(F("NeoGeo Pocket"));
     println_Msg(F(""));
     println_Msg(F(""));
-    println_Msg(F("Rom Size Error"));
+    println_Msg(F("Cartridge read error"));
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
@@ -86,97 +88,120 @@ bool getCartInfo_NGP() {
   writeByte_NGP(0x555, 0x90);
 
   dataIn();
-
   cartSize = 0;
+  
+  // get chip manufacturer and device IDs 
+  manufacturerID = readByte_NGP(0);
+  deviceID = readByte_NGP(1);
   tmp = (uint8_t*)&romSize;
-  *(tmp + 0) = readByte_NGP(0);
-  *(tmp + 1) = readByte_NGP(1);
+  *(tmp + 0) = deviceID;
+  *(tmp + 1) = manufacturerID;
 
   switch (romSize)
   {
-    // 4 Mbits
-    // Toshiba
-    case 0xab98:
-      cartSize = 524288;
-      break;
-    // Toshiba ?
-    case 0x4c20:
-      cartSize = 524288;
-      break;
+      // detection error
+      case 0xffff:
+        return false;
+        break;
+	  
+      // 4 Mbits
+      // Toshiba
+      case 0x98ab:
+        cartSize = 524288;
+        break;
+      // Toshiba ?
+      case 0x204c:
+        cartSize = 524288;
+        break;      
 
-    // 8 Mbits
-    // Toshiba
-    case 0x2c98:
-      cartSize = 1048576;
-      break;
-    // Samsung
-    case 0x2cec:
-      cartSize = 1048576;
-      break;
+      // 8 Mbits
+      // Toshiba
+      case 0x982c:
+        cartSize = 1048576;
+        break;
+      // Samsung
+      case 0xec2c:
+        cartSize = 1048576;
+        break;
 
-    // 16 Mbits
-    // Toshiba
-    case 0x2f98:
-      cartSize = 2097152;
-      break;
-    // Samsung
-    case 0x2fec:
-      cartSize = 2097152;
-      break;
+      // 16 Mbits
+      // Toshiba
+      case 0x982f:
+        cartSize = 2097152;
+        break;
+      // Samsung
+      case 0xec2f:
+        cartSize = 2097152;
+        break;
   }
 
   // reset to read mode
   dataOut();
-  writeByte_NGP(0x000000, 0xf0);
-
-  if (cartSize == 0)
-    return false;
+  writeByte_NGP(0x0, 0xf0);
 
   dataIn();
 
+  // confirm NGP cart recognition
   for (uint32_t addr = 0; addr < 28; addr++)
     sdBuffer[addr] = readByte_NGP(addr);
-
   if (memcmp_P(sdBuffer, PSTR("COPYRIGHT BY SNK CORPORATION"), 28) != 0 && memcmp_P(sdBuffer, PSTR(" LICENSED BY SNK CORPORATION"), 28) != 0)
     return false;
 
-  snprintf(cartID, 5, "%02X%02X", readByte_NGP(0x000021), readByte_NGP(0x000020));
-  snprintf(ngpRomVersion, 3, "%02X", readByte_NGP(0x000022));
-  ngpSystemType = readByte_NGP(0x000023);
+  // get app ID
+  snprintf(cartID, 5, "%02X%02X", readByte_NGP(0x21), readByte_NGP(0x20));
+  
+  // force rom size to 32Mbits for few titles
+    if (strcmp(cartID,"0060") == 0 || strcmp(cartID,"0061") == 0 || strcmp(cartID,"0069") == 0 )
+		cartSize = 4194304;
+  
+  // get app version 
+  snprintf(ngpRomVersion, 3, "%02X", readByte_NGP(0x22));
+  
+  // get app system compatibility
+  ngpSystemType = readByte_NGP(0x23);
 
+  // get app name
   for (uint32_t i = 0; i < 17; i++)
     romName[i] = readByte_NGP(0x24 + i);
 
   return true;
 }
 
-void showCartInfo_NGP() {
+void printCartInfo_NGP() {
   display_Clear();
 
   println_Msg(F("NGP Cart Info"));
 
-  print_Msg(F("Game: "));
+  print_Msg(F("Name: "));
   println_Msg(romName);
 
-  print_Msg(F("GameID: "));
+  print_Msg(F("ID: "));
   println_Msg(cartID);
 
   print_Msg(F("Version: "));
   println_Msg(ngpRomVersion);
 
   print_Msg(F("System: "));
-  if (ngpSystemType == 0)
+  if (ngpSystemType == 0x0)
     println_Msg(F("NGPMonochrome"));
-  else if (ngpSystemType == 16)
+  else if (ngpSystemType == 0x10)
     println_Msg(F("NGPColor"));
   else
     println_Msg(F("Unknown"));
 
   print_Msg(F("Rom Size: "));
-  print_Msg((cartSize >> 17));
-  println_Msg(F(" Mbits"));
+  if (cartSize == 0)
+  {
+    println_Msg(F("Unknown"));
+    print_Msg(F("Chip ID: "));
+    println_Msg(String(manufacturerID,HEX) + " " + String(deviceID,HEX));
+  }
+  else
+  {
+    print_Msg((cartSize >> 17));
+    println_Msg(F(" Mbits"));
+  }
 
-  println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
@@ -214,6 +239,7 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
   dataOut();
   writeByte_NGP(0x0, 0xf0);
 
+// read rom
   dataIn();
   for (uint32_t addr = 0; addr < cartSize; addr += 512) {
 
