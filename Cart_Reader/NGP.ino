@@ -9,6 +9,12 @@ static const char ngpMenuItem1[] PROGMEM = "Read Rom";
 static const char ngpMenuItemReset[] PROGMEM = "Reset";
 static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItemReset};
 
+static const char ngpRomItem1[] PROGMEM = "4 Mbits";
+static const char ngpRomItem2[] PROGMEM = "8 Mbits";
+static const char ngpRomItem3[] PROGMEM = "16 Mbits";
+static const char ngpRomItem4[] PROGMEM = "32 Mbits";
+static const char* const ngpRomOptions[] PROGMEM = {ngpRomItem1, ngpRomItem2, ngpRomItem3, ngpRomItem4};
+
 char ngpRomVersion[3];
 uint8_t ngpSystemType;
 uint8_t manufacturerID;
@@ -37,11 +43,8 @@ void setup_NGP() {
   PORTH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
   if (getCartInfo_NGP())
-  {
     printCartInfo_NGP();
-  }
-  else
-  {
+  else {
     println_Msg(F("NeoGeo Pocket"));
     println_Msg(F(""));
     println_Msg(F(""));
@@ -59,8 +62,7 @@ void ngpMenu() {
   convertPgm(menuOptionsNGP, 2);
   mainMenu = question_box(F("NGP Menu"), menuOptions, 2, 0);
 
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       sd.chdir("/");
       readROM_NGP(filePath, FILEPATH_LENGTH);
@@ -97,42 +99,40 @@ bool getCartInfo_NGP() {
   *(tmp + 0) = deviceID;
   *(tmp + 1) = manufacturerID;
 
-  switch (romSize)
-  {
-      // detection error
-      case 0xffff:
-        return false;
-        break;
-	  
-      // 4 Mbits
-      // Toshiba
-      case 0x98ab:
-        cartSize = 524288;
-        break;
-      // Toshiba ?
-      case 0x204c:
-        cartSize = 524288;
-        break;      
+  switch (romSize) {
+    // detection error
+    case 0xffff:
+      return false;
+      break;
+    
+    // 4 Mbits
+    case 0x98ab:
+      cartSize = 524288;
+      break;
+    // Toshiba ?
+    case 0x204c:
+      cartSize = 524288;
+      break;      
 
-      // 8 Mbits
-      // Toshiba
-      case 0x982c:
-        cartSize = 1048576;
-        break;
-      // Samsung
-      case 0xec2c:
-        cartSize = 1048576;
-        break;
+    // 8 Mbits
+    // Toshiba
+    case 0x982c:
+      cartSize = 1048576;
+      break;
+    // Samsung
+    case 0xec2c:
+      cartSize = 1048576;
+      break;
 
-      // 16 Mbits
-      // Toshiba
-      case 0x982f:
-        cartSize = 2097152;
-        break;
-      // Samsung
-      case 0xec2f:
-        cartSize = 2097152;
-        break;
+    // 16 Mbits
+    // Toshiba
+    case 0x982f:
+      cartSize = 2097152;
+      break;
+    // Samsung
+    case 0xec2f:
+      cartSize = 2097152;
+      break;
   }
 
   // reset to read mode
@@ -151,8 +151,8 @@ bool getCartInfo_NGP() {
   snprintf(cartID, 5, "%02X%02X", readByte_NGP(0x21), readByte_NGP(0x20));
   
   // force rom size to 32Mbits for few titles
-    if (strcmp(cartID,"0060") == 0 || strcmp(cartID,"0061") == 0 || strcmp(cartID,"0069") == 0 )
-		cartSize = 4194304;
+  if (strcmp(cartID,"0060") == 0 || strcmp(cartID,"0061") == 0 || strcmp(cartID,"0069") == 0 )
+    cartSize = 4194304;
   
   // get app version 
   snprintf(ngpRomVersion, 3, "%02X", readByte_NGP(0x22));
@@ -190,14 +190,12 @@ void printCartInfo_NGP() {
     println_Msg(F("Unknown"));
 
   print_Msg(F("Rom Size: "));
-  if (cartSize == 0)
-  {
+  if (cartSize == 0) {
     println_Msg(F("Unknown"));
     print_Msg(F("Chip ID: "));
     println_Msg(String(manufacturerID,HEX) + " " + String(deviceID,HEX));
   }
-  else
-  {
+  else {
     print_Msg((cartSize >> 17));
     println_Msg(F(" Mbits"));
   }
@@ -208,6 +206,38 @@ void printCartInfo_NGP() {
 }
 
 void readROM_NGP(char *outPathBuf, size_t bufferSize) {
+  // Set cartsize manually if chip ID is unknown
+  if (cartSize == 0) {
+    unsigned char ngpRomMenu;
+    
+    // Copy menuOptions out of progmem
+    convertPgm(ngpRomOptions, 4);
+    ngpRomMenu = question_box(F("Select ROM size"), menuOptions, 4, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (ngpRomMenu) {
+      case 0:
+        // 4 Mbits
+        cartSize = 524288;
+        break;
+
+      case 1:
+        // 8 Mbits
+        cartSize = 1048576;
+        break;
+
+      case 2:
+        // 16 Mbits
+        cartSize = 2097152;
+        break;
+
+      case 3:
+        // 32 Mbits
+        cartSize = 4194304;
+        break;
+    }
+  }
+  
   // generate fullname of rom file
   snprintf(fileName, FILENAME_LENGTH, "%s.ngp", romName);
 
@@ -239,14 +269,14 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
   dataOut();
   writeByte_NGP(0x0, 0xf0);
 
-// read rom
+  // read rom
   dataIn();
   for (uint32_t addr = 0; addr < cartSize; addr += 512) {
-
     // blink LED
     if ((addr & ((1 << 14) - 1)) == 0)
       PORTB ^= (1 << 4);
 
+    // read block
     for (uint32_t i = 0; i < 512; i++)
       sdBuffer[i] = readByte_NGP(addr + i);
 
