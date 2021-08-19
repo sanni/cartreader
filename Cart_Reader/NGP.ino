@@ -42,18 +42,13 @@ void setup_NGP() {
 
   PORTH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
+  println_Msg(F("Initializing..."));
+  display_Update();
+  
   if (getCartInfo_NGP())
     printCartInfo_NGP();
-  else {
-    println_Msg(F("NeoGeo Pocket"));
-    println_Msg(F(""));
-    println_Msg(F(""));
-    println_Msg(F("Cartridge read error"));
-    println_Msg(F(""));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
+  else
+    print_Error(F("Cartridge read error"), true);
 }
 
 void ngpMenu() {
@@ -99,14 +94,15 @@ bool getCartInfo_NGP() {
   *(tmp + 0) = deviceID;
   *(tmp + 1) = manufacturerID;
 
+  // select rom size depending of the chip IDs
   switch (romSize) {
+    case 0x98ab: cartSize = 524288; break; // 4 Mbits Toshiba
+    case 0x204c: cartSize = 524288; break; // 4 Mbits STMicroelectronics ?
+    case 0x982c: cartSize = 1048576; break; // 8 Mbits Toshiba
+    case 0xec2c: cartSize = 1048576; break; // 8 Mbits Samsung
+    case 0x982f: cartSize = 2097152; break; // 16 Mbits Toshiba
+    case 0xec2f: cartSize = 2097152; break; // 16 Mbits Samsung
     case 0xffff: return false; break; // detection error (no cart inserted or hw problem)
-    case 0x98ab: cartSize = 524288; break; // 4 Mbits - Toshiba
-    case 0x204c: cartSize = 524288; break; // 4 Mbits - STMicroelectronics ?
-    case 0x982c: cartSize = 1048576; break; // 8 Mbits - Toshiba
-    case 0xec2c: cartSize = 1048576; break; // 8 Mbits - Samsung
-    case 0x982f: cartSize = 2097152; break; // 16 Mbits - Toshiba
-    case 0xec2f: cartSize = 2097152; break; // 16 Mbits - Samsung
   }
 
   // reset to read mode
