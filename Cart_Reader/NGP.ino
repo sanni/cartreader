@@ -6,8 +6,9 @@
 #ifdef enable_NGP
 
 static const char ngpMenuItem1[] PROGMEM = "Read Rom";
+static const char ngpMenuItem2[] PROGMEM = "Read chip info";
 static const char ngpMenuItemReset[] PROGMEM = "Reset";
-static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItemReset};
+static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItem2, ngpMenuItemReset};
 
 static const char ngpRomItem1[] PROGMEM = "4 Mbits / 512 KB";
 static const char ngpRomItem2[] PROGMEM = "8 Mbits / 1 MB";
@@ -54,8 +55,8 @@ void setup_NGP() {
 void ngpMenu() {
   uint8_t mainMenu;
 
-  convertPgm(menuOptionsNGP, 2);
-  mainMenu = question_box(F("NGP Menu"), menuOptions, 2, 0);
+  convertPgm(menuOptionsNGP, 3);
+  mainMenu = question_box(F("NGP Menu"), menuOptions, 3, 0);
 
   switch (mainMenu) {
     case 0:
@@ -65,6 +66,10 @@ void ngpMenu() {
       break;
 
     case 1:
+      scanChip_NGP();
+      break;
+
+    case 2:
       resetArduino();
       break;
   }
@@ -94,15 +99,15 @@ bool getCartInfo_NGP() {
   *(tmp + 0) = deviceID;
   *(tmp + 1) = manufacturerID;
 
-  // select rom size depending of the chip IDs
+
   switch (romSize) {
-    case 0x98ab: cartSize = 524288; break; // 4 Mbits Toshiba
-    case 0x204c: cartSize = 524288; break; // 4 Mbits STMicroelectronics ?
-    case 0x982c: cartSize = 1048576; break; // 8 Mbits Toshiba
-    case 0xec2c: cartSize = 1048576; break; // 8 Mbits Samsung
-    case 0x982f: cartSize = 2097152; break; // 16 Mbits Toshiba
-    case 0xec2f: cartSize = 2097152; break; // 16 Mbits Samsung
     case 0xffff: return false; break; // detection error (no cart inserted or hw problem)
+    case 0x98ab: cartSize = 524288; break; // 4 Mbits - Toshiba
+    case 0x204c: cartSize = 524288; break; // 4 Mbits - STMicroelectronics ?
+    case 0x982c: cartSize = 1048576; break; // 8 Mbits - Toshiba
+    case 0xec2c: cartSize = 1048576; break; // 8 Mbits - Samsung
+    case 0x982f: cartSize = 2097152; break; // 16 Mbits - Toshiba
+    case 0xec2f: cartSize = 2097152; break; // 16 Mbits - Samsung
   }
 
   // reset to read mode
@@ -161,9 +166,6 @@ void printCartInfo_NGP() {
   print_Msg(F("Rom Size: "));
   if (cartSize == 0) {
     println_Msg(F("Unknown"));
-    // display the chip IDs if unknown
-    print_Msg(F("Chip ID: "));
-    println_Msg(String(manufacturerID,HEX) + " " + String(deviceID,HEX));
   }
   else {
     print_Msg((cartSize >> 17));
@@ -186,21 +188,10 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
 
     // wait for user choice to come back from the question box menu
     switch (ngpRomMenu) {
-      case 0:
-        cartSize = 524288;
-        break;
-
-      case 1:
-        cartSize = 1048576;
-        break;
-
-      case 2:
-        cartSize = 2097152;
-        break;
-
-      case 3:
-        cartSize = 4194304;
-        break;
+      case 0: cartSize = 524288; break;
+      case 1: cartSize = 1048576; break;
+      case 2: cartSize = 2097152; break;
+      case 3: cartSize = 4194304; break;
     }
   }
   
@@ -250,6 +241,89 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
   }
 
   myFile.close();
+}
+
+void scanChip_NGP() {
+  display_Clear();
+  //uint32_t block_addr = 0;
+  uint32_t block_addr = 0;
+
+  // generate name of report file
+  snprintf(fileName, FILENAME_LENGTH, "%s.txt",romName);
+
+  // create a new folder to save report file
+  EEPROM_readAnything(0, foldern);
+  snprintf(folder, sizeof(folder), "NGP/ROM/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  print_Msg(F("Saving chip report to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // open file on sdcard
+  if (!myFile.open(fileName, O_RDWR | O_CREAT))
+    print_Error(F("Can't create file on SD"), true);
+
+  // write new folder number back to EEPROM
+  foldern++;
+  EEPROM_writeAnything(0, foldern);
+
+  // write software info to report file
+  myFile.println("Game: " + String(romName));
+  myFile.println("ID: " + String(cartID));
+  myFile.println("Version: " + String(ngpRomVersion));
+  myFile.println("");
+
+  // write chip info to report file
+  myFile.println("Chip manufacturer ID : 0x" + String(manufacturerID,HEX));
+  myFile.println("Chip device ID : 0x" + String(deviceID,HEX));
+  myFile.println("");
+
+  if(cartSize == 0)
+    myFile.println("Cart size unknown");
+  else {
+    // enter autoselect mode
+    dataOut();
+    writeByte_NGP(0x555, 0xaa);
+    writeByte_NGP(0x2aa, 0x55);
+    writeByte_NGP(0x555, 0x90);
+
+    dataIn();
+    uint32_t addrMax;
+    uint8_t sectorID = 0;
+
+    // skip the 2nd 16Mbits chip
+    if (cartSize == 4194304){
+      myFile.println("Warning: this cart is 32Mbits. Only the first 16Mbits chip will be scanned.");
+      myFile.println("");
+      addrMax = 2097152;
+    }
+    else
+      addrMax = cartSize;
+    
+    myFile.println("Sector | Start address | Status");
+    
+    // browse sectors
+    for(uint32_t addr = 0; addr < addrMax; addr+= 0x1000) {
+
+      if( (addr%0x10000 == 0) || (addr == addrMax-0x8000) || (addr == addrMax-0x6000) || (addr == addrMax-0x4000)){
+        
+        myFile.print("#" + String(sectorID) + " | 0x" + String(addr,HEX) + " | ");
+            
+        // check the protection status
+        if(readByte_NGP(addr + 0x2) == 0)
+          myFile.println("unprotected");
+        else
+          myFile.println("protected");
+      
+        sectorID += 1;
+      }
+    }
+    myFile.close();
+    writeByte_NGP(0x00, 0xf0);
+  }
 }
 
 void writeByte_NGP(uint32_t addr, uint8_t data) {
