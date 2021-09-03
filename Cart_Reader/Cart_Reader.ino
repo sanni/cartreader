@@ -32,7 +32,11 @@
    RobinTheHood - GameboyAdvanceRomDumper
    Gens-gs - Megadrive checksum
 
-   And a special Thank You to all contributors on Github and the Arduino forum.
+   And a special Thank You to all coders and contributors on Github and the Arduino forum:
+   jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, Pickle, sdhizumi, 
+   Uzlopak, sakman55, majorpbx, borti4938, Modman, philenotfound, vogelfreiheit
+   
+   And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
 **********************************************************************************/
 
