@@ -90,6 +90,26 @@ boolean realtec = 0;
 int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
 
 /******************************************
+   SONIC & KNUCKLES LOCK-ON MODE VARIABLES
+// SnKmode : 
+// 0 = Not Sonic & Knuckles
+// 1 = Only Sonic & Knucles
+// 2 = Sonic & Knucles + Sonic1
+// 3 = Sonic & Knucles + Sonic2
+// 4 = Sonic & Knucles + Sonic3
+// 5 = Sonic & Knucles + Other game
+ *****************************************/
+static byte SnKmode = 0;
+static unsigned long cartSizeLockon;
+static unsigned long cartSizeSonic2 = 262144;
+static word chksumLockon;
+static word chksumSonic2 = 0x0635;
+static char romNameLockon[12];
+static char id[15];
+static char idLockon[15];
+static char labelLockon[17];
+
+/******************************************
    Configuration
  *****************************************/
 void mdLoadConf() {
@@ -628,6 +648,90 @@ void getCartInfo_MD() {
     }
   }
 
+  // Sonic & Knuckles Check
+  SnKmode = 0;
+  if (chksum == 0xDFB3) {
+
+    // Get ID
+    for (byte c = 0; c < 14; c += 2) {
+      // split word
+      word myWord = readWord_MD((0x180 + c) / 2);
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
+
+      // write to buffer
+      sdBuffer[c] = hiByte;
+      sdBuffer[c + 1] = loByte;
+    }
+    for(int i=0; i<14; i++){
+      id[i] = char(sdBuffer[i]);
+    }
+
+    //Sonic & Knuckles ID:GM MK-1563 -00
+    if (!strcmp("GM MK-1563 -00", id)) {
+
+      // Get labelLockon
+      for (byte c = 0; c < 16; c += 2) {
+        // split word
+        word myWord = readWord_MD((0x200100 + c) / 2);
+        byte loByte = myWord & 0xFF;
+        byte hiByte = myWord >> 8;
+
+        // write to buffer
+        sdBuffer[c] = hiByte;
+        sdBuffer[c + 1] = loByte;
+      }
+      for(int i=0; i<16; i++){
+        labelLockon[i] = char(sdBuffer[i]);
+      }
+
+      // check Lock-on game presence
+      if (!(strcmp("SEGA MEGA DRIVE ", labelLockon) & strcmp("SEGA GENESIS    ", labelLockon))) {
+
+        // Lock-on cart checksum
+        chksumLockon = readWord_MD(0x1000C7);
+        // Lock-on cart size
+        cartSizeLockon = ((long(readWord_MD(0x1000D2)) << 16) | readWord_MD(0x1000D3)) + 1;
+
+        // Get IdLockon
+        for (byte c = 0; c < 14; c += 2) {
+          // split word
+          word myWord = readWord_MD((0x200180 + c) / 2);
+          byte loByte = myWord & 0xFF;
+          byte hiByte = myWord >> 8;
+
+          // write to buffer
+          sdBuffer[c] = hiByte;
+          sdBuffer[c + 1] = loByte;
+        }
+        for(int i=0; i<14; i++){
+          idLockon[i] = char(sdBuffer[i]);
+        }
+
+        if (!(strncmp("GM 00001009-0", idLockon,13) & strncmp("GM 00004049-0", idLockon,13) )) {
+          //Sonic1 ID:GM 00001009-0? or GM 00004049-0?
+          SnKmode = 2;
+        }else if (!(strcmp("GM 00001051-00", idLockon) & strcmp("GM 00001051-01", idLockon) & strcmp("GM 00001051-02", idLockon))) {
+          //Sonic2 ID:GM 00001051-00 or GM 00001051-01 or GM 00001051-02
+          SnKmode = 3;
+
+          // Prepare Sonic2 Banks
+          writeSSF2Map(0x509878, 1); // 0xA130F1
+
+        }else if (!strcmp("GM MK-1079 -00", idLockon)) {
+          //Sonic1 ID:GM MK-1079 -00
+          SnKmode = 4;
+        }else{
+          //Other game
+          SnKmode = 5;
+        }
+
+      }else{
+        SnKmode = 1;
+      }
+    }
+  }
+
   // Serial EEPROM Check
   for (int i = 0; i < eepcount; i++) {
     int index = i * 2;
@@ -821,6 +925,39 @@ void getCartInfo_MD() {
     }
   }
 
+  //Get Lock-on cart name
+  if(SnKmode>=2){
+
+    //Change romName
+    strcpy(romName,"SnK_");
+
+      for (byte c = 0; c < 48; c += 2) {
+    // split word
+    word myWord = readWord_MD((0x200150 + c) / 2);
+    byte loByte = myWord & 0xFF;
+    byte hiByte = myWord >> 8;
+
+    // write to buffer
+    sdBuffer[c] = hiByte;
+    sdBuffer[c + 1] = loByte;
+    }
+    byte myLength = 0;
+    for (unsigned int i = 0; i < 48; i++) {
+      if (((char(sdBuffer[i]) >= 48 && char(sdBuffer[i]) <= 57) || (char(sdBuffer[i]) >= 65 && char(sdBuffer[i]) <= 122)) && myLength < 11) {
+        romNameLockon[myLength] = char(sdBuffer[i]);
+        myLength++;
+      }
+    }
+
+    switch(SnKmode){
+      case 2: strcat(romName,"SONIC1"); break;
+      case 3: strcat(romName,"SONIC2"); break;
+      case 4: strcat(romName,"SONIC3"); break;
+      case 5: strcat(romName,romNameLockon); break;
+    }
+
+  }
+
   // Realtec Mapper Check
   word realtecCheck1 = readWord_MD(0x3F080); // 0x7E100 "SEGA" (BootROM starts at 0x7E000)
   word realtecCheck2 = readWord_MD(0x3F081);
@@ -846,10 +983,41 @@ void getCartInfo_MD() {
   }
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
+  switch(SnKmode){
+    case 2:
+    case 4:
+    case 5:
+      print_Msg(F("+"));
+      print_Msg(cartSizeLockon * 8 / 1024 / 1024 );
+      break;
+   case 3:
+      print_Msg(F("+"));
+      print_Msg(cartSizeLockon * 8 / 1024 / 1024 );
+      print_Msg(F("+"));
+      print_Msg(cartSizeSonic2 * 8 / 1024 / 1024 );
+      break;       
+  }
   println_Msg(F(" MBit"));
   print_Msg(F("ChkS: "));
   print_Msg_PaddedHexByte((chksum >> 8));
   print_Msg_PaddedHexByte((chksum & 0x00ff));
+  switch(SnKmode){
+    case 2:
+    case 4:
+    case 5:
+      print_Msg(F("+"));
+      print_Msg_PaddedHexByte((chksumLockon >> 8));
+      print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
+      break;
+    case 3:
+      print_Msg(F("+"));
+      print_Msg_PaddedHexByte((chksumLockon >> 8));
+      print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
+      print_Msg(F("+"));
+      print_Msg_PaddedHexByte((chksumSonic2 >> 8));
+      print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
+      break;
+  }
   println_Msg(F(""));
   if (saveType == 4) {
     print_Msg(F("Serial EEPROM: "));
@@ -913,6 +1081,8 @@ void writeSSF2Map(unsigned long myAddress, word myData) {
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
+  uint16_t calcCKSLockon = 0;
+  uint16_t calcCKSSonic2 = 0;
 
   // Set control
   dataIn_MD();
@@ -958,6 +1128,8 @@ void readROM_MD() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize);
+  if(SnKmode>=2) totalProgressBar += (uin32_t) cartSizeLockon;
+  if(SnKmode==3) totalProgressBar += (uin32_t) cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
@@ -1012,6 +1184,93 @@ void readROM_MD() {
     processedProgressBar += 1024;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
+  if(SnKmode >= 2){
+    for (unsigned long currBuffer = 0; currBuffer < cartSizeLockon / 2; currBuffer += 512) {
+      // Blink led
+      if (currBuffer % 16384 == 0)
+        PORTB ^= (1 << 4);
+
+      d = 0;
+
+      for (int currWord = 0; currWord < 512; currWord++) {
+        unsigned long myAddress = currBuffer + currWord + cartSize / 2;
+        PORTF = myAddress & 0xFF;
+        PORTK = (myAddress >> 8) & 0xFF;
+        PORTL = (myAddress >> 16) & 0xFF;
+
+        // Arduino running at 16Mhz -> one nop = 62.5ns
+        NOP;
+        // Setting CS(PH3) LOW
+        PORTH &= ~(1 << 3);
+        // Setting OE(PH6) LOW
+        PORTH &= ~(1 << 6);
+        // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
+        NOP; NOP; NOP; NOP; NOP; NOP;
+
+        // Read
+        buffer[d]     = PINA;
+        buffer[d + 1] = PINC;
+
+        // Setting CS(PH3) HIGH
+        PORTH |= (1 << 3);
+        // Setting OE(PH6) HIGH
+        PORTH |= (1 << 6);
+
+        // Skip first 256 words
+        if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
+          calcCKSLockon += ((buffer[d] << 8) | buffer[d + 1]);
+        }
+        d += 2;
+      }
+      myFile.write(buffer, 1024);
+
+      // update progress bar
+      processedProgressBar += 1024;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+  if(SnKmode == 3){
+    for (unsigned long currBuffer = 0; currBuffer < cartSizeSonic2 / 2; currBuffer += 512) {
+      // Blink led
+      if (currBuffer % 16384 == 0)
+        PORTB ^= (1 << 4);
+
+      d = 0;
+
+      for (int currWord = 0; currWord < 512; currWord++) {
+        unsigned long myAddress = currBuffer + currWord + (cartSize+cartSizeLockon) / 2;
+        PORTF = myAddress & 0xFF;
+        PORTK = (myAddress >> 8) & 0xFF;
+        PORTL = (myAddress >> 16) & 0xFF;
+
+        // Arduino running at 16Mhz -> one nop = 62.5ns
+        NOP;
+        // Setting CS(PH3) LOW
+        PORTH &= ~(1 << 3);
+        // Setting OE(PH6) LOW
+        PORTH &= ~(1 << 6);
+        // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
+        NOP; NOP; NOP; NOP; NOP; NOP;
+
+        // Read
+        buffer[d]     = PINA;
+        buffer[d + 1] = PINC;
+
+        // Setting CS(PH3) HIGH
+        PORTH |= (1 << 3);
+        // Setting OE(PH6) HIGH
+        PORTH |= (1 << 6);
+
+        calcCKSSonic2 += ((buffer[d] << 8) | buffer[d + 1]);
+        d += 2;
+      }
+      myFile.write(buffer, 1024);
+
+      // update progress bar
+      processedProgressBar += 1024;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
   // Close the file:
   myFile.close();
 
@@ -1039,6 +1298,34 @@ void readROM_MD() {
     println_Msg(calcsumStr);
     print_Error(F(""), false);
     display_Update();
+  }
+  if(SnKmode >= 2){
+    if (chksumLockon == calcCKSLockon) {
+      println_Msg(F("Checksum2 OK"));
+      display_Update();
+    }
+    else {
+      print_Msg(F("Checksum2 Error: "));
+      char calcsumStr[5];
+      sprintf(calcsumStr, "%04X", calcCKSLockon);
+      println_Msg(calcsumStr);
+      print_Error(F(""), false);
+      display_Update();
+    }
+  }
+  if(SnKmode == 3){
+    if (chksumSonic2 == calcCKSSonic2) {
+      println_Msg(F("Checksum3 OK"));
+      display_Update();
+    }
+    else {
+      print_Msg(F("Checksum3 Error: "));
+      char calcsumStr[5];
+      sprintf(calcsumStr, "%04X", calcCKSSonic2);
+      println_Msg(calcsumStr);
+      print_Error(F(""), false);
+      display_Update();
+    }
   }
 }
 
