@@ -89,8 +89,8 @@ boolean realtec = 0;
 #define DEFAULT_VALUE_segaSram16bit 0
 int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
 
-/******************************************
-   SONIC & KNUCKLES LOCK-ON MODE VARIABLES
+//*****************************************
+// SONIC & KNUCKLES LOCK-ON MODE VARIABLES
 // SnKmode : 
 // 0 = Not Sonic & Knuckles
 // 1 = Only Sonic & Knucles
@@ -98,7 +98,7 @@ int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
 // 3 = Sonic & Knucles + Sonic2
 // 4 = Sonic & Knucles + Sonic3
 // 5 = Sonic & Knucles + Other game
- *****************************************/
+//*****************************************
 static byte SnKmode = 0;
 static unsigned long cartSizeLockon;
 static unsigned long cartSizeSonic2 = 262144;
@@ -719,7 +719,7 @@ void getCartInfo_MD() {
           writeSSF2Map(0x509878, 1); // 0xA130F1
 
         }else if (!strcmp("GM MK-1079 -00", idLockon)) {
-          //Sonic1 ID:GM MK-1079 -00
+          //Sonic3 ID:GM MK-1079 -00
           SnKmode = 4;
         }else{
           //Other game
@@ -1128,8 +1128,8 @@ void readROM_MD() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize);
-  if(SnKmode>=2) totalProgressBar += (uin32_t) cartSizeLockon;
-  if(SnKmode==3) totalProgressBar += (uin32_t) cartSizeSonic2;
+  if(SnKmode>=2) totalProgressBar += (uint32_t) cartSizeLockon;
+  if(SnKmode==3) totalProgressBar += (uint32_t) cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
