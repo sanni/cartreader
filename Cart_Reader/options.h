@@ -42,3 +42,7 @@
 
 // saves a n64log.txt file with rom info in /N64/ROM
 #define savesummarytotxt
+
+// Setup RTC if installed.
+// remove // if you have an RTC installed
+// #define RTC_installed
