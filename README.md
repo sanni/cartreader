@@ -1,7 +1,8 @@
 ![image](https://dl.dropboxusercontent.com/s/w39fnwop0yypt8a/free.png?dl=1)   ![image](https://dl.dropboxusercontent.com/s/94j412n2inh681p/c3378c2cb507ebb.pn?dl=1)
 
 # Open Source Cartridge Reader
-This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper. All the Arduino source code along with the PCB design files and detailed build guides can be found in this Github. Happy making. 🔧🔨😊
+This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper.     
+Happy making. 🔧🔨😊     
 
 [![image](https://dl.dropboxusercontent.com/s/0udh1gkl7kem90v/cartbatttop.jpg?dl=1)](https://dl.dropboxusercontent.com/s/p1s0selosoxr86f/1.jpg?dl=1)   
 
@@ -43,5 +44,3 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads NeoGeo Pocket cartridges   
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C    
 - Programs M27C322 eproms    
-
-[![](https://dl.dropboxusercontent.com/s/h2e08skmn9pbi2y/savegameyouprev.jpg?dl=1)](https://www.youtube.com/watch?v=r0J9Dplejjg)   
