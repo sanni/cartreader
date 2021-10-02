@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             02.08.2021
-   Version:          6.6
+   Date:             02.10.2021
+   Version:          6.7
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -34,13 +34,13 @@
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, Pickle, sdhizumi, 
-   sakman55, Uzlopak, scrap-a, majorpbx, borti4938, Modman, philenotfound, vogelfreiheit
+   Uzlopak, sakman55, majorpbx, borti4938, Modman, philenotfound, vogelfreiheit
    
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
 **********************************************************************************/
 
-char ver[5] = "6.6";
+char ver[5] = "6.7";
 
 /******************************************
    Libraries
@@ -110,6 +110,11 @@ typedef enum COLOR_T {
   yellow_color,
   white_color,
 } color_t;
+
+// RTC Library
+#ifdef RTC_installed
+#include "RTC.h"
+#endif
 
 /******************************************
   Defines
@@ -211,6 +216,8 @@ char checksumStr[5];
 bool errorLvl = 0;
 byte romVersion = 0;
 char cartID[5];
+String CRC1 = "";
+String CRC2 = "";
 unsigned long cartSize;
 char flashid[5];
 char vendorID[5];
@@ -709,6 +716,14 @@ void setup() {
   Serial.print(sd.card()->cardSize() * 512E-9);
   Serial.print(F("GB FAT"));
   Serial.println(int(sd.vol()->fatType()));
+#endif
+
+#ifdef RTC_installed
+  // Start RTC
+  RTCStart();
+
+  // Set Date/Time Callback Funtion
+  SdFile::dateTimeCallback(dateTime);
 #endif
 
   startMenu();
