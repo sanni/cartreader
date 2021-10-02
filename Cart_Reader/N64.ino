@@ -6,6 +6,11 @@
 #ifdef enable_N64
 #include "snes_clk.h"
 
+// Include Cart_Reader.ino to allow for calling istablished functions
+#ifdef RTC_installed
+#include "RTC.h"
+#endif
+
 /******************************************
   Defines
  *****************************************/
@@ -1883,6 +1888,22 @@ void idCart() {
       myLength++;
     }
   }
+
+// Get CRC1
+for (int i = 0; i < 4; i++) {
+  if (sdBuffer[0x10 + i] < 0x10) {
+    CRC1 += '0';
+  }
+  CRC1 += String(sdBuffer[0x10 + i], HEX);
+}
+
+// Get CRC2
+for (int i = 0; i < 4; i++) {
+  if (sdBuffer[0x14 + i] < 0x10) {
+    CRC2 += '0';
+  }
+  CRC2 += String(sdBuffer[0x14 + i], HEX);
+}
 }
 
 /******************************************
@@ -3112,17 +3133,23 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   }
 
   //Write the info
-  myFile.print(F("Name: "));
+  myFile.print(F("Name\t: "));
   myFile.println(romName);
 
-  myFile.print(F("ID: "));
+  myFile.print(F("ID\t: "));
   myFile.println(cartID);
 
-  myFile.print(F("Size: "));
+  myFile.print(F("ROM CRC1: "));
+  myFile.println(CRC1);
+
+  myFile.print(F("ROM CRC2: "));
+  myFile.println(CRC2);
+
+  myFile.print(F("Size\t: "));
   myFile.print(cartSize);
 
   myFile.println(F("MB"));
-  myFile.print(F("Save: "));
+  myFile.print(F("Save\t: "));
 
   switch (saveType) {
     case 1:
@@ -3142,23 +3169,31 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
       break;
   }
 
-  myFile.print(F("Version: 1."));
+  myFile.print(F("Version\t: 1."));
   myFile.println(romVersion);
 
   myFile.print(F("Saved To: "));
   myFile.println(folder);
-  myFile.print(F("CRC: "));
-  myFile.println(crcStr);
 
+  #ifdef RTC_installed
+  myFile.print(F("Dumped\t: "));
+  myFile.println(RTCStamp());
+  #endif
+  
+  myFile.print(F("CRC\t: "));
+  myFile.print(crcStr);
+  
   if (checkfound) {
     // Dump was a known good rom
-    myFile.println(F("Checksum matches"));
+    // myFile.println(F("Checksum matches"));
+    myFile.println(" [Match]");
   }
   else {
-    myFile.println(F("Checksum not found"));
+    // myFile.println(F("Checksum not found"));
+    myFile.println(" [No Match]");
   }
 
-  myFile.print(F("Time: "));
+  myFile.print(F("Time\t: "));
   myFile.println(timeElapsed);
 
   myFile.println(F(" "));
