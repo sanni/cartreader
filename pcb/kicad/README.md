@@ -1,0 +1,1 @@
+You can view the schematic and the PCB files using a free and open source programm called [KiCad](https://www.kicad.org/).
