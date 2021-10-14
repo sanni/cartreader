@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             02.10.2021
-   Version:          6.7
+   Date:             14.10.2021
+   Version:          6.8
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -33,14 +33,14 @@
    Gens-gs - Megadrive checksum
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
-   jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, Pickle, sdhizumi, 
+   jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, Pickle, sdhizumi,
    sakman55, Uzlopak, scrap-a, majorpbx, borti4938, Modman, philenotfound, vogelfreiheit
-   
+
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
 **********************************************************************************/
 
-char ver[5] = "6.7";
+char ver[5] = "6.8";
 
 /******************************************
    Libraries

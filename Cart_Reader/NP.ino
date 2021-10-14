@@ -606,12 +606,17 @@ void setup_SFM() {
   //PORTH &= ~(1 << 1);
 
   // Adafruit Clock Generator
+#ifdef clockgen_calibration
   int32_t clock_offset = readClockOffset();
   if (clock_offset > INT32_MIN) {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
+#else
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+#endif
+
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
   clockgen.set_freq(2147727200ULL, SI5351_CLK0);

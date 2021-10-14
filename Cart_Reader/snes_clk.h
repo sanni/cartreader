@@ -3,7 +3,5 @@
 
 #include "SdFat.h"
 #include "atoi32.h"
-
 int32_t readClockOffset();
-
 #endif

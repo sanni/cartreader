@@ -421,13 +421,18 @@ void setup_N64_Cart() {
 
 #ifdef clockgen_installed
   // Adafruit Clock Generator
-  // last number is the clock correction factor which is custom for each clock generator
+
+#ifdef clockgen_calibration
   int32_t clock_offset = readClockOffset();
   if (clock_offset > INT32_MIN) {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
+#else
+  // last number is the clock correction factor which is custom for each clock generator
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+#endif
 
   // Set Eeprom clock to 2Mhz
   clockgen.set_freq(200000000ULL, SI5351_CLK1);
@@ -1713,7 +1718,7 @@ int strcicmp(char const * a, char const * b)
   }
 }
 
-#ifdef slowcrc
+#ifndef fastcrc
 // Calculate dumped rom's CRC32
 inline uint32_t updateCRC64(uint8_t ch, uint32_t crc) {
   uint32_t idx = ((crc) ^ (ch)) & 0xff;
@@ -1889,21 +1894,21 @@ void idCart() {
     }
   }
 
-// Get CRC1
-for (int i = 0; i < 4; i++) {
-  if (sdBuffer[0x10 + i] < 0x10) {
-    CRC1 += '0';
+  // Get CRC1
+  for (int i = 0; i < 4; i++) {
+    if (sdBuffer[0x10 + i] < 0x10) {
+      CRC1 += '0';
+    }
+    CRC1 += String(sdBuffer[0x10 + i], HEX);
   }
-  CRC1 += String(sdBuffer[0x10 + i], HEX);
-}
 
-// Get CRC2
-for (int i = 0; i < 4; i++) {
-  if (sdBuffer[0x14 + i] < 0x10) {
-    CRC2 += '0';
+  // Get CRC2
+  for (int i = 0; i < 4; i++) {
+    if (sdBuffer[0x14 + i] < 0x10) {
+      CRC2 += '0';
+    }
+    CRC2 += String(sdBuffer[0x14 + i], HEX);
   }
-  CRC2 += String(sdBuffer[0x14 + i], HEX);
-}
 }
 
 /******************************************
@@ -2908,7 +2913,7 @@ redumpsamefolder:
   }
 
   // dumping rom slow
-#ifdef slowcrc
+#ifndef fastcrc
   // get current time
   unsigned long startTime = millis();
 
@@ -3175,14 +3180,14 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   myFile.print(F("Saved To: "));
   myFile.println(folder);
 
-  #ifdef RTC_installed
+#ifdef RTC_installed
   myFile.print(F("Dumped\t: "));
   myFile.println(RTCStamp());
-  #endif
-  
+#endif
+
   myFile.print(F("CRC\t: "));
   myFile.print(crcStr);
-  
+
   if (checkfound) {
     // Dump was a known good rom
     // myFile.println(F("Checksum matches"));
