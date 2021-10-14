@@ -13,7 +13,7 @@ void RTCStart() {
   // Set RTC Date/Time of Sketch Build if it lost battery power
   // After initial setup it would have lost battery power ;)
   if (rtc.lostPower()) {
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 }
 
@@ -38,14 +38,14 @@ void dateTime(uint16_t* date, uint16_t* time) {
 String RTCStamp() {
   // Set a format
   char dtstamp[] = "DDMMMYYYY hh:mm:ssAP";
-  
+
   // Get current Date/Time
   DateTime now = rtc.now();
 
   // Convert it to a string and caps lock it
   String dts = now.toString(dtstamp);
   dts.toUpperCase();
-  
+
   // Print results
   return dts;
 }

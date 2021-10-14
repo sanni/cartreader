@@ -9,9 +9,17 @@
 // be sure to change the Arduino Serial Monitor to no line ending
 #define enable_OLED
 // Skip OLED start-up animation
-//#define fast_start
+// #define fast_start
+
 // Enable the second button
 #define enable_Button2
+
+// Setup RTC if installed.
+// remove // if you have an RTC installed
+// #define RTC_installed
+
+// Use calibration data from snes_clk.txt
+// #define clockgen_calibration
 
 //******************************************
 // ENABLED MODULES
@@ -35,14 +43,10 @@
 //******************************************
 // Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
 // add // and disable CLK1 switch if you don't have the clockgen installed or if you want to read a repros save
-#define clockgen_installed
+// #define clockgen_installed
 
-// Define CRC method for dumping N64 ROMs, slow seems to be more compatible with some SD cards
-#define slowcrc // crc will be calculated after dumping from SD card instead of during dumping from memory
+// The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
+// #define fastcrc 
 
 // saves a n64log.txt file with rom info in /N64/ROM
-#define savesummarytotxt
-
-// Setup RTC if installed.
-// remove // if you have an RTC installed
-// #define RTC_installed
+// #define savesummarytotxt

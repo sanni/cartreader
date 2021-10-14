@@ -45,7 +45,7 @@ void setup_NGP() {
 
   println_Msg(F("Initializing..."));
   display_Update();
-  
+
   if (getCartInfo_NGP())
     printCartInfo_NGP();
   else
@@ -91,8 +91,8 @@ bool getCartInfo_NGP() {
 
   dataIn();
   cartSize = 0;
-  
-  // get chip manufacturer and device IDs 
+
+  // get chip manufacturer and device IDs
   manufacturerID = readByte_NGP(0);
   deviceID = readByte_NGP(1);
   tmp = (uint8_t*)&romSize;
@@ -123,14 +123,14 @@ bool getCartInfo_NGP() {
 
   // get app ID
   snprintf(cartID, 5, "%02X%02X", readByte_NGP(0x21), readByte_NGP(0x20));
-  
+
   // force rom size to 32 Mbits for few titles
-  if (strcmp(cartID,"0060") == 0 || strcmp(cartID,"0061") == 0 || strcmp(cartID,"0069") == 0 )
+  if (strcmp(cartID, "0060") == 0 || strcmp(cartID, "0061") == 0 || strcmp(cartID, "0069") == 0 )
     cartSize = 4194304;
-  
-  // get app version 
+
+  // get app version
   snprintf(ngpRomVersion, 3, "%02X", readByte_NGP(0x22));
-  
+
   // get app system compatibility
   ngpSystemType = readByte_NGP(0x23);
 
@@ -181,7 +181,7 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
   // Set cartsize manually if chip ID is unknown
   if (cartSize == 0) {
     unsigned char ngpRomMenu;
-    
+
     // Copy menuOptions out of progmem
     convertPgm(ngpRomOptions, 4);
     ngpRomMenu = question_box(F("Select ROM size"), menuOptions, 4, 0);
@@ -194,7 +194,7 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
       case 3: cartSize = 4194304; break;
     }
   }
-  
+
   // generate fullname of rom file
   snprintf(fileName, FILENAME_LENGTH, "%s.ngp", romName);
 
@@ -249,7 +249,7 @@ void scanChip_NGP() {
   uint32_t block_addr = 0;
 
   // generate name of report file
-  snprintf(fileName, FILENAME_LENGTH, "%s.txt",romName);
+  snprintf(fileName, FILENAME_LENGTH, "%s.txt", romName);
 
   // create a new folder to save report file
   EEPROM_readAnything(0, foldern);
@@ -277,11 +277,11 @@ void scanChip_NGP() {
   myFile.println("");
 
   // write chip info to report file
-  myFile.println("Chip manufacturer ID : 0x" + String(manufacturerID,HEX));
-  myFile.println("Chip device ID : 0x" + String(deviceID,HEX));
+  myFile.println("Chip manufacturer ID : 0x" + String(manufacturerID, HEX));
+  myFile.println("Chip device ID : 0x" + String(deviceID, HEX));
   myFile.println("");
 
-  if(cartSize == 0)
+  if (cartSize == 0)
     myFile.println("Cart size unknown");
   else {
     // enter autoselect mode
@@ -295,29 +295,29 @@ void scanChip_NGP() {
     uint8_t sectorID = 0;
 
     // skip the 2nd 16Mbits chip
-    if (cartSize == 4194304){
+    if (cartSize == 4194304) {
       myFile.println("Warning: this cart is 32Mbits. Only the first 16Mbits chip will be scanned.");
       myFile.println("");
       addrMax = 2097152;
     }
     else
       addrMax = cartSize;
-    
-    myFile.println("Sector | Start address | Status");
-    
-    // browse sectors
-    for(uint32_t addr = 0; addr < addrMax; addr+= 0x1000) {
 
-      if( (addr%0x10000 == 0) || (addr == addrMax-0x8000) || (addr == addrMax-0x6000) || (addr == addrMax-0x4000)){
-        
-        myFile.print("#" + String(sectorID) + " | 0x" + String(addr,HEX) + " | ");
-            
+    myFile.println("Sector | Start address | Status");
+
+    // browse sectors
+    for (uint32_t addr = 0; addr < addrMax; addr += 0x1000) {
+
+      if ( (addr % 0x10000 == 0) || (addr == addrMax - 0x8000) || (addr == addrMax - 0x6000) || (addr == addrMax - 0x4000)) {
+
+        myFile.print("#" + String(sectorID) + " | 0x" + String(addr, HEX) + " | ");
+
         // check the protection status
-        if(readByte_NGP(addr + 0x2) == 0)
+        if (readByte_NGP(addr + 0x2) == 0)
           myFile.println("unprotected");
         else
           myFile.println("protected");
-      
+
         sectorID += 1;
       }
     }

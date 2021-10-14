@@ -436,13 +436,17 @@ void setup_Snes() {
   //PORTJ &= ~(1 << 0);
 
   // Adafruit Clock Generator
-  // last number is the clock correction factor which is custom for each clock generator
+#ifdef clockgen_calibration
   int32_t clock_offset = readClockOffset();
   if (clock_offset > INT32_MIN) {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
     clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
+#else
+  // last number is the clock correction factor which is custom for each clock generator
+  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+#endif
 
   // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
   clockgen.set_freq(100000000ULL, SI5351_CLK1); // CPU

@@ -91,7 +91,7 @@ int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
 
 //*****************************************
 // SONIC & KNUCKLES LOCK-ON MODE VARIABLES
-// SnKmode : 
+// SnKmode :
 // 0 = Not Sonic & Knuckles
 // 1 = Only Sonic & Knucles
 // 2 = Sonic & Knucles + Sonic1
@@ -663,7 +663,7 @@ void getCartInfo_MD() {
       sdBuffer[c] = hiByte;
       sdBuffer[c + 1] = loByte;
     }
-    for(int i=0; i<14; i++){
+    for (int i = 0; i < 14; i++) {
       id[i] = char(sdBuffer[i]);
     }
 
@@ -681,7 +681,7 @@ void getCartInfo_MD() {
         sdBuffer[c] = hiByte;
         sdBuffer[c + 1] = loByte;
       }
-      for(int i=0; i<16; i++){
+      for (int i = 0; i < 16; i++) {
         labelLockon[i] = char(sdBuffer[i]);
       }
 
@@ -704,29 +704,29 @@ void getCartInfo_MD() {
           sdBuffer[c] = hiByte;
           sdBuffer[c + 1] = loByte;
         }
-        for(int i=0; i<14; i++){
+        for (int i = 0; i < 14; i++) {
           idLockon[i] = char(sdBuffer[i]);
         }
 
-        if (!(strncmp("GM 00001009-0", idLockon,13) & strncmp("GM 00004049-0", idLockon,13) )) {
+        if (!(strncmp("GM 00001009-0", idLockon, 13) & strncmp("GM 00004049-0", idLockon, 13) )) {
           //Sonic1 ID:GM 00001009-0? or GM 00004049-0?
           SnKmode = 2;
-        }else if (!(strcmp("GM 00001051-00", idLockon) & strcmp("GM 00001051-01", idLockon) & strcmp("GM 00001051-02", idLockon))) {
+        } else if (!(strcmp("GM 00001051-00", idLockon) & strcmp("GM 00001051-01", idLockon) & strcmp("GM 00001051-02", idLockon))) {
           //Sonic2 ID:GM 00001051-00 or GM 00001051-01 or GM 00001051-02
           SnKmode = 3;
 
           // Prepare Sonic2 Banks
           writeSSF2Map(0x509878, 1); // 0xA130F1
 
-        }else if (!strcmp("GM MK-1079 -00", idLockon)) {
+        } else if (!strcmp("GM MK-1079 -00", idLockon)) {
           //Sonic3 ID:GM MK-1079 -00
           SnKmode = 4;
-        }else{
+        } else {
           //Other game
           SnKmode = 5;
         }
 
-      }else{
+      } else {
         SnKmode = 1;
       }
     }
@@ -926,20 +926,20 @@ void getCartInfo_MD() {
   }
 
   //Get Lock-on cart name
-  if(SnKmode>=2){
+  if (SnKmode >= 2) {
 
     //Change romName
-    strcpy(romName,"SnK_");
+    strcpy(romName, "SnK_");
 
-      for (byte c = 0; c < 48; c += 2) {
-    // split word
-    word myWord = readWord_MD((0x200150 + c) / 2);
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
+    for (byte c = 0; c < 48; c += 2) {
+      // split word
+      word myWord = readWord_MD((0x200150 + c) / 2);
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
 
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
+      // write to buffer
+      sdBuffer[c] = hiByte;
+      sdBuffer[c + 1] = loByte;
     }
     byte myLength = 0;
     for (unsigned int i = 0; i < 48; i++) {
@@ -949,11 +949,11 @@ void getCartInfo_MD() {
       }
     }
 
-    switch(SnKmode){
-      case 2: strcat(romName,"SONIC1"); break;
-      case 3: strcat(romName,"SONIC2"); break;
-      case 4: strcat(romName,"SONIC3"); break;
-      case 5: strcat(romName,romNameLockon); break;
+    switch (SnKmode) {
+      case 2: strcat(romName, "SONIC1"); break;
+      case 3: strcat(romName, "SONIC2"); break;
+      case 4: strcat(romName, "SONIC3"); break;
+      case 5: strcat(romName, romNameLockon); break;
     }
 
   }
@@ -983,25 +983,25 @@ void getCartInfo_MD() {
   }
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024 );
-  switch(SnKmode){
+  switch (SnKmode) {
     case 2:
     case 4:
     case 5:
       print_Msg(F("+"));
       print_Msg(cartSizeLockon * 8 / 1024 / 1024 );
       break;
-   case 3:
+    case 3:
       print_Msg(F("+"));
       print_Msg(cartSizeLockon * 8 / 1024 / 1024 );
       print_Msg(F("+"));
       print_Msg(cartSizeSonic2 * 8 / 1024 / 1024 );
-      break;       
+      break;
   }
   println_Msg(F(" MBit"));
   print_Msg(F("ChkS: "));
   print_Msg_PaddedHexByte((chksum >> 8));
   print_Msg_PaddedHexByte((chksum & 0x00ff));
-  switch(SnKmode){
+  switch (SnKmode) {
     case 2:
     case 4:
     case 5:
@@ -1128,8 +1128,8 @@ void readROM_MD() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize);
-  if(SnKmode>=2) totalProgressBar += (uint32_t) cartSizeLockon;
-  if(SnKmode==3) totalProgressBar += (uint32_t) cartSizeSonic2;
+  if (SnKmode >= 2) totalProgressBar += (uint32_t) cartSizeLockon;
+  if (SnKmode == 3) totalProgressBar += (uint32_t) cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
@@ -1184,7 +1184,7 @@ void readROM_MD() {
     processedProgressBar += 1024;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
-  if(SnKmode >= 2){
+  if (SnKmode >= 2) {
     for (unsigned long currBuffer = 0; currBuffer < cartSizeLockon / 2; currBuffer += 512) {
       // Blink led
       if (currBuffer % 16384 == 0)
@@ -1229,7 +1229,7 @@ void readROM_MD() {
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
-  if(SnKmode == 3){
+  if (SnKmode == 3) {
     for (unsigned long currBuffer = 0; currBuffer < cartSizeSonic2 / 2; currBuffer += 512) {
       // Blink led
       if (currBuffer % 16384 == 0)
@@ -1238,7 +1238,7 @@ void readROM_MD() {
       d = 0;
 
       for (int currWord = 0; currWord < 512; currWord++) {
-        unsigned long myAddress = currBuffer + currWord + (cartSize+cartSizeLockon) / 2;
+        unsigned long myAddress = currBuffer + currWord + (cartSize + cartSizeLockon) / 2;
         PORTF = myAddress & 0xFF;
         PORTK = (myAddress >> 8) & 0xFF;
         PORTL = (myAddress >> 16) & 0xFF;
@@ -1299,7 +1299,7 @@ void readROM_MD() {
     print_Error(F(""), false);
     display_Update();
   }
-  if(SnKmode >= 2){
+  if (SnKmode >= 2) {
     if (chksumLockon == calcCKSLockon) {
       println_Msg(F("Checksum2 OK"));
       display_Update();
@@ -1313,7 +1313,7 @@ void readROM_MD() {
       display_Update();
     }
   }
-  if(SnKmode == 3){
+  if (SnKmode == 3) {
     if (chksumSonic2 == calcCKSSonic2) {
       println_Msg(F("Checksum3 OK"));
       display_Update();
