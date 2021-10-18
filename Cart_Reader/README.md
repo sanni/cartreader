@@ -63,3 +63,4 @@ GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library
 BusIO: https://github.com/adafruit/Adafruit_BusIO    
 RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools  
 SI5351 lib: https://github.com/etherkit/Si5351Arduino  
+RTC lib: https://github.com/adafruit/RTClib (If you include an RTC)
