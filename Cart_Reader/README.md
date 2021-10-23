@@ -57,10 +57,13 @@ To compile and upload the code please have a look at [this wiki article](https:/
 
 Needed libraries(already included in the portable Arduino IDE under Releases)   
 
-SD lib: https://github.com/greiman/SdFat  
-LCD lib: https://github.com/adafruit/Adafruit_SSD1306       
+SD lib: https://github.com/greiman/SdFat    
+OLED lib: https://github.com/adafruit/Adafruit_SSD1306    
 GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library    
 BusIO: https://github.com/adafruit/Adafruit_BusIO    
-RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools  
-SI5351 lib: https://github.com/etherkit/Si5351Arduino  
-RTC lib: https://github.com/adafruit/RTClib (If you include an RTC)
+LCD lib: https://github.com/olikraus/u8g2     
+RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools     
+Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel    
+Rotary Enc lib: https://github.com/mathertel/RotaryEncoder    
+SI5351 lib: https://github.com/etherkit/Si5351Arduino        
+RTC lib: https://github.com/adafruit/RTClib      

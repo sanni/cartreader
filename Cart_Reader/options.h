@@ -1,18 +1,40 @@
 //******************************************
+// CHOOSE HARDWARE VERSION
+//******************************************
+//#define HW4
+#define HW3
+//#define HW2
+//#define HW1
+//#define SERIAL
+
+#if defined(HW4)
+#define enable_LCD
+#define enable_neopixel
+#define enable_rotary
+#endif
+
+#if defined(HW2) || defined(HW3)
+#define enable_OLED
+#define enable_Button2
+#endif
+
+#if defined(HW1)
+#define enable_OLED
+#endif
+
+#if defined(SERIAL)
+#define enable_serial
+#endif
+
+//******************************************
 // GLOBAL OPTIONS
 //******************************************
 // Change mainMenu to snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu,
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
 #define startMenu mainMenu
 
-// Comment out to change to Serial Output
-// be sure to change the Arduino Serial Monitor to no line ending
-#define enable_OLED
-// Skip OLED start-up animation
+// Skip start-up animation
 // #define fast_start
-
-// Enable the second button
-#define enable_Button2
 
 // Setup RTC if installed.
 // remove // if you have an RTC installed
@@ -46,7 +68,7 @@
 // #define clockgen_installed
 
 // The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
-// #define fastcrc 
+// #define fastcrc
 
 // saves a n64log.txt file with rom info in /N64/ROM
 // #define savesummarytotxt

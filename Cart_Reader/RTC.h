@@ -1,3 +1,6 @@
+#include "options.h"
+#ifdef RTC_installed
+
 // RTC Library
 #ifndef _RTC_H
 #define _RTC_H
@@ -10,4 +13,5 @@ void dateTime(uint16_t* date, uint16_t* time);
 
 String RTCStamp();
 
+#endif
 #endif

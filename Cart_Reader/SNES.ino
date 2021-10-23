@@ -665,7 +665,7 @@ void getCartInfo_SNES() {
     // Checksum either corrupt or 0000
     manualConfig = 1;
     errorLvl = 1;
-    rgb.setColor(255, 0, 0);
+    setColor_RGB(255, 0, 0);
 
     display_Clear();
     println_Msg(F("ERROR"));
@@ -775,7 +775,8 @@ void getCartInfo_SNES() {
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
-#else
+#endif
+#ifdef enable_serial
   println_Msg(F(" "));
 #endif
 

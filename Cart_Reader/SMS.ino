@@ -319,7 +319,7 @@ void getCartInfo_SMS() {
     default:
       cartSize =  48 * 1024UL;
       // LED Error
-      rgb.setColor(0, 0, 255);
+      setColor_RGB(0, 0, 255);
       break;
 
   }
@@ -382,7 +382,7 @@ void getCartInfo_SMS() {
   wait();
 #endif
   // Turn off LED
-  rgb.setColor(0, 0, 0);
+  setColor_RGB(0, 0, 0);
 }
 
 // Read rom and save to the SD card

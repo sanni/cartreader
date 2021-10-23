@@ -1,3 +1,6 @@
+#include "options.h"
+#ifdef RTC_installed
+
 #include "RTC.h"
 #include "SdFat.h"
 
@@ -49,3 +52,5 @@ String RTCStamp() {
   // Print results
   return dts;
 }
+
+#endif
