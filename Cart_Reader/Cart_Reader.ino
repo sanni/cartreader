@@ -4,15 +4,19 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             14.10.2021
-   Version:          6.8
+   Date:             24.10.2021
+   Version:          7.0
 
    SD lib: https://github.com/greiman/SdFat
-   LCD lib: https://github.com/adafruit/Adafruit_SSD1306
+   OLED lib: https://github.com/adafruit/Adafruit_SSD1306
    GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library
    BusIO: https://github.com/adafruit/Adafruit_BusIO
+   LCD lib: https://github.com/olikraus/u8g2
    RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools
+   Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel
+   Rotary Enc lib: https://github.com/mathertel/RotaryEncoder
    SI5351 lib: https://github.com/etherkit/Si5351Arduino
+   RTC lib: https://github.com/adafruit/RTClib
 
    Compiled with Arduino 1.8.13
 
@@ -33,14 +37,14 @@
    Gens-gs - Megadrive checksum
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
-   jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, Pickle, sdhizumi,
-   sakman55, Uzlopak, scrap-a, majorpbx, borti4938, Modman, philenotfound, vogelfreiheit
+   jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
+   Uzlopak, sakman55, scrap-a, borti4938, vogelfreiheit, Modman, philenotfound
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
 **********************************************************************************/
 
-char ver[5] = "6.8";
+char ver[5] = "7.0";
 
 /******************************************
    Libraries
@@ -48,17 +52,17 @@ char ver[5] = "6.8";
 // Options
 #include "options.h"
 
-// SD Card
-#include "SdFat.h"
-SdFs sd;
-FsFile myDir;
-FsFile myFile;
-
 // Basic Libs
 #include <SPI.h>
 #include <Wire.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
+
+// SD Card
+#include "SdFat.h"
+SdFs sd;
+FsFile myDir;
+FsFile myFile;
 
 // AVR Eeprom
 #include <EEPROM.h>
@@ -82,24 +86,34 @@ template <class T> int EEPROM_readAnything(int ee, T& value) {
   return i;
 }
 
-// Graphic I2C LCD
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+// Graphic SPI LCD
+#ifdef enable_LCD
+#include <U8g2lib.h>
+U8G2_ST7567_OS12864_F_4W_HW_SPI display(U8G2_R2, /* cs=*/ 12, /* dc=*/ 11, /* reset=*/ 10);
+#endif
 
-// Adafruit Clock Generator
-#include <si5351.h>
-Si5351 clockgen;
+// Rotary Encoder
+#ifdef enable_rotary
+#include <RotaryEncoder.h>
+#define PIN_IN1 18
+#define PIN_IN2 19
+RotaryEncoder encoder(PIN_IN1, PIN_IN2, RotaryEncoder::LatchMode::FOUR3);
+int rotaryPos = 0;
+#endif
 
-// RGB LED
+// Choose RGB LED type
+#ifdef enable_neopixel
+// Neopixel
+#include <Adafruit_NeoPixel.h>
+Adafruit_NeoPixel pixels(3, 13, NEO_GRB + NEO_KHZ800);
+#else
+#ifndef enable_LCD
+// 4 Pin RGB LED
 #include <RGBTools.h>
-
 // Set pins of red, green and blue
 RGBTools rgb(12, 11, 10);
+#endif
+#endif
 
 typedef enum COLOR_T {
   blue_color,
@@ -110,6 +124,21 @@ typedef enum COLOR_T {
   yellow_color,
   white_color,
 } color_t;
+
+// Graphic I2C OLED
+#ifdef enable_OLED
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#endif
+
+// Adafruit Clock Generator
+#include <si5351.h>
+Si5351 clockgen;
 
 // RTC Library
 #ifdef RTC_installed
@@ -156,6 +185,14 @@ typedef enum COLOR_T {
 /******************************************
    Variables
  *****************************************/
+#ifdef enable_rotary
+// Button debounce
+boolean buttonState = HIGH;             // the current reading from the input pin
+boolean lastButtonState = HIGH;   // the previous reading from the input pin
+unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
+unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
+#endif
+
 #ifdef enable_OLED
 // Button 1
 boolean buttonVal1 = HIGH; // value read from button
@@ -181,7 +218,9 @@ boolean ignoreUp2 = false; // whether to ignore the button release because the c
 boolean waitForUp2 = false; // when held, whether to wait for the up event
 boolean holdEventPast2 = false; // whether or not the hold event happened already
 boolean longholdEventPast2 = false;// whether or not the long hold event happened already
-#else
+#endif
+
+#ifdef enable_serial
 // For incoming serial data
 int incomingByte;
 #endif
@@ -437,7 +476,9 @@ static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, ad
 void aboutScreen() {
   display_Clear();
   // Draw the Logo
+#ifdef enable_OLED
   display.drawBitmap(0, 0, sig, 128, 64, 1);
+#endif
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
   print_Msg(F("2021 Version "));
@@ -450,7 +491,7 @@ void aboutScreen() {
   display_Update();
 
   while (1) {
-#ifdef enable_OLED
+#if defined(enable_OLED) || defined(enable_LCD)
     // get input button
     int b = checkButton();
 
@@ -474,11 +515,12 @@ void aboutScreen() {
       EEPROM_writeAnything(0, foldern);
       resetArduino();
     }
-#else
+#endif
+#ifdef enable_serial
     wait_serial();
     resetArduino();
 #endif
-    rgb.setColor(random(0, 255), random(0, 255), random(0, 255));
+    setColor_RGB(random(0, 255), random(0, 255), random(0, 255));
     delay(random(50, 100));
   }
 }
@@ -643,6 +685,20 @@ void setup() {
   // Read current folder number out of eeprom
   EEPROM_readAnything(0, foldern);
 
+#ifdef enable_LCD
+  display.begin();
+  display.setFont(u8g2_font_haxrcorp4089_tr);
+#endif
+
+#ifdef enable_neopixel
+  pixels.begin();
+  pixels.clear();
+  pixels.setPixelColor(0, pixels.Color(255, 0, 0));
+  pixels.setPixelColor(1, pixels.Color(0, 0, 255));
+  pixels.setPixelColor(2, pixels.Color(0, 0, 255));
+  pixels.show();
+#endif
+
 #ifdef enable_OLED
   // GLCD
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -661,7 +717,7 @@ void setup() {
   delay(100);
 
   // Initialize LED
-  rgb.setColor(0, 0, 0);
+  setColor_RGB(0, 0, 0);
 
   // Clear the screen.
   display_Clear();
@@ -693,30 +749,23 @@ void setup() {
   display_Update();
   delay(200);
 #endif
+#endif
 
-#else
+#ifdef enable_serial
   // Serial Begin
   Serial.begin(9600);
   Serial.println(F("Cartridge Reader"));
   Serial.println(F("2021 sanni"));
   Serial.println("");
   // LED Error
-  rgb.setColor(0, 0, 255);
+  setColor_RGB(0, 0, 255);
 #endif
 
   // Init SD card
-  if (!sd.begin(SdSpiConfig(SS, DEDICATED_SPI))) {
+  if (!sd.begin(SS)) {
     display_Clear();
     print_Error(F("SD Error"), true);
   }
-
-#ifndef enable_OLED
-  // Print SD Info
-  Serial.print(F("SD Card: "));
-  Serial.print(sd.card()->cardSize() * 512E-9);
-  Serial.print(F("GB FAT"));
-  Serial.println(int(sd.vol()->fatType()));
-#endif
 
 #ifdef RTC_installed
   // Start RTC
@@ -748,6 +797,19 @@ void dataIn() {
 /******************************************
    Helper Functions
  *****************************************/
+// Set RGB color
+void setColor_RGB(byte r, byte g, byte b) {
+#ifdef enable_neopixel
+  pixels.clear();
+  pixels.setPixelColor(0, pixels.Color(255, 0, 0));
+  pixels.setPixelColor(1, pixels.Color(g, r, b));
+  pixels.setPixelColor(2, pixels.Color(g, r, b));
+  pixels.show();
+#else
+  rgb.setColor(r, g, b);
+#endif
+}
+
 // Converts a progmem array into a ram array
 void convertPgm(const char* const pgmOptions[], byte numArrays) {
   for (int i = 0; i < numArrays; i++) {
@@ -757,12 +819,12 @@ void convertPgm(const char* const pgmOptions[], byte numArrays) {
 
 void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
   errorLvl = 1;
-  rgb.setColor(255, 0, 0);
+  setColor_RGB(255, 0, 0);
   println_Msg(errorMessage);
   display_Update();
 
   if (forceReset) {
-#ifdef enable_OLED
+#if defined(enable_OLED) || defined(enable_LCD)
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
@@ -780,7 +842,8 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
       display_Update();
       delay(2000);
     }
-#else
+#endif
+#ifdef enable_serial
     println_Msg(F("Fatal Error, please reset"));
     while (1);
 #endif
@@ -788,49 +851,73 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
 }
 
 void wait() {
+#ifdef enable_LCD
+  wait_encoder();
+#endif
 #ifdef enable_OLED
   wait_btn();
-#else
+#endif
+#ifdef enable_serial
   wait_serial();
 #endif
 }
 
 void print_Msg(const __FlashStringHelper *string) {
+#ifdef enable_LCD
+  display.print(string);
+#endif
 #ifdef enable_OLED
   display.print(string);
-#else
+#endif
+#ifdef enable_serial
   Serial.print(string);
 #endif
 }
 
 void print_Msg(const char string[]) {
+#ifdef enable_LCD
+  display.print(string);
+#endif
 #ifdef enable_OLED
   display.print(string);
-#else
+#endif
+#ifdef enable_serial
   Serial.print(string);
 #endif
 }
 
 void print_Msg(long unsigned int message) {
+#ifdef enable_LCD
+  display.print(message);
+#endif
 #ifdef enable_OLED
   display.print(message);
-#else
+#endif
+#ifdef enable_serial
   Serial.print(message);
 #endif
 }
 
 void print_Msg(byte message, int outputFormat) {
+#ifdef enable_LCD
+  display.print(message, outputFormat);
+#endif
 #ifdef enable_OLED
   display.print(message, outputFormat);
-#else
+#endif
+#ifdef enable_serial
   Serial.print(message, outputFormat);
 #endif
 }
 
 void print_Msg(String string) {
+#ifdef enable_LCD
+  display.print(string);
+#endif
 #ifdef enable_OLED
   display.print(string);
-#else
+#endif
+#ifdef enable_serial
   Serial.print(string);
 #endif
 }
@@ -852,56 +939,88 @@ void print_Msg_PaddedHex32(unsigned long message) {
   print_Msg_PaddedHexByte((message >>  0) & 0xFF);
 }
 
-
 void println_Msg(String string) {
+#ifdef enable_LCD
+  display.println(string);
+  display.setCursor(0, display.ty + 8);
+#endif
 #ifdef enable_OLED
   display.println(string);
-#else
+#endif
+#ifdef enable_serial
   Serial.println(string);
 #endif
 }
 
 void println_Msg(byte message, int outputFormat) {
+#ifdef enable_LCD
+  display.println(message, outputFormat);
+  display.setCursor(0, display.ty + 8);
+#endif
 #ifdef enable_OLED
   display.println(message, outputFormat);
-#else
+#endif
+#ifdef enable_serial
   Serial.println(message, outputFormat);
 #endif
 }
 
 void println_Msg(const char message[]) {
+#ifdef enable_LCD
+  display.println(message);
+  display.setCursor(0, display.ty + 8);
+#endif
 #ifdef enable_OLED
   display.println(message);
-#else
+#endif
+#ifdef enable_serial
   Serial.println(message);
 #endif
 }
 
 void println_Msg(const __FlashStringHelper *string) {
+#ifdef enable_LCD
+  display.println(string);
+  display.setCursor(0, display.ty + 8);
+#endif
 #ifdef enable_OLED
   display.println(string);
-#else
+#endif
+#ifdef enable_serial
   Serial.println(string);
 #endif
 }
 
 void println_Msg(long unsigned int message) {
+#ifdef enable_LCD
+  display.print(message);
+  display.setCursor(0, display.ty + 8);
+#endif
 #ifdef enable_OLED
   display.println(message);
-#else
+#endif
+#ifdef enable_serial
   Serial.println(message);
 #endif
 }
 
 void display_Update() {
+#ifdef enable_LCD
+  display.updateDisplay();
+#endif
 #ifdef enable_OLED
   display.display();
-#else
+#endif
+#ifdef enable_serial
   delay(100);
 #endif
 }
 
 void display_Clear() {
+#ifdef enable_LCD
+  display.clearDisplay();
+  display.setCursor(0, 8);
+#endif
 #ifdef enable_OLED
   display.clearDisplay();
   display.setCursor(0, 0);
@@ -909,9 +1028,13 @@ void display_Clear() {
 }
 
 unsigned char question_box(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
+#ifdef enable_LCD
+  return questionBox_LCD(question, answers, num_answers, default_choice);
+#endif
 #ifdef enable_OLED
   return questionBox_OLED(question, answers, num_answers, default_choice);
-#else
+#endif
+#ifdef enable_serial
   return questionBox_Serial(question, answers, num_answers, default_choice);
 #endif
 }
@@ -919,7 +1042,7 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 /******************************************
   Serial Out
 *****************************************/
-#ifndef enable_OLED
+#ifdef enable_serial
 void wait_serial() {
   while (Serial.available() == 0) {
   }
@@ -1045,28 +1168,247 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 void rgbLed(byte Color) {
   switch (Color) {
     case blue_color:
-      rgb.setColor(0, 0, 255);
+      setColor_RGB(0, 0, 255);
       break;
     case red_color:
-      rgb.setColor(255, 0, 0);
+      setColor_RGB(255, 0, 0);
       break;
     case purple_color:
-      rgb.setColor(255, 0, 255);
+      setColor_RGB(255, 0, 255);
       break;
     case green_color:
-      rgb.setColor(0, 255, 0);
+      setColor_RGB(0, 255, 0);
       break;
     case turquoise_color:
-      rgb.setColor(0, 255, 255);
+      setColor_RGB(0, 255, 255);
       break;
     case yellow_color:
-      rgb.setColor(255, 255, 0);
+      setColor_RGB(255, 255, 0);
       break;
     case white_color:
-      rgb.setColor(255, 255, 255);
+      setColor_RGB(255, 255, 255);
       break;
   }
 }
+
+/******************************************
+  LCD Menu Module
+*****************************************/
+#if defined(enable_LCD) && defined(enable_rotary)
+// Read encoder state
+int checkButton() {
+  // Read rotary encoder
+  encoder.tick();
+  int newPos = encoder.getPosition();
+  // Read button
+  boolean reading = (PING & (1 << PING2)) >> PING2;
+
+  // Check if rotary encoder has changed
+  if (rotaryPos != newPos) {
+    int rotaryDir = (int)encoder.getDirection();
+    if (rotaryDir == 1) {
+      rotaryPos = newPos;
+      return 1;
+    }
+    else if (rotaryDir == -1) {
+      rotaryPos = newPos;
+      return 2;
+    }
+    else {
+      return 0;
+    }
+  }
+  // Check if button has changed
+  else {
+    if (reading != lastButtonState) {
+      lastDebounceTime = millis();
+    }
+    if ((millis() - lastDebounceTime) > debounceDelay) {
+      if (reading != buttonState) {
+        buttonState = reading;
+        if (buttonState == 0) {
+          while ((PING & (1 << PING2)) >> PING2 == 0);
+          lastButtonState = reading;
+          return 3;
+        }
+      }
+      else {
+        lastButtonState = reading;
+        return 0;
+      }
+    }
+    else {
+      lastButtonState = reading;
+      return 0;
+    }
+  }
+}
+
+// Wait for user to push button
+void wait_encoder() {
+  // Change led to green
+  if (errorLvl == 0)
+    rgbLed(green_color);
+
+  while (1)
+  {
+    // Get rotary encoder
+    encoder.tick();
+    int newPos = encoder.getPosition();
+
+#ifdef enable_N64
+#ifndef clockgen_installed
+    // Send some clock pulses to the Eeprom in case it locked up
+    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
+      pulseClock_N64(1);
+    }
+#endif
+#endif
+
+    if (rotaryPos != newPos) {
+      rotaryPos = newPos;
+      errorLvl = 0;
+      break;
+    }
+  }
+}
+#endif
+
+#ifdef enable_LCD
+// Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
+unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
+  //clear the screen
+  display.clearDisplay();
+  display.updateDisplay();
+  display.setCursor(0, 8);
+
+  // change the rgb led to the start menu color
+  rgbLed(default_choice);
+
+  // print menu
+  display.println(question);
+  display.setCursor(0, display.ty + 8);
+  for (unsigned char i = 0; i < num_answers; i++) {
+    // Add space for the selection dot
+    display.print(" ");
+    // Print menu item
+    display.println(answers[i]);
+    display.setCursor(0, display.ty + 8);
+  }
+  display.updateDisplay();
+
+  // start with the default choice
+  choice = default_choice;
+
+  // draw selection box
+  display.setDrawColor(1);
+  display.drawPixel(0, 8 * choice + 12);
+  display.updateDisplay();
+
+  unsigned long idleTime = millis();
+  byte currentColor = 0;
+
+  // wait until user makes his choice
+  while (1) {
+    // Attract Mode
+    if (millis() - idleTime > 300000) {
+      if ((millis() - idleTime) % 4000 == 0) {
+        if (currentColor < 7) {
+          currentColor++;
+          if (currentColor == 1) {
+            currentColor = 2; // skip red as that signifies an error to the user
+          }
+        }
+        else {
+          currentColor = 0;
+        }
+      }
+      rgbLed(currentColor);
+    }
+
+    /* Check Button
+      1 click
+      2 doubleClick
+      3 hold
+      4 longHold */
+    int b = checkButton();
+
+    if (b == 2) {
+      idleTime = millis();
+
+      // remove selection box
+      display.setDrawColor(0);
+      display.drawPixel(0, 8 * choice + 12);
+      display.updateDisplay();
+
+      if ((choice == 0) && (filebrowse == 1)) {
+        if (currPage > 1) {
+          lastPage = currPage;
+          currPage--;
+          break;
+        }
+        else {
+          root = 1;
+          break;
+        }
+      }
+      else if (choice > 0) {
+        choice--;
+      }
+      else {
+        choice = num_answers - 1;
+      }
+
+      // draw selection box
+      display.setDrawColor(1);
+      display.drawPixel(0, 8 * choice + 12);
+      display.updateDisplay();
+
+      // change RGB led to the color of the current menu option
+      rgbLed(choice);
+    }
+
+    // go one down in the menu if the Cart Dumpers button is clicked shortly
+
+    if (b == 1) {
+      idleTime = millis();
+
+      // remove selection box
+      display.setDrawColor(0);
+      display.drawPixel(0, 8 * choice + 12);
+      display.updateDisplay();
+
+      if ((choice == num_answers - 1 ) && (numPages > currPage) && (filebrowse == 1)) {
+        lastPage = currPage;
+        currPage++;
+        break;
+      }
+      else
+        choice = (choice + 1) % num_answers;
+
+      // draw selection box
+      display.setDrawColor(1);
+      display.drawPixel(0, 8 * choice + 12);
+      display.updateDisplay();
+
+      // change RGB led to the color of the current menu option
+      rgbLed(choice);
+    }
+
+    // if the Cart Dumpers button is hold continiously leave the menu
+    // so the currently highlighted action can be executed
+
+    if (b == 3) {
+      idleTime = millis();
+      break;
+    }
+  }
+
+  // pass on user choice
+  setColor_RGB(0, 0, 0);
+  return choice;
+}
+#endif
 
 /******************************************
   OLED Menu Module
@@ -1243,7 +1585,7 @@ void wait_btn() {
 }
 
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
-unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char questionBox_OLED(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
   //clear the screen
   display.clearDisplay();
   display.display();
@@ -1365,7 +1707,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers
   }
 
   // pass on user choice
-  rgb.setColor(0, 0, 0);
+  setColor_RGB(0, 0, 0);
   return choice;
 }
 #endif
@@ -1373,7 +1715,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper* question, char answers
 /******************************************
   Filebrowser Module
 *****************************************/
-void fileBrowser(const __FlashStringHelper* browserTitle) {
+void fileBrowser(const __FlashStringHelper * browserTitle) {
   char fileNames[30][FILENAME_LENGTH];
   int currFile;
   filebrowse = 1;

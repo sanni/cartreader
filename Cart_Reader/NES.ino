@@ -1253,10 +1253,11 @@ chooseMapper:
     errorLvl = 1;
     display.println("Mapper not supported");
     display.display();
-    wait_btn();
+    wait();
     goto chooseMapper;
   }
-#else
+#endif
+#ifdef enable_serial
 setmapper:
   String newmap;
   mapfound = false;
@@ -1356,7 +1357,8 @@ void setPRGSize() {
   println_Msg(F("K"));
   display_Update();
   delay(1000);
-#else
+#endif
+#ifdef enable_serial
   if (prglo == prghi)
     newprgsize = prglo;
   else {
@@ -1429,7 +1431,8 @@ void setCHRSize() {
   println_Msg(F("K"));
   display_Update();
   delay(1000);
-#else
+#endif
+#ifdef enable_serial
   if (chrlo == chrhi)
     newchrsize = chrlo;
   else {
@@ -1549,7 +1552,8 @@ void setRAMSize() {
   }
   display_Update();
   delay(1000);
-#else
+#endif
+#ifdef enable_serial
   if (ramlo == ramhi)
     newramsize = ramlo;
   else {

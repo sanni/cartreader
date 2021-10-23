@@ -182,7 +182,9 @@ void n64ControllerMenu() {
     case 0:
       display_Clear();
       display_Update();
-      controllerTest();
+#ifdef enable_OLED
+      controllerTest_OLED();
+#endif
       quit = 1;
       break;
 
@@ -903,6 +905,7 @@ void get_button()
 /******************************************
   N64 Controller Test
  *****************************************/
+#ifdef enable_OLED
 #define CENTER 64
 
 void oledPrint(const char string[], int x, int y) {
@@ -926,7 +929,7 @@ void printSTR(String st, int x, int y)
   oledPrint(buf, x, y);
 }
 
-void controllerTest() {
+void controllerTest_OLED() {
   // on which screens do we start
   int startscreen = 1;
   int mode = 0;
@@ -1426,6 +1429,8 @@ void controllerTest() {
     }
   }
 }
+#endif
+
 /******************************************
    N64 Controller Pak Functions
    (connected via Controller)
@@ -3069,7 +3074,7 @@ redumpsamefolder:
   else {
     // Dump was bad or unknown
     errorLvl = 1;
-    rgb.setColor(255, 0, 0);
+    setColor_RGB(255, 0, 0);
     println_Msg(F("Checksum not found"));
     println_Msg(F("in N64.txt"));
     println_Msg(F(""));
@@ -3099,7 +3104,7 @@ redumpsamefolder:
       case 1:
         // Dump again into new folder
         display_Clear();
-        rgb.setColor(0, 0, 0);
+        setColor_RGB(0, 0, 0);
         goto redumpnewfolder;
         break;
 
@@ -3118,7 +3123,7 @@ redumpsamefolder:
         display_Clear();
         println_Msg(F("Reading Rom..."));
         display_Update();
-        rgb.setColor(0, 0, 0);
+        setColor_RGB(0, 0, 0);
         goto redumpsamefolder;
         break;
 
