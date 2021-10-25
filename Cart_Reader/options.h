@@ -5,7 +5,7 @@
 #define HW3
 //#define HW2
 //#define HW1
-//#define SERIAL
+//#define SERIAL_MONITOR
 
 #if defined(HW4)
 #define enable_LCD
@@ -22,7 +22,7 @@
 #define enable_OLED
 #endif
 
-#if defined(SERIAL)
+#if defined(SERIAL_MONITOR)
 #define enable_serial
 #endif
 

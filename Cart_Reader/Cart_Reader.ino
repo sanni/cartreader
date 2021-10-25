@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             24.10.2021
+   Date:             25.10.2021
    Version:          7.0
 
    SD lib: https://github.com/greiman/SdFat
@@ -491,7 +491,8 @@ void aboutScreen() {
   display_Update();
 
   while (1) {
-#if defined(enable_OLED) || defined(enable_LCD)
+
+#if defined(enable_LCD) || defined(enable_OLED)
     // get input button
     int b = checkButton();
 
@@ -515,8 +516,7 @@ void aboutScreen() {
       EEPROM_writeAnything(0, foldern);
       resetArduino();
     }
-#endif
-#ifdef enable_serial
+#elif defined(enable_serial)
     wait_serial();
     resetArduino();
 #endif
@@ -851,13 +851,11 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
 }
 
 void wait() {
-#ifdef enable_LCD
+#if defined(enable_LCD)
   wait_encoder();
-#endif
-#ifdef enable_OLED
+#elif defined (enable_OLED)
   wait_btn();
-#endif
-#ifdef enable_serial
+#elif defined (enable_serial)
   wait_serial();
 #endif
 }
