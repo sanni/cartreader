@@ -1288,7 +1288,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
   display.setCursor(0, display.ty + 8);
   for (unsigned char i = 0; i < num_answers; i++) {
     // Add space for the selection dot
-    display.print(" ");
+    display.print("   ");
     // Print menu item
     display.println(answers[i]);
     display.setCursor(0, display.ty + 8);
@@ -1300,7 +1300,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
   // draw selection box
   display.setDrawColor(1);
-  display.drawPixel(0, 8 * choice + 12);
+  display.drawBox(1, 8 * choice + 11, 3, 3);
   display.updateDisplay();
 
   unsigned long idleTime = millis();
@@ -1336,7 +1336,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
       // remove selection box
       display.setDrawColor(0);
-      display.drawPixel(0, 8 * choice + 12);
+      display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
 
       if ((choice == 0) && (filebrowse == 1)) {
@@ -1359,7 +1359,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
       // draw selection box
       display.setDrawColor(1);
-      display.drawPixel(0, 8 * choice + 12);
+      display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
 
       // change RGB led to the color of the current menu option
@@ -1373,7 +1373,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
       // remove selection box
       display.setDrawColor(0);
-      display.drawPixel(0, 8 * choice + 12);
+      display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
 
       if ((choice == num_answers - 1 ) && (numPages > currPage) && (filebrowse == 1)) {
@@ -1386,7 +1386,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
       // draw selection box
       display.setDrawColor(1);
-      display.drawPixel(0, 8 * choice + 12);
+      display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
 
       // change RGB led to the color of the current menu option
@@ -1606,7 +1606,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper * question, char answer
   choice = default_choice;
 
   // draw selection box
-  display.drawPixel(0, 8 * choice + 12, WHITE);
+  display.fillRect(0, 8 * choice + 10, 3, 4, WHITE);
   display.display();
 
   unsigned long idleTime = millis();
@@ -1641,7 +1641,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper * question, char answer
       idleTime = millis();
 
       // remove selection box
-      display.drawPixel(0, 8 * choice + 12, BLACK);
+      display.fillRect(0, 8 * choice + 10, 3, 4, BLACK);
       display.display();
 
       if ((choice == 0) && (filebrowse == 1)) {
@@ -1663,7 +1663,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper * question, char answer
       }
 
       // draw selection box
-      display.drawPixel(0, 8 * choice + 12, WHITE);
+      display.fillRect(0, 8 * choice + 10, 3, 4, WHITE);
       display.display();
 
       // change RGB led to the color of the current menu option
@@ -1676,7 +1676,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper * question, char answer
       idleTime = millis();
 
       // remove selection box
-      display.drawPixel(0, 8 * choice + 12, BLACK);
+      display.fillRect(0, 8 * choice + 10, 3, 4, BLACK);
       display.display();
 
       if ((choice == num_answers - 1 ) && (numPages > currPage) && (filebrowse == 1)) {
@@ -1688,7 +1688,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper * question, char answer
         choice = (choice + 1) % num_answers;
 
       // draw selection box
-      display.drawPixel(0, 8 * choice + 12, WHITE);
+      display.fillRect(0, 8 * choice + 10, 3, 4, WHITE);
       display.display();
 
       // change RGB led to the color of the current menu option
