@@ -1188,6 +1188,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
   display.clearDisplay();
   display.updateDisplay();
   display.setCursor(0, 8);
+  display.setDrawColor(1);
 
   // change the rgb led to the start menu color
   rgbLed(default_choice);
@@ -1208,7 +1209,6 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
   choice = default_choice;
 
   // draw selection box
-  display.setDrawColor(1);
   display.drawBox(1, 8 * choice + 11, 3, 3);
   display.updateDisplay();
 
@@ -1240,12 +1240,14 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
       4 longHold */
     int b = checkButton();
 
+    // go one up in the menu if button is pressed twice
     if (b == 2) {
       idleTime = millis();
 
       // remove selection box
       display.setDrawColor(0);
       display.drawBox(1, 8 * choice + 11, 3, 3);
+      display.setDrawColor(1);
       display.updateDisplay();
 
       if ((choice == 0) && (filebrowse == 1)) {
@@ -1267,7 +1269,6 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
       }
 
       // draw selection box
-      display.setDrawColor(1);
       display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
 
@@ -1275,14 +1276,14 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
       rgbLed(choice);
     }
 
-    // go one down in the menu if the Cart Dumpers button is clicked shortly
-
+    // go one down in the menu if the Cart Readers button is clicked shortly
     if (b == 1) {
       idleTime = millis();
 
       // remove selection box
       display.setDrawColor(0);
       display.drawBox(1, 8 * choice + 11, 3, 3);
+      display.setDrawColor(1);
       display.updateDisplay();
 
       if ((choice == num_answers - 1 ) && (numPages > currPage) && (filebrowse == 1)) {
@@ -1294,7 +1295,6 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
         choice = (choice + 1) % num_answers;
 
       // draw selection box
-      display.setDrawColor(1);
       display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
 
@@ -1710,7 +1710,6 @@ page:
     count = currFile - 21;
   else {
     display_Clear();
-
     println_Msg(F("Too many files"));
     display_Update();
     println_Msg(F(""));
@@ -1775,9 +1774,9 @@ page:
       strncpy(fileName, fileNames[6 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
       break;
 
-    case 7:
+      //case 7:
       // File import
-      break;
+      //break;
   }
 
   // Add directory to our filepath if we just entered a new directory
