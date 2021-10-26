@@ -2,7 +2,7 @@ To order adapter PCBs go to https://jlcpcb.com/ and click the "Quote now" button
 The other settings are fine by default. Next, click the "Save to cart" button and if you want to order another adapter type click on "Add new item" button and upload the next zip file, set the thickness to 1.2mm again if needed, add to cart, and so on.     
 You should get a free shipping coupon if this is your first order and you sign up on this page: https://jlcpcb.com/cheapest-PCB-way      
 
-You can also order from [Oshpark](https://oshpark.com/) but you need to either [rename *_adapter.GML to *_adapter.GKO](https://www.dropbox.com/s/0rcvhalgeu11sf8/rename.jpg?dl=0) inside the *_adapter.zip or upload the *_adapter.brd from the [eagle design files directory](https://github.com/sanni/cartreader/tree/master/pcb/eagle%20design%20files) instead or the Oshpark website will display an error. Oshpark is great for ordering the smaller PCBs but very expensive for larger boards.   
+You can also order from [Oshpark](https://oshpark.com/) but you need to [rename *_adapter.GML to *_adapter.GKO](https://www.dropbox.com/s/0rcvhalgeu11sf8/rename.jpg?dl=0) inside the *_adapter.zip or the Oshpark website will display an error. Oshpark is great for ordering the smaller PCBs but very expensive for larger boards.   
 
 #### nes_adapter.zip is an add-on for reading NES carts, [PCB thickness needs to be changed to 1.2mm](https://dl.dropboxusercontent.com/s/va1c72073cqfy90/pcb12.jpg?dl=1), this is very important or else it won't fit into the SNES slot. You can order a 2.5mm 72pin NES slot [here](https://www.aliexpress.com/item/32827561164.html).     
 
