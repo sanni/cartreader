@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             25.10.2021
+   Date:             26.10.2021
    Version:          7.0
 
    SD lib: https://github.com/greiman/SdFat
@@ -754,6 +754,7 @@ void setup() {
 #ifdef enable_serial
   // Serial Begin
   Serial.begin(9600);
+  Serial.println("");
   Serial.println(F("Cartridge Reader"));
   Serial.println(F("2021 sanni"));
   Serial.println("");
@@ -852,7 +853,7 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
 
 void wait() {
 #if defined(enable_LCD)
-  wait_encoder();
+  wait_btn();
 #elif defined (enable_OLED)
   wait_btn();
 #elif defined (enable_serial)
@@ -1243,6 +1244,44 @@ int checkButton() {
 }
 
 // Wait for user to push button
+void wait_btn() {
+  // Change led to green
+  if (errorLvl == 0)
+    rgbLed(green_color);
+
+  while (1)
+  {
+    // get input button
+    int b = checkButton();
+
+#ifdef enable_N64
+#ifndef clockgen_installed
+    // Send some clock pulses to the Eeprom in case it locked up
+    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
+      pulseClock_N64(1);
+    }
+#endif
+#endif
+
+    // if the cart readers input button is pressed shortly
+    if (b == 1) {
+      errorLvl = 0;
+      break;
+    }
+
+    // if the cart readers input button is pressed long
+    if (b == 3) {
+      if (errorLvl) {
+        // Debug
+        //ignoreError = 1;
+        errorLvl = 0;
+      }
+      break;
+    }
+  }
+}
+
+// Wait for user to rotate knob
 void wait_encoder() {
   // Change led to green
   if (errorLvl == 0)

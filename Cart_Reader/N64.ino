@@ -182,8 +182,12 @@ void n64ControllerMenu() {
     case 0:
       display_Clear();
       display_Update();
-#ifdef enable_OLED
+#if defined(enable_OLED)
       controllerTest_OLED();
+#elif defined(enable_LCD)
+      controllerTest_LCD();
+#elif defined(enable_serial)
+      controllerTest_Serial();
 #endif
       quit = 1;
       break;
@@ -905,6 +909,507 @@ void get_button()
 /******************************************
   N64 Controller Test
  *****************************************/
+#ifdef enable_serial
+void controllerTest_Serial() {
+  while (quit) {
+    // Get Button and analog stick
+    get_button();
+
+    // Print Button
+    String buttonc = String("Button: " + String(button) + "   ");
+    Serial.print(buttonc);
+
+    // Print Stick X Value
+    String stickx = String("X: " + String(N64_status.stick_x, DEC) + "   ");
+    Serial.print(stickx);
+
+    // Print Stick Y Value
+    String sticky = String(" Y: " + String(N64_status.stick_y, DEC) + "   ");
+    Serial.println(sticky);
+
+    if (button == "Press a button" && lastbutton == "Z") {
+      // Quit
+      Serial.println("");
+      quit = 0;
+    }
+  }
+}
+#endif
+
+#ifdef enable_LCD
+#define CENTER 64
+// on which screens do we start
+int startscreen = 1;
+int test = 1;
+
+void printSTR(String st, int x, int y)
+{
+  char buf[st.length() + 1];
+
+  if (x == CENTER) {
+    x = 64 - (((st.length() - 5) / 2) * 4);
+  }
+
+  st.toCharArray(buf, st.length() + 1);
+  display.drawStr(x, y, buf);
+}
+
+void nextscreen()
+{
+  if (button == "Press a button" && lastbutton == "START")
+  {
+    // reset button
+    lastbutton = "N/A";
+
+    display.clearDisplay();
+    if (startscreen != 4)
+      startscreen = startscreen + 1;
+    else
+    {
+      startscreen = 1;
+      test = 1;
+    }
+  }
+  else if (button == "Press a button" && lastbutton == "Z" && startscreen == 4)
+  {
+    // Quit
+    quit = 0;
+  }
+}
+
+void controllerTest_LCD() {
+  int mode = 0;
+
+  //name of the current displayed result
+  String anastick = "";
+
+  // Graph
+  int xax = 24; // midpoint x
+  int yax = 24; // midpoint y
+  int zax = 24; // size
+
+  // variables to display test data of different sticks
+  int upx = 0;
+  int upy = 0;
+  int uprightx = 0;
+  int uprighty = 0;
+  int rightx = 0;
+  int righty = 0;
+  int downrightx = 0;
+  int downrighty = 0;
+  int downx = 0;
+  int downy = 0;
+  int downleftx = 0;
+  int downlefty = 0;
+  int leftx = 0;
+  int lefty = 0;
+  int upleftx = 0;
+  int uplefty = 0;
+
+  // variables to save test data
+  int bupx = 0;
+  int bupy = 0;
+  int buprightx = 0;
+  int buprighty = 0;
+  int brightx = 0;
+  int brighty = 0;
+  int bdownrightx = 0;
+  int bdownrighty = 0;
+  int bdownx = 0;
+  int bdowny = 0;
+  int bdownleftx = 0;
+  int bdownlefty = 0;
+  int bleftx = 0;
+  int blefty = 0;
+  int bupleftx = 0;
+  int buplefty = 0;
+  int results = 0;
+  int prevStickX = 0;
+
+  while (quit) {
+    // Get Button and analog stick
+    get_button();
+
+    switch (startscreen)
+    {
+      case 1:
+        {
+          delay(20);
+          display.clearDisplay();
+          display.drawStr(32, 8, "Controller Test");
+          display.drawLine(0, 10, 128, 10);
+
+          // Print Button
+          printSTR("       " + button + "       ", CENTER, 20);
+
+          // Print Stick X Value
+          String stickx = String("X: " + String(N64_status.stick_x, DEC) + "   ");
+          printSTR(stickx, 36, 38);
+
+          // Print Stick Y Value
+          String sticky = String("Y: " + String(N64_status.stick_y, DEC) + "   ");
+          printSTR(sticky, 74, 38);
+
+          printSTR("(Continue with START)", 16, 55);
+
+          //Update LCD
+          display.updateDisplay();
+
+          // go to next screen
+          nextscreen();
+          break;
+        }
+      case 2:
+        {
+          display.drawStr(36, 8, "Range Test");
+          display.drawLine(0, 9, 128, 9);
+
+          if (mode == 0)
+          {
+            // Print Stick X Value
+            String stickx = String("X:" + String(N64_status.stick_x, DEC) + "   ");
+            printSTR(stickx, 22 + 54, 26);
+
+            // Print Stick Y Value
+            String sticky = String("Y:" + String(N64_status.stick_y, DEC) + "   ");
+            printSTR(sticky, 22 + 54, 36);
+          }
+
+          // Draw Axis
+          display.drawPixel(10 + xax, 12 + yax);
+          display.drawPixel(10 + xax, 12 + yax - 80 / 4);
+          display.drawPixel(10 + xax, 12 + yax + 80 / 4);
+          display.drawPixel(10 + xax + 80 / 4, 12 + yax);
+          display.drawPixel(10 + xax - 80 / 4, 12 + yax);
+
+          // Draw corners
+          display.drawPixel(10 + xax - 68 / 4, 12 + yax - 68 / 4);
+          display.drawPixel(10 + xax + 68 / 4, 12 + yax + 68 / 4);
+          display.drawPixel(10 + xax + 68 / 4, 12 + yax - 68 / 4);
+          display.drawPixel(10 + xax - 68 / 4, 12 + yax + 68 / 4);
+
+          //Draw Analog Stick
+          if (mode == 1)
+          {
+            display.drawPixel(10 + xax + N64_status.stick_x / 4, 12 + yax - N64_status.stick_y / 4);
+            //Update LCD
+            display.updateDisplay();
+          }
+          else
+          {
+            display.drawCircle(10 + xax + N64_status.stick_x / 4, 12 + yax - N64_status.stick_y / 4, 2);
+            //Update LCD
+            display.updateDisplay();
+            delay(20);
+            display.clearDisplay();
+          }
+
+          // switch mode
+          if (button == "Press a button" && lastbutton == "Z")
+          {
+            if (mode == 0)
+            {
+              mode = 1;
+              display.clearDisplay();
+            }
+            else
+            {
+              mode = 0;
+              display.clearDisplay();
+            }
+          }
+          // go to next screen
+          nextscreen();
+          break;
+        }
+      case 3:
+        {
+          display.setDrawColor(0);
+          display.drawPixel(22 + prevStickX, 40);
+          display.setDrawColor(1);
+          printSTR("Skipping Test", 34, 8);
+          display.drawLine(0, 9, 128, 9);
+          display.drawFrame(22 + 0, 15, 22 + 59, 21);
+          if (N64_status.stick_x > 0) {
+            display.drawLine(22 + N64_status.stick_x, 15, 22 + N64_status.stick_x, 35);
+            display.drawPixel(22 + N64_status.stick_x, 40);
+            prevStickX = N64_status.stick_x;
+          }
+
+          printSTR("Try to fill the box by", 22, 45);
+          printSTR("slowly moving right", 22, 55);
+          //Update LCD
+          display.updateDisplay();
+
+          if (button == "Press a button" && lastbutton == "Z")
+          {
+            // reset button
+            lastbutton = "N/A";
+
+            display.clearDisplay();
+          }
+          // go to next screen
+          nextscreen();
+          break;
+        }
+      case 4:
+        {
+          switch ( test )
+          {
+            case 0:  // Display results
+              {
+                switch (results)
+                {
+                  case 0:
+                    {
+                      anastick = "YOURS";
+                      upx = bupx;
+                      upy = bupy;
+                      uprightx = buprightx;
+                      uprighty = buprighty;
+                      rightx = brightx;
+                      righty = brighty;
+                      downrightx = bdownrightx;
+                      downrighty = bdownrighty;
+                      downx = bdownx;
+                      downy = bdowny;
+                      downleftx = bdownleftx;
+                      downlefty = bdownlefty;
+                      leftx = bleftx;
+                      lefty = blefty;
+                      upleftx = bupleftx;
+                      uplefty = buplefty;
+
+                      if (button == "Press a button" && lastbutton == "A")
+                      {
+                        // reset button
+                        lastbutton = "N/A";
+                        results = 1;
+                      }
+
+                      break;
+                    }
+                  case 1:
+                    {
+                      anastick = "ORIG";
+                      upx = 1;
+                      upy = 84;
+                      uprightx = 67;
+                      uprighty = 68;
+                      rightx = 83;
+                      righty = -2;
+                      downrightx = 67;
+                      downrighty = -69;
+                      downx = 3;
+                      downy = -85;
+                      downleftx = -69;
+                      downlefty = -70;
+                      leftx = -85;
+                      lefty = 0;
+                      upleftx = -68;
+                      uplefty = 68;
+
+                      if (button == "Press a button" && lastbutton == "A")
+                      {
+                        // reset button
+                        lastbutton = "N/A";
+                        results = 0;
+                      }
+                      break;
+                    }
+
+                } //results
+                delay(20);
+                display.clearDisplay();
+
+                printSTR(anastick, 22 + 50, 15);
+
+                display.drawStr(22 + 50, 25, "U:");
+                printSTR(String(upy), 100, 25);
+                display.drawStr(22 + 50, 35, "D:");
+                printSTR(String(downy), 100, 35);
+                display.drawStr(22 + 50, 45, "L:");
+                printSTR(String(leftx), 100, 45);
+                display.drawStr(22 + 50, 55, "R:");
+                printSTR(String(rightx), 100, 55);
+
+                display.drawLine(xax + upx / 4, yax - upy / 4, xax + uprightx / 4, yax - uprighty / 4);
+                display.drawLine(xax + uprightx / 4, yax - uprighty / 4, xax + rightx / 4, yax - righty / 4);
+                display.drawLine(xax + rightx / 4, yax - righty / 4, xax + downrightx / 4, yax - downrighty / 4);
+                display.drawLine(xax + downrightx / 4, yax - downrighty / 4, xax + downx / 4, yax - downy / 4);
+                display.drawLine(xax + downx / 4, yax - downy / 4, xax + downleftx / 4, yax - downlefty / 4);
+                display.drawLine(xax + downleftx / 4, yax - downlefty / 4, xax + leftx / 4, yax - lefty / 4);
+                display.drawLine(xax + leftx / 4, yax - lefty / 4, xax + upleftx / 4, yax - uplefty / 4);
+                display.drawLine(xax + upleftx / 4, yax - uplefty / 4, xax + upx / 4, yax - upy / 4);
+
+                display.drawPixel(xax, yax);
+
+                //Update LCD
+                display.updateDisplay();
+                break;
+              } //display results
+
+            case 1:// +y Up
+              {
+                display.drawStr(34, 26, "Hold Stick Up");
+                display.drawStr(34, 34, "then press A");
+                //display.drawBitmap(110, 60, ana1);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  bupx = N64_status.stick_x;
+                  bupy = N64_status.stick_y;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                  test = 2;
+                }
+                break;
+              }
+
+            case 2:// +y+x Up-Right
+              {
+                display.drawStr(42, 26, "Up-Right" );
+                //display.drawBitmap(110, 60, ana2);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  buprightx = N64_status.stick_x;
+                  buprighty = N64_status.stick_y;
+                  test = 3;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+
+            case 3:// +x Right
+              {
+                display.drawStr(50, 26, "Right" );
+                //display.drawBitmap(110, 60, ana3);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  brightx = N64_status.stick_x;
+                  brighty = N64_status.stick_y;
+                  test = 4;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+
+            case 4:// -y+x Down-Right
+              {
+                display.drawStr(38, 26, "Down-Right");
+                //display.drawBitmap(110, 60, ana4);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  bdownrightx = N64_status.stick_x;
+                  bdownrighty = N64_status.stick_y;
+                  test = 5;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+
+            case 5:// -y Down
+              {
+                display.drawStr(49, 26, "Down");
+                //display.drawBitmap(110, 60, ana5);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  bdownx = N64_status.stick_x;
+                  bdowny = N64_status.stick_y;
+                  test = 6;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+
+            case 6:// -y-x Down-Left
+              {
+                display.drawStr(39, 26, "Down-Left");
+                //display.drawBitmap(110, 60, ana6);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  bdownleftx = N64_status.stick_x;
+                  bdownlefty = N64_status.stick_y;
+                  test = 7;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+
+            case 7:// -x Left
+              {
+                display.drawStr(51, 26, "Left" );
+                //display.drawBitmap(110, 60, ana7);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  bleftx = N64_status.stick_x;
+                  blefty = N64_status.stick_y;
+                  test = 8;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+
+            case 8:// +y+x Up-Left
+              {
+                display.drawStr(43, 26, "Up-Left");
+                //display.drawBitmap(110, 60, ana8);
+
+                if (button == "Press a button" && lastbutton == "A")
+                {
+                  bupleftx = N64_status.stick_x;
+                  buplefty = N64_status.stick_y;
+                  test = 0;
+                  // reset button
+                  lastbutton = "N/A";
+
+                  display.clearDisplay();
+                }
+                break;
+              }
+          }
+          if (test != 0)
+          {
+            display.drawStr(38, 8, "Benchmark");
+            display.drawLine(0, 9, 128, 9);
+          }
+          display.updateDisplay();
+          // go to next screen
+          nextscreen();
+          break;
+        }
+    }
+  }
+
+}
+#endif
+
 #ifdef enable_OLED
 #define CENTER 64
 
