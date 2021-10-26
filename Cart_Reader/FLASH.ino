@@ -985,7 +985,7 @@ void eraseFlash29F032() {
   // After a completed erase D7 will output 1
   while ((statusReg & 0x80) != 0x80) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
     delay(100);
     // Update Status
     statusReg = readByte_Flash(0);
@@ -1026,7 +1026,7 @@ void writeFlash29F032() {
       }
       // Blink led
       if (currByte % 2048 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       noInterrupts();
       int blockfailcnt = 0;
@@ -1157,7 +1157,7 @@ void writeFlash29F1610() {
 
       // Blink led
       if (currByte % 3072 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       // Check if write is complete
       delayMicroseconds(100);
@@ -1212,7 +1212,7 @@ void writeFlash29F1601() {
 
       // Blink led
       if (currByte % 3072 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       // Check if write is complete
       delayMicroseconds(100);
@@ -1355,7 +1355,7 @@ void writeFlash29LV640() {
       myFile.read(sdBuffer, 512);
       // Blink led
       if (currByte % 4096 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
       for (int c = 0; c < 512; c++) {
         // Write command sequence
         writeByte_Flash(0x555 << 1, 0xaa);
@@ -1400,7 +1400,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       // Write to flashrom
       for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
@@ -1471,7 +1471,7 @@ void writeFlash29F800() {
       myFile.read(sdBuffer, 512);
       // Blink led
       if (currByte % 2048 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       for (int c = 0; c < 512; c++) {
         // Write command sequence
@@ -1537,7 +1537,7 @@ void eraseFlash28FXXX() {
     while ((readByte_Flash(ba) & 0x80) == 0x00);
 
     // blink LED
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 }
 
@@ -1581,7 +1581,7 @@ void writeFlashE28FXXXJ3A() {
 
     // Blink led
     if (currByte % 2048 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     block_addr = currByte & block_addr_mask;
 
@@ -1626,7 +1626,7 @@ void writeFlashLH28F0XX() {
     myFile.read(sdBuffer, 512);
     // Blink led
     if (currByte % 2048 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     for (uint32_t c = 0; c < 512; c += bufferSize) {
       // sequence load to page
@@ -1820,7 +1820,7 @@ void writeFlash16() {
 
       // Blink led
       if (currByte % 2048 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       // Check if write is complete
       delayMicroseconds(100);
@@ -1879,7 +1879,7 @@ void writeFlash16_29F1601() {
 
       // Blink led
       if (currByte % 2048 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       // Check if write is complete
       delayMicroseconds(100);
@@ -2180,7 +2180,7 @@ void writeFlash16_29LV640() {
 
       // Blink led
       if (currWord % 4096 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       for (int c = 0; c < 256; c++) {
         // Write command sequence
@@ -2396,7 +2396,7 @@ void write_Eprom() {
 
       // Blink led
       if (currWord % 2048 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       // Work through SD buffer
       for (int c = 0; c < 256; c++) {

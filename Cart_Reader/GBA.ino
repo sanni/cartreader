@@ -896,7 +896,7 @@ void readROM_GBA() {
   for (int myAddress = 0; myAddress < cartSize; myAddress += 512) {
     // Blink led
     if (myAddress % 16384 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     for (int currWord = 0; currWord < 512; currWord += 2) {
       word tempWord = readWord_GBA(myAddress + currWord);
@@ -2074,7 +2074,7 @@ void idFlashrom_GBA() {
 boolean blankcheckFlashrom_GBA() {
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x20000) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     for (unsigned long currByte = 0; currByte < 0x20000; currByte += 2) {
       if (readWord_GBA(currSector + currByte) != 0xFFFF) {
@@ -2124,7 +2124,7 @@ void eraseIntel4000_GBA() {
       statusReg = readWord_GBA(currBlock);
     }
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 
   // Erase the second chip
@@ -2145,7 +2145,7 @@ void eraseIntel4000_GBA() {
         statusReg = readWord_GBA(currBlock);
       }
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
     }
 
     // 4 blocks with 16kword each
@@ -2164,7 +2164,7 @@ void eraseIntel4000_GBA() {
         statusReg = readWord_GBA(currBlock);
       }
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
     }
   }
 }
@@ -2208,7 +2208,7 @@ void eraseIntel4400_GBA() {
       statusReg = readWord_GBA(currBlock);
     }
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 
   /* No need to erase the second chip as max rom size is 32MB
@@ -2229,7 +2229,7 @@ void eraseIntel4400_GBA() {
         statusReg = readWord_GBA(currBlock);
       }
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
     }
 
     // 4 blocks with 16kword each
@@ -2248,7 +2248,7 @@ void eraseIntel4400_GBA() {
         statusReg = readWord_GBA(currBlock);
       }
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
     }
     }*/
 }
@@ -2272,7 +2272,7 @@ void sectorEraseMSP55LV128_GBA() {
       statusReg = readWord_GAB(currSector);
     }
     // Blink LED
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 }
 
@@ -2295,14 +2295,14 @@ void sectorEraseMX29GL128E_GBA() {
       statusReg = readWord_GAB(currSector);
     }
     // Blink LED
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 }
 
 void writeIntel4000_GBA() {
   for (unsigned long currBlock = 0; currBlock < fileSize; currBlock += 0x20000) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 0x20000; currSdBuffer += 512) {
@@ -2350,7 +2350,7 @@ void writeIntel4000_GBA() {
 void writeMSP55LV128_GBA() {
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x10000) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 0x10000; currSdBuffer += 512) {
@@ -2392,7 +2392,7 @@ void writeMSP55LV128_GBA() {
 void writeMX29GL128E_GBA() {
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 0x20000) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 0x20000; currSdBuffer += 512) {
@@ -2438,7 +2438,7 @@ boolean verifyFlashrom_GBA() {
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
         myFile.read(sdBuffer, 512);

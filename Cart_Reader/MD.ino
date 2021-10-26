@@ -1135,7 +1135,7 @@ void readROM_MD() {
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
     // Blink led
     if (currBuffer % 16384 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     if (currBuffer == 0x200000) {
       writeSSF2Map(0x50987E, 8); // 0xA130FD
@@ -1188,7 +1188,7 @@ void readROM_MD() {
     for (unsigned long currBuffer = 0; currBuffer < cartSizeLockon / 2; currBuffer += 512) {
       // Blink led
       if (currBuffer % 16384 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       d = 0;
 
@@ -1233,7 +1233,7 @@ void readROM_MD() {
     for (unsigned long currBuffer = 0; currBuffer < cartSizeSonic2 / 2; currBuffer += 512) {
       // Blink led
       if (currBuffer % 16384 == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       d = 0;
 
@@ -1572,7 +1572,7 @@ void write29F1610_MD() {
 
       // Blink led
       if (currByte % 4096 == 0) {
-        PORTB ^= (1 << 4);
+        blinkLED();
       }
 
       // Write command sequence
@@ -1664,7 +1664,7 @@ void blankcheck_MD() {
       blank = 0;
     }
     if (currByte % 4096 == 0) {
-      PORTB ^= (1 << 4);
+      blinkLED();
     }
   }
   if (!blank) {
@@ -1685,7 +1685,7 @@ void verifyFlash_MD() {
     word d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
       if (currByte % 4096 == 0) {
-        PORTB ^= (1 << 4);
+        blinkLED();
       }
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
@@ -2460,7 +2460,7 @@ void readRealtec_MD() {
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
     // Blink led
     if (currBuffer % 16384 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     for (int currWord = 0; currWord < 256; currWord++) {
       word myWord = readWord_MD(currBuffer + currWord);

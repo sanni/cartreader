@@ -496,7 +496,7 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
     {
       // blink LED
       if ((addr & ((1 << 14) - 1)) == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       for (uint32_t w = 0; w < 512; w += 2)
         * ((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
@@ -556,7 +556,7 @@ void readSRAM_WS()
     {
       // blink LED
       if ((addr & ((1 << 14) - 1)) == 0)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       // SRAM data on D0-D7, with A-1 to select high/low byte
       for (uint32_t w = 0; w < 512; w++)
@@ -658,7 +658,7 @@ void writeSRAM_WS()
       {
         // blink LED
         if ((addr & ((1 << 14) - 1)) == 0)
-          PORTB ^= (1 << 4);
+          blinkLED();
 
         myFile.read(sdBuffer, 512);
 
@@ -711,7 +711,7 @@ void readEEPROM_WS()
     {
       // blink LED
       if ((j & 0x1f) == 0x00)
-        PORTB ^= (1 << 4);
+        blinkLED();
 
       generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
 
@@ -756,7 +756,7 @@ void verifyEEPROM_WS()
       {
         // blink LED
         if ((j & 0x1f) == 0x00)
-          PORTB ^= (1 << 4);
+          blinkLED();
 
         generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
 
@@ -825,7 +825,7 @@ void writeEEPROM_WS()
       {
         // blink LED
         if ((j & 0x1f) == 0x00)
-          PORTB ^= (1 << 4);
+          blinkLED();
 
         generateEepromInstruction_WS(wsEepromShiftReg, 0x1, ((i + j) >> 1));
 
@@ -915,7 +915,7 @@ void writeWitchOS_WS()
       {
         // blink LED
         if ((i & 0x3ff) == 0)
-          PORTB ^= (1 << 4);
+          blinkLED();
 
         // reset key
         key = 0xff;
@@ -973,7 +973,7 @@ void fastProgramWitchFlash_WS(uint32_t addr, uint16_t data)
 void eraseWitchFlashSector_WS(uint32_t sector_addr)
 {
   // blink LED
-  PORTB ^= (1 << 4);
+  blinkLED();
 
   dataOut_WS();
   writeWord_WS(0x80aaa, 0xaaaa);
