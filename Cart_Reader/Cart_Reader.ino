@@ -1092,13 +1092,25 @@ int checkButton() {
     if (reading != lastButtonState) {
       lastDebounceTime = millis();
     }
+    // Debounce button
     if ((millis() - lastDebounceTime) > debounceDelay) {
       if (reading != buttonState) {
         buttonState = reading;
+        // Button was pressed down
         if (buttonState == 0) {
+          unsigned long pushTime = millis();
+          // Wait until button was let go again
           while ((PING & (1 << PING2)) >> PING2 == 0);
           lastButtonState = reading;
-          return 3;
+
+          // If the hold time was over 10 seconds, super long press for resetting eeprom in about screen
+          if (millis() - pushTime > 10000) {
+            return 4;
+          }
+          // long press
+          else {
+            return 3;
+          }
         }
       }
       else {
