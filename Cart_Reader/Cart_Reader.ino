@@ -574,15 +574,16 @@ void setup() {
 
 #ifdef enable_LCD
   display.begin();
+  display.setContrast(20);
   display.setFont(u8g2_font_haxrcorp4089_tr);
 #endif
 
 #ifdef enable_neopixel
   pixels.begin();
   pixels.clear();
-  pixels.setPixelColor(0, pixels.Color(255, 0, 0));
-  pixels.setPixelColor(1, pixels.Color(0, 0, 255));
-  pixels.setPixelColor(2, pixels.Color(0, 0, 255));
+  pixels.setPixelColor(0, pixels.Color(100, 0, 0));
+  pixels.setPixelColor(1, pixels.Color(0, 0, 100));
+  pixels.setPixelColor(2, pixels.Color(0, 0, 100));
   pixels.show();
 #endif
 
@@ -645,8 +646,12 @@ void dataIn() {
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
 #ifdef enable_neopixel
+  // Dim Neopixel LEDs
+  if (r >= 100) r = 100;
+  if (g >= 100) g = 100;
+  if (b >= 100) b = 100;
   pixels.clear();
-  pixels.setPixelColor(0, pixels.Color(255, 0, 0));
+  pixels.setPixelColor(0, pixels.Color(100, 0, 0));
   pixels.setPixelColor(1, pixels.Color(g, r, b));
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
