@@ -2508,7 +2508,7 @@ void writeEeprom_CLK() {
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
           // Blink led
-          PORTB ^= (1 << 4);
+          blinkLED();
 
           // Wait ~50ms between page writes or eeprom will have write errors
           pulseClock_N64(26000);
@@ -2573,7 +2573,7 @@ void readEeprom_CLK() {
 
       for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
         // Blink led
-        PORTB ^= (1 << 4);
+        blinkLED();
 
         // Send read command
         sendData_CLK(0x04);
@@ -2634,7 +2634,7 @@ unsigned long verifyEeprom_CLK() {
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
           // Blink led
-          PORTB ^= (1 << 4);
+          blinkLED();
 
           // Send read command
           sendData_CLK(0x04);
@@ -2755,7 +2755,7 @@ void writeEeprom() {
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
           // Blink led
-          PORTB ^= (1 << 4);
+          blinkLED();
 
           // Wait ~50ms between page writes or eeprom will have write errors, Arduino running at 16Mhz -> one nop = 62.5ns
           for (long i = 0; i < 115000; i++) {
@@ -2818,7 +2818,7 @@ void readEeprom() {
 
       for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
         // Blink led
-        PORTB ^= (1 << 4);
+        blinkLED();
 
         // Send read command
         sendData(0x04);
@@ -2878,7 +2878,7 @@ unsigned long verifyEeprom() {
 
         for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
           // Blink led
-          PORTB ^= (1 << 4);
+          blinkLED();
 
           // Send read command
           sendData(0x04);
@@ -3430,7 +3430,7 @@ redumpsamefolder:
   for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
     // Blink led
     if (currByte % 16384 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     // Set the address for the next 512 bytes
     setAddress_N64(currByte);
@@ -3483,7 +3483,7 @@ redumpsamefolder:
   for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 1024) {
     // Blink led
     if (currByte % 16384 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     // Set the address for the first 512 bytes to dump
     setAddress_N64(currByte);
@@ -4266,7 +4266,7 @@ void eraseIntel4400_N64() {
     }
 
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 
   // Check if we should erase the second chip too
@@ -4296,7 +4296,7 @@ void eraseIntel4400_N64() {
       }
 
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
     }
 
     // 4 blocks with 16kword each
@@ -4333,7 +4333,7 @@ void eraseMSP55LV100_N64() {
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Send Erase Command to first chip
     setAddress_N64(flashBase + (0x555 << 1));
@@ -4393,7 +4393,7 @@ void eraseFlashrom_N64() {
     setAddress_N64(romBase);
     statusReg = readWord_N64();
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
     delay(500);
   }
 }
@@ -4407,7 +4407,7 @@ void eraseSector_N64(unsigned long sectorSize) {
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Spansion S29GL256N(32MB/64MB) with two flashrom chips
     if ((currSector == 0x2000000) && (strcmp(cartID, "2201") == 0) && (strcmp(flashid, "227E") == 0)) {
@@ -4447,7 +4447,7 @@ boolean blankcheckFlashrom_N64() {
   for (unsigned long currByte = romBase; currByte < romBase + fileSize; currByte += 512) {
     // Blink led
     if (currByte % 131072 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     // Set the address
     setAddress_N64(currByte);
@@ -4465,7 +4465,7 @@ boolean blankcheckFlashrom_N64() {
 void writeIntel4400_N64() {
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
@@ -4519,7 +4519,7 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
@@ -4576,7 +4576,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Spansion S29GL256N(32MB/64MB) with two flashrom chips
     if ((currSector == 0x2000000) && (strcmp(cartID, "2201") == 0)) {
@@ -4638,7 +4638,7 @@ void writeFlashrom_N64(unsigned long sectorSize) {
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     // Macronix MX29LV640(8MB/16MB) with two flashrom chips
     if (currSector == 0x800000) {
@@ -4683,7 +4683,7 @@ unsigned long verifyFlashrom_N64() {
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
         myFile.read(sdBuffer, 512);
@@ -4864,7 +4864,7 @@ void backupGameshark_N64() {
   for (unsigned long currByte = romBase + 0xC00000; currByte < (romBase + 0xC00000 + 262144); currByte += 512) {
     // Blink led
     if (currByte % 16384 == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     // Set the address for the next 512 bytes
     setAddress_N64(currByte);
@@ -4914,7 +4914,7 @@ void writeGameshark_N64() {
     // Fill SD buffer with twice the amount since we flash 2 chips
     myFile.read(sdBuffer, 256);
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     //Send page write command to both flashroms
     setAddress_N64(romBase + 0xAAAA);
@@ -4944,7 +4944,7 @@ unsigned long verifyGameshark_N64() {
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
         myFile.read(sdBuffer, 512);

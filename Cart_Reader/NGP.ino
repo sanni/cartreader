@@ -231,7 +231,7 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
   for (uint32_t addr = 0; addr < cartSize; addr += 512) {
     // blink LED
     if ((addr & ((1 << 14) - 1)) == 0)
-      PORTB ^= (1 << 4);
+      blinkLED();
 
     // read block
     for (uint32_t i = 0; i < 512; i++)

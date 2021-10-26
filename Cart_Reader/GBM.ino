@@ -601,7 +601,7 @@ void writeFlash_GBM() {
     // Write 63 banks
     for (byte currBank = 0x1; currBank < (fileSize / 0x4000); currBank++) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       // all following banks: 0x4000-0x7FFF
       if (currBank > 1) {
@@ -863,7 +863,7 @@ void writeMapping_GBM() {
     // Fill flash buffer
     for (word currByte = 0; currByte < 128; currByte++) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       writeByte_GBM(currByte, sdBuffer[currByte]);
     }

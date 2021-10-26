@@ -417,7 +417,7 @@ void readROM_SMS() {
     writeByte_SMS(0xFFFF, currBank);
 
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
     // Read 16KB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
@@ -479,7 +479,7 @@ void readSRAM_SMS() {
     writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
 
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
     // Read 16KB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
@@ -526,7 +526,7 @@ void writeSRAM_SMS() {
         word page_address = address - (currBank * bankSize);
         writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
         // Blink led
-        PORTB ^= (1 << 4);
+        blinkLED();
         myFile.read(sdBuffer, 512);
         for (int x = 0; x < 512; x++) {
           writeByte_SMS(0x8000 + page_address + x, sdBuffer[x]);
@@ -535,7 +535,7 @@ void writeSRAM_SMS() {
       myFile.close();
 
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       println_Msg(F(""));
       println_Msg(F("DONE"));

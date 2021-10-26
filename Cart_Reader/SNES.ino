@@ -556,7 +556,7 @@ void readLoRomBanks( unsigned int start, unsigned int total, FsFile *file)
     PORTL = currBank;
 
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     currByte = 32768;
     while (1) {
@@ -603,7 +603,7 @@ void readHiRomBanks( unsigned int start, unsigned int total, FsFile *file)
     PORTL = currBank;
 
     // Blink led
-    PORTB ^= (1 << 4);
+    blinkLED();
 
     currByte = 0;
     while (1) {

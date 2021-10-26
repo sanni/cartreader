@@ -563,7 +563,7 @@ void gbSmartWriteFlashFromMyFile(uint32_t addr)
   }
 
   // blink LED
-  PORTB ^= (1 << 4);
+  blinkLED();
 }
 
 uint32_t gbSmartVerifyFlash()
@@ -671,7 +671,7 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
   while ((readByte_GBS(0x0000) & 0x80) == 0x00);
 
   // blink LED
-  PORTB ^= (1 << 4);
+  blinkLED();
 
   // rest of flash block
   for (uint32_t ba = gbSmartBanksPerFlashBlock; ba < gbSmartBanksPerFlashChip; ba += gbSmartBanksPerFlashBlock)
@@ -686,7 +686,7 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
     while ((readByte_GBS(0x4000) & 0x80) == 0x00);
 
     // blink LED
-    PORTB ^= (1 << 4);
+    blinkLED();
   }
 }
 

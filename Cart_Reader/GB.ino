@@ -1022,7 +1022,7 @@ void writeFlash29F_GB(byte MBC) {
     // After a completed erase D7 will output 1
     while ((statusReg & 0x80) != 0x80) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
       delay(100);
       // Update Status
       statusReg = readByte_GB(0);
@@ -1035,7 +1035,7 @@ void writeFlash29F_GB(byte MBC) {
     // Read x number of banks
     for (int currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       dataOut();
 
@@ -1069,7 +1069,7 @@ void writeFlash29F_GB(byte MBC) {
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
-        PORTB ^= (1 << 4);
+        blinkLED();
 
         // Set ROM bank
         writeByte_GB(0x2100, currBank);
@@ -1120,7 +1120,7 @@ void writeFlash29F_GB(byte MBC) {
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
-        PORTB ^= (1 << 4);
+        blinkLED();
 
         // Set ROM bank
         writeByte_GB(0x2000, currBank);
@@ -1193,7 +1193,7 @@ void writeFlash29F_GB(byte MBC) {
         romAddress = 0x4000;
       }
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       // Read up to 7FFF per bank
       while (romAddress <= 0x7FFF) {
@@ -1423,7 +1423,7 @@ bool writeCFI_GB() {
     // After a completed erase D7 will output 1
     while ((statusReg & 0x80) != 0x80) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
       delay(100);
       // Update Status
       statusReg = readByte_GB(0);
@@ -1436,7 +1436,7 @@ bool writeCFI_GB() {
     // Read x number of banks
     for (int currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       dataOut();
 
@@ -1469,7 +1469,7 @@ bool writeCFI_GB() {
 
     for (int currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       // Set ROM bank
       writeByte_GB(0x2100, currBank);
@@ -1562,7 +1562,7 @@ bool writeCFI_GB() {
         romAddress = 0x4000;
       }
       // Blink led
-      PORTB ^= (1 << 4);
+      blinkLED();
 
       // Read up to 7FFF per bank
       while (romAddress <= 0x7FFF) {

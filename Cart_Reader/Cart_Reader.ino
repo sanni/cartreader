@@ -717,15 +717,33 @@ void print_Msg(const __FlashStringHelper *string) {
 #endif
 }
 
-void print_Msg(const char string[]) {
+void print_Msg(const char myString[]) {
 #ifdef enable_LCD
-  display.print(string);
+  // test for word wrap
+  if ((display.tx + strlen(myString) * 6) > 128) {
+    int strPos = 0;
+    // Print until end of display
+    while (display.tx < 122) {
+      display.print(myString[strPos]);
+      strPos++;
+    }
+    // Newline
+    display.setCursor(0, display.ty + 8);
+    // Print remaining characters
+    while (strPos < strlen(myString)) {
+      display.print(myString[strPos]);
+      strPos++;
+    }
+  }
+  else {
+    display.print(myString);
+  }
 #endif
 #ifdef enable_OLED
-  display.print(string);
+  display.print(myString);
 #endif
 #ifdef enable_serial
-  Serial.print(string);
+  Serial.print(myString);
 #endif
 }
 
@@ -784,7 +802,7 @@ void print_Msg_PaddedHex32(unsigned long message) {
 
 void println_Msg(String string) {
 #ifdef enable_LCD
-  display.println(string);
+  print_Msg(string);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -797,7 +815,7 @@ void println_Msg(String string) {
 
 void println_Msg(byte message, int outputFormat) {
 #ifdef enable_LCD
-  display.println(message, outputFormat);
+  print_Msg(message, outputFormat);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -810,7 +828,7 @@ void println_Msg(byte message, int outputFormat) {
 
 void println_Msg(const char message[]) {
 #ifdef enable_LCD
-  display.println(message);
+  print_Msg(message);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -823,7 +841,7 @@ void println_Msg(const char message[]) {
 
 void println_Msg(const __FlashStringHelper *string) {
 #ifdef enable_LCD
-  display.println(string);
+  print_Msg(string);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -836,7 +854,7 @@ void println_Msg(const __FlashStringHelper *string) {
 
 void println_Msg(long unsigned int message) {
 #ifdef enable_LCD
-  display.print(message);
+  print_Msg(message);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -910,7 +928,7 @@ void wait_serial() {
         for (unsigned long currByte = 0; currByte < fileSize; currByte++) {
           // Blink led
           if (currByte % 1024 == 0)
-            PORTB ^= (1 << 4);
+            blinkLED();
           Serial.write(myFile.read());
         }
         // Close the file:
@@ -959,7 +977,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
         myFile.write(Serial.read());
         fileSize++;
         // Blink led
-        PORTB ^= (1 << 4);
+        blinkLED();
       }
 
       // Close the file:
@@ -1032,6 +1050,14 @@ void rgbLed(byte Color) {
       setColor_RGB(255, 255, 255);
       break;
   }
+}
+
+void blinkLED() {
+#if defined(enable_OLED) || defined(enable_serial)
+  PORTB ^= (1 << 4);
+#elif defined(enable_LCD)
+  PORTB ^= (1 << 7);
+#endif
 }
 
 /******************************************
