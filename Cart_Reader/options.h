@@ -33,9 +33,6 @@
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
 #define startMenu mainMenu
 
-// Skip start-up animation
-// #define fast_start
-
 // Setup RTC if installed.
 // remove // if you have an RTC installed
 // #define RTC_installed
@@ -44,7 +41,20 @@
 // #define clockgen_calibration
 
 //******************************************
-// ENABLED MODULES
+// N64 OPTIONS
+//******************************************
+// Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
+// add // and disable CLK1 switch if you don't have the clockgen installed or if you want to read a repros save
+// #define clockgen_installed
+
+// The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
+// #define fastcrc
+
+// saves a n64log.txt file with rom info in /N64/ROM
+// #define savesummarytotxt
+
+//******************************************
+// DISABLE MODULES
 //******************************************
 // add // before #define to disable a module
 #define enable_FLASH
@@ -59,16 +69,3 @@
 #define enable_SNES
 #define enable_SV
 #define enable_WS
-
-//******************************************
-// N64 OPTIONS
-//******************************************
-// Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
-// add // and disable CLK1 switch if you don't have the clockgen installed or if you want to read a repros save
-// #define clockgen_installed
-
-// The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
-// #define fastcrc
-
-// saves a n64log.txt file with rom info in /N64/ROM
-// #define savesummarytotxt
