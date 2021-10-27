@@ -341,8 +341,130 @@ byte eepbit[8];
 byte eeptemp;
 
 /******************************************
-  Menu
+  Main menu optimized for rotary encoder
 *****************************************/
+#if defined(enable_LCD)
+// Main menu
+static const char modeItem1[] PROGMEM = "Super Nintendo";
+static const char modeItem2[] PROGMEM = "Mega Drive";
+static const char modeItem3[] PROGMEM = "Nintendo 64";
+static const char modeItem4[] PROGMEM = "Game Boy";
+static const char modeItem5[] PROGMEM = "NES/Famicom";
+static const char modeItem6[] PROGMEM = "Flashrom Programmer";
+static const char modeItem7[] PROGMEM = "PC Engine/TG16";
+static const char modeItem8[] PROGMEM = "Sega Master System";
+static const char modeItem9[] PROGMEM = "WonderSwan";
+static const char modeItem10[] PROGMEM = "NeoGeo Pocket";
+static const char modeItem11[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11};
+
+// All included slots
+void mainMenu() {
+  // create menu with title and 11 options to choose from
+  unsigned char modeMenu;
+
+  // Main menu spans across two pages
+  currPage = 1;
+  lastPage = 1;
+  numPages = 2;
+
+  while (1) {
+    if (currPage == 1) {
+      // Copy menuOptions out of progmem
+      convertPgm(modeOptions, 0, 7);
+      modeMenu = question_box(F("Cartridge Reader"), menuOptions, 7, 0);
+    }
+    if (currPage == 2) {
+      // Copy menuOptions out of progmem
+      convertPgm(modeOptions, 7, 4);
+      modeMenu = question_box(F("Cartridge Reader"), menuOptions, 4, 0);
+    }
+    if (numPages == 0) {
+      // Execute choice
+      modeMenu = (currPage - 1) * 7 + modeMenu;
+      break;
+    }
+  }
+
+  // wait for user choice to come back from the question box menu
+  switch (modeMenu)
+  {
+#ifdef enable_SNES
+    case 0:
+      snsMenu();
+      break;
+#endif
+
+#ifdef enable_MD
+    case 1:
+      mdMenu();
+      break;
+#endif
+
+#ifdef enable_N64
+    case 2:
+      n64Menu();
+      break;
+#endif
+
+#ifdef enable_GBX
+    case 3:
+      gbxMenu();
+      break;
+#endif
+
+#ifdef enable_NES
+    case 4:
+      nesMenu();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 5:
+      flashMenu();
+      break;
+#endif
+
+#ifdef enable_PCE
+    case 6:
+      pcsMenu();
+      break;
+#endif
+
+#ifdef enable_SMS
+    case 7:
+      smsMenu();
+      break;
+#endif
+
+#ifdef enable_WS
+    case 8:
+      display_Clear();
+      display_Update();
+      setup_WS();
+      mode = mode_WS;
+      break;
+#endif
+
+#ifdef enable_NGP
+    case 9:
+      display_Clear();
+      display_Update();
+      setup_NGP();
+      mode = mode_NGP;
+      break;
+#endif
+
+    case 10:
+      aboutScreen();
+      break;
+  }
+}
+
+/******************************************
+  Main menu optimized for buttons
+*****************************************/
+#else
 // Main menu
 static const char modeItem1[] PROGMEM = "Add-ons";
 static const char modeItem2[] PROGMEM = "Super Nintendo";
@@ -362,55 +484,6 @@ static const char addonsItem5[] PROGMEM = "WonderSwan";
 static const char addonsItem6[] PROGMEM = "NeoGeo Pocket";
 static const char addonsItem7[] PROGMEM = "Reset";
 static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, addonsItem6, addonsItem7};
-
-// Info Screen
-void aboutScreen() {
-  display_Clear();
-  println_Msg(F("Cartridge Reader"));
-  println_Msg(F("github.com/sanni"));
-  print_Msg(F("2021 Version "));
-  println_Msg(ver);
-  println_Msg(F(""));
-  println_Msg(F(""));
-  println_Msg(F(""));
-  println_Msg(F(""));
-  println_Msg(F("Press Button"));
-  display_Update();
-
-  while (1) {
-
-#if defined(enable_LCD) || defined(enable_OLED)
-    // get input button
-    int b = checkButton();
-
-    // if the cart readers input button is pressed shortly
-    if (b == 1) {
-      resetArduino();
-    }
-
-    // if the cart readers input button is pressed long
-    if (b == 3) {
-      resetArduino();
-    }
-
-    // if the button is pressed super long
-    if (b == 4) {
-      display_Clear();
-      println_Msg(F("Resetting folder..."));
-      display_Update();
-      delay(2000);
-      foldern = 0;
-      EEPROM_writeAnything(0, foldern);
-      resetArduino();
-    }
-#elif defined(enable_serial)
-    wait_serial();
-    resetArduino();
-#endif
-    setColor_RGB(random(0, 255), random(0, 255), random(0, 255));
-    delay(random(50, 100));
-  }
-}
 
 // All included slots
 void mainMenu() {
@@ -519,6 +592,59 @@ void addonsMenu() {
       break;
   }
 }
+#endif
+
+/******************************************
+  About Screen
+*****************************************/
+// Info Screen
+void aboutScreen() {
+  display_Clear();
+  println_Msg(F("Cartridge Reader"));
+  println_Msg(F("github.com/sanni"));
+  print_Msg(F("2021 Version "));
+  println_Msg(ver);
+  println_Msg(F(""));
+  println_Msg(F(""));
+  println_Msg(F(""));
+  println_Msg(F(""));
+  println_Msg(F("Press Button"));
+  display_Update();
+
+  while (1) {
+
+#if defined(enable_LCD) || defined(enable_OLED)
+    // get input button
+    int b = checkButton();
+
+    // if the cart readers input button is pressed shortly
+    if (b == 1) {
+      resetArduino();
+    }
+
+    // if the cart readers input button is pressed long
+    if (b == 3) {
+      resetArduino();
+    }
+
+    // if the button is pressed super long
+    if (b == 4) {
+      display_Clear();
+      println_Msg(F("Resetting folder..."));
+      display_Update();
+      delay(2000);
+      foldern = 0;
+      EEPROM_writeAnything(0, foldern);
+      resetArduino();
+    }
+#elif defined(enable_serial)
+    wait_serial();
+    resetArduino();
+#endif
+    setColor_RGB(random(0, 255), random(0, 255), random(0, 255));
+    delay(random(50, 100));
+  }
+}
 
 /******************************************
   Progressbar
@@ -574,7 +700,7 @@ void setup() {
 
 #ifdef enable_LCD
   display.begin();
-  display.setContrast(20);
+  display.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
 #endif
 
@@ -658,6 +784,13 @@ void setColor_RGB(byte r, byte g, byte b) {
 #else
   rgb.setColor(r, g, b);
 #endif
+}
+
+// Converts a progmem array into a ram array
+void convertPgm(const char* const pgmOptions[], byte startArray, byte numArrays) {
+  for (int i = 0; i < numArrays; i++) {
+    strlcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i + startArray])), 20);
+  }
 }
 
 // Converts a progmem array into a ram array
@@ -1267,13 +1400,13 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
       display.setDrawColor(1);
       display.updateDisplay();
 
-      if ((choice == 0) && (filebrowse == 1)) {
+      if (choice == 0) {
         if (currPage > 1) {
           lastPage = currPage;
           currPage--;
           break;
         }
-        else {
+        else if (filebrowse == 1) {
           root = 1;
           break;
         }
@@ -1303,7 +1436,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
       display.setDrawColor(1);
       display.updateDisplay();
 
-      if ((choice == num_answers - 1 ) && (numPages > currPage) && (filebrowse == 1)) {
+      if ((choice == num_answers - 1 ) && (numPages > currPage)) {
         lastPage = currPage;
         currPage++;
         break;
@@ -1324,6 +1457,8 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
     if (b == 3) {
       idleTime = millis();
+      // All done
+      numPages = 0;
       break;
     }
   }
