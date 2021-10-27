@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             26.10.2021
-   Version:          7.0
+   Date:             27.10.2021
+   Version:          7.1
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -44,7 +44,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.0";
+char ver[5] = "7.1";
 
 /******************************************
    Libraries
@@ -372,12 +372,12 @@ void mainMenu() {
     if (currPage == 1) {
       // Copy menuOptions out of progmem
       convertPgm(modeOptions, 0, 7);
-      modeMenu = question_box(F("Cartridge Reader"), menuOptions, 7, 0);
+      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
     }
     if (currPage == 2) {
       // Copy menuOptions out of progmem
       convertPgm(modeOptions, 7, 4);
-      modeMenu = question_box(F("Cartridge Reader"), menuOptions, 4, 0);
+      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 4, 0);
     }
     if (numPages == 0) {
       // Execute choice
@@ -491,7 +491,7 @@ void mainMenu() {
   unsigned char modeMenu;
   // Copy menuOptions out of progmem
   convertPgm(modeOptions, 7);
-  modeMenu = question_box(F("Cartridge Reader"), menuOptions, 7, 0);
+  modeMenu = question_box(F("OPENSOURCE CARTREADER"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
