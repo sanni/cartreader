@@ -36,8 +36,14 @@ static const char snsMenuItem1[] PROGMEM = "Super Nintendo";
 static const char snsMenuItem2[] PROGMEM = "NPower SF Memory";
 static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "Flash repro";
+#ifdef clockgen_calibration
+static const char snsMenuItem5[] PROGMEM = "Calibrate Clock";
+static const char snsMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6};
+#else
 static const char snsMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5};
+#endif
 
 // SNES menu items
 static const char SnesMenuItem1[] PROGMEM = "Read Rom";
@@ -133,8 +139,14 @@ void snsMenu() {
   // create menu with title and 6 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
+  #ifdef clockgen_calibration
+  convertPgm(menuOptionsSNS, 6);
+  snsCart = question_box(F("Select Cart Type"), menuOptions, 6, 0);
+  #else
   convertPgm(menuOptionsSNS, 5);
   snsCart = question_box(F("Select Cart Type"), menuOptions, 5, 0);
+  #endif
+  
 
   // wait for user choice to come back from the question box menu
   switch (snsCart)
@@ -169,6 +181,12 @@ void snsMenu() {
 #endif
 
     case 4:
+#ifdef clockgen_calibration
+      clkcal();
+      break;
+
+    case 5:
+#endif    
       resetArduino();
       break;
   }
