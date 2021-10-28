@@ -17,6 +17,7 @@
    Rotary Enc lib: https://github.com/mathertel/RotaryEncoder
    SI5351 lib: https://github.com/etherkit/Si5351Arduino
    RTC lib: https://github.com/adafruit/RTClib
+   Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
    Compiled with Arduino 1.8.13
 
