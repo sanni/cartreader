@@ -11,6 +11,8 @@
 #define enable_LCD
 #define enable_neopixel
 #define enable_rotary
+#define clockgen_installed
+#define fastcrc
 #endif
 
 #if defined(HW2) || defined(HW3)
