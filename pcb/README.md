@@ -1,3 +1,0 @@
-#### cartreader.zip is the main PCB, if you order it from [JLCPCB](https://jlcpcb.com/quote) you also might get a coupon displayed during the checkout for buying parts [from lcsc.com](https://github.com/sanni/cartreader/wiki/Needed-Parts). [Default settings](https://www.dropbox.com/s/06dnus50ikmsmya/pcb16.jpg?dl=0) are fine, just select the color you prefer. If this is your first order from JLCPCB you should only pay $2 for 5 PCBs by using the free shipping coupon found [here](https://jlcpcb.com/cheapest-PCB-way).    
-
-![image](https://dl.dropboxusercontent.com/s/ta7pjoxn9kirtan/v17pcb.png?dl=1)   
