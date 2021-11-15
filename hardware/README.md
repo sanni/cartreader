@@ -1,7 +1,10 @@
 ### Important: This is still a work in progress.    
 
 The Open Source Cart Reader consists out of a main PCB that connects an Arduino Mega to different modules and a cartridge slot adapter PCB.     
-To order download zipped gerber files and upload them to a PCB manufacturer like [JLCPCB](https://cart.jlcpcb.com/quote). You don't have to change any of the settings but you can select a color you like.    
+
+![image](https://dl.dropboxusercontent.com/s/aigwjboijagl48z/hw4.jpg?dl=1)   
+
+To order a PCB you need to download the zipped gerber files and upload them to a PCB manufacturer like [JLCPCB](https://cart.jlcpcb.com/quote). You don't have to change any of the settings but you can select a color you like.    
 
 ### More info:    
 - [Needed Parts](https://github.com/sanni/cartreader/wiki/Parts-needed)   
