@@ -1,4 +1,4 @@
-### Important: This is still a work in progress.    
+### Important: This is still a work in progress and PCB files might contain errors.    
 
 The Open Source Cart Reader consists out of a main PCB that connects an Arduino Mega to different modules and a cartridge slot adapter PCB.     
 
