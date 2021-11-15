@@ -34,7 +34,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads Sega Master System roms and saves (using Retrode or Raphnet adapter)       
 - Reads Sega Game Gear roms and saves(using Retrode adapter)    
 - Reads PC engine/TG16 cartridges (using Retrode TG16 adapter)   
-- Reads WonderSwan cartridges    
-- Reads NeoGeo Pocket cartridges   
+- Reads WonderSwan cartridges (using V3 adapter)   
+- Reads NeoGeo Pocket cartridges (using V3 adapter)   
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C    
 - Programs M27C322 eproms    
