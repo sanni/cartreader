@@ -4,19 +4,13 @@
 This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper.     
 Happy making. 🔧🔨😊     
 
-[![image](https://dl.dropboxusercontent.com/s/0udh1gkl7kem90v/cartbatttop.jpg?dl=1)](https://dl.dropboxusercontent.com/s/p1s0selosoxr86f/1.jpg?dl=1)   
-
 For any questions or issues please also visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
 And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.    
-
-[![image](https://dl.dropboxusercontent.com/s/pswyr93ttrn0bbm/cartbatttop2.jpg?dl=1)](https://dl.dropboxusercontent.com/s/a54y5fhqaj4iiki/2.jpg?dl=1)   
 
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
 - Portable if fitted with battery add-on or suitable power bank  
 - Easy to modify open-source code, write your own extensions and share them with others      
-
-[![image](https://dl.dropboxusercontent.com/s/05bvrsapruip49o/cartbatttop3.jpeg?dl=1)](https://dl.dropboxusercontent.com/s/m2l97t86o3hvndm/3.jpg?dl=1) 
 
 #### Supported Systems:    
 - Reads NES, Famicom and Family Basic cartridges including save    

@@ -46,14 +46,20 @@ void print_Msg(long unsigned int message) {
 }
 ```
 
-For development purposes you can route all the text output to the Arduino's Serial Monitor instead of to the OLED screen. In this case you control the cart reader by typing numbers into the serial monitor corresponding to the action you want to perform. If you are asked to press the button just send a random number.   
+Before uploading the code to your Arduino you need to select your hardware version in options.h        
 ```
-// Comment out to change to Serial Output
-// be sure to change the Arduino Serial Monitor to no line ending
-//#define enable_OLED
+//******************************************     
+// CHOOSE HARDWARE VERSION     
+//******************************************    
+#define HW4    
+//#define HW3    
+//#define HW2    
+//#define HW1    
+//#define SERIAL_MONITOR    
+
 ```
 
-To compile and upload the code please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/How-to-flash-the-Arduino).   
+For more info please have a look at [this wiki article](https://github.com/sanni/cartreader/wiki/How-to-flash-the-Arduino).   
 
 Needed libraries(already included in the portable Arduino IDE under Releases)   
 
