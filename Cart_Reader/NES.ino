@@ -1126,7 +1126,7 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
    Config Functions
  *****************************************/
 void setMapper() {
-#ifdef enable_OLED
+#if defined(enable_LCD) || defined(enable_OLED)
 chooseMapper:
   // Read stored mapper
   EEPROM_readAnything(7, newmapper);
@@ -1152,6 +1152,7 @@ chooseMapper:
       display.println("");
       display.println(F("Press to Change"));
       display.println(F("Hold to Select"));
+#ifdef enable_OLED
       if (digit == 0) {
         display.drawLine(20, 30, 30, 30, WHITE);
         display.drawLine(40, 30, 50, 30, BLACK);
@@ -1167,6 +1168,30 @@ chooseMapper:
         display.drawLine(40, 30, 50, 30, BLACK);
         display.drawLine(60, 30, 70, 30, WHITE);
       }
+#else if enable_LCD
+      if (digit == 0) {
+        display.setDrawColor(1);
+        display.drawLine(20, 30, 30, 30);
+        display.setDrawColor(0);
+        display.drawLine(40, 30, 50, 30);
+        display.drawLine(60, 30, 70, 30);
+      }
+      else if (digit == 1) {
+        display.setDrawColor(0);
+        display.drawLine(20, 30, 30, 30);
+        display.setDrawColor(1);
+        display.drawLine(40, 30, 50, 30);
+        display.setDrawColor(0);
+        display.drawLine(60, 30, 70, 30);
+      }
+      else if (digit == 2) {
+        display.setDrawColor(0);
+        display.drawLine(20, 30, 30, 30);
+        display.drawLine(40, 30, 50, 30);
+        display.setDrawColor(1);
+        display.drawLine(60, 30, 70, 30);
+      }
+#endif
       /* Check Button
          1 click
          2 doubleClick
@@ -1316,7 +1341,7 @@ void checkMapperSize() {
 }
 
 void setPRGSize() {
-#ifdef enable_OLED
+#if defined(enable_LCD) || defined(enable_OLED)
   display_Clear();
   if (prglo == prghi)
     newprgsize = prglo;
@@ -1391,7 +1416,7 @@ setprg:
 }
 
 void setCHRSize() {
-#ifdef enable_OLED
+#if defined(enable_LCD) || defined(enable_OLED)
   display_Clear();
   if (chrlo == chrhi)
     newchrsize = chrlo;
@@ -1465,7 +1490,7 @@ setchr:
 }
 
 void setRAMSize() {
-#ifdef enable_OLED
+#if defined(enable_LCD) || defined(enable_OLED)
   display_Clear();
   if (ramlo == ramhi)
     newramsize = ramlo;

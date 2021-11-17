@@ -1036,7 +1036,7 @@ void getCartInfo_MD() {
   println_Msg(F(" "));
 
   // Wait for user input
-#ifdef enable_OLED
+#if defined(enable_LCD) || defined(enable_OLED)
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
