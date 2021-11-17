@@ -787,7 +787,7 @@ void getCartInfo_SNES() {
   display_Update();
 
   // Wait for user input
-#ifdef enable_OLED
+#if defined(enable_LCD) || defined(enable_OLED)
   println_Msg(F(" "));
   println_Msg(F(" "));
   println_Msg(F("Press Button..."));
