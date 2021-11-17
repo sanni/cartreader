@@ -1126,7 +1126,7 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
    Config Functions
  *****************************************/
 void setMapper() {
-#if defined(enable_LCD) || defined(enable_OLED)
+#if (defined(enable_LCD) || defined(enable_OLED))
 chooseMapper:
   // Read stored mapper
   EEPROM_readAnything(7, newmapper);
@@ -1168,7 +1168,7 @@ chooseMapper:
         display.drawLine(40, 30, 50, 30, BLACK);
         display.drawLine(60, 30, 70, 30, WHITE);
       }
-#else if enable_LCD
+#else
       if (digit == 0) {
         display.setDrawColor(1);
         display.drawLine(20, 30, 30, 30);
@@ -1258,7 +1258,11 @@ chooseMapper:
       else if (b == 3) {
         break;
       }
+#ifdef enable_OLED
       display.display();
+#else
+      display.updateDisplay();
+#endif
     }
   }
   display.clearDisplay();
@@ -1277,7 +1281,11 @@ chooseMapper:
   if (!validMapper) {
     errorLvl = 1;
     display.println("Mapper not supported");
+#ifdef enable_OLED
     display.display();
+#else
+    display.updateDisplay();
+#endif
     wait();
     goto chooseMapper;
   }
@@ -1341,7 +1349,7 @@ void checkMapperSize() {
 }
 
 void setPRGSize() {
-#if defined(enable_LCD) || defined(enable_OLED)
+#if (defined(enable_LCD) || defined(enable_OLED))
   display_Clear();
   if (prglo == prghi)
     newprgsize = prglo;
@@ -1416,7 +1424,7 @@ setprg:
 }
 
 void setCHRSize() {
-#if defined(enable_LCD) || defined(enable_OLED)
+#if (defined(enable_LCD) || defined(enable_OLED))
   display_Clear();
   if (chrlo == chrhi)
     newchrsize = chrlo;
@@ -1490,7 +1498,7 @@ setchr:
 }
 
 void setRAMSize() {
-#if defined(enable_LCD) || defined(enable_OLED)
+#if (defined(enable_LCD) || defined(enable_OLED))
   display_Clear();
   if (ramlo == ramhi)
     newramsize = ramlo;
@@ -3607,9 +3615,13 @@ void writeFLASH() {
             }
           }
         }
-#ifdef OLED
+
+#if defined(enable_OLED)
         display.print(F("*"));
         display.display();
+#elif  defined(enable_LCD)
+        display.print(F("*"));
+        display.updateDisplay();
 #else
         Serial.print(F("*"));
         if ((i != 0) && ((i + 1) % 16 == 0))
