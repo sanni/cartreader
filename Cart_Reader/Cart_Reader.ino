@@ -672,7 +672,7 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
       // steps are 20, so 20 - 1 = 19.
       if (i == (19)) {
         //If end of progress bar, finish progress bar by drawing "]"
-        print_Msg(F("]"));
+        println_Msg(F("]"));
       }
       else {
         print_Msg(F("*"));

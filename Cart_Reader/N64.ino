@@ -3549,9 +3549,8 @@ redumpsamefolder:
   myFile.close();
 
   unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
-
+ 
   print_Msg(F("CRC: "));
-  display_Update();
   // convert checksum to string
   char crcStr[9];
   sprintf(crcStr, "%08lx", ~oldcrc32);
