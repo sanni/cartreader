@@ -15,7 +15,7 @@
 #define fastcrc
 #endif
 
-#if defined(HW2) || defined(HW3)
+#if (defined(HW2) || defined(HW3))
 #define enable_OLED
 #define enable_Button2
 #endif
@@ -59,15 +59,17 @@
 // DISABLE MODULES
 //******************************************
 // add // before #define to disable a module
-#define enable_FLASH
-#define enable_GBX
-#define enable_MD
-#define enable_N64
-#define enable_NES
-#define enable_NGP
-#define enable_NP
-#define enable_PCE
-#define enable_SMS
 #define enable_SNES
+#define enable_NP
 #define enable_SV
+
+#define enable_MD
+#define enable_SMS
+
+#define enable_N64
+#define enable_GBX
+#define enable_NES
+#define enable_FLASH
+#define enable_PCE
 #define enable_WS
+#define enable_NGP

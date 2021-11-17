@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             27.10.2021
-   Version:          7.1
+   Date:             17.11.2021
+   Version:          7.2
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -614,7 +614,7 @@ void aboutScreen() {
 
   while (1) {
 
-#if defined(enable_LCD) || defined(enable_OLED)
+#if (defined(enable_LCD) || defined(enable_OLED))
     // get input button
     int b = checkButton();
 
@@ -808,7 +808,7 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
   display_Update();
 
   if (forceReset) {
-#if defined(enable_OLED) || defined(enable_LCD)
+#if (defined(enable_OLED) || defined(enable_LCD))
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
@@ -1192,7 +1192,7 @@ void rgbLed(byte Color) {
 }
 
 void blinkLED() {
-#if defined(enable_OLED) || defined(enable_serial)
+#if (defined(enable_OLED) || defined(enable_serial))
   PORTB ^= (1 << 4);
 #elif defined(enable_LCD)
   PORTB ^= (1 << 7);
@@ -1202,7 +1202,7 @@ void blinkLED() {
 /******************************************
   LCD Menu Module
 *****************************************/
-#if defined(enable_LCD) && defined(enable_rotary)
+#if (defined(enable_LCD) && defined(enable_rotary))
 // Read encoder state
 int checkButton() {
   // Read rotary encoder
