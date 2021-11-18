@@ -609,22 +609,30 @@ void setup_SFM() {
 #ifdef clockgen_calibration
   int32_t clock_offset = readClockOffset();
   if (clock_offset > INT32_MIN) {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
 #else
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
 #endif
 
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
-  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
-  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
+  if (i2c_found) {
+    clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+    clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+    clockgen.set_freq(2147727200ULL, SI5351_CLK0);
 
-  // start outputting master clock
-  clockgen.output_enable(SI5351_CLK1, 0);
-  clockgen.output_enable(SI5351_CLK2, 0);
-  clockgen.output_enable(SI5351_CLK0, 1);
+    // start outputting master clock
+    clockgen.output_enable(SI5351_CLK1, 0);
+    clockgen.output_enable(SI5351_CLK2, 0);
+    clockgen.output_enable(SI5351_CLK0, 1);
+  }
+#ifdef clockgen_installed
+  else {
+    display_Clear();
+    print_Error(F("Clock Generator not found"), true);
+  }
+#endif
 
   // Wait until all is stable
   delay(500);

@@ -242,8 +242,8 @@ void gbMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGB, 3);
-  mainMenu = question_box(F("GB Cart Reader"), menuOptions, 3, 0);
+  convertPgm(menuOptionsGB, 4);
+  mainMenu = question_box(F("GB Cart Reader"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)

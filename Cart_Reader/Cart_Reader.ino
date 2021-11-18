@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             17.11.2021
+   Date:             18.11.2021
    Version:          7.2
 
    SD lib: https://github.com/greiman/SdFat
@@ -140,6 +140,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 // Adafruit Clock Generator
 #include <si5351.h>
 Si5351 clockgen;
+bool i2c_found;
 
 // RTC Library
 #ifdef RTC_installed
@@ -1804,7 +1805,7 @@ browserstart:
   }
 
   // Read in File as long as there are files
-  while (myFile.openNext(&myDir, O_READ)) {
+  while (myFile.openNext(&myDir, O_READ) && (currFile < 29)) {
 
     // Get name of file
     myFile.getName(nameStr, FILENAME_LENGTH);
@@ -1994,9 +1995,11 @@ void loop() {
   }
 #endif
 #ifdef enable_NP
+#ifdef enable_FLASH
   else if (mode == mode_SFM_Flash) {
     sfmFlashMenu();
   }
+#endif
   else if (mode == mode_SFM_Game) {
     sfmGameOptions();
   }
