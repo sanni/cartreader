@@ -431,14 +431,19 @@ void setup_N64_Cart() {
 #ifdef clockgen_calibration
   int32_t clock_offset = readClockOffset();
   if (clock_offset > INT32_MIN) {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
 #else
   // last number is the clock correction factor which is custom for each clock generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
 #endif
+
+  if (!i2c_found) {
+    display_Clear();
+    print_Error(F("Clock Generator not found"), true);
+  }
 
   // Set Eeprom clock to 2Mhz
   clockgen.set_freq(200000000ULL, SI5351_CLK1);
@@ -3549,7 +3554,7 @@ redumpsamefolder:
   myFile.close();
 
   unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
- 
+
   print_Msg(F("CRC: "));
   // convert checksum to string
   char crcStr[9];

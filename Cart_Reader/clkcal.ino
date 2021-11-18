@@ -31,11 +31,17 @@ void clkcal()   {
   delay(500);
 
   if (cal_factor > INT32_MIN) {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, cal_factor);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, cal_factor);
   } else {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
     cal_factor = 0;
   }
+
+  if (!i2c_found) {
+    display_Clear();
+    print_Error(F("Clock Generator not found"), true);
+  }
+
   //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
   clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
@@ -51,7 +57,7 @@ void clkcal()   {
   // Frequency Counter
   delay(500);
   FreqCount.begin(1000);
-  while (1) 
+  while (1)
   {
     if (old_cal != cal_factor) {
       display_Clear();
@@ -76,7 +82,7 @@ void clkcal()   {
       clockgen.update_status();
       while (clockgen.dev_status.SYS_INIT == 1) {
       }
-  
+
       if (FreqCount.available()) {
         float count = FreqCount.read();
         display_Clear();
@@ -94,19 +100,19 @@ void clkcal()   {
         println_Msg(F(""));
         println_Msg(F("Decrease     Increase"));
 #else
-  #ifdef enable_rotary
+#ifdef enable_rotary
         println_Msg(F("Rotate to adjust"));
-  #else
+#else
         println_Msg(F("Click/dbl to adjust"));
-  #endif
+#endif
 #endif
         display_Update();
       }
-  #ifdef enable_Button2
+#ifdef enable_Button2
       // get input button
       int a = checkButton1();
       int b = checkButton2();
-  
+
       // if the cart readers input button is pressed shortly
       if (a == 1) {
         old_cal = cal_factor;
@@ -116,7 +122,7 @@ void clkcal()   {
         old_cal = cal_factor;
         cal_factor += cal_offset;
       }
-  
+
       // if the cart readers input buttons is double clicked
       if (a == 2) {
         cal_offset /= 10ULL;
@@ -132,7 +138,7 @@ void clkcal()   {
           cal_offset = 1;
         }
       }
-  
+
       // if the cart readers input button is pressed long
       if (a == 3) {
         savetofile();
@@ -141,30 +147,30 @@ void clkcal()   {
         savetofile();
       }
 #else
-    //Handle inputs for either rotary encoder or single button interface.
-    int a = checkButton();
-    
-    if (a == 1) { //clockwise rotation or single click
-      old_cal = cal_factor;
-      cal_factor += cal_offset;
-    }
+      //Handle inputs for either rotary encoder or single button interface.
+      int a = checkButton();
 
-    if (a == 2) {  //counterclockwise rotation or double click
-      old_cal = cal_factor;
-      cal_factor -= cal_offset;
-    }
+      if (a == 1) { //clockwise rotation or single click
+        old_cal = cal_factor;
+        cal_factor += cal_offset;
+      }
 
-    if (a == 3) { //button short hold
-       cal_offset *= 10ULL;
+      if (a == 2) {  //counterclockwise rotation or double click
+        old_cal = cal_factor;
+        cal_factor -= cal_offset;
+      }
+
+      if (a == 3) { //button short hold
+        cal_offset *= 10ULL;
         if (cal_offset > 100000000ULL)
         {
           cal_offset = 1;
         }
-    }
+      }
 
-    if (a == 4) { //button long hold
-      savetofile();
-    }
+      if (a == 4) { //button long hold
+        savetofile();
+      }
 #endif
     }
   }
@@ -180,7 +186,7 @@ void print_right(int32_t number)
 
   if (abs_number == 0)
     abs_number = 1;
-  while(abs_number < 100000000ULL)
+  while (abs_number < 100000000ULL)
   {
     print_Msg(F(" "));
     abs_number *= 10ULL;

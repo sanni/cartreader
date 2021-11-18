@@ -139,14 +139,14 @@ void snsMenu() {
   // create menu with title and 6 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-  #ifdef clockgen_calibration
+#ifdef clockgen_calibration
   convertPgm(menuOptionsSNS, 6);
   snsCart = question_box(F("Select Cart Type"), menuOptions, 6, 0);
-  #else
+#else
   convertPgm(menuOptionsSNS, 5);
   snsCart = question_box(F("Select Cart Type"), menuOptions, 5, 0);
-  #endif
-  
+#endif
+
 
   // wait for user choice to come back from the question box menu
   switch (snsCart)
@@ -167,12 +167,14 @@ void snsMenu() {
       break;
 #endif
 
+#ifdef enable_SV
     case 2:
       display_Clear();
       display_Update();
       setup_SV();
       mode = mode_SV;
       break;
+#endif
 
 #ifdef enable_FLASH
     case 3:
@@ -186,7 +188,7 @@ void snsMenu() {
       break;
 
     case 5:
-#endif    
+#endif
       resetArduino();
       break;
   }
@@ -385,9 +387,11 @@ void stopSnesClocks_resetCic_resetCart() {
   PORTG |= (1 << 1);  // pull high = reset CIC
   DDRH |= (1 << 0);   // Set RST(PH0) pin to Output
   PORTH &= ~(1 << 0); // Switch RST(PH0) to LOW
-  clockgen.output_enable(SI5351_CLK1, 0); // CPU clock
-  clockgen.output_enable(SI5351_CLK2, 0); // CIC clock
-  clockgen.output_enable(SI5351_CLK0, 0); // master clock
+  if (i2c_found) {
+    clockgen.output_enable(SI5351_CLK1, 0); // CPU clock
+    clockgen.output_enable(SI5351_CLK2, 0); // CIC clock
+    clockgen.output_enable(SI5351_CLK0, 0); // master clock
+  }
 }
 
 /******************************************
@@ -457,28 +461,36 @@ void setup_Snes() {
 #ifdef clockgen_calibration
   int32_t clock_offset = readClockOffset();
   if (clock_offset > INT32_MIN) {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
   } else {
-    clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   }
 #else
   // last number is the clock correction factor which is custom for each clock generator
-  clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
 #endif
 
-  // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
-  clockgen.set_freq(100000000ULL, SI5351_CLK1); // CPU
-  clockgen.set_freq(100000000ULL, SI5351_CLK2); // CIC
-  clockgen.set_freq(400000000ULL, SI5351_CLK0); // EXT
+  if (i2c_found) {
+    // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
+    clockgen.set_freq(100000000ULL, SI5351_CLK1); // CPU
+    clockgen.set_freq(100000000ULL, SI5351_CLK2); // CIC
+    clockgen.set_freq(400000000ULL, SI5351_CLK0); // EXT
 
-  // Start outputting master clock, CIC clock
-  clockgen.output_enable(SI5351_CLK1, 0); // no CPU clock yet; seems to affect SA-1 success a lot
-  clockgen.output_enable(SI5351_CLK2, 1); // CIC clock (should go before master clock)
-  clockgen.output_enable(SI5351_CLK0, 1); // master clock
+    // Start outputting master clock, CIC clock
+    clockgen.output_enable(SI5351_CLK1, 0); // no CPU clock yet; seems to affect SA-1 success a lot
+    clockgen.output_enable(SI5351_CLK2, 1); // CIC clock (should go before master clock)
+    clockgen.output_enable(SI5351_CLK0, 1); // master clock
 
-  // Wait for clock generator
-  clockgen.update_status();
-  delay(500);
+    // Wait for clock generator
+    clockgen.update_status();
+    delay(500);
+  }
+#ifdef clockgen_installed
+  else {
+    display_Clear();
+    print_Error(F("Clock Generator not found"), true);
+  }
+#endif
 
   // Start CIC by outputting a low signal to cicrstPin(PG1)
   PORTG &= ~(1 << 1);
@@ -489,10 +501,12 @@ void setup_Snes() {
   // Print all the info
   getCartInfo_SNES();
 
-  //Set clocks to standard or else SA-1 sram writing will fail
-  clockgen.set_freq(2147727200ULL, SI5351_CLK0);
-  clockgen.set_freq(357954500ULL, SI5351_CLK1);
-  clockgen.set_freq(307200000ULL, SI5351_CLK2);
+  if (i2c_found) {
+    //Set clocks to standard or else SA-1 sram writing will fail
+    clockgen.set_freq(2147727200ULL, SI5351_CLK0);
+    clockgen.set_freq(357954500ULL, SI5351_CLK1);
+    clockgen.set_freq(307200000ULL, SI5351_CLK2);
+  }
 }
 
 /******************************************
@@ -1490,8 +1504,10 @@ void writeSRAM (boolean browseFile) {
     // SA1
     else if (romType == SA) {
       long lastByte = (long(sramSize) * 128);
-      // Enable CPU Clock
-      clockgen.output_enable(SI5351_CLK1, 1);
+      if (i2c_found) {
+        // Enable CPU Clock
+        clockgen.output_enable(SI5351_CLK1, 1);
+      }
 
       // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
       // Break BW-RAM (SRAM) into 0x2000 blocks
@@ -1532,8 +1548,10 @@ void writeSRAM (boolean browseFile) {
       writeBank_SNES(0, 0x2224, 0);
       writeBank_SNES(0, 0x2226, 0x80);
       writeBank_SNES(0, 0x6000, firstByte);
-      // Disable CPU clock
-      clockgen.output_enable(SI5351_CLK1, 0);
+      if (i2c_found) {
+        // Disable CPU clock
+        clockgen.output_enable(SI5351_CLK1, 0);
+      }
     }
 
     // Set pins to input
@@ -1986,8 +2004,10 @@ boolean eraseSRAM (byte b) {
   // SA1
   else if (romType == SA) {
     long lastByte = (long(sramSize) * 128);
-    // Enable CPU Clock
-    clockgen.output_enable(SI5351_CLK1, 1);
+    if (i2c_found) {
+      // Enable CPU Clock
+      clockgen.output_enable(SI5351_CLK1, 1);
+    }
 
     // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
     // Break BW-RAM (SRAM) into 0x2000 blocks
@@ -2024,8 +2044,11 @@ boolean eraseSRAM (byte b) {
     writeBank_SNES(0, 0x2224, 0);
     writeBank_SNES(0, 0x2226, 0x80);
     writeBank_SNES(0, 0x6000, b);
-    // Disable CPU clock
-    clockgen.output_enable(SI5351_CLK1, 0);
+
+    if (i2c_found) {
+      // Disable CPU clock
+      clockgen.output_enable(SI5351_CLK1, 0);
+    }
   }
 
   dataIn();
