@@ -5,8 +5,8 @@
   (paper "A4")
 
   (title_block
-    (title "OSCR MEGADRIVE ADAPTER")
-    (date "2021-11-15")
+    (title "OSCR MASTER SYSTEM ADAPTER")
+    (date "2021-11-22")
     (rev "V1")
   )
 
@@ -1120,7 +1120,6 @@
       )
     )
   )
-
 
   (junction (at 38.1 40.64) (diameter 0) (color 0 0 0 0))
   (junction (at 40.64 41.91) (diameter 0) (color 0 0 0 0))
