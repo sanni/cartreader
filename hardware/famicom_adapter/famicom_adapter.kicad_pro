@@ -33,9 +33,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 1.0,
-          "height": 1.7,
-          "width": 1.7
+          "drill": 0.762,
+          "height": 1.524,
+          "width": 1.524
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
@@ -346,7 +346,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "nes_adapter.kicad_pro",
+    "filename": "famicom_adapter.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -363,7 +363,7 @@
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.32,
+        "track_width": 0.4,
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6.0
@@ -380,8 +380,8 @@
         "name": "Power",
         "nets": [
           "+3V3",
-          "+5V",
-          "GND"
+          "GND",
+          "VCC"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
@@ -401,8 +401,8 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "specctra_dsn": "nes_adapter.dsn",
-      "step": "nes_adapter.step",
+      "specctra_dsn": "famicom_adapter.dsn",
+      "step": "famicom_adapter.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
