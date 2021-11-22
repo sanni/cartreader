@@ -7,8 +7,8 @@
   (paper "A4")
   (title_block
     (title "OSCR MEGADRIVE ADAPTER")
-    (date "2021-11-15")
-    (rev "V1")
+    (date "2021-11-22")
+    (rev "V2")
   )
 
   (layers
