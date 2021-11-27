@@ -504,6 +504,13 @@ idtheflash:
       sectorSize = 65536;
       bufferSize = 32;
     }
+    // S29GL064M
+    else if (readByte_Flash(28) == 0x10) {
+      println_Msg(F("S29GL064M detected"));
+      flashSize = 8388608;
+      sectorSize = 65536;
+      bufferSize = 32;
+    }
     // Unknown S29GL type
     else {
       println_Msg(F("Unknown S29GL Type"));
