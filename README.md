@@ -9,8 +9,11 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
-- Portable if fitted with battery add-on or suitable power bank  
 - Easy to modify open-source code, write your own extensions and share them with others      
+- Portable thanks to a battery  
+- Modular design using mostly off-the-shelf components    
+
+![image](https://dl.dropboxusercontent.com/s/70zaxs9lyyuxvqe/IMG_0799.jpg?dl=1)   
 
 #### Supported Systems:    
 - Reads NES, Famicom and Family Basic cartridges including save    
@@ -34,7 +37,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads Sega Master System roms and saves (using Retrode or Raphnet adapter)       
 - Reads Sega Game Gear roms and saves(using Retrode adapter)    
 - Reads PC engine/TG16 cartridges (using Retrode TG16 adapter)   
-- Reads WonderSwan cartridges (using V3 adapter)   
-- Reads NeoGeo Pocket cartridges (using V3 adapter)   
-- Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C    
-- Programs M27C322 eproms    
+- Reads WonderSwan cartridges (using V3 adapters)   
+- Reads NeoGeo Pocket cartridges (using V3 adapters)   
+- Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using V3 adapters)      
+- Programs M27C322 eproms (using V3 adapters)      
