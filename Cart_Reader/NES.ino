@@ -1150,8 +1150,8 @@ chooseMapper:
       display.setCursor(63, 20);
       println_Msg(units);
       println_Msg("");
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+      println_Msg(F("Press left to change"));
+      println_Msg(F("Press right to select"));
 
       if (digit == 0) {
         display.drawLine(20, 30, 30, 30, WHITE);
@@ -1392,8 +1392,13 @@ void setPRGSize() {
     print_Msg(F("PRG Size: "));
     println_Msg(PRG[i]);
     println_Msg(F(""));
+#if defined(enable_OLED)
+    println_Msg(F("Press left to change"));
+    println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
     println_Msg(F("Rotate to change"));
     println_Msg(F("Press to select"));
+#endif
     display_Update();
 
     while (1) {
