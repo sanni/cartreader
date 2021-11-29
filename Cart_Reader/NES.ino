@@ -1126,7 +1126,8 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
    Config Functions
  *****************************************/
 void setMapper() {
-#if (defined(enable_LCD) || defined(enable_OLED))
+  // OLED
+#if defined(enable_OLED)
 chooseMapper:
   // Read stored mapper
   EEPROM_readAnything(7, newmapper);
@@ -1140,19 +1141,18 @@ chooseMapper:
   // Cycle through al 3 digits
   for (byte digit = 0; digit < 3; digit++) {
     while (1) {
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.println("Select Mapper:");
+      display_Clear();
+      println_Msg("Select Mapper:");
       display.setCursor(23, 20);
-      display.println(hundreds);
+      println_Msg(hundreds);
       display.setCursor(43, 20);
-      display.println(tens);
+      println_Msg(tens);
       display.setCursor(63, 20);
-      display.println(units);
-      display.println("");
-      display.println(F("Press to Change"));
-      display.println(F("Hold to Select"));
-#ifdef enable_OLED
+      println_Msg(units);
+      println_Msg("");
+      println_Msg(F("Press to Change"));
+      println_Msg(F("Hold to Select"));
+
       if (digit == 0) {
         display.drawLine(20, 30, 30, 30, WHITE);
         display.drawLine(40, 30, 50, 30, BLACK);
@@ -1168,30 +1168,7 @@ chooseMapper:
         display.drawLine(40, 30, 50, 30, BLACK);
         display.drawLine(60, 30, 70, 30, WHITE);
       }
-#else
-      if (digit == 0) {
-        display.setDrawColor(1);
-        display.drawLine(20, 30, 30, 30);
-        display.setDrawColor(0);
-        display.drawLine(40, 30, 50, 30);
-        display.drawLine(60, 30, 70, 30);
-      }
-      else if (digit == 1) {
-        display.setDrawColor(0);
-        display.drawLine(20, 30, 30, 30);
-        display.setDrawColor(1);
-        display.drawLine(40, 30, 50, 30);
-        display.setDrawColor(0);
-        display.drawLine(60, 30, 70, 30);
-      }
-      else if (digit == 2) {
-        display.setDrawColor(0);
-        display.drawLine(20, 30, 30, 30);
-        display.drawLine(40, 30, 50, 30);
-        display.setDrawColor(1);
-        display.drawLine(60, 30, 70, 30);
-      }
-#endif
+
       /* Check Button
          1 click
          2 doubleClick
@@ -1258,15 +1235,11 @@ chooseMapper:
       else if (b == 3) {
         break;
       }
-#ifdef enable_OLED
+
       display.display();
-#else
-      display.updateDisplay();
-#endif
     }
   }
-  display.clearDisplay();
-  display.setCursor(0, 0);
+  display_Clear();
 
   newmapper = hundreds * 100 + tens * 10 + units;
 
@@ -1281,16 +1254,74 @@ chooseMapper:
   if (!validMapper) {
     errorLvl = 1;
     display.println("Mapper not supported");
-#ifdef enable_OLED
     display.display();
-#else
-    display.updateDisplay();
-#endif
     wait();
     goto chooseMapper;
   }
-#endif
-#ifdef enable_serial
+
+  // LCD
+#elif defined(enable_LCD)
+  int i = 0;
+
+  display_Clear();
+  mapselect = pgm_read_byte(mapsize + i * 7);
+  print_Msg(F("Mapper: "));
+  println_Msg(mapselect);
+  println_Msg(F(""));
+  println_Msg(F("Rotate to change"));
+  println_Msg(F("Press to select"));
+  display_Update();
+
+  while (1) {
+    int b = checkButton();
+
+    if (b == 2) { // Previous Mapper
+      if (i == 0)
+        i = mapcount - 1;
+      else
+        i--;
+
+      display_Clear();
+      mapselect = pgm_read_byte(mapsize + i * 7);
+      print_Msg(F("Mapper: "));
+      println_Msg(mapselect);
+      println_Msg(F(""));
+      println_Msg(F("Rotate to change"));
+      println_Msg(F("Press to select"));
+      display_Update();
+    }
+
+    else if (b == 1) { // Next Mapper
+      if (i == (mapcount - 1))
+        i = 0;
+      else
+        i++;
+
+      display_Clear();
+      mapselect = pgm_read_byte(mapsize + i * 7);
+      print_Msg(F("Mapper: "));
+      println_Msg(mapselect);
+      println_Msg(F(""));
+      println_Msg(F("Rotate to change"));
+      println_Msg(F("Press to select"));
+      display_Update();
+    }
+
+    else if (b == 3) { // Long Press - Execute
+      newmapper = mapselect;
+      break;
+    }
+  }
+
+  display.setCursor(0, 56 + 8);
+  print_Msg(F("MAPPER "));
+  print_Msg(newmapper);
+  println_Msg(F(" SELECTED"));
+  display_Update();
+  delay(1000);
+
+  // Serial Monitor
+#elif defined(enable_serial)
 setmapper:
   String newmap;
   mapfound = false;
@@ -1356,26 +1387,55 @@ void setPRGSize() {
   else {
     b = 0;
     int i = prglo;
+
+    display_Clear();
+    print_Msg(F("PRG Size: "));
+    println_Msg(PRG[i]);
+    println_Msg(F(""));
+    println_Msg(F("Rotate to change"));
+    println_Msg(F("Press to select"));
+    display_Update();
+
     while (1) {
-      display_Clear();
-      print_Msg(F("PRG Size: "));
-      println_Msg(PRG[i]);
-      println_Msg(F(""));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
       b = checkButton();
+
       if (b == doubleclick) { // Previous
         if (i == prglo)
           i = prghi;
         else
           i--;
+
+        display_Clear();
+        print_Msg(F("PRG Size: "));
+        println_Msg(PRG[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        println_Msg(F("Press left to change"));
+        println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+        println_Msg(F("Rotate to change"));
+        println_Msg(F("Press to select"));
+#endif
+        display_Update();
       }
       if (b == press) { // Next
         if (i == prghi)
           i = prglo;
         else
           i++;
+
+        display_Clear();
+        print_Msg(F("PRG Size: "));
+        println_Msg(PRG[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        println_Msg(F("Press left to change"));
+        println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+        println_Msg(F("Rotate to change"));
+        println_Msg(F("Press to select"));
+#endif
+        display_Update();
       }
       if (b == hold) { // Long Press - Execute
         newprgsize = i;
@@ -1390,8 +1450,8 @@ void setPRGSize() {
   println_Msg(F("K"));
   display_Update();
   delay(1000);
-#endif
-#ifdef enable_serial
+
+#elif defined(enable_serial)
   if (prglo == prghi)
     newprgsize = prglo;
   else {
@@ -1431,27 +1491,63 @@ void setCHRSize() {
   else {
     b = 0;
     int i = chrlo;
+
+    display_Clear();
+    print_Msg(F("CHR Size: "));
+    println_Msg(CHR[i]);
+    println_Msg(F(""));
+#if defined(enable_OLED)
+    println_Msg(F("Press left to change"));
+    println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+    println_Msg(F("Rotate to change"));
+    println_Msg(F("Press to select"));
+#endif
+    display_Update();
+
     while (1) {
-      display_Clear();
-      print_Msg(F("CHR Size: "));
-      println_Msg(CHR[i]);
-      println_Msg(F(""));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
       b = checkButton();
+
       if (b == doubleclick) { // Previous
         if (i == chrlo)
           i = chrhi;
         else
           i--;
+
+        display_Clear();
+        print_Msg(F("CHR Size: "));
+        println_Msg(CHR[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        println_Msg(F("Press left to change"));
+        println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+        println_Msg(F("Rotate to change"));
+        println_Msg(F("Press to select"));
+#endif
+        display_Update();
       }
+
       if (b == press) { // Next
         if (i == chrhi)
           i = chrlo;
         else
           i++;
+
+        display_Clear();
+        print_Msg(F("CHR Size: "));
+        println_Msg(CHR[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        println_Msg(F("Press left to change"));
+        println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+        println_Msg(F("Rotate to change"));
+        println_Msg(F("Press to select"));
+#endif
+        display_Update();
       }
+
       if (b == hold) { // Long Press - Execute
         newchrsize = i;
         break;
@@ -1464,8 +1560,8 @@ void setCHRSize() {
   println_Msg(F("K"));
   display_Update();
   delay(1000);
-#endif
-#ifdef enable_serial
+
+#elif defined(enable_serial)
   if (chrlo == chrhi)
     newchrsize = chrlo;
   else {
@@ -1505,42 +1601,108 @@ void setRAMSize() {
   else {
     b = 0;
     int i = 0;
-    while (1) {
-      display_Clear();
-      print_Msg(F("RAM Size: "));
-      if (mapper == 0)
-        println_Msg(RAM[i] / 4);
-      else if (mapper == 16)
-        println_Msg(RAM[i] * 32);
-      else if (mapper == 19) {
-        if (i == 2)
-          println_Msg(F("128"));
-        else
-          println_Msg(RAM[i]);
-      }
-      else if ((mapper == 159) || (mapper == 80))
-        println_Msg(RAM[i] * 16);
-      else if (mapper == 82)
-        println_Msg(i * 5);
+
+    display_Clear();
+    print_Msg(F("RAM Size: "));
+    if (mapper == 0)
+      println_Msg(RAM[i] / 4);
+    else if (mapper == 16)
+      println_Msg(RAM[i] * 32);
+    else if (mapper == 19) {
+      if (i == 2)
+        println_Msg(F("128"));
       else
         println_Msg(RAM[i]);
-      println_Msg(F(""));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
+    }
+    else if ((mapper == 159) || (mapper == 80))
+      println_Msg(RAM[i] * 16);
+    else if (mapper == 82)
+      println_Msg(i * 5);
+    else
+      println_Msg(RAM[i]);
+    println_Msg(F(""));
+#if defined(enable_OLED)
+    println_Msg(F("Press left to change"));
+    println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+    println_Msg(F("Rotate to change"));
+    println_Msg(F("Press to select"));
+#endif
+    display_Update();
+
+    while (1) {
       b = checkButton();
+
       if (b == doubleclick) { // Previous Mapper
         if (i == 0)
           i = ramhi;
         else
           i--;
+
+        display_Clear();
+        print_Msg(F("RAM Size: "));
+        if (mapper == 0)
+          println_Msg(RAM[i] / 4);
+        else if (mapper == 16)
+          println_Msg(RAM[i] * 32);
+        else if (mapper == 19) {
+          if (i == 2)
+            println_Msg(F("128"));
+          else
+            println_Msg(RAM[i]);
+        }
+        else if ((mapper == 159) || (mapper == 80))
+          println_Msg(RAM[i] * 16);
+        else if (mapper == 82)
+          println_Msg(i * 5);
+        else
+          println_Msg(RAM[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        println_Msg(F("Press left to change"));
+        println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+        println_Msg(F("Rotate to change"));
+        println_Msg(F("Press to select"));
+#endif
+        display_Update();
       }
+
       if (b == press) { // Next
         if (i == ramhi)
           i = 0;
         else
           i++;
+
+        display_Clear();
+        print_Msg(F("RAM Size: "));
+        if (mapper == 0)
+          println_Msg(RAM[i] / 4);
+        else if (mapper == 16)
+          println_Msg(RAM[i] * 32);
+        else if (mapper == 19) {
+          if (i == 2)
+            println_Msg(F("128"));
+          else
+            println_Msg(RAM[i]);
+        }
+        else if ((mapper == 159) || (mapper == 80))
+          println_Msg(RAM[i] * 16);
+        else if (mapper == 82)
+          println_Msg(i * 5);
+        else
+          println_Msg(RAM[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        println_Msg(F("Press left to change"));
+        println_Msg(F("Press right to select"));
+#elif defined(enable_LCD)
+        println_Msg(F("Rotate to change"));
+        println_Msg(F("Press to select"));
+#endif
+        display_Update();
       }
+
       if (b == hold) { // Long Press - Execute
         newramsize = i;
         break;
@@ -1585,8 +1747,8 @@ void setRAMSize() {
   }
   display_Update();
   delay(1000);
-#endif
-#ifdef enable_serial
+
+#elif defined(enable_serial)
   if (ramlo == ramhi)
     newramsize = ramlo;
   else {

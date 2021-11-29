@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             18.11.2021
-   Version:          7.2
+   Date:             29.11.2021
+   Version:          7.3
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.2";
+char ver[5] = "7.3";
 
 /******************************************
    Libraries
@@ -643,8 +643,6 @@ void aboutScreen() {
     wait_serial();
     resetArduino();
 #endif
-    setColor_RGB(random(0, 255), random(0, 255), random(0, 255));
-    delay(random(50, 100));
   }
 }
 
@@ -1196,7 +1194,7 @@ void blinkLED() {
 #if (defined(enable_OLED) || defined(enable_serial))
   PORTB ^= (1 << 4);
 #elif defined(enable_LCD)
-  PORTB ^= (1 << 7);
+  //PORTB ^= (1 << 7);
 #endif
 }
 
@@ -1226,6 +1224,9 @@ int checkButton() {
     else {
       return 0;
     }
+  }
+  else if (reading == buttonState) {
+    return 0;
   }
   // Check if button has changed
   else {
@@ -1777,7 +1778,7 @@ unsigned char questionBox_OLED(const __FlashStringHelper * question, char answer
   Filebrowser Module
 *****************************************/
 void fileBrowser(const __FlashStringHelper * browserTitle) {
-  char fileNames[30][FILENAME_LENGTH];
+  char fileNames[7][FILENAME_LENGTH];
   int currFile;
   filebrowse = 1;
 
@@ -1804,25 +1805,17 @@ browserstart:
     print_Error(F("SD Error"), true);
   }
 
-  // Read in File as long as there are files
-  while (myFile.openNext(&myDir, O_READ) && (currFile < 29)) {
-
-    // Get name of file
-    myFile.getName(nameStr, FILENAME_LENGTH);
-
+  // Count files in directory
+  while (myFile.openNext(&myDir, O_READ)) {
     // Ignore if hidden
     if (myFile.isHidden()) {
     }
     // Indicate a directory.
     else if (myFile.isDir()) {
-      // Copy full dirname into fileNames
-      snprintf(fileNames[currFile], FILENAME_LENGTH, "%s%s", "/", nameStr);
       currFile++;
     }
     // It's just a file
     else if (myFile.isFile()) {
-      // Copy full filename into fileNames
-      snprintf(fileNames[currFile], FILENAME_LENGTH, "%s", nameStr);
       currFile++;
     }
     myFile.close();
@@ -1872,9 +1865,45 @@ page:
     wait();
   }
 
+  // Open filepath directory
+  if (!myDir.open(filePath)) {
+    display_Clear();
+    print_Error(F("SD Error"), true);
+  }
+
+  int countFile = 0;
+  byte i = 0;
+  // Cycle through all files
+  while ((myFile.openNext(&myDir, O_READ)) && (i < 8)) {
+    // Get name of file
+    myFile.getName(nameStr, FILENAME_LENGTH);
+
+    // Ignore if hidden
+    if (myFile.isHidden()) {
+    }
+    // Directory
+    else if (myFile.isDir()) {
+      if (countFile == ((currPage - 1) * 7 + i)) {
+        snprintf(fileNames[i], FILENAME_LENGTH, "%s%s", "/", nameStr);
+        i++;
+      }
+      countFile++;
+    }
+    // File
+    else if (myFile.isFile()) {
+      if (countFile == ((currPage - 1) * 7 + i)) {
+        snprintf(fileNames[i], FILENAME_LENGTH, "%s", nameStr);
+        i++;
+      }
+      countFile++;
+    }
+    myFile.close();
+  }
+  myDir.close();
+
   for (byte i = 0; i < 8; i++ ) {
     // Copy short string into fileOptions
-    snprintf( answers[i], FILEOPTS_LENGTH, "%s", fileNames[ ((currPage - 1) * 7 + i)] );
+    snprintf( answers[i], FILEOPTS_LENGTH, "%s", fileNames[i] );
   }
 
   // Create menu with title and 1-7 options to choose from
@@ -1901,31 +1930,31 @@ page:
   switch (answer)
   {
     case 0:
-      strncpy(fileName, fileNames[0 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[0], FILENAME_LENGTH - 1);
       break;
 
     case 1:
-      strncpy(fileName, fileNames[1 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[1], FILENAME_LENGTH - 1);
       break;
 
     case 2:
-      strncpy(fileName, fileNames[2 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[2], FILENAME_LENGTH - 1);
       break;
 
     case 3:
-      strncpy(fileName, fileNames[3 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[3], FILENAME_LENGTH - 1);
       break;
 
     case 4:
-      strncpy(fileName, fileNames[4 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[4], FILENAME_LENGTH - 1);
       break;
 
     case 5:
-      strncpy(fileName, fileNames[5 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[5], FILENAME_LENGTH - 1);
       break;
 
     case 6:
-      strncpy(fileName, fileNames[6 + ((currPage - 1) * 7)], FILENAME_LENGTH - 1);
+      strncpy(fileName, fileNames[6], FILENAME_LENGTH - 1);
       break;
 
       //case 7:
