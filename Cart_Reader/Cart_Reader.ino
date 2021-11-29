@@ -19,7 +19,7 @@
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
-   Compiled with Arduino 1.8.13
+   Compiled with Arduino 1.8.16
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
