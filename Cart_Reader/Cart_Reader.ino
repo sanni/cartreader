@@ -711,6 +711,11 @@ void setup() {
   pixels.setPixelColor(1, pixels.Color(0, 0, 100));
   pixels.setPixelColor(2, pixels.Color(0, 0, 100));
   pixels.show();
+
+  // Set TX0 LED Pin(PE1) to Output for status indication during flashing
+#if !defined(enable_serial)
+  DDRE |= (1 << 1);
+#endif
 #endif
 
 #ifdef enable_OLED
@@ -1194,7 +1199,7 @@ void blinkLED() {
 #if (defined(enable_OLED) || defined(enable_serial))
   PORTB ^= (1 << 4);
 #elif defined(enable_LCD)
-  //PORTB ^= (1 << 7);
+  PORTE ^= (1 << 1);
 #endif
 }
 
