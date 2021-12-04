@@ -2,8 +2,9 @@
 
 The Open Source Cart Reader consists out of a main PCB that connects an Arduino Mega to different modules and a cartridge slot adapter PCB.     
 
-Tested adapters so far:    
-- GB(C)/GBA    
+Tested systems so far:    
+- GB(C)    
+- GBA    
 - N64   
 - SNES   
 
