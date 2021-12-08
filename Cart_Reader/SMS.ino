@@ -359,6 +359,20 @@ void getCartInfo_SMS() {
   }
   writeByte_SMS(0xFFFE, 1);
 
+  // Fix for "Fantasy Zone (J) (V1.0)" that has not the normal header, but "COPYRIGHT SEGAPRG. BY T.ASAI".
+  char headerFZ[29];
+  if (strcmp(romName, "G. BY T.A") != 0) {
+    for (byte i = 0; i < 28; i++) {
+      headerFZ[i] = char(readByte_SMS(0x7fe0 + i));
+    }
+    headerFZ[28] = '\0';
+    
+    if (strcmp(headerFZ, "COPYRIGHT SEGAPRG. BY T.ASAI") == 0) {
+      strcpy(romName, "TMR SEGA");
+      cartSize =  128 * 1024UL;
+    }
+  }
+  
   display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(F(" "));
