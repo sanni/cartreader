@@ -4728,14 +4728,22 @@ void flashGameshark_N64() {
   // Check flashrom ID's
   idGameshark_N64();
 
-  // Check for SST 29LE010
-  if (strcmp(flashid, "0808") == 0) {
+  // Check for SST 29LE010 (0808)/SST 28LF040 (0404)/AMTEL AT29LV010A (3535)/SST 29EE010 (0707)
+  // !!!!          This has been confirmed to allow reading of v1.07, v1.09, v2.0-2.21, v3.2-3.3           !!!!
+  // !!!!   29LE010/29EE010/AT29LV010A are very similar and can possibly be written to with this process.  !!!!
+  // !!!!                                                                                                  !!!!
+  // !!!!                                PROCEED AT YOUR OWN RISK                                          !!!!
+  // !!!!                                                                                                  !!!!
+  // !!!! SST 29EE010 may have a 5V requirement for writing however dumping works at 3V. As such it is not !!!!
+  // !!!!        advised to write to a cart with this chip until further testing can be completed.         !!!!
+
+  if (strcmp(flashid, "0808") == 0 || strcmp(flashid, "0404") == 0 || strcmp(flashid, "3535") == 0 || strcmp(flashid, "0707") == 0) {
     backupGameshark_N64();
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Gameshark cartridge"));
     println_Msg(F("Attention: Use 3.3V!"));
-    println_Msg("");
+    println_Msg(F("Power OFF if Unsure!"));
     println_Msg(F("Press Button"));
     display_Update();
     wait();
@@ -4810,7 +4818,7 @@ void flashGameshark_N64() {
 }
 
 
-//Test for SST 29LE010
+//Test for SST 29LE010  or SST 28LF040 (0404) or AMTEL AT29LV010A (3535) or SST 29EE010 (0707)
 void idGameshark_N64() {
   //Send flashrom ID command
   setAddress_N64(romBase + 0xAAAA);
