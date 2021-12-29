@@ -316,10 +316,10 @@ void setup_GB() {
   //A8-A15
   DDRK = 0xFF;
 
-  // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) RD(PH6)
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
   // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
@@ -479,8 +479,8 @@ byte readByteSRAM_GB(word myAddress) {
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Pull CS(PH3) LOW
-  PORTH &= ~(1 << 3);
+  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) LOW
+  PORTH &= ~((1 << 3) | (1 << 1));
   // Pull RD(PH6) LOW
   PORTH &= ~(1 << 6);
 
@@ -489,8 +489,8 @@ byte readByteSRAM_GB(word myAddress) {
   // Read
   byte tempByte = PINC;
 
-  // Pull CS(PH3) HIGH
-  PORTH |= (1 << 3);
+  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
+  PORTH |= (1 << 3) | (1 << 1);
   // Pull RD(PH6) HIGH
   PORTH |=  (1 << 6);
 
@@ -506,8 +506,8 @@ void writeByteSRAM_GB(int myAddress, uint8_t myData) {
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Pull CS(PH3) LOW
-  PORTH &= ~(1 << 3);
+  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) LOW
+  PORTH &= ~((1 << 3) | (1 << 1));
   // Pull WR(PH5) low
   PORTH &= ~(1 << 5);
 
@@ -516,8 +516,8 @@ void writeByteSRAM_GB(int myAddress, uint8_t myData) {
 
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
-  // Pull CS(PH3) HIGH
-  PORTH |= (1 << 3);
+  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
+  PORTH |= (1 << 3) | (1 << 1);
 
   // Leave WE high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
