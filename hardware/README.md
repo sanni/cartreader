@@ -16,7 +16,7 @@ To order a PCB you need to download the zipped gerber files and upload them to a
 - [Needed Parts](https://github.com/sanni/cartreader/wiki/Parts-needed)   
 - [Build Guide](https://github.com/sanni/cartreader/wiki/Build-Guide)    
 
-You can view the schematic and the PCB files using a free and open source programm called [KiCad](https://downloads.kicad.org/kicad/windows/explore/nightlies).   
+You can view the schematic and the PCB files using a free and open source programm called [KiCad 6.0](https://www.kicad.org/).   
 To design your own adapters you can follow this [tutorial](https://github.com/sanni/cartreader/wiki/Designing-your-own-Adapters)   
 
 
