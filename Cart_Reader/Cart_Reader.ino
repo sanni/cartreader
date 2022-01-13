@@ -724,7 +724,9 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
   // Clear the screen buffer.
-  display_Clear();
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.display();
 #endif
 
 #ifdef enable_serial
