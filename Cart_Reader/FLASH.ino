@@ -580,7 +580,21 @@ idtheflash:
     print_Msg(F("ID Type 2: "));
     println_Msg(flashid);
     println_Msg(" ");
-    print_Error(F("UNKNOWN FLASHROM"), true);
+    println_Msg(F("UNKNOWN FLASHROM"));
+    println_Msg(" ");
+    println_Msg(F("Press Button..."));
+    display_Update();
+    wait();
+
+    // print first 40 bytes of flash
+    display_Clear();
+    println_Msg(F("First 40 bytes:"));
+    println_Msg(F(""));
+    printFlash(40);
+    println_Msg(F(""));
+    display_Update();
+    resetFlash8();
+    print_Error(F("Press Button to reset"), true);
   }
   println_Msg(" ");
   println_Msg(F("Press Button..."));
