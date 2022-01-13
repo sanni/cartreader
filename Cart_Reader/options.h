@@ -1,18 +1,18 @@
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
 //******************************************
-#if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(SERIAL_MONITOR))
-# error !!! PLEASE CHOOSE HARDWARE VERSION IN OPTIONS.H !!!
-#endif
-
 // Remove // in front of the line with your hardware version
 //#define HW4
 //#define HW3
 //#define HW2
 //#define HW1
 //#define SERIAL_MONITOR
+
+#if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(SERIAL_MONITOR))
+# error !!! PLEASE CHOOSE HARDWARE VERSION IN OPTIONS.H !!!
+#endif
 //******************************************
-// 
+//
 //******************************************
 
 //******************************************
