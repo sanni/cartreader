@@ -189,6 +189,7 @@ void flashromMenu8() {
     case 4:
       time = 0;
       display_Clear();
+      resetFlash8();
       println_Msg(F("ID Flashrom"));
       switch (flashromType) {
         case 1: idFlash29F032(); break;
@@ -399,8 +400,8 @@ void epromMenu() {
    Flash IDs
  *****************************************/
 void id_Flash8() {
-  // ID flash
-  idFlash29F032();
+  // Test if 28FXXX series flash (type 2 flashrom)
+  idFlash28FXXX();
 
   // Print start screen
 idtheflash:
@@ -557,16 +558,19 @@ idtheflash:
     flashromType = 3;
   }
   else if (secondID == 1) {
-    // Backup first ID read-out
-    strncpy(vendorID, flashid, 5);
-    // Read ID a second time using a different command
-    idFlash29F1610();
+    // Read ID a second time using a different command (type 1 flashrom)
+    resetFlash8();
+    idFlash29F032();
     secondID = 2;
     goto idtheflash;
   }
   else if (secondID == 2) {
-    // test if 28FXXX series flash
-    idFlash28FXXX();
+    // Backup first ID read-out
+    strncpy(vendorID, flashid, 5);
+
+    // Read ID a third time using a different command (type 2 flashrom)
+    resetFlash8();
+    idFlash29F1610();
     secondID = 0;
     goto idtheflash;
   }

@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             13.01.2022
-   Version:          7.3
+   Date:             19.01.2022
+   Version:          7.4
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.3";
+char ver[5] = "7.4";
 
 /******************************************
    Libraries
@@ -604,7 +604,7 @@ void aboutScreen() {
   display_Clear();
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2021 Version "));
+  print_Msg(F("2022 Version "));
   println_Msg(ver);
   println_Msg(F(""));
   println_Msg(F(""));
