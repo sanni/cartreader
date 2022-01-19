@@ -400,7 +400,7 @@ void epromMenu() {
    Flash IDs
  *****************************************/
 void id_Flash8() {
-  // Test if 28FXXX series flash (type 2 flashrom)
+  // Test if 28FXXX series flash (type 3 flashrom)
   idFlash28FXXX();
 
   // Print start screen
