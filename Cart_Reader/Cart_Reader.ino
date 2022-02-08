@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             19.01.2022
-   Version:          7.4
+   Date:             08.02.2022
+   Version:          7.5
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.4";
+char ver[5] = "7.5";
 
 /******************************************
    Libraries
@@ -734,8 +734,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("");
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2021 sanni"));
-  Serial.println("");
+  Serial.println(F("2022 sanni"));
   // LED Error
   setColor_RGB(0, 0, 255);
 #endif
@@ -1088,6 +1087,7 @@ void wait_serial() {
 byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
   //Serial.println(question);
+  Serial.println("");
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
     Serial.print(F(")"));
@@ -1097,6 +1097,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
   Serial.println("");
   Serial.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
   Serial.println(F("and enter a selection by typing a number(0-6): _ "));
+  Serial.println("");
   while (Serial.available() == 0) {
   }
 
@@ -1198,10 +1199,13 @@ void rgbLed(byte Color) {
 }
 
 void blinkLED() {
-#if (defined(enable_OLED) || defined(enable_serial))
+#if defined(enable_OLED)
   PORTB ^= (1 << 4);
 #elif defined(enable_LCD)
   PORTE ^= (1 << 1);
+#elif defined(enable_serial)
+  PORTB ^= (1 << 4);
+  PORTB ^= (1 << 7);
 #endif
 }
 
