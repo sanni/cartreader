@@ -2403,10 +2403,18 @@ void idCart() {
   // Get name
   byte myLength = 0;
   for (unsigned int i = 0; i < 20; i++) {
-    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 15) {
+    if (((char(sdBuffer[0x20 + i]) >= 48 && char(sdBuffer[0x20 + i]) <= 57) || (char(sdBuffer[0x20 + i]) >= 65 && char(sdBuffer[0x20 + i]) <= 90) || (char(sdBuffer[0x20 + i]) >= 97 && char(sdBuffer[0x20 + i]) <= 122)) && myLength < 15) {
       romName[myLength] = char(sdBuffer[0x20 + i]);
       myLength++;
     }
+  }
+
+  // If name consists out of all japanese characters use cart id
+  if (myLength == 0) {
+    romName[0] = sdBuffer[0x3B];
+    romName[1] = sdBuffer[0x3C];
+    romName[2] = sdBuffer[0x3D];
+    romName[3] = sdBuffer[0x3E];
   }
 
   // Get CRC1
