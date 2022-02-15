@@ -2,7 +2,7 @@
 // !!! CHOOSE HARDWARE VERSION !!!
 //******************************************
 // Remove // in front of the line with your hardware version
-//#define HW4
+#define HW4
 //#define HW3
 //#define HW2
 //#define HW1

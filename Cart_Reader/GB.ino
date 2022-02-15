@@ -472,7 +472,7 @@ byte readByte_GB(word myAddress) {
   return tempByte;
 }
 
-void writeByte_GB(int myAddress, uint8_t myData) {
+void writeByte_GB(int myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTC = myData;
@@ -520,7 +520,7 @@ byte readByteSRAM_GB(word myAddress) {
   return tempByte;
 }
 
-void writeByteSRAM_GB(int myAddress, uint8_t myData) {
+void writeByteSRAM_GB(int myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTC = myData;
@@ -809,14 +809,14 @@ void readSRAM_GB() {
     writeByte_GB(0x0000, 0x0A);
 
     // Switch SRAM banks
-    for (uint8_t bank = 0; bank < sramBanks; bank++) {
+    for (byte currBank = 0; currBank < sramBanks; currBank++) {
       dataOut();
-      writeByte_GB(0x4000, bank);
+      writeByte_GB(0x4000, currBank);
 
       // Read SRAM
       dataIn_GB();
       for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
-        for (uint8_t i = 0; i < 64; i++) {
+        for (byte i = 0; i < 64; i++) {
           sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
         }
         myFile.write(sdBuffer, 64);
@@ -923,9 +923,9 @@ unsigned long verifySRAM_GB() {
       writeByte_GB(0x0000, 0x0A);
 
       // Switch SRAM banks
-      for (uint8_t bank = 0; bank < sramBanks; bank++) {
+      for (byte currBank = 0; currBank < sramBanks; currBank++) {
         dataOut();
-        writeByte_GB(0x4000, bank);
+        writeByte_GB(0x4000, currBank);
 
         // Read SRAM
         dataIn_GB();
@@ -1095,12 +1095,11 @@ void writeFlash29F_GB(byte MBC) {
       dataIn();
 
       for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-        uint8_t readData[512];
         for (int currByte = 0; currByte < 512; currByte++) {
-          readData[currByte] = readByte_GB(currAddr + currByte);
+          sdBuffer[currByte] = readByte_GB(currAddr + currByte);
         }
         for (int j = 0; j < 512; j++) {
-          if (readData[j] != 0xFF) {
+          if (sdBuffer[j] != 0xFF) {
             println_Msg(F("Not empty"));
             print_Error(F("Erase failed"), true);
           }
@@ -1496,12 +1495,11 @@ bool writeCFI_GB() {
       dataIn();
 
       for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-        uint8_t readData[512];
         for (int currByte = 0; currByte < 512; currByte++) {
-          readData[currByte] = readByte_GB(currAddr + currByte);
+          sdBuffer[currByte] = readByte_GB(currAddr + currByte);
         }
         for (int j = 0; j < 512; j++) {
-          if (readData[j] != 0xFF) {
+          if (sdBuffer[j] != 0xFF) {
             println_Msg(F("Not empty"));
             print_Error(F("Erase failed"), true);
           }
