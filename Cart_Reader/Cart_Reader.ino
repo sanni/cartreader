@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             08.02.2022
-   Version:          7.5
+   Date:             15.02.2022
+   Version:          7.6
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.5";
+char ver[5] = "7.6";
 
 /******************************************
    Libraries

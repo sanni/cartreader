@@ -366,13 +366,13 @@ void getCartInfo_SMS() {
       headerFZ[i] = char(readByte_SMS(0x7fe0 + i));
     }
     headerFZ[28] = '\0';
-    
+
     if (strcmp(headerFZ, "COPYRIGHT SEGAPRG. BY T.ASAI") == 0) {
       strcpy(romName, "TMR SEGA");
       cartSize =  128 * 1024UL;
     }
   }
-  
+
   display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(F(" "));

@@ -11,7 +11,7 @@
 // Game Boy
 int sramBanks;
 int romBanks;
-uint16_t sramEndAddress = 0;
+word lastByte = 0;
 
 /******************************************
    Menu
@@ -127,7 +127,7 @@ void gbxMenu() {
           }
           getCartInfo_GB();
           // Does cartridge have SRAM
-          if (sramEndAddress > 0) {
+          if (lastByte > 0) {
             // Remove file name ending
             int pos = -1;
             while (fileName[++pos] != '\0') {
@@ -259,7 +259,7 @@ void gbMenu() {
     case 1:
       display_Clear();
       // Does cartridge have SRAM
-      if (sramEndAddress > 0) {
+      if (lastByte > 0) {
         // Change working dir to root
         sd.chdir("/");
         readSRAM_GB();
@@ -272,7 +272,7 @@ void gbMenu() {
     case 2:
       display_Clear();
       // Does cartridge have SRAM
-      if (sramEndAddress > 0) {
+      if (lastByte > 0) {
         // Change working dir to root
         sd.chdir("/");
         filePath[0] = '\0';
@@ -339,52 +339,60 @@ void showCartInfo_GB() {
     println_Msg(F("GB Cart Info"));
     print_Msg(F("Name: "));
     println_Msg(romName);
-    print_Msg(F("Rom Type: "));
-    switch (romType) {
-      case 0: print_Msg(F("ROM ONLY")); break;
-      case 1: print_Msg(F("MBC1")); break;
-      case 2: print_Msg(F("MBC1+RAM")); break;
-      case 3: print_Msg(F("MBC1+RAM")); break;
-      case 5: print_Msg(F("MBC2")); break;
-      case 6: print_Msg(F("MBC2")); break;
-      case 8: print_Msg(F("ROM+RAM")); break;
-      case 9: print_Msg(F("ROM ONLY")); break;
-      case 11: print_Msg(F("MMM01")); break;
-      case 12: print_Msg(F("MMM01+RAM")); break;
-      case 13: print_Msg(F("MMM01+RAM")); break;
-      case 15: print_Msg(F("MBC3+TIMER")); break;
-      case 16: print_Msg(F("MBC3+TIMER+RAM")); break;
-      case 17: print_Msg(F("MBC3")); break;
-      case 18: print_Msg(F("MBC3+RAM")); break;
-      case 19: print_Msg(F("MBC3+RAM")); break;
-      case 21: print_Msg(F("MBC4")); break;
-      case 22: print_Msg(F("MBC4+RAM")); break;
-      case 23: print_Msg(F("MBC4+RAM")); break;
-      case 25: print_Msg(F("MBC5")); break;
-      case 26: print_Msg(F("MBC5+RAM")); break;
-      case 27: print_Msg(F("MBC5+RAM")); break;
-      case 28: print_Msg(F("MBC5+RUMBLE")); break;
-      case 29: print_Msg(F("MBC5+RUMBLE+RAM")); break;
-      case 30: print_Msg(F("MBC5+RUMBLE+RAM")); break;
-      case 252: print_Msg(F("Gameboy Camera")); break;
-      default: print_Msg(F("Not found"));
-    }
+    print_Msg(F("Mapper: "));
+
+    if ((romType == 0) || (romType == 8) || (romType == 9))
+      print_Msg(F("none"));
+    else if ((romType == 1) || (romType == 2) || (romType == 3))
+      print_Msg(F("MBC1"));
+    else if ((romType == 5) || (romType == 6))
+      print_Msg(F("MBC2"));
+    else if ((romType == 11) || (romType == 12) || (romType == 13))
+      print_Msg(F("MMM01"));
+    else if ((romType == 15) || (romType == 16) || (romType == 17) || (romType == 18) || (romType == 19))
+      print_Msg(F("MBC3"));
+    else if ((romType == 21) || (romType == 22) || (romType == 23))
+      print_Msg(F("MBC4"));
+    else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
+      print_Msg(F("MBC5"));
+    if (romType == 252)
+      print_Msg(F("Camera"));
+
     println_Msg(F(" "));
     print_Msg(F("Rom Size: "));
     switch (romSize) {
-      case 0: print_Msg(F("32KB")); break;
-      case 1: print_Msg(F("64KB")); break;
-      case 2: print_Msg(F("128KB")); break;
-      case 3: print_Msg(F("256KB")); break;
-      case 4: print_Msg(F("512KB")); break;
-      case 5: print_Msg(F("1MB")); break;
-      case 6: print_Msg(F("2MB")); break;
-      case 7: print_Msg(F("4MB")); break;
-      case 82: print_Msg(F("1.1MB")); break;
-      case 83: print_Msg(F("1.2MB")); break;
-      case 84: print_Msg(F("1.5MB)")); break;
-      default: print_Msg(F("Not found"));
+      case 0:
+        print_Msg(F("32KB"));
+        break;
+
+      case 1:
+        print_Msg(F("64KB"));
+        break;
+
+      case 2:
+        print_Msg(F("128KB"));
+        break;
+
+      case 3:
+        print_Msg(F("256KB"));
+        break;
+
+      case 4:
+        print_Msg(F("512KB"));
+        break;
+
+      case 5: print_Msg(F("1MB"));
+        break;
+
+      case 6:
+        print_Msg(F("2MB"));
+        break;
+
+      case 7:
+        print_Msg(F("4MB"));
+        break;
     }
+
     println_Msg(F(""));
     print_Msg(F("Banks: "));
     println_Msg(romBanks);
@@ -396,14 +404,27 @@ void showCartInfo_GB() {
           print_Msg(F("512B"));
         }
         else {
-          print_Msg(F("None"));
+          print_Msg(F("none"));
         }
         break;
-      case 1: print_Msg(F("2KB")); break;
-      case 2: print_Msg(F("8KB")); break;
-      case 3: print_Msg(F("32KB")); break;
-      case 4: print_Msg(F("128KB")); break;
-      default: print_Msg(F("Not found"));
+      case 1:
+        print_Msg(F("2KB"));
+        break;
+
+      case 2:
+        print_Msg(F("8KB"));
+        break;
+
+      case 3:
+        print_Msg(F("32KB"));
+        break;
+
+      case 4:
+        print_Msg
+        (F("128KB"));
+        break;
+
+      default: print_Msg(F("none"));
     }
     println_Msg(F(""));
     print_Msg(F("Checksum: "));
@@ -533,16 +554,43 @@ void getCartInfo_GB() {
   sramSize = readByte_GB(0x0149);
 
   // ROM banks
-  romBanks = 2; // Default 32K
-  if (romSize >= 1) { // Calculate rom size
-    romBanks = 2 << romSize;
+  switch (romSize)
+  {
+    case 0x00:
+      romBanks = 2;
+      break;
+    case 0x01:
+      romBanks = 4;
+      break;
+    case 0x02:
+      romBanks = 8;
+      break;
+    case 0x03:
+      romBanks = 16;
+      break;
+    case 0x04:
+      romBanks = 32;
+      break;
+    case 0x05:
+      romBanks = 64;
+      break;
+    case 0x06:
+      romBanks = 128;
+      break;
+    case 0x07:
+      romBanks = 256;
+      break;
+    default:
+      romBanks = 2;
   }
 
-  // RAM banks
-  sramBanks = 0; // Default 0K RAM
+  // SRAM banks
+  sramBanks = 0;
   if (romType == 6) {
     sramBanks = 1;
   }
+
+  // SRAM size
   switch (sramSize) {
     case 2:
       sramBanks = 1;
@@ -558,15 +606,15 @@ void getCartInfo_GB() {
       break;
   }
 
-  // RAM end address
+  // Last byte of SRAM
   if (romType == 6) {
-    sramEndAddress = 0xA1FF;  // MBC2 512bytes (nibbles)
+    lastByte = 0xA1FF;
   }
   if (sramSize == 1) {
-    sramEndAddress = 0xA7FF;  // 2K RAM
+    lastByte = 0xA7FF;
   }
-  if (sramSize > 1) {
-    sramEndAddress = 0xBFFF;  // 8K RAM
+  else if (sramSize > 1) {
+    lastByte = 0xBFFF;
   }
 
   // Get Checksum as string
@@ -588,7 +636,7 @@ void getCartInfo_GB() {
 /******************************************
   ROM functions
 *****************************************/
-// Dump ROM
+// Read ROM
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
@@ -615,36 +663,37 @@ void readROM_GB() {
     print_Error(F("Can't create file on SD"), true);
   }
 
-  uint16_t romAddress = 0;
+  word romAddress = 0;
 
-  // Read number of banks and switch banks
-  for (uint16_t bank = 1; bank < romBanks; bank++) {
+  for (word currBank = 1; currBank < romBanks; currBank++) {
     // Switch data pins to output
     dataOut();
 
-    if (romType >= 5) { // MBC2 and above
-      writeByte_GB(0x2100, bank); // Set ROM bank
+    // Set ROM bank for MBC2/3/4/5
+    if (romType >= 5) {
+      writeByte_GB(0x2100, currBank);
     }
-    else { // MBC1
-      writeByte_GB(0x6000, 0); // Set ROM Mode
-      writeByte_GB(0x4000, bank >> 5); // Set bits 5 & 6 (01100000) of ROM bank
-      writeByte_GB(0x2000, bank & 0x1F); // Set bits 0 & 4 (00011111) of ROM bank
+    // Set ROM bank for MBC1
+    else {
+      writeByte_GB(0x6000, 0);
+      writeByte_GB(0x4000, currBank >> 5);
+      writeByte_GB(0x2000, currBank & 0x1F);
     }
 
     // Switch data pins to intput
     dataIn_GB();
 
-    if (bank > 1) {
+    // Second bank starts at 0x4000
+    if (currBank > 1) {
       romAddress = 0x4000;
     }
 
-    // Read up to 7FFF per bank
+    // Read banks and save to SD
     while (romAddress <= 0x7FFF) {
-      uint8_t readData[512];
       for (int i = 0; i < 512; i++) {
-        readData[i] = readByte_GB(romAddress + i);
+        sdBuffer[i] = readByte_GB(romAddress + i);
       }
-      myFile.write(readData, 512);
+      myFile.write(sdBuffer, 512);
       romAddress += 512;
     }
   }
@@ -653,6 +702,7 @@ void readROM_GB() {
   myFile.close();
 }
 
+// Calculate checksum
 unsigned int calc_checksum_GB (char* fileName, char* folder) {
   unsigned int calcChecksum = 0;
   //  int calcFilesize = 0; // unused
@@ -687,6 +737,7 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
   }
 }
 
+// Compare checksum
 boolean compare_checksum_GB() {
 
   println_Msg(F("Calculating Checksum"));
@@ -723,7 +774,7 @@ boolean compare_checksum_GB() {
 // Read RAM
 void readSRAM_GB() {
   // Does cartridge have RAM
-  if (sramEndAddress > 0) {
+  if (lastByte > 0) {
 
     // Get name, add extension and convert to char array for sd lib
     strcpy(fileName, romName);
@@ -746,12 +797,12 @@ void readSRAM_GB() {
 
     dataIn_GB();
 
-    // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
+    // MBC2 Fix
     readByte_GB(0x0134);
 
     dataOut();
-    if (romType <= 4) { // MBC1
-      writeByte_GB(0x6000, 1); // Set RAM Mode
+    if (romType <= 4) {
+      writeByte_GB(0x6000, 1);
     }
 
     // Initialise MBC
@@ -764,12 +815,11 @@ void readSRAM_GB() {
 
       // Read SRAM
       dataIn_GB();
-      for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress += 64) {
-        uint8_t readData[64];
+      for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
         for (uint8_t i = 0; i < 64; i++) {
-          readData[i] = readByteSRAM_GB(sramAddress + i);
+          sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
         }
-        myFile.write(readData, 64);
+        myFile.write(sdBuffer, 64);
       }
     }
 
@@ -795,7 +845,7 @@ void readSRAM_GB() {
 // Write RAM
 void writeSRAM_GB() {
   // Does cartridge have SRAM
-  if (sramEndAddress > 0) {
+  if (lastByte > 0) {
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
 
@@ -804,28 +854,29 @@ void writeSRAM_GB() {
       // Set pins to input
       dataIn_GB();
 
-      // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
+      // MBC2 Fix
       readByte_GB(0x0134);
 
       dataOut();
 
-      if (romType <= 4) { // MBC1
-        writeByte_GB(0x6000, 1); // Set RAM Mode
+      // Enable SRAM for MBC1
+      if (romType <= 4) {
+        writeByte_GB(0x6000, 1);
       }
 
       // Initialise MBC
       writeByte_GB(0x0000, 0x0A);
 
       // Switch RAM banks
-      for (uint8_t bank = 0; bank < sramBanks; bank++) {
-        writeByte_GB(0x4000, bank);
+      for (byte currBank = 0; currBank < sramBanks; currBank++) {
+        writeByte_GB(0x4000, currBank);
 
         // Write RAM
-        for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress++) {
+        for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
           writeByteSRAM_GB(sramAddress, myFile.read());
         }
       }
-      // Disable RAM
+      // Disable SRAM
       writeByte_GB(0x0000, 0x00);
 
       // Set pins to input
@@ -858,11 +909,11 @@ unsigned long verifySRAM_GB() {
 
     dataIn_GB();
 
-    // MBC2 Fix (unknown why this fixes it, maybe has to read ROM before RAM?)
+    // MBC2 Fix
     readByte_GB(0x0134);
 
-    // Does cartridge have RAM
-    if (sramEndAddress > 0) {
+    // Check SRAM size
+    if (lastByte > 0) {
       dataOut();
       if (romType <= 4) { // MBC1
         writeByte_GB(0x6000, 1); // Set RAM Mode
@@ -878,7 +929,7 @@ unsigned long verifySRAM_GB() {
 
         // Read SRAM
         dataIn_GB();
-        for (uint16_t sramAddress = 0xA000; sramAddress <= sramEndAddress; sramAddress += 64) {
+        for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
           for (int c = 0; c < 64; c++) {
@@ -1064,8 +1115,8 @@ void writeFlash29F_GB(byte MBC) {
       // Write flash
       dataOut();
 
-      uint16_t currAddr = 0;
-      uint16_t endAddr = 0x3FFF;
+      word currAddr = 0;
+      word endAddr = 0x3FFF;
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
@@ -1170,10 +1221,10 @@ void writeFlash29F_GB(byte MBC) {
     writeErrors = 0;
 
     // Verify flashrom
-    uint16_t romAddress = 0;
+    word romAddress = 0;
 
     // Read number of banks and switch banks
-    for (uint16_t bank = 1; bank < romBanks; bank++) {
+    for (word bank = 1; bank < romBanks; bank++) {
       // Switch data pins to output
       dataOut();
 
@@ -1464,8 +1515,8 @@ bool writeCFI_GB() {
     // Write flash
     dataOut();
 
-    uint16_t currAddr = 0;
-    uint16_t endAddr = 0x3FFF;
+    word currAddr = 0;
+    word endAddr = 0x3FFF;
 
     for (int currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
@@ -1539,10 +1590,10 @@ bool writeCFI_GB() {
     writeErrors = 0;
 
     // Verify flashrom
-    uint16_t romAddress = 0;
+    word romAddress = 0;
 
     // Read number of banks and switch banks
-    for (uint16_t bank = 1; bank < romBanks; bank++) {
+    for (word bank = 1; bank < romBanks; bank++) {
       // Switch data pins to output
       dataOut();
 
