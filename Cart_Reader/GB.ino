@@ -381,7 +381,8 @@ void showCartInfo_GB() {
         print_Msg(F("512KB"));
         break;
 
-      case 5: print_Msg(F("1MB"));
+      case 5:
+        print_Msg(F("1MB"));
         break;
 
       case 6:
@@ -420,8 +421,7 @@ void showCartInfo_GB() {
         break;
 
       case 4:
-        print_Msg
-        (F("128KB"));
+        print_Msg(F("128KB"));
         break;
 
       default: print_Msg(F("none"));
@@ -554,8 +554,7 @@ void getCartInfo_GB() {
   sramSize = readByte_GB(0x0149);
 
   // ROM banks
-  switch (romSize)
-  {
+  switch (romSize){
     case 0x00:
       romBanks = 2;
       break;
