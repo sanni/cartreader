@@ -734,7 +734,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("");
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2022 sanni"));
+  Serial.println(F("2022 github.com/sanni"));
   // LED Error
   setColor_RGB(0, 0, 255);
 #endif
