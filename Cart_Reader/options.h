@@ -46,6 +46,9 @@
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
 #define startMenu mainMenu
 
+//Ignores errors that normally force a reset if button 2 is pressed
+//#define debug_mode
+
 // Setup RTC if installed.
 // remove // if you have an RTC installed
 // #define RTC_installed

@@ -494,7 +494,7 @@ void writeByte_GB(int myAddress, byte myData) {
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
-byte readByteSRAM_GB(word myAddress) {
+byte readByteCLK_GB(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
@@ -510,17 +510,17 @@ byte readByteSRAM_GB(word myAddress) {
   // Read
   byte tempByte = PINC;
 
-  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
-  PORTH |= (1 << 3) | (1 << 1);
   // Pull RD(PH6) HIGH
   PORTH |=  (1 << 6);
+  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
+  PORTH |= (1 << 3) | (1 << 1);
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempByte;
 }
 
-void writeByteSRAM_GB(int myAddress, byte myData) {
+void writeByteCLK_GB(int myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTC = myData;
@@ -549,12 +549,12 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
 *****************************************/
 // Read Cartridge Header
 void getCartInfo_GB() {
-  romType = readByte_GB(0x0147);
-  romSize = readByte_GB(0x0148);
-  sramSize = readByte_GB(0x0149);
+  romType = readByteCLK_GB(0x0147);
+  romSize = readByteCLK_GB(0x0148);
+  sramSize = readByteCLK_GB(0x0149);
 
   // ROM banks
-  switch (romSize){
+  switch (romSize) {
     case 0x00:
       romBanks = 2;
       break;
@@ -617,14 +617,14 @@ void getCartInfo_GB() {
   }
 
   // Get Checksum as string
-  sprintf(checksumStr, "%02X%02X", readByte_GB(0x014E), readByte_GB(0x014F));
+  sprintf(checksumStr, "%02X%02X", readByteCLK_GB(0x014E), readByteCLK_GB(0x014F));
 
   // Get name
   byte myByte = 0;
   byte myLength = 0;
 
   for (int addr = 0x0134; addr <= 0x13C; addr++) {
-    myByte = readByte_GB(addr);
+    myByte = readByteCLK_GB(addr);
     if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
       romName[myLength] = char(myByte);
       myLength++;
@@ -664,6 +664,11 @@ void readROM_GB() {
 
   word romAddress = 0;
 
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(romBanks - 1);
+  draw_progressbar(0, totalProgressBar);
+
   for (word currBank = 1; currBank < romBanks; currBank++) {
     // Switch data pins to output
     dataOut();
@@ -690,11 +695,14 @@ void readROM_GB() {
     // Read banks and save to SD
     while (romAddress <= 0x7FFF) {
       for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByte_GB(romAddress + i);
+        sdBuffer[i] = readByteCLK_GB(romAddress + i);
       }
       myFile.write(sdBuffer, 512);
       romAddress += 512;
     }
+
+    processedProgressBar += 1;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
@@ -723,8 +731,8 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
     myFile.close();
     sd.chdir();
     // Subtract checksum bytes
-    calcChecksum -= readByte_GB(0x014E);
-    calcChecksum -= readByte_GB(0x014F);
+    calcChecksum -= readByteCLK_GB(0x014E);
+    calcChecksum -= readByteCLK_GB(0x014F);
 
     // Return result
     return (calcChecksum);
@@ -797,7 +805,7 @@ void readSRAM_GB() {
     dataIn_GB();
 
     // MBC2 Fix
-    readByte_GB(0x0134);
+    readByteCLK_GB(0x0134);
 
     dataOut();
     if (romType <= 4) {
@@ -816,7 +824,7 @@ void readSRAM_GB() {
       dataIn_GB();
       for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
         for (byte i = 0; i < 64; i++) {
-          sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
+          sdBuffer[i] = readByteCLK_GB(sramAddress + i);
         }
         myFile.write(sdBuffer, 64);
       }
@@ -854,7 +862,7 @@ void writeSRAM_GB() {
       dataIn_GB();
 
       // MBC2 Fix
-      readByte_GB(0x0134);
+      readByteCLK_GB(0x0134);
 
       dataOut();
 
@@ -872,7 +880,7 @@ void writeSRAM_GB() {
 
         // Write RAM
         for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
-          writeByteSRAM_GB(sramAddress, myFile.read());
+          writeByteCLK_GB(sramAddress, myFile.read());
         }
       }
       // Disable SRAM
@@ -909,7 +917,7 @@ unsigned long verifySRAM_GB() {
     dataIn_GB();
 
     // MBC2 Fix
-    readByte_GB(0x0134);
+    readByteCLK_GB(0x0134);
 
     // Check SRAM size
     if (lastByte > 0) {
@@ -932,7 +940,7 @@ unsigned long verifySRAM_GB() {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
           for (int c = 0; c < 64; c++) {
-            if (readByteSRAM_GB(sramAddress + c) != sdBuffer[c]) {
+            if (readByteCLK_GB(sramAddress + c) != sdBuffer[c]) {
               writeErrors++;
             }
           }
@@ -978,9 +986,33 @@ void writeFlash29F_GB(byte MBC) {
     myFile.seekSet(0);
 
     // ROM banks
-    romBanks = 2; // Default 32K
-    if (romSize >= 1) { // Calculate rom size
-      romBanks = 2 << romSize;
+    switch (romSize) {
+      case 0x00:
+        romBanks = 2;
+        break;
+      case 0x01:
+        romBanks = 4;
+        break;
+      case 0x02:
+        romBanks = 8;
+        break;
+      case 0x03:
+        romBanks = 16;
+        break;
+      case 0x04:
+        romBanks = 32;
+        break;
+      case 0x05:
+        romBanks = 64;
+        break;
+      case 0x06:
+        romBanks = 128;
+        break;
+      case 0x07:
+        romBanks = 256;
+        break;
+      default:
+        romBanks = 2;
     }
 
     // Set data pins to output
@@ -1409,9 +1441,33 @@ bool writeCFI_GB() {
     myFile.seekSet(0);
 
     // ROM banks
-    romBanks = 2; // Default 32K
-    if (romSize >= 1) { // Calculate rom size
-      romBanks = 2 << romSize;
+    switch (romSize) {
+      case 0x00:
+        romBanks = 2;
+        break;
+      case 0x01:
+        romBanks = 4;
+        break;
+      case 0x02:
+        romBanks = 8;
+        break;
+      case 0x03:
+        romBanks = 16;
+        break;
+      case 0x04:
+        romBanks = 32;
+        break;
+      case 0x05:
+        romBanks = 64;
+        break;
+      case 0x06:
+        romBanks = 128;
+        break;
+      case 0x07:
+        romBanks = 256;
+        break;
+      default:
+        romBanks = 2;
     }
 
     if (romBanks <= flashBanks) {

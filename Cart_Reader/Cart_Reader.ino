@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             15.02.2022
-   Version:          7.6
+   Date:             23.02.2022
+   Version:          7.7
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.6";
+char ver[5] = "7.7";
 
 /******************************************
    Libraries
@@ -813,7 +813,6 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
   display_Update();
 
   if (forceReset) {
-#if (defined(enable_OLED) || defined(enable_LCD))
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
@@ -825,17 +824,11 @@ void print_Error(const __FlashStringHelper *errorMessage, boolean forceReset) {
       ignoreError = 0;
       display_Clear();
       println_Msg(F(""));
+      println_Msg(F("Error Overwrite"));
       println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F("  Error Overwrite"));
       display_Update();
       delay(2000);
     }
-#endif
-#ifdef enable_serial
-    println_Msg(F("Fatal Error, please reset"));
-    while (1);
-#endif
   }
 }
 
@@ -1049,6 +1042,13 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 *****************************************/
 #ifdef enable_serial
 void wait_serial() {
+  if (errorLvl) {
+    // Debug
+#ifdef debug_mode
+    ignoreError = 1;
+#endif
+    errorLvl = 0;
+  }
   while (Serial.available() == 0) {
   }
   incomingByte = Serial.read() - 48;
@@ -1307,7 +1307,9 @@ void wait_btn() {
     if (b == 3) {
       if (errorLvl) {
         // Debug
-        //ignoreError = 1;
+#ifdef debug_mode
+        ignoreError = 1;
+#endif
         errorLvl = 0;
       }
       break;
@@ -1649,7 +1651,9 @@ void wait_btn() {
     if (b == 3) {
       if (errorLvl) {
         // Debug
-        //ignoreError = 1;
+#ifdef debug_mode
+        ignoreError = 1;
+#endif
         errorLvl = 0;
       }
       break;
