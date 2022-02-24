@@ -528,8 +528,8 @@ void writeSRAM_SMS() {
     if (myFile.open(filePath, O_READ)) {
       // Get SRAM size from file, with a maximum of 32KB
       uint32_t sramSize = myFile.fileSize();
-      if (sramSize > (32 * 1024)) {
-        sramSize = 32 * 1024;
+      if (sramSize > ((uint32_t)32 * (uint32_t)1024)) {
+        sramSize = (uint32_t)32 * (uint32_t)1024;
       }
       print_Msg(F("sramSize: "));
       print_Msg(sramSize);

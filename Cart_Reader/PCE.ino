@@ -67,7 +67,7 @@ static const char pceCartMenuItem4[] = "Reset";
 static const char pceCartMenuItem5[] = "Inc Bank Number";
 static const char pceCartMenuItem6[] = "Dec Bank Number";
 static char pceCartMenuItem7[20];
-static const char menuOptionspceCart[7][20];
+static char menuOptionspceCart[7][20];
 
 // Turbochip menu items
 static const char pceTCMenuItem1[] PROGMEM = "Read ROM";

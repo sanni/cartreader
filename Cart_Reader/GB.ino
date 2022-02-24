@@ -1411,7 +1411,7 @@ void identifyCFI_GB() {
       println_Msg(F("CFI Query failed!"));
       display_Update();
       wait();
-      return 0;
+      return;
     }
   }
   dataIn_GB();
