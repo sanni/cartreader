@@ -851,7 +851,7 @@ unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uin
   }
 
   char* temp_line;
-  char* nes20_header;
+  unsigned char* nes20_header;
   int i;
 
   if (!sdFile.open("/nes20db.txt", FILE_READ)) {
@@ -862,7 +862,7 @@ unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uin
     display_Update();
   }
 
-  temp_line = malloc(256 * sizeof(char));
+  temp_line = (char*)malloc(256 * sizeof(char));
   while (sdFile.available()) {
     // We're reading fixed-length lines
     // padded with null characters

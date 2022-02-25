@@ -4,7 +4,7 @@
 
 int32_t readClockOffset() {
   FsFile clock_file;
-  unsigned char* clock_buf;
+  char* clock_buf;
   int16_t i;
   int32_t clock_offset;
 
@@ -12,7 +12,7 @@ int32_t readClockOffset() {
     return INT32_MIN;
   }
 
-  clock_buf = malloc(12 * sizeof(char));
+  clock_buf = (char*)malloc(12 * sizeof(char));
   i = clock_file.read(clock_buf, 11);
   clock_file.close();
   if (i == -1) {
