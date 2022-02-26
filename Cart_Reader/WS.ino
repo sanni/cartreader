@@ -494,6 +494,9 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
 
   // get correct starting rom bank
   uint16_t bank = (256 - (cartSize >> 16));
+  uint32_t progress = 0;
+
+  draw_progressbar(0, cartSize);
 
   // start reading rom
   for (; bank <= 0xff; bank++)
@@ -517,7 +520,10 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
         * ((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
 
       myFile.write(sdBuffer, 512);
+      progress += 512;
     }
+
+    draw_progressbar(progress, cartSize);
   }
 
   // turn off LEDs (only for BANC33)
