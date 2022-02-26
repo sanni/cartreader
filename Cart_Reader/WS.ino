@@ -224,6 +224,8 @@ uint8_t getCartInfo_WS()
     // games missing 'COLOR' flag
     case 0x26db:  // SQRC01
     case 0xbfdf:  // SUMC07
+    case 0x50ca:  // BANC09
+    case 0x9238:  // BANC0E
       {
         sdBuffer[7] |= 0x01;
         break;
@@ -303,6 +305,12 @@ uint8_t getCartInfo_WS()
             }
           }
         }
+        else if (sdBuffer[6] == 0x2a && sdBuffer[8] == 0x01 && sdBuffer[9] == 0x01)
+        {
+          // Mobile WonderGate v1.1, checksum is filled with 0x0000
+          wsGameChecksum = 0x1da0;
+        }
+
         break;
       }
   }
@@ -435,6 +443,7 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
     case 0x26: devName = PSTR("KDK"); break;
     case 0x27: devName = PSTR("SHL"); break;
     case 0x28: devName = PSTR("SQR"); break;
+    case 0x2a: devName = PSTR("SCC"); break;
     case 0x2b: devName = PSTR("TMC"); break;
     case 0x2d: devName = PSTR("NMC"); break;
     case 0x2e: devName = PSTR("SES"); break;
