@@ -25,6 +25,12 @@
 #include "options.h"
 #ifdef enable_WS
 
+#ifdef ws_adapter_v2
+#define WS_CLK_BIT 5  // USE PE5 as CLK
+#else
+#define WS_CLK_BIT 3  // USE PE3 as CLK
+#endif
+
 /******************************************
   Menu
 *****************************************/
@@ -61,8 +67,8 @@ void setup_WS()
   PORTH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
   // CLK outputs LOW
-  DDRE |= (1 << 3);
-  PORTE &= ~(1 << 3);
+  DDRE |= (1 << WS_CLK_BIT);
+  PORTE &= ~(1 << WS_CLK_BIT);
 
   // IO? as input with internal pull-up enabled
   DDRE &= ~(1 << 4);
@@ -218,6 +224,8 @@ uint8_t getCartInfo_WS()
     // games missing 'COLOR' flag
     case 0x26db:  // SQRC01
     case 0xbfdf:  // SUMC07
+    case 0x50ca:  // BANC09
+    case 0x9238:  // BANC0E
       {
         sdBuffer[7] |= 0x01;
         break;
@@ -297,6 +305,12 @@ uint8_t getCartInfo_WS()
             }
           }
         }
+        else if (sdBuffer[6] == 0x2a && sdBuffer[8] == 0x01 && sdBuffer[9] == 0x01)
+        {
+          // Mobile WonderGate v1.1, checksum is filled with 0x0000
+          wsGameChecksum = 0x1da0;
+        }
+
         break;
       }
   }
@@ -429,6 +443,7 @@ void getDeveloperName(uint8_t id, char *buf, size_t length)
     case 0x26: devName = PSTR("KDK"); break;
     case 0x27: devName = PSTR("SHL"); break;
     case 0x28: devName = PSTR("SQR"); break;
+    case 0x2a: devName = PSTR("SCC"); break;
     case 0x2b: devName = PSTR("TMC"); break;
     case 0x2d: devName = PSTR("NMC"); break;
     case 0x2e: devName = PSTR("SES"); break;
@@ -479,6 +494,9 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
 
   // get correct starting rom bank
   uint16_t bank = (256 - (cartSize >> 16));
+  uint32_t progress = 0;
+
+  draw_progressbar(0, cartSize);
 
   // start reading rom
   for (; bank <= 0xff; bank++)
@@ -502,7 +520,10 @@ void readROM_WS(char *outPathBuf, size_t bufferSize)
         * ((uint16_t*)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
 
       myFile.write(sdBuffer, 512);
+      progress += 512;
     }
+
+    draw_progressbar(progress, cartSize);
   }
 
   // turn off LEDs (only for BANC33)
@@ -1214,10 +1235,10 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
 boolean unlockMMC2003_WS()
 {
   // initialize all control pin state
-  // RST(PH0) and CLK(PE3) to LOW
+  // RST(PH0) and CLK(PE3or5) to LOW
   // CART(PH3) MMC(PH4) WE(PH5) OE(PH6) to HIGH
   PORTH &= ~(1 << 0);
-  PORTE &= ~(1 << 3);
+  PORTE &= ~(1 << WS_CLK_BIT);
   PORTH |= ((1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
   // switch RST(PH0) to HIGH
@@ -1256,7 +1277,7 @@ boolean unlockMMC2003_WS()
   return false;
 }
 
-// doing a L->H on CLK(PE3) pin
+// doing a L->H on CLK pin
 void pulseCLK_WS(uint8_t count)
 {
   register uint8_t tic;
@@ -1267,12 +1288,12 @@ void pulseCLK_WS(uint8_t count)
    "cpi %[count], 0\n\t"
    "breq L3_%=\n\t"
    "dec %[count]\n\t"
-   "cbi %[porte], 3\n\t"
+   "cbi %[porte], %[ws_clk_bit]\n\t"
    "ldi %[tic], 6\n\t"
    "L1_%=:\n\t"
    "dec %[tic]\n\t"
    "brne L1_%=\n\t"
-   "sbi %[porte], 3\n\t"
+   "sbi %[porte], %[ws_clk_bit]\n\t"
    "ldi %[tic], 5\n\t"
    "L2_%=:\n\t"
    "dec %[tic]\n\t"
@@ -1280,7 +1301,7 @@ void pulseCLK_WS(uint8_t count)
    "rjmp L0_%=\n\t"
    "L3_%=:\n\t"
    : [tic] "=a" (tic)
-   : [count] "a" (count), [porte] "I" (_SFR_IO_ADDR(PORTE))
+   : [count] "a" (count), [porte] "I" (_SFR_IO_ADDR(PORTE)), [ws_clk_bit] "I" (WS_CLK_BIT)
   );
 }
 
