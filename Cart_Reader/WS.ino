@@ -25,6 +25,12 @@
 #include "options.h"
 #ifdef enable_WS
 
+#ifdef ws_adapter_v2
+#define WS_CLK_BIT 5  // USE PE5 as CLK
+#else
+#define WS_CLK_BIT 3  // USE PE3 as CLK
+#endif
+
 /******************************************
   Menu
 *****************************************/
@@ -61,8 +67,8 @@ void setup_WS()
   PORTH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
   // CLK outputs LOW
-  DDRE |= (1 << 3);
-  PORTE &= ~(1 << 3);
+  DDRE |= (1 << WS_CLK_BIT);
+  PORTE &= ~(1 << WS_CLK_BIT);
 
   // IO? as input with internal pull-up enabled
   DDRE &= ~(1 << 4);
@@ -1214,10 +1220,10 @@ void generateEepromInstruction_WS(uint8_t *instruction, uint8_t opcode, uint16_t
 boolean unlockMMC2003_WS()
 {
   // initialize all control pin state
-  // RST(PH0) and CLK(PE3) to LOW
+  // RST(PH0) and CLK(PE3or5) to LOW
   // CART(PH3) MMC(PH4) WE(PH5) OE(PH6) to HIGH
   PORTH &= ~(1 << 0);
-  PORTE &= ~(1 << 3);
+  PORTE &= ~(1 << WS_CLK_BIT);
   PORTH |= ((1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
   // switch RST(PH0) to HIGH
@@ -1256,7 +1262,7 @@ boolean unlockMMC2003_WS()
   return false;
 }
 
-// doing a L->H on CLK(PE3) pin
+// doing a L->H on CLK pin
 void pulseCLK_WS(uint8_t count)
 {
   register uint8_t tic;
@@ -1267,12 +1273,12 @@ void pulseCLK_WS(uint8_t count)
    "cpi %[count], 0\n\t"
    "breq L3_%=\n\t"
    "dec %[count]\n\t"
-   "cbi %[porte], 3\n\t"
+   "cbi %[porte], %[ws_clk_bit]\n\t"
    "ldi %[tic], 6\n\t"
    "L1_%=:\n\t"
    "dec %[tic]\n\t"
    "brne L1_%=\n\t"
-   "sbi %[porte], 3\n\t"
+   "sbi %[porte], %[ws_clk_bit]\n\t"
    "ldi %[tic], 5\n\t"
    "L2_%=:\n\t"
    "dec %[tic]\n\t"
@@ -1280,7 +1286,7 @@ void pulseCLK_WS(uint8_t count)
    "rjmp L0_%=\n\t"
    "L3_%=:\n\t"
    : [tic] "=a" (tic)
-   : [count] "a" (count), [porte] "I" (_SFR_IO_ADDR(PORTE))
+   : [count] "a" (count), [porte] "I" (_SFR_IO_ADDR(PORTE)), [ws_clk_bit] "I" (WS_CLK_BIT)
   );
 }
 

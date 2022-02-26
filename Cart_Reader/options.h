@@ -24,6 +24,7 @@
 #define enable_rotary
 #define clockgen_installed
 #define fastcrc
+#define ws_adapter_v2
 #endif
 
 #if (defined(HW2) || defined(HW3))
