@@ -1,6 +1,8 @@
 #include "snes_clk.h"
+#include <si5351.h>
 #include "SdFat.h"
 #include "atoi32.h"
+#include "options.h"
 
 int32_t readClockOffset() {
   FsFile clock_file;
@@ -8,7 +10,7 @@ int32_t readClockOffset() {
   int16_t i;
   int32_t clock_offset;
 
-  if (!clock_file.open("/snes_clk.txt", FILE_READ)) {
+  if (!clock_file.open("/snes_clk.txt", O_READ)) {
     return INT32_MIN;
   }
 
@@ -43,4 +45,26 @@ int32_t readClockOffset() {
   free(clock_buf);
 
   return clock_offset;
+}
+
+int32_t initializeClockOffset() {
+#ifdef clockgen_calibration
+  FsFile clock_file;
+  const char zero_char_arr[] = {'0'};
+  int32_t clock_offset = readClockOffset();
+  if (clock_offset > INT32_MIN) {
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+  } else {
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    if(clock_file.open("/snes_clk.txt", O_WRITE | O_CREAT | O_TRUNC)) {
+      clock_file.write(zero_char_arr, 1);
+      clock_file.close();
+    }
+  }
+  return clock_offset;
+#else
+  // last number is the clock correction factor which is custom for each clock generator
+  i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  return 0;
+#endif
 }
