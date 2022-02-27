@@ -115,12 +115,12 @@ static const byte PROGMEM mapsize [] = {
 #define CHR_WRITE_LOW PORTF &= ~(1<<2)
 
 // RGB LED COMMON ANODE
-#define LED_RED_OFF PORTB |= (1<<6)
-#define LED_RED_ON PORTB &= ~(1<<6)
-#define LED_GREEN_OFF PORTB |= (1<<5)
-#define LED_GREEN_ON PORTB &= ~(1<<5)
-#define LED_BLUE_OFF PORTB |= (1<<4)
-#define LED_BLUE_ON PORTB &= ~(1<<4)
+#define LED_RED_OFF setColor_RGB(0, 0, 0)
+#define LED_RED_ON setColor_RGB(255, 0, 0)
+#define LED_GREEN_OFF setColor_RGB(0, 0, 0)
+#define LED_GREEN_ON setColor_RGB(0, 255, 0)
+#define LED_BLUE_OFF setColor_RGB(0, 0, 0)
+#define LED_BLUE_ON setColor_RGB(0, 0, 255)
 
 #define MODE_READ { PORTK = 0xFF; DDRK = 0; }
 #define MODE_WRITE DDRK = 0xFF
