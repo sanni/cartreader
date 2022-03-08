@@ -5,7 +5,7 @@
    an easy to build and easy to modify cartridge dumper.
 
    Date:             08.03.2022
-   Version:          7.9
+   Version:          8.0
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "7.9";
+char ver[5] = "8.0";
 
 /******************************************
    Libraries
@@ -417,7 +417,12 @@ void mainMenu() {
 
 #ifdef enable_NES
     case 4:
+      display_Clear();
+      display_Update();
+      setup_NES();
+      checkStatus_NES();
       nesMenu();
+      mode = mode_NES;
       break;
 #endif
 
@@ -549,7 +554,12 @@ void addonsMenu() {
   {
 #ifdef enable_NES
     case 0:
+      display_Clear();
+      display_Update();
+      setup_NES();
+      checkStatus_NES();
       nesMenu();
+      mode = mode_NES;
       break;
 #endif
 

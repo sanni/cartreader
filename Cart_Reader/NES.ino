@@ -13,17 +13,17 @@
 //28   Supported Mappers
 //103  Defines
 //133  Variables
-//194  Menu
-//313  Setup
-//342  Low Level Functions
-//589  CRC Functions
-//649  File Functions
-//844  NES 2.0 Header Functions
-//1125 Config Functions
-//1721 ROM Functions
-//2819 RAM Functions
-//3248 Eeprom Functions
-//3444 NESmaker Flash Cart Functions
+//194  Menus
+//333  Setup
+//362  Low Level Functions
+//609  CRC Functions
+//669  File Functions
+//864  NES 2.0 Header Functions
+//1145 Config Functions
+//1946 ROM Functions
+//3044 RAM Functions
+//3477 Eeprom Functions
+//3667 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -194,32 +194,26 @@ int b = 0;
 /******************************************
   Menu
 *****************************************/
-static const char menuItem1[] PROGMEM = "Select Mapper";
-static const char menuItem2[] PROGMEM = "Read Complete Cart";
-static const char menuItem3[] PROGMEM = "Read PRG";
-static const char menuItem4[] PROGMEM = "Read CHR";
-static const char menuItem5[] PROGMEM = "Read RAM";
-static const char menuItem6[] PROGMEM = "Write Options";
-static const char* const baseMenu[] PROGMEM = {menuItem1, menuItem2, menuItem3, menuItem4, menuItem5, menuItem6};
+// NES start menu
+static const char nesMenuItem1[] PROGMEM = "Select Mapper";
+static const char nesMenuItem2[] PROGMEM = "Read complete Cart";
+static const char nesMenuItem3[] PROGMEM = "Read single chip";
+static const char nesMenuItem4[] PROGMEM = "Write RAM";
+static const char nesMenuItem5[] PROGMEM = "Write FLASH";
+static const char nesMenuItem6[] PROGMEM = "Reset";
+static const char* const menuOptionsNES[] PROGMEM = {nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6};
 
-static const char writeItem1[] PROGMEM = "Write RAM";
-static const char writeItem2[] PROGMEM = "Write FLASH";
-static const char writeItem3[] PROGMEM = "Return to Main Menu";
-static const char* const writeMenu[] PROGMEM = {writeItem1, writeItem2, writeItem3};
+// NES chips menu
+static const char  nesChipsMenuItem1[] PROGMEM = "Read PRG";
+static const char  nesChipsMenuItem2[] PROGMEM = "Read CHR";
+static const char  nesChipsMenuItem3[] PROGMEM = "Read RAM";
+static const char  nesChipsMenuItem4[] PROGMEM = "Back";
+static const char* const menuOptionsNESChips[] PROGMEM = {nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3, nesChipsMenuItem4};
 
 // NES start menu
 void nesMenu() {
-  display_Clear();
-  display_Update();
-  setup_NES();
-  checkStatus_NES();
-  nesCartMenu();
-  mode = mode_NES;
-}
-
-void nesCartMenu() {
   // create menu with title "NES CART READER" and 6 options to choose from
-  convertPgm(baseMenu, 6);
+  convertPgm(menuOptionsNES, 6);
   unsigned char answer = question_box(F("NES CART READER"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
@@ -231,6 +225,7 @@ void nesCartMenu() {
       setPRGSize();
       setCHRSize();
       setRAMSize();
+      checkStatus_NES();
       break;
 
     // Read Complete Cart
@@ -248,63 +243,88 @@ void nesCartMenu() {
       CartFinish();
       break;
 
-    // Read PRG
+    // Read single chip
     case 2:
-      CreateROMFolderInSD();
-      readPRG();
-      resetROM();
-      wait();
+      nesChipMenu();
       break;
 
-    // Read CHR
-    case 3:
-      CreateROMFolderInSD();
-      readCHR();
-      resetROM();
-      wait();
-      break;
-
-    // Read RAM
-    case 4:
-      CreateROMFolderInSD();
-      readRAM();
-      resetROM();
-      wait();
-      break;
-
-    // Write Options
-    case 5:
-      nesCartWriteMenu();
-      wait();
-      break;
-  }
-}
-
-void nesCartWriteMenu() {
-  // create menu with title "WRITE OPTIONS MENU" and 3 options to choose from
-  convertPgm(writeMenu, 3);
-  unsigned char answer = question_box(F("WRITE OPTIONS MENU"), menuOptions, 3, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (answer) {
     // Write RAM
-    case 0:
+    case 3:
       writeRAM();
       resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press button"));
+      display_Update();
       wait();
       break;
 
     // Write FLASH
-    case 1:
-      if (mapper == 30)
+    case 4:
+      if (mapper == 30) {
         writeFLASH();
+        resetROM();
+      }
+      else {
+        display_Clear();
+        println_Msg(F("Error:"));
+        println_Msg(F("Can't write to this cartridge"));
+        println_Msg(F(""));
+        println_Msg(F("Press button"));
+        display_Update();
+      }
+      wait();
+      break;
+
+    // Reset
+    case 5:
+      resetArduino();
+      break;
+  }
+}
+
+void nesChipMenu() {
+  // create menu with title "Select NES Chip" and 4 options to choose from
+  convertPgm(menuOptionsNESChips, 4);
+  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (answer) {
+    // Read PRG
+    case 0:
+      CreateROMFolderInSD();
+      readPRG();
       resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press button"));
+      display_Update();
+      wait();
+      break;
+
+    // Read CHR
+    case 1:
+      CreateROMFolderInSD();
+      readCHR();
+      resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press button"));
+      display_Update();
+      wait();
+      break;
+
+    // Read RAM
+    case 2:
+      CreateROMFolderInSD();
+      readRAM();
+      resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press button"));
+      display_Update();
       wait();
       break;
 
     // Return to Main Menu
-    case 2:
-      nesCartMenu();
+    case 3:
+      nesMenu();
       wait();
       break;
   }
@@ -598,7 +618,7 @@ inline uint32_t updateCRC32(uint8_t ch, uint32_t crc) {
   return tab_value ^ ((crc) >> 8);
 }
 
-uint32_t crc32(FsFile &file, uint32_t &charcnt) {
+uint32_t crc32(FsFile & file, uint32_t &charcnt) {
   uint32_t oldcrc32 = 0xFFFFFFFF;
   charcnt = 0;
   while (file.available()) {
@@ -612,7 +632,7 @@ uint32_t crc32(FsFile &file, uint32_t &charcnt) {
   return ~oldcrc32;
 }
 
-uint32_t crc32EEP(FsFile &file, uint32_t &charcnt) {
+uint32_t crc32EEP(FsFile & file, uint32_t &charcnt) {
   uint32_t oldcrc32 = 0xFFFFFFFF;
   charcnt = 0;
   while (file.available()) {
@@ -1884,6 +1904,7 @@ void checkStatus_NES() {
 
   display_Clear();
   println_Msg(F("NES CART READER"));
+  println_Msg(F(""));
   println_Msg(F("CURRENT SETTINGS"));
   println_Msg(F(""));
   print_Msg(F("MAPPER:   "));
@@ -3446,8 +3467,6 @@ void writeRAM() {
       print_Error(F("SD ERROR"), true);
     }
   }
-
-  display_Clear();
 
   LED_RED_OFF;
   LED_GREEN_OFF;
