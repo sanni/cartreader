@@ -20,8 +20,9 @@ word lastByte = 0;
 static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
 static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
-static const char gbxMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4};
+static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
+static const char gbxMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5};
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read Rom";
@@ -31,11 +32,11 @@ static const char GBMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4};
 
 // GB Flash items
-static const char GBFlashItem1[] PROGMEM = "CFI Cart";
-static const char GBFlashItem2[] PROGMEM = "CFI Cart and Save";
-static const char GBFlashItem3[] PROGMEM = "29F Cart (MBC3)";
-static const char GBFlashItem4[] PROGMEM = "29F Cart (MBC5)";
-static const char GBFlashItem5[] PROGMEM = "NPower GB Memory";
+static const char GBFlashItem1[] PROGMEM = "29F Cart (MBC3)";
+static const char GBFlashItem2[] PROGMEM = "29F Cart (MBC5)";
+static const char GBFlashItem3[] PROGMEM = "29F Cart (CAM)";
+static const char GBFlashItem4[] PROGMEM = "CFI Cart";
+static const char GBFlashItem5[] PROGMEM = "CFI Cart and Save";
 static const char GBFlashItem6[] PROGMEM = "GB Smart";
 static const char GBFlashItem7[] PROGMEM = "Reset";
 static const char* const menuOptionsGBFlash[] PROGMEM = {GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, GBFlashItem7};
@@ -45,8 +46,8 @@ void gbxMenu() {
   // create menu with title and 4 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 4);
-  gbType = question_box(F("Select Game Boy"), menuOptions, 4, 0);
+  convertPgm(menuOptionsGBx, 5);
+  gbType = question_box(F("Select Game Boy"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gbType)
@@ -76,6 +77,83 @@ void gbxMenu() {
       switch (gbFlash)
       {
         case 0:
+          //Flash MBC3
+          display_Clear();
+          display_Update();
+          setup_GB();
+          mode =  mode_GB;
+
+          // Change working dir to root
+          sd.chdir("/");
+          //MBC3
+          writeFlash29F_GB(3, 1);
+          // Reset
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+          resetArduino();
+          break;
+
+        case 1:
+          //Flash MBC5
+          display_Clear();
+          display_Update();
+          setup_GB();
+          mode =  mode_GB;
+
+          // Change working dir to root
+          sd.chdir("/");
+          //MBC5
+          writeFlash29F_GB(5, 1);
+          // Reset
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+          resetArduino();
+          break;
+
+        case 2:
+          //Flash GB Camera
+          display_Clear();
+          display_Update();
+          setup_GB();
+          mode =  mode_GB;
+
+          //Flash first bank with erase
+          // Change working dir to root
+          sd.chdir("/");
+          //MBC3
+          writeFlash29F_GB(3, 1);
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+
+          display_Clear();
+          println_Msg(F("Please change the"));
+          println_Msg(F("switch on the cart"));
+          println_Msg(F("to B2 (Bank 2)"));
+          println_Msg(F("if you want to flash"));
+          println_Msg(F("a second game"));
+          println_Msg(F(""));
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+
+          // Flash second bank without erase
+          // Change working dir to root
+          sd.chdir("/");
+          //MBC3
+          writeFlash29F_GB(3, 0);
+
+          // Reset
+          println_Msg(F(""));
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+          resetArduino();
+          break;
+
+        case 3:
           // Flash CFI
           display_Clear();
           display_Update();
@@ -102,7 +180,7 @@ void gbxMenu() {
           resetArduino();
           break;
 
-        case 1:
+        case 4:
           // Flash CFI and Save
           display_Clear();
           display_Update();
@@ -178,46 +256,6 @@ void gbxMenu() {
           resetArduino();
           break;
 
-        case 2:
-          //Flash MBC3
-          display_Clear();
-          display_Update();
-          setup_GB();
-          mode =  mode_GB;
-
-          // Change working dir to root
-          sd.chdir("/");
-          //MBC3
-          writeFlash29F_GB(3);
-          // Reset
-          wait();
-          resetArduino();
-          break;
-
-        case 3:
-          //Flash MBC5
-          display_Clear();
-          display_Update();
-          setup_GB();
-          mode =  mode_GB;
-
-          // Change working dir to root
-          sd.chdir("/");
-          //MBC5
-          writeFlash29F_GB(5);
-          // Reset
-          wait();
-          resetArduino();
-          break;
-
-        case 4:
-          // Flash GB Memory
-          display_Clear();
-          display_Update();
-          setup_GBM();
-          mode =  mode_GBM;
-          break;
-
         case 5:
           // Flash GB Smart
           display_Clear();
@@ -233,6 +271,14 @@ void gbxMenu() {
       break;
 
     case 3:
+      // Flash GB Memory
+      display_Clear();
+      display_Update();
+      setup_GBM();
+      mode =  mode_GBM;
+      break;
+
+    case 4:
       resetArduino();
       break;
   }
@@ -666,7 +712,7 @@ void readROM_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks - 1);
+  uint32_t totalProgressBar = (uint32_t)(romBanks - 2);
   draw_progressbar(0, totalProgressBar);
 
   for (word currBank = 1; currBank < romBanks; currBank++) {
@@ -966,7 +1012,7 @@ unsigned long verifySRAM_GB() {
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-void writeFlash29F_GB(byte MBC) {
+void writeFlash29F_GB(byte MBC, boolean flashErase) {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
@@ -1085,54 +1131,57 @@ void writeFlash29F_GB(byte MBC) {
     writeByte_GB(0x555, 0xf0);
 
     delay(100);
-    println_Msg(F("Erasing flash"));
-    display_Update();
 
-    // Erase flash
-    writeByte_GB(0x555, 0xaa);
-    writeByte_GB(0x2aa, 0x55);
-    writeByte_GB(0x555, 0x80);
-    writeByte_GB(0x555, 0xaa);
-    writeByte_GB(0x2aa, 0x55);
-    writeByte_GB(0x555, 0x10);
+    if (flashErase) {
+      println_Msg(F("Erasing flash"));
+      display_Update();
 
-    dataIn_GB();
+      // Erase flash
+      writeByte_GB(0x555, 0xaa);
+      writeByte_GB(0x2aa, 0x55);
+      writeByte_GB(0x555, 0x80);
+      writeByte_GB(0x555, 0xaa);
+      writeByte_GB(0x2aa, 0x55);
+      writeByte_GB(0x555, 0x10);
 
-    // Read the status register
-    byte statusReg = readByte_GB(0);
+      dataIn_GB();
 
-    // After a completed erase D7 will output 1
-    while ((statusReg & 0x80) != 0x80) {
-      // Blink led
-      blinkLED();
-      delay(100);
-      // Update Status
-      statusReg = readByte_GB(0);
-    }
+      // Read the status register
+      byte statusReg = readByte_GB(0);
 
-    // Blankcheck
-    println_Msg(F("Blankcheck"));
-    display_Update();
+      // After a completed erase D7 will output 1
+      while ((statusReg & 0x80) != 0x80) {
+        // Blink led
+        blinkLED();
+        delay(100);
+        // Update Status
+        statusReg = readByte_GB(0);
+      }
 
-    // Read x number of banks
-    for (int currBank = 0; currBank < romBanks; currBank++) {
-      // Blink led
-      blinkLED();
+      // Blankcheck
+      println_Msg(F("Blankcheck"));
+      display_Update();
 
-      dataOut();
+      // Read x number of banks
+      for (int currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        blinkLED();
 
-      // Set ROM bank
-      writeByte_GB(0x2000, currBank);
-      dataIn();
+        dataOut();
 
-      for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-        for (int currByte = 0; currByte < 512; currByte++) {
-          sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-        }
-        for (int j = 0; j < 512; j++) {
-          if (sdBuffer[j] != 0xFF) {
-            println_Msg(F("Not empty"));
-            print_Error(F("Erase failed"), true);
+        // Set ROM bank
+        writeByte_GB(0x2000, currBank);
+        dataIn();
+
+        for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
+          for (int currByte = 0; currByte < 512; currByte++) {
+            sdBuffer[currByte] = readByte_GB(currAddr + currByte);
+          }
+          for (int j = 0; j < 512; j++) {
+            if (sdBuffer[j] != 0xFF) {
+              println_Msg(F("Not empty"));
+              print_Error(F("Erase failed"), true);
+            }
           }
         }
       }
@@ -1147,6 +1196,11 @@ void writeFlash29F_GB(byte MBC) {
 
       word currAddr = 0;
       word endAddr = 0x3FFF;
+
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = (uint32_t)(romBanks - 2);
+      draw_progressbar(0, totalProgressBar);
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
@@ -1189,6 +1243,8 @@ void writeFlash29F_GB(byte MBC) {
           }
           currAddr += 512;
         }
+        processedProgressBar += 1;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
 
@@ -1198,6 +1254,11 @@ void writeFlash29F_GB(byte MBC) {
 
       // Write flash
       dataOut();
+
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = (uint32_t)(romBanks - 2);
+      draw_progressbar(0, totalProgressBar);
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
@@ -1236,13 +1297,15 @@ void writeFlash29F_GB(byte MBC) {
             dataOut();
           }
         }
+        processedProgressBar += 1;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
 
     // Set data pins to input again
     dataIn_GB();
 
-    println_Msg(F("Verifying"));
+    print_Msg(F("Verifying..."));
     display_Update();
 
     // Go back to file beginning
@@ -1297,10 +1360,10 @@ void writeFlash29F_GB(byte MBC) {
       display_Update();
     }
     else {
-      print_Msg(F("Error: "));
+      println_Msg(F("Error"));
       print_Msg(writeErrors);
       println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_Error(F("did not verify."), true);
     }
   }
   else {
