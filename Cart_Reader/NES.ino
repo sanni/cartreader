@@ -198,10 +198,9 @@ int b = 0;
 static const char nesMenuItem1[] PROGMEM = "Select Mapper";
 static const char nesMenuItem2[] PROGMEM = "Read complete Cart";
 static const char nesMenuItem3[] PROGMEM = "Read single chip";
-static const char nesMenuItem4[] PROGMEM = "Write RAM";
-static const char nesMenuItem5[] PROGMEM = "Write FLASH";
-static const char nesMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsNES[] PROGMEM = {nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6};
+static const char nesMenuItem4[] PROGMEM = "Write RAM/ROM";
+static const char nesMenuItem5[] PROGMEM = "Reset";
+static const char* const menuOptionsNES[] PROGMEM = {nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5};
 
 // NES chips menu
 static const char  nesChipsMenuItem1[] PROGMEM = "Read PRG";
@@ -210,11 +209,17 @@ static const char  nesChipsMenuItem3[] PROGMEM = "Read RAM";
 static const char  nesChipsMenuItem4[] PROGMEM = "Back";
 static const char* const menuOptionsNESChips[] PROGMEM = {nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3, nesChipsMenuItem4};
 
+// NES write menu
+static const char nesWriteMenuItem1[] PROGMEM = "Write RAM";
+static const char nesWriteMenuItem2[] PROGMEM = "Write FLASH";
+static const char nesWriteMenuItem3[] PROGMEM = "Back";
+static const char* const menuOptionsNESWrite[] PROGMEM = {nesWriteMenuItem1, nesWriteMenuItem2, nesWriteMenuItem3};
+
 // NES start menu
 void nesMenu() {
-  // create menu with title "NES CART READER" and 6 options to choose from
-  convertPgm(menuOptionsNES, 6);
-  unsigned char answer = question_box(F("NES CART READER"), menuOptions, 6, 0);
+  // create menu with title "NES CART READER" and 5 options to choose from
+  convertPgm(menuOptionsNES, 5);
+  unsigned char answer = question_box(F("NES CART READER"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
@@ -248,35 +253,13 @@ void nesMenu() {
       nesChipMenu();
       break;
 
-    // Write RAM
+    // Read single chip
     case 3:
-      writeRAM();
-      resetROM();
-      println_Msg(F(""));
-      println_Msg(F("Press button"));
-      display_Update();
-      wait();
-      break;
-
-    // Write FLASH
-    case 4:
-      if (mapper == 30) {
-        writeFLASH();
-        resetROM();
-      }
-      else {
-        display_Clear();
-        println_Msg(F("Error:"));
-        println_Msg(F("Can't write to this cartridge"));
-        println_Msg(F(""));
-        println_Msg(F("Press button"));
-        display_Update();
-      }
-      wait();
+      nesWriteMenu();
       break;
 
     // Reset
-    case 5:
+    case 4:
       resetArduino();
       break;
   }
@@ -319,6 +302,48 @@ void nesChipMenu() {
       println_Msg(F(""));
       println_Msg(F("Press button"));
       display_Update();
+      wait();
+      break;
+
+    // Return to Main Menu
+    case 3:
+      nesMenu();
+      wait();
+      break;
+  }
+}
+
+void nesWriteMenu() {
+  // create menu with title "Select NES Chip" and 3 options to choose from
+  convertPgm(menuOptionsNESWrite, 3);
+  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (answer) {
+    // Write RAM
+    case 0:
+      writeRAM();
+      resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press button"));
+      display_Update();
+      wait();
+      break;
+
+    // Write FLASH
+    case 1:
+      if (mapper == 30) {
+        writeFLASH();
+        resetROM();
+      }
+      else {
+        display_Clear();
+        println_Msg(F("Error:"));
+        println_Msg(F("Can't write to this cartridge"));
+        println_Msg(F(""));
+        println_Msg(F("Press button"));
+        display_Update();
+      }
       wait();
       break;
 
