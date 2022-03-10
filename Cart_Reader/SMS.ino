@@ -1,6 +1,6 @@
-//******************************************
-// SEGA MASTER SYSTEM MODULE
-//******************************************
+//**********************************************
+// SEGA MASTER SYSTEM/SG-1000/GAME GEAR MODULE
+//**********************************************
 
 #include "options.h"
 #ifdef enable_MD
@@ -19,6 +19,16 @@ static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
 static const char SMSMenuItem4[] PROGMEM = "Change Retrode Mode";
 static const char SMSMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4, SMSMenuItem5};
+
+// Rom Size menu
+static const char SMSRomItem1[] PROGMEM = "8KB";
+static const char SMSRomItem2[] PROGMEM = "16KB";
+static const char SMSRomItem3[] PROGMEM = "24KB";
+static const char SMSRomItem4[] PROGMEM = "32KB";
+static const char SMSRomItem5[] PROGMEM = "40KB";
+static const char SMSRomItem6[] PROGMEM = "48KB";
+static const char SMSRomItem7[] PROGMEM = "512KB";
+static const char* const romOptionsSMS[] PROGMEM = {SMSRomItem1, SMSRomItem2, SMSRomItem3, SMSRomItem4, SMSRomItem5, SMSRomItem6, SMSRomItem7};
 
 // Set retrode_mode to true when using a retrode SMS/GG adapter
 static bool retrode_mode = false;
@@ -373,20 +383,76 @@ void getCartInfo_SMS() {
     }
   }
 
-  display_Clear();
-  println_Msg(F("Cart Info"));
-  println_Msg(F(" "));
-  print_Msg(F("Name: "));
-  println_Msg(romName);
-  print_Msg(F("Size: "));
-  print_Msg(cartSize / 1024);
-  println_Msg(F("KB"));
-  println_Msg(F(" "));
-
+  // SMS header not found
   if (strcmp(romName, "TMR SEGA") != 0) {
-    print_Error(F("Not working yet"), false);
-    sprintf(romName, "ERROR");
-    cartSize =  48 * 1024UL;
+    // Set cartsize manually
+    unsigned char SMSRomMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(romOptionsSMS, 7);
+    SMSRomMenu = question_box(F("Select ROM size"), menuOptions, 7, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (SMSRomMenu)
+    {
+      case 0:
+        // 8KB
+        cartSize =  8 * 1024UL;
+        break;
+
+      case 1:
+        // 16KB
+        cartSize =  16 * 1024UL;
+        break;
+
+      case 2:
+        // 24KB
+        cartSize =  24 * 1024UL;
+        break;
+
+      case 3:
+        // 32KB
+        cartSize =  32 * 1024UL;
+        break;
+
+      case 4:
+        // 40KB
+        cartSize =  40 * 1024UL;
+        break;
+
+      case 5:
+        // 48KB
+        cartSize =  48 * 1024UL;
+        break;
+
+      case 6:
+        // 512KB
+        cartSize =  512 * 1024UL;
+        break;
+    }
+
+    display_Clear();
+    println_Msg(F("SMS Header not found"));
+    println_Msg(F(" "));
+    print_Msg(F("Name: "));
+    println_Msg(romName);
+    print_Msg(F("Selected Size: "));
+    print_Msg(cartSize / 1024);
+    println_Msg(F("KB"));
+    println_Msg(F(" "));
+    sprintf(romName, "UNKNOWN");
+  }
+
+  // Header found
+  else {
+    display_Clear();
+    println_Msg(F("SMS Header Info"));
+    println_Msg(F(" "));
+    print_Msg(F("Name: "));
+    println_Msg(romName);
+    print_Msg(F("Size: "));
+    print_Msg(cartSize / 1024);
+    println_Msg(F("KB"));
+    println_Msg(F(" "));
   }
 
   // Wait for user input
