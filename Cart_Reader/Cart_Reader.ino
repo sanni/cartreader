@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             08.03.2022
-   Version:          8.0
+   Date:             21.03.2022
+   Version:          8.1
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -45,7 +45,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "8.0";
+char ver[5] = "8.1";
 
 /******************************************
    Libraries
@@ -354,7 +354,7 @@ static const char modeItem4[] PROGMEM = "Game Boy";
 static const char modeItem5[] PROGMEM = "NES/Famicom";
 static const char modeItem6[] PROGMEM = "Flashrom Programmer";
 static const char modeItem7[] PROGMEM = "PC Engine/TG16";
-static const char modeItem8[] PROGMEM = "SMS/GG/Mark III";
+static const char modeItem8[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char modeItem9[] PROGMEM = "WonderSwan";
 static const char modeItem10[] PROGMEM = "NeoGeo Pocket";
 static const char modeItem11[] PROGMEM = "About";
@@ -387,6 +387,9 @@ void mainMenu() {
       break;
     }
   }
+
+  // Reset page number
+  currPage = 1;
 
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
@@ -486,7 +489,7 @@ static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem
 static const char addonsItem1[] PROGMEM = "NES/Famicom";
 static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
 static const char addonsItem3[] PROGMEM = "PC Engine/TG16";
-static const char addonsItem4[] PROGMEM = "SMS/GG/Mark III";
+static const char addonsItem4[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char addonsItem5[] PROGMEM = "WonderSwan";
 static const char addonsItem6[] PROGMEM = "NeoGeo Pocket";
 static const char addonsItem7[] PROGMEM = "Reset";

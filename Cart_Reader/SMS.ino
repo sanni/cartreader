@@ -1,6 +1,6 @@
-//**********************************************
-// SEGA MASTER SYSTEM/SG-1000/GAME GEAR MODULE
-//**********************************************
+//********************************************************
+// SEGA MASTER SYSTEM/Mark III/SG-1000/GAME GEAR MODULE
+//********************************************************
 
 #include "options.h"
 #ifdef enable_MD
@@ -12,12 +12,19 @@
 /******************************************
    Menu
  *****************************************/
+// Adapter menu
+static const char SMSAdapterItem1[] PROGMEM = "SMS/Mark 3 raphnet";
+static const char SMSAdapterItem2[] PROGMEM = "SG-1000 raphnet";
+static const char SMSAdapterItem3[] PROGMEM = "SMS Retrode";
+static const char SMSAdapterItem4[] PROGMEM = "GG Retrode";
+static const char* const menuAdapterSMS[] PROGMEM = {SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4};
+
 // MD menu items
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
 static const char SMSMenuItem2[] PROGMEM = "Read from SRAM";
 static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
-static const char SMSMenuItem4[] PROGMEM = "Change Retrode Mode";
-static const char SMSMenuItem5[] PROGMEM = "Reset";
+static const char SMSMenuItem4[] PROGMEM = "Reset";
+static const char SMSMenuItem5[] PROGMEM = "Change Retrode Mode";
 static const char* const menuOptionsSMS[] PROGMEM = {SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4, SMSMenuItem5};
 
 // Rom Size menu
@@ -33,14 +40,23 @@ static const char* const romOptionsSMS[] PROGMEM = {SMSRomItem1, SMSRomItem2, SM
 // Set retrode_mode to true when using a retrode SMS/GG adapter
 static bool retrode_mode = false;
 static bool retrode_mode_sms = false; // true: SMS/Mark3 false: GG
+static bool raphnet_mode_sg1000 = false; //  true: SG-1000 false: SMS/Mark3
 
 void _smsMenu() {
-  // create menu with title and 2 options to choose from
+  // create menu with title and n options to choose from
   unsigned char mainMenu;
-  // Copy menuOptions out of progmem
-  int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
-  convertPgm(menuOptionsSMS, noptions);
-  mainMenu = question_box(retrode_mode ? (retrode_mode_sms ? F("Retrode:SMS") : F("Retrode:GG")) : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
+
+  if (retrode_mode) {
+    // Copy menuOptions out of progmem
+    int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
+    convertPgm(menuOptionsSMS, noptions);
+    mainMenu = question_box(retrode_mode ? (retrode_mode_sms ? F("Retrode:SMS") : F("Retrode:GG")) : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
+  }
+  else {
+    // Copy menuOptions out of progmem
+    convertPgm(menuOptionsSMS, (raphnet_mode_sg1000 ?  1 : 4));
+    mainMenu = question_box((raphnet_mode_sg1000 ?  F("SG-1000") : F("SMS/Mark III") ), menuOptions, (raphnet_mode_sg1000 ?  1 : 4), 0);
+  }
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu)
@@ -73,32 +89,70 @@ void _smsMenu() {
       break;
 
     case 3:
-      if (!retrode_mode && !retrode_mode_sms) {
-        // first state (default)
-        retrode_mode = true; // Change to GG
-      } else if (retrode_mode && !retrode_mode_sms) {
-        // second state
-        retrode_mode_sms = true; // Change to SMS
-      } else {
-        // third state, reset to the first state
-        retrode_mode = false;
-        retrode_mode_sms = false;
-      }
-      break;
-
-    case 4:
       // Reset
       resetArduino();
       break;
+
+    case 4:
+      if (retrode_mode && !retrode_mode_sms) {
+        // Change to SMS
+        retrode_mode_sms = true;
+      } else if (retrode_mode && retrode_mode_sms) {
+        // Change to GG
+        retrode_mode_sms = false;
+      }
+      break;
   }
-  println_Msg(retrode_mode ? (retrode_mode_sms ? F("Retrode Mode SMS") : F("Retrode Mode GG")) : F("Retrode Mode Off"));
-  println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  if (retrode_mode) {
+    println_Msg(retrode_mode ? (retrode_mode_sms ? F("Retrode Mode SMS") : F("Retrode Mode GG")) : F("Retrode Mode Off"));
+    println_Msg(F("Press Button..."));
+  }
+  else {
+    println_Msg(F(""));
+    println_Msg(F("Press Button..."));
+  }
   display_Update();
   wait();
 }
 
 void smsMenu() {
+  // create main menu with title and 4 options to choose from
+  unsigned char SMSAdapterMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(menuAdapterSMS, 4);
+  SMSAdapterMenu = question_box(F("Select System/Adapter"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (SMSAdapterMenu)
+  {
+    case 0:
+      //  raphnet SMS/Mark3
+      retrode_mode = false;
+      retrode_mode_sms = false;
+      raphnet_mode_sg1000 = false;
+      break;
+
+    case 1:
+      //  raphnet SG-1000
+      retrode_mode = false;
+      retrode_mode_sms = false;
+      raphnet_mode_sg1000 = true;
+      break;
+
+    case 2:
+      // retrode SMS/Mark3
+      retrode_mode = true;
+      retrode_mode_sms = true;
+      raphnet_mode_sg1000 = false;
+      break;
+
+    case 3:
+      // retrode GG
+      retrode_mode = true;
+      retrode_mode_sms = false;
+      raphnet_mode_sg1000 = false;
+      break;
+  }
   for (;;) _smsMenu();
 }
 
@@ -388,8 +442,8 @@ void getCartInfo_SMS() {
     // Set cartsize manually
     unsigned char SMSRomMenu;
     // Copy menuOptions out of progmem
-    convertPgm(romOptionsSMS, 7);
-    SMSRomMenu = question_box(F("Select ROM size"), menuOptions, 7, 0);
+    convertPgm(romOptionsSMS, (raphnet_mode_sg1000 ?  4 : 7));
+    SMSRomMenu = question_box(F("Select ROM size"), menuOptions, (raphnet_mode_sg1000 ?  4 : 7), 0);
 
     // wait for user choice to come back from the question box menu
     switch (SMSRomMenu)
@@ -491,10 +545,19 @@ void readROM_SMS() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
   }
+
   word bankSize = 16 * 1024UL;
+
+  if (raphnet_mode_sg1000) {
+    // cart with no mapper
+    bankSize = cartSize;
+  }
+
   for (byte currBank = 0x0; currBank < (cartSize / bankSize); currBank++) {
     // Write current 16KB bank to slot 2 register 0xFFFF
-    writeByte_SMS(0xFFFF, currBank);
+    if (!raphnet_mode_sg1000) {
+      writeByte_SMS(0xFFFF, currBank);
+    }
 
     // Blink led
     blinkLED();
@@ -502,7 +565,7 @@ void readROM_SMS() {
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
+        sdBuffer[currByte] = readByte_SMS((raphnet_mode_sg1000 ?  0 : 0x8000) + currBuffer + currByte);
       }
       // hexdump for debugging:
       // if (currBank == 0 && currBuffer == 0) {
