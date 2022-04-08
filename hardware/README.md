@@ -6,7 +6,9 @@ Tested systems so far:
 - GB(C)    
 - GBA    
 - N64   
-- SNES   
+- SNES  
+- Master System    
+- Mega Drive   
 
 ![image](https://dl.dropboxusercontent.com/s/eks6s6zzfo6ahqr/hw42.jpg?dl=1)   
 
@@ -19,5 +21,5 @@ To order a PCB you need to download the zipped gerber files and upload them to a
 You can view the schematic and the PCB files using a free and open source programm called [KiCad 6.0](https://www.kicad.org/).   
 To design your own adapters you can follow this [tutorial](https://github.com/sanni/cartreader/wiki/Designing-your-own-Adapters)   
 
-
+### Also check out the user contributions for even more adapters: https://github.com/sanni/cartreader/discussions/354    
 
