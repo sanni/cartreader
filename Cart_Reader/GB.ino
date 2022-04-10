@@ -365,7 +365,9 @@ void setup_GB() {
   // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
   DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
   // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
+  PORTH &= ~(1 << 1);
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
@@ -540,7 +542,8 @@ void writeByte_GB(int myAddress, byte myData) {
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
-byte readByteCLK_GB(word myAddress) {
+// Triggers CLK pin
+byte readByteSRAM_GB(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
@@ -558,33 +561,59 @@ byte readByteCLK_GB(word myAddress) {
 
   // Pull RD(PH6) HIGH
   PORTH |=  (1 << 6);
-  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
-  PORTH |= (1 << 3) | (1 << 1);
-
+  if (romType == 252) {
+    // Pull CS(PH3) HIGH
+    PORTH |= (1 << 3);
+  }
+  else {
+    // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
+    PORTH |= (1 << 3) | (1 << 1);
+  }
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   return tempByte;
 }
 
-void writeByteCLK_GB(int myAddress, byte myData) {
+// Triggers CLK pin
+void writeByteSRAM_GB(int myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTC = myData;
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) LOW
-  PORTH &= ~((1 << 3) | (1 << 1));
-  // Pull WR(PH5) low
-  PORTH &= ~(1 << 5);
+  if (romType == 252) {
+    // Pull CS(PH3) LOW
+    PORTH &= ~(1 << 3);
+    // Pull CLK(PH1)(for GB CAM) HIGH
+    PORTH |= (1 << 1);
+    // Pull WR(PH5) low
+    PORTH &= ~(1 << 5);
+  }
+  else {
+    // Pull CS(PH3) CLK(PH1)(for FRAM MOD) LOW
+    PORTH &= ~((1 << 3) | (1 << 1));
+    // Pull WR(PH5) low
+    PORTH &= ~(1 << 5);
+  }
 
   // Leave WE low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  // Pull WR(PH5) HIGH
-  PORTH |= (1 << 5);
-  // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
-  PORTH |= (1 << 3) | (1 << 1);
+  if (romType == 252) {
+    // Pull WR(PH5) HIGH
+    PORTH |= (1 << 5);
+    // Pull CS(PH3) HIGH
+    PORTH |= (1 << 3);
+    // Pull  CLK(PH1) LOW (for GB CAM)
+    PORTH &= ~(1 << 1);
+  }
+  else {
+    // Pull WR(PH5) HIGH
+    PORTH |= (1 << 5);
+    // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
+    PORTH |= (1 << 3) | (1 << 1);
+  }
 
   // Leave WE high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
@@ -595,9 +624,9 @@ void writeByteCLK_GB(int myAddress, byte myData) {
 *****************************************/
 // Read Cartridge Header
 void getCartInfo_GB() {
-  romType = readByteCLK_GB(0x0147);
-  romSize = readByteCLK_GB(0x0148);
-  sramSize = readByteCLK_GB(0x0149);
+  romType = readByte_GB(0x0147);
+  romSize = readByte_GB(0x0148);
+  sramSize = readByte_GB(0x0149);
 
   // ROM banks
   switch (romSize) {
@@ -663,14 +692,14 @@ void getCartInfo_GB() {
   }
 
   // Get Checksum as string
-  sprintf(checksumStr, "%02X%02X", readByteCLK_GB(0x014E), readByteCLK_GB(0x014F));
+  sprintf(checksumStr, "%02X%02X", readByte_GB(0x014E), readByte_GB(0x014F));
 
   // Get name
   byte myByte = 0;
   byte myLength = 0;
 
   for (int addr = 0x0134; addr <= 0x13C; addr++) {
-    myByte = readByteCLK_GB(addr);
+    myByte = readByte_GB(addr);
     if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
       romName[myLength] = char(myByte);
       myLength++;
@@ -741,7 +770,7 @@ void readROM_GB() {
     // Read banks and save to SD
     while (romAddress <= 0x7FFF) {
       for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByteCLK_GB(romAddress + i);
+        sdBuffer[i] = readByte_GB(romAddress + i);
       }
       myFile.write(sdBuffer, 512);
       romAddress += 512;
@@ -777,8 +806,8 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
     myFile.close();
     sd.chdir();
     // Subtract checksum bytes
-    calcChecksum -= readByteCLK_GB(0x014E);
-    calcChecksum -= readByteCLK_GB(0x014F);
+    calcChecksum -= readByte_GB(0x014E);
+    calcChecksum -= readByte_GB(0x014F);
 
     // Return result
     return (calcChecksum);
@@ -792,7 +821,6 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
 
 // Compare checksum
 boolean compare_checksum_GB() {
-
   println_Msg(F("Calculating Checksum"));
   display_Update();
 
@@ -851,7 +879,7 @@ void readSRAM_GB() {
     dataIn_GB();
 
     // MBC2 Fix
-    readByteCLK_GB(0x0134);
+    readByte_GB(0x0134);
 
     dataOut();
     if (romType <= 4) {
@@ -870,7 +898,7 @@ void readSRAM_GB() {
       dataIn_GB();
       for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
         for (byte i = 0; i < 64; i++) {
-          sdBuffer[i] = readByteCLK_GB(sramAddress + i);
+          sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
         }
         myFile.write(sdBuffer, 64);
       }
@@ -908,7 +936,7 @@ void writeSRAM_GB() {
       dataIn_GB();
 
       // MBC2 Fix
-      readByteCLK_GB(0x0134);
+      readByte_GB(0x0134);
 
       dataOut();
 
@@ -926,7 +954,7 @@ void writeSRAM_GB() {
 
         // Write RAM
         for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
-          writeByteCLK_GB(sramAddress, myFile.read());
+          writeByteSRAM_GB(sramAddress, myFile.read());
         }
       }
       // Disable SRAM
@@ -963,7 +991,7 @@ unsigned long verifySRAM_GB() {
     dataIn_GB();
 
     // MBC2 Fix
-    readByteCLK_GB(0x0134);
+    readByte_GB(0x0134);
 
     // Check SRAM size
     if (lastByte > 0) {
@@ -986,7 +1014,7 @@ unsigned long verifySRAM_GB() {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
           for (int c = 0; c < 64; c++) {
-            if (readByteCLK_GB(sramAddress + c) != sdBuffer[c]) {
+            if (readByteSRAM_GB(sramAddress + c) != sdBuffer[c]) {
               writeErrors++;
             }
           }
