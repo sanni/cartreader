@@ -532,17 +532,17 @@ void writeByte_GB(int myAddress, byte myData) {
   // Pull WR(PH5) low
   PORTH &= ~(1 << 5);
 
-  // Leave WE low for at least 60ns
+  // Leave WR low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
 
-  // Leave WE high for at least 50ns
+  // Leave WR high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
-// Triggers CLK pin
+// Triggers CS and CLK pin
 byte readByteSRAM_GB(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -574,7 +574,7 @@ byte readByteSRAM_GB(word myAddress) {
   return tempByte;
 }
 
-// Triggers CLK pin
+// Triggers CS and CLK pin
 void writeByteSRAM_GB(int myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -597,7 +597,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
     PORTH &= ~(1 << 5);
   }
 
-  // Leave WE low for at least 60ns
+  // Leave WR low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
   if (romType == 252) {
@@ -615,7 +615,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
     PORTH |= (1 << 3) | (1 << 1);
   }
 
-  // Leave WE high for at least 50ns
+  // Leave WR high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 }
 
@@ -1172,19 +1172,18 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       writeByte_GB(0x2aa, 0x55);
       writeByte_GB(0x555, 0x10);
 
-      dataIn_GB();
+      // Set data pins to input
+      dataIn();
 
-      // Read the status register
-      byte statusReg = readByte_GB(0);
+      // Set OE/RD(PH6) LOW
+      PORTH &= ~(1 << 6);
 
       // After a completed erase D7 will output 1
-      while ((statusReg & 0x80) != 0x80) {
-        // Blink led
-        blinkLED();
-        delay(100);
-        // Update Status
-        statusReg = readByte_GB(0);
+      while ((PINC & 0x80) != 0x80) {
       }
+
+      // Switch OE/RD(PH6) to HIGH
+      PORTH |= (1 << 6);
 
       // Blankcheck
       println_Msg(F("Blankcheck"));
@@ -1256,15 +1255,15 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
             // Set data pins to input
             dataIn();
 
-            // Setting CS(PH3) and OE/RD(PH6) LOW
-            PORTH &= ~((1 << 3) | (1 << 6));
+            // Set OE/RD(PH6) LOW
+            PORTH &= ~(1 << 6);
 
             // Busy check
             while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
             }
 
-            // Switch CS(PH3) and OE/RD(PH6) to HIGH
-            PORTH |= (1 << 3) | (1 << 6);
+            // Switch OE/RD(PH6) to HIGH
+            PORTH |= (1 << 6);
 
             // Set data pins to output
             dataOut();
@@ -1311,15 +1310,15 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
             // Set data pins to input
             dataIn();
 
-            // Setting CS(PH3) and OE/RD(PH6) LOW
-            PORTH &= ~((1 << 3) | (1 << 6));
+            // Set OE/RD(PH6) LOW
+            PORTH &= ~(1 << 6);
 
             // Busy check
             while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
             }
 
-            // Switch CS(PH3) and OE/RD(PH6) to HIGH
-            PORTH |= (1 << 3) | (1 << 6);
+            // Switch OE/RD(PH6) to HIGH
+            PORTH |= (1 << 6);
 
             // Set data pins to output
             dataOut();
