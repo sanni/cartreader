@@ -26,7 +26,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Eeprom needs Adafruit Clockgen by default, Proto carts are not supported yet    
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
 - Reflashes some Chinese N64 repros with S29GL type flashroms   
-- Reflashes N64 Gamesharks with SST 29LE010 eeproms     
+- Reflashes N64 Gamesharks with SST 29LE010(and similar) eeproms     
 - Reads Game Boy (Color) roms and reads/writes save games   
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
 - Programs custom-made Game Boy (Color) flashcarts with AM29F016, AM29F032, MBM29F033 flashrom   
@@ -35,9 +35,12 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128, PC28F256M29 or M29W128GH flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
 - Reads Sega Master System roms and saves (using Retrode or Raphnet adapter)       
-- Reads Sega Game Gear roms and saves(using Retrode adapter)    
+- Reads Sega Game Gear roms and saves (using Retrode adapter)    
+- Reads some Sega Mark III cartridges (using Raphnet adapter)  
+- Reads some Sega SG-1000 cartridges (using Raphnet adapter)      
+- Reads some Sega Cards (using Card Catcher and Raphnet Mark III Adapter)   
 - Reads PC engine/TG16 cartridges (using Retrode TG16 adapter)   
-- Reads WonderSwan cartridges (using V3 adapters)   
-- Reads NeoGeo Pocket cartridges (using V3 adapters)   
+- Reads WonderSwan cartridges (using custom adapter)   
+- Reads NeoGeo Pocket cartridges (using custom adapter)
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (HW4 needs modified adapters)       
 - Programs M27C322 eproms (HW4 needs modified adapters)      
