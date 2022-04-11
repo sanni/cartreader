@@ -496,6 +496,8 @@ void showCartInfo_GB() {
 void dataIn_GB() {
   // Set to Input
   DDRC = 0x00;
+  // Pullups
+  //PORTC = 0xFF;
 }
 
 byte readByte_GB(word myAddress) {
@@ -1173,7 +1175,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       writeByte_GB(0x555, 0x10);
 
       // Set data pins to input
-      dataIn();
+      dataIn_GB();
 
       // Set OE/RD(PH6) LOW
       PORTH &= ~(1 << 6);
@@ -1198,7 +1200,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
         // Set ROM bank
         writeByte_GB(0x2000, currBank);
-        dataIn();
+        dataIn_GB();
 
         for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
           for (int currByte = 0; currByte < 512; currByte++) {
@@ -1253,7 +1255,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
             // Set data pins to input
-            dataIn();
+            dataIn_GB();
 
             // Set OE/RD(PH6) LOW
             PORTH &= ~(1 << 6);
@@ -1308,7 +1310,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
             // Set data pins to input
-            dataIn();
+            dataIn_GB();
 
             // Set OE/RD(PH6) LOW
             PORTH &= ~(1 << 6);
@@ -1637,7 +1639,7 @@ bool writeCFI_GB() {
 
       // Set ROM bank
       writeByte_GB(0x2000, currBank);
-      dataIn();
+      dataIn_GB();
 
       for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
         for (int currByte = 0; currByte < 512; currByte++) {
@@ -1688,7 +1690,7 @@ bool writeCFI_GB() {
           writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
           // Set data pins to input
-          dataIn();
+          dataIn_GB();
 
           // Setting CS(PH3) and OE/RD(PH6) LOW
           PORTH &= ~((1 << 3) | (1 << 6));
