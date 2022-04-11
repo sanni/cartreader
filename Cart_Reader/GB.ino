@@ -743,7 +743,7 @@ void readROM_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks - 2);
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
   draw_progressbar(0, totalProgressBar);
 
   for (word currBank = 1; currBank < romBanks; currBank++) {
@@ -776,10 +776,9 @@ void readROM_GB() {
       }
       myFile.write(sdBuffer, 512);
       romAddress += 512;
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
-
-    processedProgressBar += 1;
-    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
@@ -1176,16 +1175,13 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
       // Set data pins to input
       dataIn_GB();
-
-      // Set OE/RD(PH6) LOW
-      PORTH &= ~(1 << 6);
-
+      // Read the status register
+      byte statusReg = readByte_GB(0);
       // After a completed erase D7 will output 1
-      while ((PINC & 0x80) != 0x80) {
+      while ((statusReg & 0x80) != 0x80) {
+        // Update Status
+        statusReg = readByte_GB(0);
       }
-
-      // Switch OE/RD(PH6) to HIGH
-      PORTH |= (1 << 6);
 
       // Blankcheck
       println_Msg(F("Blankcheck"));
@@ -1228,7 +1224,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks - 2);
+      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
       draw_progressbar(0, totalProgressBar);
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
@@ -1271,9 +1267,9 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
             dataOut();
           }
           currAddr += 512;
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
         }
-        processedProgressBar += 1;
-        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
 
@@ -1286,7 +1282,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks - 2);
+      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
       draw_progressbar(0, totalProgressBar);
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
@@ -1325,9 +1321,9 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
             // Set data pins to output
             dataOut();
           }
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
         }
-        processedProgressBar += 1;
-        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
 
