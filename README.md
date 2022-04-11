@@ -42,5 +42,5 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads PC engine/TG16 cartridges (using Retrode TG16 adapter)   
 - Reads WonderSwan cartridges (using custom adapter)   
 - Reads NeoGeo Pocket cartridges (using custom adapter)
-- Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (HW4 needs modified adapters)       
-- Programs M27C322 eproms (HW4 needs modified adapters)      
+- Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
+- Programs M27C322 eproms (using custom adapter)      
