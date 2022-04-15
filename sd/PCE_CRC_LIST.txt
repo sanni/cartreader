@@ -1275,3 +1275,6 @@ Zipang
 
 [CD] TurboGrafx CD System Card
 FF2A5EC3
+
+Test Checksum
+154803CC
