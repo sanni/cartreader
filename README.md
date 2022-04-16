@@ -31,6 +31,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads and writes Nintendo Power Game Boy Memory Flash Cartridges   
 - Programs custom-made Game Boy (Color) flashcarts with AM29F016, AM29F032, MBM29F033 flashrom   
 - Programs EMS GB Smart 32M flash carts    
+- Programs Gameboy Camera Flashcart      
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128, PC28F256M29 or M29W128GH flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
