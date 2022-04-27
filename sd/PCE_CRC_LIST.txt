@@ -32,7 +32,7 @@ Alien Crush (USA)
 EA488494
 
 All Star Power League (Japan)
-4A85769
+04A85769
 
 Andre Panza Kick Boxing (USA)
 A980E0E9
@@ -41,7 +41,7 @@ Ankoku Densetsu (Japan)
 CACC06FB
 
 Aoi Blink (Japan)
-8A09B9A
+08A09B9A
 
 Appare! Gateball (Japan)
 2B54CBA2
@@ -110,10 +110,10 @@ Bomberman '93 (USA)
 56171C1C
 
 Bomberman '93 - Special Version (Japan)
-2309AA0
+02309AA0
 
 Bomberman '94 (Japan)
-5362516
+05362516
 
 Bomberman (Japan)
 9ABB4D1F
@@ -149,7 +149,7 @@ Break In (Japan)
 C9D7426A
 
 Bubblegum Crash! - Knight Sabers 2034 (Japan)
-D766139
+0D766139
 
 Bull Fight - Ring no Hasha (Japan)
 5C4D1991
@@ -188,7 +188,7 @@ China Warrior (USA)
 A2EE361D
 
 Chouzetsurinjin Bravoman (Japan)
-DF57C90
+0DF57C90
 
 Circus Lido (Japan)
 C3212C24
@@ -254,7 +254,7 @@ Deep Blue (USA)
 16B40B44
 
 Deep Blue - Kaitei Shinwa (Japan)
-53A0F83
+053A0F83
 
 Detana!! TwinBee (Japan)
 5CF59D80
@@ -278,7 +278,7 @@ Doraemon - Meikyuu Daisakusen (Japan)
 DC760A07
 
 Doraemon - Nobita no Dorabian Night (Japan)
-13A747F
+013A747F
 
 Double Dungeons (Japan)
 86087B39
@@ -296,10 +296,10 @@ Dragon Saber (Japan)
 3219849C
 
 Dragon Spirit (Japan)
-1A76935
+01A76935
 
 Dragon Spirit (USA)
-86F148C
+086F148C
 
 Dragon's Curse (USA)
 7D2C4B09
@@ -329,7 +329,7 @@ F-1 Dream (Japan)
 D50FF730
 
 F-1 Pilot - You're King of Kings (Japan)
-9048174
+09048174
 
 F1 Circus '91 (Japan)
 D7CFD70F
@@ -344,7 +344,7 @@ F1 Triple Battle (Japan)
 13BF0409
 
 Falcon (USA)
-BC0A12B
+0BC0A12B
 
 Fantasy Zone (Japan)
 72CB0F9D
@@ -371,7 +371,7 @@ Final Soldier (Japan) (En)
 AF2DD2AF
 
 Final Soldier - Special Version (Japan) (En)
-2A578C5
+02A578C5
 
 Fire Pro Wrestling - Combination Tag (Japan)
 90ED6575
@@ -428,7 +428,7 @@ Gomola Speed (Japan)
 4BD38F17
 
 Gradius (Japan)
-517DA65
+0517DA65
 
 Gunboat (USA)
 F370B58E
@@ -479,7 +479,7 @@ J.J. & Jeff (USA)
 E01C5127
 
 J.League Greatest Eleven (Japan)
-AD97B04
+0AD97B04
 
 Jack Nicklaus - Championship Golf (Japan)
 EA751E82
@@ -536,7 +536,7 @@ Klax (Japan)
 C74FFBC9
 
 Klax (USA)
-F1B59B4
+0F1B59B4
 
 Knight Rider Special (Japan)
 C614116C
@@ -551,13 +551,13 @@ Kung Fu, The (Japan)
 B552C906
 
 Kyuukyoku Mahjong - Idol Graphics (Japan) (Unl)
-2DDE03E
+02DDE03E
 
 Kyuukyoku Mahjong II (Japan) (Unl)
 E5B6B3E5
 
 Kyuukyoku Tiger (Japan)
-9509315
+09509315
 
 Lady Sword - Ryakudatsu Sareta 10-nin no Otome (Japan) (Unl)
 C6F764EC
@@ -659,7 +659,7 @@ Moto Roader (USA)
 E2B0D544
 
 Moto Roader II (Japan)
-B7F6E5F
+0B7F6E5F
 
 Mr. Heli no Daibouken (Japan)
 2CB92290
@@ -674,13 +674,13 @@ Naxat Stadium (Japan)
 20A7D128
 
 Nazo no Mascarade (Japan)
-441D85A
+0441D85A
 
 Necros no Yousai (Japan)
 FB0FDCFE
 
 Nectaris (Japan)
-243453B
+0243453B
 
 Nekketsu Koukou Dodgeball-bu - PC Bangai Hen (Japan)
 65FDB863
@@ -791,10 +791,10 @@ PC Genjin 3 - Pithecanthropus Computerurus (Japan)
 A170B60E
 
 PC Pachi-Slot - Idol Gambler (Japan) (Unl)
-AA88F33
+0AA88F33
 
 Populous (Japan)
-83C956A
+083C956A
 
 Power Drift (Japan)
 25E0F6E9
@@ -845,7 +845,7 @@ Pro Yakyuu World Stadium (Japan)
 34E089A9
 
 Psycho Chaser (Japan)
-3883EE8
+03883EE8
 
 Psychosis (USA)
 6CC10824
@@ -884,7 +884,7 @@ Raiden (USA)
 BC59C31E
 
 Rastan Saga II (Japan)
-C38E69
+00C38E69
 
 Rock-On (Japan)
 2FD65312
@@ -893,13 +893,13 @@ Ryuukyuu (Japan)
 91E6896F
 
 S.C.I. - Special Criminal Investigation (Japan)
-9A0BFCC
+09A0BFCC
 
 Sadakichi Seven - Hideyoshi no Ougon (Japan)
 F999356F
 
 Saigo no Nindou - Ninja Spirit (Japan)
-590A156
+0590A156
 
 Salamander (Japan)
 FAECCE20
@@ -1070,7 +1070,7 @@ Tiger Road (USA)
 985D492D
 
 Time Cruise (USA)
-2C39660
+02C39660
 
 Time Cruise II (Japan)
 CFEC1D6A
@@ -1136,7 +1136,7 @@ Valkyrie no Densetsu (Japan)
 A3303978
 
 Veigues - Tactical Gladiator (Japan)
-4188C5C
+04188C5C
 
 Veigues - Tactical Gladiator (USA)
 99D14FB7
@@ -1145,7 +1145,7 @@ Victory Run (USA)
 85CBD045
 
 Victory Run - Eikou no 13,000km (Japan)
-3E28CFF
+03E28CFF
 
 Vigilante (Japan)
 E4124FE0
@@ -1166,7 +1166,7 @@ Wai Wai Mahjong - Yukai na Janyuu-tachi (Japan)
 A2A0776E
 
 Wallaby!! - Usagi no Kuni no Kangaroo Race (Japan)
-112D0C7
+0112D0C7
 
 Winning Shot (Japan)
 9B5EBC58
@@ -1237,5 +1237,3 @@ Zipang (Japan)
 [BIOS] TurboGrafx CD System Card (USA) (v2.0)
 FF2A5EC3
 
-Test Checksum
-154803CC
