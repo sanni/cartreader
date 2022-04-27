@@ -1,1279 +1,1240 @@
-Counter Attack (Super Grafx)
-D206E241
-
-Counter Attack (Super Grafx)
+1941 - Counter Attack (Japan)
 8C4588E2
 
-1943 Kai
+1943 Kai (Japan)
 FDE08D6D
 
-21 Emon - Mezase Hotel Ou!!
+21 Emon - Mezase Hotel Ou!! (Japan)
 73614660
 
-Adventure Island
+Adventure Island (Japan)
 8E71D4F3
 
-Aero Blasters
+Aero Blasters (Japan)
 25BE2B81
 
-Aero Blasters
+Aero Blasters (USA)
 B03E0B32
 
-After Burner II
+After Burner II (Japan)
 CA72A828
 
-Air Zonk
+Air Zonk (USA)
 933D5BCC
 
-Aldynes (Super Grafx)
+Aldynes - The Misson Code for Rage Crisis (Japan)
 4C2126B0
 
-Alien Crush
+Alien Crush (Japan)
 60EDF4E1
 
-Alien Crush
+Alien Crush (USA)
 EA488494
 
-Ankoku Densetsu
-CACC06FB
+All Star Power League (Japan)
+4A85769
 
-Aoi Blink
-08A09B9A
-
-Appare Gateball
-2B54CBA2
-
-Armed Formation F
-20EF87FD
-
-Artist Tool
-5E4FA713
-
-Atomic Robo-Kid Special
-DD175EFD
-
-AV Poker
-B866D282
-
-Ballistix
-8ACFC8AA
-
-Ballistix
-420FA189
-
-Bari Bari Densetsu
-C267E25D
-
-Barunba
-4A3DF3CA
-
-Batman
-106BB7B2
-
-Battle Ace (Super Grafx)
-3B13AF61
-
-Battle Lode Runner
-59E44F45
-
-Battle Royale
-E70B01AF
-
-Be Ball
-E439F299
-
-Benkei Gaiden
-C9626A43
-
-Benkei Gaiden
-E1A73797
-
-Bikkuriman World
-34893891
-
-Bikkuriman World
-2841FD1E
-
-Blazing Lazers
-B4A1B0F6
-
-Blodia
-958BCD09
-
-Bloody Wolf
-37BAF6BC
-
-Body Conquest II
-FFD92458
-
-Bomberman '93
-B300C5D0
-
-Bomberman '93 (Special Version)
-02309AA0
-
-Bomberman '93
-56171C1C
-
-Bomberman '94
-05362516
-
-Bomberman
-9ABB4D1F
-
-Bomberman
-5F6F3C2A
-
-Bomberman - Users Battle
-1489FA51
-
-Bonk III - Bonk's Big Adventure
-5A3F76D8
-
-Bonk's Adventure
-599EAD9B
-
-Bonk's Revenge
-14250F9A
-
-Bouken Danshaku Don - The Lost Sunheart
-8F4D9F94
-
-Boxyboy
-605BE213
-
-Bravoman
-CCA08B02
-
-Break In
-C9D7426A
-
-Bubblegum Crash! - Knight Sabers 2034
-0D766139
-
-Bull Fight - Ring no Haja
-5C4D1991
-
-Burning Angels
-D233C05A
-
-Busou Keiji - Cyber Cross
-D0C250CA
-
-Cadash
-8DC0D85F
-
-Cadash
-BB0B3AEF
-
-Champion Wrestler
-9EDC0AEA
-
-Champions Forever Boxing
-15EE889A
-
-Chew Man Fu
-8CD13E9A
-
-Chibi Maruko Chan - Quiz de Piihyara
-951ED380
-
-Chikudenya Toubei - Kubikiri Yakata Yori
-84098884
-
-Chikudenya Toubei - Kubikiri Yakata Yori
-CAB21B2E
-
-China Warrior
-A2EE361D
-
-Chouzetsu Rinjin - Bravoman
-0DF57C90
-
-Circus Lido
-C3212C24
-
-City Hunter
-F91B055F
-
-Columns
-99F7A572
-
-Coryoon - Child of Dragon
-D5389889
-
-Coryoon - Child of Dragon
-B4D29E3B
-
-Cratermaze
-9033E83A
-
-Cross Wiber - Cyber Combat Police
-2DF97BD0
-
-Cyber Core
-A98D276A
-
-Cyber Core
-4CFB6E3E
-
-Cyber Dodge
-B5326B16
-
-Cyber Knight
-A594FAC0
-
-Dai Makaimura (Super Grafx)
-B486A8ED
-
-Dai Senpu
-9107BCC8
-
-Daichi Kun Crisis - Do Natural
-61A2935F
-
-Darius Alpha
-B0BA689F
-
-Darius Plus (Super Grafx-compatible)
-BEBFE042
-
-Darkwing Duck
-4AC97606
-
-Davis Cup Tennis
-9EDAB596
-
-Dead Moon
-56739BC7
-
-Dead Moon
-F5D98B0B
-
-Deep Blue
-16B40B44
-
-Deep Blue - Kaitei Shinwa
-053A0F83
-
-Detana!! TwinBee
-5CF59D80
-
-Devil Crash - Naxat Pinball
-4EC81A80
-
-Devil's Crush - Naxat Pinball
-157B4492
-
-Die Hard
-1B5B1CB1
-
-Digital Champ
-17BA3032
-
-Don Doko Don!
-F42AA73E
-
-Doraemon - Meikyuu Dai Sakusen
-DC760A07
-
-Doraemon - Nobita no Dorabian Night
-013A747F
-
-Double Dungeons - W
-86087B39
-
-Double Dungeons - W
-4A1A8C60
-
-Download
-4E0DE488
-
-Download
-85101C20
-
-Dragon Egg!
-442405D5
-
-Dragon Saber - After Story of Dragon Spirit
-C89CE75A
-
-Dragon Saber - After Story of Dragon Spirit
-3219849C
-
-Dragon Spirit
-01A76935
-
-Dragon Spirit
-086F148C
-
-Dragon's Curse
-7D2C4B09
-
-Drop Rock Hora Hora
-8E81FCAC
-
-Drop Rock Hora Hora
-67EC5EC4
-
-Drop.Off
-FEA27B32
-
-Dungeon Explorer
-1B1A80A2
-
-Dungeon Explorer
-4FF01515
-
-Energy
-CA68FF21
-
-F-1 Dream
-D50FF730
-
-F-1 Pilot - You're King of Kings
-09048174
-
-F1 Circus '91 - World Championship
-D7CFD70F
-
-F1 Circus '92 - The Speed of Sound
-B268F2A2
-
-F1 Circus
-79705779
-
-F1 Circus
-E14DEE08
-
-F1 Triple Battle
-13BF0409
-
-Falcon
-0BC0A12B
-
-Fantasy Zone
-72CB0F9D
-
-Fantasy Zone
-E8C3573D
-
-Fighting Run
-1828D2E5
-
-Final Blaster
-C90971BA
-
-Final Lap Twin
-C8C084E3
-
-Final Lap Twin
-26408EA3
-
-Final Match Tennis
-560D2305
-
-Final Soldier
-AF2DD2AF
-
-Final Soldier (Special Version)
-02A578C5
-
-Fire Pro Wrestling - Combination Tag
-90ED6575
-
-Fire Pro Wrestling 2 - 2nd Bout
-E88987BB
-
-Fire Pro Wrestling 3 - Legend Bout
-534E8808
-
-Formation Soccer - Human Cup '90
-85A1E7B6
-
-Formation Soccer - On J. League
-7146027C
-
-Fushigi no Yume no Alice
-12C4E6FD
-
-Gai Flame
-95F90DEC
-
-Gaia no Monshou
-6FD6827C
-
-Galaga '88
-1A8393C6
-
-Galaga '90
-2909DEC6
-
-Ganbare! Golf Boys
-27A4D11A
-
-Gekisha Boy
-E8702D51
-
-Genji Tsuushin Agedama
-AD450DFC
-
-Genpei Toumaden
-B926C682
-
-Genpei Toumaden Ni no Maki
-8793758C
-
-Ghost Manor
-2DB4C1FD
-
-Gokuraku! Chuuka Taisen
-E749A22C
-
-Gomola Speed
-9A353AFD
-
-Gradius
-0517DA65
-
-Gunboat
-F370B58E
-
-Gunhed
-A17D4D7E
-
-Gunhed - Hudson Gunhed Taikai
-57F183AE
-
-Hana Taaka Daka!
-BA4D0DD4
-
-Hanii in the Sky
-BF3E2CC7
-
-Hanii on the Road
-9897FA86
-
-Hatris
-44E7DF53
-
-Heavy Unit
-EB923DE5
-
-Hisou Kihei - Xserd
-1CAB1EE6
-
-Hit the Ice - VHL the Official Video Hockey League
-7ACB60C8
-
-Hit the Ice - VHL the Official Video Hockey League
-8B29C3AA
-
-Honoo no Toukyuuji Dodge Danpei
-B01EE703
-
-Idol Hanafuda Fan Club
-9EC6FC6C
-
-Image Fight
-A80C565F
-
-Impossamole
-E2470F5F
-
-J. League Greatest Eleven
-0AD97B04
-
-J.J. & Jeff
-E01C5127
-
-Jack Nicklaus' Greatest 18 Holes of Major Championship Golf
-EA751E82
-
-Jack Nicklaus' Turbo Golf
-83384572
-
-Jackie Chan
-C6FA6373
-
-Jackie Chan's Action Kung Fu
-9D2F6193
-
-Jigoku Meguri
-CC7D3EEB
-
-Jinmu Denshou
-84240EF9
-
-Jinmu Denshou
-C150637A
-
-Juuouki
-6A628982
-
-Juuouki
-C8C7D63E
-
-Kaizou Choujin Shubibinman
-A9084D6E
-
-Kaizou Choujin Shubibinman 2 - Aratanaru Teki
-109BA474
-
-Kato Chan & Ken Chan
-6069C5E7
-
-Kattobi! Takuhai Kun
-4F2844B0
-
-Keith Courage in Alpha Zones
-474D7A72
-
-KickBall
-7E3C367B
-
-Kiki Kaikai
-C0CB5ADD
-
-King of Casino
-BF52788E
-
-King of Casino
-2F2E2240
-
-Klax
-C74FFBC9
-
-Klax
-0F1B59B4
-
-Knight Rider Special
-C614116C
-
-Kore ga Pro Yakyuu '89
-44F60137
-
-Kore ga Pro Yakyuu '90
-1772B229
-
-Kung Fu, The
-B552C906
-
-Kyuukyoku Mahjong - Idol Graphics
-02DDE03E
-
-Kyuukyoku Mahjong II
-E5B6B3E5
-
-Kyuukyoku Tiger
-09509315
-
-Lady Sword
-EB833D15
-
-Lady Sword
-C6F764EC
-
-Legend of Hero Tonma
-C28B0D8A
-
-Legend of Hero Tonma
-3C131486
-
-Legendary Axe II, The
-220EBF91
-
-Legendary Axe, The
-2D211007
-
-Lode Runner - Lost Labyrinth
-E6EE1468
-
-Madou Ou - Granzooto (Super Grafx)
-1F041166
-
-Maerchen Maze
-A15A1F37
-
-Magical Chase
-DD0EBF8C
-
-Magical Chase
-95CD2979
-
-Mahjong Gakuen - Touma Soushirou Toujou
-F5B90D55
-
-Mahjong Gakuen Mild - Touma Soushirou Toujou
-3E4D432A
-
-Mahjong Gakuen Mild - Touma Soushirou Toujou
-F4148600
-
-Mahjong Gokuu Special
-F8861456
-
-Mahjong Haou Den - Kaiser's Quest
-DF10C895
-
-Mahjong Shikyaku Retsuden - Mahjong Wars
-6C34AAEA
-
-Maison Ikkoku
-5C78FEE1
-
-Majin Eiyuu Den Wataru
-2F8935AA
-
-Makai Hakken Den Shada
-BE62EEF5
-
-Makai Prince Dorabocchan
-B101B333
-
-Makyou Densetsu
-D4C5AF46
-
-Maniac Puroresu - Asu heno Tatakai
-99F2865C
-
-Mesopotamia
-E87190F1
-
-Metal Stoker
-25A02BEE
-
-Military Madness
-93F316F7
-
-Mizubaku Dai Bouken
-B2EF558D
-
-Momotarou Densetsu Gaiden Dai 1 Shuu
-F860455C
-
-Momotarou Densetsu II
-D9E1549A
-
-Momotarou Densetsu Turbo
-625221A6
-
-Momotarou Katsugeki
-345F43E9
-
-Monster Puroresu
-F2E46D25
-
-Morita Shougi PC
-2546EFE0
-
-Moto Roader
-428F36CD
-
-Moto Roader
-E2B0D544
-
-Moto Roader II
-4BA525BA
-
-Moto Roader II
-0B7F6E5F
-
-Mr. Heli no Daibouken
-AC0CD796
-
-Mr. Heli no Daibouken
-2CB92290
-
-Narazumono Sentai Butai - Bloody Wolf
-B01F70C2
-
-Naxat Open
-60ECAE22
-
-Naxat Stadium
-20A7D128
-
-Nazo no Mascarade
-0441D85A
-
-Necromancer
-53109AE6
-
-Necros no Yousai
-FB0FDCFE
-
-Nectaris
-0243453B
-
-Nekketsu Koukou Dodgeball Bu - PC Bangai Hen
-65FDB863
-
-Nekketsu Koukou Dodgeball Bu - Soccer PC Hen
-F2285C6D
-
-Neutopia
-9C49EF11
-
-Neutopia
-A9A94E1B
-
-Neutopia II
-2B94AEDC
-
-Neutopia II
-C4ED4307
-
-New Adventure Island
-756A1802
-
-New Zealand Story, The
-8E4D75A8
-
-NHK Taiga Drama - Taiheiki
-A32430D5
-
-Night Creatures
-C159761B
-
-Niko Niko Pun
-82DEF9EE
-
-Ninja Ryuuken Den
-67573BAC
-
-Ninja Spirit
-DE8AF1C1
-
-Ninja Warriors, The
-96E0CD9D
-
-Obocchama Kun
-4D3B0BC9
-
-Operation Wolf
-FF898F87
-
-Order of the Griffon
-FAE0FC60
-
-Ordyne
-8C565CB6
-
-Ordyne
-E7BF2A74
-
-Out Live
-5CDB3F5B
-
-Out Run
-E203F223
-
-Override
-B74EC562
-
-P-47 - The Freedom Fighter
-7632DB90
-
-Pac-Land
-14FAD3BA
-
-Pac-Land
-D6E30CCD
-
-Pachio Kun - Juuban Shoubu
-4148FD7C
-
-Panza Kick Boxing
+Andre Panza Kick Boxing (USA)
 A980E0E9
 
-Paranoia
-9893E0E6
+Ankoku Densetsu (Japan)
+CACC06FB
 
-Parasol Stars - The Story of Bubble Bobble III
-51E86451
+Aoi Blink (Japan)
+8A09B9A
 
-Parasol Stars - The Story of Bubble Bobble III
-E6458212
+Appare! Gateball (Japan)
+2B54CBA2
 
-Parodius da! - Shinwa Kara Owarai he
-647718F9
+Armed F (Japan)
+20EF87FD
 
-PC Denjin - Punkic Cyborgs
-8FB4F228
+Artist Tool (Japan)
+5E4FA713
 
-PC Denjin - Punkic Cyborgs
-740491C2
+Atomic Robo-Kid Special (Japan)
+DD175EFD
 
-PC Genjin - Pithecanthropus Computerurus
-67B35E6E
+AV Poker - World Gambler (Japan) (Unl)
+B866D282
 
-PC Genjin - Pithecanthropus Computerurus
-2CB5CD55
+Ballistix (Japan)
+8ACFC8AA
 
-PC Genjin 2 - Pithecanthropus Computerurus
-3028F7CA
+Ballistix (USA)
+420FA189
 
-PC Genjin 3 - Pithecanthropus Computerurus
-A170B60E
+Bari Bari Densetsu (Japan)
+C267E25D
 
-PC Genjin 3 - Pithecanthropus Computerurus (Taikenban)
-6F6ED301
+Barunba (Japan)
+4A3DF3CA
 
-PC Pachi-Slot
-0AA88F33
+Batman (Japan)
+106BB7B2
 
-Populous
-0A9ADE99
+Battle Ace (Japan)
+3B13AF61
 
-Populous
-083C956A
+Battle Lode Runner (Japan)
+59E44F45
 
-Power Drift
-99E6D988
+Battle Royale (USA)
+E70B01AF
 
-Power Drift
-25E0F6E9
+Be Ball (Japan)
+261F1013
 
-Power Eleven
-3E647D8B
+Benkei Gaiden (Japan)
+E1A73797
 
-Power Gate
-BE8B6E3B
+Bikkuriman World (Japan)
+2841FD1E
 
-Power Golf
-EA324F07
+Blazing Lazers (USA)
+B4A1B0F6
 
-Power Golf
-ED1D3843
+Blodia (Japan)
+958BCD09
 
-Power League '93
-7D3E6F33
+Bloody Wolf (USA)
+37BAF6BC
 
-Power League (All Star Version)
-04A85769
+Bodycon Quest II (Japan) (Unl)
+FFD92458
 
-Power League
-69180984
+Bomberman '93 (Japan)
+B300C5D0
 
-Power League II
-C5FDFA89
+Bomberman '93 (USA)
+56171C1C
 
-Power League III
-8AA4B220
+Bomberman '93 - Special Version (Japan)
+2309AA0
 
-Power League IV
-30CC3563
+Bomberman '94 (Japan)
+5362516
 
-Power League V
-8B61E029
+Bomberman (Japan)
+9ABB4D1F
 
-Power Sports
-29EEC024
+Bomberman (USA) (Bomberman Collection)
+3D1F8ECE
 
-Power Tennis
-8DEF5AA1
+Bomberman (USA)
+5F6F3C2A
 
-Pro Tennis World Court
-11A36745
+Bomberman - Users Battle (Japan)
+1489FA51
 
-Pro Yakyuu World Stadium '91
-66B167A9
+Bonk 3 - Bonk's Big Adventure (USA)
+5A3F76D8
 
-Pro Yakyuu World Stadium
-34E089A9
+Bonk's Adventure (USA)
+599EAD9B
 
-Psycho Chaser
-03883EE8
+Bonk's Revenge (USA)
+14250F9A
 
-Psychosis
-6CC10824
+Bouken Danshaku Don - The Lost Sunheart (Japan)
+8F4D9F94
 
-Puzzle Boy
-FAA6E187
+Boxyboy (USA)
+605BE213
 
-Puzznic
-965C95B3
+Bravoman (USA)
+CCA08B02
 
-Quiz Toukou Shashin
-F2E6856D
+Break In (Japan)
+C9D7426A
 
-R-Type
-91CE5156
+Bubblegum Crash! - Knight Sabers 2034 (Japan)
+D766139
 
-R-Type Part-1
-CEC3D28A
+Bull Fight - Ring no Hasha (Japan)
+5C4D1991
 
-R-Type Part-2
-F207ECAE
+Burning Angels (Japan)
+D233C05A
 
-Rabio Lepus Special
-D8373DE6
+Busou Keiji - Cyber Cross (Japan)
+D0C250CA
 
-Racing Damashii
-3E79734C
+Cadash (Japan)
+8DC0D85F
 
-Raiden
-850829F2
+Cadash (USA)
+BB0B3AEF
 
-Raiden
-BC59C31E
+Champion Wrestler (Japan)
+9EDC0AEA
 
-Rastan Saga II
-00C38E69
+Champions Forever Boxing (USA)
+15EE889A
 
-Rock-On
-2FD65312
-
-Ryukyu
-91E6896F
-
-Sadakichi 7 Series - Hideyoshi no Ougon
-F999356F
-
-Saigo no Nindou - Ninja Spirit
-0590A156
-
-Salamander
-FAECCE20
-
-Samurai-Ghost
-77A924B7
-
-Sekigahara
-2E955051
-
-Sengoku Mahjong
-90E6BF49
-
-Shanghai
-6923D736
-
-Shinobi
-BC655CF3
-
-Shiryou Sensen
-469A0FDF
-
-Shockman
-2774462C
-
-Shougi Shodan Icchokusen
-23EC8970
-
-Shougi Shoshinsha Muyou
-457F2BC4
-
-SideArms - Hyper Dyne
-E5E7B8B7
-
-SideArms - Hyper Dyne
-D1993C9F
-
-Silent Debuggers
-616EA179
-
-Silent Debuggers
-FA7E5D66
-
-Sindibad Chitei no Dai Makyuu
-B5C4EEBD
-
-Sinistron
-4F6E2DBD
-
-Skweek
-4D539C9F
-
-Soldier Blade
-8420B12B
-
-Soldier Blade
-4BB68B13
-
-Soldier Blade Special - Caravan Stage
-F39F38ED
-
-Somer Assault
-8FCAF2E9
-
-Son Son II
-D7921DF2
-
-Sonic Spike - World Championship Beach Volleyball
-F74E5EB3
-
-Soukoban World
-FB37DDC4
-
-Space Harrier
-64580427
-
-Space Harrier
-43B05EB8
-
-Space Invaders - Fukkatsu no Hi
-99496DB3
-
-Special Criminal Investigation
-09A0BFCC
-
-Spin Pair
-1C6FF459
-
-Spiral Wave
-A5290DD0
-
-Splatterhouse
-6B319457
-
-Splatterhouse
-D00CA74F
-
-Stratego
-727F4656
-
-Street Fighter II' - Champion Edition
-D15CB6BB
-
-Strip Fighter II
-D6FC51CE
-
-Super Metal Crusher
-56488B36
-
-Super Momotarou Dentetsu
-3EB5304A
-
-Super Momotarou Dentetsu (Alternate)
-69D52E7A
-
-Super Momotarou Dentetsu II
-2BC023FC
-
-Super Star Soldier
-5D0E3105
-
-Super Star Soldier
-DB29486F
-
-Super Volleyball
-CE2E4F9F
-
-Super Volleyball
-245040B3
-
-Susanoo Densetsu
-CF73D8FC
-
-Taito Chase H.Q.
-6F4FD790
-
-Taito Chase H.Q.
+Chase H.Q. (USA)
 9298254C
 
-Takahashi Meijin no Shin Boukenjima
-E415EA19
+Chew-Man-Fu (USA)
+8CD13E9A
 
-Takeda Shingen
-DF7AF71C
+Chibi Maruko-chan - Quiz de Piihyara (Japan)
+951ED380
 
-Takeda Shingen
-F022BE13
+Chikudenya Toubei - Kubikiri Yakata Yori (Japan)
+CAB21B2E
 
-Takin' It to the Hoop
-E9D51797
+China Warrior (USA)
+A2EE361D
 
-TaleSpin
-BAE9CECC
+Chouzetsurinjin Bravoman (Japan)
+DF57C90
 
-Tatsujin
-C1B26659
+Circus Lido (Japan)
+C3212C24
 
-Tatsujin
-A6088275
+City Hunter (Japan)
+F91B055F
 
-Tatsunoko Fighter
-EEB6DD43
+Columns (Japan)
+99F7A572
 
-Tennokoe Bank
-3B3808BD
+Coryoon - Child of Dragon (Japan)
+B4D29E3B
 
-Tenseiryuu - Saint Dragon
-2E278CCB
+Cratermaze (USA)
+9033E83A
 
-Terra Cresta II - Mandoraa no Gyakushuu
-1B2D0077
+Cross Wiber - Cyber Combat Police (Japan)
+2DF97BD0
 
-Thunder Blade
-DDC3E809
+Cyber Core (Japan)
+A98D276A
 
-Tiger Road
-985D492D
+Cyber Core (USA)
+4CFB6E3E
 
-Time Cruise
-02C39660
+Cyber Dodge (Japan)
+B5326B16
 
-Time Cruise II
-CFEC1D6A
+Cyber Knight (Japan)
+A594FAC0
 
-Timeball
-5D395019
+Daichi-kun Crisis - Do Natural (Japan)
+61A2935F
 
-Titan
-D20F382F
+Daimakaimura (Japan)
+B486A8ED
 
-Toilet Kids
-53B7784B
+Daisenpuu (Japan)
+9107BCC8
 
-Tora heno Michi
-82AE3B16
+Darius Alpha (Japan) (SG Enhanced)
+B0BA689F
 
-Toshi Tensou Keikaku - Eternal City
+Darius Alpha (World) (SG Enhanced) (Darius Cozmic Collection)
+EB2466F9
+
+Darius Plus (Japan) (SG Enhanced)
+BEBFE042
+
+Darkwing Duck (USA)
+4AC97606
+
+Davis Cup Tennis (USA)
+9EDAB596
+
+Dead Moon (USA)
+F5D98B0B
+
+Dead Moon - Getsu Sekai no Akumu (Japan)
+56739BC7
+
+Deep Blue (USA)
+16B40B44
+
+Deep Blue - Kaitei Shinwa (Japan)
+53A0F83
+
+Detana!! TwinBee (Japan)
+5CF59D80
+
+Devil Crash - Naxat Pinball (Japan)
+4EC81A80
+
+Devil's Crush (USA)
+157B4492
+
+Die Hard (Japan)
+1B5B1CB1
+
+Digital Champ (Japan)
+17BA3032
+
+Don Doko Don! (Japan)
+F42AA73E
+
+Doraemon - Meikyuu Daisakusen (Japan)
+DC760A07
+
+Doraemon - Nobita no Dorabian Night (Japan)
+13A747F
+
+Double Dungeons (Japan)
+86087B39
+
+Double Dungeons (USA)
+4A1A8C60
+
+Download (Japan)
+85101C20
+
+Dragon Egg! (Japan)
+442405D5
+
+Dragon Saber (Japan)
+3219849C
+
+Dragon Spirit (Japan)
+1A76935
+
+Dragon Spirit (USA)
+86F148C
+
+Dragon's Curse (USA)
+7D2C4B09
+
+Drop Off (USA)
+FEA27B32
+
+Drop Rock Hora Hora (Japan)
+67EC5EC4
+
+Dungeon Explorer (Japan)
+1B1A80A2
+
+Dungeon Explorer (USA)
+4FF01515
+
+Dungeons & Dragons - Order of the Griffon (USA)
+FAE0FC60
+
+Energy (Japan)
+CA68FF21
+
+Eternal City - Toshi Tensou Keikaku (Japan)
 B18D102D
 
-Tower of Druaga, The
+F-1 Dream (Japan)
+D50FF730
+
+F-1 Pilot - You're King of Kings (Japan)
+9048174
+
+F1 Circus '91 (Japan)
+D7CFD70F
+
+F1 Circus '92 - The Speed of Sound (Japan)
+B268F2A2
+
+F1 Circus (Japan)
+E14DEE08
+
+F1 Triple Battle (Japan)
+13BF0409
+
+Falcon (USA)
+BC0A12B
+
+Fantasy Zone (Japan)
+72CB0F9D
+
+Fantasy Zone (USA)
+E8C3573D
+
+Fighting Run (Japan)
+1828D2E5
+
+Final Blaster (Japan)
+C90971BA
+
+Final Lap Twin (Japan)
+C8C084E3
+
+Final Lap Twin (USA)
+26408EA3
+
+Final Match Tennis (Japan)
+560D2305
+
+Final Soldier (Japan) (En)
+AF2DD2AF
+
+Final Soldier - Special Version (Japan) (En)
+2A578C5
+
+Fire Pro Wrestling - Combination Tag (Japan)
+90ED6575
+
+Fire Pro Wrestling 2 - 2nd Bout (Japan)
+E88987BB
+
+Fire Pro Wrestling 3 - Legend Bout (Japan)
+534E8808
+
+Formation Soccer - Human Cup '90 (Japan)
+85A1E7B6
+
+Formation Soccer - On J League (Japan)
+7146027C
+
+Fushigi no Yume no Alice (Japan)
+12C4E6FD
+
+Gai Flame (Japan)
+95F90DEC
+
+Gaia no Monshou (Japan)
+6FD6827C
+
+Galaga '88 (Japan)
+1A8393C6
+
+Galaga '90 (USA)
+2909DEC6
+
+Ganbare! Golf Boys (Japan)
+27A4D11A
+
+Gekisha Boy (Japan)
+E8702D51
+
+Genji Tsuushin Agedama (Japan)
+AD450DFC
+
+Genpei Toumaden (Japan)
+B926C682
+
+Genpei Toumaden - Kan no Ni (Japan)
+8793758C
+
+Ghost Manor (USA)
+2DB4C1FD
+
+Gokuraku! Chuuka Taisen (Japan)
+E749A22C
+
+Gomola Speed (Japan)
+4BD38F17
+
+Gradius (Japan)
+517DA65
+
+Gunboat (USA)
+F370B58E
+
+Gunhed (Japan)
+A17D4D7E
+
+Gunhed - Special Version (Japan)
+57F183AE
+
+Hana Taaka Daka! (Japan)
+BA4D0DD4
+
+Hanii in the Sky (Japan)
+BF3E2CC7
+
+Hanii on the Road (Japan)
+9897FA86
+
+Hatris (Japan)
+44E7DF53
+
+Heavy Unit (Japan)
+EB923DE5
+
+Hisou Kihei X-Serd (Japan)
+1CAB1EE6
+
+Hit the Ice - VHL - The Official Video Hockey League (USA)
+8B29C3AA
+
+Hit the Ice - VHL - The Video Hockey League (Japan)
+7ACB60C8
+
+Honoo no Toukyuuji - Dodge Danpei (Japan)
+B01EE703
+
+Idol Hanafuda Fan Club (Japan) (Unl)
+9EC6FC6C
+
+Image Fight (Japan)
+A80C565F
+
+Impossamole (USA)
+E2470F5F
+
+J.J. & Jeff (USA)
+E01C5127
+
+J.League Greatest Eleven (Japan)
+AD97B04
+
+Jack Nicklaus - Championship Golf (Japan)
+EA751E82
+
+Jack Nicklaus' Turbo Golf (USA)
+83384572
+
+Jackie Chan (Japan)
+C6FA6373
+
+Jackie Chan's Action Kung Fu (USA)
+9D2F6193
+
+Jaseiken Necromancer (Japan)
+53109AE6
+
+Jigoku Meguri (Japan)
+CC7D3EEB
+
+Jinmu Denshou (Japan)
+C150637A
+
+Juuouki (Japan)
+C8C7D63E
+
+Kaizou Choujin Shubibinman (Japan)
+A9084D6E
+
+Kaizou Choujin Shubibinman 2 - Aratanaru Teki (Japan)
+109BA474
+
+Kato-chan Ken-chan (Japan)
+6069C5E7
+
+Kattobi! Takuhai-kun (Japan)
+4F2844B0
+
+Keith Courage in Alpha Zones (USA)
+474D7A72
+
+KickBall (Japan)
+7E3C367B
+
+Kiki Kaikai (Japan)
+C0CB5ADD
+
+King of Casino (Japan)
+BF52788E
+
+King of Casino (USA)
+2F2E2240
+
+Klax (Japan)
+C74FFBC9
+
+Klax (USA)
+F1B59B4
+
+Knight Rider Special (Japan)
+C614116C
+
+Kore ga Pro Yakyuu '89 (Japan)
+44F60137
+
+Kore ga Pro Yakyuu '90 (Japan)
+1772B229
+
+Kung Fu, The (Japan)
+B552C906
+
+Kyuukyoku Mahjong - Idol Graphics (Japan) (Unl)
+2DDE03E
+
+Kyuukyoku Mahjong II (Japan) (Unl)
+E5B6B3E5
+
+Kyuukyoku Tiger (Japan)
+9509315
+
+Lady Sword - Ryakudatsu Sareta 10-nin no Otome (Japan) (Unl)
+C6F764EC
+
+Legend of Hero Tonma (Japan)
+C28B0D8A
+
+Legend of Hero Tonma (USA)
+3C131486
+
+Legendary Axe II (USA)
+220EBF91
+
+Legendary Axe, The (USA)
+2D211007
+
+Lode Runner - Lost Labyrinth (Japan)
+E6EE1468
+
+Madou King Granzort (Japan)
+1F041166
+
+Maerchen Maze (Japan)
+A15A1F37
+
+Magical Chase (Japan)
+DD0EBF8C
+
+Magical Chase (USA)
+95CD2979
+
+Mahjong Gakuen - Touma Soushirou Toujou (Japan)
+F5B90D55
+
+Mahjong Gakuen Mild - Touma Soushirou Toujou (Japan)
+F4148600
+
+Mahjong Gokuu Special (Japan)
+F8861456
+
+Mahjong Haouden - Kaiser's Quest (Japan)
+DF10C895
+
+Mahjong Shikaku Retsuden - Mahjong Wars (Japan)
+6C34AAEA
+
+Maison Ikkoku (Japan)
+5C78FEE1
+
+Makai Hakkenden Shada (Japan)
+BE62EEF5
+
+Makai Prince Dorabocchan (Japan)
+B101B333
+
+Makyou Densetsu (Japan)
+D4C5AF46
+
+Maniac Pro Wres - Asu e no Tatakai (Japan)
+99F2865C
+
+Mashin Eiyuuden Wataru (Japan)
+2F8935AA
+
+Mesopotamia (Japan)
+E87190F1
+
+Metal Stoker (Japan)
+25A02BEE
+
+Military Madness (USA)
+93F316F7
+
+Mizubaku Daibouken (Japan)
+B2EF558D
+
+Momotarou Densetsu Gaiden - Dai-1-shuu (Japan)
+F860455C
+
+Momotarou Densetsu II (Japan)
+D9E1549A
+
+Momotarou Densetsu Turbo (Japan)
+625221A6
+
+Momotarou Katsugeki (Japan)
+345F43E9
+
+Monster Pro Wres (Japan)
+F2E46D25
+
+Morita Shougi PC (Japan)
+2546EFE0
+
+Moto Roader (Japan)
+428F36CD
+
+Moto Roader (USA)
+E2B0D544
+
+Moto Roader II (Japan)
+B7F6E5F
+
+Mr. Heli no Daibouken (Japan)
+2CB92290
+
+Narazumono Sentou Butai - Bloody Wolf (Japan)
+B01F70C2
+
+Naxat Open (Japan)
+60ECAE22
+
+Naxat Stadium (Japan)
+20A7D128
+
+Nazo no Mascarade (Japan)
+441D85A
+
+Necros no Yousai (Japan)
+FB0FDCFE
+
+Nectaris (Japan)
+243453B
+
+Nekketsu Koukou Dodgeball-bu - PC Bangai Hen (Japan)
+65FDB863
+
+Nekketsu Koukou Dodgeball-bu - PC Soccer Hen (Japan)
+F2285C6D
+
+Neutopia (Japan)
+9C49EF11
+
+Neutopia (USA)
+A9A94E1B
+
+Neutopia II (Japan)
+2B94AEDC
+
+Neutopia II (USA)
+C4ED4307
+
+New Adventure Island (USA)
+756A1802
+
+NewZealand Story, The (Japan)
+8E4D75A8
+
+NHK Taiga Drama - Taiheiki (Japan)
+A32430D5
+
+Night Creatures (USA)
+C159761B
+
+Niko Niko Pun (Japan)
+82DEF9EE
+
+Ninja Ryuukenden (Japan) (En,Ja,Zh)
+67573BAC
+
+Ninja Spirit (USA)
+DE8AF1C1
+
+Ninja Warriors, The (Japan)
+96E0CD9D
+
+Obocchama-kun (Japan)
+4D3B0BC9
+
+Off the Wall (USA) (Proto)
+8621AE02
+
+Operation Wolf (Japan)
+FF898F87
+
+Ordyne (Japan)
+8C565CB6
+
+Ordyne (USA)
+E7BF2A74
+
+Out Live (Japan)
+5CDB3F5B
+
+Out Run (Japan)
+E203F223
+
+Override (Japan)
+B74EC562
+
+P-47 - The Freedom Fighter (Japan)
+7632DB90
+
+Pac-Land (Japan)
+14FAD3BA
+
+Pac-Land (USA)
+D6E30CCD
+
+Pachio-kun - Juuban Shoubu (Japan)
+4148FD7C
+
+Paranoia (Japan)
+9893E0E6
+
+Parasol Stars - The Story of Bubble Bobble III (Japan)
+51E86451
+
+Parasol Stars - The Story of Bubble Bobble III (USA)
+E6458212
+
+Parodius Da! - Shinwa kara Owarai e (Japan)
+647718F9
+
+PC Denjin - Punkic Cyborgs (Japan) (Beta)
+4F8299C8
+
+PC Denjin - Punkic Cyborgs (Japan)
+740491C2
+
+PC Genjin - Pithecanthropus Computerurus (Japan)
+2CB5CD55
+
+PC Genjin 2 - Pithecanthropus Computerurus (Japan)
+3028F7CA
+
+PC Genjin 3 - Pithecanthropus Computerurus (Japan) (Sample)
+6F6ED301
+
+PC Genjin 3 - Pithecanthropus Computerurus (Japan)
+A170B60E
+
+PC Pachi-Slot - Idol Gambler (Japan) (Unl)
+AA88F33
+
+Populous (Japan)
+83C956A
+
+Power Drift (Japan)
+25E0F6E9
+
+Power Eleven (Japan)
+3E647D8B
+
+Power Gate (Japan)
+BE8B6E3B
+
+Power Golf (Japan)
+EA324F07
+
+Power Golf (USA)
+ED1D3843
+
+Power League '93 (Japan)
+7D3E6F33
+
+Power League (Japan)
+69180984
+
+Power League 4 (Japan)
+30CC3563
+
+Power League 5 (Japan)
+8B61E029
+
+Power League II (Japan)
+C5FDFA89
+
+Power League III (Japan)
+8AA4B220
+
+Power Sports (Japan)
+29EEC024
+
+Power Tennis (Japan)
+8DEF5AA1
+
+Pro Tennis - World Court (Japan)
+11A36745
+
+Pro Yakyuu World Stadium '91 (Japan)
+66B167A9
+
+Pro Yakyuu World Stadium (Japan)
+34E089A9
+
+Psycho Chaser (Japan)
+3883EE8
+
+Psychosis (USA)
+6CC10824
+
+Puzzle Boy (Japan)
+FAA6E187
+
+Puzznic (Japan)
+965C95B3
+
+Quiz Toukou Shashin (Japan) (Unl)
+F2E6856D
+
+R-Type (USA)
+91CE5156
+
+R-Type I (Japan)
+CEC3D28A
+
+R-Type II (Japan) (v1.1)
+417B961D
+
+R-Type II (Japan)
+F207ECAE
+
+Rabio Lepus Special (Japan)
+D8373DE6
+
+Racing Damashii (Japan)
+3E79734C
+
+Raiden (Japan)
+850829F2
+
+Raiden (USA)
+BC59C31E
+
+Rastan Saga II (Japan)
+C38E69
+
+Rock-On (Japan)
+2FD65312
+
+Ryuukyuu (Japan)
+91E6896F
+
+S.C.I. - Special Criminal Investigation (Japan)
+9A0BFCC
+
+Sadakichi Seven - Hideyoshi no Ougon (Japan)
+F999356F
+
+Saigo no Nindou - Ninja Spirit (Japan)
+590A156
+
+Salamander (Japan)
+FAECCE20
+
+Samurai-Ghost (USA)
+77A924B7
+
+Sekigahara (Japan)
+2E955051
+
+Sengoku Mahjong (Japan)
+90E6BF49
+
+Shanghai (Japan)
+6923D736
+
+Shinobi (Japan)
+BC655CF3
+
+Shiryou Sensen - War of the Dead (Japan)
+469A0FDF
+
+Shockman (USA)
+2774462C
+
+Shougi Shodan Icchokusen (Japan)
+23EC8970
+
+Shougi Shoshinsha Muyou (Japan)
+457F2BC4
+
+SideArms (USA)
+D1993C9F
+
+SideArms - Hyper Dyne (Japan)
+E5E7B8B7
+
+Silent Debuggers (Japan)
+616EA179
+
+Silent Debuggers (USA)
+FA7E5D66
+
+Sindibad - Chitei no Daimakyuu (Japan)
+B5C4EEBD
+
+Sinistron (USA)
+4F6E2DBD
+
+Skweek (Japan)
+4D539C9F
+
+Soldier Blade (Japan)
+8420B12B
+
+Soldier Blade (USA)
+4BB68B13
+
+Soldier Blade - Special Version (Japan)
+F39F38ED
+
+Somer Assault (USA)
+8FCAF2E9
+
+Son Son II (Japan)
+D7921DF2
+
+Sonic Spike - World Championship Beach Volleyball (USA)
+F74E5EB3
+
+Soukoban World (Japan)
+FB37DDC4
+
+Space Harrier (Japan)
+64580427
+
+Space Harrier (USA)
+43B05EB8
+
+Space Invaders - Fukkatsu no Hi (Japan)
+99496DB3
+
+Spin Pair (Japan)
+1C6FF459
+
+Spiral Wave (Japan)
+A5290DD0
+
+Splatterhouse (Japan) (En)
+6B319457
+
+Splatterhouse (USA)
+D00CA74F
+
+Stratego (Japan)
+727F4656
+
+Street Fighter II' - Champion Edition (Japan)
+D15CB6BB
+
+Strip Fighter II (Japan) (Unl)
+D6FC51CE
+
+Super Metal Crusher (Japan)
+56488B36
+
+Super Momotarou Dentetsu (Japan) (Alt)
+69D52E7A
+
+Super Momotarou Dentetsu (Japan)
+3EB5304A
+
+Super Momotarou Dentetsu II (Japan)
+2BC023FC
+
+Super Star Soldier (Japan)
+5D0E3105
+
+Super Star Soldier (USA)
+DB29486F
+
+Super Volley Ball (Japan)
+CE2E4F9F
+
+Super Volleyball (USA)
+245040B3
+
+Susanoou Densetsu (Japan)
+CF73D8FC
+
+Taito Chase H.Q. (Japan)
+6F4FD790
+
+Takahashi Meijin no Shin Bouken-jima (Japan)
+E415EA19
+
+Takeda Shingen (Japan)
+F022BE13
+
+Takin' It to the Hoop (USA)
+E9D51797
+
+TaleSpin (USA)
+BAE9CECC
+
+Tatsujin (Japan) (Beta)
+C1B26659
+
+Tatsujin (Japan)
+A6088275
+
+Tatsunoko Fighter (Japan)
+EEB6DD43
+
+Ten no Koe Bank (Japan)
+3B3808BD
+
+Tenseiryuu - Saint Dragon (Japan)
+2E278CCB
+
+Terra Cresta II - Mandoler no Gyakushuu (Japan)
+1B2D0077
+
+Thunder Blade (Japan)
+DDC3E809
+
+Tiger Road (USA)
+985D492D
+
+Time Cruise (USA)
+2C39660
+
+Time Cruise II (Japan)
+CFEC1D6A
+
+Timeball (USA)
+5D395019
+
+Titan (Japan)
+D20F382F
+
+Toilet Kids (Japan)
+53B7784B
+
+Tora e no Michi (Japan)
+82AE3B16
+
+Tower of Druaga, The (Japan)
 72E00BC4
 
-Toy Shop Boys
+Toy Shop Boys (Japan)
 97C5EE9A
 
-Tricky
+Tricky (Japan)
 3AEA2F8F
 
-Tricky Kick
+Tricky Kick (USA)
 48E6FD34
 
-Tsuppari Oozumou - Heisei Ban
+Tsuppari Oozumou - Heisei Ban (Japan)
 61A6E210
 
-Tsuru Teruhito no Jissen Kabushiki Bai Bai Game
+Tsuru Teruhito no Jissen Kabushiki Bai Bai Game (Japan)
 F70112E5
 
-Turrican
+Turrican (USA)
 EB045EDF
 
-TV Sports Basketball
+TV Sports Baseball (USA) (Proto)
+B6B38D61
+
+TV Sports Basketball (Japan)
 10B60601
 
-TV Sports Basketball
+TV Sports Basketball (USA)
 EA54D653
 
-TV Sports Football
+TV Sports Football (Japan)
 968D908A
 
-TV Sports Football
+TV Sports Football (USA)
 5E25B557
 
-TV Sports Hockey
+TV Sports Hockey (Japan)
 E7529890
 
-TV Sports Hockey
+TV Sports Hockey (USA)
 97FE5BCF
 
-USA Pro Basketball
+USA Pro Basketball (Japan)
 1CAD4B7F
 
-Veigues - Tactical Gladiator
-04188C5C
-
-Veigues - Tactical Gladiator
-99D14FB7
-
-Victory Run
-03E28CFF
-
-Victory Run
-85CBD045
-
-Vigilante
-E4124FE0
-
-Vigilante
-79D49A0D
-
-Violent Soldier
-1BC36B36
-
-Volfied
-AD226F30
-
-W-Ring - The Double Rings
-BE990010
-
-Wai Wai Mahjong - Yukaina Janyuu Tachi
-A2A0776E
-
-Walkuere no Densetsu
+Valkyrie no Densetsu (Japan)
 A3303978
 
-Wallaby!! - Usagi no Kuni no Kangaroo Race
-0112D0C7
+Veigues - Tactical Gladiator (Japan)
+4188C5C
 
-Winning Shot
+Veigues - Tactical Gladiator (USA)
+99D14FB7
+
+Victory Run (USA)
+85CBD045
+
+Victory Run - Eikou no 13,000km (Japan)
+3E28CFF
+
+Vigilante (Japan)
+E4124FE0
+
+Vigilante (USA)
+79D49A0D
+
+Violent Soldier (Japan)
+1BC36B36
+
+Volfied (Japan)
+AD226F30
+
+W-Ring - The Double Rings (Japan)
+BE990010
+
+Wai Wai Mahjong - Yukai na Janyuu-tachi (Japan)
+A2A0776E
+
+Wallaby!! - Usagi no Kuni no Kangaroo Race (Japan)
+112D0C7
+
+Winning Shot (Japan)
 9B5EBC58
 
-Wonder Momo
+Wonder Momo (Japan)
 59D07314
 
-World Beach Volley
+World Beach Volley (Japan)
 BE850530
 
-World Circuit
+World Circuit (Japan)
 B3EEEA2E
 
-World Class Baseball
+World Class Baseball (USA)
 4186D0C0
 
-World Court Tennis
+World Court Tennis (USA)
 A4457DF0
 
-World Jockey
+World Jockey (Japan)
 A9AB2954
 
-World Sports Competition
+World Sports Competition (USA)
 4B93F0AC
 
-Xevious - Fardraut Densetsu
+Xevious - Fardraut Saga (Japan)
 F8F85EEC
 
-Yo, Bro
+Yo, Bro (USA)
 3CA7DB48
 
-Youkai Douchuuki
-F131B706
-
-Yuu Yuu Jinsei - Victory Life
+You-You Jinsei (Japan)
 C0905CA9
 
-Zero 4 Champ
+Youkai Douchuuki (Japan)
+80C3F824
+
+Zero4 Champ (Japan) (Alt)
 B77F2E2F
 
-Zero 4 Champ
+Zero4 Champ (Japan)
 EE156721
 
-Zipang
+Zipang (Japan)
 67AAB7A1
 
-[CD] CD-ROM System
+[BIOS] CD-ROM System (Japan) (v1.0)
 3F9F95A4
 
-[CD] CD-ROM System
+[BIOS] CD-ROM System (Japan) (v2.0)
 52520BC6
 
-[CD] CD-ROM System
+[BIOS] CD-ROM System (Japan) (v2.1)
 283B74E0
 
-[CD] Games Express CD Card
+[BIOS] Games Express CD Card (Japan) (Blue Version)
 51A12D90
 
-[CD] Super CD-ROM System
+[BIOS] Games Express CD Card (Japan) (Green Version)
+20E0A364
+
+[BIOS] Super CD-ROM System (Japan) (v3.0)
 6D9A73EF
 
-[CD] TurboGrafx CD Super System Card
+[BIOS] TurboGrafx CD Super System Card (USA) (v3.0)
 2B5B75FE
 
-[CD] TurboGrafx CD System Card
+[BIOS] TurboGrafx CD System Card (USA) (v2.0)
 FF2A5EC3
 
 Test Checksum
