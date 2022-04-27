@@ -53,9 +53,9 @@ uint8_t tennokoe_bank_index = 0;
   Menu
 *****************************************/
 // PCE start menu
-static const char pceMenuItem1[] PROGMEM = "HuCARD";
-static const char pceMenuItem2[] PROGMEM = "Turbochip";
-static const char pceMenuItem3[] PROGMEM = "HuCARD Not Swapped";
+static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
+static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
+static const char pceMenuItem3[] PROGMEM = "Turbochip";
 static const char pceMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionspce[] PROGMEM = {pceMenuItem1, pceMenuItem2, pceMenuItem3, pceMenuItem4};
 
@@ -95,19 +95,19 @@ void pcsMenu(void) {
       break;
 
     case 1:
-      //Turbografx
+      //Hucard not swapped
       display_Clear();
       display_Update();
-      pce_internal_mode = TURBOCHIP;
+      pce_internal_mode = HUCARD_NOSWAP;
       setup_cart_PCE();
       mode = mode_PCE;
       break;
 
     case 2:
-      //Hucard not swapped
+      //Turbografx
       display_Clear();
       display_Update();
-      pce_internal_mode = HUCARD_NOSWAP;
+      pce_internal_mode = TURBOCHIP;
       setup_cart_PCE();
       mode = mode_PCE;
       break;
