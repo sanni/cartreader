@@ -30,6 +30,7 @@
 #if (defined(HW2) || defined(HW3))
 #define enable_OLED
 #define enable_Button2
+//#define clockgen_installed
 #endif
 
 #if defined(HW1)
