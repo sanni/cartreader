@@ -365,9 +365,10 @@ void setup_GB() {
   // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
   DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
   // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
   // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
-  PORTH &= ~(1 << 1);
+  // Output a low signal on RST(PH0) to initialize MMC correctly
+  PORTH &= ~((1 << 0) | (1 << 1));
 
   // Set Data Pins (D0-D7) to Input
   DDRC = 0x00;
@@ -376,9 +377,24 @@ void setup_GB() {
 
   delay(400);
 
+  // RST(PH0) to H
+  PORTH |= (1 << 0);
+
   // Print start page
   getCartInfo_GB();
   showCartInfo_GB();
+
+  // MMM01 initialize
+  if (romType >= 11 && romType <= 13)
+  {
+    dataOut();
+    writeByte_GB(0x3fff, 0x00);
+    writeByte_GB(0x5fff, 0x40);
+    writeByte_GB(0x7fff, 0x01);
+    writeByte_GB(0x1fff, 0x3a);
+    writeByte_GB(0x1fff, 0x7a);
+    dataIn_GB();
+  }
 }
 
 void showCartInfo_GB() {
@@ -694,7 +710,9 @@ void getCartInfo_GB() {
   }
 
   // Get Checksum as string
-  sprintf(checksumStr, "%02X%02X", readByte_GB(0x014E), readByte_GB(0x014F));
+  eepbit[6] = readByte_GB(0x014E);
+  eepbit[7] = readByte_GB(0x014F);
+  sprintf(checksumStr, "%02X%02X", eepbit[6], eepbit[7]);
 
   // Get name
   byte myByte = 0;
@@ -750,9 +768,38 @@ void readROM_GB() {
     // Switch data pins to output
     dataOut();
 
+    // Second bank starts at 0x4000
+    if (currBank > 1) {
+      romAddress = 0x4000;
+    }
+
     // Set ROM bank for MBC2/3/4/5
     if (romType >= 5) {
-      writeByte_GB(0x2100, currBank);
+      if (romType >= 11 && romType <= 13) {
+        if ((currBank & 0x1f) == 0) {
+          // reset MMM01
+          PORTH &= ~(1 << 0);
+          PORTH |= (1 << 0);
+
+          // remap to higher 4Mbits ROM
+          writeByte_GB(0x3fff, 0x20);
+          writeByte_GB(0x5fff, 0x40);
+          writeByte_GB(0x7fff, 0x01);
+          writeByte_GB(0x1fff, 0x3a);
+          writeByte_GB(0x1fff, 0x7a);
+
+          // for every 4Mbits ROM, restart from 0x0000
+          romAddress = 0x0000;
+          currBank++;
+        }
+        else {
+          writeByte_GB(0x6000, 0);
+          writeByte_GB(0x2000, (currBank & 0x1f));
+        }
+      }
+      else {
+        writeByte_GB(0x2100, currBank);
+      }
     }
     // Set ROM bank for MBC1
     else {
@@ -763,11 +810,6 @@ void readROM_GB() {
 
     // Switch data pins to intput
     dataIn_GB();
-
-    // Second bank starts at 0x4000
-    if (currBank > 1) {
-      romAddress = 0x4000;
-    }
 
     // Read banks and save to SD
     while (romAddress <= 0x7FFF) {
@@ -807,8 +849,8 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
     myFile.close();
     sd.chdir();
     // Subtract checksum bytes
-    calcChecksum -= readByte_GB(0x014E);
-    calcChecksum -= readByte_GB(0x014F);
+    calcChecksum -= eepbit[6];
+    calcChecksum -= eepbit[7];
 
     // Return result
     return (calcChecksum);
@@ -883,7 +925,7 @@ void readSRAM_GB() {
     readByte_GB(0x0134);
 
     dataOut();
-    if (romType <= 4) {
+    if (romType <= 4 || (romType >= 11 && romType <= 13)) {
       writeByte_GB(0x6000, 1);
     }
 
@@ -942,7 +984,7 @@ void writeSRAM_GB() {
       dataOut();
 
       // Enable SRAM for MBC1
-      if (romType <= 4) {
+      if (romType <= 4 || (romType >= 11 && romType <= 13)) {
         writeByte_GB(0x6000, 1);
       }
 
