@@ -33,7 +33,7 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 2.2,
+          "drill": 1.5,
           "height": 2.2,
           "width": 2.2
         },
@@ -342,12 +342,8 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [
-      "!sanni"
-    ],
-    "pinned_symbol_libs": [
-      "sanni"
-    ]
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
   },
   "meta": {
     "filename": "main_pcb.kicad_pro",
@@ -391,7 +387,7 @@
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.7,
+        "track_width": 0.8,
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6.0
