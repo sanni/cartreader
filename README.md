@@ -7,13 +7,15 @@ Happy making. 🔧🔨😊
 For any questions or issues please also visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
 And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.    
 
+![image](https://dl.dropboxusercontent.com/s/70zaxs9lyyuxvqe/IMG_0799.jpg?dl=1)   
+
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
 - Easy to modify open-source code, write your own extensions and share them with others      
 - Portable thanks to a battery  
 - Modular design using mostly off-the-shelf components    
 
-![image](https://dl.dropboxusercontent.com/s/70zaxs9lyyuxvqe/IMG_0799.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/13qrglxt7ehsyr0/IMG_07999.jpg?dl=1)   
 
 #### Supported Systems:    
 - Reads NES, Famicom and Family Basic cartridges including save    
@@ -45,3 +47,5 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads NeoGeo Pocket cartridges (using custom adapter)
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
 - Programs M27C322 eproms (using custom adapter)      
+
+![image](https://dl.dropboxusercontent.com/s/l6eujajz60x3ho9/IMG_079999.jpg?dl=1)  
