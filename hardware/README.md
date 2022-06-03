@@ -1,4 +1,4 @@
-### Important: HW5 is still an untested work-in-progress and PCB files might contain errors. Do not order yet, I will edit this text once I have received and tested the PCBs.    
+### Important: HW5 is still an untested work-in-progress and PCB files might contain errors. 
 
 The Open Source Cart Reader consists out of a main PCB that connects an Arduino Mega to different cartridge slot adapters.     
 To order a PCB you need to download the zipped gerber files and upload them to a PCB manufacturer. You don't have to change any of the settings but you can select a color you like.    
