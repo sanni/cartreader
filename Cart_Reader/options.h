@@ -2,6 +2,7 @@
 // !!! CHOOSE HARDWARE VERSION !!!
 //******************************************
 // Remove // in front of the line with your hardware version
+//#define HW5
 //#define HW4
 //#define HW3
 //#define HW2
@@ -18,7 +19,7 @@
 //******************************************
 // Hardware Configurations
 //******************************************
-#if defined(HW4)
+#if (defined(HW4) || defined(HW5))
 #define enable_LCD
 #define enable_neopixel
 #define enable_rotary
