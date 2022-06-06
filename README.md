@@ -4,7 +4,7 @@
 This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper.     
 Happy making. 🔧🔨😊     
 
-For any questions or issues please also visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
+For any questions you can use the [Discussions](https://github.com/sanni/cartreader/discussions) and/or [Issues](https://github.com/sanni/cartreader/issues) section here on Github or visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
 And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.    
 
 ![image](https://dl.dropboxusercontent.com/s/70zaxs9lyyuxvqe/IMG_0799.jpg?dl=1)   
@@ -37,12 +37,12 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads Game Boy Advance roms and reads/writes most of the save games(4K Eeprom, 64K Eeprom, Sram/Fram, SST39VF512 512K flash + MX29L010 1M flash)  
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128, PC28F256M29 or M29W128GH flashroms    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
-- Reads Sega Master System roms and saves (using Retrode or Raphnet adapter)       
+- Reads Sega Master System roms and saves           
 - Reads Sega Game Gear roms and saves (using Retrode adapter)    
 - Reads some Sega Mark III cartridges (using Raphnet adapter)  
 - Reads some Sega SG-1000 cartridges (using Raphnet adapter)      
 - Reads some Sega Cards (using Card Catcher and Raphnet Mark III Adapter)   
-- Reads PC engine/TG16 cartridges (using Retrode TG16 adapter)   
+- Reads PC engine/TG16 cartridges (using Retrode or custom adapter)   
 - Reads WonderSwan cartridges (using custom adapter)   
 - Reads NeoGeo Pocket cartridges (using custom adapter)
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
