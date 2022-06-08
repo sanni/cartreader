@@ -9,7 +9,7 @@
 //#define HW1
 //#define SERIAL_MONITOR
 
-#if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(SERIAL_MONITOR))
+#if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
 # error !!! PLEASE CHOOSE HARDWARE VERSION IN OPTIONS.H !!!
 #endif
 //******************************************
@@ -22,7 +22,9 @@
 #if (defined(HW4) || defined(HW5))
 #define enable_LCD
 #define enable_neopixel
+#define background_color 100,0,0 //Green, Red, Blue
 #define enable_rotary
+//#define rotate_counter_clockwise
 #define clockgen_installed
 #define fastcrc
 #define ws_adapter_v2
@@ -32,6 +34,7 @@
 #define enable_OLED
 #define enable_Button2
 //#define clockgen_installed
+//#define fastcrc
 #endif
 
 #if defined(HW1)

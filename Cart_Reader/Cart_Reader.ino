@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             15.04.2022
+   Date:             09.06.2022
    Version:          8.4
 
    SD lib: https://github.com/greiman/SdFat
@@ -111,7 +111,11 @@ U8G2_ST7567_OS12864_F_4W_HW_SPI display(U8G2_R2, /* cs=*/ 12, /* dc=*/ 11, /* re
 #include <RotaryEncoder.h>
 #define PIN_IN1 18
 #define PIN_IN2 19
+#ifdef rotate_counter_clockwise
+RotaryEncoder encoder(PIN_IN2, PIN_IN1, RotaryEncoder::LatchMode::FOUR3);
+#else
 RotaryEncoder encoder(PIN_IN1, PIN_IN2, RotaryEncoder::LatchMode::FOUR3);
+#endif
 int rotaryPos = 0;
 #endif
 
@@ -360,16 +364,16 @@ byte eeptemp;
 *****************************************/
 #if defined(enable_LCD)
 // Main menu
-static const char modeItem1[] PROGMEM = "Super Nintendo";
-static const char modeItem2[] PROGMEM = "Mega Drive";
-static const char modeItem3[] PROGMEM = "Nintendo 64";
-static const char modeItem4[] PROGMEM = "Game Boy";
-static const char modeItem5[] PROGMEM = "NES/Famicom";
-static const char modeItem6[] PROGMEM = "Flashrom Programmer";
+static const char modeItem1[] PROGMEM = "Game Boy";
+static const char modeItem2[] PROGMEM = "NES/Famicom";
+static const char modeItem3[] PROGMEM = "Super Nintendo";
+static const char modeItem4[] PROGMEM = "Nintendo 64";
+static const char modeItem5[] PROGMEM = "Mega Drive";
+static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char modeItem7[] PROGMEM = "PC Engine/TG16";
-static const char modeItem8[] PROGMEM = "SMS/GG/MIII/SG-1000";
-static const char modeItem9[] PROGMEM = "WonderSwan";
-static const char modeItem10[] PROGMEM = "NeoGeo Pocket";
+static const char modeItem8[] PROGMEM = "WonderSwan";
+static const char modeItem9[] PROGMEM = "NeoGeo Pocket";
+static const char modeItem10[] PROGMEM = "Flashrom Programmer";
 static const char modeItem11[] PROGMEM = "About";
 static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11};
 
@@ -407,32 +411,14 @@ void mainMenu() {
   // wait for user choice to come back from the question box menu
   switch (modeMenu)
   {
-#ifdef enable_SNES
-    case 0:
-      snsMenu();
-      break;
-#endif
-
-#ifdef enable_MD
-    case 1:
-      mdMenu();
-      break;
-#endif
-
-#ifdef enable_N64
-    case 2:
-      n64Menu();
-      break;
-#endif
-
 #ifdef enable_GBX
-    case 3:
+    case 0:
       gbxMenu();
       break;
 #endif
 
 #ifdef enable_NES
-    case 4:
+    case 1:
       display_Clear();
       display_Update();
       setup_NES();
@@ -442,9 +428,27 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_SNES
+    case 2:
+      snsMenu();
+      break;
+#endif
+
+#ifdef enable_N64
+    case 3:
+      n64Menu();
+      break;
+#endif
+
+#ifdef enable_MD
+    case 4:
+      mdMenu();
+      break;
+#endif
+
+#ifdef enable_SMS
     case 5:
-      flashMenu();
+      smsMenu();
       break;
 #endif
 
@@ -454,14 +458,8 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_SMS
-    case 7:
-      smsMenu();
-      break;
-#endif
-
 #ifdef enable_WS
-    case 8:
+    case 7:
       display_Clear();
       display_Update();
       setup_WS();
@@ -470,11 +468,17 @@ void mainMenu() {
 #endif
 
 #ifdef enable_NGP
-    case 9:
+    case 8:
       display_Clear();
       display_Update();
       setup_NGP();
       mode = mode_NGP;
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 9:
+      flashMenu();
       break;
 #endif
 
@@ -714,12 +718,22 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
    Setup
  *****************************************/
 void setup() {
-  // Set Button Pins(PD7, PG2) to Input
-  DDRD &= ~(1 << 7);
+  // Set Button Pin PG2 to Input
   DDRG &= ~(1 << 2);
+#ifdef HW5
+  // HW5 has status LED connected to PD7
+  // Set LED Pin PD7 to Output
+  DDRD |= (1 << 7);
+  PORTD |= (1 << 7);
+#else
+  // HW1/2/3 have button connected to PD7
+  // Set Button Pin PD7 to Input
+  DDRD &= ~(1 << 7);
+#endif
   // Activate Internal Pullup Resistors
-  //PORTD |= (1 << 7);
   //PORTG |= (1 << 2);
+  //PORTD |= (1 << 7);
+
 
   // Read current folder number out of eeprom
   EEPROM_readAnything(0, foldern);
@@ -733,13 +747,13 @@ void setup() {
 #ifdef enable_neopixel
   pixels.begin();
   pixels.clear();
-  pixels.setPixelColor(0, pixels.Color(100, 0, 0));
+  pixels.setPixelColor(0, pixels.Color(background_color));
   pixels.setPixelColor(1, pixels.Color(0, 0, 100));
   pixels.setPixelColor(2, pixels.Color(0, 0, 100));
   pixels.show();
 
-  // Set TX0 LED Pin(PE1) to Output for status indication during flashing
-#if !defined(enable_serial)
+  // Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
+#if !(defined(enable_serial) || defined(HW5))
   DDRE |= (1 << 1);
 #endif
 #endif
@@ -809,7 +823,7 @@ void setColor_RGB(byte r, byte g, byte b) {
   if (g >= 100) g = 100;
   if (b >= 100) b = 100;
   pixels.clear();
-  pixels.setPixelColor(0, pixels.Color(100, 0, 0));
+  pixels.setPixelColor(0, pixels.Color(background_color));
   pixels.setPixelColor(1, pixels.Color(g, r, b));
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
@@ -1225,7 +1239,9 @@ void rgbLed(byte Color) {
 }
 
 void blinkLED() {
-#if defined(enable_OLED)
+#if defined(HW5)
+  PORTD ^= (1 << 7);
+#elif defined(enable_OLED)
   PORTB ^= (1 << 4);
 #elif defined(enable_LCD)
   PORTE ^= (1 << 1);
