@@ -15,7 +15,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Portable thanks to a battery  
 - Modular design using mostly off-the-shelf components    
 
-![image](https://dl.dropboxusercontent.com/s/13qrglxt7ehsyr0/IMG_07999.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/mhlx620tmbnglx1/hw5wframe.jpg?dl=1)   
 
 #### Supported Systems:    
 - Reads NES, Famicom and Family Basic cartridges including save    
@@ -49,3 +49,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Programs M27C322 eproms (using custom adapter)      
 
 ![image](https://dl.dropboxusercontent.com/s/l6eujajz60x3ho9/IMG_079999.jpg?dl=1)  
+
+#### Open Source Licenses:    
+- Software(everything in Cart_Reader folder) = GPL v3   
+- Hardware(everything in hardware folder) = CC-BY-4.0   
