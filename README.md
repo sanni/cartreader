@@ -1,4 +1,4 @@
-![image](https://dl.dropboxusercontent.com/s/v2ds2zfj1bxuqr9/logos.png?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/ioc5oewzcuvs8nz/logos.png?dl=1)   
 
 # Open Source Cartridge Reader
 This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper.     
