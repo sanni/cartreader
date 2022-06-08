@@ -1,4 +1,20 @@
-This Arduino code is written by a beginner for beginners, therefore I tried to comment every line of code. To an experienced coder this probably will seem very wrong but it really helps if you're just starting out.   
+## This Arduino sketch is licensed under the GNU GENERAL PUBLIC LICENSE Version 3 (GPL v3)    
+
+### This means that you are free to:    
+- use, modify and distribute this software, even commercially    
+
+### Under the following terms:    
+- state changes   
+- disclose source   
+- same license   
+
+### Limitations:
+- Liability   
+- Warranty   
+
+More details: https://www.gnu.org/licenses/gpl-3.0.en.html    
+
+## 
 
 Every submodule has it's own setup_XX() function that configures the needed pins and a submenu that lets you choose what you want to do. 
 The code directly addresses the pins via the DDR, PIN and PORT registers.   
