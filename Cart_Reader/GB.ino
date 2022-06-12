@@ -959,7 +959,7 @@ void compare_checksums_GB() {
   print_Msg(crcStr);
 
   //Search for CRC32 in file
-  char gamename[50];
+  char gamename[100];
   char crc_search[9];
 
   //go to root
@@ -968,7 +968,7 @@ void compare_checksums_GB() {
     //Search for same CRC in list
     while (myFile.available()) {
       //Read 2 lines (game name and CRC)
-      get_line(gamename, &myFile, 46);
+      get_line(gamename, &myFile, 96);
       get_line(crc_search, &myFile, 9);
       skip_line(&myFile); //Skip every 3rd line
 

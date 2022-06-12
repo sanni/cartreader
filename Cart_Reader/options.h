@@ -2,12 +2,12 @@
 // !!! CHOOSE HARDWARE VERSION !!!
 //******************************************
 // Remove // in front of the line with your hardware version
-//#define HW5
-//#define HW4
-//#define HW3
-//#define HW2
-//#define HW1
-//#define SERIAL_MONITOR
+// #define HW5
+// #define HW4
+// #define HW3
+// #define HW2
+// #define HW1
+// #define SERIAL_MONITOR
 
 #if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
 # error !!! PLEASE CHOOSE HARDWARE VERSION IN OPTIONS.H !!!
@@ -24,7 +24,7 @@
 #define enable_neopixel
 #define background_color 100,0,0 //Green, Red, Blue
 #define enable_rotary
-//#define rotate_counter_clockwise
+// #define rotate_counter_clockwise
 #define clockgen_installed
 #define fastcrc
 #define ws_adapter_v2
@@ -33,8 +33,8 @@
 #if (defined(HW2) || defined(HW3))
 #define enable_OLED
 #define enable_Button2
-//#define clockgen_installed
-//#define fastcrc
+// #define clockgen_installed
+// #define fastcrc
 #endif
 
 #if defined(HW1)
@@ -52,8 +52,8 @@
 // flashMenu, nesMenu or smsMenu for single slot Cart Readers
 #define startMenu mainMenu
 
-//Ignores errors that normally force a reset if button 2 is pressed
-//#define debug_mode
+// Ignores errors that normally force a reset if button 2 is pressed
+// #define debug_mode
 
 // Setup RTC if installed.
 // remove // if you have an RTC installed
@@ -63,7 +63,7 @@
 // #define clockgen_calibration
 
 // Write all info to log.txt in root dir
-//#define global_log
+// #define global_log
 
 // Use Adafruit Clock Generator
 // #define clockgen_installed
@@ -72,7 +72,7 @@
 // GB OPTIONS
 //******************************************
 // Renames ROM if found in database (slow)
-//#define no-intro
+// #define no-intro
 
 //******************************************
 // N64 OPTIONS
