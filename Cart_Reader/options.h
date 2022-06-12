@@ -62,13 +62,21 @@
 // Use calibration data from snes_clk.txt
 // #define clockgen_calibration
 
+// Write all info to log.txt in root dir
+//#define global_log
+
+// Use Adafruit Clock Generator
+// #define clockgen_installed
+
+//******************************************
+// GB OPTIONS
+//******************************************
+// Renames ROM if found in database (slow)
+//#define no-intro
+
 //******************************************
 // N64 OPTIONS
 //******************************************
-// Read N64 Eeprom with Adadruit clockgen, CLK1 switch needs to be switch to ON
-// add // and disable CLK1 switch if you don't have the clockgen installed or if you want to read a repros save
-// #define clockgen_installed
-
 // The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
 // #define fastcrc
 

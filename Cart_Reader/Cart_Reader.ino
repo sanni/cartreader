@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             09.06.2022
-   Version:          8.4
+   Date:             11.06.2022
+   Version:          8.5 BETA
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -19,7 +19,7 @@
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
-   Compiled with Arduino 1.8.16
+   Compiled with Arduino 1.8.19
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
@@ -58,7 +58,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "8.4";
+char ver[5] = "8.5B";
 
 /******************************************
    Libraries
@@ -77,6 +77,9 @@ char ver[5] = "8.4";
 SdFs sd;
 FsFile myDir;
 FsFile myFile;
+#ifdef global_log
+FsFile myLog;
+#endif
 
 // AVR Eeprom
 #include <EEPROM.h>
@@ -785,6 +788,12 @@ void setup() {
     print_Error(F("SD Error"), true);
   }
 
+#ifdef global_log
+  if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
+    print_Error(F("SD Error"), true);
+  }
+#endif
+
 #ifdef RTC_installed
   // Start RTC
   RTCStart();
@@ -892,6 +901,9 @@ void print_Msg(const __FlashStringHelper *string) {
 #ifdef enable_serial
   Serial.print(string);
 #endif
+#ifdef global_log
+  myLog.print(string);
+#endif
 }
 
 void print_Msg(const char myString[]) {
@@ -906,8 +918,8 @@ void print_Msg(const char myString[]) {
     }
     // Newline
     display.setCursor(0, display.ty + 8);
-    // Print remaining characters
-    while (strPos < strlen(myString)) {
+    // Print until end of display and ignore remaining characters
+    while ((strPos < strlen(myString)) && (display.tx < 122)) {
       display.print(myString[strPos]);
       strPos++;
     }
@@ -922,6 +934,9 @@ void print_Msg(const char myString[]) {
 #ifdef enable_serial
   Serial.print(myString);
 #endif
+#ifdef global_log
+  myLog.print(myString);
+#endif
 }
 
 void print_Msg(long unsigned int message) {
@@ -933,6 +948,9 @@ void print_Msg(long unsigned int message) {
 #endif
 #ifdef enable_serial
   Serial.print(message);
+#endif
+#ifdef global_log
+  myLog.print(message);
 #endif
 }
 
@@ -946,6 +964,9 @@ void print_Msg(byte message, int outputFormat) {
 #ifdef enable_serial
   Serial.print(message, outputFormat);
 #endif
+#ifdef global_log
+  myLog.print(message, outputFormat);
+#endif
 }
 
 void print_Msg(String string) {
@@ -957,6 +978,9 @@ void print_Msg(String string) {
 #endif
 #ifdef enable_serial
   Serial.print(string);
+#endif
+#ifdef global_log
+  myLog.print(string);
 #endif
 }
 
@@ -976,10 +1000,9 @@ void print_Msg_PaddedHex32(unsigned long message) {
   print_Msg_PaddedHexByte((message >>  8) & 0xFF);
   print_Msg_PaddedHexByte((message >>  0) & 0xFF);
 }
-
 void println_Msg(String string) {
 #ifdef enable_LCD
-  print_Msg(string);
+  display.print(string);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -988,11 +1011,14 @@ void println_Msg(String string) {
 #ifdef enable_serial
   Serial.println(string);
 #endif
+#ifdef global_log
+  myLog.println(string);
+#endif
 }
 
 void println_Msg(byte message, int outputFormat) {
 #ifdef enable_LCD
-  print_Msg(message, outputFormat);
+  display.print(message, outputFormat);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -1001,24 +1027,48 @@ void println_Msg(byte message, int outputFormat) {
 #ifdef enable_serial
   Serial.println(message, outputFormat);
 #endif
+#ifdef global_log
+  myLog.println(message, outputFormat);
+#endif
 }
 
-void println_Msg(const char message[]) {
+void println_Msg(const char myString[]) {
 #ifdef enable_LCD
-  print_Msg(message);
+  // test for word wrap
+  if ((display.tx + strlen(myString) * 6) > 128) {
+    int strPos = 0;
+    // Print until end of display
+    while (display.tx < 122) {
+      display.print(myString[strPos]);
+      strPos++;
+    }
+    // Newline
+    display.setCursor(0, display.ty + 8);
+    // Print until end of display and ignore remaining characters
+    while ((strPos < strlen(myString)) && (display.tx < 122)) {
+      display.print(myString[strPos]);
+      strPos++;
+    }
+  }
+  else {
+    display.print(myString);
+  }
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
-  display.println(message);
+  display.println(myString);
 #endif
 #ifdef enable_serial
-  Serial.println(message);
+  Serial.println(myString);
+#endif
+#ifdef global_log
+  myLog.println(myString);
 #endif
 }
 
 void println_Msg(const __FlashStringHelper *string) {
 #ifdef enable_LCD
-  print_Msg(string);
+  display.print(string);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -1027,11 +1077,14 @@ void println_Msg(const __FlashStringHelper *string) {
 #ifdef enable_serial
   Serial.println(string);
 #endif
+#ifdef global_log
+  myLog.println(string);
+#endif
 }
 
 void println_Msg(long unsigned int message) {
 #ifdef enable_LCD
-  print_Msg(message);
+  display.print(message);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef enable_OLED
@@ -1039,6 +1092,9 @@ void println_Msg(long unsigned int message) {
 #endif
 #ifdef enable_serial
   Serial.println(message);
+#endif
+#ifdef global_log
+  myLog.println(message);
 #endif
 }
 
@@ -1052,6 +1108,9 @@ void display_Update() {
 #ifdef enable_serial
   delay(100);
 #endif
+#ifdef global_log
+  myLog.flush();
+#endif
 }
 
 void display_Clear() {
@@ -1062,6 +1121,9 @@ void display_Clear() {
 #ifdef enable_OLED
   display.clearDisplay();
   display.setCursor(0, 0);
+#endif
+#ifdef global_log
+  myLog.println("");
 #endif
 }
 

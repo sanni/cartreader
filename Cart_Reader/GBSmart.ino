@@ -62,6 +62,36 @@ boolean hasMenu;
 byte numGames;
 #endif
 
+// Compare checksum
+boolean compare_checksum_GBS() {
+  println_Msg(F("Calculating Checksum"));
+  display_Update();
+
+  strcpy(fileName, romName);
+  strcat(fileName, ".GB");
+
+  // last used rom folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/ROM/%s/%d", romName, foldern - 1);
+
+  char calcsumStr[5];
+  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
+
+  if (strcmp(calcsumStr, checksumStr) == 0) {
+    print_Msg(F("Result: "));
+    println_Msg(calcsumStr);
+    println_Msg(F("Checksum matches"));
+    display_Update();
+    return 1;
+  }
+  else {
+    print_Msg(F("Result: "));
+    println_Msg(calcsumStr);
+    print_Error(F("Checksum Error"), false);
+    return 0;
+  }
+}
+
 byte readByte_GBS(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -166,7 +196,7 @@ void gbSmartGameOptions()
         display_Clear();
         sd.chdir("/");
         readROM_GB();
-        compare_checksum_GB();
+        compare_checksum_GBS();
         break;
       }
     case 1: // Read SRAM
@@ -329,7 +359,7 @@ void gbSmartGetGames()
 
   // check if contain menu
   hasMenu = true;
-  dataIn_GB();
+  dataIn();
   for (i = 0; i < 5; i++)
   {
     if (readByte_GBS(0x0134 + i) != menu_title[i])
@@ -349,7 +379,7 @@ void gbSmartGetGames()
       dataOut();
       writeByte_GB(0x2100, i);
 
-      dataIn_GB();
+      dataIn();
       // read signature
       for (uint8_t j = 0x00; j < 0x30; j++)
       {
@@ -385,7 +415,7 @@ gb_smart_get_game_loop_end:;
   }
   else
   {
-    dataIn_GB();
+    dataIn();
     for (uint8_t j = 0; j < 15; j++)
     {
       myByte = readByte_GBS(0x0134 + j);
@@ -424,7 +454,7 @@ void gbSmartReadFlash()
   gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);
 
   // dump fixed bank 0x00
-  dataIn_GB();
+  dataIn();
   for (uint16_t addr = 0x0000; addr <= 0x3fff; addr += 512)
   {
     for (uint16_t c = 0; c < 512; c++)
@@ -439,7 +469,7 @@ void gbSmartReadFlash()
     dataOut();
     writeByte_GB(0x2100, bank);
 
-    dataIn_GB();
+    dataIn();
     for (uint16_t addr = 0x4000; addr <= 0x7fff; addr += 512)
     {
       for (uint16_t c = 0; c < 512; c++)
@@ -558,7 +588,7 @@ void gbSmartWriteFlashFromMyFile(uint32_t addr)
     gbSmartWriteFlashByte(addr + i, 0x00);  // BCH should be 0x00
 
     // waiting for finishing
-    dataIn_GB();
+    dataIn();
     while ((readByte_GBS(addr + i) & 0x80) == 0x00);
   }
 
@@ -581,7 +611,7 @@ uint32_t gbSmartVerifyFlash()
     gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);
 
     // verify bank 0x00
-    dataIn_GB();
+    dataIn();
     for (uint16_t addr = 0x0000; addr <= 0x3fff; addr += 512)
     {
       myFile.read(sdBuffer, 512);
@@ -599,7 +629,7 @@ uint32_t gbSmartVerifyFlash()
       dataOut();
       writeByte_GB(0x2100, bank);
 
-      dataIn_GB();
+      dataIn();
       for (uint16_t addr = 0x4000; addr <= 0x7fff; addr += 512)
       {
         myFile.read(sdBuffer, 512);
@@ -626,7 +656,7 @@ byte gbSmartBlankCheckingFlash(uint8_t flash_start_bank)
   gbSmartRemapStartBank(flash_start_bank, gbSmartFlashSizeGB, gbSmartSramSizeGB);
 
   // check first bank
-  dataIn_GB();
+  dataIn();
   for (uint16_t addr = 0x0000; addr <= 0x3fff; addr++)
   {
     if (readByte_GBS(addr) != 0xff)
@@ -639,7 +669,7 @@ byte gbSmartBlankCheckingFlash(uint8_t flash_start_bank)
     dataOut();
     writeByte_GB(0x2100, bank);
 
-    dataIn_GB();
+    dataIn();
     for (uint16_t addr = 0x4000; addr <= 0x7fff; addr++)
     {
       if (readByte_GBS(addr) != 0xff)
@@ -667,7 +697,7 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
   gbSmartWriteFlashByte(0x0000, 0x20);
   gbSmartWriteFlashByte(0x0000, 0xd0);
 
-  dataIn_GB();
+  dataIn();
   while ((readByte_GBS(0x0000) & 0x80) == 0x00);
 
   // blink LED
@@ -682,7 +712,7 @@ void gbSmartEraseFlash(uint8_t flash_start_bank)
     gbSmartWriteFlashByte(0x4000, 0x20);
     gbSmartWriteFlashByte(0x4000, 0xd0);
 
-    dataIn_GB();
+    dataIn();
     while ((readByte_GBS(0x4000) & 0x80) == 0x00);
 
     // blink LED
@@ -730,7 +760,7 @@ void gbSmartRemapStartBank(uint8_t rom_start_bank, uint8_t rom_size, uint8_t sra
     // start set new base bank
     writeByte_GB(0x1000, 0xa5);
 
-    dataIn_GB();
+    dataIn();
     rom_start_bank = gbSmartGetResizeParam(rom_size, sram_size);
 
     dataOut();
@@ -740,7 +770,7 @@ void gbSmartRemapStartBank(uint8_t rom_start_bank, uint8_t rom_size, uint8_t sra
     writeByte_GB(0x2100, 0x01);
   }
 
-  dataIn_GB();
+  dataIn();
 }
 
 // Get magic number for 0x7000 register.
