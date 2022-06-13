@@ -1,1 +1,6 @@
-*.txt  eol=crlf
+PCE_CRC_LIST.txt eol=crlf
+gb.txt eol=crlf
+gba.txt eol=crlf
+n64.txt eol=crlf
+nes20db.txt binary
+snes.txt eol=crlf
