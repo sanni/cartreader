@@ -278,7 +278,7 @@ void nesChipMenu() {
       readPRG();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press button"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       break;
@@ -289,7 +289,7 @@ void nesChipMenu() {
       readCHR();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press button"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       break;
@@ -300,7 +300,7 @@ void nesChipMenu() {
       readRAM();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press button"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       break;
@@ -325,7 +325,7 @@ void nesWriteMenu() {
       writeRAM();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press button"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       break;
@@ -341,7 +341,7 @@ void nesWriteMenu() {
         println_Msg(F("Error:"));
         println_Msg(F("Can't write to this cartridge"));
         println_Msg(F(""));
-        println_Msg(F("Press button"));
+        println_Msg(F("Press Button..."));
         display_Update();
       }
       wait();

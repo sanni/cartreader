@@ -171,7 +171,7 @@ void gbxMenu() {
           if (!writeCFI_GB()) {
             display_Clear();
             println_Msg(F("Flashing failed, time out!"));
-            println_Msg(F("Press button..."));
+            println_Msg(F("Press Button..."));
             display_Update();
             wait();
           }
@@ -198,7 +198,7 @@ void gbxMenu() {
           if (!writeCFI_GB()) {
             display_Clear();
             println_Msg(F("Flashing failed, time out!"));
-            println_Msg(F("Press button..."));
+            println_Msg(F("Press Button..."));
             display_Update();
             wait();
             resetArduino();
@@ -1695,7 +1695,7 @@ bool writeCFI_GB() {
       print_Msg(F("but needs "));
       print_Msg(romBanks);
       println_Msg(F("."));
-      println_Msg(F("Press button..."));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       resetArduino();

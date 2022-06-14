@@ -62,7 +62,7 @@
 // Use calibration data from snes_clk.txt
 // #define clockgen_calibration
 
-// Write all info to log.txt in root dir
+// Write all info to OSCR_LOG.txt in root dir
 // #define global_log
 
 // Use Adafruit Clock Generator

@@ -320,8 +320,7 @@ void gbSmartFlashMenu()
         println_Msg(F("This will erase your"));
         println_Msg(F("GB Smart Cartridge."));
         println_Msg(F(""));
-        println_Msg(F("Press Button"));
-        println_Msg(F("to continue"));
+        println_Msg(F("Press Button..."));
         display_Update();
         wait();
 

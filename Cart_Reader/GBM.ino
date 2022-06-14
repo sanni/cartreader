@@ -45,8 +45,7 @@ void gbmMenu() {
       println_Msg(F("cartreader directly"));
       println_Msg(F("before reading"));
       println_Msg("");
-      println_Msg(F("Press Button"));
-      println_Msg(F("to continue"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       // Clear screen
@@ -75,8 +74,7 @@ void gbmMenu() {
       println_Msg(F("NP Cartridge."));
       println_Msg("");
       println_Msg("");
-      println_Msg(F("Press Button"));
-      println_Msg(F("to continue"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
       // Clear screen
@@ -137,8 +135,7 @@ void gbmMenu() {
       println_Msg(F("NP Cartridge's"));
       println_Msg(F("mapping data"));
       println_Msg("");
-      println_Msg(F("Press Button"));
-      println_Msg(F("to continue"));
+      println_Msg(F("Press Button..."));
       display_Update();
       wait();
 

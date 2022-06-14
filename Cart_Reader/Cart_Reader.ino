@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             12.06.2022
+   Date:             14.06.2022
    Version:          8.5 BETA
 
    SD lib: https://github.com/greiman/SdFat
@@ -643,7 +643,7 @@ void aboutScreen() {
   println_Msg(F(""));
   println_Msg(F(""));
   println_Msg(F(""));
-  println_Msg(F("Press Button"));
+  println_Msg(F("Press Button..."));
   display_Update();
 
   while (1) {
@@ -792,6 +792,22 @@ void setup() {
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
     print_Error(F("SD Error"), true);
   }
+  println_Msg(F(""));
+#if defined(HW1)
+  print_Msg(F("OSCR HW1"));
+#elif defined(HW2)
+  print_Msg(F("OSCR HW2"));
+#elif defined(HW3)
+  print_Msg(F("OSCR HW3"));
+#elif defined(HW4)
+  print_Msg(F("OSCR HW4"));
+#elif defined(HW5)
+  print_Msg(F("OSCR HW5"));
+#elif defined(SERIAL_MONITOR)
+  print_Msg(F("OSCR Serial"));
+#endif
+  print_Msg(F(" V"));
+  println_Msg(ver);
 #endif
 
 #ifdef RTC_installed
@@ -1078,7 +1094,11 @@ void println_Msg(const __FlashStringHelper *string) {
   Serial.println(string);
 #endif
 #ifdef global_log
-  myLog.println(string);
+  char myBuffer[15];
+  strlcpy_P(myBuffer, (char *)string, 15);
+  if ((strncmp(myBuffer, "Press Button...", 14) != 0) && (strncmp(myBuffer, "Select file", 10) != 0)) {
+    myLog.println(string);
+  }
 #endif
 }
 
@@ -1585,6 +1605,13 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
   // pass on user choice
   setColor_RGB(0, 0, 0);
+
+#ifdef global_log
+  println_Msg("");
+  print_Msg("[+] ");
+  println_Msg(answers[choice]);
+#endif
+
   return choice;
 }
 #endif
