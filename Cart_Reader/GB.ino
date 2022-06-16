@@ -300,6 +300,9 @@ void gbMenu() {
       sd.chdir("/");
       readROM_GB();
       compare_checksums_GB();
+#ifdef global_log
+      save_log();
+#endif
       break;
 
     case 1:
@@ -997,7 +1000,7 @@ void compare_checksums_GB() {
     }
   }
   else {
-    println_Msg("gb.txt not found");
+    println_Msg(" -> gb.txt not found");
   }
 #else
   println_Msg("");

@@ -216,10 +216,14 @@ void snesMenu() {
           // start reading from cart
           readROM_SNES();
           compare_checksum();
+
           // print elapsed time
           print_Msg(F("Time elapsed: "));
           print_Msg((millis() - startTime) / 1000);
           println_Msg(F("s"));
+#ifdef global_log
+          save_log();
+#endif
           display_Update();
         }
         else {

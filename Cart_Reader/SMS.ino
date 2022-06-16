@@ -68,6 +68,9 @@ void _smsMenu() {
       // Change working dir to root
       sd.chdir("/");
       readROM_SMS();
+#ifdef global_log
+      save_log();
+#endif
       break;
 
     case 1:

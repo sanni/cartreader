@@ -311,6 +311,9 @@ void mdCartMenu() {
         else
           readROM_MD();
         //compare_checksum_MD();
+#ifdef global_log
+        save_log();
+#endif
       }
       else {
         print_Error(F("Cart has no ROM"), false);

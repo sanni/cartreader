@@ -128,6 +128,9 @@ void gbaMenu() {
       readROM_GBA();
       sd.chdir("/");
       compare_checksum_GBA();
+#ifdef global_log
+      save_log();
+#endif
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
       display_Update();

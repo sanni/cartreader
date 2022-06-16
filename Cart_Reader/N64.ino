@@ -3576,6 +3576,9 @@ redumpsamefolder:
 #ifdef savesummarytotxt
     savesummary_N64(1, crcStr, timeElapsed);
 #endif
+#ifdef global_log
+    save_log();
+#endif
     wait();
   }
   else {

@@ -246,6 +246,9 @@ void nesMenu() {
       delay(2000);
       resetROM();
       CartFinish();
+#ifdef global_log
+      save_log();
+#endif
       break;
 
     // Read single chip
