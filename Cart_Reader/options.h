@@ -69,7 +69,7 @@
 // #define clockgen_installed
 
 //******************************************
-// GB OPTIONS
+// GB, SMS database options
 //******************************************
 // Renames ROM if found in database (slow)
 // #define no-intro
