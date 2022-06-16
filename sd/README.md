@@ -1,4 +1,5 @@
-### Copy these files to the root of your SD card.  
+### Copy these files to the root of your SD card.      
+Tip: You can select them all, right-click, properties, mark checkbox Hidden and now they won't show up in the Cart Reader's file browser.    
 
 ## gba.txt  
 This file stores the GBA database which is needed because the save type and rom size are not stored inside the rom. 
