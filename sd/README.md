@@ -32,7 +32,7 @@ Savetypes:
 6 = 16K Eeprom  
 
 ## nes.txt  
-Database for NES cartridges.     
+iNES Header database for NES cartridges.     
 
 ## gb.txt md.txt pce.txt sms.txt    
 Placing these files into the root of the SD card will enable verify and automatic game name identifier.    
