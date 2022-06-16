@@ -112,8 +112,9 @@ static char labelLockon[17];
 /******************************************
    Configuration
  *****************************************/
+#ifdef use_md_conf
 void mdLoadConf() {
-  if (myFile.open("md.txt", O_READ)) {
+  if (myFile.open("mdconf.txt", O_READ)) {
     char line[64];
     int n;
     int i;
@@ -183,6 +184,7 @@ void mdLoadConf() {
     myFile.close();
   }
 }
+#endif
 
 /******************************************
    Menu
@@ -306,18 +308,19 @@ void mdCartMenu() {
       if (cartSize != 0 && cartSize <= 16777216) {
         // Change working dir to root
         sd.chdir("/");
-        if (realtec)
+        if (realtec) {
           readRealtec_MD();
-        else
+        }
+        else {
           readROM_MD();
-        //compare_checksum_MD();
-#ifdef global_log
-        save_log();
-#endif
+        }
       }
       else {
         print_Error(F("Cart has no ROM"), false);
       }
+#ifdef global_log
+      save_log();
+#endif
       break;
 
     case 1:
@@ -460,7 +463,9 @@ void segaCDMenu() {
    Setup
  *****************************************/
 void setup_MD() {
+#ifdef use_md_conf
   mdLoadConf();
+#endif
 
   // Set Address Pins to Output
   //A0-A7
@@ -1284,18 +1289,21 @@ void readROM_MD() {
   }
 
   // print elapsed time
-  print_Msg(F("Time elapsed: "));
-  print_Msg((millis() - startTime) / 1000);
-  println_Msg(F("s"));
-  display_Update();
+  //print_Msg(F("Time elapsed: "));
+  //print_Msg((millis() - startTime) / 1000);
+  //println_Msg(F("s"));
+  //display_Update();
+
+  // Calculate and compare CRC32 with no-intro
+  compareCRC("md.txt");
 
   // print Checksum
   if (chksum == calcCKS) {
-    println_Msg(F("Checksum OK"));
+    println_Msg(F("Internal checksum OK"));
     display_Update();
   }
   else {
-    print_Msg(F("Checksum Error: "));
+    print_Msg(F("Internal checksum Error: "));
     char calcsumStr[5];
     sprintf(calcsumStr, "%04X", calcCKS);
     println_Msg(calcsumStr);

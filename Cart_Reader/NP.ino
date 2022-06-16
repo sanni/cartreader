@@ -1309,7 +1309,7 @@ void printMapping() {
     for (int c = 0; c < 10; c++) {
       itoa (readBank_SFM(0xC0, currByte + c), buffer, 16);
       for (int i = 0; i < 2 - strlen(buffer); i++) {
-        print_Msg("0");
+        print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buffer);

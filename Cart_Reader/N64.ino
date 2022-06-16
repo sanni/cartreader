@@ -2223,35 +2223,6 @@ int strcicmp(char const * a, char const * b)
   }
 }
 
-#ifndef fastcrc
-// Calculate dumped rom's CRC32
-inline uint32_t updateCRC64(uint8_t ch, uint32_t crc) {
-  uint32_t idx = ((crc) ^ (ch)) & 0xff;
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
-  return tab_value ^ ((crc) >> 8);
-}
-
-// Calculate rom's CRC32 from SD
-uint32_t crc64() {
-  if (myFile.open(fileName, O_READ)) {
-    uint32_t oldcrc32 = 0xFFFFFFFF;
-
-    for (unsigned long currByte = 0; currByte < cartSize * 2048; currByte++) {
-      myFile.read(sdBuffer, 512);
-      for (int c = 0; c < 512; c++) {
-        oldcrc32 = updateCRC64(sdBuffer[c], oldcrc32);
-      }
-    }
-    // Close the file:
-    myFile.close();
-    return ~oldcrc32;
-  }
-  else {
-    print_Error(F("File not found"), true);
-  }
-}
-#endif
-
 // look-up the calculated crc in the file n64.txt on sd card
 boolean searchCRC(char crcStr[9]) {
   boolean result = 0;
@@ -3117,7 +3088,7 @@ void writeFram(byte flashramType) {
       display_Update();
     }
     else {
-      println_Msg("FAIL");
+      println_Msg(F("FAIL"));
       display_Update();
     }
 
@@ -3457,7 +3428,7 @@ redumpsamefolder:
   println_Msg(F("Calculating CRC.."));
   display_Update();
   char crcStr[9];
-  sprintf(crcStr, "%08lx", crc64());
+  sprintf(crcStr, "%08lx", calculateCRC(fileName, folder));
   // Print checksum
   println_Msg(crcStr);
   display_Update();

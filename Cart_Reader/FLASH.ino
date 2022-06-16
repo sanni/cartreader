@@ -323,7 +323,7 @@ void flashromMenu16() {
   if (time != 0) {
     print_Msg(F("Operation took: "));
     print_Msg((millis() - time) / 1000, DEC);
-    println_Msg("s");
+    println_Msg(F("s"));
     display_Update();
   }
   wait();
@@ -390,7 +390,7 @@ void epromMenu() {
   if (time != 0) {
     print_Msg(F("Operation took: "));
     print_Msg((millis() - time) / 1000, DEC);
-    println_Msg("s");
+    println_Msg(F("s"));
     display_Update();
   }
   wait();
@@ -408,8 +408,8 @@ idtheflash:
   display_Clear();
   display_Update();
   println_Msg(F("Flashrom Writer 8bit"));
-  println_Msg(" ");
-  println_Msg(" ");
+  println_Msg("");
+  println_Msg("");
   print_Msg(F("Flash ID: "));
   println_Msg(flashid);
 
@@ -578,14 +578,14 @@ idtheflash:
     // ID not found
     display_Clear();
     println_Msg(F("Flashrom Writer 8bit"));
-    println_Msg(" ");
+    println_Msg("");
     print_Msg(F("ID Type 1: "));
     println_Msg(vendorID);
     print_Msg(F("ID Type 2: "));
     println_Msg(flashid);
-    println_Msg(" ");
+    println_Msg("");
     println_Msg(F("UNKNOWN FLASHROM"));
-    println_Msg(" ");
+    println_Msg("");
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
@@ -600,7 +600,7 @@ idtheflash:
     resetFlash8();
     print_Error(F("Press Button to reset"), true);
   }
-  println_Msg(" ");
+  println_Msg("");
   println_Msg(F("Press Button..."));
   display_Update();
 
@@ -613,12 +613,12 @@ void id_Flash16() {
   resetFlash16();
 
   println_Msg(F("Flashrom Writer 16bit"));
-  println_Msg(" ");
+  println_Msg("");
   print_Msg(F("Flash ID: "));
   println_Msg(flashid);
   if (strcmp(flashid, "C2F1") == 0) {
     println_Msg(F("MX29F1610 detected"));
-    println_Msg(" ");
+    println_Msg("");
     flashSize = 2097152;
     flashromType = 2;
   }
@@ -659,9 +659,9 @@ void id_Flash16() {
   }
   else {
     print_Error(F("Unknown flashrom"), true);
-    println_Msg(" ");
+    println_Msg("");
   }
-  println_Msg(" ");
+  println_Msg("");
   println_Msg(F("Press Button..."));
   display_Update();
 }
@@ -1785,7 +1785,7 @@ void printFlash(int numBytes) {
     for (int c = 0; c < 10; c++) {
       itoa (readByte_Flash(currByte + c), myBuffer, 16);
       for (int i = 0; i < 2 - strlen(myBuffer); i++) {
-        print_Msg("0");
+        print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(myBuffer);
@@ -2130,14 +2130,14 @@ void printFlash16(int numBytes) {
 
       sprintf (buf, "%x", left_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
-        print_Msg("0");
+        print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buf);
 
       sprintf (buf, "%x", right_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
-        print_Msg("0");
+        print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buf);
@@ -2521,14 +2521,14 @@ void print_Eprom(int numBytes) {
 
       sprintf (buf, "%x", left_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
-        print_Msg("0");
+        print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buf);
 
       sprintf (buf, "%x", right_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
-        print_Msg("0");
+        print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buf);

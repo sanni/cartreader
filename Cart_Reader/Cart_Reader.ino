@@ -308,8 +308,12 @@ void(*resetArduino) (void) = 0;
 // Progressbar
 void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 
+// used by MD and NES modules
+byte eepbit[8];
+byte eeptemp;
+
 //******************************************
-// Data used by multiple modules
+// CRC32
 //******************************************
 // CRC32 lookup table // 256 entries
 static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
@@ -358,9 +362,89 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-// used by MD and NES modules
-byte eepbit[8];
-byte eeptemp;
+inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
+  uint32_t idx = ((crc) ^ (ch)) & 0xff;
+  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
+  return tab_value ^ ((crc) >> 8);
+}
+
+// Calculate rom's CRC32 from SD
+uint32_t calculateCRC(char* fileName, char* folder) {
+  if (myFile.open(fileName, O_READ)) {
+    uint32_t oldcrc32 = 0xFFFFFFFF;
+
+    for (unsigned long currByte = 0; currByte < (myFile.fileSize() / 512); currByte++) {
+      myFile.read(sdBuffer, 512);
+      for (int c = 0; c < 512; c++) {
+        oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
+      }
+    }
+    // Close the file:
+    myFile.close();
+    return ~oldcrc32;
+  }
+  else {
+    print_Error(F("File not found"), true);
+  }
+}
+
+//******************************************
+// no-intro database
+//******************************************
+void compareCRC(char* database) {
+#ifdef no-intro
+  // Calculate CRC32
+  char crcStr[9];
+  sprintf(crcStr, "%08lX", calculateCRC(fileName, folder));
+  // Print checksum
+  print_Msg(F("CRC32: "));
+  print_Msg(crcStr);
+
+  //Search for CRC32 in file
+  char gamename[100];
+  char crc_search[9];
+
+  //go to root
+  sd.chdir();
+  if (myFile.open(database, O_READ)) {
+    //Search for same CRC in list
+    while (myFile.available()) {
+      //Read 2 lines (game name and CRC)
+      get_line(gamename, &myFile, 96);
+      get_line(crc_search, &myFile, 9);
+      skip_line(&myFile); //Skip every 3rd line
+
+      //if checksum search successful, rename the file and end search
+      if (strcmp(crc_search, crcStr) == 0)
+      {
+        // Close the file:
+        myFile.close();
+
+        print_Msg(F(" -> "));
+        println_Msg(gamename);
+
+        // Rename file to no-intro
+        sd.chdir(folder);
+        if (myFile.open(fileName, O_READ)) {
+          myFile.rename(gamename);
+          // Close the file:
+          myFile.close();
+        }
+        break;
+      }
+    }
+    if (strcmp(crc_search, crcStr) != 0)
+    {
+      println_Msg(F(" -> Not found"));
+    }
+  }
+  else {
+    println_Msg(F(" -> database file not found"));
+  }
+#else
+  println_Msg("");
+#endif
+}
 
 /******************************************
   Main menu optimized for rotary encoder
@@ -1688,7 +1772,7 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 
 #ifdef global_log
   println_Msg("");
-  print_Msg("[+] ");
+  print_Msg(F("[+] "));
   println_Msg(answers[choice]);
 #endif
 

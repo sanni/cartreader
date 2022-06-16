@@ -945,96 +945,17 @@ void compare_checksums_GB() {
   if (strcmp(calcsumStr, checksumStr) == 0) {
     print_Msg(F("Internal: "));
     print_Msg(calcsumStr);
-    println_Msg(" -> OK");
+    println_Msg(F(" -> OK"));
   }
   else {
     print_Msg(F("Internal: "));
     println_Msg(calcsumStr);
     print_Error(F("Checksum Error"), false);
   }
-
-#ifdef no-intro
-  //CRC32
-  char crcStr[9];
-  sprintf(crcStr, "%08lX", crcGB(fileName, folder));
-  // Print checksum
-  print_Msg("CRC32: ");
-  print_Msg(crcStr);
-
-  //Search for CRC32 in file
-  char gamename[100];
-  char crc_search[9];
-
-  //go to root
-  sd.chdir();
-  if (myFile.open("gb.txt", O_READ)) {
-    //Search for same CRC in list
-    while (myFile.available()) {
-      //Read 2 lines (game name and CRC)
-      get_line(gamename, &myFile, 96);
-      get_line(crc_search, &myFile, 9);
-      skip_line(&myFile); //Skip every 3rd line
-
-      //if checksum search successful, rename the file and end search
-      if (strcmp(crc_search, crcStr) == 0)
-      {
-        // Close the file:
-        myFile.close();
-
-        print_Msg(" -> ");
-        println_Msg(gamename);
-
-        // Rename file to no-intro
-        sd.chdir(folder);
-        if (myFile.open(fileName, O_READ)) {
-          myFile.rename(gamename);
-          // Close the file:
-          myFile.close();
-        }
-        break;
-      }
-    }
-    if (strcmp(crc_search, crcStr) != 0)
-    {
-      println_Msg(" -> Not found");
-    }
-  }
-  else {
-    println_Msg(" -> gb.txt not found");
-  }
-#else
-  println_Msg("");
-#endif
-
+  compareCRC("gb.txt");
   display_Update();
   //go to root
   sd.chdir();
-}
-
-inline uint32_t updateCRC_GB(uint8_t ch, uint32_t crc) {
-  uint32_t idx = ((crc) ^ (ch)) & 0xff;
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
-  return tab_value ^ ((crc) >> 8);
-}
-
-// Calculate rom's CRC32 from SD
-uint32_t crcGB(char* fileName, char* folder) {
-  if (myFile.open(fileName, O_READ)) {
-    uint32_t oldcrc32 = 0xFFFFFFFF;
-
-    for (unsigned long currByte = 0; currByte < (myFile.fileSize() / 512); currByte++) {
-      myFile.read(sdBuffer, 512);
-      for (int c = 0; c < 512; c++) {
-        oldcrc32 = updateCRC_GB(sdBuffer[c], oldcrc32);
-      }
-    }
-    // Close the file:
-    myFile.close();
-    return ~oldcrc32;
-  }
-  else {
-    print_Error(F("File not found"), true);
-  }
 }
 
 /******************************************

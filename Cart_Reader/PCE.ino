@@ -496,7 +496,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size, uint32_t crc)
 
   //Open list file. If no list file found, just skip
   sd.chdir("/"); //Set read directry to root
-  if (script.open("PCE_CRC_LIST.txt", O_READ))
+  if (script.open("pce.txt", O_READ))
   {
     //Calculate CRC of ROM file
     sd.chdir(folder_p);
