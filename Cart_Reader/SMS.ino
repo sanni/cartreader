@@ -557,6 +557,11 @@ void readROM_SMS() {
     bankSize = cartSize;
   }
 
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(cartSize);
+  draw_progressbar(0, totalProgressBar);
+
   for (byte currBank = 0x0; currBank < (cartSize / bankSize); currBank++) {
     // Write current 16KB bank to slot 2 register 0xFFFF
     if (!raphnet_mode_sg1000) {
@@ -588,6 +593,10 @@ void readROM_SMS() {
       // }
       myFile.write(sdBuffer, 512);
     }
+
+    // update progress bar
+    processedProgressBar += bankSize;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
   myFile.close();

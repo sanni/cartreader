@@ -410,7 +410,6 @@ void mdCartMenu() {
       resetArduino();
       break;
   }
-  println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
@@ -1294,10 +1293,13 @@ void readROM_MD() {
   //println_Msg(F("s"));
   //display_Update();
 
+  println_Msg(F("Calculating checksum..."));
+  display_Update();
+  
   // Calculate and compare CRC32 with no-intro
   compareCRC("md.txt");
 
-  // print Checksum
+  // Calculate internal checksum
   if (chksum == calcCKS) {
     println_Msg(F("Internal checksum OK"));
     display_Update();
