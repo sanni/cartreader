@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             16.06.2022
+   Date:             18.06.2022
    Version:          8.5 BETA
 
    SD lib: https://github.com/greiman/SdFat
@@ -389,16 +389,72 @@ uint32_t calculateCRC(char* fileName, char* folder) {
 }
 
 //******************************************
-// no-intro database
+// Functions for CRC32 database
 //******************************************
-void compareCRC(char* database) {
+//Skip line
+void skip_line(FsFile* readfile)
+{
+  int i = 0;
+  char str_buf;
+
+  while (readfile->available())
+  {
+    //Read 1 byte from file
+    str_buf = readfile->read();
+
+    //if end of file or newline found, execute command
+    if (str_buf == '\r')
+    {
+      readfile->read(); //dispose \n because \r\n
+      break;
+    }
+    i++;
+  }//End while
+}
+
+//Get line from file
+void get_line(char* str_buf, FsFile* readfile, uint8_t maxi)
+{
+  int i = 0;
+
+  while (readfile->available())
+  {
+    //If line size is more than maximum array, limit it.
+    if (i >= maxi)
+    {
+      i = maxi - 1;
+    }
+
+    //Read 1 byte from file
+    str_buf[i] = readfile->read();
+
+    //if end of file or newline found, execute command
+    if (str_buf[i] == '\r')
+    {
+      str_buf[i] = '\0';
+      readfile->read(); //dispose \n because \r\n
+      break;
+    }
+    i++;
+  }//End while
+}
+
+// Calculate CRC32 if needed and compare it to CRC read from database
+boolean compareCRC(char* database, char* crcString) {
 #ifdef no-intro
-  // Calculate CRC32
   char crcStr[9];
-  sprintf(crcStr, "%08lX", calculateCRC(fileName, folder));
+  if (crcString == 0) {
+    // Calculate CRC32
+    sprintf(crcStr, "%08lX", calculateCRC(fileName, folder));
+  }
+  else {
+    // Use precalculated crc
+    strcpy(crcStr, crcString);
+  }
   // Print checksum
   print_Msg(F("CRC32: "));
   print_Msg(crcStr);
+  display_Update();
 
   //Search for CRC32 in file
   char gamename[100];
@@ -430,16 +486,19 @@ void compareCRC(char* database) {
           // Close the file:
           myFile.close();
         }
+        return 1;
         break;
       }
     }
     if (strcmp(crc_search, crcStr) != 0)
     {
       println_Msg(F(" -> Not found"));
+      return 0;
     }
   }
   else {
     println_Msg(F(" -> database file not found"));
+    return 0;
   }
 #else
   println_Msg("");

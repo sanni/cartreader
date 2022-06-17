@@ -1,939 +1,2955 @@
-9e978488,CDZJ,16,0
-0b561fba,CFZE,16,1
-6b1cef83,CFZJ,16,1
-4d60abe5,CLBE,32,5
-4f1adc7b,CLBJ,32,5
-40aa4874,CP2J,32,4
-3139189c,CPSJ,16,1
-346de3ae,CZLE,32,1
-cd16c529,CZLE,32,1
-3fd2151e,CZLE,32,1
-32120c23,CZLE,32,1
-c744c4db,CZLE,32,1
-d423e8b0,CZLJ,32,1
-26e73887,CZLJ,32,1
-2b2721ba,CZLJ,32,1
-8c5b90c1,CZLJ,32,1
-1c6ce8cb,CZLJ,32,1
-122ff261,CZLJ,32,1
-052a0e04,N22E,32,0
-f573f107,N2ME,12,0
-7614ee0d,N2PE,12,0
-fa6e097b,N2PP,12,0
-cdf26d67,N2VE,08,0
-3b53519f,N2VP,08,0
-79a71608,N32E,08,0
-d3b68be4,N3DJ,16,6
-92dfe338,N3DJ,16,6
-da443f0b,N3HE,12,0
-73133cd2,N3HJ,12,1
-b3181ee0,N3HP,12,0
-785dd0f8,N3PE,16,0
-62a8ce7d,N3TE,16,0
-7fdc3784,N64J,12,0
-57de7cab,N7IE,08,0
-ae2583fb,N7IP,08,0
-28b1221c,N8IE,12,0
-ae346df6,N8IJ,12,0
-137cb3cc,N8IP,12,0
-42e5fafa,N8ME,12,0
-fab3e50d,N8MP,12,0
-13930c26,N8WE,12,0
-79f483f7,N8WP,12,0
-9be0a7ac,N9BE,16,0
-a316df37,N9BP,16,0
-3d8eb950,N9CE,12,0
-76e79cea,N9CP,12,0
-6b2473a9,N9FE,16,0
-6eae1e6e,N9FP,16,0
-e5df2afe,N9HE,12,0
-f3b2aa4d,N9HP,12,0
-2eb64fc2,N9ME,12,0
-56769a44,N9ME,12,0
-d0929942,N9MP,12,0
-f620835d,NA2J,32,1
-58fcb771,NABJ,08,5
-c14d45ac,NABP,08,5
-1952cc87,NACE,08,0
-5471ae3b,NADE,12,5
-9503e3f1,NAFJ,16,4
-198b9e0e,NAGE,08,5
-6ee3b932,NAGJ,08,5
-f322b641,NAGJ,08,5
-040b0046,NAGP,08,5
-f5ce3d91,NAHE,04,0
-e5c1fedc,NAIE,04,0
-eb97929e,NALE,16,1
-04c9d3b1,NALJ,16,1
-45a91cb1,NALP,32,1
-e96779fa,NALU,16,1
-2fe786f6,NAME,08,0
-e79048e2,NAMP,08,0
-5bab9100,NARD,16,0
-630a19e2,NARE,16,0
-600bc49e,NARP,16,0
-4d659e85,NASE,16,0
-b1f18186,NAYE,32,0
-d5051096,NAYE,32,0
-be7e230d,NAYP,32,0
-eab083b8,NB2E,12,0
-41093b73,NB2J,12,0
-588e60e8,NB2P,12,0
-c285fc69,NB3E,08,0
-95595889,NB3P,08,0
-6b09092e,NB4E,12,0
-4f9d569f,NB5J,64,1
-5006dc88,NB6J,12,5
-bab803ef,NB7E,32,6
-258c58d0,NB7J,32,6
-1ec12f5a,NB7P,32,6
-2736266a,NB7U,32,6
-49e75825,NB8J,16,0
-559cd6b1,NB9E,12,0
-90e4275b,NB9P,12,0
-a245d737,NBAE,12,0
-aed2700a,NBAJ,12,0
-04b75ccc,NBAP,12,0
-767a95e7,NBCE,08,5
-9cbbccf1,NBCE,08,5
-081a3641,NBCJ,08,5
-4c820695,NBCP,08,5
-2cc2e634,NBDE,12,5
-69ceabcc,NBDJ,12,5
-59e39947,NBDP,12,5
-69e88471,NBEE,16,0
-d3c29aa4,NBEP,16,0
-dfbf448c,NBFE,16,0
-2c4eb906,NBFP,16,0
-fabbdf02,NBHE,12,5
-6a04cdae,NBHP,12,5
-7f471773,NBIE,16,0
-b591cfea,NBIE,16,0
-ef8c2f34,NBJJ,12,0
-47db2246,NBJJ,12,0
-ad429961,NBKE,16,5
-fb7ffb10,NBKE,16,5
-8f7c9324,NBKJ,16,5
-525899c9,NBKP,16,5
-8ec937db,NBLE,12,0
-2ed81a65,NBLJ,12,0
-e26192ab,NBLP,12,0
-3ed0e0dc,NBME,08,5
-22f54a52,NBMJ,08,5
-525339c5,NBMP,08,5
-6ab7fec6,NBNJ,12,5
-1844c8ca,NBOE,16,0
-c6f49764,NBPE,16,0
-8fb41658,NBPP,16,0
-31beb053,NBQE,08,0
-c99c6030,NBQP,08,0
-172fca97,NBRE,04,0
-c08ce624,NBRP,04,0
-6d25b36f,NBSE,12,0
-d0de3584,NBSP,12,0
-9f54cd2d,NBUE,08,0
-04731bab,NBUP,08,0
-57550007,NBVE,16,5
-86bbc278,NBVJ,16,5
-f6ccd04a,NBWE,08,0
-ba2d8b2e,NBWJ,08,0
-6c230765,NBXE,08,0
-15a32836,NBYD,12,0
-cf2ea0b6,NBYE,12,0
-e5429094,NBYF,12,0
-2d118764,NBYI,12,0
-791881d4,NBYP,12,0
-9bcd670f,NBZE,16,0
-434de656,NC2E,16,0
-ba4e65a8,NCBE,04,0
-82c1d9e1,NCBP,04,0
-6cd0fc99,NCCD,32,4
-3e9069ef,NCCE,32,4
-f3da8a26,NCCP,32,4
-10c6a0a1,NCDE,16,0
-8569f1a0,NCDX,16,0
-8036f999,NCDY,16,0
-0916ab13,NCED,32,0
-d175397b,NCED,32,0
-d7467294,NCEE,32,0
-9afbfcaf,NCEP,32,0
-18f4166a,NCFE,12,0
-3fa647dd,NCFE,12,0
-82263e5d,NCFP,12,0
-5c565ad6,NCGJ,12,5
-aa5d76a9,NCHE,08,5
-c1dcd7ab,NCHP,08,5
-a7cc4ce2,NCKE,16,4
-6f6262cb,NCLE,16,0
-2a5c9a06,NCOE,16,0
-5bf42ec4,NCOP,16,0
-c1e57337,NCRE,08,5
-231f9284,NCRJ,08,5
-a1d6eb5b,NCRP,08,5
-22916735,NCSE,08,0
-4e37b6f2,NCSP,08,0
-7fe024c9,NCTE,12,5
-7ff42fd0,NCTE,12,5
-6395c475,NCTJ,12,5
-587dd983,NCTP,12,5
-5238b727,NCUE,08,5
-4655ba2d,NCUE,08,5
-c3b52701,NCUE,08,5
-8935a8d9,NCUP,08,5
-a123769f,NCWE,12,6
-e46ce079,NCWP,12,6
-ebaed1f9,NCWP,12,6
-f2fae693,NCXJ,16,5
-6b6b1d09,NCYE,16,0
-ac1628eb,NCYP,16,0
-c8201454,NCZJ,16,6
-0c1a0c38,ND2J,12,6
-8b0d3c00,ND3E,12,0
-83032d97,ND3E,12,0
-274d3493,ND3E,12,0
-e349cfec,ND3J,12,6
-d9d76235,ND3P,12,0
-ab13028c,ND4E,16,0
-ff009c21,ND4J,16,6
-12ab9b45,ND4P,16,0
-7bfc71e0,ND6J,32,6
-ffc76f35,ND6J,32,6
-a9417994,NDAJ,32,4
-cc083e34,NDCJ,12,0
-38f1b5d9,NDEE,16,0
-7ad9e429,NDEP,16,0
-3c13fbcf,NDFJ,32,0
-43ee0117,NDFJ,32,0
-d09f4da8,NDHE,12,0
-20f23dde,NDHJ,12,0
-5a7e226b,NDHP,12,0
-83fd222f,NDKE,08,0
-8cb4b948,NDKJ,08,5
-d2a19c71,NDKP,08,0
-5cc1ade6,NDME,08,0
-1d3a17b5,NDME,08,0
-c8f3af5b,NDMJ,08,0
-d985c356,NDMP,08,0
-dbfd5a53,NDNE,08,0
-b9c9f07a,NDNF,08,0
-3275adb0,NDNP,08,0
-d44b4fc6,NDOE,32,6
-919f7e74,NDOJ,32,6
-a28c71c6,NDOP,32,6
-c83dfa15,NDPE,32,0
-7fdec270,NDQE,32,0
-e6220482,NDQP,32,0
-154e8b33,NDRJ,08,5
-dc0b2c8f,NDSJ,08,0
-235caec6,NDTB,16,0
-5711e197,NDTD,16,0
-7d666b9e,NDTE,16,0
-b2c3e123,NDTP,16,0
-3177a905,NDUE,16,5
-c61f6bb9,NDUP,16,5
-494950c6,NDWE,16,0
-44b80fd7,NDWJ,16,0
-f88ac3ce,NDWP,16,0
-eb759206,NDYE,12,5
-5acca298,NDYE,12,5
-b566fb94,NDYJ,12,5
-4a13323c,NDYP,12,5
-b1e87639,NDYP,12,5
-9a3258d7,NDZE,32,0
-7ecdfb28,NDZF,32,0
-ea82f037,NDZP,32,0
-7cdfcdaa,NEAE,16,5
-6b5ff959,NEAP,16,5
-04cb74ec,NEGE,08,0
-750dc9a7,NEGJ,08,0
-0b71b1ea,NEGP,08,0
-92c3ba6f,NELE,08,0
-ea3b92d8,NENE,08,0
-c53c1035,NEPE,32,6
-97c155c5,NEPJ,32,6
-e0f46629,NEPP,32,6
-4370d7e3,NERE,08,5
-d1934cf6,NETD,16,0
-d75b45c6,NETE,16,0
-284170ed,NETF,16,0
-a4fe7652,NETJ,16,0
-24d937bf,NETJ,16,0
-84ff9890,NETP,16,0
-a10a86af,NEVJ,32,6
-803d33df,NF2P,12,5
-67eaf0f3,NF9E,12,0
-18eeb41b,NFBE,16,0
-91bc9aeb,NFDE,12,0
-c3066e59,NFDP,12,0
-8456841e,NFFE,16,0
-4052c176,NFFP,16,0
-bb2563c6,NFGE,16,5
-d8eb5e6e,NFHE,08,5
-00da3704,NFHP,08,5
-245eaee8,NFLE,12,0
-9793abc2,NFOD,08,0
-76c4333d,NFOE,08,0
-5ed736d9,NFOP,08,0
-927ce621,NFQE,08,0
-c05b9184,NFRE,16,0
-2da744f5,NFRP,16,0
-9fb0e6c9,NFSJ,12,0
-ce8cc172,NFUE,64,6
-4667cfe9,NFUP,64,6
-0f1984dc,NFWD,12,5
-7dc9ef2c,NFWE,12,5
-57cd299d,NFWF,12,5
-f7bacbc3,NFWJ,12,5
-bebbc6c8,NFWP,12,5
-1f4e651a,NFWP,12,5
-b1fcaa9c,NFXE,12,5
-b1b5fc46,NFXE,12,5
-411142a7,NFXJ,12,5
-50a9c0b1,NFXP,12,5
-9a3425da,NFXU,12,5
-db40a155,NFYJ,16,5
-2d6f7e8b,NFZP,16,1
-81a4c28b,NG2E,12,0
-7c8a36da,NG2J,12,0
-1a57f416,NG2P,12,0
-4180c296,NG5E,16,0
-2e91efc9,NG5J,16,0
-3bd9059a,NG5P,16,0
-08c41e0e,NG6J,16,1
-3db8130e,NGAE,12,0
-6ead2d89,NGAJ,12,0
-5aa63b04,NGAP,12,0
-6eebc26a,NGBE,16,0
-09b2cda1,NGBJ,16,0
-bae57ea7,NGBP,16,0
-bc627da7,NGCE,12,6
-6dfb4747,NGCP,12,6
-8d133db0,NGDJ,16,0
-b6330846,NGEE,12,5
-a6be19dd,NGEJ,12,5
-9ec14aeb,NGEP,12,5
-724ecae7,NGLJ,12,5
-52d418e1,NGME,16,0
-3502dbbe,NGMP,16,0
-70594d3c,NGNE,08,0
-965c4575,NGPJ,16,1
-137287f5,NGRE,08,0
-c4bc4df8,NGRX,08,0
-0a796c3e,NGSJ,16,0
-6fc0a31b,NGSJ,16,0
-e272bdf6,NGTJ,16,6
-ca2e5e49,NGUJ,32,5
-f874571c,NGVE,08,5
-90eceb4a,NGVP,08,5
-64765e82,NGXE,16,0
-b7b3a489,NGXP,16,0
-ee8288d4,NH5E,12,0
-c1ea5d33,NH5J,12,0
-c44de11c,NH5P,12,0
-75f75b9d,NH9E,12,0
-572060e0,NH9P,12,0
-7e74eedc,NHAJ,16,5
-8c7c2dca,NHBJ,08,0
-4948892b,NHCE,16,0
-b1954b08,NHCP,16,0
-60a680e7,NHFJ,08,5
-30a24d89,NHGE,08,0
-31e102e3,NHGJ,08,0
-ed750623,NHGP,08,0
-ba6a687e,NHKJ,12,0
-49d86c00,NHLE,12,0
-8c0c9669,NHLP,12,0
-2db3d3d6,NHME,16,0
-2d777652,NHNE,08,0
-9e98fce8,NHNJ,08,0
-5a805c2e,NHNP,08,0
-1ee678fe,NHOE,12,0
-e272867e,NHOP,12,0
-99a427fa,NHPJ,08,5
-c1d98b78,NHSJ,12,0
-e744456f,NHTE,32,0
-010f6242,NHTF,32,0
-863ab8f3,NHTP,32,0
-15b57ef8,NHVE,16,0
-e76627ff,NHVP,16,0
-a5c92148,NHWE,12,0
-850633a7,NHWP,16,0
-e4821c4b,NHXD,08,0
-1d35e110,NHXE,08,0
-e373fa31,NHXF,08,0
-571da09a,NHXJ,08,0
-5369efb4,NHXP,08,0
-e769de96,NHYJ,16,1
-576915d4,NIBJ,16,1
-a5163f29,NICE,16,5
-4978eb57,NIJE,32,5
-a4a24517,NIMJ,12,6
-dbd96deb,NIMJ,12,6
-50cbe8a6,NIRJ,08,5
-dcd0538f,NISE,16,0
-4c433fdd,NISE,16,0
-69572558,NISX,16,0
-8a16a6a9,NISY,16,0
-60f7ff8e,NIVE,08,0
-5e8fc436,NJ2J,08,0
-3ba9e644,NJ3J,08,0
-feec34f6,NJ5J,16,1
-c02fd9be,NJ5J,16,1
-7994c2fe,NJ5J,16,1
-163dadf9,NJAE,16,0
-9f95485e,NJAP,16,0
-fa061b96,NJDE,32,4
-7d0eed6a,NJEJ,08,0
-6753d5a3,NJFE,32,4
-964506ce,NJFJ,32,4
-cfbed88c,NJFP,32,4
-67a1a22c,NJGJ,16,1
-4c536dd7,NJLJ,08,0
-9e6579c5,NJME,16,5
-61a56330,NJMP,16,5
-e739947c,NJOE,04,0
-0ea249b9,NJPE,08,0
-8ed60dea,NJPJ,08,0
-8c839268,NJPP,08,0
-35299f9c,NJQE,04,0
-82a4bb8a,NJQP,04,0
-d0dc8a8e,NK2E,16,5
-8fedf4c6,NK2J,16,5
-dd4e84e4,NK2J,16,5
-3a0b6214,NK2P,16,5
-20a1c120,NK4E,32,6
-ae7cb69d,NK4J,32,1
-a263c1b9,NK4J,32,1
-f4589aa8,NK4J,32,1
-6d5e1332,NK4J,32,1
-5b8b89ef,NK4P,32,6
-5052168c,NKAD,12,5
-f45ea789,NKAE,12,5
-b3a034d6,NKAF,12,5
-b3a034d6,NKAF,12,5
-8a1c261e,NKAJ,12,5
-c9225511,NKAP,12,5
-255ee1dd,NKEE,08,0
-3bc93017,NKEJ,08,0
-b77783be,NKEP,08,0
-2ef1ea20,NKGE,16,1
-e08f7578,NKGP,16,1
-31c76be7,NKIE,12,5
-49ef8f2b,NKIE,12,5
-0b5b5df8,NKIE,12,5
-5d0ee5d2,NKIP,12,5
-12d8f3e9,NKJE,16,4
-074690d6,NKKE,16,0
-58ce7d80,NKKP,16,0
-1f5907f9,NKMJ,08,0
-b9be7b90,NKMJ,08,0
-b9e53b06,NKRJ,12,0
-483129aa,NKRP,12,0
-434389c1,NKTE,12,5
-5d9696df,NKTJ,12,5
-6ced6472,NKTJ,12,5
-faa6b083,NKTP,12,5
-0248f6c3,NKTP,12,5
-914cf9c4,NL2E,12,0
-aa136e07,NL2J,12,0
-cb294d39,NL2P,12,0
-135c8eb0,NL2X,12,0
-da98a5d3,NLBP,32,5
-a4374eac,NLCE,04,0
-0f879a70,NLCJ,04,0
-3baf58d5,NLCP,04,0
-4d1e1897,NLGE,16,0
-c7d9b21c,NLGP,16,0
-9db99881,NLLJ,12,5
-4ea07453,NLRE,08,5
-1d4fb466,NLRJ,08,5
-7148251d,NLRP,08,5
-3fd0604d,NM3E,08,0
-4731df5c,NM3P,08,0
-b7f46516,NM4E,16,0
-635adeca,NM4P,16,0
-1bfc71f0,NM6E,32,4
-4e9560f6,NM8E,16,6
-c665301d,NM8J,16,6
-29aa5df4,NM8P,16,6
-51228f0c,NM9J,16,0
-d1c1681e,NMAJ,08,0
-cc253cab,NMBE,12,0
-ef5f997b,NMDE,12,0
-d2a363a6,NMEE,12,0
-57ddede1,NMEP,12,0
-2d40abb0,NMFE,32,1
-2fc4c216,NMFE,32,1
-911f179a,NMFJ,32,1
-bb03a1a6,NMFJ,32,1
-ad1758ac,NMFJ,32,1
-e5d723c7,NMFP,32,1
-a5071a77,NMFP,32,1
-ba73a7e4,NMGD,16,5
-e2bbeac1,NMGE,16,5
-3f5e5830,NMGP,16,5
-990a8e54,NMHJ,12,0
-67c30a2d,NMID,12,5
-3677a8b8,NMIE,12,5
-282a350d,NMIF,12,5
-2d789d98,NMII,12,5
-2c7131d6,NMIP,12,5
-ebb060dc,NMIS,12,5
-e1c470fd,NMIS,12,5
-dbe7d51a,NMJJ,08,0
-50a99d60,NMKE,12,0
-0f323d00,NMKE,12,0
-ba64f824,NMKE,12,0
-bc04c62f,NMKP,12,0
-2d4f8f1b,NMLE,32,5
-1aecfc56,NMLJ,32,5
-0ae51ea5,NMLP,32,5
-b68d596f,NMMJ,08,0
-c8cad8f6,NMOE,08,5
-1d69ca55,NMPJ,16,0
-176b3683,NMPJ,16,0
-a7f5cd7e,NMQE,40,4
-bd60ca66,NMQJ,40,4
-9fc00ce3,NMQP,48,4
-1dc1c812,NMRE,12,5
-bea43300,NMRJ,12,5
-bc966b10,NMRP,12,5
-88c83511,NMSJ,08,5
-377f18e9,NMTD,16,0
-22fe979c,NMTE,16,0
-e7ef60e8,NMTF,16,0
-7efb2f1e,NMTJ,16,0
-af3b099e,NMTP,16,0
-3ac924bc,NMUE,12,5
-b7445ddc,NMVE,32,6
-3fc04053,NMVJ,32,6
-813b13f2,NMVP,32,6
-e58a1955,NMWE,32,5
-7457b081,NMWJ,32,5
-dc00357a,NMWP,32,5
-fc459192,NMXE,16,6
-143926ce,NMXE,16,6
-03bfd065,NMXJ,16,6
-0b881e60,NMXP,16,6
-51a07fd9,NMYE,16,0
-ea21015a,NMYP,16,0
-756ba26d,NMZJ,12,0
-02bf7c2d,NN2E,12,0
-a4701927,NN6E,04,5
-99dee3c0,NNAE,32,5
-029104fd,NNAP,32,5
-86360bfb,NNBE,12,6
-1355a826,NNBP,12,6
-6a1eb795,NNCE,16,0
-9f14481b,NNIE,04,0
-7c3bc95e,NNLE,16,0
-0e4b944c,NNLP,16,0
-ce361f92,NNME,04,0
-35461699,NNRJ,08,0
-f4a97c73,NNSE,16,0
-5b6c6e4c,NNSP,16,0
-c0ba9440,NNSX,16,0
-be6298b0,NNXE,16,0
-c1bc6fd8,NO2J,16,0
+007 - The World Is Not Enough (Europe) (En,Fr,De).z64
+002C3B2A,NO7P,32,0
+
+007 - The World Is Not Enough (USA) (v2) (Beta).z64
+6C180FEF,NM4E,16,0
+
+007 - The World Is Not Enough (USA) (v21) (Beta).z64
+F0B6BF59,NO7E,32,0
+
+007 - The World Is Not Enough (USA).z64
 26360987,NO7E,32,0
-002c3b2a,NO7P,32,0
-a05aea85,NOBE,40,1
-410f6510,NOBE,40,1
-845b8711,NOBJ,40,1
-991f569c,NOBJ,40,1
-1a45c5ab,NOFE,16,0
-d9fe9ee7,NOFP,16,0
-85138b5a,NOHE,16,0
-ac72a1c7,NOMJ,16,0
-742e31fb,NOSJ,16,5
-80d70173,NOWE,08,0
-479643e2,NP2J,16,5
-1146a43a,NP3D,64,4
-a9998e09,NP3E,64,4
-e2a78066,NP3F,64,4
-9fa5c095,NP3I,64,4
-cbc3b935,NP3J,64,4
-6b3096c4,NP3P,64,4
-283e7641,NP3S,64,4
-480b953e,NP4J,12,0
-40e3ac61,NP4J,12,0
-d9329895,NP6J,16,1
-1e53a7ba,NP6J,16,1
-7ab7ebf4,NP6J,16,1
-fcc10356,NP6J,16,1
-e34c7060,NP9E,12,0
-351cde48,NPAJ,16,1
-753706ef,NPAJ,16,1
-ea837423,NPBJ,08,0
-42d06e32,NPCJ,12,0
-68446ad4,NPDE,32,6
-4c1677f7,NPDE,32,6
-639c0da9,NPDJ,32,6
-7718a714,NPDP,32,6
-6a9e24d7,NPEJ,16,1
-bc7ef5c1,NPEJ,16,1
-10c27b3c,NPFD,16,4
-86a69756,NPFE,16,4
-ec843586,NPFF,16,4
-63f6058a,NPFI,16,4
-df56e922,NPFI,16,4
-a091bd56,NPFJ,16,4
-f824a057,NPFP,16,4
-371b787f,NPFS,16,4
-cdea6d4c,NPFU,16,4
-b18b2734,NPGE,16,5
-3f6245ae,NPGJ,16,5
-e22a00d0,NPHE,16,4
-5f75634e,NPKJ,08,0
-aec21c28,NPLJ,08,0
-81cda888,NPMP,16,1
-ac543150,NPND,32,4
-8b9c598f,NPNE,32,4
-c3aa0074,NPNF,32,4
+
+1080 Snowboarding (Europe) (En,Ja,Fr,De).z64
+75A21679,NTEP,16,1
+
+1080 Snowboarding (Japan, USA) (En,Ja).z64
+08FE81C7,NTEA,16,1
+
+40 Winks (Europe) (En,Es,It) (Proto) (1999-10-07).z64
+7E718143,N4WX,32,0
+
+40 Winks (USA) (Aftermarket) (Unl).z64
+31C19633,N4WE,32,0
+
+40 Winks (USA) (Proto).z64
+3A674026,N4WZ,32,0
+
+64 de Hakken!! Tamagotchi - Minna de Tamagotchi World (Japan).z64
+67A789E5,NTWJ,12,5
+
+64 Hanafuda - Tenshi no Yakusoku (Japan).z64
+60A680E7,NHFJ,08,5
+
+64 Oozumou (Japan).z64
+742E31FB,NOSJ,16,5
+
+64 Oozumou 2 (Japan).z64
+C1BC6FD8,NO2J,16,0
+
+64 Trump Collection - Alice no Wakuwaku Trump World (Japan).z64
+DCA7F4EB,NTCJ,12,5
+
+AeroFighters Assault (Europe) (En,Fr,De).z64
+6A2B08DA,NSAP,12,5
+
+AeroFighters Assault (USA).z64
+4370D7E3,NERE,08,5
+
+AeroGauge (Europe) (En,Fr,De).z64
+040B0046,NAGP,08,5
+
+AeroGauge (Japan) (Demo) (Kiosk).z64
+6EE3B932,NAGJ,08,5
+
+AeroGauge (Japan) (Rev 1).z64
+F322B641,NAGJ,08,5
+
+AeroGauge (USA).z64
+198B9E0E,NAGE,08,5
+
+AI Shougi 3 (Japan).z64
+86DF90E6,NS3J,08,0
+
+Aidyn Chronicles - The First Mage (Europe).z64
+BE7E230D,NAYP,32,0
+
+Aidyn Chronicles - The First Mage (USA) (Rev 1).z64
+D5051096,NAYE,32,0
+
+Aidyn Chronicles - The First Mage (USA).z64
+B1F18186,NAYE,32,0
+
+Air Boarder 64 (Japan).z64
+58FCB771,NABJ,08,5
+
+Airboarder 64 (Europe).z64
+C14D45AC,NABP,08,5
+
+Akumajou Dracula Mokushiroku - Real Action Adventure (Japan).z64
+E349CFEC,ND3J,12,6
+
+Akumajou Dracula Mokushiroku Gaiden - Legend of Cornell (Japan).z64
+FF009C21,ND4J,16,6
+
+All Star Tennis '99 (Europe) (En,Fr,De,Es,It).z64
+996E845F,NTNP,08,5
+
+All Star Tennis 99 (USA).z64
+A7DCF638,NTNE,08,5
+
+All-Star Baseball 2000 (Europe).z64
+D3C29AA4,NBEP,16,0
+
+All-Star Baseball 2000 (USA).z64
+69E88471,NBEE,16,0
+
+All-Star Baseball 2001 (USA).z64
+4D659E85,NASE,16,0
+
+All-Star Baseball 99 (Europe).z64
+D0DE3584,NBSP,12,0
+
+All-Star Baseball 99 (USA).z64
+6D25B36F,NBSE,12,0
+
+Armorines - Project S.W.A.R.M. (Europe).z64
+600BC49E,NARP,16,0
+
+Armorines - Project S.W.A.R.M. (Germany).z64
+5BAB9100,NARD,16,0
+
+Armorines - Project S.W.A.R.M. (USA).z64
+630A19E2,NARE,16,0
+
+Army Men - Air Combat (USA).z64
+1952CC87,NACE,08,0
+
+Army Men - Sarge's Heroes (Europe) (En,Fr,De).z64
+E79048E2,NAMP,08,0
+
+Army Men - Sarge's Heroes (USA).z64
+2FE786F6,NAME,08,0
+
+Army Men - Sarge's Heroes 2 (USA).z64
+79A71608,N32E,08,0
+
+Asteroids Hyper 64 (USA).z64
+F5CE3D91,NAHE,04,0
+
+Automobili Lamborghini (Europe).z64
+3BAF58D5,NLCP,04,0
+
+Automobili Lamborghini (USA).z64
+A4374EAC,NLCE,04,0
+
+Baku Bomberman (Japan).z64
+22F54A52,NBMJ,08,5
+
+Baku Bomberman 2 (Japan).z64
+86BBC278,NBVJ,16,5
+
+Bakuretsu Muteki Bangaioh (Japan).z64
+6AB7FEC6,NBNJ,12,5
+
+Bakushou Jinsei 64 - Mezase! Resort Ou (Japan).z64
+EF8C2F34,NBJJ,12,0
+
+Banjo to Kazooie no Daibouken (Japan).z64
+8F7C9324,NBKJ,16,5
+
+Banjo to Kazooie no Daibouken 2 (Japan).z64
+258C58D0,NB7J,32,6
+
+Banjo-Kazooie (Europe) (En,Fr,De).z64
+525899C9,NBKP,16,5
+
+Banjo-Kazooie (USA) (Rev 1).z64
+FB7FFB10,NBKE,16,5
+
+Banjo-Kazooie (USA).z64
+AD429961,NBKE,16,5
+
+Banjo-Tooie (Australia).z64
+2736266A,NB7U,32,6
+
+Banjo-Tooie (Europe) (En,Fr,De,Es).z64
+1EC12F5A,NB7P,32,6
+
+Banjo-Tooie (USA).z64
+BAB803EF,NB7E,32,6
+
+Bass Rush - ECOGEAR PowerWorm Championship (Japan).z64
+383B86EF,NVBJ,32,1
+
+Bassmasters 2000 (USA).z64
+6B09092E,NB4E,12,0
+
+Batman Beyond - Return of the Joker (USA).z64
+35299F9C,NJQE,04,0
+
+Batman of the Future - Return of the Joker (Europe) (En,Fr,De).z64
+82A4BB8A,NJQP,04,0
+
+BattleTanx (USA).z64
+6C230765,NBXE,08,0
+
+BattleTanx - Global Assault (Europe) (En,Fr,De).z64
+C99C6030,NBQP,08,0
+
+BattleTanx - Global Assault (USA).z64
+31BEB053,NBQE,08,0
+
+Battlezone - Rise of the Black Dogs (USA).z64
+736F9D5C,NZOE,16,0
+
+Beetle Adventure Racing! (Europe) (En,Fr,De).z64
+5B6C6E4C,NNSP,16,0
+
+Beetle Adventure Racing! (Japan).z64
+49E75825,NB8J,16,0
+
+Beetle Adventure Racing! (USA) (En,Fr,De).z64
+F4A97C73,NNSE,16,0
+
+Big Mountain 2000 (USA).z64
+3AC924BC,NMUE,12,5
+
+Bio F.R.E.A.K.S. (Europe).z64
+2C4EB906,NBFP,16,0
+
+Bio F.R.E.A.K.S. (USA).z64
+DFBF448C,NBFE,16,0
+
+Biohazard 2 (Japan).z64
+4F9D569F,NB5J,64,1
+
+Blast Corps (Europe) (En,De).z64
+4C820695,NBCP,08,5
+
+Blast Corps (USA) (Rev 1).z64
+9CBBCCF1,NBCE,08,5
+
+Blast Corps (USA).z64
+767A95E7,NBCE,08,5
+
+Blastdozer (Japan).z64
+081A3641,NBCJ,08,5
+
+Blues Brothers 2000 (Europe) (En,Fr,De,Es,It,Nl).z64
+8FB41658,NBPP,16,0
+
+Blues Brothers 2000 (USA).z64
+C6F49764,NBPE,16,0
+
+Body Harvest (Europe) (En,Fr,De).z64
+6A04CDAE,NBHP,12,5
+
+Body Harvest (USA).z64
+FABBDF02,NBHE,12,5
+
+Bokujou Monogatari 2 (Japan) (Rev 1).z64
+20FD2939,NYWJ,16,1
+
+Bokujou Monogatari 2 (Japan) (Rev 2).z64
+9181C1B7,NYWJ,16,1
+
+Bokujou Monogatari 2 (Japan).z64
+F97237C7,NYWJ,16,1
+
+Bomberman 64 (Europe).z64
+525339C5,NBMP,08,5
+
+Bomberman 64 (Japan).z64
+7E74EEDC,NHAJ,12,5
+
+Bomberman 64 (USA).z64
+3ED0E0DC,NBME,08,5
+
+Bomberman 64 - The Second Attack! (USA).z64
+57550007,NBVE,16,5
+
+Bomberman Hero (Europe).z64
+59E39947,NBDP,12,5
+
+Bomberman Hero (USA).z64
+2CC2E634,NBDE,12,5
+
+Bomberman Hero - Mirian Oujo o Sukue! (Japan).z64
+69CEABCC,NBDJ,12,5
+
+Bottom of the 9th (USA).z64
+1844C8CA,NBOE,16,0
+
+Brunswick Circuit Pro Bowling (USA).z64
+80D70173,NOWE,08,0
+
+Buck Bumble (Europe) (En,Fr,De,Es,It).z64
+E26192AB,NBLP,12,0
+
+Buck Bumble (Japan).z64
+2ED81A65,NBLJ,12,0
+
+Buck Bumble (USA).z64
+8EC937DB,NBLE,12,0
+
+Bug's Life, A (Europe).z64
+791881D4,NBYP,12,0
+
+Bug's Life, A (France).z64
+E5429094,NBYF,12,0
+
+Bug's Life, A (Germany).z64
+15A32836,NBYD,12,0
+
+Bug's Life, A (Italy).z64
+2D118764,NBYI,12,0
+
+Bug's Life, A (USA).z64
+CF2EA0B6,NBYE,12,0
+
+Bust-A-Move '99 (USA).z64
+C285FC69,NB3E,08,0
+
+Bust-A-Move 2 - Arcade Edition (Europe).z64
+04731BAB,NBUP,08,0
+
+Bust-A-Move 2 - Arcade Edition (USA).z64
+9F54CD2D,NBUE,08,0
+
+Bust-A-Move 3 DX (Europe).z64
+95595889,NB3P,08,0
+
+California Speed (Europe) (Proto).z64
+D913B95F,NCLP,16,0
+
+California Speed (USA).z64
+6F6262CB,NCLE,16,0
+
+Carmageddon 64 (Europe) (En,Fr,De,Es).z64
+8569F1A0,NCDX,16,0
+
+Carmageddon 64 (Europe) (En,Fr,Es,It).z64
+8036F999,NCDY,16,0
+
+Carmageddon 64 (USA).z64
+10C6A0A1,NCDE,16,0
+
+Carnivale - Cenzo's Adventure (USA) (Proto).z64
+3D9F8D32,NSYE,64,0
+
+Castlevania (Europe) (En,Fr,De).z64
+D9D76235,ND3P,12,0
+
+Castlevania (USA) (Rev 1).z64
+274D3493,ND3E,12,0
+
+Castlevania (USA) (Rev 2).z64
+83032D97,ND3E,12,0
+
+Castlevania (USA).z64
+8B0D3C00,ND3E,12,0
+
+Castlevania - Legacy of Darkness (Europe) (En,Fr,De).z64
+12AB9B45,ND4P,16,0
+
+Castlevania - Legacy of Darkness (USA).z64
+AB13028C,ND4E,16,0
+
+Centre Court Tennis (Europe).z64
+B1D26F39,NTSP,12,0
+
+Chameleon Twist (Europe).z64
+587DD983,NCTP,12,5
+
+Chameleon Twist (Japan).z64
+6395C475,NCTJ,12,5
+
+Chameleon Twist (USA) (Rev 1).z64
+7FF42FD0,NCTE,12,5
+
+Chameleon Twist (USA).z64
+7FE024C9,NCTE,12,5
+
+Chameleon Twist 2 (Europe).z64
+3B53519F,N2VP,08,0
+
+Chameleon Twist 2 (Japan).z64
+08287CC8,NV2J,12,0
+
+Chameleon Twist 2 (USA).z64
+CDF26D67,N2VE,08,0
+
+Charlie Blast's Territory (Europe).z64
+82C1D9E1,NCBP,04,0
+
+Charlie Blast's Territory (USA).z64
+BA4E65A8,NCBE,04,0
+
+Chopper Attack (Europe).z64
+C1DCD7AB,NCHP,08,5
+
+Chopper Attack (USA).z64
+AA5D76A9,NCHE,08,5
+
+Choro Q 64 (Japan).z64
+231F9284,NCRJ,08,5
+
+Choro Q 64 2 - Hacha Mecha Grand Prix Race (Japan).z64
+5C565AD6,NCGJ,12,5
+
+Chou Kuukan Nighter Pro Yakyuu King (Japan).z64
+5F75634E,NPKJ,08,0
+
+Chou Kuukan Nighter Pro Yakyuu King 2 (Japan).z64
+479643E2,NP2J,16,5
+
+Chou Snobo Kids (Japan).z64
+DD4E84E4,NK2J,16,5
+
+City-Tour GP - Zen-Nihon GT Senshuken (Japan).z64
+E272BDF6,NGTJ,16,6
+
+Clay Fighter - Sculptor's Cut (USA).z64
+434DE656,NC2E,16,0
+
+Clay Fighter 63 1-3 (Europe).z64
+82263E5D,NCFP,12,0
+
+Clay Fighter 63 1-3 (USA) (Beta) (1997-08-21).z64
+18F4166A,NCFE,12,0
+
+Clay Fighter 63 1-3 (USA).z64
+3FA647DD,NCFE,12,0
+
+Command & Conquer (Europe) (En,Fr).z64
+F3DA8A26,NCCP,32,4
+
+Command & Conquer (Germany).z64
+6CD0FC99,NCCD,32,4
+
+Command & Conquer (USA).z64
+3E9069EF,NCCE,32,4
+
+Conker's Bad Fur Day (Europe).z64
+4667CFE9,NFUP,64,6
+
+Conker's Bad Fur Day (USA) (Beta) (2000-10-25).z64
+4F73408C,NFUE,64,6
+
+Conker's Bad Fur Day (USA) (Beta) (ECTS 2000) (2000-08-26).z64
+E1CDA95A,NFUE,64,6
+
+Conker's Bad Fur Day (USA).z64
+CE8CC172,NFUE,64,6
+
+Controller Pak Test (Unknown).z64
+3504DBD5,N4WE,16,0
+
+Cruis'n Exotica (USA).z64
+867A2CED,NXOE,16,5
+
+Cruis'n USA (Europe).z64
+8935A8D9,NCUP,08,5
+
+Cruis'n USA (USA) (Rev 1).z64
+4655BA2D,NCUE,08,5
+
+Cruis'n USA (USA) (Rev 2).z64
+C3B52701,NCUE,08,5
+
+Cruis'n USA (USA) (Wii Virtual Console).z64
+8FC564F9,NCUE,08,5
+
+Cruis'n USA (USA).z64
+5238B727,NCUE,08,5
+
+Cruis'n World (Europe) (Rev 1).z64
+EBAED1F9,NCWP,12,6
+
+Cruis'n World (Europe).z64
+E46CE079,NCWP,12,6
+
+Cruis'n World (USA).z64
+A123769F,NCWE,12,6
+
+Custom Robo (Japan).z64
+F2FAE693,NCXJ,16,5
+
+Custom Robo V2 (Japan).z64
+C8201454,NCZJ,16,6
+
+CyberTiger (Europe).z64
+7319D9AF,NT4P,16,0
+
+CyberTiger (USA).z64
+10CC5F15,NT4E,16,0
+
+Daffy Duck Starring as Duck Dodgers (Europe) (En,Fr,De,Es,It,Nl).z64
+C61F6BB9,NDUP,16,5
+
+Dance Dance Revolution - Disney Dancing Museum (Japan).z64
+43EE0117,NDFJ,32,0
+
+Dark Rift (Europe).z64
+D2A19C71,NDKP,08,0
+
+Dark Rift (USA).z64
+83FD222F,NDKE,08,0
+
+Deadly Arts (USA).z64
+3DB8130E,NGAE,12,0
+
+Defi au Tetris Magique (France).z64
+E7EF60E8,NMTF,16,0
+
+Densha de Go! 64 (Japan).z64
+7BFC71E0,ND6J,32,6
+
+Derby Stallion 64 (Japan).z64
+A9417994,NDAJ,32,4
+
+Destruction Derby 64 (Europe) (En,Fr,De).z64
+7AD9E429,NDEP,16,0
+
+Destruction Derby 64 (USA).z64
+38F1B5D9,NDEE,16,0
+
+Dezaemon 3D (Japan).z64
+9E978488,CDZJ,16,0
+
+Diddy Kong Racing (Europe) (En,Fr,De) (Rev 1).z64
+B1E87639,NDYP,12,5
+
+Diddy Kong Racing (Europe) (En,Fr,De).z64
+4A13323C,NDYP,12,5
+
+Diddy Kong Racing (Japan).z64
+B566FB94,NDYJ,12,5
+
+Diddy Kong Racing (USA) (En,Fr) (Rev 1).z64
+5ACCA298,NDYE,12,5
+
+Diddy Kong Racing (USA) (En,Fr).z64
+EB759206,NDYE,12,5
+
+Dinosaur Planet (USA) (Proto) (2000-12-01).z64
+A7DAF9FA,NDPE,64,0
+
+Donald Duck - Goin' Quackers (USA) (En,Fr,De,Es,It).z64
+7FDEC270,NDQE,20,0
+
+Donald Duck - Quack Attack (Europe) (En,Fr,De,Es,It).z64
+C4B0D9EA,NDQP,20,0
+
+Donkey Kong 64 (Europe) (En,Fr,De,Es).z64
+A28C71C6,NDOP,32,6
+
+Donkey Kong 64 (Japan).z64
+919F7E74,NDOJ,32,6
+
+Donkey Kong 64 (USA) (Demo) (Kiosk).z64
+C83DFA15,NDPE,32,0
+
+Donkey Kong 64 (USA).z64
+D44B4FC6,NDOE,32,6
+
+Doom 64 (Europe).z64
+D985C356,NDMP,08,0
+
+Doom 64 (Japan).z64
+C8F3AF5B,NDMJ,08,0
+
+Doom 64 (USA) (Rev 1).z64
+1D3A17B5,NDME,08,0
+
+Doom 64 (USA).z64
+5CC1ADE6,NDME,08,0
+
+Doraemon - Nobita to 3tsu no Seireiseki (Japan).z64
+154E8B33,NDRJ,08,5
+
+Doraemon 2 - Nobita to Hikari no Shinden (Japan).z64
+0C1A0C38,ND2J,12,6
+
+Doraemon 3 - Nobita no Machi SOS! (Japan).z64
+D3B68BE4,N3DJ,16,6
+
+Doubutsu no Mori (Japan).z64
+9503E3F1,NAFJ,16,4
+
+Dr. Mario 64 (USA).z64
+A4701927,NN6E,04,5
+
+Dragon Sword 64 (Europe) (Proto).z64
+55DED416,MGVP,32,0
+
+Dual Heroes (Europe).z64
+5A7E226B,NDHP,12,0
+
+Dual Heroes (Japan).z64
+20F23DDE,NDHJ,12,0
+
+Dual Heroes (USA).z64
+D09F4DA8,NDHE,12,0
+
+Duck Dodgers Starring Daffy Duck (USA) (En,Fr,Es).z64
+3177A905,NDUE,16,5
+
+Duke Nukem - Zero Hour (Europe).z64
+EA82F037,NDZP,32,0
+
+Duke Nukem - Zero Hour (France).z64
+7ECDFB28,NDZF,32,0
+
+Duke Nukem - Zero Hour (USA).z64
+9A3258D7,NDZE,32,0
+
+Duke Nukem 64 (Europe) (Beta).z64
+4A82D036,NMSE,08,0
+
+Duke Nukem 64 (Europe).z64
+3275ADB0,NDNP,08,0
+
+Duke Nukem 64 (France).z64
+B9C9F07A,NDNF,08,0
+
+Duke Nukem 64 (USA).z64
+DBFD5A53,NDNE,08,0
+
+Earthworm Jim 3D (Europe) (En,Fr,De,Es,It).z64
+61A56330,NJMP,16,5
+
+Earthworm Jim 3D (USA).z64
+9E6579C5,NJME,16,5
+
+ECW Hardcore Revolution (Europe).z64
+BE8FEEAD,NWIP,32,0
+
+ECW Hardcore Revolution (Germany).z64
+E9CF3D9F,NWID,32,0
+
+ECW Hardcore Revolution (USA).z64
+36D368EF,NWIE,32,0
+
+Eikou no Saint Andrews (Japan).z64
+1699D2D6,NSTJ,08,0
+
+Eltale Monsters (Japan).z64
+24D937BF,NETJ,16,0
+
+Excitebike 64 (Europe).z64
+0B881E60,NMXP,16,6
+
+Excitebike 64 (Japan).z64
+03BFD065,NMXJ,16,6
+
+Excitebike 64 (USA) (Demo) (Kiosk).z64
+BE6298B0,NNXE,16,0
+
+Excitebike 64 (USA) (Rev 1).z64
+143926CE,NMXE,16,6
+
+Excitebike 64 (USA).z64
+FC459192,NMXE,16,6
+
+Extreme-G (Europe) (En,Fr,De,Es,It).z64
+0B71B1EA,NEGP,08,0
+
+Extreme-G (Japan).z64
+750DC9A7,NEGJ,08,0
+
+Extreme-G (USA).z64
+04CB74EC,NEGE,08,0
+
+Extreme-G XG2 (Europe) (En,Fr,De,Es,It).z64
+1A57F416,NG2P,12,0
+
+Extreme-G XG2 (Japan).z64
+7C8A36DA,NG2J,12,0
+
+Extreme-G XG2 (USA).z64
+81A4C28B,NG2E,12,0
+
+F-1 World Grand Prix (Europe) (Beta).z64
+BEBBC6C8,NFWP,12,5
+
+F-1 World Grand Prix (Europe).z64
+1F4E651A,NFWP,12,5
+
+F-1 World Grand Prix (France).z64
+57CD299D,NFWF,12,5
+
+F-1 World Grand Prix (Germany).z64
+0F1984DC,NFWD,12,5
+
+F-1 World Grand Prix (Japan).z64
+F7BACBC3,NFWJ,12,5
+
+F-1 World Grand Prix (USA).z64
+7DC9EF2C,NFWE,12,5
+
+F-1 World Grand Prix II (Europe) (En,Fr,De,Es).z64
+803D33DF,NF2P,12,5
+
+F-Zero X (Europe).z64
+2D6F7E8B,NFZP,16,1
+
+F-Zero X (Japan).z64
+6B1CEF83,CFZJ,16,1
+
+F-Zero X (USA) (Beta) (The Legend of Zelda Ocarina of Time Overdump).z64
+68FE1CEC,CFZE,32,1
+
+F-Zero X (USA).z64
+0B561FBA,CFZE,16,1
+
+F1 Pole Position 64 (Europe) (En,Fr,De).z64
+ED750623,NHGP,08,0
+
+F1 Pole Position 64 (USA) (En,Fr,De).z64
+30A24D89,NHGE,08,0
+
+F1 Racing Championship (Brazil) (En,Fr).z64
+C05B9184,NFRE,16,0
+
+F1 Racing Championship (Europe) (En,Fr,De,Es,It).z64
+2DA744F5,NFRP,16,0
+
+F1 Racing Championship (Unknown) (Beta).z64
+5A55B4C2,NMGE,32,0
+
+Famista 64 (Japan).z64
+9FB0E6C9,NFSJ,12,0
+
+FIFA - Road to World Cup 98 (Europe) (En,Fr,De,Es,It,Nl,Sv).z64
+137CB3CC,N8IP,12,0
+
+FIFA - Road to World Cup 98 (USA) (En,Fr,De,Es,It,Nl,Sv).z64
+28B1221C,N8IE,12,0
+
+FIFA - Road to World Cup 98 - World Cup e no Michi (Japan).z64
+AE346DF6,N8IJ,12,0
+
+FIFA 64 (Europe) (En,Fr,De).z64
+AE2583FB,N7IP,08,0
+
+FIFA 99 (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv).z64
+6EAE1E6E,N9FP,16,0
+
+FIFA 99 (USA) (En,Fr,De,Es,It,Nl,Pt,Sv).z64
+6B2473A9,N9FE,16,0
+
+FIFA Soccer 64 (USA) (En,Fr,De).z64
+57DE7CAB,N7IE,08,0
+
+Fighter Destiny 2 (USA).z64
+BB2563C6,NFGE,16,5
+
+Fighters Destiny (Europe).z64
+C9225511,NKAP,12,5
+
+Fighters Destiny (France).z64
+B3A034D6,NKAF,12,5
+
+Fighters Destiny (Germany).z64
+5052168C,NKAD,12,5
+
+Fighters Destiny (USA).z64
+F45EA789,NKAE,12,5
+
+Fighting Cup (Japan).z64
+8A1C261E,NKAJ,12,5
+
+Fighting Force 64 (Europe).z64
+4052C176,NFFP,16,0
+
+Fighting Force 64 (USA).z64
+8456841E,NFFE,16,0
+
+Flying Dragon (Europe).z64
+C3066E59,NFDP,12,0
+
+Flying Dragon (USA).z64
+91BC9AEB,NFDE,12,0
+
+Forsaken (Europe) (En,Fr,Es,It).z64
+5ED736D9,NFOP,08,0
+
+Forsaken (Germany).z64
+9793ABC2,NFOD,08,0
+
+Forsaken 64 (USA).z64
+76C4333D,NFOE,08,0
+
+Fox Sports College Hoops '99 (USA).z64
+67EAF0F3,NF9E,12,0
+
+Frogger 2 (USA) (Proto 1).z64
+8D62268E,NGVE,32,0
+
+Frogger 2 (USA) (Proto 2).z64
+A8F81F39,NGVE,32,0
+
+Fushigi no Dungeon - Fuurai no Shiren 2 - Oni Shuurai! Shiren Jou! (Japan).z64
+2AA6D2A1,NSIJ,32,1
+
+G.A.S.P!! Fighters' NEXTream (Europe).z64
+5AA63B04,NGAP,12,0
+
+G.A.S.P!! Fighters' NEXTream (Japan).z64
+6EAD2D89,NGAJ,12,0
+
+Ganbare Goemon - Dero Dero Douchuu Obake Tenkomori (Japan).z64
+08C41E0E,NG6J,16,1
+
+Ganbare Goemon - Neo Momoyama Bakufu no Odori (Japan).z64
+2E91EFC9,NG5J,16,0
+
+Ganbare! Nippon! Olympics 2000 (Japan).z64
+73133CD2,N3HJ,12,1
+
+Gauntlet Legends (Europe).z64
+B7B3A489,NGXP,16,0
+
+Gauntlet Legends (Japan).z64
+8D133DB0,NGDJ,16,0
+
+Gauntlet Legends (USA).z64
+64765E82,NGXE,16,0
+
+Getter Love!! - Cho Renai Party Game Tanjou (Japan).z64
+724ECAE7,NGLJ,12,5
+
+Gex 3 - Deep Cover Gecko (Europe) (En,Es,It).z64
+6BC4A056,NX3P,32,0
+
+Gex 3 - Deep Cover Gecko (Europe) (Fr,De).z64
+A43CB8E4,NX3X,32,0
+
+Gex 3 - Deep Cover Gecko (USA).z64
+87A7D099,NX3E,32,0
+
+Gex 64 - Enter the Gecko (Europe).z64
+A7C92BEA,NX2P,16,0
+
+Gex 64 - Enter the Gecko (USA).z64
+C545CE80,NX2E,16,0
+
+Glover (Europe) (En,Fr,De).z64
+90ECEB4A,NGVP,08,5
+
+Glover (USA) (Proto) (1998-09-04).z64
+5E091E8F,NGVE,24,5
+
+Glover (USA).z64
+F874571C,NGVE,08,5
+
+Glover 2 (USA) (Proto 1).z64
+D0809AFB,NGVE,32,0
+
+Glover 2 (USA) (Proto 2).z64
+29966555,NGVE,08,0
+
+Goemon - Mononoke Sugoroku (Japan).z64
+965C4575,NGPJ,16,1
+
+Goemon's Great Adventure (USA).z64
+52D418E1,NGME,16,0
+
+Golden Nugget 64 (USA).z64
+70594D3C,NGNE,08,0
+
+GoldenEye 007 (Europe).z64
+9EC14AEB,NGEP,12,5
+
+GoldenEye 007 (Japan).z64
+A6BE19DD,NGEJ,12,5
+
+GoldenEye 007 (USA).z64
+B6330846,NGEE,12,5
+
+GT 64 - Championship Edition (Europe) (En,Fr,De).z64
+6DFB4747,NGCP,12,6
+
+GT 64 - Championship Edition (USA) (Beta) (1998-05-25).z64
+191BF504,NGCE,16,6
+
+GT 64 - Championship Edition (USA).z64
+BC627DA7,NGCE,12,6
+
+Hamster Monogatari 64 (Japan).z64
+C1D98B78,NHSJ,12,0
+
+Harukanaru Augusta - Masters '98 (Japan).z64
+51228F0C,NM9J,16,0
+
+Harvest Moon 64 (USA).z64
+DECDC0AD,NYWE,16,1
+
+Heiwa Pachinko World 64 (Japan).z64
+99A427FA,NHPJ,08,5
+
+Hercules - The Legendary Journeys (Europe) (En,Fr,De,Es,It,Nl).z64
+B1954B08,NHCP,16,0
+
+Hercules - The Legendary Journeys (USA).z64
+4948892B,NHCE,16,0
+
+Hexen (Europe).z64
+5369EFB4,NHXP,08,0
+
+Hexen (France).z64
+E373FA31,NHXF,08,0
+
+Hexen (Germany).z64
+E4821C4B,NHXD,08,0
+
+Hexen (Japan).z64
+571DA09A,NHXJ,08,0
+
+Hexen (USA).z64
+1D35E110,NHXE,08,0
+
+Hey You, Pikachu! (USA).z64
+B18B2734,NPGE,16,5
+
+Hiryuu no Ken Twin (Japan).z64
+BA6A687E,NHKJ,12,0
+
+Holy Magic Century (Europe).z64
+84FF9890,NETP,16,0
+
+Holy Magic Century (France).z64
+284170ED,NETF,16,0
+
+Holy Magic Century (Germany).z64
+D1934CF6,NETD,16,0
+
+Hoshi no Kirby 64 (Japan) (Rev 1).z64
+A263C1B9,NK4J,32,1
+
+Hoshi no Kirby 64 (Japan) (Rev 2).z64
+F4589AA8,NK4J,32,1
+
+Hoshi no Kirby 64 (Japan) (Rev 3).z64
+6D5E1332,NK4J,32,1
+
+Hoshi no Kirby 64 (Japan).z64
+AE7CB69D,NK4J,32,1
+
+Hot Wheels - Turbo Racing (Europe) (En,Fr,De).z64
+850633A7,NHWP,16,0
+
+Hot Wheels - Turbo Racing (USA).z64
+A5C92148,NHWE,12,0
+
+HSV Adventure Racing! (Australia).z64
+C0BA9440,NNSX,16,0
+
+Human Grand Prix - The New Generation (Japan).z64
+31E102E3,NHGJ,08,0
+
+Hybrid Heaven (Europe) (En,Fr,De).z64
+E76627FF,NHVP,16,0
+
+Hybrid Heaven (Japan).z64
+E769DE96,NHYJ,16,1
+
+Hybrid Heaven (USA).z64
+15B57EF8,NHVE,16,0
+
+Hydro Thunder (Europe).z64
+863AB8F3,NHTP,32,0
+
+Hydro Thunder (France).z64
+010F6242,NHTF,32,0
+
+Hydro Thunder (USA).z64
+E744456F,NHTE,32,0
+
+Hyper Olympics in Nagano 64 (Japan).z64
+C1EA5D33,NH5J,12,0
+
+Ide Yosuke no Mahjong Juku (Japan).z64
+DBD96DEB,NIMJ,12,6
+
+Iggy's Reckin' Balls (Europe).z64
+9BF26065,NWBP,04,0
+
+Iggy's Reckin' Balls (USA).z64
+6A6FBD5D,NWBE,04,0
+
+Iggy-kun no Bura Bura Poyon (Japan).z64
+26CC1266,NWBJ,04,0
+
+In-Fisherman - Bass Hunter 64 (Europe).z64
+00DA3704,NFHP,08,5
+
+In-Fisherman - Bass Hunter 64 (USA).z64
+D8EB5E6E,NFHE,08,5
+
+Indiana Jones and the Infernal Machine (Australia) (Proto).z64
+337219BE,NIJP,32,5
+
+Indiana Jones and the Infernal Machine (USA).z64
+4978EB57,NIJE,32,5
+
+Indy Racing 2000 (USA).z64
+A5163F29,NICE,16,5
+
+International Superstar Soccer '98 (Europe).z64
+BF23945D,NWSP,12,0
+
+International Superstar Soccer '98 (USA).z64
+B85FA721,NWSE,12,0
+
+International Superstar Soccer 2000 (Europe) (En,De).z64
+69572558,NISX,16,0
+
+International Superstar Soccer 2000 (Europe) (Fr,It).z64
+8A16A6A9,NISY,16,0
+
+International Superstar Soccer 2000 (USA) (En,Es) (Rev 1).z64
+4C433FDD,NISE,16,0
+
+International Superstar Soccer 2000 (USA) (En,Es).z64
+DCD0538F,NISE,16,0
+
+International Superstar Soccer 64 (Europe).z64
+8C839268,NJPP,08,0
+
+International Superstar Soccer 64 (USA).z64
+0EA249B9,NJPE,08,0
+
+International Track & Field - Summer Games (Europe) (En,Fr,De).z64
+B3181EE0,N3HP,12,0
+
+International Track & Field 2000 (USA).z64
+DA443F0B,N3HE,12,0
+
+Itoi Shigesato no Bass Tsuri No. 1 Kettei Ban! (Japan).z64
+576915D4,NIBJ,16,1
+
+J.League Dynamite Soccer 64 (Japan).z64
+DC0B2C8F,NDSJ,08,0
+
+J.League Eleven Beat 1997 (Japan).z64
+7D0EED6A,NJEJ,08,0
+
+J.League Live 64 (Japan).z64
+4C536DD7,NJLJ,08,0
+
+J.League Tactics Soccer (Japan) (Rev 1).z64
+156E705E,NSJJ,12,0
+
+J.League Tactics Soccer (Japan).z64
+976A2D12,NSJJ,12,0
+
+Jangou Simulation Mahjong Dou 64 (Japan).z64
+D1C1681E,NMAJ,08,0
+
+Jeopardy! (USA).z64
+E739947C,NJOE,04,0
+
+Jeremy McGrath Supercross 2000 (Europe).z64
+5BF42EC4,NCOP,16,0
+
+Jeremy McGrath Supercross 2000 (USA).z64
+2A5C9A06,NCOE,16,0
+
+Jet Force Gemini (Europe) (En,Fr,De,Es).z64
+CFBED88C,NJFP,32,4
+
+Jet Force Gemini (USA) (Demo) (Kiosk).z64
+FA061B96,NJDE,32,4
+
+Jet Force Gemini (USA).z64
+6753D5A3,NJFE,32,4
+
+Jikkyou G1 Stable (Japan) (Rev 1).z64
+6FC0A31B,NGSJ,16,0
+
+Jikkyou G1 Stable (Japan).z64
+0A796C3E,NGSJ,16,0
+
+Jikkyou J.League 1999 - Perfect Striker 2 (Japan) (Rev 1).z64
+F96C2BE1,NPSJ,16,1
+
+Jikkyou J.League 1999 - Perfect Striker 2 (Japan).z64
+2EF647D3,NPSJ,16,1
+
+Jikkyou J.League Perfect Striker (Japan).z64
+8ED60DEA,NJPJ,08,0
+
+Jikkyou Powerful Pro Yakyuu - Basic Ban 2001 (Japan) (Rev 1).z64
+BC7EF5C1,NPEJ,16,1
+
+Jikkyou Powerful Pro Yakyuu - Basic Ban 2001 (Japan).z64
+6A9E24D7,NPEJ,16,1
+
+Jikkyou Powerful Pro Yakyuu 2000 (Japan) (Rev 1).z64
+753706EF,NPAJ,16,1
+
+Jikkyou Powerful Pro Yakyuu 2000 (Japan).z64
+351CDE48,NPAJ,16,1
+
+Jikkyou Powerful Pro Yakyuu 4 (Japan) (Rev 1).z64
+40E3AC61,NP4J,12,0
+
+Jikkyou Powerful Pro Yakyuu 4 (Japan).z64
+480B953E,NP4J,12,0
+
+Jikkyou Powerful Pro Yakyuu 5 (Japan) (Rev 1).z64
+7994C2FE,NJ5J,16,1
+
+Jikkyou Powerful Pro Yakyuu 5 (Japan) (Rev 2).z64
+C02FD9BE,NJ5J,16,1
+
+Jikkyou Powerful Pro Yakyuu 5 (Japan).z64
+FEEC34F6,NJ5J,16,1
+
+Jikkyou Powerful Pro Yakyuu 6 (Japan) (Rev 1).z64
+7AB7EBF4,NP6J,16,1
+
+Jikkyou Powerful Pro Yakyuu 6 (Japan) (Rev 2).z64
+FCC10356,NP6J,16,1
+
+Jikkyou Powerful Pro Yakyuu 6 (Japan).z64
+1E53A7BA,NP6J,16,1
+
+Jikkyou World Soccer - World Cup France '98 (Japan) (Rev 1).z64
+68DBCC04,NWSJ,16,0
+
+Jikkyou World Soccer - World Cup France '98 (Japan) (Rev 2).z64
+F63F9A5E,NWSJ,16,0
+
+Jikkyou World Soccer - World Cup France '98 (Japan).z64
+5C721850,NWSJ,16,0
+
+Jikkyou World Soccer 3 (Japan).z64
+3BA9E644,NJ3J,08,0
+
+Jikuu Senshi Turok (Japan).z64
+E6BD65D5,NTUJ,08,0
+
+Jinsei Game 64 (Japan).z64
+67A1A22C,NJGJ,16,1
+
+John Romero's Daikatana (Europe) (En,Fr,De).z64
+F88AC3CE,NDWP,16,0
+
+John Romero's Daikatana (Japan).z64
+44B80FD7,NDWJ,16,0
+
+John Romero's Daikatana (USA).z64
+494950C6,NDWE,16,0
+
+Kakutou Denshou - F-Cup Maniax (Japan).z64
+DB40A155,NFYJ,16,5
+
+Ken Griffey Jr.'s Slugfest (USA).z64
+12D8F3E9,NKJE,16,4
+
+Killer Instinct Gold (Europe).z64
+5D0EE5D2,NKIP,12,5
+
+Killer Instinct Gold (USA) (Rev 1).z64
+49EF8F2B,NKIE,12,5
+
+Killer Instinct Gold (USA) (Rev 2).z64
+0B5B5DF8,NKIE,12,5
+
+Killer Instinct Gold (USA).z64
+31C76BE7,NKIE,12,5
+
+King Hill 64 - Extreme Snowboarding (Japan).z64
+F120CC52,NSBJ,12,0
+
+Kiratto Kaiketsu! 64 Tanteidan (Japan).z64
+7FDC3784,N64J,12,0
+
+Kirby 64 - The Crystal Shards (Europe).z64
+5B8B89EF,NK4P,32,6
+
+Kirby 64 - The Crystal Shards (USA).z64
+20A1C120,NK4E,32,6
+
+Knife Edge - Nose Gunner (Europe).z64
+B77783BE,NKEP,08,0
+
+Knife Edge - Nose Gunner (Japan).z64
+3BC93017,NKEJ,08,0
+
+Knife Edge - Nose Gunner (USA).z64
+255EE1DD,NKEE,08,0
+
+Knockout Kings 2000 (Europe).z64
+58CE7D80,NKKP,16,0
+
+Knockout Kings 2000 (USA).z64
+074690D6,NKKE,16,0
+
+Kobe Bryant in NBA Courtside (Europe).z64
+1355A826,NNBP,12,6
+
+Kobe Bryant in NBA Courtside (USA).z64
+86360BFB,NNBE,12,6
+
+Last Legion UX (Japan).z64
+9DB99881,NLLJ,12,5
+
+Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es) (Rev 1) (Debug).z64
+04EA55EA,NZSP,64,4
+
+Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es) (Rev 1) (Wii Virtual Console).z64
+A83ABF72,NZSP,32,4
+
+Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es) (Rev 1).z64
+E2E6823D,NZSP,32,4
+
+Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es).z64
+9EAD1608,NZSP,32,4
+
+Legend of Zelda, The - Majora's Mask (Europe) (GameCube).z64
+12836E19,NZSP,32,4
+
+Legend of Zelda, The - Majora's Mask (USA) (Demo) (Kiosk).z64
+DCC110A0,NDLE,32,4
+
+Legend of Zelda, The - Majora's Mask (USA) (GameCube).z64
+B008458F,NZSE,32,4
+
+Legend of Zelda, The - Majora's Mask (USA).z64
+B428D8A7,NZSE,32,4
+
+Legend of Zelda, The - Ocarina of Time (Europe) (Beta) (2003-02-13) (GameCube).z64
+C188ACDA,NZLP,64,1
+
+Legend of Zelda, The - Ocarina of Time (Europe) (Debug) (GameCube).z64
+5D1B2996,NZLP,64,1
+
+Legend of Zelda, The - Ocarina of Time (Europe) (En,Fr,De) (Rev 1).z64
+A108F6E3,NZLP,32,1
+
+Legend of Zelda, The - Ocarina of Time (Europe) (En,Fr,De).z64
+946FD0F7,NZLP,32,1
+
+Legend of Zelda, The - Ocarina of Time (Europe) (GameCube).z64
+3FBD519F,NZLP,32,1
+
+Legend of Zelda, The - Ocarina of Time (USA) (Beta).z64
+6C348AA8,CZLE,32,1
+
+Legend of Zelda, The - Ocarina of Time (USA) (GameCube).z64
+346DE3AE,CZLE,32,1
+
+Legend of Zelda, The - Ocarina of Time (USA) (Rev 1).z64
+3FD2151E,CZLE,32,1
+
+Legend of Zelda, The - Ocarina of Time (USA) (Rev 2).z64
+32120C23,CZLE,32,1
+
+Legend of Zelda, The - Ocarina of Time (USA).z64
+CD16C529,CZLE,32,1
+
+Legend of Zelda, The - Ocarina of Time - Master Quest (Europe) (Debug) (GameCube).z64
+A1D34E08,NZLP,64,1
+
+Legend of Zelda, The - Ocarina of Time - Master Quest (Europe) (GameCube).z64
+832D6449,NZLP,32,1
+
+Legend of Zelda, The - Ocarina of Time - Master Quest (USA) (GameCube).z64
+C744C4DB,CZLE,32,1
+
+LEGO Racers (Europe) (En,Fr,De,Es,It,Nl,Sv,No,Da,Fi).z64
+C7D9B21C,NLGP,16,0
+
+LEGO Racers (USA) (En,Fr,De,Es,It,Nl,Sv,No,Da,Fi).z64
+4D1E1897,NLGE,16,0
+
+Let's Smash (Japan).z64
+455A1770,NTSJ,12,0
+
+Lode Runner 3-D (Europe) (En,Fr,De,Es,It).z64
+7148251D,NLRP,08,5
+
+Lode Runner 3-D (Japan).z64
+1D4FB466,NLRJ,08,5
+
+Lode Runner 3-D (USA).z64
+4EA07453,NLRE,08,5
+
+Lylat Wars (Australia) (En,Fr,De).z64
+9A3425DA,NFXU,12,5
+
+Lylatwars (Europe) (En,Fr,De).z64
+50A9C0B1,NFXP,12,5
+
+Mace - The Dark Age (Europe).z64
+57DDEDE1,NMEP,12,0
+
+Mace - The Dark Age (USA).z64
+D2A363A6,NMEE,12,0
+
+Madden Football 64 (Europe).z64
+FAB3E50D,N8MP,12,0
+
+Madden Football 64 (USA).z64
+42E5FAFA,N8ME,12,0
+
+Madden NFL 2000 (USA).z64
+EF5F997B,NMDE,12,0
+
+Madden NFL 2001 (USA).z64
+245EAEE8,NFLE,12,0
+
+Madden NFL 2002 (USA).z64
+F573F107,N2ME,12,0
+
+Madden NFL 99 (Europe).z64
+D0929942,N9MP,12,0
+
+Madden NFL 99 (USA) (Beta) (1998-08-05).z64
+033A2CA6,N9ME,16,0
+
+Madden NFL 99 (USA) (Rev 1).z64
+56769A44,N9ME,12,0
+
+Madden NFL 99 (USA).z64
+2EB64FC2,N9ME,12,0
+
+Magical Tetris Challenge (Europe).z64
+AF3B099E,NMTP,16,0
+
+Magical Tetris Challenge (Germany).z64
+377F18E9,NMTD,16,0
+
+Magical Tetris Challenge (USA).z64
+22FE979C,NMTE,16,0
+
+Magical Tetris Challenge featuring Mickey (Japan).z64
+7EFB2F1E,NMTJ,16,0
+
+Mahjong 64 (Japan).z64
+DBE7D51A,NMJJ,08,0
+
+Mahjong Hourouki Classic (Japan).z64
+990A8E54,NMHJ,12,0
+
+Mahjong Master (Japan).z64
+B68D596F,NMMJ,08,0
+
+Major League Baseball Featuring Ken Griffey Jr. (Australia).z64
+E08F7578,NKGP,16,1
+
+Major League Baseball Featuring Ken Griffey Jr. (USA).z64
+2EF1EA20,NKGE,16,1
+
+Mario Golf (Europe).z64
+A5071A77,NMFP,32,1
+
+Mario Golf (USA).z64
+2FC4C216,NMFE,32,1
+
+Mario Golf 64 (Japan) (Rev 1).z64
+AD1758AC,NMFJ,32,1
+
+Mario Golf 64 (Japan).z64
+BB03A1A6,NMFJ,32,1
+
+Mario Kart 64 (Europe) (Rev 1).z64
+0248F6C3,NKTP,12,5
+
+Mario Kart 64 (Europe).z64
+FAA6B083,NKTP,12,5
+
+Mario Kart 64 (Japan) (Rev 1).z64
+6CED6472,NKTJ,12,5
+
+Mario Kart 64 (Japan).z64
+5D9696DF,NKTJ,12,5
+
+Mario Kart 64 (USA).z64
+434389C1,NKTE,12,5
+
+Mario no Photopie (Japan).z64
+176B3683,NMPJ,16,0
+
+Mario Party (Europe) (En,Fr,De).z64
+DA98A5D3,NLBP,32,5
+
+Mario Party (Japan).z64
+4F1ADC7B,CLBJ,32,5
+
+Mario Party (USA).z64
+4D60ABE5,CLBE,32,5
+
+Mario Party 2 (Europe) (En,Fr,De,Es,It) (Wii Virtual Console).z64
+DCA66040,NMWP,32,5
+
+Mario Party 2 (Europe) (En,Fr,De,Es,It).z64
+DC00357A,NMWP,32,5
+
+Mario Party 2 (Japan) (Wii Virtual Console).z64
+FDC89220,NMWJ,32,5
+
+Mario Party 2 (Japan).z64
+7457B081,NMWJ,32,5
+
+Mario Party 2 (USA) (Wii Virtual Console).z64
+6F45853E,NMWE,32,5
+
+Mario Party 2 (USA).z64
+E58A1955,NMWE,32,5
+
+Mario Party 3 (Europe) (En,Fr,De,Es).z64
+813B13F2,NMVP,32,6
+
+Mario Party 3 (Japan).z64
+3FC04053,NMVJ,32,6
+
+Mario Party 3 (USA) (Beta).z64
+697C1777,NMVE,64,6
+
+Mario Party 3 (USA).z64
+B7445DDC,NMVE,32,6
+
+Mario Story (Japan).z64
+BD60CA66,NMQJ,40,4
+
+Mario Tennis (Europe) (Wii Virtual Console).z64
+E9BA8E6B,NM8P,16,6
+
+Mario Tennis (Europe).z64
+29AA5DF4,NM8P,16,6
+
+Mario Tennis (USA) (Wii Virtual Console).z64
+8E85B369,NM8E,16,6
+
+Mario Tennis (USA).z64
+4E9560F6,NM8E,16,6
+
+Mario Tennis 64 (Japan) (Wii Virtual Console).z64
+32C58AF3,NM8J,16,6
+
+Mario Tennis 64 (Japan).z64
+C665301D,NM8J,16,6
+
+Mega Man 64 (USA).z64
+1BFC71F0,NM6E,32,4
+
+Mia Hamm Soccer 64 (USA) (En,Es).z64
+2DB3D3D6,NHME,16,0
+
+Michael Owen's WLS 2000 (Europe).z64
+BB680CBE,NWKX,16,0
+
+Mickey no Racing Challenge USA (Japan).z64
+1AECFC56,NMLJ,32,5
+
+Mickey's Speedway USA (Europe) (En,Fr,De,Es,It).z64
+0AE51EA5,NMLP,32,5
+
+Mickey's Speedway USA (USA).z64
+2D4F8F1B,NMLE,32,5
+
+Micro Machines 64 Turbo (Europe) (En,Fr,De,Es,It).z64
+10B9FF1F,NV3P,12,0
+
+Micro Machines 64 Turbo (USA).z64
+A62A2763,NV3E,12,0
+
+Midway's Greatest Arcade Hits - Volume 1 (USA).z64
+E5C1FEDC,NAIE,04,0
+
+Mike Piazza's Strike Zone (USA).z64
+CC253CAB,NMBE,12,0
+
+Milo's Astro Lanes (Europe).z64
+C08CE624,NBRP,04,0
+
+Milo's Astro Lanes (USA).z64
+172FCA97,NBRE,04,0
+
+Mischief Makers (Europe).z64
+68A4F072,NTMP,08,5
+
+Mischief Makers (USA) (Rev 1).z64
+C3300CEF,NTME,08,5
+
+Mischief Makers (USA).z64
+7D222D3F,NTME,08,5
+
+Mission - Impossible (Europe).z64
+2C7131D6,NMIP,12,5
+
+Mission - Impossible (France).z64
+282A350D,NMIF,12,5
+
+Mission - Impossible (Germany).z64
+67C30A2D,NMID,12,5
+
+Mission - Impossible (Italy).z64
+2D789D98,NMII,12,5
+
+Mission - Impossible (Spain) (Rev 1).z64
+E1C470FD,NMIS,12,5
+
+Mission - Impossible (Spain).z64
+EBB060DC,NMIS,12,5
+
+Mission - Impossible (USA).z64
+3677A8B8,NMIE,12,5
+
+Monaco Grand Prix (USA).z64
+E2BBEAC1,NMGE,16,5
+
+Monaco Grand Prix - Racing Simulation 2 (Europe) (En,Fr,Es,It).z64
+3F5E5830,NMGP,16,5
+
+Monopoly (USA).z64
+C8CAD8F6,NMOE,08,5
+
+Monster Truck Madness 64 (Europe) (En,Fr,De,Es,It).z64
+4731DF5C,NM3P,08,0
+
+Monster Truck Madness 64 (USA).z64
+3FD0604D,NM3E,08,0
+
+Morita Shougi 64 (Japan).z64
+88C83511,NMSJ,08,5
+
+Mortal Kombat 4 (Europe).z64
+635ADECA,NM4P,16,0
+
+Mortal Kombat 4 (USA).z64
+B7F46516,NM4E,16,0
+
+Mortal Kombat Mythologies - Sub-Zero (Europe).z64
+EA21015A,NMYP,16,0
+
+Mortal Kombat Mythologies - Sub-Zero (USA).z64
+51A07FD9,NMYE,16,0
+
+Mortal Kombat Trilogy (Europe).z64
+BC04C62F,NMKP,12,0
+
+Mortal Kombat Trilogy (USA) (Rev 1).z64
+BA64F824,NMKE,12,0
+
+Mortal Kombat Trilogy (USA) (Rev 2).z64
+0F323D00,NMKE,12,0
+
+Mortal Kombat Trilogy (USA).z64
+50A99D60,NMKE,12,0
+
+MRC - Multi-Racing Championship (Europe) (En,Fr,De).z64
+BC966B10,NMRP,12,5
+
+MRC - Multi-Racing Championship (Japan).z64
+BEA43300,NMRJ,12,5
+
+MRC - Multi-Racing Championship (USA).z64
+1DC1C812,NMRE,12,5
+
+Ms. Pac-Man - Maze Madness (USA).z64
+E34C7060,NP9E,12,0
+
+Mystical Ninja 2 Starring Goemon (Europe) (En,Fr,De).z64
+3502DBBE,NGMP,16,0
+
+Mystical Ninja Starring Goemon (Europe).z64
+3BD9059A,NG5P,16,0
+
+Mystical Ninja Starring Goemon (USA).z64
+4180C296,NG5E,16,0
+
+Nagano Winter Olympics '98 (Europe).z64
+C44DE11C,NH5P,12,0
+
+Nagano Winter Olympics '98 (USA).z64
+EE8288D4,NH5E,12,0
+
+Namco Museum 64 (USA).z64
+CE361F92,NNME,04,0
+
+NASCAR 2000 (USA).z64
+02BF7C2D,NN2E,12,0
+
+NASCAR 99 (Europe) (En,Fr,De).z64
+76E79CEA,N9CP,12,0
+
+NASCAR 99 (USA).z64
+3D8EB950,N9CE,12,0
+
+NBA Courtside 2 featuring Kobe Bryant (USA).z64
+A7CC4CE2,NCKE,16,4
+
+NBA Hangtime (Europe).z64
+7E6D00AE,NXGP,12,0
+
+NBA Hangtime (USA).z64
+714CF532,NXGE,12,0
+
+NBA in the Zone '98 (Japan).z64
+AED2700A,NBAJ,12,0
+
+NBA in the Zone '98 (USA).z64
+A245D737,NBAE,12,0
+
+NBA in the Zone '99 (USA).z64
+EAB083B8,NB2E,12,0
+
+NBA in the Zone 2 (Japan).z64
+41093B73,NB2J,12,0
+
+NBA in the Zone 2000 (Europe).z64
+A4973197,NWZP,16,0
+
+NBA in the Zone 2000 (USA).z64
+CBB4B730,NWZE,16,0
+
+NBA Jam 2000 (Europe).z64
+9F95485E,NJAP,16,0
+
+NBA Jam 2000 (USA).z64
+163DADF9,NJAE,16,0
+
+NBA Jam 99 (Europe).z64
+90E4275B,NB9P,12,0
+
+NBA Jam 99 (USA).z64
+559CD6B1,NB9E,12,0
+
+NBA Live 2000 (Europe) (En,Fr,De,Es).z64
+0E4B944C,NNLP,16,0
+
+NBA Live 2000 (USA) (En,Fr,De,Es).z64
+7C3BC95E,NNLE,16,0
+
+NBA Live 99 (Europe) (En,Fr,De,Es,It).z64
+A316DF37,N9BP,16,0
+
+NBA Live 99 (USA) (En,Fr,De,Es,It).z64
+9BE0A7AC,N9BE,16,0
+
+NBA Pro 98 (Europe).z64
+04B75CCC,NBAP,12,0
+
+NBA Pro 99 (Europe).z64
+588E60E8,NB2P,12,0
+
+NBA Showtime - NBA on NBC (USA).z64
+A4E378F4,NSOE,16,0
+
+Neon Genesis Evangelion (Japan).z64
+A10A86AF,NEVJ,32,6
+
+New Tetris, The (Europe).z64
+983263D7,NRIP,12,1
+
+New Tetris, The (USA).z64
+528A07FA,NRIE,12,1
+
+NFL Blitz (USA).z64
+9BCD670F,NBZE,16,0
+
+NFL Blitz - Special Edition (USA).z64
+5D1907F7,NSZE,16,0
+
+NFL Blitz 2000 (USA) (Rev 1).z64
+B591CFEA,NBIE,16,0
+
+NFL Blitz 2000 (USA).z64
+7F471773,NBIE,16,0
+
+NFL Blitz 2001 (USA).z64
+18EEB41B,NFBE,16,0
+
+NFL QB Club 2001 (USA).z64
+6D849E17,NQCE,12,0
+
+NFL Quarterback Club 2000 (Europe).z64
+CEEF5C29,NQBP,12,0
+
+NFL Quarterback Club 2000 (USA).z64
+8F54F999,NQBE,12,0
+
+NFL Quarterback Club 98 (Europe).z64
+34A21417,NQ8P,08,0
+
+NFL Quarterback Club 98 (USA).z64
+ABF0E8F2,NQ8E,08,0
+
+NFL Quarterback Club 99 (Europe).z64
+F688BDF3,NQ9P,12,0
+
+NFL Quarterback Club 99 (USA).z64
+44496B26,NQ9E,12,0
+
+NHL 99 (Europe) (En,De,Sv,Fi).z64
+F3B2AA4D,N9HP,12,0
+
+NHL 99 (USA).z64
+E5DF2AFE,N9HE,12,0
+
+NHL Blades of Steel '99 (USA).z64
+1EE678FE,NHOE,12,0
+
+NHL Breakaway 98 (Europe).z64
+8C0C9669,NHLP,12,0
+
+NHL Breakaway 98 (USA).z64
+49D86C00,NHLE,12,0
+
+NHL Breakaway 99 (Europe).z64
+572060E0,NH9P,12,0
+
+NHL Breakaway 99 (USA).z64
+75F75B9D,NH9E,12,0
+
+NHL Pro 99 (Europe).z64
+E272867E,NHOP,12,0
+
+Nightmare Creatures (USA).z64
+6A1EB795,NNCE,16,0
+
+Nintama Rantarou 64 Game Gallery (Japan).z64
+8C7C2DCA,NHBJ,08,0
+
+Nintendo 64 Modem (Japan) (Add-on).z64
+77D7B7E3,CMDJ,08,0
+
+Nintendo All-Star! Dairantou Smash Brothers (Japan).z64
+04C9D3B1,NALJ,16,1
+
+Nuclear Strike 64 (Europe) (En,Fr).z64
+9AFBFCAF,NCEP,32,0
+
+Nuclear Strike 64 (Germany) (Beta) (1999-11-17).z64
+020B6443,NCED,32,0
+
+Nuclear Strike 64 (Germany).z64
+D175397B,NCED,32,0
+
+Nuclear Strike 64 (USA).z64
+D7467294,NCEE,32,0
+
+Nushi Zuri 64 (Japan) (Rev 1).z64
+16414AE4,NUTJ,16,1
+
+Nushi Zuri 64 (Japan).z64
+A6800EC0,NUTJ,16,1
+
+Nushi Zuri 64 - Shiokaze ni Notte (Japan).z64
+F0BCD1CE,NUMJ,32,1
+
+O.D.T. (Europe) (En,Fr,De,Es,It) (Proto).z64
+7B870026,NTDP,16,0
+
+O.D.T. (USA) (En,Fr,Es) (Proto).z64
+1D4A8659,NTDE,16,0
+
+Off Road Challenge (Europe).z64
+D9FE9EE7,NOFP,16,0
+
+Off Road Challenge (USA).z64
+1A45C5AB,NOFE,16,0
+
+Ogre Battle 64 - Person of Lordly Caliber (Japan) (Rev 1) (Wii Virtual Console).z64
+991F569C,NOBJ,40,1
+
+Ogre Battle 64 - Person of Lordly Caliber (Japan) (Rev 1).z64
+845B8711,NOBJ,40,1
+
+Ogre Battle 64 - Person of Lordly Caliber (USA) (Rev 1).z64
+410F6510,NOBE,40,1
+
+Ogre Battle 64 - Person of Lordly Caliber (USA).z64
+A05AEA85,NOBE,40,1
+
+Ogre Battle 64 - Person of Lordly Caliber (USA, Europe) (Rev 1) (Wii Virtual Console).z64
+19337B04,NOBE,40,1
+
+Olympic Hockey 98 (Europe) (En,Fr,De,Es).z64
+5A805C2E,NHNP,08,0
+
+Olympic Hockey 98 (Japan).z64
+9E98FCE8,NHNJ,08,0
+
+Olympic Hockey 98 (USA).z64
+2D777652,NHNE,08,0
+
+Onegai Monsters (Japan).z64
+AC72A1C7,NOMJ,16,0
+
+Operation WinBack (Europe) (En,Fr,De,Es,It).z64
+FB96F166,NWDP,16,0
+
+Pachinko 365 Nichi (Japan).z64
+42D06E32,NPCJ,12,0
+
+Paper Mario (Europe) (En,Fr,De,Es).z64
+9FC00CE3,NMQP,48,4
+
+Paper Mario (USA).z64
+A7F5CD7E,NMQE,40,4
+
+Paperboy (Europe).z64
+F00C5053,NYPP,12,0
+
+Paperboy (USA).z64
+F27114E6,NYPE,12,0
+
+Parlor! Pro 64 - Pachinko Jikki Simulation Game (Japan).z64
+A33146E0,NPPJ,12,6
+
+PD Ultraman Battle Collection 64 (Japan).z64
+86CC80B5,NUBJ,32,6
+
+Penny Racers (Europe).z64
+A1D6EB5B,NCRP,08,5
+
+Penny Racers (USA).z64
+C1E57337,NCRE,08,5
+
+Perfect Dark (Europe) (Debug Version) (2000-04-26).z64
+B33C4A54,NPDP,32,6
+
+Perfect Dark (Europe) (En,Fr,De,Es,It).z64
+7718A714,NPDP,32,6
+
+Perfect Dark (Japan).z64
+639C0DA9,NPDJ,32,6
+
+Perfect Dark (USA) (Debug Version) (2000-03-22).z64
+B568A9FE,NPDE,32,6
+
+Perfect Dark (USA) (Rev 1).z64
+4C1677F7,NPDE,32,6
+
+Perfect Dark (USA).z64
+68446AD4,NPDE,32,6
+
+PGA European Tour (USA).z64
+7CDFCDAA,NEAE,16,5
+
+PGA European Tour Golf (Europe) (En,Fr,De,Es,It).z64
+6B5FF959,NEAP,16,5
+
+Pikachuu Genki de Chuu (Japan).z64
+3F6245AE,NPGJ,16,5
+
+Pilotwings 64 (Europe) (En,Fr,De).z64
+C902E57C,NPWP,08,5
+
+Pilotwings 64 (Japan).z64
+3D3A84A9,NPWJ,08,5
+
+Pilotwings 64 (USA).z64
+728807E7,NPWE,08,5
+
+Pokemon Puzzle League (Europe) (Wii Virtual Console).z64
+13F996B2,NPNP,32,4
+
+Pokemon Puzzle League (Europe).z64
 75839254,NPNP,32,4
-9f22a945,NPOD,32,4
-72f66f05,NPOE,32,4
-72b552e3,NPOE,32,4
-4b1bc2ac,NPOE,32,4
-235b1842,NPOE,32,4
-5dd92d4c,NPOF,32,4
-f155c465,NPOI,32,4
-dc57508d,NPOP,32,4
-da889668,NPOP,32,4
-f02cd5eb,NPOS,32,4
-a33146e0,NPPJ,16,6
-9514da0a,NPQE,08,0
-ccdd322a,NPRE,16,0
-296e3525,NPRP,16,0
-153aeb15,NPSJ,16,1
-2ef647d3,NPSJ,16,1
-f96c2be1,NPSJ,16,1
-d59d2794,NPTJ,12,5
-a5033311,NPUE,12,0
-36ee5ca8,NPUP,12,0
-728807e7,NPWE,08,5
-3d3a84a9,NPWJ,08,5
-c902e57c,NPWP,08,5
-8dd735ef,NPXE,12,0
-355ff9de,NPYJ,08,5
-4cd21372,NPZJ,08,0
-e6b34387,NQ2E,12,0
-82beca21,NQ2P,12,0
-abf0e8f2,NQ8E,08,0
-34a21417,NQ8P,08,0
-44496b26,NQ9E,12,0
-f688bdf3,NQ9P,12,0
-8f54f999,NQBE,12,0
-ceef5c29,NQBP,12,0
-6d849e17,NQCE,12,0
-761f39d1,NQKE,12,0
-28c10844,NQKP,12,0
-9eb14ea8,NR2E,12,0
-30f21f89,NR2P,12,0
-3438b1af,NR3E,12,0
-5d73e788,NR6D,16,0
-53b0cc13,NR6E,16,0
-bbf7b6a8,NR6F,16,0
-4b71e083,NR6P,16,0
-3b0f8061,NR7J,32,6
-ffa625fe,NRAJ,12,5
-f3e0ff21,NRCE,12,5
-81aafc2b,NRCJ,12,5
-0cc70580,NRCP,12,5
-2a554048,NRDE,32,0
-a69df7b3,NRDP,32,0
-848fbc0d,NREE,64,1
-832ea1da,NREE,64,1
-7c8ee011,NREP,64,1
-23aed3a2,NRGD,16,0
-a87faf82,NRGE,16,0
+
+Pokemon Puzzle League (France) (Wii Virtual Console).z64
+8671137D,NPNF,32,4
+
+Pokemon Puzzle League (France).z64
+C3AA0074,NPNF,32,4
+
+Pokemon Puzzle League (Germany) (Wii Virtual Console).z64
+00E73008,NPND,32,4
+
+Pokemon Puzzle League (Germany).z64
+AC543150,NPND,32,4
+
+Pokemon Puzzle League (USA) (Wii Virtual Console).z64
+91623130,NPNE,32,4
+
+Pokemon Puzzle League (USA).z64
+8B9C598F,NPNE,32,4
+
+Pokemon Snap (Australia).z64
+CDEA6D4C,NPFU,16,4
+
+Pokemon Snap (Europe).z64
+F824A057,NPFP,16,4
+
+Pokemon Snap (France).z64
+EC843586,NPFF,16,4
+
+Pokemon Snap (Germany).z64
+10C27B3C,NPFD,16,4
+
+Pokemon Snap (Italy).z64
+DF56E922,NPFI,16,4
+
+Pokemon Snap (Japan) (Rev 1) (Wii Virtual Console).z64
+A761DAEF,NPFJ,16,4
+
+Pokemon Snap (Japan).z64
+A091BD56,NPFJ,16,4
+
+Pokemon Snap (Spain).z64
+371B787F,NPFS,16,4
+
+Pokemon Snap (USA).z64
+86A69756,NPFE,16,4
+
+Pokemon Snap Station (USA) (Demo) (Kiosk).z64
+E22A00D0,NPHE,16,4
+
+Pokemon Stadium (Europe) (Rev 1).z64
+DA889668,NPOP,32,4
+
+Pokemon Stadium (Europe).z64
+DC57508D,NPOP,32,4
+
+Pokemon Stadium (France).z64
+5DD92D4C,NPOF,32,4
+
+Pokemon Stadium (Germany).z64
+9F22A945,NPOD,32,4
+
+Pokemon Stadium (Italy).z64
+F155C465,NPOI,32,4
+
+Pokemon Stadium (Japan).z64
+3139189C,CPSJ,16,1
+
+Pokemon Stadium (Spain).z64
+F02CD5EB,NPOS,32,4
+
+Pokemon Stadium (USA) (Rev 1).z64
+4B1BC2AC,NPOE,32,4
+
+Pokemon Stadium (USA) (Rev 2).z64
+235B1842,NPOE,32,4
+
+Pokemon Stadium (USA).z64
+72F66F05,NPOE,32,4
+
+Pokemon Stadium 2 (Europe).z64
+6B3096C4,NP3P,64,4
+
+Pokemon Stadium 2 (France).z64
+E2A78066,NP3F,64,4
+
+Pokemon Stadium 2 (Germany).z64
+1146A43A,NP3D,64,4
+
+Pokemon Stadium 2 (Italy).z64
+9FA5C095,NP3I,64,4
+
+Pokemon Stadium 2 (Japan).z64
+40AA4874,CP2J,32,4
+
+Pokemon Stadium 2 (Spain).z64
+283E7641,NP3S,64,4
+
+Pokemon Stadium 2 (USA).z64
+A9998E09,NP3E,64,4
+
+Pokemon Stadium Kin Gin (Japan).z64
+CBC3B935,NP3J,64,4
+
+Polaris SnoCross (USA).z64
+8DD735EF,NPXE,12,0
+
+Power League 64 (Japan).z64
+AEC21C28,NPLJ,08,0
+
+Power Rangers - Lightspeed Rescue (Europe).z64
+36EE5CA8,NPUP,12,0
+
+Power Rangers - Lightspeed Rescue (USA).z64
+A5033311,NPUE,12,0
+
+Powerpuff Girls, The - Chemical X-Traction (USA).z64
+9514DA0A,NPQE,08,0
+
+Premier Manager 64 (Europe).z64
+81CDA888,NPMP,16,1
+
+Pro Mahjong Kiwame 64 (Japan) (Rev 1).z64
+B9BE7B90,NKMJ,08,0
+
+Pro Mahjong Kiwame 64 (Japan).z64
+1F5907F9,NKMJ,08,0
+
+Pro Mahjong Tsuwamono 64 - Jansou Battle ni Chousen (Japan).z64
+35461699,NNRJ,08,0
+
+Puyo Puyo Sun 64 (Japan).z64
+355FF9DE,NPYJ,08,5
+
+Puyo Puyoon Party (Japan).z64
+D59D2794,NPTJ,12,5
+
+Puzzle Bobble 64 (Japan).z64
+EA837423,NPBJ,08,0
+
+Quake (Europe).z64
+28C10844,NQKP,12,0
+
+Quake (USA).z64
+761F39D1,NQKE,12,0
+
+Quake II (Europe).z64
+82BECA21,NQ2P,12,0
+
+Quake II (USA).z64
+E6B34387,NQ2E,12,0
+
+Quest 64 (USA).z64
+D75B45C6,NETE,16,0
+
+Racing Simulation 2 (Germany).z64
+BA73A7E4,NMGD,16,5
+
+Rakugakids (Europe).z64
+483129AA,NKRP,12,0
+
+Rakugakids (Japan).z64
+B9E53B06,NKRJ,12,0
+
+Rally '99 (Japan).z64
+FFA625FE,NRAJ,08,5
+
+Rally Challenge 2000 (USA).z64
+3EDEC7B0,NWQE,12,5
+
+Rampage - World Tour (Europe).z64
+CDC458EC,NRPP,12,0
+
+Rampage - World Tour (USA).z64
+211119DD,NRPE,12,0
+
+Rampage 2 - Universal Tour (Europe).z64
+FA6E097B,N2PP,12,0
+
+Rampage 2 - Universal Tour (USA).z64
+7614EE0D,N2PE,12,0
+
+Rat Attack (Europe) (En,Fr,De,Es,It,Nl).z64
+DD4FA798,NRTP,08,0
+
+Rat Attack! (USA) (En,Fr,De,Es,It,Nl).z64
+2315FEA7,NRTE,08,0
+
+Rayman 2 - The Great Escape (Europe) (En,Fr,De,Es,It).z64
+169A5037,NY2P,32,0
+
+Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It).z64
+02BB4409,NY2E,32,0
+
+Razmoket, Les - La Chasse aux Tresors (France).z64
 66766469,NRGF,16,0
-3338b7c8,NRGP,16,0
-61eaee83,NRHJ,32,4
-528a07fa,NRIE,12,1
-983263d7,NRIP,12,1
-a9cc2419,NRKE,16,0
-cd74b07e,NRKP,16,0
-600b3988,NROE,32,0
-3c664a7b,NROP,32,0
-211119dd,NRPE,12,0
-cdc458ec,NRPP,12,0
-e4337b92,NRRE,12,0
-997ed5af,NRRP,12,0
-83c225cc,NRSE,16,5
-65a8fba0,NRSE,16,5
-ee7643b6,NRSJ,16,5
-6289645f,NRSP,16,5
-c88e5638,NRSP,16,5
-2315fea7,NRTE,08,0
-dd4fa798,NRTP,08,0
+
+Razor Freestyle Scooter (USA).z64
+927CE621,NFQE,08,0
+
+Re-Volt (Europe) (En,Fr,De,Es).z64
+81D13A11,NRVP,12,0
+
+Re-Volt (USA).z64
+FC0C86D0,NRVE,12,0
+
+Ready 2 Rumble Boxing (Europe) (En,Fr,De).z64
+A69DF7B3,NRDP,32,0
+
+Ready 2 Rumble Boxing (USA).z64
+2A554048,NRDE,32,0
+
+Ready 2 Rumble Boxing - Round 2 (USA).z64
+052A0E04,N22E,32,0
+
+Resident Evil 2 (Europe) (En,Fr).z64
+7C8EE011,NREP,64,1
+
+Resident Evil 2 (USA) (Rev 1).z64
+848FBC0D,NREE,64,1
+
+Resident Evil 2 (USA).z64
+832EA1DA,NREE,64,1
+
+Road Rash 64 (Europe) (Beta) (1999-10-12).z64
+4FB98385,NROP,32,0
+
+Road Rash 64 (Europe).z64
+3C664A7B,NROP,32,0
+
+Road Rash 64 (USA).z64
+600B3988,NROE,32,0
+
+Roadsters (Europe) (En,Fr,De,Es,It,Nl).z64
+997ED5AF,NRRP,12,0
+
+Roadsters (USA) (En,Fr,Es).z64
+E4337B92,NRRE,12,0
+
+Robot Poncots 64 - 7tsu no Umi no Caramel (Japan).z64
+3B0F8061,NR7J,32,6
+
+Robotron 64 (Europe).z64
+23BF4956,NRXP,08,0
+
+Robotron 64 (USA).z64
+B2CBAE58,NRXE,08,0
+
+Rocket - Robot on Wheels (Europe) (Beta) (1999-09-29).z64
+7D766772,NSUP,24,5
+
+Rocket - Robot on Wheels (Europe) (En,Fr,De).z64
+7DE5D20D,NSUP,12,5
+
+Rocket - Robot on Wheels (USA).z64
+E0399F23,NSUE,12,5
+
+Rockman Dash - Hagane no Boukenshin (Japan).z64
+61EAEE83,NRHJ,32,4
+
+Ronaldinho's Soccer 64 (Brazil) (Unl) (Pirate).z64
+C296ECA1,NJPE,08,0
+
+RR64 - Ridge Racer 64 (Europe).z64
+DD9AE3A8,NRZP,32,6
+
+RR64 - Ridge Racer 64 (USA).z64
+3C2C2D1C,NRZE,32,6
+
+RTL World League Soccer 2000 (Germany).z64
+0A17DA7B,NWKD,16,0
+
+Rugrats - Die grosse Schatzsuche (Germany).z64
+23AED3A2,NRGD,16,0
+
+Rugrats - Scavenger Hunt (USA).z64
+A87FAF82,NRGE,16,0
+
+Rugrats - Treasure Hunt (Europe).z64
+3338B7C8,NRGP,16,0
+
+Rugrats in Paris - The Movie (Europe).z64
+CD74B07E,NRKP,16,0
+
+Rugrats in Paris - The Movie (USA).z64
+A9CC2419,NRKE,16,0
+
+Rush 2 - Extreme Racing USA (Europe) (En,Fr,De,Es,It,Nl).z64
+30F21F89,NR2P,12,0
+
+Rush 2 - Extreme Racing USA (USA).z64
+9EB14EA8,NR2E,12,0
+
+S.C.A.R.S. (Europe) (En,Fr,De).z64
+4E37B6F2,NCSP,08,0
+
+S.C.A.R.S. (USA).z64
+22916735,NCSE,08,0
+
+Saikyou Habu Shougi (Japan).z64
+01794D62,NSHJ,08,0
+
+San Francisco Rush - Extreme Racing (Europe) (En,Fr,De).z64
+E064962A,NSFP,08,0
+
+San Francisco Rush - Extreme Racing (USA) (En,Fr,De) (Rev 1).z64
+886C5753,NSFE,08,0
+
+San Francisco Rush - Extreme Racing (USA) (En,Fr,De).z64
+3E20070B,NSFE,08,0
+
+San Francisco Rush 2049 (Europe) (En,Fr,De,Es,It,Nl).z64
+E63B86C5,NRUP,12,0
+
+San Francisco Rush 2049 (USA).z64
 10941439,NRUE,12,0
-e63b86c5,NRUP,12,0
-fc0c86d0,NRVE,12,0
-81d13a11,NRVP,12,0
-b937874f,NRWD,08,0
-422872a2,NRWE,08,0
-e28756f4,NRWE,08,0
-82b1e116,NRWP,08,0
-f4a2862b,NRWX,08,0
-b2cbae58,NRXE,08,0
-23bf4956,NRXP,08,0
-3c2c2d1c,NRZE,32,6
-dd9ae3a8,NRZP,32,6
-57767e45,NS2J,12,0
-86df90e6,NS3J,08,0
-85df2771,NS4J,32,1
-ea650def,NS6E,12,5
-7ee5f51d,NS6J,12,5
-fc73fb79,NSAJ,08,5
-6a2b08da,NSAP,12,5
-bfbcc038,NSBE,12,0
-f120cc52,NSBJ,12,0
-bf0c1291,NSBP,12,0
-7720e5f3,NSCE,12,5
-056d2218,NSCP,12,5
-61e6642c,NSDB,32,0
-eaf6add1,NSDD,32,0
-5e20cc63,NSDE,32,0
-6812d3a7,NSDF,32,0
-8d230306,NSDP,32,0
-3e20070b,NSFE,08,0
-886c5753,NSFE,08,0
-e064962a,NSFP,08,0
-69983cc3,NSGE,16,0
-9f74a58c,NSGJ,16,0
-ff7d7df0,NSGP,16,0
-eedc0bea,NSGX,16,0
-87f00472,NSGY,16,0
-01794d62,NSHJ,08,0
-2aa6d2a1,NSIJ,32,1
-976a2d12,NSJJ,12,0
-156e705e,NSJJ,12,0
-020fb906,NSKE,08,0
-213bf381,NSKJ,08,0
-5619a70d,NSKP,08,0
-696cc2a4,NSLE,32,0
-3ce60709,NSME,08,5
-dd801954,NSMJ,08,5
-a1e15117,NSMJ,08,5
-03048de6,NSMP,08,5
-30ea3fd7,NSNJ,12,5
-a4e378f4,NSOE,16,0
-437e3677,NSPE,08,0
-bca4ff8c,NSPP,08,0
-4e4c7ec9,NSQE,32,4
-2639dae2,NSQP,32,4
-8c9216c1,NSSJ,16,5
-1699d2d6,NSTJ,08,0
-e0399f23,NSUE,12,5
-7de5d20d,NSUP,12,5
-a606e8ae,NSVE,08,5
-e32d9e7b,NSVE,08,5
-dcec9f8a,NSVJ,08,5
-63042e36,NSVP,08,5
-3c0837b3,NSWE,12,5
-b0540688,NSWE,12,5
-e8727549,NSWE,12,5
-7ce71426,NSWJ,12,5
-f0a191bf,NSWP,12,5
-094e2a48,NSXE,16,0
-cb5482ec,NSXP,16,0
+
+Scooby-Doo! - Classic Creep Capers (Europe).z64
+0D737E6F,NSYP,16,0
+
+Scooby-Doo! - Classic Creep Capers (USA) (Rev 1).z64
+CDF86F5E,NSYE,16,0
+
+Scooby-Doo! - Classic Creep Capers (USA).z64
 39068228,NSYE,16,0
-cdf86f5e,NSYE,16,0
-0d737e6f,NSYP,16,0
-5d1907f7,NSZE,16,0
-c07877b6,NT2D,32,0
-ff5e7636,NT2E,32,0
-57f1fbf5,NT2E,32,0
-097f139f,NT2J,32,0
-e2d34bfe,NT2P,32,0
-1febde32,NT2X,32,0
-deac787f,NT3J,32,1
-10cc5f15,NT4E,16,0
-7319d9af,NT4P,16,0
-f128cd17,NT6J,08,5
-68c2ac8f,NT9E,16,4
-d82d5736,NT9P,16,4
-0b0954c5,NTAD,16,0
-c38ca641,NTAE,16,0
-99c7649d,NTAF,16,0
-7737ed9e,NTAP,16,0
-338f1d45,NTBJ,12,5
-dca7f4eb,NTCJ,12,5
-1d4a8659,NTDE,16,0
-7b870026,NTDP,16,0
-08fe81c7,NTEA,16,1
-75a21679,NTEP,16,1
-f5c1b64f,NTFE,12,0
-6182a092,NTFE,12,0
-39e4f766,NTFP,12,0
-c5e4c89f,NTHD,12,0
-d1906de4,NTHD,12,0
-b9570841,NTHE,12,0
-c81f3321,NTHE,12,0
-fb4bea9a,NTHF,12,0
-59574cb9,NTHP,12,0
-ea5d8359,NTID,32,0
-7a4b3686,NTIE,32,0
-804fe494,NTIP,32,0
-6d685b83,NTJE,12,5
-9ea8a3b8,NTJP,12,5
-cb297224,NTKE,32,0
-98d3114c,NTKP,32,0
-7d222d3f,NTME,08,5
-c3300cef,NTME,08,5
-b69d3068,NTMJ,08,5
-68a4f072,NTMP,08,5
-a7dcf638,NTNE,08,5
-996e845f,NTNP,08,5
-e892ed43,NTOJ,12,0
-70a3a5ce,NTPE,08,5
-7cb31b0f,NTPP,08,5
-80aa83f3,NTQE,16,0
-a1207132,NTQP,16,0
-c6707cd6,NTRJ,08,5
-40b3bb21,NTRP,08,5
-455a1770,NTSJ,12,0
-b1d26f39,NTSP,12,0
-1c04ba12,NTTE,16,0
-b4322403,NTTP,16,0
-64631ff9,NTUD,08,0
-2765dd8f,NTUD,08,0
-72ca307a,NTUD,08,0
-26c4f597,NTUE,08,0
-7f2476f4,NTUE,08,0
-8c3bbc00,NTUE,08,0
-e6bd65d5,NTUJ,08,0
-e8525687,NTUP,08,0
-c2353283,NTUP,08,0
-312af877,NTUP,08,0
-67a789e5,NTWJ,12,5
-0712c306,NTXP,12,5
-8d5b9bd0,NTYE,12,0
-4e29b234,NTYP,12,0
-86cc80b5,NUBJ,32,6
-f0bcd1ce,NUMJ,32,1
-a6800ec0,NUTJ,16,1
-16414ae4,NUTJ,16,1
-08287cc8,NV2J,12,0
-a62a2763,NV3E,12,0
-10b9ff1f,NV3P,12,0
-17f63c3f,NV8D,08,0
-330b73e6,NV8E,08,0
-11d23ab3,NV8F,08,0
-0e9bb6d6,NV8P,08,0
-383b86ef,NVBJ,32,1
-620de0b7,NVCE,04,0
-aae15243,NVCP,04,0
-0293203f,NVGE,12,0
-691aa971,NVGP,12,0
-4803075e,NVLE,08,5
-0735d7a2,NVLP,12,5
-e6651803,NVPJ,16,1
-ad628ded,NVRE,04,0
-9a6fb0bc,NVRP,04,0
-02475a01,NVYJ,08,5
-54cbaaa8,NW2E,16,1
-8af0f964,NW2P,16,1
-455b0830,NW3E,12,0
-b33f44f0,NW4E,32,4
-baceea13,NW4E,32,4
-b79bddd8,NW4P,32,4
-43ba9e7e,NW4P,32,4
-e88d7e16,NW4P,32,4
-355fb089,NW8E,08,0
-6f6dc53d,NW8P,08,0
-ffacf993,NWAE,12,0
-c73010c8,NWAP,12,0
-6a6fbd5d,NWBE,04,0
-26cc1266,NWBJ,04,0
-9bf26065,NWBP,04,0
-d6136dc5,NWCJ,08,5
-64c817c5,NWDE,16,0
-d35360b0,NWDJ,16,0
-927383bb,NWDJ,16,0
-fb96f166,NWDP,16,0
-8d3efa8d,NWFE,04,0
-9781f88d,NWGE,08,0
-c2678971,NWGE,08,0
-485275ed,NWGJ,08,0
-442a4f5f,NWGP,08,0
-e9cf3d9f,NWID,32,0
-36d368ef,NWIE,32,0
-be8feead,NWIP,32,0
-0a17da7b,NWKD,16,0
-7bd20931,NWKF,16,0
-bb680cbe,NWKX,16,0
-ccab08d7,NWLE,16,1
-c65ee122,NWLE,16,1
-6858759a,NWLP,16,1
-6cb097b3,NWLP,16,1
-f1f9b6eb,NWME,16,0
-864e066e,NWMP,16,0
-dfbfc61f,NWNE,12,0
-a74da07a,NWNE,12,0
-37f358eb,NWNP,12,0
-5e4acbfa,NWOE,16,0
-76151df6,NWOP,16,0
-4888d0fe,NWPE,08,0
+
+SD Hiryuu no Ken Densetsu (Japan).z64
+CC083E34,NDCJ,12,0
+
+Sesame Street - Elmo's Letter Adventure (USA).z64
+92C3BA6F,NELE,08,0
+
+Sesame Street - Elmo's Number Journey (USA).z64
+EA3B92D8,NENE,08,0
+
+Shadow Man (Brazil).z64
+61E6642C,NSDB,32,0
+
+Shadow Man (Europe) (En,Es,It).z64
+8D230306,NSDP,32,0
+
+Shadow Man (France).z64
+6812D3A7,NSDF,32,0
+
+Shadow Man (Germany).z64
+EAF6ADD1,NSDD,32,0
+
+Shadow Man (USA).z64
+5E20CC63,NSDE,32,0
+
+Shadowgate 64 - Trials of the Four Towers (Europe) (Es,It).z64
+87F00472,NSGY,16,0
+
+Shadowgate 64 - Trials of the Four Towers (Europe) (Fr,De,Nl).z64
+EEDC0BEA,NSGX,16,0
+
+Shadowgate 64 - Trials of the Four Towers (Europe).z64
+FF7D7DF0,NSGP,16,0
+
+Shadowgate 64 - Trials of the Four Towers (Japan).z64
+9F74A58C,NSGJ,16,0
+
+Shadowgate 64 - Trials of the Four Towers (USA) (En,Es).z64
+69983CC3,NSGE,16,0
+
+Shin Nihon Pro Wrestling Toukon Road - Brave Spirits (Japan).z64
+E892ED43,NTOJ,12,0
+
+Shin Nihon Pro Wrestling Toukon Road 2 - The Next Generation (Japan).z64
+DEAC787F,NT3J,32,1
+
+SimCity 2000 (Japan).z64
+57767E45,NS2J,12,0
+
+Snobo Kids (Japan).z64
+213BF381,NSKJ,08,0
+
+Snow Speeder (Japan).z64
+30EA3FD7,NSNJ,12,5
+
+Snowboard Kids (Europe, Australia).z64
+5619A70D,NSKP,08,0
+
+Snowboard Kids (USA).z64
+020FB906,NSKE,08,0
+
+Snowboard Kids 2 (Australia).z64
+3A0B6214,NK2P,16,5
+
+Snowboard Kids 2 (USA).z64
+D0DC8A8E,NK2E,16,5
+
+Sonic Wings Assault (Japan).z64
+FC73FB79,NSAJ,08,5
+
+South Park (Brazil).z64
+235CAEC6,NDTB,16,0
+
+South Park (Europe) (En,Fr,Es).z64
+B2C3E123,NDTP,16,0
+
+South Park (Germany).z64
+5711E197,NDTD,16,0
+
+South Park (USA).z64
+7D666B9E,NDTE,16,0
+
+South Park - Chef's Luv Shack (Europe).z64
+AC1628EB,NCYP,16,0
+
+South Park - Chef's Luv Shack (USA).z64
+6B6B1D09,NCYE,16,0
+
+South Park Rally (Europe).z64
+296E3525,NPRP,16,0
+
+South Park Rally (USA).z64
+CCDD322A,NPRE,16,0
+
+Space Dynamites (Japan).z64
+8CB4B948,NDKJ,08,5
+
+Space Invaders (USA).z64
+60F7FF8E,NIVE,08,0
+
+SpaceStation Silicon Valley (Europe) (En,Fr,De,Es,It,Nl,Pt).z64
+63042E36,NSVP,08,5
+
+SpaceStation Silicon Valley (Japan) (Proto).z64
+DCEC9F8A,NSVJ,08,5
+
+SpaceStation Silicon Valley (USA) (Rev 1).z64
+E32D9E7B,NSVE,08,5
+
+SpaceStation Silicon Valley (USA).z64
+A606E8AE,NSVE,08,5
+
+Spider-Man (USA).z64
+696CC2A4,NSLE,32,0
+
+Star Fox 64 (Japan) (Rev 1) (Wii Virtual Console).z64
+6508D4AD,NFXJ,12,5
+
+Star Fox 64 (Japan).z64
+411142A7,NFXJ,12,5
+
+Star Fox 64 (USA) (Rev 1).z64
+B1B5FC46,NFXE,12,5
+
+Star Fox 64 (USA).z64
+B1FCAA9C,NFXE,12,5
+
+Star Soldier - Vanishing Earth (Japan).z64
+7EE5F51D,NS6J,12,5
+
+Star Soldier - Vanishing Earth (USA).z64
+EA650DEF,NS6E,12,5
+
+Star Twins (Japan).z64
+964506CE,NJFJ,32,4
+
+Star Wars - Rogue Squadron (Europe) (En,Fr,De) (Rev 1).z64
+C88E5638,NRSP,16,5
+
+Star Wars - Rogue Squadron (Europe) (En,Fr,De).z64
+6289645F,NRSP,16,5
+
+Star Wars - Rogue Squadron (USA) (Rev 1).z64
+65A8FBA0,NRSE,16,5
+
+Star Wars - Rogue Squadron (USA).z64
+83C225CC,NRSE,16,5
+
+Star Wars - Shadows of the Empire (Europe).z64
+F0A191BF,NSWP,12,5
+
+Star Wars - Shadows of the Empire (USA) (Aftermarket) (Unl).z64
+776A069B,NSWE,16,5
+
+Star Wars - Shadows of the Empire (USA) (Beta) (1996-10-15).z64
+28368603,NSWE,12,5
+
+Star Wars - Shadows of the Empire (USA) (Rev 1).z64
+B0540688,NSWE,12,5
+
+Star Wars - Shadows of the Empire (USA) (Rev 2).z64
+E8727549,NSWE,12,5
+
+Star Wars - Shadows of the Empire (USA).z64
+3C0837B3,NSWE,12,5
+
+Star Wars - Shutsugeki! Rogue Chuutai (Japan).z64
+EE7643B6,NRSJ,16,5
+
+Star Wars - Teikoku no Kage (Japan).z64
+7CE71426,NSWJ,12,5
+
+Star Wars Episode I - Battle for Naboo (Europe).z64
+029104FD,NNAP,32,5
+
+Star Wars Episode I - Battle for Naboo (USA).z64
+99DEE3C0,NNAE,32,5
+
+Star Wars Episode I - Racer (Europe) (En,Fr,De).z64
+E0F46629,NEPP,32,6
+
+Star Wars Episode I - Racer (Japan).z64
+97C155C5,NEPJ,32,6
+
+Star Wars Episode I - Racer (USA) (Aftermarket) (Unl).z64
+FB401A2A,NEPE,32,6
+
+Star Wars Episode I - Racer (USA).z64
+C53C1035,NEPE,32,6
+
+StarCraft 64 (Australia).z64
+2639DAE2,NSQP,32,4
+
+StarCraft 64 (Germany) (Proto).z64
+2B1C9FE4,NSQD,32,4
+
+StarCraft 64 (USA) (Beta).z64
+B0E1654F,1»ù7,32,4
+
+StarCraft 64 (USA).z64
+4E4C7EC9,NSQE,32,4
+
+Starshot - Space Circus Fever (Europe) (En,Fr,De).z64
+056D2218,NSCP,12,5
+
+Starshot - Space Circus Fever (USA) (En,Fr,Es).z64
+7720E5F3,NSCE,12,5
+
+Stunt Racer 64 (USA).z64
+3438B1AF,NR3E,12,0
+
+Super B-Daman - Battle Phoenix 64 (Japan).z64
+5006DC88,NB6J,12,5
+
+Super Bowling (Japan).z64
+BA2D8B2E,NBWJ,08,0
+
+Super Bowling (USA).z64
+F6CCD04A,NBWE,08,0
+
+Super Mario 64 (Europe) (En,Fr,De).z64
+03048DE6,NSMP,08,5
+
+Super Mario 64 (Japan) (Rev 3) (Shindou Edition).z64
+A1E15117,NSMJ,08,5
+
+Super Mario 64 (Japan).z64
+DD801954,NSMJ,08,5
+
+Super Mario 64 (USA).z64
+3CE60709,NSME,08,5
+
+Super Robot Spirits (Japan).z64
+8C9216C1,NSSJ,16,5
+
+Super Robot Taisen 64 (Japan).z64
+85DF2771,NS4J,32,1
+
+Super Smash Bros. (Australia).z64
+E96779FA,NALU,16,1
+
+Super Smash Bros. (Europe) (En,Fr,De).z64
+45A91CB1,NALP,32,1
+
+Super Smash Bros. (USA).z64
+EB97929E,NALE,16,1
+
+Super Speed Race 64 (Japan).z64
+0F879A70,NLCJ,04,0
+
+Supercross 2000 (Europe) (En,Fr,De).z64
+CB5482EC,NSXP,16,0
+
+Supercross 2000 (USA).z64
+094E2A48,NSXE,16,0
+
+Superman (Europe) (En,Fr,De,Es,It,Nl).z64
+BCA4FF8C,NSPP,08,0
+
+Superman - The New Superman Aventures (USA) (En,Fr,Es).z64
+437E3677,NSPE,08,0
+
+Susume! Taisen Puzzle Dama - Toukon! Marutama Chou (Japan).z64
+4CD21372,NPZJ,08,0
+
+Tarzan (Europe).z64
+7737ED9E,NTAP,16,0
+
+Tarzan (France).z64
+99C7649D,NTAF,16,0
+
+Tarzan (Germany).z64
+0B0954C5,NTAD,16,0
+
+Tarzan (USA).z64
+C38CA641,NTAE,16,0
+
+Taz Express (Europe) (En,Fr,De,Es,It,Nl).z64
+0712C306,NTXP,12,5
+
+Taz Express (USA) (Proto) (2000-05-15).z64
+DDE7CFBD,NTXE,32,5
+
+Telefoot Soccer 2000 (France).z64
+7BD20931,NWKF,16,0
+
+Tetris 64 (Japan) (En).z64
+F128CD17,NT6J,08,5
+
+Tetrisphere (Europe).z64
+7CB31B0F,NTPP,08,5
+
+Tetrisphere (USA).z64
+70A3A5CE,NTPE,08,5
+
+TG Rally 2 (Europe).z64
+135C8EB0,NL2X,12,0
+
+Tigger's Honey Hunt (Europe) (En,Fr,De,Es,It,Nl,Da).z64
+D82D5736,NT9P,16,4
+
+Tigger's Honey Hunt (USA).z64
+68C2AC8F,NT9E,16,4
+
+Tom and Jerry in Fists of Furry (Europe) (En,Fr,De,Es,It,Nl).z64
+9EA8A3B8,NTJP,12,5
+
+Tom and Jerry in Fists of Furry (USA).z64
+6D685B83,NTJE,12,5
+
+Tom Clancy's Rainbow Six (Europe).z64
+4B71E083,NR6P,16,0
+
+Tom Clancy's Rainbow Six (France).z64
+BBF7B6A8,NR6F,16,0
+
+Tom Clancy's Rainbow Six (Germany).z64
+5D73E788,NR6D,16,0
+
+Tom Clancy's Rainbow Six (USA).z64
+53B0CC13,NR6E,16,0
+
+Tommy Thunder (USA) (Proto) (1997-10-01).z64
+66734854,NNiE,08,0
+
+Tonic Trouble (Europe) (En,Fr,De,Es,It).z64
+B4322403,NTTP,16,0
+
+Tonic Trouble (USA) (Rev 1).z64
+1C04BA12,NTTE,16,0
+
+Tony Hawk's Pro Skater (USA) (Beta).z64
+F50204DA,NTFE,24,0
+
+Tony Hawk's Pro Skater (USA) (Rev 1).z64
+6182A092,NTFE,12,0
+
+Tony Hawk's Pro Skater (USA).z64
+F5C1B64F,NTFE,12,0
+
+Tony Hawk's Pro Skater 2 (Europe).z64
+A1207132,NTQP,16,0
+
+Tony Hawk's Pro Skater 2 (USA).z64
+80AA83F3,NTQE,16,0
+
+Tony Hawk's Pro Skater 3 (USA).z64
+62A8CE7D,N3TE,16,0
+
+Tony Hawk's Skateboarding (Europe).z64
+39E4F766,NTFP,12,0
+
+Top Gear Hyper Bike (Europe).z64
+BAE57EA7,NGBP,16,0
+
+Top Gear Hyper Bike (Japan).z64
+09B2CDA1,NGBJ,16,0
+
+Top Gear Hyper-Bike (USA).z64
+6EEBC26A,NGBE,16,0
+
+Top Gear Overdrive (Europe).z64
+0CC70580,NRCP,12,5
+
+Top Gear Overdrive (Japan).z64
+81AAFC2B,NRCJ,12,5
+
+Top Gear Overdrive (USA).z64
+F3E0FF21,NRCE,12,5
+
+Top Gear Rally (Asia) (En).z64
+C4BC4DF8,NGRX,08,0
+
+Top Gear Rally (Europe).z64
+40B3BB21,NTRP,08,5
+
+Top Gear Rally (Japan).z64
+C6707CD6,NTRJ,08,5
+
+Top Gear Rally (USA).z64
+137287F5,NGRE,08,0
+
+Top Gear Rally 2 (Europe).z64
+CB294D39,NL2P,12,0
+
+Top Gear Rally 2 (Japan).z64
+AA136E07,NL2J,12,0
+
+Top Gear Rally 2 (USA).z64
+914CF9C4,NL2E,12,0
+
+Toy Story 2 - Buzz l'Eclair a la Rescousse! (France).z64
+FB4BEA9A,NTHF,12,0
+
+Toy Story 2 - Buzz Lightyear to the Rescue! (Europe).z64
+59574CB9,NTHP,12,0
+
+Toy Story 2 - Buzz Lightyear to the Rescue! (USA) (Rev 1).z64
+C81F3321,NTHE,12,0
+
+Toy Story 2 - Buzz Lightyear to the Rescue! (USA).z64
+B9570841,NTHE,12,0
+
+Toy Story 2 - Captain Buzz Lightyear auf Rettungsmission! (Germany) (Rev 1).z64
+D1906DE4,NTHD,12,0
+
+Toy Story 2 - Captain Buzz Lightyear auf Rettungsmission! (Germany).z64
+C5E4C89F,NTHD,12,0
+
+Transformers - Beast Wars Metals 64 (Japan).z64
+338F1D45,NTBJ,12,5
+
+Transformers - Beast Wars Transmetals (USA).z64
+85138B5A,NOHE,16,0
+
+Triple Play 2000 (USA).z64
+785DD0F8,N3PE,16,0
+
+Tsumi to Batsu - Hoshi no Keishousha (Japan).z64
+CA2E5E49,NGUJ,32,5
+
+Turok - Dinosaur Hunter (Europe) (Rev 1).z64
+C2353283,NTUP,08,0
+
+Turok - Dinosaur Hunter (Europe) (Rev 2).z64
+312AF877,NTUP,08,0
+
+Turok - Dinosaur Hunter (Europe).z64
+E8525687,NTUP,08,0
+
+Turok - Dinosaur Hunter (Germany) (Rev 1).z64
+2765DD8F,NTUD,08,0
+
+Turok - Dinosaur Hunter (Germany) (Rev 2).z64
+72CA307A,NTUD,08,0
+
+Turok - Dinosaur Hunter (Germany).z64
+64631FF9,NTUD,08,0
+
+Turok - Dinosaur Hunter (USA) (Rev 1).z64
+7F2476F4,NTUE,08,0
+
+Turok - Dinosaur Hunter (USA) (Rev 2).z64
+8C3BBC00,NTUE,08,0
+
+Turok - Dinosaur Hunter (USA).z64
+26C4F597,NTUE,08,0
+
+Turok - Legenden des Verlorenen Landes (Germany).z64
+B937874F,NRWD,08,0
+
+Turok - Rage Wars (Europe) (En,Fr,It).z64
+F4A2862B,NRWX,08,0
+
+Turok - Rage Wars (Europe).z64
+82B1E116,NRWP,08,0
+
+Turok - Rage Wars (USA) (Rev 1).z64
+E28756F4,NRWE,08,0
+
+Turok - Rage Wars (USA).z64
+422872A2,NRWE,08,0
+
+Turok 2 - Seeds of Evil (Europe) (Demo) (Kiosk).z64
+4E29B234,NTYP,12,0
+
+Turok 2 - Seeds of Evil (Europe) (En,Fr,Es,It).z64
+1FEBDE32,NT2X,32,0
+
+Turok 2 - Seeds of Evil (Europe).z64
+E2D34BFE,NT2P,32,0
+
+Turok 2 - Seeds of Evil (Germany).z64
+C07877B6,NT2D,32,0
+
+Turok 2 - Seeds of Evil (USA) (Demo) (Kiosk).z64
+8D5B9BD0,NTYE,12,0
+
+Turok 2 - Seeds of Evil (USA) (Rev 1).z64
+57F1FBF5,NT2E,32,0
+
+Turok 2 - Seeds of Evil (USA).z64
+FF5E7636,NT2E,32,0
+
+Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-06-06) [b].z64
+7946B05A,ABCD,32,0
+
+Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-07-10) [b].z64
+3CD1F9AF,NSED,32,0
+
+Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-07-16).z64
+9A01A5F4,NSHT,32,0
+
+Turok 3 - Shadow of Oblivion (Europe).z64
+98D3114C,NTKP,32,0
+
+Turok 3 - Shadow of Oblivion (USA) (Beta) (2000-06-26).z64
+58C4C0AB,ABCD,32,0
+
+Turok 3 - Shadow of Oblivion (USA) (Beta) (2000-07-21).z64
+667B553D,ABCD,32,0
+
+Turok 3 - Shadow of Oblivion (USA).z64
+CB297224,NTKE,32,0
+
+Twisted Edge - Extreme Snowboarding (USA).z64
+BFBCC038,NSBE,12,0
+
+Twisted Edge - Snowboarding (Europe).z64
+BF0C1291,NSBP,12,0
+
+Utchan Nanchan no Hono no Challenger - Denryuu Ira Ira Bou (Japan).z64
+50CBE8A6,NIRJ,08,5
+
+V-Rally Edition 99 (Europe) (En,Fr,De).z64
+0735D7A2,NVLP,12,5
+
+V-Rally Edition 99 (Japan).z64
+02475A01,NVYJ,08,5
+
+V-Rally Edition 99 (USA).z64
+4803075E,NVLE,08,5
+
+Vigilante 8 (Europe).z64
+0E9BB6D6,NV8P,08,0
+
+Vigilante 8 (France).z64
+11D23AB3,NV8F,08,0
+
+Vigilante 8 (Germany).z64
+17F63C3F,NV8D,08,0
+
+Vigilante 8 (USA).z64
+330B73E6,NV8E,08,0
+
+Vigilante 8 - 2nd Offense (Europe).z64
+691AA971,NVGP,12,0
+
+Vigilante 8 - 2nd Offense (USA).z64
+0293203F,NVGE,12,0
+
+Violence Killer - Turok New Generation (Japan).z64
+097F139F,NT2J,32,0
+
+Virtual Chess 64 (Europe) (En,Fr,De,Es,It,Nl).z64
+AAE15243,NVCP,04,0
+
+Virtual Chess 64 (USA) (En,Fr,Es).z64
+620DE0B7,NVCE,04,0
+
+Virtual Pool 64 (Europe).z64
+9A6FB0BC,NVRP,04,0
+
+Virtual Pool 64 (USA).z64
+AD628DED,NVRE,04,0
+
+Virtual Pro Wrestling 2 - Oudou Keishou (Japan).z64
+F620835D,NA2J,32,1
+
+Virtual Pro Wrestling 64 (Japan).z64
+E6651803,NVPJ,16,1
+
+Waialae Country Club - True Golf Classics (Europe) (Rev 1).z64
+6CB097B3,NWLP,16,1
+
+Waialae Country Club - True Golf Classics (Europe).z64
+6858759A,NWLP,16,1
+
+Waialae Country Club - True Golf Classics (USA) (Rev 1).z64
+C65EE122,NWLE,16,1
+
+Waialae Country Club - True Golf Classics (USA).z64
+CCAB08D7,NWLE,16,1
+
+War Gods (Europe).z64
+C73010C8,NWAP,12,0
+
+War Gods (USA).z64
+FFACF993,NWAE,12,0
+
+Wave Race 64 - Kawasaki Jet Ski (Europe) (En,De).z64
+FB289893,NWRP,08,5
+
+Wave Race 64 - Kawasaki Jet Ski (Japan) (Rev 1).z64
+54D190A8,NWRJ,08,5
+
+Wave Race 64 - Kawasaki Jet Ski (Japan) (Rev 2) (Shindou Edition).z64
+90044C4B,NWRJ,08,5
+
+Wave Race 64 - Kawasaki Jet Ski (Japan).z64
+6C93FF83,NWRJ,08,5
+
+Wave Race 64 - Kawasaki Jet Ski (USA) (Rev 1).z64
+394948C4,NWRE,08,5
+
+Wave Race 64 - Kawasaki Jet Ski (USA).z64
+74A7B725,NWRE,08,5
+
+Wayne Gretzky's 3D Hockey '98 (Europe) (En,Fr,De,Es).z64
+6F6DC53D,NW8P,08,0
+
+Wayne Gretzky's 3D Hockey '98 (USA).z64
+355FB089,NW8E,08,0
+
+Wayne Gretzky's 3D Hockey (Europe) (En,Fr,De,Es).z64
+442A4F5F,NWGP,08,0
+
+Wayne Gretzky's 3D Hockey (Japan).z64
+485275ED,NWGJ,08,0
+
+Wayne Gretzky's 3D Hockey (USA) (Rev 1).z64
+C2678971,NWGE,08,0
+
+Wayne Gretzky's 3D Hockey (USA).z64
+9781F88D,NWGE,08,0
+
+WCW Backstage Assault (USA).z64
+5DCC2E4E,NWVE,32,0
+
+WCW Mayhem (Europe).z64
+864E066E,NWMP,16,0
+
+WCW Mayhem (USA).z64
+F1F9B6EB,NWME,16,0
+
+WCW Nitro (USA).z64
+455B0830,NW3E,12,0
+
+WCW vs. nWo - World Tour (Europe).z64
+37F358EB,NWNP,12,0
+
+WCW vs. nWo - World Tour (USA) (Rev 1).z64
+A74DA07A,NWNE,12,0
+
+WCW vs. nWo - World Tour (USA).z64
+DFBFC61F,NWNE,12,0
+
+WCW-nWo Revenge (Europe).z64
+8AF0F964,NW2P,16,1
+
+WCW-nWo Revenge (USA).z64
+54CBAAA8,NW2E,16,1
+
+Wetrix (Europe) (En,Fr,De,Es,It,Nl).z64
+EDDC5B06,NWTP,08,0
+
+Wetrix (Japan).z64
+BAD08218,NWTJ,04,5
+
+Wetrix (USA) (En,Fr,De,Es,It,Nl).z64
+50CD1F71,NWTE,08,0
+
+Wheel of Fortune (USA).z64
+8D3EFA8D,NWFE,04,0
+
+Wild Choppers (Japan).z64
+D6136DC5,NWCJ,08,5
+
+WinBack (Japan) (Rev 1).z64
+927383BB,NWDJ,16,0
+
+WinBack (Japan).z64
+D35360B0,NWDJ,16,0
+
+WinBack - Covert Operations (USA).z64
+64C817C5,NWDE,16,0
+
+Wipeout 64 (Europe) (Beta).z64
+944B258F,NWPP,16,0
+
+Wipeout 64 (Europe).z64
 38111048,NWPP,08,0
-3edec7b0,NWQE,12,5
-74a7b725,NWRE,08,5
-394948c4,NWRE,08,5
-6c93ff83,NWRJ,08,5
-90044c4b,NWRJ,08,5
-54d190a8,NWRJ,08,5
-fb289893,NWRP,08,5
-b85fa721,NWSE,12,0
-5c721850,NWSJ,16,0
-68dbcc04,NWSJ,16,0
-f63f9a5e,NWSJ,16,0
-bf23945d,NWSP,12,0
-50cd1f71,NWTE,08,0
-bad08218,NWTJ,04,5
-eddc5b06,NWTP,08,0
-6bfff27b,NWUP,12,5
-5dcc2e4e,NWVE,32,0
-2fbb5507,NWWE,12,0
-90a0b609,NWWP,12,0
-0b50b4c6,NWXE,32,1
-c2034d24,NWXJ,32,1
-09d710c7,NWXP,32,1
-cbb4b730,NWZE,16,0
-a4973197,NWZP,16,0
-c545ce80,NX2E,16,0
-a7c92bea,NX2P,16,0
-87a7d099,NX3E,32,0
-6bc4a056,NX3P,32,0
-a43cb8e4,NX3X,32,0
-7da93999,NXFE,12,0
-d3932f88,NXFP,12,0
-714cf532,NXGE,12,0
-7e6d00ae,NXGP,12,0
-867a2ced,NXOE,16,5
-02bb4409,NY2E,32,0
-169a5037,NY2P,32,0
-4538c41a,NYKJ,32,5
-f27114e6,NYPE,12,0
-f00c5053,NYPP,12,0
-a1453e0d,NYSE,16,6
-4f44a9ef,NYSJ,16,6
-f9ffc760,NYSP,16,6
-decdc0ad,NYWE,16,1
-f97237c7,NYWJ,16,1
-20fd2939,NYWJ,16,1
-9181c1b7,NYWJ,16,1
-3fbd519f,NZLP,32,1
-946fd0f7,NZLP,32,1
-a108f6e3,NZLP,32,1
-832d6449,NZLP,32,1
-5d1b2996,NZLP,32,1
-736f9d5c,NZOE,16,0
-b428d8a7,NZSE,32,4
-b9bf76df,NZSJ,32,4
-0d33e1db,NZSJ,32,4
-356c2e19,NZSJ,32,4
-9ead1608,NZSP,32,4
-12836e19,NZSP,32,4
-e2e6823d,NZSP,32,4
-04ea55ea,NZSP,32,4
+
+Wipeout 64 (USA).z64
+4888D0FE,NWPE,08,0
+
+Wonder Project J2 - Koruro no Mori no Jozet (Japan).z64
+5E8FC436,NJ2J,08,0
+
+World Cup 98 (Europe) (En,Fr,De,Es,It,Nl,Sv,Da).z64
+79F483F7,N8WP,12,0
+
+World Cup 98 (USA) (En,Fr,De,Es,It,Nl,Sv,Da).z64
+13930C26,N8WE,12,0
+
+World Driver Championship (Europe) (En,Fr,De,Es,It).z64
+76151DF6,NWOP,16,0
+
+World Driver Championship (USA).z64
+5E4ACBFA,NWOE,16,0
+
+Worms Armageddon (Europe) (En,Fr,De,Es,It,Nl).z64
+6BFFF27B,NWUP,12,5
+
+Worms Armageddon (USA) (En,Fr,Es).z64
+5471AE3B,NADE,12,5
+
+WWF Attitude (Europe).z64
+804FE494,NTIP,32,0
+
+WWF Attitude (Germany).z64
+EA5D8359,NTID,32,0
+
+WWF Attitude (USA).z64
+7A4B3686,NTIE,32,0
+
+WWF No Mercy (Europe) (Rev 1).z64
+43BA9E7E,NW4P,32,4
+
+WWF No Mercy (Europe).z64
+E88D7E16,NW4P,32,4
+
+WWF No Mercy (USA) (Rev 1).z64
+BACEEA13,NW4E,32,4
+
+WWF No Mercy (USA).z64
+B33F44F0,NW4E,32,4
+
+WWF War Zone (Europe).z64
+90A0B609,NWWP,12,0
+
+WWF War Zone (USA).z64
+2FBB5507,NWWE,12,0
+
+WWF WrestleMania 2000 (Europe).z64
+09D710C7,NWXP,32,1
+
+WWF WrestleMania 2000 (Japan).z64
+C2034D24,NWXJ,32,1
+
+WWF WrestleMania 2000 (USA).z64
+0B50B4C6,NWXE,32,1
+
+Xena - Warrior Princess - The Talisman of Fate (Europe).z64
+D3932F88,NXFP,12,0
+
+Xena - Warrior Princess - The Talisman of Fate (USA).z64
+7DA93999,NXFE,12,0
+
+Yakouchuu II - Satsujin Kouro (Japan).z64
+4538C41A,NYKJ,32,5
+
+Yoshi Story (Japan).z64
+4F44A9EF,NYSJ,16,6
+
+Yoshi's Story (Europe) (En,Fr,De).z64
+F9FFC760,NYSP,16,6
+
+Yoshi's Story (USA) (En,Ja).z64
+A1453E0D,NYSE,16,6
+
+Yuke Yuke!! Trouble Makers (Japan).z64
+B69D3068,NTMJ,08,5
+
+Zelda no Densetsu - Mujura no Kamen (Japan) (GameCube).z64
+B9BF76DF,NZSJ,32,4
+
+Zelda no Densetsu - Mujura no Kamen (Japan) (Rev 1).z64
+356C2E19,NZSJ,32,4
+
+Zelda no Densetsu - Mujura no Kamen (Japan).z64
+0D33E1DB,NZSJ,32,4
+
+Zelda no Densetsu - Toki no Ocarina (Japan) (GameCube, Zelda Collection).z64
+8C5B90C1,CZLJ,32,1
+
+Zelda no Densetsu - Toki no Ocarina (Japan) (Rev 1).z64
+26E73887,CZLJ,32,1
+
+Zelda no Densetsu - Toki no Ocarina (Japan) (Rev 2).z64
+2B2721BA,CZLJ,32,1
+
+Zelda no Densetsu - Toki no Ocarina (Japan).z64
+D423E8B0,CZLJ,32,1
+
+Zelda no Densetsu - Toki no Ocarina GC (Japan) (GameCube).z64
+1C6CE8CB,CZLJ,32,1
+
+Zelda no Densetsu - Toki no Ocarina GC Ura (Japan) (GameCube).z64
+122FF261,CZLJ,32,1
+
+Zool - Majuu Tsukai Densetsu (Japan).z64
+756BA26D,NMZJ,12,0
+

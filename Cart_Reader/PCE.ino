@@ -424,54 +424,6 @@ void read_bank_PCE_RAM(uint32_t address_start, int block_index)
   }
 }
 
-//Get line from file and convert upper case to lower case
-void skip_line(FsFile* readfile)
-{
-  int i = 0;
-  char str_buf;
-
-  while (readfile->available())
-  {
-    //Read 1 byte from file
-    str_buf = readfile->read();
-
-    //if end of file or newline found, execute command
-    if (str_buf == '\r')
-    {
-      readfile->read(); //dispose \n because \r\n
-      break;
-    }
-    i++;
-  }//End while
-}
-
-//Get line from file and convert upper case to lower case
-void get_line(char* str_buf, FsFile* readfile, uint8_t maxi)
-{
-  int i = 0;
-
-  while (readfile->available())
-  {
-    //If line size is more than maximum array, limit it.
-    if (i >= maxi)
-    {
-      i = maxi - 1;
-    }
-
-    //Read 1 byte from file
-    str_buf[i] = readfile->read();
-
-    //if end of file or newline found, execute command
-    if (str_buf[i] == '\r')
-    {
-      str_buf[i] = '\0';
-      readfile->read(); //dispose \n because \r\n
-      break;
-    }
-    i++;
-  }//End while
-}
-
 uint32_t calculate_crc32(int n, unsigned char c[], uint32_t r)
 {
   int i, j;

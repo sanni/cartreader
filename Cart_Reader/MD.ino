@@ -1297,7 +1297,7 @@ void readROM_MD() {
   display_Update();
   
   // Calculate and compare CRC32 with no-intro
-  compareCRC("md.txt");
+  compareCRC("md.txt", 0);
 
   // Calculate internal checksum
   if (chksum == calcCKS) {

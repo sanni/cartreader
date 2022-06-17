@@ -68,7 +68,7 @@ void _smsMenu() {
       // Change working dir to root
       sd.chdir("/");
       readROM_SMS();
-      compareCRC("sms.txt");
+      compareCRC("sms.txt", 0);
 #ifdef global_log
       save_log();
 #endif

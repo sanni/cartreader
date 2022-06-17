@@ -2223,8 +2223,8 @@ int strcicmp(char const * a, char const * b)
   }
 }
 
-// look-up the calculated crc in the file n64.txt on sd card
-boolean searchCRC(char crcStr[9]) {
+/* look-up the calculated crc in the file n64.txt on sd card
+  boolean searchCRC(char crcStr[9]) {
   boolean result = 0;
   char tempStr2[2];
   char tempStr1[9];
@@ -2276,7 +2276,7 @@ boolean searchCRC(char crcStr[9]) {
   else {
     print_Error(F("n64.txt missing"), true);
   }
-}
+  }*/
 
 // look-up cart id in file n64.txt on sd card
 void getCartInfo_N64() {
@@ -2291,10 +2291,14 @@ void getCartInfo_N64() {
   idCart();
 
   if (myFile.open("n64.txt", O_READ)) {
-    // Skip over the first crc
-    myFile.seekSet(myFile.curPosition() + 9);
     // Loop through file
     while (myFile.available()) {
+      // Skip first line with name
+      skip_line(&myFile);
+
+      // Skip over the CRC checksum
+      myFile.seekSet(myFile.curPosition() + 9);
+
       // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
       sprintf(tempStr, "%c", myFile.read());
       for (byte i = 0; i < 3; i++) {
@@ -2322,10 +2326,16 @@ void getCartInfo_N64() {
 
         // Read the next ascii character and subtract 48 to convert to decimal
         saveType = myFile.read() - 48;
+
+        // End loop
+        break;
       }
-      // If no match, empty string, advance by 16 and try again
+      // If no match skip to next entry
       else {
-        myFile.seekSet(myFile.curPosition() + 16);
+        // skip rest of line
+        myFile.seekSet(myFile.curPosition() + 7);
+        // skip third empty line
+        skip_line(&myFile);
       }
     }
     // Close the file:
@@ -3427,14 +3437,7 @@ redumpsamefolder:
   // Calculate Checksum and convert to string
   println_Msg(F("Calculating CRC.."));
   display_Update();
-  char crcStr[9];
-  sprintf(crcStr, "%08lx", calculateCRC(fileName, folder));
-  // Print checksum
-  println_Msg(crcStr);
-  display_Update();
-
-  // end time
-  unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
+  if (compareCRC("n64.txt", 0)) {
 #else
   // dumping rom fast
   byte buffer[1024] = { 0 };
@@ -3522,21 +3525,14 @@ redumpsamefolder:
   // Close the file:
   myFile.close();
 
-  unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
-
-  print_Msg(F("CRC: "));
   // convert checksum to string
   char crcStr[9];
-  sprintf(crcStr, "%08lx", ~oldcrc32);
-  // Print checksum
-  println_Msg(crcStr);
-  display_Update();
-#endif
+  sprintf(crcStr, "%08lX", ~oldcrc32);
 
   // Search n64.txt for crc
-  if (searchCRC(crcStr)) {
-    // Dump was a known good rom
-    println_Msg(F("Checksum matches"));
+  if (compareCRC("n64.txt", crcStr)) {
+#endif
+    unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
     print_Msg(F("Done ("));
     print_Msg(timeElapsed); // include elapsed time
     println_Msg(F("s)"));
@@ -3556,8 +3552,6 @@ redumpsamefolder:
     // Dump was bad or unknown
     errorLvl = 1;
     setColor_RGB(255, 0, 0);
-    println_Msg(F("Checksum not found"));
-    println_Msg(F("in N64.txt"));
     println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();

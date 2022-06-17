@@ -952,7 +952,7 @@ void compare_checksums_GB() {
     println_Msg(calcsumStr);
     print_Error(F("Checksum Error"), false);
   }
-  compareCRC("gb.txt");
+  compareCRC("gb.txt", 0);
   display_Update();
   //go to root
   sd.chdir();
