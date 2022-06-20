@@ -136,7 +136,6 @@ void gbaMenu() {
 #ifdef global_log
       save_log();
 #endif
-      println_Msg(F(""));
       println_Msg(F("Press Button..."));
       display_Update();
       wait();
@@ -914,6 +913,11 @@ void readROM_GBA() {
     print_Error(F("Can't create file on SD"), true);
   }
 
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(cartSize);
+  draw_progressbar(0, totalProgressBar);
+
   // Read rom
   for (int myAddress = 0; myAddress < cartSize; myAddress += 512) {
     // Blink led
@@ -928,6 +932,9 @@ void readROM_GBA() {
 
     // Write to SD
     myFile.write(sdBuffer, 512);
+
+    processedProgressBar += 512;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
