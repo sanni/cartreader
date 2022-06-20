@@ -127,7 +127,12 @@ void gbaMenu() {
       sd.chdir("/");
       readROM_GBA();
       sd.chdir("/");
+      // Internal Checksum
       compare_checksum_GBA();
+      // CRC32
+      println_Msg(F("Calculating CRC checksum..."));
+      display_Update();
+      compareCRC("gba.txt", 0);
 #ifdef global_log
       save_log();
 #endif
@@ -495,10 +500,14 @@ void gbaMenu() {
 void setup_GBA() {
   setROM_GBA();
 
-  // Print start page
+  // Get cart info
+  display_Clear();
+  println_Msg(F("Seaching database..."));
+  display_Update();
   getCartInfo_GBA();
   display_Clear();
 
+  // Print start page
   print_Msg(F("Name: "));
   println_Msg(romName);
   print_Msg(F("Cart ID: "));
@@ -544,6 +553,7 @@ void setup_GBA() {
   println_Msg(romVersion);
 
   // Wait for user input
+  println_Msg("");
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
@@ -788,6 +798,12 @@ void getCartInfo_GBA() {
     if (myFile.open("gba.txt", O_READ)) {
       // Loop through file
       while (myFile.available()) {
+        // Skip first line with name
+        skip_line(&myFile);
+
+        // Skip over the CRC checksum
+        myFile.seekSet(myFile.curPosition() + 9);
+
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
         sprintf(tempStr, "%c", myFile.read());
         for (byte i = 0; i < 3; i++) {
@@ -818,7 +834,10 @@ void getCartInfo_GBA() {
         }
         // If no match, empty string, advance by 7 and try again
         else {
+          // skip rest of line
           myFile.seekSet(myFile.curPosition() + 7);
+          // skip third empty line
+          skip_line(&myFile);
         }
       }
       // Close the file:
@@ -917,7 +936,7 @@ void readROM_GBA() {
 
 // Calculate the checksum of the dumped rom
 boolean compare_checksum_GBA () {
-  println_Msg(F("Calculating Checksum"));
+  print_Msg(F("Internal Checksum..."));
   display_Update();
 
   strcpy(fileName, romName);
@@ -945,11 +964,12 @@ boolean compare_checksum_GBA () {
     sprintf(calcChecksumStr, "%02X", calcChecksum);
 
     if (strcmp(calcChecksumStr, checksumStr) == 0) {
-      println_Msg(F("Checksum matches"));
+      println_Msg(F("OK"));
       display_Update();
       return 1;
     }
     else {
+      println_Msg("");
       print_Msg(F("Result: "));
       println_Msg(calcChecksumStr);
       print_Error(F("Checksum Error"), false);
