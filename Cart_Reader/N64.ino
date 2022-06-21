@@ -3434,9 +3434,6 @@ redumpsamefolder:
   // Close the file:
   myFile.close();
 
-  // Calculate Checksum and convert to string
-  println_Msg(F("Calculating CRC.."));
-  display_Update();
   if (compareCRC("n64.txt", 0)) {
 #else
   // dumping rom fast

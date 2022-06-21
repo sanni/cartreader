@@ -925,9 +925,6 @@ unsigned int calc_checksum_GB (char* fileName, char* folder) {
 
 // Compare checksum
 void compare_checksums_GB() {
-  println_Msg(F("Calculating Checksum..."));
-  display_Update();
-
   strcpy(fileName, romName);
   strcat(fileName, ".GB");
 

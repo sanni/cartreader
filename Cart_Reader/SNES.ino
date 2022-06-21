@@ -215,12 +215,10 @@ void snesMenu() {
           unsigned long startTime = millis();
           // start reading from cart
           readROM_SNES();
+          // Internal Checksum
           compare_checksum();
-
-          // print elapsed time
-          print_Msg(F("Time elapsed: "));
-          print_Msg((millis() - startTime) / 1000);
-          println_Msg(F("s"));
+          // CRC32
+          compareCRC("snes.txt", 0);
 #ifdef global_log
           save_log();
 #endif
@@ -337,7 +335,7 @@ void snesMenu() {
       resetArduino();
       break;
   }
-  println_Msg(F(""));
+  //println_Msg(F(""));
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
@@ -818,7 +816,18 @@ void checkAltConf() {
   altconf = 0;
 
   if (myFile.open("snes.txt", O_READ)) {
+    // Get cart info
+    display_Clear();
+    println_Msg(F("Searching database..."));
+    display_Update();
+
     while (myFile.available()) {
+      // Skip first line with name
+      skip_line(&myFile);
+
+      // Skip over the CRC checksum
+      myFile.seekSet(myFile.curPosition() + 9);
+
       // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
       sprintf(tempStr1, "%c", myFile.read());
       strcpy(tempStr2, tempStr1);
@@ -836,24 +845,31 @@ void checkAltConf() {
         myFile.seekSet(myFile.curPosition() + 1);
 
         // Read file size
-        romSize = (myFile.read() - 48) * 10 + (myFile.read() - 48);
+        byte romSize2 = (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
 
         // Read number of banks
-        numBanks  = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
+        byte numBanks2  = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
-        altconf = 1;
+        if ((romSize != romSize2) || (numBanks != numBanks2)) {
+          romSize = romSize2;
+          numBanks  = numBanks2;
+          altconf = 1;
+        }
       }
       // If no match empty string advance by 9 and try again
       else {
-        myFile.seekSet(myFile.curPosition() + 9);
+        // skip rest of line
+        myFile.seekSet(myFile.curPosition() + 7);
+        // skip third empty line
+        skip_line(&myFile);
       }
     }
+    // Close the file:
+    myFile.close();
   }
-  // Close the file:
-  myFile.close();
 }
 
 // Read header
@@ -1163,8 +1179,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
 }
 
 boolean compare_checksum() {
-
-  println_Msg(F("Calculating Checksum"));
+  print_Msg(F("Internal Checksum..."));
   display_Update();
 
   strcpy(fileName, romName);
@@ -1178,8 +1193,8 @@ boolean compare_checksum() {
   sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
 
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    print_Msg(F("Checksum OK: "));
-    println_Msg(calcsumStr);
+    println_Msg(F("OK"));
+    //println_Msg(calcsumStr);
     display_Update();
     return 1;
   }

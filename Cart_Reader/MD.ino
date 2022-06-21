@@ -1293,9 +1293,6 @@ void readROM_MD() {
   //println_Msg(F("s"));
   //display_Update();
 
-  println_Msg(F("Calculating checksum..."));
-  display_Update();
-
   // Calculate and compare CRC32 with no-intro
   compareCRC("md.txt", 0);
 

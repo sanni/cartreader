@@ -130,8 +130,6 @@ void gbaMenu() {
       // Internal Checksum
       compare_checksum_GBA();
       // CRC32
-      println_Msg(F("Calculating CRC checksum..."));
-      display_Update();
       compareCRC("gba.txt", 0);
 #ifdef global_log
       save_log();
@@ -501,7 +499,7 @@ void setup_GBA() {
 
   // Get cart info
   display_Clear();
-  println_Msg(F("Seaching database..."));
+  println_Msg(F("Searching database..."));
   display_Update();
   getCartInfo_GBA();
   display_Clear();

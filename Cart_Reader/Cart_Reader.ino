@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             20.06.2022
+   Date:             21.06.2022
    Version:          8.5 BETA
 
    SD lib: https://github.com/greiman/SdFat
@@ -370,6 +370,9 @@ inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
 
 // Calculate rom's CRC32 from SD
 uint32_t calculateCRC(char* fileName, char* folder) {
+  // Open folder
+  sd.chdir(folder);
+  // Open file
   if (myFile.open(fileName, O_READ)) {
     uint32_t oldcrc32 = 0xFFFFFFFF;
 
@@ -384,7 +387,12 @@ uint32_t calculateCRC(char* fileName, char* folder) {
     return ~oldcrc32;
   }
   else {
-    print_Error(F("File not found"), true);
+    display_Clear();
+    print_Msg(F("File "));
+    //print_Msg(folder);
+    //print_Msg(F("/"));
+    //print_Msg(fileName);
+    print_Error(F(" not found"), true);
   }
 }
 
@@ -444,7 +452,11 @@ boolean compareCRC(char* database, char* crcString) {
 #ifdef no-intro
   char crcStr[9];
   if (crcString == 0) {
+    //go to root
+    sd.chdir();
     // Calculate CRC32
+    print_Msg(F("CRC32... "));
+    display_Update();
     sprintf(crcStr, "%08lX", calculateCRC(fileName, folder));
   }
   else {
@@ -452,7 +464,6 @@ boolean compareCRC(char* database, char* crcString) {
     strcpy(crcStr, crcString);
   }
   // Print checksum
-  print_Msg(F("CRC32: "));
   print_Msg(crcStr);
   display_Update();
 
