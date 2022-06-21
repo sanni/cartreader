@@ -379,11 +379,13 @@
         "microvia_drill": 0.1,
         "name": "Power",
         "nets": [
+          "+3.3VA",
           "+3V3",
           "+5V",
           "GND",
           "VBUS",
-          "VCC"
+          "VCC",
+          "VDDA"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
