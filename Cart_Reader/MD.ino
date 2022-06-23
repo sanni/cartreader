@@ -1293,22 +1293,26 @@ void readROM_MD() {
   //println_Msg(F("s"));
   //display_Update();
 
-  // Calculate and compare CRC32 with no-intro
-  compareCRC("md.txt", 0);
-
   // Calculate internal checksum
+  print_Msg(F("Internal checksum..."));
+  display_Update();
   if (chksum == calcCKS) {
-    println_Msg(F("Internal checksum OK"));
+    println_Msg(F("OK"));
     display_Update();
   }
   else {
-    print_Msg(F("Internal checksum Error: "));
+    println_Msg(F("Error"));
     char calcsumStr[5];
     sprintf(calcsumStr, "%04X", calcCKS);
     println_Msg(calcsumStr);
     print_Error(F(""), false);
     display_Update();
   }
+
+  // Calculate and compare CRC32 with no-intro
+  compareCRC("md.txt", 0);
+
+  // More checksums
   if (SnKmode >= 2) {
     if (chksumLockon == calcCKSLockon) {
       println_Msg(F("Checksum2 OK"));
