@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             21.06.2022
+   Date:             23.06.2022
    Version:          8.5 BETA
 
    SD lib: https://github.com/greiman/SdFat

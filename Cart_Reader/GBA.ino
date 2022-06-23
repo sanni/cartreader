@@ -498,9 +498,6 @@ void setup_GBA() {
   setROM_GBA();
 
   // Get cart info
-  display_Clear();
-  println_Msg(F("Searching database..."));
-  display_Update();
   getCartInfo_GBA();
   display_Clear();
 
@@ -767,6 +764,7 @@ void getCartInfo_GBA() {
   }
 
   if (logoChecksum != 0x4B1B) {
+    display_Clear();
     print_Error(F("CARTRIDGE ERROR"), false);
     strcpy(romName, "ERROR");
     println_Msg(F(""));
@@ -791,6 +789,10 @@ void getCartInfo_GBA() {
     cartID[1] = char(sdBuffer[0xAD]);
     cartID[2] = char(sdBuffer[0xAE]);
     cartID[3] = char(sdBuffer[0xAF]);
+
+    display_Clear();
+    println_Msg(F("Searching database..."));
+    display_Update();
 
     if (myFile.open("gba.txt", O_READ)) {
       // Loop through file
