@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             23.06.2022
-   Version:          8.5 BETA
+   Date:             03.07.2022
+   Version:          9.0 BETA
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -58,7 +58,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "8.5B";
+char ver[5] = "9.0B";
 
 /******************************************
    Libraries
@@ -273,12 +273,10 @@ int romType = 0;
 byte saveType;
 word romSize = 0;
 word numBanks = 128;
-char checksumStr[5];
+char checksumStr[9];
 bool errorLvl = 0;
 byte romVersion = 0;
 char cartID[5];
-String CRC1 = "";
-String CRC2 = "";
 unsigned long cartSize;
 char flashid[5];
 char vendorID[5];

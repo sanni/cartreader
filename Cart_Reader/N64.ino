@@ -54,6 +54,11 @@ boolean MN63F81MPN = false;
 //ControllerTest
 bool quit = 1;
 
+#ifdef savesummarytotxt
+String CRC1 = "";
+String CRC2 = "";
+#endif
+
 /******************************************
   Menu
 *****************************************/
@@ -2164,7 +2169,8 @@ void printCartInfo_N64() {
     println_Msg(romName);
     print_Msg(F("ID: "));
     println_Msg(cartID);
-    println_Msg("");
+    print_Msg(F("CRC1: "));
+    println_Msg(checksumStr);
     display_Update();
 
     strcpy(romName, "GPERROR");
@@ -2281,7 +2287,7 @@ int strcicmp(char const * a, char const * b)
 // look-up cart id in file n64.txt on sd card
 void getCartInfo_N64() {
   char tempStr2[2];
-  char tempStr[5];
+  char tempStr[9];
 
   // cart not in list
   cartSize = 0;
@@ -2296,18 +2302,18 @@ void getCartInfo_N64() {
       // Skip first line with name
       skip_line(&myFile);
 
-      // Skip over the CRC checksum
+      // Skip over the CRC32 checksum
       myFile.seekSet(myFile.curPosition() + 9);
 
-      // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
+      // Read 8 bytes into String, do it one at a time so byte order doesn't get mixed up
       sprintf(tempStr, "%c", myFile.read());
-      for (byte i = 0; i < 3; i++) {
+      for (byte i = 0; i < 7; i++) {
         sprintf(tempStr2, "%c", myFile.read());
         strcat(tempStr, tempStr2);
       }
 
       // Check if string is a match
-      if (strcmp(tempStr, cartID) == 0) {
+      if (strcmp(tempStr, checksumStr) == 0) {
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
 
@@ -2362,6 +2368,9 @@ void idCart() {
     sdBuffer[c + 1] = loByte;
   }
 
+  // CRC1
+  sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
+
   // Get cart id
   cartID[0] = sdBuffer[0x3B];
   cartID[1] = sdBuffer[0x3C];
@@ -2388,6 +2397,7 @@ void idCart() {
     romName[3] = sdBuffer[0x3E];
   }
 
+#ifdef savesummarytotxt
   // Get CRC1
   for (int i = 0; i < 4; i++) {
     if (sdBuffer[0x10 + i] < 0x10) {
@@ -2403,6 +2413,7 @@ void idCart() {
     }
     CRC2 += String(sdBuffer[0x14 + i], HEX);
   }
+#endif
 }
 
 /******************************************
@@ -3607,6 +3618,7 @@ redumpsamefolder:
   }
 }
 
+#ifdef savesummarytotxt
 // Save an info.txt with information on the dumped rom to the SD card
 void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElapsed) {
   // Open file on sd card
@@ -3683,6 +3695,7 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   // Close the file:
   myFile.close();
 }
+#endif
 
 /******************************************
    N64 Repro Flashrom Functions
