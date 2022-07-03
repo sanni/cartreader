@@ -2,10 +2,10 @@
 002C3B2A,3B941695,32,0
 
 007 - The World Is Not Enough (USA) (v2) (Beta).z64
-6C180FEF,7BD65F9E,16,9
+6C180FEF,7BD65F9E,16,0
 
 007 - The World Is Not Enough (USA) (v21) (Beta).z64
-F0B6BF59,A92E0966,32,9
+F0B6BF59,A92E0966,32,0
 
 007 - The World Is Not Enough (USA).z64
 26360987,033F4C13,32,0
@@ -17,13 +17,13 @@ F0B6BF59,A92E0966,32,9
 08FE81C7,1FBAF161,16,1
 
 40 Winks (Europe) (En,Es,It) (Proto) (1999-10-07).z64
-7E718143,ABA51D09,32,9
+7E718143,ABA51D09,32,0
 
 40 Winks (USA) (Aftermarket) (Unl).z64
-31C19633,5EF44642,32,9
+31C19633,5EF44642,32,0
 
 40 Winks (USA) (Proto).z64
-3A674026,AA94493C,32,9
+3A674026,AA94493C,32,0
 
 64 de Hakken!! Tamagotchi - Minna de Tamagotchi World (Japan).z64
 67A789E5,B98BA456,12,5
@@ -65,10 +65,10 @@ Aidyn Chronicles - The First Mage (Europe).z64
 BE7E230D,2DC4FFCC,32,0
 
 Aidyn Chronicles - The First Mage (USA) (Beta) (2000-02-10).z64
-C46D84A0,40066883,32,9
+C46D84A0,40066883,32,0
 
 Aidyn Chronicles - The First Mage (USA) (Beta) (2000-05-09).z64
-ABD43F3F,FC8BED44,32,9
+ABD43F3F,FC8BED44,32,0
 
 Aidyn Chronicles - The First Mage (USA) (Rev 1).z64
 D5051096,112051D2,32,0
@@ -179,7 +179,7 @@ Bass Rush - ECOGEAR PowerWorm Championship (Japan).z64
 383B86EF,D76333AC,32,1
 
 Bassmasters 2000 (USA) (Beta).z64
-86F8E439,67DD8AAB,32,9
+86F8E439,67DD8AAB,32,0
 
 Bassmasters 2000 (USA).z64
 6B09092E,BCFACCAA,12,0
@@ -236,10 +236,10 @@ Blastdozer (Japan).z64
 081A3641,65234451,08,5
 
 Blues Brothers 2000 (Europe) (En,Fr,De,Es,It,Nl) (Beta) (2000-01-15) (#20).z64
-1AC60460,B669C3CF,32,9
+1AC60460,B669C3CF,32,0
 
 Blues Brothers 2000 (Europe) (En,Fr,De,Es,It,Nl) (Beta) (2000-01-15) (#53).z64
-BB1CA04D,B669C3CF,32,9
+BB1CA04D,B669C3CF,32,0
 
 Blues Brothers 2000 (Europe) (En,Fr,De,Es,It,Nl).z64
 8FB41658,D571C883,16,0
@@ -326,7 +326,7 @@ Bust-A-Move 3 DX (Europe).z64
 95595889,E328B4FA,08,0
 
 California Speed (Europe) (Proto).z64
-D913B95F,CA2A7444,16,9
+D913B95F,CA2A7444,16,0
 
 California Speed (USA).z64
 6F6262CB,AC16400E,16,0
@@ -341,7 +341,7 @@ Carmageddon 64 (USA).z64
 10C6A0A1,F00F2D4E,16,0
 
 Carnivale - Cenzo's Adventure (USA) (Proto).z64
-3D9F8D32,0CA6AEDA,64,9
+3D9F8D32,0CA6AEDA,64,0
 
 Castlevania (Europe) (En,Fr,De).z64
 D9D76235,64F1B7CA,12,0
@@ -440,19 +440,19 @@ Conker's Bad Fur Day (Europe).z64
 4667CFE9,373F5889,64,6
 
 Conker's Bad Fur Day (USA) (Beta) (2000-10-25).z64
-4F73408C,8BC3A47A,64,9
+4F73408C,8BC3A47A,64,6
 
 Conker's Bad Fur Day (USA) (Beta) (ECTS 2000) (2000-08-26).z64
-E1CDA95A,A08D0F77,64,9
+E1CDA95A,A08D0F77,64,6
 
 Conker's Bad Fur Day (USA).z64
 CE8CC172,30C7AC50,64,6
 
 Controller Kensa-ki NUS-yo N Cassette (Japan) (Test Program).z64
-E5828A7F,D6355E14,08,9
+E5828A7F,D6355E14,08,0
 
 Controller Pak Test (Unknown).z64
-3504DBD5,449F60CC,16,9
+3504DBD5,449F60CC,16,0
 
 Cruis'n Exotica (USA).z64
 867A2CED,46A3F7AF,16,5
@@ -467,7 +467,7 @@ Cruis'n USA (USA) (Rev 2).z64
 C3B52701,B3402554,08,5
 
 Cruis'n USA (USA) (Wii Virtual Console).z64
-8FC564F9,FF2F2FB4,08,9
+8FC564F9,FF2F2FB4,08,5
 
 Cruis'n USA (USA).z64
 5238B727,FF2F2FB4,08,5
@@ -515,7 +515,7 @@ Densha de Go! 64 (Japan).z64
 7BFC71E0,17C54A61,32,6
 
 Derby Stallion 64 (Japan) (Beta) [b].z64
-8EC950A9,96BA4EFB,32,9
+8EC950A9,96BA4EFB,32,4
 
 Derby Stallion 64 (Japan).z64
 A9417994,A5F667E1,32,4
@@ -545,22 +545,22 @@ Diddy Kong Racing (USA) (En,Fr).z64
 EB759206,53D440E7,12,5
 
 Die Hard 64 (USA) (Proto) (Level 1).z64
-5E826037,870611BA,32,9
+5E826037,870611BA,32,0
 
 Die Hard 64 (USA) (Proto) (Level 2).z64
-D1D593CF,08D49262,32,9
+D1D593CF,08D49262,32,0
 
 Die Hard 64 (USA) (Proto) (Level 3).z64
-70943925,A1F51C25,32,9
+70943925,A1F51C25,32,0
 
 Dinosaur Planet (USA) (Proto) (2000-12-01).z64
-A7DAF9FA,D0F6A741,64,9
+A7DAF9FA,D0F6A741,64,4
 
 Donald Duck - Goin' Quackers (USA) (En,Fr,De,Es,It).z64
 7FDEC270,C16C421B,20,0
 
 Donald Duck - Quack Attack (Europe) (En,Fr,De,Es,It).z64
-C4B0D9EA,3DF17480,20,9
+C4B0D9EA,3DF17480,20,0
 
 Donkey Kong 64 (Europe) (En,Fr,De,Es).z64
 A28C71C6,11936D8C,32,6
@@ -596,7 +596,7 @@ Doraemon 3 - Nobita no Machi SOS! (Japan).z64
 D3B68BE4,A8275140,16,6
 
 Doubutsu Banchou (Japan) (Proto).z64
-6F8E3E71,EB85EBC9,32,9
+6F8E3E71,EB85EBC9,32,0
 
 Doubutsu no Mori (Japan).z64
 9503E3F1,BD8E206D,16,4
@@ -605,10 +605,10 @@ Dr. Mario 64 (USA).z64
 A4701927,769D4D13,04,5
 
 Dragon Sword 64 (Europe) (Proto).z64
-55DED416,40DFEDA0,32,9
+55DED416,40DFEDA0,32,0
 
 Dragon Sword 64 (USA) (Proto) (1999-08-25).z64
-2296B50D,AE6B1E11,32,9
+2296B50D,AE6B1E11,32,0
 
 Dual Heroes (Europe).z64
 5A7E226B,B6524461,12,0
@@ -620,7 +620,7 @@ Dual Heroes (USA).z64
 D09F4DA8,A62230C3,12,0
 
 Duck Dodgers Starring Daffy Duck (USA) (En,Fr,Es) (Beta) (2000-03-07).z64
-1E48D155,59B4F567,32,9
+1E48D155,59B4F567,32,5
 
 Duck Dodgers Starring Daffy Duck (USA) (En,Fr,Es).z64
 3177A905,FBB9F1FA,16,5
@@ -635,7 +635,7 @@ Duke Nukem - Zero Hour (USA).z64
 9A3258D7,04DAF07F,32,0
 
 Duke Nukem 64 (Europe) (Beta).z64
-4A82D036,FF14C1DA,08,9
+4A82D036,FF14C1DA,08,0
 
 Duke Nukem 64 (Europe).z64
 3275ADB0,57BFF74D,08,0
@@ -659,7 +659,7 @@ ECW Hardcore Revolution (Germany).z64
 E9CF3D9F,2138A076,32,0
 
 ECW Hardcore Revolution (USA) (Beta).z64
-0A239818,8107C330,128,9
+0A239818,8107C330,128,0
 
 ECW Hardcore Revolution (USA).z64
 36D368EF,BDF9766D,32,0
@@ -731,7 +731,7 @@ F-Zero X (Japan).z64
 6B1CEF83,4D3E622E,16,1
 
 F-Zero X (USA) (Beta) (The Legend of Zelda Ocarina of Time Overdump).z64
-68FE1CEC,B30ED978,32,9
+68FE1CEC,B30ED978,32,1
 
 F-Zero X (USA).z64
 0B561FBA,B30ED978,16,1
@@ -749,7 +749,7 @@ F1 Racing Championship (Europe) (En,Fr,De,Es,It).z64
 2DA744F5,3CECBCB8,16,0
 
 F1 Racing Championship (Unknown) (Beta).z64
-5A55B4C2,20EC5CAB,32,9
+5A55B4C2,20EC5CAB,32,0
 
 Famista 64 (Japan).z64
 9FB0E6C9,6DFF4C37,12,0
@@ -818,13 +818,13 @@ Fox Sports College Hoops '99 (USA).z64
 67EAF0F3,3261D479,12,0
 
 Freak Boy (Unknown) (Proto).z64
-40632BEC,4471C13E,16,9
+40632BEC,4471C13E,16,0
 
 Frogger 2 (USA) (Proto 1).z64
-8D62268E,AD19A172,32,9
+8D62268E,AD19A172,32,0
 
 Frogger 2 (USA) (Proto 2).z64
-A8F81F39,E8E5B179,32,9
+A8F81F39,E8E5B179,32,0
 
 Fushigi no Dungeon - Fuurai no Shiren 2 - Oni Shuurai! Shiren Jou! (Japan).z64
 2AA6D2A1,F774EAEE,32,1
@@ -875,19 +875,19 @@ Glover (Europe) (En,Fr,De).z64
 90ECEB4A,F5237301,08,5
 
 Glover (USA) (Beta) (1998-07-16) [b].z64
-7A866221,254CC736,64,9
+7A866221,254CC736,64,5
 
 Glover (USA) (Proto) (1998-09-04).z64
-5E091E8F,396ABCEC,24,9
+5E091E8F,396ABCEC,24,5
 
 Glover (USA).z64
 F874571C,8E6E01FF,08,5
 
 Glover 2 (USA) (Proto 1).z64
-D0809AFB,8E9F21D2,32,9
+D0809AFB,8E9F21D2,32,0
 
 Glover 2 (USA) (Proto 2).z64
-29966555,B7F40BCF,08,9
+29966555,B7F40BCF,08,0
 
 Goemon - Mononoke Sugoroku (Japan).z64
 965C4575,B2C6D27F,16,1
@@ -911,7 +911,7 @@ GT 64 - Championship Edition (Europe) (En,Fr,De).z64
 6DFB4747,EE4A0E33,12,6
 
 GT 64 - Championship Edition (USA) (Beta) (1998-05-25).z64
-191BF504,99D5CF89,16,9
+191BF504,99D5CF89,16,6
 
 GT 64 - Championship Edition (USA).z64
 BC627DA7,C49ADCA2,12,6
@@ -932,7 +932,7 @@ Hercules - The Legendary Journeys (Europe) (En,Fr,De,Es,It,Nl).z64
 B1954B08,AE90DBEB,16,0
 
 Hercules - The Legendary Journeys (Unknown) (Beta).z64
-A7759499,59C92A8D,24,9
+A7759499,59C92A8D,24,0
 
 Hercules - The Legendary Journeys (USA).z64
 4948892B,7F3CEB77,16,0
@@ -1031,7 +1031,7 @@ In-Fisherman - Bass Hunter 64 (USA).z64
 D8EB5E6E,8C138BE0,08,5
 
 Indiana Jones and the Infernal Machine (Australia) (Proto).z64
-337219BE,3A6F8C6B,32,9
+337219BE,3A6F8C6B,32,5
 
 Indiana Jones and the Infernal Machine (USA).z64
 4978EB57,AF9DCC15,32,5
@@ -1040,7 +1040,7 @@ Indy Racing 2000 (USA).z64
 A5163F29,E436467A,16,5
 
 International Superstar Soccer '98 (Europe) (Beta) (1998-03-02).z64
-A63DCB66,CAF12C9E,16,9
+A63DCB66,CAF12C9E,16,0
 
 International Superstar Soccer '98 (Europe).z64
 BF23945D,F41B6343,12,0
@@ -1139,7 +1139,7 @@ Jikkyou Powerful Pro Yakyuu 2000 (Japan).z64
 351CDE48,0AC244D1,16,1
 
 Jikkyou Powerful Pro Yakyuu 4 (Japan) (Beta) (1996-11-30).z64
-1B8B9A68,C56BC5F8,16,9
+1B8B9A68,C56BC5F8,16,0
 
 Jikkyou Powerful Pro Yakyuu 4 (Japan) (Rev 1).z64
 40E3AC61,D7891F1C,12,0
@@ -1250,7 +1250,7 @@ Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es) (Rev 1) (Debug).z64
 04EA55EA,9FC385E5,64,4
 
 Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es) (Rev 1) (Wii Virtual Console).z64
-A83ABF72,0A5D8F83,32,9
+A83ABF72,0A5D8F83,32,4
 
 Legend of Zelda, The - Majora's Mask (Europe) (En,Fr,De,Es) (Rev 1).z64
 E2E6823D,0A5D8F83,32,4
@@ -1262,16 +1262,16 @@ Legend of Zelda, The - Majora's Mask (Europe) (GameCube).z64
 12836E19,6AECEC4F,32,4
 
 Legend of Zelda, The - Majora's Mask (USA) (Demo) (Kiosk).z64
-DCC110A0,BF799345,32,9
+DCC110A0,BF799345,32,4
 
 Legend of Zelda, The - Majora's Mask (USA) (GameCube).z64
-B008458F,B443EB08,32,9
+B008458F,B443EB08,32,4
 
 Legend of Zelda, The - Majora's Mask (USA).z64
 B428D8A7,5354631C,32,4
 
 Legend of Zelda, The - Ocarina of Time (Europe) (Beta) (2003-02-13) (GameCube).z64
-C188ACDA,87121EFE,64,9
+C188ACDA,87121EFE,64,1
 
 Legend of Zelda, The - Ocarina of Time (Europe) (Debug) (GameCube).z64
 5D1B2996,871E1C92,64,1
@@ -1286,7 +1286,7 @@ Legend of Zelda, The - Ocarina of Time (Europe) (GameCube).z64
 3FBD519F,09465AC3,32,1
 
 Legend of Zelda, The - Ocarina of Time (USA) (Beta).z64
-6C348AA8,48CA05F4,32,9
+6C348AA8,48CA05F4,32,1
 
 Legend of Zelda, The - Ocarina of Time (USA) (GameCube).z64
 346DE3AE,F3DD35BA,32,1
@@ -1301,7 +1301,7 @@ Legend of Zelda, The - Ocarina of Time (USA).z64
 CD16C529,EC7011B7,32,1
 
 Legend of Zelda, The - Ocarina of Time - Master Quest (Europe) (Debug) (GameCube).z64
-A1D34E08,917D18F6,64,9
+A1D34E08,917D18F6,64,1
 
 Legend of Zelda, The - Ocarina of Time - Master Quest (Europe) (GameCube).z64
 832D6449,1D4136F3,32,1
@@ -1337,7 +1337,7 @@ Mace - The Dark Age (Europe).z64
 57DDEDE1,1145443D,12,0
 
 Mace - The Dark Age (Unknown) (Beta).z64
-2B23212F,06335838,12,9
+2B23212F,06335838,12,0
 
 Mace - The Dark Age (USA).z64
 D2A363A6,6B700750,12,0
@@ -1361,7 +1361,7 @@ Madden NFL 99 (Europe).z64
 D0929942,3925D625,12,0
 
 Madden NFL 99 (USA) (Beta) (1998-08-05).z64
-033A2CA6,076F8FB3,16,9
+033A2CA6,076F8FB3,16,0
 
 Madden NFL 99 (USA) (Rev 1).z64
 56769A44,DF09D625,12,0
@@ -1436,19 +1436,19 @@ Mario Party (USA).z64
 4D60ABE5,2829657E,32,5
 
 Mario Party 2 (Europe) (En,Fr,De,Es,It) (Wii Virtual Console).z64
-DCA66040,82380387,32,9
+DCA66040,82380387,32,5
 
 Mario Party 2 (Europe) (En,Fr,De,Es,It).z64
 DC00357A,82380387,32,5
 
 Mario Party 2 (Japan) (Wii Virtual Console).z64
-FDC89220,ED567D0F,32,9
+FDC89220,ED567D0F,32,5
 
 Mario Party 2 (Japan).z64
 7457B081,ED567D0F,32,5
 
 Mario Party 2 (USA) (Wii Virtual Console).z64
-6F45853E,9EA95858,32,9
+6F45853E,9EA95858,32,5
 
 Mario Party 2 (USA).z64
 E58A1955,9EA95858,32,5
@@ -1460,7 +1460,7 @@ Mario Party 3 (Japan).z64
 3FC04053,0B0AB4CD,32,6
 
 Mario Party 3 (USA) (Beta).z64
-697C1777,3734932E,64,9
+697C1777,3734932E,64,6
 
 Mario Party 3 (USA).z64
 B7445DDC,7C3829D9,32,6
@@ -1469,25 +1469,25 @@ Mario Story (Japan).z64
 BD60CA66,3BA7CDDC,40,4
 
 Mario Tennis (Europe) (Wii Virtual Console).z64
-E9BA8E6B,839F3AD5,16,9
+E9BA8E6B,839F3AD5,16,6
 
 Mario Tennis (Europe).z64
 29AA5DF4,839F3AD5,16,6
 
 Mario Tennis (USA) (Wii Virtual Console).z64
-8E85B369,5001CF4F,16,9
+8E85B369,5001CF4F,16,6
 
 Mario Tennis (USA).z64
 4E9560F6,5001CF4F,16,6
 
 Mario Tennis 64 (Japan) (Wii Virtual Console).z64
-32C58AF3,3A6C42B5,16,9
+32C58AF3,3A6C42B5,16,6
 
 Mario Tennis 64 (Japan).z64
 C665301D,3A6C42B5,16,6
 
 Mega Man 64 (USA) (Beta).z64
-D3562B57,27C985A8,64,9
+D3562B57,27C985A8,64,4
 
 Mega Man 64 (USA).z64
 1BFC71F0,0EC158F5,32,4
@@ -1526,7 +1526,7 @@ Milo's Astro Lanes (USA).z64
 172FCA97,2E955ECD,04,0
 
 Mini Racers (USA) (Ja) (Proto).z64
-F59F881B,21548CA9,16,9
+F59F881B,21548CA9,16,0
 
 Mischief Makers (Europe).z64
 68A4F072,418BDA98,08,5
@@ -1781,7 +1781,7 @@ Nuclear Strike 64 (Europe) (En,Fr).z64
 9AFBFCAF,8A97A197,32,0
 
 Nuclear Strike 64 (Germany) (Beta) (1999-11-17).z64
-020B6443,26B3E6E9,32,9
+020B6443,26B3E6E9,32,0
 
 Nuclear Strike 64 (Germany).z64
 D175397B,8F50B845,32,0
@@ -1823,7 +1823,7 @@ Ogre Battle 64 - Person of Lordly Caliber (USA).z64
 A05AEA85,E6419BC5,40,1
 
 Ogre Battle 64 - Person of Lordly Caliber (USA, Europe) (Rev 1) (Wii Virtual Console).z64
-19337B04,0ADAECA7,40,9
+19337B04,0ADAECA7,40,1
 
 Olympic Hockey 98 (Europe) (En,Fr,De,Es).z64
 5A805C2E,AE2D3A35,08,0
@@ -1868,7 +1868,7 @@ Penny Racers (USA).z64
 C1E57337,73ABB1FB,08,5
 
 Perfect Dark (Europe) (Debug Version) (2000-04-26).z64
-B33C4A54,F9864452,32,9
+B33C4A54,F9864452,32,6
 
 Perfect Dark (Europe) (En,Fr,De,Es,It).z64
 7718A714,E4B08007,32,6
@@ -1877,7 +1877,7 @@ Perfect Dark (Japan).z64
 639C0DA9,96747EB4,32,6
 
 Perfect Dark (USA) (Debug Version) (2000-03-22).z64
-B568A9FE,2CE75AEF,32,9
+B568A9FE,2CE75AEF,32,6
 
 Perfect Dark (USA) (Rev 1).z64
 4C1677F7,41F2B98F,32,6
@@ -1904,25 +1904,25 @@ Pilotwings 64 (USA).z64
 728807E7,C851961C,08,5
 
 Pokemon Puzzle League (Europe) (Wii Virtual Console).z64
-13F996B2,4A1CD153,32,9
+13F996B2,4A1CD153,32,4
 
 Pokemon Puzzle League (Europe).z64
 75839254,4A1CD153,32,4
 
 Pokemon Puzzle League (France) (Wii Virtual Console).z64
-8671137D,3EB2E6F3,32,9
+8671137D,3EB2E6F3,32,4
 
 Pokemon Puzzle League (France).z64
 C3AA0074,3EB2E6F3,32,4
 
 Pokemon Puzzle League (Germany) (Wii Virtual Console).z64
-00E73008,7A4747AC,32,9
+00E73008,7A4747AC,32,4
 
 Pokemon Puzzle League (Germany).z64
 AC543150,7A4747AC,32,4
 
 Pokemon Puzzle League (USA) (Wii Virtual Console).z64
-91623130,19C553A7,32,9
+91623130,19C553A7,32,4
 
 Pokemon Puzzle League (USA).z64
 8B9C598F,19C553A7,32,4
@@ -1943,7 +1943,7 @@ Pokemon Snap (Italy).z64
 DF56E922,C0C85046,16,4
 
 Pokemon Snap (Japan) (Rev 1) (Wii Virtual Console).z64
-A761DAEF,E0044E9E,16,9
+A761DAEF,E0044E9E,16,4
 
 Pokemon Snap (Japan).z64
 A091BD56,EC0F690D,16,4
@@ -2132,7 +2132,7 @@ Resident Evil 2 (USA).z64
 832EA1DA,2F493DD0,64,1
 
 Road Rash 64 (Europe) (Beta) (1999-10-12).z64
-4FB98385,82F19ACA,32,9
+4FB98385,82F19ACA,32,0
 
 Road Rash 64 (Europe).z64
 3C664A7B,02D8366A,32,0
@@ -2150,10 +2150,10 @@ Robot Poncots 64 - 7tsu no Umi no Caramel (Japan).z64
 3B0F8061,272B690F,32,6
 
 Robotech - Crystal Dreams (USA) (Proto 1).z64
-BAA8646D,A6B25452,16,9
+BAA8646D,A6B25452,16,0
 
 Robotech - Crystal Dreams (USA) (Proto 2).z64
-F9A7904E,75A0B893,16,9
+F9A7904E,75A0B893,16,0
 
 Robotron 64 (Europe).z64
 23BF4956,9FF69D4F,08,0
@@ -2162,7 +2162,7 @@ Robotron 64 (USA).z64
 B2CBAE58,AC8E4B32,08,0
 
 Rocket - Robot on Wheels (Europe) (Beta) (1999-09-29).z64
-7D766772,77233244,24,9
+7D766772,77233244,24,5
 
 Rocket - Robot on Wheels (Europe) (En,Fr,De).z64
 7DE5D20D,9FD375F8,12,5
@@ -2174,7 +2174,7 @@ Rockman Dash - Hagane no Boukenshin (Japan).z64
 61EAEE83,D666593B,32,4
 
 Ronaldinho's Soccer 64 (Brazil) (Unl) (Pirate).z64
-C296ECA1,6F46DA42,08,9
+C296ECA1,6F46DA42,08,0
 
 RR64 - Ridge Racer 64 (Europe).z64
 DD9AE3A8,FEE97010,32,6
@@ -2327,7 +2327,7 @@ South Park - Chef's Luv Shack (USA).z64
 6B6B1D09,C00CA948,16,0
 
 South Park Rally (Europe) (Beta).z64
-1C535592,7E42287C,16,9
+1C535592,7E42287C,16,0
 
 South Park Rally (Europe).z64
 296E3525,4F8AFC3A,16,0
@@ -2357,7 +2357,7 @@ Spider-Man (USA).z64
 696CC2A4,A60ED171,32,0
 
 Star Fox 64 (Japan) (Rev 1) (Wii Virtual Console).z64
-6508D4AD,65AEDEEF,12,9
+6508D4AD,65AEDEEF,12,5
 
 Star Fox 64 (Japan).z64
 411142A7,FFCAA7C1,12,5
@@ -2393,10 +2393,10 @@ Star Wars - Shadows of the Empire (Europe).z64
 F0A191BF,4D486681,12,5
 
 Star Wars - Shadows of the Empire (USA) (Aftermarket) (Unl).z64
-776A069B,1C5EE088,16,9
+776A069B,1C5EE088,16,5
 
 Star Wars - Shadows of the Empire (USA) (Beta) (1996-10-15).z64
-28368603,FB315F95,12,9
+28368603,FB315F95,12,5
 
 Star Wars - Shadows of the Empire (USA) (Rev 1).z64
 B0540688,4147B091,12,5
@@ -2426,7 +2426,7 @@ Star Wars Episode I - Racer (Japan).z64
 97C155C5,61F5B152,32,6
 
 Star Wars Episode I - Racer (USA) (Aftermarket) (Unl).z64
-FB401A2A,21CD632F,32,9
+FB401A2A,21CD632F,32,6
 
 Star Wars Episode I - Racer (USA).z64
 C53C1035,72F70398,32,6
@@ -2435,10 +2435,10 @@ StarCraft 64 (Australia).z64
 2639DAE2,42CF5EA3,32,4
 
 StarCraft 64 (Germany) (Proto).z64
-2B1C9FE4,FD6907F0,32,9
+2B1C9FE4,FD6907F0,32,4
 
 StarCraft 64 (USA) (Beta).z64
-B0E1654F,BC9B2CC3,32,9
+B0E1654F,BC9B2CC3,32,4
 
 StarCraft 64 (USA).z64
 4E4C7EC9,0684FBFB,32,4
@@ -2501,7 +2501,7 @@ Superman (Europe) (En,Fr,De,Es,It,Nl).z64
 BCA4FF8C,B44CAB74,08,0
 
 Superman (USA) (Beta) (1998-09-06).z64
-A0897826,944FAFC4,32,9
+A0897826,944FAFC4,32,0
 
 Superman - The New Superman Aventures (USA) (En,Fr,Es).z64
 437E3677,A2E8F35B,08,0
@@ -2510,13 +2510,13 @@ Susume! Taisen Puzzle Dama - Toukon! Marutama Chou (Japan).z64
 4CD21372,35E811F3,08,0
 
 Sydney 2000 (Europe) (Proto).z64
-DB7B31B9,ECBD95DD,32,9
+DB7B31B9,ECBD95DD,32,0
 
 Sydney 2000 (USA) (Proto).z64
-5B6673AA,80A78080,32,9
+5B6673AA,80A78080,32,0
 
 Tamiya Racing 64 (USA) (Proto).z64
-1B4C53FA,37955E65,16,9
+1B4C53FA,37955E65,16,0
 
 Tarzan (Europe).z64
 7737ED9E,D614E5BF,16,0
@@ -2534,7 +2534,7 @@ Taz Express (Europe) (En,Fr,De,Es,It,Nl).z64
 0712C306,AEBCDD54,12,5
 
 Taz Express (USA) (Proto) (2000-05-15).z64
-DDE7CFBD,6C2C6C49,32,9
+DDE7CFBD,6C2C6C49,32,5
 
 Telefoot Soccer 2000 (France).z64
 7BD20931,D9042FBB,16,0
@@ -2576,7 +2576,7 @@ Tom Clancy's Rainbow Six (USA).z64
 53B0CC13,392A0C42,16,0
 
 Tommy Thunder (USA) (Proto) (1997-10-01).z64
-66734854,21260D94,08,9
+66734854,21260D94,08,0
 
 Tonic Trouble (Europe) (En,Fr,De,Es,It).z64
 B4322403,093F916E,16,0
@@ -2585,7 +2585,7 @@ Tonic Trouble (USA) (Rev 1).z64
 1C04BA12,EF9E9714,16,0
 
 Tony Hawk's Pro Skater (USA) (Beta).z64
-F50204DA,1762C9FF,24,9
+F50204DA,1762C9FF,24,0
 
 Tony Hawk's Pro Skater (USA) (Rev 1).z64
 6182A092,E0144180,12,0
@@ -2597,10 +2597,10 @@ Tony Hawk's Pro Skater 2 (Europe).z64
 A1207132,84EAB557,16,0
 
 Tony Hawk's Pro Skater 2 (USA) (Beta) (2001-04-20).z64
-98D0D335,E7641245,32,9
+98D0D335,E7641245,32,0
 
 Tony Hawk's Pro Skater 2 (USA) (v012) (Beta) (2001-06-04).z64
-BCF178C5,404E8D71,32,9
+BCF178C5,404E8D71,32,0
 
 Tony Hawk's Pro Skater 2 (USA).z64
 80AA83F3,99150E18,16,0
@@ -2612,7 +2612,7 @@ Tony Hawk's Skateboarding (Europe).z64
 39E4F766,9F8926A5,12,0
 
 Toon Panic (Japan) (Proto).z64
-CF396C4E,9A746EBF,12,9
+CF396C4E,9A746EBF,12,0
 
 Top Gear Hyper Bike (Europe).z64
 BAE57EA7,5F3F49C6,16,0
@@ -2621,7 +2621,7 @@ Top Gear Hyper Bike (Japan).z64
 09B2CDA1,845B0269,16,0
 
 Top Gear Hyper-Bike (USA) (Beta).z64
-00C0278A,75FBDE20,32,9
+00C0278A,75FBDE20,32,0
 
 Top Gear Hyper-Bike (USA).z64
 6EEBC26A,8ECC02F0,16,0
@@ -2648,7 +2648,7 @@ Top Gear Rally (USA).z64
 137287F5,62269B3D,08,0
 
 Top Gear Rally 2 (Europe) (Beta) (1999-08-31).z64
-3C77C5D6,EFDF9140,16,9
+3C77C5D6,EFDF9140,16,0
 
 Top Gear Rally 2 (Europe).z64
 CB294D39,BEBAB677,12,0
@@ -2753,25 +2753,25 @@ Turok 2 - Seeds of Evil (USA).z64
 FF5E7636,49088A11,32,0
 
 Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-05-31).z64
-66E63BBC,D124DBB7,32,9
+66E63BBC,D124DBB7,32,0
 
 Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-06-06) [b].z64
-7946B05A,37FA8F16,32,9
+7946B05A,37FA8F16,32,0
 
 Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-07-10) [b].z64
-3CD1F9AF,D25C1211,32,9
+3CD1F9AF,D25C1211,32,0
 
 Turok 3 - Shadow of Oblivion (Europe) (Beta) (2000-07-16).z64
-9A01A5F4,A2421F2A,32,9
+9A01A5F4,A2421F2A,32,0
 
 Turok 3 - Shadow of Oblivion (Europe).z64
 98D3114C,6A162FF2,32,0
 
 Turok 3 - Shadow of Oblivion (USA) (Beta) (2000-06-26).z64
-58C4C0AB,7869A9A1,32,9
+58C4C0AB,7869A9A1,32,0
 
 Turok 3 - Shadow of Oblivion (USA) (Beta) (2000-07-21).z64
-667B553D,89A579F1,32,9
+667B553D,89A579F1,32,0
 
 Turok 3 - Shadow of Oblivion (USA).z64
 CB297224,89A579F1,32,0
@@ -2795,7 +2795,7 @@ V-Rally Edition 99 (USA).z64
 4803075E,3C059038,08,5
 
 Viewpoint 2064 (Japan) (Proto).z64
-93A630CB,5D40ED2C,16,9
+93A630CB,5D40ED2C,16,0
 
 Vigilante 8 (Europe).z64
 0E9BB6D6,151F79F4,08,0
@@ -2927,7 +2927,7 @@ Wetrix (USA) (En,Fr,De,Es,It,Nl).z64
 50CD1F71,CEA8B54F,08,0
 
 Whack 'n' Roll (USA) (Beta) (1998-02-05).z64
-74DF67BB,99DEEFD1,03,9
+74DF67BB,99DEEFD1,03,0
 
 Wheel of Fortune (USA).z64
 8D3EFA8D,E896092B,04,0
@@ -2936,7 +2936,7 @@ Wild Choppers (Japan).z64
 D6136DC5,0CEBC4C7,08,5
 
 Wildwaters (USA) (Proto) (1999-06-15).z64
-40443C67,A04237B9,16,9
+40443C67,A04237B9,16,0
 
 WinBack (Japan) (Rev 1).z64
 927383BB,C52E0BC6,16,0
@@ -2948,7 +2948,7 @@ WinBack - Covert Operations (USA).z64
 64C817C5,ED98957E,16,0
 
 Wipeout 64 (Europe) (Beta).z64
-944B258F,136EBEE3,16,9
+944B258F,136EBEE3,16,0
 
 Wipeout 64 (Europe).z64
 38111048,54310E7D,08,0
@@ -3014,7 +3014,7 @@ WWF WrestleMania 2000 (USA).z64
 0B50B4C6,90A59003,32,1
 
 X'treme Roller (Unknown) (Proto).z64
-FCE6875F,4AE3C1CA,24,9
+FCE6875F,4AE3C1CA,24,0
 
 Xena - Warrior Princess - The Talisman of Fate (Europe).z64
 D3932F88,0A1667C7,12,0
