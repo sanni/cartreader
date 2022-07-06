@@ -1,5 +1,5 @@
-### Copy these files to the root of your SD card.      
-Tip: You can select them all, right-click, properties, mark checkbox Hidden and now they won't show up in the Cart Reader's file browser.    
+### Copy these files to the root of your SD card. If you're on Linux or MAC make sure the Windows style line endings(CRLF) don't get removed.      
+Hint: You can select all the databases, right-click, properties, mark checkbox Hidden and now they won't show up in the Cart Reader's file browser.    
 
 ## gb.txt / md.txt / pce.txt / sms.txt    
 These files store the ROM names and the CRC32 checksums.    
