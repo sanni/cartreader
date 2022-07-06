@@ -230,9 +230,9 @@ void nesMenu() {
     case 1:
 #ifndef no-intro
       CartStart();
-      readPRG();
+      readPRG(false);
       delay(2000);
-      readCHR();
+      readCHR(false);
       delay(2000);
       outputNES();
       delay(2000);
@@ -315,7 +315,7 @@ void nesChipMenu() {
     // Read PRG
     case 0:
       CreateROMFolderInSD();
-      readPRG();
+      readPRG(false);
       resetROM();
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
@@ -326,7 +326,7 @@ void nesChipMenu() {
     // Read CHR
     case 1:
       CreateROMFolderInSD();
-      readCHR();
+      readCHR(false);
       resetROM();
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
@@ -609,14 +609,14 @@ void readRom_NES() {
   draw_progressbar(processedProgressBar, totalProgressBar);
 
   //Write PRG
-  readPRG();
+  readPRG(true);
 
   // update progress bar
   processedProgressBar += prgsize * 16 * 1024;
   draw_progressbar(processedProgressBar, totalProgressBar);
 
   //Write CHR
-  readCHR();
+  readCHR(true);
 
   // update progress bar
   processedProgressBar += chrsize * 4 * 1024;
@@ -2307,21 +2307,22 @@ void writeMMC5RAM(word base, word address) { // MMC5 SRAM WRITE
   write_prg_byte(0x5103, 0); // PRG RAM PROTECT2
 }
 
-void readPRG() {
-#ifndef no-intro
-  display_Clear();
-  display_Update();
+void readPRG(boolean readrom) {
+  if (!readrom) {
+    display_Clear();
+    display_Update();
 
-  LED_BLUE_ON;
-  set_address(0);
-  _delay_us(1);
-  CreatePRGFileInSD();
+    LED_BLUE_ON;
+    set_address(0);
+    _delay_us(1);
+    CreatePRGFileInSD();
+  }
+  else {
+    set_address(0);
+    _delay_us(1);
+  }
+
   word base = 0x8000;
-#else
-  set_address(0);
-  _delay_us(1);
-  word base = 0x8000;
-#endif
 
   if (myFile) {
     switch (mapper) {
@@ -2801,15 +2802,17 @@ void readPRG() {
         }
         break;
     }
-#ifndef no-intro
-    myFile.flush();
-    myFile.close();
+    if (!readrom) {
+      myFile.flush();
+      myFile.close();
 
-    println_Msg(F("PRG FILE DUMPED!"));
-    println_Msg(F(""));
-    display_Update();
-    calcCRC(fileName, prg * 1024, &prg_crc32, 0);
+      println_Msg(F("PRG FILE DUMPED!"));
+      println_Msg(F(""));
+      display_Update();
+#ifndef no-intro
+      calcCRC(fileName, prg * 1024, &prg_crc32, 0);
 #endif
+    }
   }
   set_address(0);
   PHI2_HI;
@@ -2817,11 +2820,11 @@ void readPRG() {
   LED_BLUE_OFF;
 }
 
-void readCHR() {
-#ifndef no-intro
-  display_Clear();
-  display_Update();
-#endif
+void readCHR(boolean readrom) {
+  if (!readrom) {
+    display_Clear();
+    display_Update();
+  }
 
   LED_GREEN_ON;
   set_address(0);
@@ -2831,9 +2834,9 @@ void readCHR() {
     display_Update();
   }
   else {
-#ifndef no-intro
-    CreateCHRFileInSD();
-#endif
+    if (!readrom) {
+      CreateCHRFileInSD();
+    }
     if (myFile) {
       switch (mapper) {
         case 0: // 8K
@@ -3360,15 +3363,17 @@ void readCHR() {
           }
           break;
       }
-#ifndef no-intro
-      myFile.flush();
-      myFile.close();
+      if (!readrom) {
+        myFile.flush();
+        myFile.close();
 
-      println_Msg(F("CHR FILE DUMPED!"));
-      println_Msg(F(""));
-      display_Update();
-      calcCRC(fileName, chr * 1024, &chr_crc32, 0);
+        println_Msg(F("CHR FILE DUMPED!"));
+        println_Msg(F(""));
+        display_Update();
+#ifndef no-intro
+        calcCRC(fileName, chr * 1024, &chr_crc32, 0);
 #endif
+      }
     }
   }
   set_address(0);
