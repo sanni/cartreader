@@ -22,7 +22,6 @@
 // C46         : INT (for RTC alarm interrupt)
 // C47         : CLK (384KHz on WS)
 
-#include "options.h"
 #ifdef enable_WS
 
 #ifdef ws_adapter_v2

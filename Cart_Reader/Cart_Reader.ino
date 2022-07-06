@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             03.07.2022
+   Date:             07.07.2022
    Version:          9.0 BETA
 
    SD lib: https://github.com/greiman/SdFat
@@ -39,7 +39,7 @@
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
-   Uzlopak, sakman55, scrap-a, Tombo89, borti4938, vogelfreiheit, CaitSith2, Modman, philenotfound
+   Uzlopak, sakman55, Tombo89, scrap-a, Tombo89, borti4938, vogelfreiheit, CaitSith2, Modman, philenotfound
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
@@ -60,12 +60,108 @@
 
 char ver[5] = "9.0B";
 
+//******************************************
+// !!! CHOOSE HARDWARE VERSION !!!
+//******************************************
+// Remove // in front of the line with your hardware version
+// #define HW5
+// #define HW4
+// #define HW3
+// #define HW2
+// #define HW1
+// #define SERIAL_MONITOR
+
+#if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
+# error !!! PLEASE CHOOSE HARDWARE VERSION !!!
+#endif
+
+//******************************************
+// HW CONFIGS
+//******************************************
+#if (defined(HW4) || defined(HW5))
+#define enable_LCD
+#define enable_neopixel
+#define background_color 100,0,0 //Green, Red, Blue
+#define enable_rotary
+// #define rotate_counter_clockwise
+#define clockgen_installed
+#define fastcrc
+#define ws_adapter_v2
+#endif
+
+#if (defined(HW2) || defined(HW3))
+#define enable_OLED
+#define enable_Button2
+// #define clockgen_installed
+// #define fastcrc
+#endif
+
+#if defined(HW1)
+#define enable_OLED
+#endif
+
+#if defined(SERIAL_MONITOR)
+#define enable_serial
+#define clockgen_installed
+#define fastcrc
+#endif
+
+//******************************************
+// OPTIONS
+//******************************************
+// Change mainMenu to snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu,
+// flashMenu, nesMenu or smsMenu for single slot Cart Readers
+#define startMenu mainMenu
+
+// Write all info to OSCR_LOG.txt in root dir
+#define global_log
+
+// Renames ROM if found in database
+#define no-intro
+
+// Ignores errors that normally force a reset if button 2 is pressed
+// #define debug_mode
+
+// Setup RTC if installed.
+// #define RTC_installed
+
+// Use calibration data from snes_clk.txt
+// #define clockgen_calibration
+
+// Use Adafruit Clock Generator
+// #define clockgen_installed
+
+// I don't know
+//#define use_md_conf
+
+// The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
+// #define fastcrc
+
+// saves a n64log.txt file with rom info in /N64/ROM
+// #define savesummarytotxt
+
+//******************************************
+// DISABLE MODULES
+//******************************************
+// add // before #define to disable a module
+#define enable_SNES
+#define enable_NP
+#define enable_SV
+
+#define enable_MD
+#define enable_SMS
+
+#define enable_N64
+#define enable_GBX
+#define enable_NES
+#define enable_FLASH
+#define enable_PCE
+#define enable_WS
+#define enable_NGP
+
 /******************************************
    Libraries
  *****************************************/
-// Options
-#include "options.h"
-
 // Basic Libs
 #include <SPI.h>
 #include <Wire.h>
@@ -367,14 +463,17 @@ inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
 }
 
 // Calculate rom's CRC32 from SD
-uint32_t calculateCRC(char* fileName, char* folder) {
+uint32_t calculateCRC(char* fileName, char* folder, int offset) {
   // Open folder
   sd.chdir(folder);
   // Open file
   if (myFile.open(fileName, O_READ)) {
     uint32_t oldcrc32 = 0xFFFFFFFF;
 
-    for (unsigned long currByte = 0; currByte < (myFile.fileSize() / 512); currByte++) {
+    // Skip iNES header
+    myFile.seek(offset);
+
+    for (unsigned long currByte = 0; currByte < ((myFile.fileSize() - offset) / 512); currByte++) {
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 512; c++) {
         oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
@@ -446,7 +545,7 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi)
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
-boolean compareCRC(char* database, char* crcString) {
+boolean compareCRC(char* database, char* crcString, int offset) {
 #ifdef no-intro
   char crcStr[9];
   if (crcString == 0) {
@@ -455,7 +554,7 @@ boolean compareCRC(char* database, char* crcString) {
     // Calculate CRC32
     print_Msg(F("CRC32... "));
     display_Update();
-    sprintf(crcStr, "%08lX", calculateCRC(fileName, folder));
+    sprintf(crcStr, "%08lX", calculateCRC(fileName, folder, offset));
   }
   else {
     // Use precalculated crc
@@ -579,7 +678,11 @@ void mainMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-      checkStatus_NES();
+#ifdef no-intro
+      checkStatus_NES(getMapping());
+#else
+      checkStatus_NES(0);
+#endif
       nesMenu();
       mode = mode_NES;
       break;
@@ -734,7 +837,11 @@ void addonsMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-      checkStatus_NES();
+#ifdef no-intro
+      checkStatus_NES(getMapping());
+#else
+      checkStatus_NES(0);
+#endif
       nesMenu();
       mode = mode_NES;
       break;
@@ -869,6 +976,341 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
     //Update display
     display_Update();
   }
+}
+
+/******************************************
+  RTC Module
+*****************************************/
+#ifdef RTC_installed
+
+#include "RTC.h"
+#include "SdFat.h"
+
+RTC_DS3231 rtc;
+
+// Start Time
+void RTCStart() {
+  // Start RTC
+  if (! rtc.begin()) {
+    abort();
+  }
+
+  // Set RTC Date/Time of Sketch Build if it lost battery power
+  // After initial setup it would have lost battery power ;)
+  if (rtc.lostPower()) {
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+}
+
+// Set Date/Time Callback Funtion
+// Callback for file timestamps
+void dateTime(uint16_t* date, uint16_t* time) {
+  DateTime now = rtc.now();
+
+  // Return date using FAT_DATE macro to format fields
+  *date = FAT_DATE(now.year(), now.month(), now.day());
+
+  // Return time using FAT_TIME macro to format fields
+  *time = FAT_TIME(now.hour(), now.minute(), now.second());
+}
+
+
+/******************************************
+  RTC Time Stamp Setup
+  Call in any other script
+*****************************************/
+// Format a Date/Time stamp
+String RTCStamp() {
+  // Set a format
+  char dtstamp[] = "DDMMMYYYY hh:mm:ssAP";
+
+  // Get current Date/Time
+  DateTime now = rtc.now();
+
+  // Convert it to a string and caps lock it
+  String dts = now.toString(dtstamp);
+  dts.toUpperCase();
+
+  // Print results
+  return dts;
+}
+#endif
+
+/******************************************
+   Clockgen Calibration
+ *****************************************/
+#ifdef clockgen_calibration
+#include <FreqCount.h>
+#include "snes_clk.h"
+#include "SdFat.h"
+
+int32_t cal_factor = 0;
+int32_t old_cal = 0;
+int32_t cal_offset = 100;
+
+void clkcal()   {
+  // Adafruit Clock Generator
+  // last number is the clock correction factor which is custom for each clock generator
+  cal_factor = readClockOffset();
+
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("Read correction: ");
+  display.println(cal_factor);
+  display.display();
+  delay(500);
+
+  if (cal_factor > INT32_MIN) {
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, cal_factor);
+  } else {
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    cal_factor = 0;
+  }
+
+  if (!i2c_found) {
+    display_Clear();
+    print_Error(F("Clock Generator not found"), true);
+  }
+
+  //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
+  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+  clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+  //clockgen.pll_reset(SI5351_PLLA);
+  //clockgen.pll_reset(SI5351_PLLB);
+  clockgen.set_freq(400000000ULL, SI5351_CLK0);
+  clockgen.set_freq(100000000ULL, SI5351_CLK1);
+  clockgen.set_freq(307200000ULL, SI5351_CLK2);
+  clockgen.output_enable(SI5351_CLK1, 1);
+  clockgen.output_enable(SI5351_CLK2, 1);
+  clockgen.output_enable(SI5351_CLK0, 1);
+
+  // Frequency Counter
+  delay(500);
+  FreqCount.begin(1000);
+  while (1)
+  {
+    if (old_cal != cal_factor) {
+      display_Clear();
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F("     Adjusting"));
+      display_Update();
+      clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
+      clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+      clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+      clockgen.pll_reset(SI5351_PLLA);
+      clockgen.pll_reset(SI5351_PLLB);
+      clockgen.set_freq(400000000ULL, SI5351_CLK0);
+      clockgen.set_freq(100000000ULL, SI5351_CLK1);
+      clockgen.set_freq(307200000ULL, SI5351_CLK2);
+      old_cal = cal_factor;
+      delay(500);
+    }
+    else {
+      clockgen.update_status();
+      while (clockgen.dev_status.SYS_INIT == 1) {
+      }
+
+      if (FreqCount.available()) {
+        float count = FreqCount.read();
+        display_Clear();
+        println_Msg(F("Clock Calibration"));
+        println_Msg(F(""));
+        print_Msg(F("Freq:   "));
+        print_Msg(count);
+        println_Msg(F("Hz"));
+        print_Msg(F("Correction:"));
+        print_right(cal_factor);
+        print_Msg(F("Adjustment:"));
+        print_right(cal_offset);
+#ifdef enable_Button2
+        println_Msg(F("(Hold button to save)"));
+        println_Msg(F(""));
+        println_Msg(F("Decrease     Increase"));
+#else
+#ifdef enable_rotary
+        println_Msg(F("Rotate to adjust"));
+#else
+        println_Msg(F("Click/dbl to adjust"));
+#endif
+#endif
+        display_Update();
+      }
+#ifdef enable_Button2
+      // get input button
+      int a = checkButton1();
+      int b = checkButton2();
+
+      // if the cart readers input button is pressed shortly
+      if (a == 1) {
+        old_cal = cal_factor;
+        cal_factor -= cal_offset;
+      }
+      if (b == 1) {
+        old_cal = cal_factor;
+        cal_factor += cal_offset;
+      }
+
+      // if the cart readers input buttons is double clicked
+      if (a == 2) {
+        cal_offset /= 10ULL;
+        if (cal_offset < 1)
+        {
+          cal_offset = 100000000ULL;
+        }
+      }
+      if (b == 2) {
+        cal_offset *= 10ULL;
+        if (cal_offset > 100000000ULL)
+        {
+          cal_offset = 1;
+        }
+      }
+
+      // if the cart readers input button is pressed long
+      if (a == 3) {
+        savetofile();
+      }
+      if (b == 3) {
+        savetofile();
+      }
+#else
+      //Handle inputs for either rotary encoder or single button interface.
+      int a = checkButton();
+
+      if (a == 1) { //clockwise rotation or single click
+        old_cal = cal_factor;
+        cal_factor += cal_offset;
+      }
+
+      if (a == 2) {  //counterclockwise rotation or double click
+        old_cal = cal_factor;
+        cal_factor -= cal_offset;
+      }
+
+      if (a == 3) { //button short hold
+        cal_offset *= 10ULL;
+        if (cal_offset > 100000000ULL)
+        {
+          cal_offset = 1;
+        }
+      }
+
+      if (a == 4) { //button long hold
+        savetofile();
+      }
+#endif
+    }
+  }
+}
+
+void print_right(int32_t number)
+{
+  int32_t abs_number = number;
+  if (abs_number < 0)
+    abs_number *= -1;
+  else
+    print_Msg(F(" "));
+
+  if (abs_number == 0)
+    abs_number = 1;
+  while (abs_number < 100000000ULL)
+  {
+    print_Msg(F(" "));
+    abs_number *= 10ULL;
+  }
+  println_Msg(number);
+}
+
+void savetofile() {
+  display_Clear();
+  println_Msg(F("Saving..."));
+  println_Msg(cal_factor);
+  display_Update();
+  delay(2000);
+
+  if (!myFile.open("/snes_clk.txt", O_WRITE | O_CREAT | O_TRUNC)) {
+    print_Error(F("SD Error"), true);
+  }
+  // Write calibration factor to file
+  myFile.print(cal_factor);
+
+  // Close the file:
+  myFile.close();
+  println_Msg(F("Done"));
+  display_Update();
+  delay(1000);
+  resetArduino();
+}
+#endif
+
+#ifdef clockgen_calibration
+int32_t readClockOffset() {
+  FsFile clock_file;
+  char* clock_buf;
+  int16_t i;
+  int32_t clock_offset;
+
+  if (!clock_file.open("/snes_clk.txt", O_READ)) {
+    return INT32_MIN;
+  }
+
+  clock_buf = (char*)malloc(12 * sizeof(char));
+  i = clock_file.read(clock_buf, 11);
+  clock_file.close();
+  if (i == -1) {
+    free(clock_buf);
+    return INT32_MIN;
+  } else if ((i == 11) && (clock_buf[0] != '-')) {
+    free(clock_buf);
+    return INT32_MIN;
+  } else {
+    clock_buf[i] = 0;
+  }
+
+  for (i = 0; i < 12; i++) {
+    if (clock_buf[i] != '-' && clock_buf[i] < '0' && clock_buf[i] > '9') {
+      if (i == 0) {
+        free(clock_buf);
+        return INT32_MIN;
+      } else if ((i == 1) && (clock_buf[0] == '-')) {
+        free(clock_buf);
+        return INT32_MIN;
+      } else {
+        clock_buf[i] = 0;
+      }
+    }
+  }
+
+  clock_offset = atoi32_signed(clock_buf);
+  free(clock_buf);
+
+  return clock_offset;
+}
+#endif
+
+int32_t initializeClockOffset() {
+#ifdef clockgen_calibration
+  FsFile clock_file;
+  const char zero_char_arr[] = {'0'};
+  int32_t clock_offset = readClockOffset();
+  if (clock_offset > INT32_MIN) {
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, clock_offset);
+  } else {
+    i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+    if (clock_file.open("/snes_clk.txt", O_WRITE | O_CREAT | O_TRUNC)) {
+      clock_file.write(zero_char_arr, 1);
+      clock_file.close();
+    }
+  }
+  return clock_offset;
+#else
+  // last number is the clock correction factor which is custom for each clock generator
+  i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  return 0;
+#endif
 }
 
 /******************************************

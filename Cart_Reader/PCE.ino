@@ -10,8 +10,6 @@
 // Chris Covell - Tennokoe bank support
 //
 //******************************************
-
-#include "options.h"
 #ifdef enable_PCE
 
 /******************************************

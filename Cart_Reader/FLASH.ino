@@ -2,8 +2,6 @@
 // FLASHROM MODULE
 // (also includes SNES repro functions)
 //******************************************
-
-#include "options.h"
 #ifdef enable_FLASH
 
 /******************************************

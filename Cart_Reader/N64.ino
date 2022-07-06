@@ -1,15 +1,7 @@
 //******************************************
 // NINTENDO 64 MODULE
 //******************************************
-
-#include "options.h"
 #ifdef enable_N64
-#include "snes_clk.h"
-
-// Include Cart_Reader.ino to allow for calling istablished functions
-#ifdef RTC_installed
-#include "RTC.h"
-#endif
 
 /******************************************
   Defines
@@ -3445,7 +3437,7 @@ redumpsamefolder:
   // Close the file:
   myFile.close();
 
-  if (compareCRC("n64.txt", 0)) {
+  if (compareCRC("n64.txt", 0, 0)) {
 #else
   // dumping rom fast
   byte buffer[1024] = { 0 };
@@ -3538,7 +3530,7 @@ redumpsamefolder:
   sprintf(crcStr, "%08lX", ~oldcrc32);
 
   // Search n64.txt for crc
-  if (compareCRC("n64.txt", crcStr)) {
+  if (compareCRC("n64.txt", crcStr, 0)) {
 #endif
     unsigned long timeElapsed = (millis() - startTime) / 1000; // seconds
     print_Msg(F("Done ("));

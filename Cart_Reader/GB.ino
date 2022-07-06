@@ -1,8 +1,6 @@
 //******************************************
 // GAME BOY MODULE
 //******************************************
-
-#include "options.h"
 #ifdef enable_GBX
 
 /******************************************
@@ -949,7 +947,7 @@ void compare_checksums_GB() {
     println_Msg(calcsumStr);
     print_Error(F("Checksum Error"), false);
   }
-  compareCRC("gb.txt", 0);
+  compareCRC("gb.txt", 0, 0);
   display_Update();
   //go to root
   sd.chdir();

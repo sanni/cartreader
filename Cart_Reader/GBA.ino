@@ -1,8 +1,6 @@
 //******************************************
 // GAME BOY ADVANCE MODULE
 //******************************************
-
-#include "options.h"
 #ifdef enable_GBX
 
 /******************************************
@@ -130,7 +128,7 @@ void gbaMenu() {
       // Internal Checksum
       compare_checksum_GBA();
       // CRC32
-      compareCRC("gba.txt", 0);
+      compareCRC("gba.txt", 0, 0);
 #ifdef global_log
       save_log();
 #endif

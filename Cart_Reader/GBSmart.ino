@@ -2,10 +2,7 @@
 // GB SMART MODULE
 // Supports 32M cart with LH28F016SUT flash
 //******************************************
-
-#include "options.h"
 #ifdef enable_GBX
-
 #define GB_SMART_GAMES_PER_PAGE  6
 
 /******************************************

@@ -1,10 +1,7 @@
 //******************************************
 // SUPER NINTENDO MODULE
 //******************************************
-
-#include "options.h"
 #ifdef enable_SNES
-#include "snes_clk.h"
 
 /******************************************
   Defines
@@ -147,7 +144,6 @@ void snsMenu() {
   snsCart = question_box(F("Select Cart Type"), menuOptions, 5, 0);
 #endif
 
-
   // wait for user choice to come back from the question box menu
   switch (snsCart)
   {
@@ -218,7 +214,7 @@ void snesMenu() {
           // Internal Checksum
           compare_checksum();
           // CRC32
-          compareCRC("snes.txt", 0);
+          compareCRC("snes.txt", 0, 0);
 #ifdef global_log
           save_log();
 #endif

@@ -1,10 +1,7 @@
 //******************************************
 // NINTENDO POWER SF MEMORY MODULE
 //******************************************
-
-#include "options.h"
 #ifdef enable_NP
-#include "snes_clk.h"
 
 /******************************************
    SF Memory Clock Source

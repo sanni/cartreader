@@ -5,9 +5,7 @@
 // also based on "CoolArduino" by HardWareMan
 // Pinout changes: LED and CIRAM_A10
 
-#include "options.h"
 #ifdef enable_NES
-#include "atoi32.h"
 
 //Line Content
 //28   Supported Mappers
@@ -37,7 +35,7 @@ static const byte PROGMEM mapsize [] = {
   3, 0, 1, 0, 3, 0, 0, // cnrom
   4, 1, 5, 0, 6, 0, 1, // mmc3/mmc6                                           [sram/prgram r/w]
   5, 3, 5, 5, 7, 0, 3, // mmc5                                                [sram r/w]
-  7, 3, 4, 0, 0, 0, 0, // axrom
+  7, 2, 4, 0, 0, 0, 0, // axrom
   9, 3, 3, 5, 5, 0, 0, // mmc2 (punch out)
   10, 3, 4, 4, 5, 1, 1, // mmc4                                               [sram r/w]
   13, 1, 1, 0, 0, 0, 0, // cprom (videomation)
@@ -163,13 +161,12 @@ byte prgchk3;
 int eepsize;
 byte bytecheck;
 byte firstbyte;
-
-char flashID[5];
 boolean flashfound = false; // NESmaker 39SF040 Flash Cart
 
 // Files
-FsFile sdFile;
 char fileCount[3];
+
+#ifndef no-intro
 FsFile nesFile;
 uint32_t prg_crc32;
 uint32_t chr_crc32;
@@ -177,6 +174,7 @@ char filePRG[] = "PRG.bin";
 char fileCHR[] = "CHR.bin";
 char fileNES[] = "CART.nes";
 char fileBIN[] = "CART.bin";
+#endif
 
 // Cartridge Config
 byte mapper;
@@ -195,46 +193,42 @@ int b = 0;
   Menu
 *****************************************/
 // NES start menu
-static const char nesMenuItem1[] PROGMEM = "Select Mapper";
-static const char nesMenuItem2[] PROGMEM = "Read complete Cart";
-static const char nesMenuItem3[] PROGMEM = "Read single chip";
-static const char nesMenuItem4[] PROGMEM = "Write RAM/ROM";
-static const char nesMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsNES[] PROGMEM = {nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5};
+static const char nesMenuItem1[] PROGMEM = "Change Mapper";
+static const char nesMenuItem2[] PROGMEM = "Read Rom";
+static const char nesMenuItem3[] PROGMEM = "Read Sram";
+static const char nesMenuItem4[] PROGMEM = "Write Sram";
+static const char nesMenuItem5[] PROGMEM = "Read PRG/CHR";
+static const char nesMenuItem6[] PROGMEM = "Flash NESMaker";
+static const char nesMenuItem7[] PROGMEM = "Reset";
+static const char* const menuOptionsNES[] PROGMEM = {nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, nesMenuItem7};
 
 // NES chips menu
 static const char  nesChipsMenuItem1[] PROGMEM = "Read PRG";
 static const char  nesChipsMenuItem2[] PROGMEM = "Read CHR";
-static const char  nesChipsMenuItem3[] PROGMEM = "Read RAM";
-static const char  nesChipsMenuItem4[] PROGMEM = "Back";
-static const char* const menuOptionsNESChips[] PROGMEM = {nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3, nesChipsMenuItem4};
-
-// NES write menu
-static const char nesWriteMenuItem1[] PROGMEM = "Write RAM";
-static const char nesWriteMenuItem2[] PROGMEM = "Write FLASH";
-static const char nesWriteMenuItem3[] PROGMEM = "Back";
-static const char* const menuOptionsNESWrite[] PROGMEM = {nesWriteMenuItem1, nesWriteMenuItem2, nesWriteMenuItem3};
+static const char  nesChipsMenuItem3[] PROGMEM = "Back";
+static const char* const menuOptionsNESChips[] PROGMEM = {nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3};
 
 // NES start menu
 void nesMenu() {
   // create menu with title "NES CART READER" and 5 options to choose from
-  convertPgm(menuOptionsNES, 5);
-  unsigned char answer = question_box(F("NES CART READER"), menuOptions, 5, 0);
+  convertPgm(menuOptionsNES, 7);
+  unsigned char answer = question_box(F("NES CART READER"), menuOptions, 7, 1);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
-    // Select Mapper
+    // Change Mapper
     case 0:
       setMapper();
       checkMapperSize();
       setPRGSize();
       setCHRSize();
       setRAMSize();
-      checkStatus_NES();
+      checkStatus_NES(0);
       break;
 
-    // Read Complete Cart
+    // Read Rom
     case 1:
+#ifndef no-intro
       CartStart();
       readPRG();
       delay(2000);
@@ -246,23 +240,66 @@ void nesMenu() {
       delay(2000);
       resetROM();
       CartFinish();
+#else
+      display_Clear();
+      // Change working dir to root
+      sd.chdir("/");
+      readRom_NES();
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
 #ifdef global_log
       save_log();
 #endif
+      display_Update();
+      wait();
+#endif
+      break;
+
+    // Read RAM
+    case 2:
+      CreateROMFolderInSD();
+      readRAM();
+      resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
+      display_Update();
+      wait();
+      break;
+
+    // Write RAM
+    case 3:
+      writeRAM();
+      resetROM();
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
+      display_Update();
+      wait();
       break;
 
     // Read single chip
-    case 2:
+    case 4:
       nesChipMenu();
       break;
 
-    // Read single chip
-    case 3:
-      nesWriteMenu();
+    // Write FLASH
+    case 5:
+      if (mapper == 30) {
+        writeFLASH();
+        resetROM();
+      }
+      else {
+        display_Clear();
+        println_Msg(F("Error:"));
+        println_Msg(F("Can't write to this cartridge"));
+        println_Msg(F(""));
+        println_Msg(F("Press Button..."));
+        display_Update();
+      }
+      wait();
       break;
 
     // Reset
-    case 4:
+    case 6:
       resetArduino();
       break;
   }
@@ -270,8 +307,8 @@ void nesMenu() {
 
 void nesChipMenu() {
   // create menu with title "Select NES Chip" and 4 options to choose from
-  convertPgm(menuOptionsNESChips, 4);
-  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 4, 0);
+  convertPgm(menuOptionsNESChips, 3);
+  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 3, 0);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
@@ -297,61 +334,8 @@ void nesChipMenu() {
       wait();
       break;
 
-    // Read RAM
+    // Return to Main Menu
     case 2:
-      CreateROMFolderInSD();
-      readRAM();
-      resetROM();
-      println_Msg(F(""));
-      println_Msg(F("Press Button..."));
-      display_Update();
-      wait();
-      break;
-
-    // Return to Main Menu
-    case 3:
-      nesMenu();
-      wait();
-      break;
-  }
-}
-
-void nesWriteMenu() {
-  // create menu with title "Select NES Chip" and 3 options to choose from
-  convertPgm(menuOptionsNESWrite, 3);
-  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 3, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (answer) {
-    // Write RAM
-    case 0:
-      writeRAM();
-      resetROM();
-      println_Msg(F(""));
-      println_Msg(F("Press Button..."));
-      display_Update();
-      wait();
-      break;
-
-    // Write FLASH
-    case 1:
-      if (mapper == 30) {
-        writeFLASH();
-        resetROM();
-      }
-      else {
-        display_Clear();
-        println_Msg(F("Error:"));
-        println_Msg(F("Can't write to this cartridge"));
-        println_Msg(F(""));
-        println_Msg(F("Press Button..."));
-        display_Update();
-      }
-      wait();
-      break;
-
-    // Return to Main Menu
-    case 3:
       nesMenu();
       wait();
       break;
@@ -386,6 +370,265 @@ void setup_NES() {
   LED_GREEN_OFF;
   LED_BLUE_OFF;
 }
+
+/******************************************
+   Get Mapping from no-intro SD database
+ *****************************************/
+#ifdef no-intro
+// Array to hold iNES header
+byte iNES_HEADER[16];
+//ID 0-3
+//ROM_size 4
+//VROM_size 5
+//ROM_type 6
+//ROM_type2 7
+//ROM_type3 8
+//Upper_ROM_VROM_size 9
+//RAM_size 10
+//VRAM_size 11
+//TV_system 12
+//VS_hardware 13
+//reserved 14, 15
+
+// no clue (taken from fceux)
+uint32_t uppow2(uint32_t n) {
+  int x;
+
+  for (x = 31; x >= 0; x--)
+    if (n & (1u << x))
+    {
+      if ((1u << x) != n)
+        return (1u << (x + 1));
+      break;
+    }
+  return n;
+}
+
+boolean getMapping() {
+  display_Clear();
+  println_Msg(F("Searching database..."));
+  display_Update();
+
+  // Read first 16 bytes of prg rom
+  for (int x = 0; x < 16; x++) {
+    sdBuffer[x] = read_prg_byte(0x8000 + x);
+  }
+
+  // Calculate CRC32
+  uint32_t oldcrc32 = 0xFFFFFFFF;
+  for (int c = 0; c < 16; c++) {
+    oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
+  }
+  char crcStr[9];
+  char tempStr2[2];
+  char iNES_STR[33];
+  sprintf(crcStr, "%08lX", ~oldcrc32);
+
+  // Search in database
+  //Search for CRC32 in file
+  char gamename[100];
+  char crc_search[9];
+
+  //go to root
+  sd.chdir();
+  if (myFile.open("nes.txt", O_READ)) {
+    //Search for same CRC in list
+    while (myFile.available()) {
+      // Read game name
+      get_line(gamename, &myFile, 96);
+
+      // Read CRC32 checksum
+      sprintf(checksumStr, "%c", myFile.read());
+      for (byte i = 0; i < 7; i++) {
+        sprintf(tempStr2, "%c", myFile.read());
+        strcat(checksumStr, tempStr2);
+      }
+
+      // Skip over semicolon
+      myFile.seekSet(myFile.curPosition() + 1);
+
+      // Read CRC32 of first 16 bytes
+      sprintf(crc_search, "%c", myFile.read());
+      for (byte i = 0; i < 7; i++) {
+        sprintf(tempStr2, "%c", myFile.read());
+        strcat(crc_search, tempStr2);
+      }
+
+      // Skip over semicolon
+      myFile.seekSet(myFile.curPosition() + 1);
+
+      // Read iNES header
+      get_line(iNES_STR, &myFile, 33);
+
+      //Skip every 3rd line
+      skip_line(&myFile);
+
+      //if checksum search successful set mapper and end search
+      if (strcmp(crc_search, crcStr) == 0) {
+        // Close the file:
+        myFile.close();
+
+        // Convert "4E4553" to (0x4E, 0x45, 0x53)
+        byte iNES_BUF[2];
+        for (byte j = 0; j < 16; j++) {
+          sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
+          iNES_HEADER[j] = iNES_BUF[0];
+        }
+
+        // Convert iNES garbage to useful info (thx to fceux)
+        mapper = (iNES_HEADER[6] >> 4);
+        mapper |= (iNES_HEADER[7] & 0xF0);
+        mapper |= ((iNES_HEADER[8] & 0x0F) << 8);
+
+        // Check if it's a supported mapper
+        boolean validMapper = 0;
+        byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
+        for (byte currMaplist = 0; currMaplist < mapcount; currMaplist++) {
+          if (pgm_read_byte(mapsize + currMaplist * 7) == mapper)
+            validMapper = 1;
+        }
+
+        if (!validMapper) {
+          println_Msg(F("Mapper not supported"));
+          return 0;
+          break;
+        }
+
+        // Save Mapper
+        EEPROM_writeAnything(7, mapper);
+
+        // PRG size
+        if ((iNES_HEADER[9] & 0x0F) != 0x0F) {
+          // simple notation
+          prgsize = (iNES_HEADER[4] | ((iNES_HEADER[9] & 0x0F) << 8)); //*16
+        }
+        else {
+          // exponent-multiplier notation
+          prgsize = (((1 << (iNES_HEADER[4] >> 2)) * ((iNES_HEADER[4] & 0b11) * 2 + 1)) >> 14); //*16
+        }
+        if (prgsize != 0)
+          prgsize = (int(log(prgsize) / log(2)));
+        EEPROM_writeAnything(8, prgsize);
+
+        // CHR size
+        if ((iNES_HEADER[9] & 0xF0) != 0xF0) {
+          // simple notation
+          chrsize = (uppow2(iNES_HEADER[5] | ((iNES_HEADER[9] & 0xF0) << 4))) * 2; //*4
+        }
+        else {
+          chrsize = (((1 << (iNES_HEADER[5] >> 2)) * ((iNES_HEADER[5] & 0b11) * 2 + 1)) >> 13) * 2; //*4
+        }
+        if (chrsize != 0)
+          chrsize = (int(log(chrsize) / log(2)));
+        EEPROM_writeAnything(9, chrsize);
+
+        // RAM size
+        ramsize = ((iNES_HEADER[10] & 0xF0) ? (64 << ((iNES_HEADER[10] & 0xF0) >> 4)) : 0) / 4096; //*4
+        if (ramsize != 0)
+          ramsize = (int(log(ramsize) / log(2)));
+        EEPROM_writeAnything(10, ramsize);
+
+
+        // Get name
+        byte myLength = 0;
+        for (unsigned int i = 0; i < 20; i++) {
+          // Stop at first "(" to remove "(Country)"
+          if (char(gamename[i]) == 40) {
+            break;
+          }
+          if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122)) && (myLength < 15)) {
+            romName[myLength] = char(gamename[i]);
+            myLength++;
+          }
+        }
+
+        // If name consists out of all japanese characters use CART as name
+        if (myLength == 0) {
+          romName[0] = 'C';
+          romName[1] = 'A';
+          romName[2] = 'R';
+          romName[3] = 'T';
+        }
+
+        // Print name
+        display_Clear();
+        println_Msg(romName);
+        display_Update();
+        return 1;
+        break;
+      }
+    }
+    // File searched until end but nothing found
+    if (strcmp(crc_search, crcStr) != 0) {
+      println_Msg(F("Not found"));
+      return 0;
+    }
+  }
+  else {
+    println_Msg(F("Database file not found"));
+    return 0;
+  }
+}
+
+void readRom_NES() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".nes");
+
+  // create a new folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "NES/ROM/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(16 + prgsize * 16  * 1024 + chrsize * 4 * 1024);
+  draw_progressbar(0, totalProgressBar);
+
+  //Write iNES header
+  myFile.write(iNES_HEADER, 16);
+
+  // update progress bar
+  processedProgressBar += 16;
+  draw_progressbar(processedProgressBar, totalProgressBar);
+
+  //Write PRG
+  readPRG();
+
+  // update progress bar
+  processedProgressBar += prgsize * 16 * 1024;
+  draw_progressbar(processedProgressBar, totalProgressBar);
+
+  //Write CHR
+  readCHR();
+
+  // update progress bar
+  processedProgressBar += chrsize * 4 * 1024;
+  draw_progressbar(processedProgressBar, totalProgressBar);
+
+  // Close the file:
+  myFile.close();
+
+  // Compare CRC32 with database
+  compareCRC("nes.txt", 0, 16);
+}
+#endif
 
 /******************************************
    Low Level Functions
@@ -703,7 +946,7 @@ void CreatePRGFileInSD() {
   strcat(fileName, ".bin");
   for (byte i = 0; i < 100; i++) {
     if (!sd.exists(fileName)) {
-      sdFile = sd.open(fileName, O_RDWR | O_CREAT);
+      myFile = sd.open(fileName, O_RDWR | O_CREAT);
       break;
     }
     sprintf(fileCount, "%02d", i);
@@ -711,7 +954,7 @@ void CreatePRGFileInSD() {
     strcat(fileName, fileCount);
     strcat(fileName, ".bin");
   }
-  if (!sdFile) {
+  if (!myFile) {
     LED_RED_ON;
 
     display_Clear();
@@ -728,7 +971,7 @@ void CreateCHRFileInSD() {
   strcat(fileName, ".bin");
   for (byte i = 0; i < 100; i++) {
     if (!sd.exists(fileName)) {
-      sdFile = sd.open(fileName, O_RDWR | O_CREAT);
+      myFile = sd.open(fileName, O_RDWR | O_CREAT);
       break;
     }
     sprintf(fileCount, "%02d", i);
@@ -736,7 +979,7 @@ void CreateCHRFileInSD() {
     strcat(fileName, fileCount);
     strcat(fileName, ".bin");
   }
-  if (!sdFile) {
+  if (!myFile) {
     LED_RED_ON;
 
     display_Clear();
@@ -753,7 +996,7 @@ void CreateRAMFileInSD() {
   strcat(fileName, ".bin");
   for (byte i = 0; i < 100; i++) {
     if (!sd.exists(fileName)) {
-      sdFile = sd.open(fileName, O_RDWR | O_CREAT);
+      myFile = sd.open(fileName, O_RDWR | O_CREAT);
       break;
     }
     sprintf(fileCount, "%02d", i);
@@ -761,7 +1004,7 @@ void CreateRAMFileInSD() {
     strcat(fileName, fileCount);
     strcat(fileName, ".bin");
   }
-  if (!sdFile) {
+  if (!myFile) {
     LED_RED_ON;
 
     display_Clear();
@@ -771,6 +1014,78 @@ void CreateRAMFileInSD() {
 
     LED_RED_OFF;
   }
+}
+
+#ifndef no-intro
+void CartStart() {
+  sd.chdir();
+  EEPROM_readAnything(0, foldern); // FOLDER #
+  sprintf(folder, "NES/CART/%d", foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+}
+
+void CartFinish() {
+  foldern += 1;
+  EEPROM_writeAnything(0, foldern); // FOLDER #
+  sd.chdir();
+}
+#endif
+
+/******************************************
+   NES 2.0 Header Functions
+ *****************************************/
+#ifndef no-intro
+int32_t atoi32_signed(const char* input_string) {
+  if (input_string == NULL) {
+    return 0;
+  }
+
+  int int_sign = 1;
+  int i = 0;
+
+  if (input_string[0] == '-') {
+    int_sign = -1;
+    i = 1;
+  }
+
+  int32_t return_val = 0;
+
+  while (input_string[i] != '\0') {
+    if (input_string[i] >= '0' && input_string[i] <= '9') {
+      return_val = (return_val * 10) + (input_string[i] - '0');
+    } else if (input_string[i] != '\0') {
+      return 0;
+    }
+
+    i++;
+  }
+
+  return_val = return_val * int_sign;
+
+  return return_val;
+}
+
+uint32_t atoi32_unsigned(const char* input_string) {
+  if (input_string == NULL) {
+    return 0;
+  }
+
+  int i = 0;
+
+  uint32_t return_val = 0;
+
+  while (input_string[i] != '\0') {
+    if (input_string[i] >= '0' && input_string[i] <= '9') {
+      return_val = (return_val * 10) + (input_string[i] - '0');
+    } else if (input_string[i] != '\0') {
+      return 0;
+    }
+
+    i++;
+  }
+
+  return return_val;
 }
 
 void outputNES() {
@@ -790,7 +1105,7 @@ void outputNES() {
   LED_RED_ON;
   LED_GREEN_ON;
   LED_BLUE_ON;
-  if (!sdFile.open(filePRG, FILE_READ)) {
+  if (!myFile.open(filePRG, FILE_READ)) {
     LED_GREEN_OFF;
     LED_BLUE_OFF;
 
@@ -831,12 +1146,12 @@ void outputNES() {
   }
 
   size_t n;
-  while ((n = sdFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
+  while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
     nesFile.write(sdBuffer, n);
   }
-  sdFile.close();
+  myFile.close();
   if (sd.exists(fileCHR)) {
-    if (!sdFile.open(fileCHR, FILE_READ)) {
+    if (!myFile.open(fileCHR, FILE_READ)) {
       LED_GREEN_OFF;
       LED_BLUE_OFF;
 
@@ -846,10 +1161,10 @@ void outputNES() {
       print_Error(F("SD Error"), true);
 
     }
-    while ((n = sdFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
+    while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
       nesFile.write(sdBuffer, n);
     }
-    sdFile.close();
+    myFile.close();
   }
   nesFile.flush();
   nesFile.close();
@@ -869,24 +1184,6 @@ void outputNES() {
   LED_BLUE_OFF;
 }
 
-void CartStart() {
-  sd.chdir();
-  EEPROM_readAnything(0, foldern); // FOLDER #
-  sprintf(folder, "NES/CART/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-}
-
-void CartFinish() {
-  foldern += 1;
-  EEPROM_writeAnything(0, foldern); // FOLDER #
-  sd.chdir();
-}
-
-/******************************************
-   NES 2.0 Header Functions
- *****************************************/
-
 unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32) {
   if (prg_size == 0) {
     return NULL;
@@ -896,7 +1193,7 @@ unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uin
   unsigned char* nes20_header;
   int i;
 
-  if (!sdFile.open("/nes.txt", FILE_READ)) {
+  if (!myFile.open("/nes20db.txt", FILE_READ)) {
     return NULL;
   } else {
     display_Clear();
@@ -905,10 +1202,10 @@ unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uin
   }
 
   temp_line = (char*)malloc(256 * sizeof(char));
-  while (sdFile.available()) {
+  while (myFile.available()) {
     // We're reading fixed-length lines
     // padded with null characters
-    sdFile.read(temp_line, 256);
+    myFile.read(temp_line, 256);
 
     uint32_t prg_size_db;
     uint32_t chr_size_db;
@@ -928,14 +1225,14 @@ unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uin
           if (chr_size == 0) {
             nes20_header = getNES20HeaderBytesFromDatabaseRow(temp_line);
             free(temp_line);
-            sdFile.close();
+            myFile.close();
             return nes20_header;
           } else {
             chr_crc32_db = getCHRCRC32FromDatabaseRow(temp_line);
             if (chr_crc32 == chr_crc32_db) {
               nes20_header = getNES20HeaderBytesFromDatabaseRow(temp_line);
               free(temp_line);
-              sdFile.close();
+              myFile.close();
               return nes20_header;
             }
           }
@@ -945,7 +1242,7 @@ unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uin
   }
 
   free(temp_line);
-  sdFile.close();
+  myFile.close();
   return NULL;
 }
 
@@ -1163,6 +1460,7 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
 
   return nes_header_bytes;
 }
+#endif
 
 /******************************************
    Config Functions
@@ -1295,7 +1593,7 @@ chooseMapper:
 
   if (!validMapper) {
     errorLvl = 1;
-    display.println("Mapper not supported");
+    display.println(F("Mapper not supported"));
     display.display();
     wait();
     goto chooseMapper;
@@ -1806,7 +2104,7 @@ setram:
       Serial.print(i);
       Serial.print(F(" = "));
       if (mapper == 0) {
-        Serial.println(RAM[i] / 4);
+        Serial.print(RAM[i] / 4);
         Serial.println(F("K"));
       }
       else if ((mapper == 16) || (mapper == 159)) {
@@ -1897,7 +2195,7 @@ void checkMMC6() { // Detect MMC6 Carts - read PRG 0x3E00A ("STARTROPICS")
     mmc6 = true; // MMC6 Cart
 }
 
-void checkStatus_NES() {
+void checkStatus_NES(boolean clrscn) {
   EEPROM_readAnything(7, mapper);
   EEPROM_readAnything(8, prgsize);
   EEPROM_readAnything(9, chrsize);
@@ -1924,10 +2222,12 @@ void checkStatus_NES() {
   else if (mapper == 30) // Check for Flashable/Non-Flashable
     NESmaker_ID(); // Flash ID
 
-  display_Clear();
-  println_Msg(F("NES CART READER"));
-  println_Msg(F(""));
-  println_Msg(F("CURRENT SETTINGS"));
+  if (!clrscn) {
+    display_Clear();
+    println_Msg(F("NES CART READER"));
+    println_Msg(F(""));
+    println_Msg(F("CURRENT SETTINGS"));
+  }
   println_Msg(F(""));
   print_Msg(F("MAPPER:   "));
   println_Msg(mapper);
@@ -1961,6 +2261,8 @@ void checkStatus_NES() {
     print_Msg(ram);
     println_Msg(F("K"));
   }
+  println_Msg(F(""));
+  println_Msg(F("Press Button..."));
   display_Update();
   wait();
 }
@@ -1972,14 +2274,14 @@ void dumpPRG(word base, word address) {
   for (int x = 0; x < 512; x++) {
     sdBuffer[x] = read_prg_byte(base + address + x);
   }
-  sdFile.write(sdBuffer, 512);
+  myFile.write(sdBuffer, 512);
 }
 
 void dumpCHR(word address) {
   for (int x = 0; x < 512; x++) {
     sdBuffer[x] = read_chr_byte(address + x);
   }
-  sdFile.write(sdBuffer, 512);
+  myFile.write(sdBuffer, 512);
 }
 
 void dumpMMC5RAM(word base, word address) { // MMC5 SRAM DUMP - PULSE M2 LO/HI
@@ -1987,11 +2289,11 @@ void dumpMMC5RAM(word base, word address) { // MMC5 SRAM DUMP - PULSE M2 LO/HI
     PHI2_LOW;
     sdBuffer[x] = read_prg_byte(base + address + x);
   }
-  sdFile.write(sdBuffer, 512);
+  myFile.write(sdBuffer, 512);
 }
 
 void writeMMC5RAM(word base, word address) { // MMC5 SRAM WRITE
-  sdFile.read(sdBuffer, 512);
+  myFile.read(sdBuffer, 512);
   for (int x = 0; x < 512; x++) {
     do {
       write_prg_byte(0x5102, 2); // PRG RAM PROTECT1
@@ -2006,6 +2308,7 @@ void writeMMC5RAM(word base, word address) { // MMC5 SRAM WRITE
 }
 
 void readPRG() {
+#ifndef no-intro
   display_Clear();
   display_Update();
 
@@ -2014,7 +2317,13 @@ void readPRG() {
   _delay_us(1);
   CreatePRGFileInSD();
   word base = 0x8000;
-  if (sdFile) {
+#else
+  set_address(0);
+  _delay_us(1);
+  word base = 0x8000;
+#endif
+
+  if (myFile) {
     switch (mapper) {
       case 0:
       case 3:
@@ -2492,14 +2801,15 @@ void readPRG() {
         }
         break;
     }
-    sdFile.flush();
-    sdFile.close();
+#ifndef no-intro
+    myFile.flush();
+    myFile.close();
 
     println_Msg(F("PRG FILE DUMPED!"));
     println_Msg(F(""));
     display_Update();
-
     calcCRC(fileName, prg * 1024, &prg_crc32, 0);
+#endif
   }
   set_address(0);
   PHI2_HI;
@@ -2508,9 +2818,10 @@ void readPRG() {
 }
 
 void readCHR() {
-
+#ifndef no-intro
   display_Clear();
   display_Update();
+#endif
 
   LED_GREEN_ON;
   set_address(0);
@@ -2520,8 +2831,10 @@ void readCHR() {
     display_Update();
   }
   else {
+#ifndef no-intro
     CreateCHRFileInSD();
-    if (sdFile) {
+#endif
+    if (myFile) {
       switch (mapper) {
         case 0: // 8K
           for (word address = 0x0; address < 0x2000; address += 512) {
@@ -3024,7 +3337,7 @@ void readCHR() {
                 sdBuffer[x] = read_chr_byte(address + x);
               }
               if (chrcheck != 0xFF)
-                sdFile.write(sdBuffer, 512);
+                myFile.write(sdBuffer, 512);
             }
           }
           break;
@@ -3047,14 +3360,15 @@ void readCHR() {
           }
           break;
       }
-      sdFile.flush();
-      sdFile.close();
+#ifndef no-intro
+      myFile.flush();
+      myFile.close();
 
       println_Msg(F("CHR FILE DUMPED!"));
       println_Msg(F(""));
       display_Update();
-
       calcCRC(fileName, chr * 1024, &chr_crc32, 0);
+#endif
     }
   }
   set_address(0);
@@ -3082,7 +3396,7 @@ void readRAM() {
   else {
     CreateRAMFileInSD();
     word base = 0x6000;
-    if (sdFile) {
+    if (myFile) {
       switch (mapper) {
         case 0: // 2K/4K
           for (word address = 0x0; address < (0x800 * ramsize); address += 512) { // 2K/4K
@@ -3165,7 +3479,7 @@ void readRAM() {
           for (word address = 0; address < eepsize; address++) {
             EepromREAD(address);
           }
-          sdFile.write(sdBuffer, eepsize);
+          myFile.write(sdBuffer, eepsize);
           //          display_Clear(); // TEST PURPOSES - DISPLAY EEPROM DATA
           break;
 
@@ -3175,7 +3489,7 @@ void readRAM() {
               write_ram_byte(0xF800, x); // PRG RAM ENABLE
               sdBuffer[x] = read_prg_byte(0x4800); // DATA PORT
             }
-            sdFile.write(sdBuffer, 128);
+            myFile.write(sdBuffer, 128);
           }
           else { // SRAM 8K
             for (int i = 0; i < 64; i++) { // Init Register
@@ -3193,7 +3507,7 @@ void readRAM() {
           for (int x = 0; x < 128; x++) {  // PRG RAM 1K ($7F00-$7FFF) MIRRORED ONCE
             sdBuffer[x] = read_prg_byte(0x7F00 + x);
           }
-          sdFile.write(sdBuffer, 128);
+          myFile.write(sdBuffer, 128);
           write_prg_byte(0x7EF8, 0xFF); // PRG RAM DISABLE 0
           write_prg_byte(0x7EF9, 0xFF); // PRG RAM DISABLE 1
           break;
@@ -3239,8 +3553,8 @@ void readRAM() {
             write_reg_byte(0xE000, 0); // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
       }
-      sdFile.flush();
-      sdFile.close();
+      myFile.flush();
+      myFile.close();
 
       println_Msg(F("RAM FILE DUMPED!"));
       println_Msg(F(""));
@@ -3279,11 +3593,11 @@ void writeRAM() {
     display_Update();
 
     //open file on sd card
-    if (sdFile.open(filePath, O_READ)) {
+    if (myFile.open(filePath, O_READ)) {
       switch (mapper) {
         case 0: // 2K/4K
           for (word address = 0x0; address < (0x800 * ramsize); address += 512) { // 2K/4K
-            sdFile.read(sdBuffer, 512);
+            myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]); // SWITCH MUST BE IN OFF POSITION
             }
@@ -3302,7 +3616,7 @@ void writeRAM() {
             else
               write_mmc1_byte(0xA000, i << 3);
             for (word address = 0x0; address < 0x2000; address += 512) { // 8K
-              sdFile.read(sdBuffer, 512);
+              myFile.read(sdBuffer, 512);
               for (int x = 0; x < 512; x++) {
                 write_prg_byte(base + address + x, sdBuffer[x]);
               }
@@ -3315,7 +3629,7 @@ void writeRAM() {
             write_prg_byte(0x8000, 0x20); // PRG RAM ENABLE
             write_prg_byte(0xA001, 0x30); // PRG RAM PROTECT - Enable reading/writing to RAM at $7000-$71FF
             for (word address = 0x1000; address < 0x1200; address += 512) { // 512B
-              sdFile.read(sdBuffer, 512);
+              myFile.read(sdBuffer, 512);
               for (int x = 0; x < 512; x++) {
                 write_wram_byte(base + address + x, sdBuffer[x]);
               }
@@ -3323,7 +3637,7 @@ void writeRAM() {
             write_prg_byte(0x8000, 0x20); // PRG RAM ENABLE
             write_prg_byte(0xA001, 0xC0); // PRG RAM PROTECT - Enable reading/writing to RAM at $7200-$73FF
             for (word address = 0x1200; address < 0x1400; address += 512) { // 512B
-              sdFile.read(sdBuffer, 512);
+              myFile.read(sdBuffer, 512);
               for (int x = 0; x < 512; x++) {
                 write_wram_byte(base + address + x, sdBuffer[x]);
               }
@@ -3333,7 +3647,7 @@ void writeRAM() {
           else { // MMC3 8K
             write_prg_byte(0xA001, 0x80); // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
             for (word address = 0; address < 0x2000; address += 512) { // 8K
-              sdFile.read(sdBuffer, 512);
+              myFile.read(sdBuffer, 512);
               for (int x = 0; x < 512; x++) {
                 write_prg_byte(base + address + x, sdBuffer[x]);
               }
@@ -3375,7 +3689,7 @@ void writeRAM() {
             eepsize = 128;
           else
             eepsize = 256;
-          sdFile.read(sdBuffer, eepsize);
+          myFile.read(sdBuffer, eepsize);
           for (word address = 0; address < eepsize; address++) {
             EepromWRITE(address);
             if ((address % 128) == 0)
@@ -3387,7 +3701,7 @@ void writeRAM() {
 
         case 19:
           if (ramsize == 2) { // PRG RAM 128B
-            sdFile.read(sdBuffer, 128);
+            myFile.read(sdBuffer, 128);
             for (int x = 0; x < 128; x++) {
               write_ram_byte(0xF800, x); // PRG RAM ENABLE
               write_prg_byte(0x4800, sdBuffer[x]); // DATA PORT
@@ -3399,7 +3713,7 @@ void writeRAM() {
             }
             write_ram_byte(0xF800, 0x40); // PRG RAM WRITE ENABLE
             for (word address = 0; address < 0x2000; address += 512) { // 8K
-              sdFile.read(sdBuffer, 512);
+              myFile.read(sdBuffer, 512);
               for (int x = 0; x < 512; x++) {
                 write_prg_byte(base + address + x, sdBuffer[x]);
               }
@@ -3412,7 +3726,7 @@ void writeRAM() {
           write_prg_byte(0x7EF8, 0xA3); // PRG RAM ENABLE 0
           write_prg_byte(0x7EF9, 0xA3); // PRG RAM ENABLE 1
           for (word address = 0x1F00; address < 0x2000; address += 512) { // PRG RAM 1K ($7F00-$7FFF)
-            sdFile.read(sdBuffer, 128);
+            myFile.read(sdBuffer, 128);
             for (int x = 0; x < 128; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]);
             }
@@ -3426,11 +3740,11 @@ void writeRAM() {
           write_prg_byte(0x7EF8, 0x69); // PRG RAM ENABLE 1 ($6800-$6FFF)
           write_prg_byte(0x7EF9, 0x84); // PRG RAM ENABLE 2 ($7000-$73FF)
           for (word address = 0x0; address < 0x1400; address += 1024) { // PRG RAM 5K ($6000-$73FF)
-            sdFile.read(sdBuffer, 512);
+            myFile.read(sdBuffer, 512);
             firstbyte = sdBuffer[0];
             for (int x = 0; x < 512; x++)
               write_prg_byte(base + address + x, sdBuffer[x]);
-            sdFile.read(sdBuffer, 512);
+            myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++)
               write_prg_byte(base + address + x + 512, sdBuffer[x]);
             write_prg_byte(base + address, firstbyte); // REWRITE 1ST BYTE
@@ -3458,7 +3772,7 @@ void writeRAM() {
           else if (mapper == 153) // 8K
             write_prg_byte(0x800D, 0x20); // PRG RAM Chip Enable
           for (word address = 0; address < 0x2000; address += 512) { // 8K
-            sdFile.read(sdBuffer, 512);
+            myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]);
             }
@@ -3477,7 +3791,7 @@ void writeRAM() {
             write_reg_byte(0xE000, 0); // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
       }
-      sdFile.close();
+      myFile.close();
       LED_GREEN_ON;
 
       println_Msg(F(""));
@@ -3709,14 +4023,14 @@ void NESmaker_ID() { // Read Flash ID
   write_prg_byte(0x9555, 0x90); // Software ID Entry
   unsigned char ID1 = read_prg_byte(0x8000);
   unsigned char ID2 = read_prg_byte(0x8001);
-  sprintf(flashID, "%02X%02X", ID1, ID2);
+  sprintf(flashid, "%02X%02X", ID1, ID2);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xAA);
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xF0); // Software ID Exit
-  if (strcmp(flashID, "BFB7") == 0) // SST 39SF040
+  if (strcmp(flashid, "BFB7") == 0) // SST 39SF040
     flashfound = 1;
 }
 
@@ -3771,7 +4085,7 @@ void writeFLASH() {
   }
   else {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashID);
+    println_Msg(flashid);
     println_Msg(F(""));
     println_Msg(F("NESmaker Flash Found"));
     println_Msg(F(""));
@@ -3792,7 +4106,7 @@ void writeFLASH() {
     display_Update();
 
     //open file on sd card
-    if (sdFile.open(filePath, O_READ)) {
+    if (myFile.open(filePath, O_READ)) {
       banks = int_pow(2, prgsize); // 256K/512K
       for (int i = 0; i < banks; i++) { // 16K Banks
         for (word sector = 0; sector < 0x4000; sector += 0x1000) { // 4K Sectors ($8000/$9000/$A000/$B000)
@@ -3808,7 +4122,7 @@ void writeFLASH() {
           }
           // Program Byte
           for (word addr = 0x0; addr < 0x1000; addr += 512) {
-            sdFile.read(sdBuffer, 512);
+            myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
               word location = base + sector + addr + x;
               NESmaker_ByteProgram(i, base + sector + addr + x, sdBuffer[x]);
@@ -3836,7 +4150,7 @@ void writeFLASH() {
           Serial.println(F(""));
 #endif
       }
-      sdFile.close();
+      myFile.close();
       LED_GREEN_ON;
 
       println_Msg(F(""));

@@ -1,8 +1,6 @@
 //********************************************************
 // SEGA MASTER SYSTEM/Mark III/SG-1000/GAME GEAR MODULE
 //********************************************************
-
-#include "options.h"
 #ifdef enable_MD
 
 /******************************************
@@ -68,7 +66,7 @@ void _smsMenu() {
       // Change working dir to root
       sd.chdir("/");
       readROM_SMS();
-      compareCRC("sms.txt", 0);
+      compareCRC("sms.txt", 0, 0);
 #ifdef global_log
       save_log();
 #endif

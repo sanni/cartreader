@@ -3,8 +3,6 @@
 // Revision 1.0.0 October 22nd 2018
 // Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
-
-#include "options.h"
 #ifdef enable_SV
 
 /******************************************

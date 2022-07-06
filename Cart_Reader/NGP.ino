@@ -1,8 +1,6 @@
 //******************************************
 // NGP MODULE
 //******************************************
-
-#include "options.h"
 #ifdef enable_NGP
 
 static const char ngpMenuItem1[] PROGMEM = "Read Rom";
