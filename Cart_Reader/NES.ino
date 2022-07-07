@@ -375,21 +375,6 @@ void setup_NES() {
    Get Mapping from no-intro SD database
  *****************************************/
 #ifdef no-intro
-// Array to hold iNES header
-byte iNES_HEADER[16];
-//ID 0-3
-//ROM_size 4
-//VROM_size 5
-//ROM_type 6
-//ROM_type2 7
-//ROM_type3 8
-//Upper_ROM_VROM_size 9
-//RAM_size 10
-//VRAM_size 11
-//TV_system 12
-//VS_hardware 13
-//reserved 14, 15
-
 // no clue (taken from fceux)
 uint32_t uppow2(uint32_t n) {
   int x;
@@ -426,6 +411,10 @@ boolean getMapping() {
 
   // Filter out 0xFF checksum
   if (strcmp(crcStr, "BD7BC39F") == 0) {
+    romName[0] = 'C';
+    romName[1] = 'A';
+    romName[2] = 'R';
+    romName[3] = 'T';
     return 0;
   }
   else {
@@ -451,7 +440,7 @@ boolean getMapping() {
         // Skip over semicolon
         myFile.seekSet(myFile.curPosition() + 1);
 
-        // Read CRC32 of first 16 bytes
+        // Read CRC32 of first 512 bytes
         sprintf(crc_search, "%c", myFile.read());
         for (byte i = 0; i < 7; i++) {
           sprintf(tempStr2, "%c", myFile.read());
@@ -565,6 +554,10 @@ boolean getMapping() {
       // File searched until end but nothing found
       if (strcmp(crc_search, crcStr) != 0) {
         println_Msg(F("Not found"));
+        romName[0] = 'C';
+        romName[1] = 'A';
+        romName[2] = 'R';
+        romName[3] = 'T';
         return 0;
       }
     }
