@@ -828,6 +828,9 @@ void getCartInfo_GBA() {
 
           // Read the next ascii character and subtract 48 to convert to decimal
           saveType = myFile.read() - 48;
+
+          // End loop if ID was found
+          break;
         }
         // If no match, empty string, advance by 7 and try again
         else {
