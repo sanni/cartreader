@@ -409,14 +409,14 @@ boolean getMapping() {
   println_Msg(F("Searching database..."));
   display_Update();
 
-  // Read first 16 bytes of prg rom
-  for (int x = 0; x < 16; x++) {
+  // Read first 512 bytes of prg rom
+  for (int x = 0; x < 512; x++) {
     sdBuffer[x] = read_prg_byte(0x8000 + x);
   }
 
   // Calculate CRC32
   uint32_t oldcrc32 = 0xFFFFFFFF;
-  for (int c = 0; c < 16; c++) {
+  for (int c = 0; c < 512; c++) {
     oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
   }
   char crcStr[9];
