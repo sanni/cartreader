@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             07.07.2022
+   Date:             08.07.2022
    Version:          9.0 BETA
 
    SD lib: https://github.com/greiman/SdFat
@@ -260,7 +260,13 @@ bool i2c_found;
 
 // RTC Library
 #ifdef RTC_installed
-#include "RTC.h"
+#define _RTC_H
+#include "RTClib.h"
+#endif
+
+// Clockgen Calibration
+#ifdef clockgen_calibration
+#include "FreqCount.h"
 #endif
 
 /******************************************
@@ -1033,10 +1039,6 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
   RTC Module
 *****************************************/
 #ifdef RTC_installed
-
-#include "RTC.h"
-#include "SdFat.h"
-
 RTC_DS3231 rtc;
 
 // Start Time
@@ -1091,10 +1093,6 @@ String RTCStamp() {
    Clockgen Calibration
  *****************************************/
 #ifdef clockgen_calibration
-#include <FreqCount.h>
-#include "snes_clk.h"
-#include "SdFat.h"
-
 int32_t cal_factor = 0;
 int32_t old_cal = 0;
 int32_t cal_offset = 100;
@@ -1298,6 +1296,36 @@ void savetofile() {
 #endif
 
 #ifdef clockgen_calibration
+int32_t atoi32_signed(const char* input_string) {
+  if (input_string == NULL) {
+    return 0;
+  }
+
+  int int_sign = 1;
+  int i = 0;
+
+  if (input_string[0] == '-') {
+    int_sign = -1;
+    i = 1;
+  }
+
+  int32_t return_val = 0;
+
+  while (input_string[i] != '\0') {
+    if (input_string[i] >= '0' && input_string[i] <= '9') {
+      return_val = (return_val * 10) + (input_string[i] - '0');
+    } else if (input_string[i] != '\0') {
+      return 0;
+    }
+
+    i++;
+  }
+
+  return_val = return_val * int_sign;
+
+  return return_val;
+}
+
 int32_t readClockOffset() {
   FsFile clock_file;
   char* clock_buf;
