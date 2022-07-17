@@ -20,13 +20,6 @@ byte mapping = 1;
 /******************************************
    Menu
  *****************************************/
-// Flash start menu
-static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
-static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
-static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
-static const char flashMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4};
-
 // 8bit Flash menu items
 static const char flash8MenuItem1[] PROGMEM = "Blankcheck";
 static const char flash8MenuItem2[] PROGMEM = "Erase";
@@ -36,6 +29,14 @@ static const char flash8MenuItem5[] PROGMEM = "ID";
 static const char flash8MenuItem6[] PROGMEM = "Print";
 static const char flash8MenuItem7[] PROGMEM = "Reset";
 static const char* const menuOptionsFLASH8[] PROGMEM = {flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, flash8MenuItem7};
+
+#ifdef enable_FLASH16
+// Flash start menu
+static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
+static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
+static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
+static const char flashMenuItem4[] PROGMEM = "Reset";
+static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4};
 
 // 16bit Flash menu items
 static const char flash16MenuItem1[] PROGMEM = "Blankcheck";
@@ -97,6 +98,7 @@ void flashMenu() {
       break;
   }
 }
+#endif
 
 void flashromMenu8() {
   // create menu with title and 7 options to choose from
@@ -231,6 +233,7 @@ void flashromMenu8() {
   wait();
 }
 
+#ifdef enable_FLASH16
 void flashromMenu16() {
   // create menu with title "Flashrom Writer 16" and 7 options to choose from
   unsigned char mainMenu;
@@ -393,6 +396,7 @@ void epromMenu() {
   }
   wait();
 }
+#endif
 
 /******************************************
    Flash IDs
@@ -605,6 +609,7 @@ idtheflash:
   resetFlash8();
 }
 
+#ifdef enable_FLASH16
 void id_Flash16() {
   // ID flash
   idFlash16();
@@ -663,6 +668,7 @@ void id_Flash16() {
   println_Msg(F("Press Button..."));
   display_Update();
 }
+#endif
 
 /******************************************
    Setup
@@ -689,6 +695,7 @@ void setup_Flash8() {
   PORTC = 0x00;
 }
 
+#ifdef enable_FLASH16
 void setup_Flash16() {
   // Set Address Pins to Output
   //A0-A7
@@ -743,6 +750,7 @@ void setup_Eprom() {
   // 27C322 is a 4MB eprom
   flashSize = 4194304;
 }
+#endif
 
 /******************************************
    I/O Functions
@@ -753,6 +761,7 @@ void dataIn8() {
   DDRC = 0x00;
 }
 
+#ifdef enable_FLASH16
 // Switch data pins to write
 void dataOut16() {
   DDRC = 0xFF;
@@ -764,6 +773,7 @@ void dataIn16() {
   DDRC = 0x00;
   DDRA = 0x00;
 }
+#endif
 
 /******************************************
    Low level functions
@@ -906,6 +916,7 @@ byte readByte_Flash(unsigned long myAddress) {
   return tempByte;
 }
 
+#ifdef enable_FLASH16
 void writeWord_Flash(unsigned long myAddress, word myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -954,6 +965,7 @@ word readWord_Flash(unsigned long myAddress) {
 
   return tempWord;
 }
+#endif
 
 /******************************************
   29F032 flashrom functions
@@ -1801,6 +1813,7 @@ void resetFlash8() {
   }
 }
 
+#ifdef enable_FLASH16
 /******************************************
   29L3211 16bit flashrom functions
 *****************************************/
@@ -2535,7 +2548,7 @@ void print_Eprom(int numBytes) {
   }
   display_Update();
 }
-
+#endif
 #endif
 
 //******************************************

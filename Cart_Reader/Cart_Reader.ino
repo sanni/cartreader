@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             08.07.2022
-   Version:          9.0 BETA
+   Date:             17.07.2022
+   Version:          9.0
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -36,6 +36,7 @@
    insidegadgets - GBCartRead
    RobinTheHood - GameboyAdvanceRomDumper
    Gens-gs - Megadrive checksum
+   fceux - iNes header
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
@@ -58,7 +59,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "9.0B";
+char ver[5] = "9.0";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -74,6 +75,24 @@ char ver[5] = "9.0B";
 #if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
 # error !!! PLEASE CHOOSE HARDWARE VERSION !!!
 #endif
+
+//******************************************
+// ENABLE MODULES
+//******************************************
+// remove // before #define to enable a module
+#define enable_SNES
+#define enable_NP
+#define enable_SV
+#define enable_MD
+#define enable_SMS
+#define enable_N64
+#define enable_GBX
+#define enable_NES
+#define enable_FLASH
+#define enable_FLASH16
+//#define enable_PCE
+//#define enable_WS
+//#define enable_NGP
 
 //******************************************
 // HW CONFIGS
@@ -139,25 +158,6 @@ char ver[5] = "9.0B";
 
 // saves a n64log.txt file with rom info in /N64/ROM
 // #define savesummarytotxt
-
-//******************************************
-// DISABLE MODULES
-//******************************************
-// add // before #define to disable a module
-#define enable_SNES
-#define enable_NP
-#define enable_SV
-
-#define enable_MD
-#define enable_SMS
-
-#define enable_N64
-#define enable_GBX
-#define enable_NES
-#define enable_FLASH
-#define enable_PCE
-#define enable_WS
-#define enable_NGP
 
 /******************************************
    Libraries
@@ -795,12 +795,22 @@ void mainMenu() {
 
 #ifdef enable_FLASH
     case 9:
+#ifdef enable_FLASH16
       flashMenu();
+#else
+      flashromMenu8();
+#endif
       break;
 #endif
 
     case 10:
       aboutScreen();
+      break;
+
+    default:
+      display_Clear();
+      println_Msg(F("Please enable module"));
+      print_Error(F("in Cart_Reader.ino."), true);
       break;
   }
 }
@@ -942,6 +952,12 @@ void addonsMenu() {
 
     case 6:
       resetArduino();
+      break;
+
+    default:
+      display_Clear();
+      println_Msg(F("Please enable module"));
+      print_Error(F("in Cart_Reader.ino."), true);
       break;
   }
 }
@@ -2904,12 +2920,14 @@ void loop() {
   else if (mode == mode_FLASH8) {
     flashromMenu8();
   }
+#ifdef enable_FLASH16
   else if (mode == mode_FLASH16) {
     flashromMenu16();
   }
   else if (mode == mode_EPROM) {
     epromMenu();
   }
+#endif
 #endif
 #ifdef enable_NP
   else if (mode == mode_SFM) {
