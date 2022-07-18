@@ -836,6 +836,8 @@ void checkAltConf() {
 
       // Check if string is a match
       if (strcmp(tempStr2, checksumStr) == 0) {
+        println_Msg(F("Found"));
+        display_Update();
 
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
@@ -853,12 +855,15 @@ void checkAltConf() {
           romSize = romSize2;
           numBanks  = numBanks2;
           altconf = 1;
+          println_Msg(F("Correcting size"));
+          display_Update();
         }
+        break;
       }
       // If no match empty string advance by 9 and try again
       else {
         // skip rest of line
-        myFile.seekSet(myFile.curPosition() + 7);
+        myFile.seekSet(myFile.curPosition() + 9);
         // skip third empty line
         skip_line(&myFile);
       }

@@ -1678,9 +1678,6 @@ B800A4FB,60A5,08,032
 Dig & Spike Volleyball (USA).sfc
 954340F8,D23C,08,032
 
-Digimon Adventure (World) (Pirate).sfc
-4F660972,6918,01,002
-
 Dimension-Force (Japan) (En).sfc
 3D0D6FDC,9FAE,08,032
 
@@ -1821,15 +1818,6 @@ Doraemon 4 - Nobita to Tsuki no Oukoku (Japan).sfc
 
 DoReMi Fantasy - Milon no Dokidoki Daibouken (Japan).sfc
 9F2C2633,8C27,16,032
-
-Dorque & Imp (Europe) (Proto) (Mine Level).sfc
-7ED703BB,2020,11,044
-
-Dorque & Imp (Europe) (Proto) (Palace Level).sfc
-59E235BA,F000,11,022
-
-Dorque & Imp (Europe) (Proto) (Woods Level).sfc
-139F8C1E,7F7F,11,044
 
 Dossun! Ganseki Battle (Japan).sfc
 1AA002D6,7D92,08,032
@@ -2514,9 +2502,6 @@ CD09A892,D53C,16,032
 
 Flashback - The Quest for Identity (USA) (En,Fr,De).sfc
 1E6ACEBA,D636,16,032
-
-Flintstones, The (Europe) (En,Fr,De,Es,It) (Beta).sfc
-15143605,0201,512,2048
 
 Flintstones, The (Europe) (En,Fr,De,Es,It).sfc
 85A8B156,1B01,16,064
@@ -6211,9 +6196,6 @@ Pocky & Rocky 2 (USA) (Beta).sfc
 Pocky & Rocky 2 (USA).sfc
 FC00BB1B,186E,12,048
 
-Pokemon Gold & Silver (World) (Pirate).sfc
-7C0B798D,6761,33554432,000
-
 Pokonyan! - Henpokorin Adventure (Japan).sfc
 D16810CD,674E,08,032
 
@@ -6538,9 +6520,6 @@ Rap Basketball (USA) (Proto).sfc
 Rap Jam - Volume One (USA) (En,Fr,Es).sfc
 ADF4FFCE,3322,16,064
 
-Rayman (USA) (Proto).sfc
-366D9177,82C8,67108864,000
-
 Realm (Europe).sfc
 9BE46820,37BE,08,032
 
@@ -6860,7 +6839,7 @@ Samurai Shodown vs Soul Blade ~ Soul Edge vs Samurai (World) (Pirate).sfc
 5E4ADA04,8D1A,01,002
 
 Samurai Spirits (Japan).sfc
-7D3D39F9,68FA,512,2048
+7D3D39F9,A01D,32,064
 
 Sangokushi Eiketsuden (Japan) (Rev 1).sfc
 7A280495,D11B,24,048
@@ -8633,13 +8612,13 @@ Super Momotarou Dentetsu II (Japan).sfc
 277AD4A1,BA92,08,032
 
 Super Momotarou Dentetsu III (Japan) (Rev 1).sfc
-8587EB6E,2020,33554432,000
+8587EB6E,113C,08,016
 
 Super Momotarou Dentetsu III (Japan) (Rev 2).sfc
 9B9F3F71,79FF,08,016
 
 Super Momotarou Dentetsu III (Japan).sfc
-F787CB9A,2020,33554432,000
+F787CB9A,1184,08,016
 
 Super Morph (Europe).sfc
 388F6DAA,F5E1,08,032
@@ -9655,9 +9634,6 @@ Tom and Jerry (USA).sfc
 Tom to Jerry (Japan).sfc
 BA2DE054,A07C,04,016
 
-Tom vs Jerry - The Chase Is On! (USA) (Proto) (1995-04-28).sfc
-690B8C85,F4F4,4096,000
-
 Tommy Moe's Winter Extreme - Skiing and Snowboarding (USA).sfc
 3D005F22,3E50,08,032
 
@@ -10318,9 +10294,6 @@ Wolfenstein 3D (Europe).sfc
 Wolfenstein 3D (USA) (Beta 1).sfc
 63E442B4,BDAA,01,002
 
-Wolfenstein 3D (USA) (Beta 2).sfc
-2BEBDB00,6918,8388608,000
-
 Wolfenstein 3D - The Claw of Eisenfaust (Japan).sfc
 CC47B8F9,9487,08,016
 
@@ -10698,9 +10671,6 @@ Zombies Ate My Neighbors (USA) (Virtual Console).sfc
 
 Zombies Ate My Neighbors (USA).sfc
 7CFC0C7C,F50C,08,032
-
-Zool (USA) (Beta).sfc
-B4FCB68C,2152,33554432,000
 
 Zool - Ninja of the 'Nth' Dimension (Europe).sfc
 1188C64E,B0E0,08,032
