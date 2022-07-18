@@ -147,10 +147,10 @@ void printCartInfo_NGP() {
   print_Msg(F("Name: "));
   println_Msg(romName);
 
-  print_Msg(F("ID: "));
+  print_Msg(F("App ID: "));
   println_Msg(cartID);
 
-  print_Msg(F("Version: "));
+  print_Msg(F("App version: "));
   println_Msg(ngpRomVersion);
 
   print_Msg(F("System: "));
@@ -161,7 +161,7 @@ void printCartInfo_NGP() {
   else
     println_Msg(F("Unknown"));
 
-  print_Msg(F("Rom Size: "));
+  print_Msg(F("ROM Size: "));
   if (cartSize == 0) {
     println_Msg(F("Unknown"));
   }
@@ -226,6 +226,8 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
 
   // read rom
   dataIn();
+  uint32_t progress = 0;
+  draw_progressbar(0, cartSize);
   for (uint32_t addr = 0; addr < cartSize; addr += 512) {
     // blink LED
     if ((addr & ((1 << 14) - 1)) == 0)
@@ -236,14 +238,15 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
       sdBuffer[i] = readByte_NGP(addr + i);
 
     myFile.write(sdBuffer, 512);
+    progress += 512;
+    draw_progressbar(progress, cartSize);
   }
-
+  
   myFile.close();
 }
 
 void scanChip_NGP() {
   display_Clear();
-  //uint32_t block_addr = 0;
   uint32_t block_addr = 0;
 
   // generate name of report file
@@ -269,9 +272,9 @@ void scanChip_NGP() {
   EEPROM_writeAnything(0, foldern);
 
   // write software info to report file
-  myFile.println("Game: " + String(romName));
-  myFile.println("ID: " + String(cartID));
-  myFile.println("Version: " + String(ngpRomVersion));
+  myFile.println("Name: " + String(romName));
+  myFile.println("App ID: " + String(cartID));
+  myFile.println("App version: " + String(ngpRomVersion));
   myFile.println("");
 
   // write chip info to report file
@@ -292,7 +295,7 @@ void scanChip_NGP() {
     uint32_t addrMax;
     uint8_t sectorID = 0;
 
-    // skip the 2nd 16Mbits chip
+    // For 32Mbits carts, skip the 2nd 16Mbits chip
     if (cartSize == 4194304) {
       myFile.println("Warning: this cart is 32Mbits. Only the first 16Mbits chip will be scanned.");
       myFile.println("");
