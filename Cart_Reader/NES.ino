@@ -4012,7 +4012,7 @@ void NESmaker_ResetFlash() { // Reset Flash
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xFF); // Reset
+  write_prg_byte(0x9555, 0xF0); // Reset
 }
 
 // SST 39SF040 Software ID
@@ -4027,12 +4027,7 @@ void NESmaker_ID() { // Read Flash ID
   unsigned char ID1 = read_prg_byte(0x8000);
   unsigned char ID2 = read_prg_byte(0x8001);
   sprintf(flashid, "%02X%02X", ID1, ID2);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xF0); // Software ID Exit
+  NESmaker_ResetFlash(); // Software ID Exit
   if (strcmp(flashid, "BFB7") == 0) // SST 39SF040
     flashfound = 1;
 }
@@ -4110,6 +4105,7 @@ void writeFLASH() {
 
     //open file on sd card
     if (myFile.open(filePath, O_READ)) {
+      myFile.seekSet(16);
       banks = int_pow(2, prgsize); // 256K/512K
       for (int i = 0; i < banks; i++) { // 16K Banks
         for (word sector = 0; sector < 0x4000; sector += 0x1000) { // 4K Sectors ($8000/$9000/$A000/$B000)
