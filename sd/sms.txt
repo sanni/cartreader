@@ -1,3 +1,42 @@
+[BIOS] Alex Kidd in Miracle World (Korea) (Unl).sms
+9C5BAD91
+
+[BIOS] Alex Kidd in Miracle World (USA, Europe).sms
+CF4A09EA
+
+[BIOS] Alex Kidd in Miracle World (BIOS Version) (World) (Sega Ages).sms
+025790FF
+
+[BIOS] Hang On (USA, Europe) (v3.4).sms
+8EDF7AC6
+
+[BIOS] Hang On & Safari Hunt (USA, Europe, Brazil) (En) (v2.4).sms
+91E93385
+
+[BIOS] Missile Defense 3-D (USA, Europe) (v4.4).sms
+E79BB689
+
+[BIOS] Sega Master System (Japan) (v2.1).sms
+48D44A13
+
+[BIOS] Sega Master System (USA) (M404) (Proto).sms
+1A15DFCC
+
+[BIOS] Sega Master System (USA) (v1.0) (Proto).sms
+72BEC693
+
+[BIOS] Sega Master System (USA, Europe) (v1.3).sms
+0072ED54
+
+[BIOS] Sega Master System (USA) (Store Display Unit).sms
+EE2C29BA
+
+[BIOS] Sega Master System (Europe) (v2.0).sms
+B3D854F8
+
+[BIOS] Sonic The Hedgehog (Europe).sms
+81C3476B
+
 20 em 1 (Brazil).sms
 F0F35C22
 
@@ -49,14 +88,14 @@ D0263024
 Action Fighter (Japan, Europe) (En) (Beta).sms
 E2D765AD
 
-Action Fighter (Japan, Europe) (Ja).sms
+Action Fighter (USA, Europe, Brazil) (En) (Rev 1).sms
+3658F3E0
+
+Action Fighter (Japan, Europe) (En).sms
 D91B340D
 
 Action Fighter (Taiwan) (Unl).sms
 8418F438
-
-Action Fighter (USA, Europe, Brazil) (En) (Rev 1).sms
-3658F3E0
 
 Addams Family, The (Europe).sms
 72420F38
@@ -64,11 +103,11 @@ Addams Family, The (Europe).sms
 Aerial Assault (Europe, Brazil) (En).sms
 ECF491CF
 
-Aerial Assault (Taiwan) (En) (Unl).sms
-6630E5FD
-
 Aerial Assault (USA).sms
 15576613
+
+Aerial Assault (Taiwan) (En) (Unl).sms
+6630E5FD
 
 After Burner (World).sms
 1C951F8E
@@ -85,14 +124,29 @@ C8718D40
 Aleste (Japan).sms
 D8C4165B
 
-Alex Kidd - High-Tech World (USA, Europe, Brazil) (En) (Beta).sms
-2D7FABB2
-
 Alex Kidd - High-Tech World (USA, Europe, Brazil) (En).sms
 013C0A94
 
+Alex Kidd - High-Tech World (USA, Europe, Brazil) (En) (Beta).sms
+2D7FABB2
+
 Alex Kidd - The Lost Stars (World).sms
 C13896D5
+
+Alex Kidd 3 - Curse in Miracle World (World) (v1.1) (Aftermarket) (Homebrew).sms
+4C405D68
+
+Alex Kidd 3 - Curse in Miracle World (France) (Aftermarket) (Homebrew).sms
+D7EED482
+
+Alex Kidd 3 - Curse in Miracle World (Germany) (Aftermarket) (Homebrew).sms
+42472435
+
+Alex Kidd 3 - Curse in Miracle World (Portugal) (Aftermarket) (Homebrew).sms
+7369853E
+
+Alex Kidd 3 - Curse in Miracle World (Spain) (Aftermarket) (Homebrew).sms
+97D77051
 
 Alex Kidd in Miracle World (USA, Europe).sms
 17A40E29
@@ -130,14 +184,14 @@ B618B144
 Alien Storm (Europe, Brazil) (En).sms
 7F30F793
 
-Alien Syndrome (Japan).sms
-4CC11DF9
+Alien Syndrome (USA, Europe, Brazil) (En).sms
+5CBFE997
 
 Alien Syndrome (USA, Europe, Brazil) (En) (Beta).sms
 C148868C
 
-Alien Syndrome (USA, Europe, Brazil) (En).sms
-5CBFE997
+Alien Syndrome (Japan).sms
+4CC11DF9
 
 Alocos (Taiwan) (En) (Unl).sms
 5E4B454E
@@ -166,20 +220,23 @@ BAE75805
 Ariel - The Little Mermaid (Brazil) (En).sms
 F4B3A7BD
 
+Arno Dash 2 (World) (v1.03) (Aftermarket) (Homebrew).sms
+9091D61A
+
 Ashura (Japan).sms
 AE705699
-
-Assault City (Europe) (Joypad).sms
-0BD8DA96
 
 Assault City (USA, Europe, Brazil) (En) (Light Phaser).sms
 861B6E79
 
-Asterix (Europe, Brazil) (En,Fr) (Rev 1).sms
-8C9D5BE8
+Assault City (Europe) (Joypad).sms
+0BD8DA96
 
 Asterix (Europe, Brazil) (En,Fr).sms
 147E02FA
+
+Asterix (Europe, Brazil) (En,Fr) (Rev 1).sms
+8C9D5BE8
 
 Asterix and the Great Rescue (Europe, Brazil) (En,Fr,De,Es,It).sms
 F9B7D26B
@@ -193,11 +250,14 @@ FB163003
 Astro Flash (Japan).sms
 C795182D
 
+Astro Warrior (Japan, USA, Brazil) (En).sms
+299CBB74
+
 Astro Warrior & Pit Pot (Europe).sms
 69EFD483
 
-Astro Warrior (Japan, USA, Brazil) (En).sms
-299CBB74
+Astro Warrior & Pit Pot (Europe) (Sample).sms
+3DA7F1CE
 
 Aventuras da TV Colosso, As (Brazil).sms
 E1714A88
@@ -220,11 +280,14 @@ Baku Baku (Brazil) (En).sms
 Bank Panic (Europe, Brazil) (En).sms
 655FB1F4
 
-Basketball Nightmare (Europe, Brazil) (En) (Beta).sms
-E5B3573E
-
 Basketball Nightmare (Europe, Brazil) (En).sms
 0DF8597F
+
+Basketball Nightmare (Europe, Brazil) (En) (Beta 2).sms
+E5B3573E
+
+Basketball Nightmare (Europe, Brazil) (En) (Beta 1).sms
+4E3EBB55
 
 Batman Returns (Europe, Brazil) (En).sms
 B154EC38
@@ -238,11 +301,11 @@ FAE0ADE7
 Battlemaniacs (Brazil) (En).sms
 1CBB7BF1
 
-Black Belt (Taiwan) (En) (Unl).sms
-98F64975
-
 Black Belt (USA, Europe, Brazil) (En).sms
 DA3A2F57
+
+Black Belt (Taiwan) (En) (Unl).sms
+98F64975
 
 Blade Eagle (World) (Beta).sms
 58D5FC48
@@ -268,6 +331,60 @@ B3768A7A
 Bram Stoker's Dracula (Europe).sms
 1B10A951
 
+Bread and Butter (World) (v1.00) (Aftermarket) (Homebrew).sms
+A93DA32B
+
+Bread and Butter (World) (v1.01) (Aftermarket) (Homebrew).sms
+62C2AAD2
+
+Bread and Butter (World) (v1.026) (Aftermarket) (Homebrew).sms
+DC10BCAB
+
+Bread and Butter (World) (v1.032) (Aftermarket) (Homebrew).sms
+6D46BC40
+
+Bread and Butter World (World) (Aftermarket) (Homebrew).sms
+22D1DC74
+
+Bruce Lee (World) (v1.00) (Aftermarket) (Homebrew).sms
+37E27A38
+
+Bruce Lee (World) (v0.75) (Aftermarket) (Homebrew).sms
+0B48F7DB
+
+Bruce Lee (World) (v0.052) (Aftermarket) (Homebrew).sms
+9086E6BB
+
+Bruce Lee (World) (v0.51) (Aftermarket) (Homebrew).sms
+06388C68
+
+Bruce Lee (World) (v0.50) (Aftermarket) (Homebrew).sms
+1647DB26
+
+Bruce Lee (World) (v0.22) (Aftermarket) (Homebrew).sms
+4EBBD863
+
+Bruce Lee (World) (v0.21) (Aftermarket) (Homebrew).sms
+CDB08905
+
+Bruce Lee (World) (v0.20) (Aftermarket) (Homebrew).sms
+B4742656
+
+Bruce Lee (World) (v1.00) (Tech Demo) (Aftermarket) (Homebrew).sms
+7A3575D8
+
+Bruce Lee (World) (v1.01) (Tech Demo) (Aftermarket) (Homebrew).sms
+70A69913
+
+Bruce Lee (World) (v1.02) (Tech Demo) (Aftermarket) (Homebrew).sms
+59FD4F72
+
+Bruce Lee (World) (v1.04) (Tech Demo) (Aftermarket) (Homebrew).sms
+F433E9EB
+
+Bruce Lee (World) (v1.05) (Tech Demo) (Aftermarket) (Homebrew).sms
+CB722A12
+
 Bubble Bobble (Europe, Brazil) (En).sms
 E843BA7E
 
@@ -277,20 +394,23 @@ B948752E
 Buggy Run (Europe, Brazil) (En).sms
 B0FC4577
 
+C_So! (Korea) (Unl).sms
+0918FBA0
+
 California Games (USA, Europe, Brazil) (En).sms
 AC6009A7
 
 California Games II (Europe).sms
 C0E25D62
 
-Captain Silver (Japan, Europe, Brazil) (En).sms
-A4852757
+Captain Silver (USA).sms
+B81F6FA5
 
 Captain Silver (USA) (Beta).sms
 2532A7CD
 
-Captain Silver (USA).sms
-B81F6FA5
+Captain Silver (Japan, Europe, Brazil) (En).sms
+A4852757
 
 Casino Games (USA, Europe).sms
 3CFF6E80
@@ -319,20 +439,20 @@ Chapolim x Dracula - Um Duelo Assustador (Brazil).sms
 Cheese Cat-astrophe Starring Speedy Gonzales (Europe, Brazil) (En,Fr,De,Es).sms
 46340C41
 
-Choplifter (Japan) (Proto).sms
-16EC3575
+Choplifter (USA, Europe, Brazil) (En).sms
+4A21C15F
 
 Choplifter (USA, Europe, Brazil) (En) (Beta).sms
 FD981232
 
-Choplifter (USA, Europe, Brazil) (En).sms
-4A21C15F
-
-Chouon Senshi Borgman (Japan) (Beta).sms
-86F49AE9
+Choplifter (Japan) (Proto).sms
+16EC3575
 
 Chouon Senshi Borgman (Japan).sms
 E421E466
+
+Chouon Senshi Borgman (Japan) (Beta).sms
+86F49AE9
 
 Chuck Rock (Europe, Brazil) (En).sms
 DD0E2927
@@ -358,14 +478,14 @@ Columns (USA, Europe, Brazil) (En) (Beta).sms
 Columns (USA, Europe, Brazil) (En).sms
 665FDA92
 
+Comical Machine Gun Joe (Taiwan) (Unl).sms
+84AD5AE4
+
 Comical Machine Gun Joe (Japan).sms
 9D549E08
 
 Comical Machine Gun Joe (Korea) (Unl).sms
 643F6BFC
-
-Comical Machine Gun Joe (Taiwan) (Unl).sms
-84AD5AE4
 
 Cool Spot (Europe).sms
 13AC9023
@@ -382,17 +502,14 @@ Cyber Shinobi, The (Europe, Brazil) (En).sms
 Cyber Shinobi, The (Taiwan) (En) (Unl).sms
 AD9FF469
 
-Cyborg Hunter (USA, Europe, Brazil) (En) (Sample) (1988-09-12).sms
-691211A1
-
 Cyborg Hunter (USA, Europe, Brazil) (En).sms
 908E7524
 
+Cyborg Hunter (USA, Europe, Brazil) (En) (Sample) (1988-09-12).sms
+691211A1
+
 Cyborg Z (Korea) (Unl).sms
 77EFE84A
-
-C_So! (Korea) (Unl).sms
-0918FBA0
 
 Daffy Duck in Hollywood (Europe, Brazil) (En,Fr,De,Es,It).sms
 71ABEF27
@@ -403,11 +520,11 @@ Dallyeora Pigu-Wang (Korea) (Unl).sms
 Danan - The Jungle Fighter (Europe, Brazil) (En).sms
 AE4A28D7
 
-Dead Angle (USA, Europe, Brazil) (En) (Beta).sms
-F9271C3D
-
 Dead Angle (USA, Europe, Brazil) (En).sms
 E2F7193E
+
+Dead Angle (USA, Europe, Brazil) (En) (Beta).sms
+F9271C3D
 
 Deep Duck Trouble Starring Donald Duck (Europe, Brazil) (En).sms
 42FC3A6E
@@ -433,22 +550,22 @@ Doki Doki Penguin Land - Uchuu Daibouken (Japan) (Beta).sms
 Doki Doki Penguin Land - Uchuu Daibouken (Japan).sms
 2BCDB8FA
 
-Double Dragon (Taiwan) (En) (Unl).sms
-F4F848C2
-
 Double Dragon (World).sms
 A55D89F3
 
-Double Hawk (Europe) (Beta).sms
-F76D5CEE
+Double Dragon (Taiwan) (En) (Unl).sms
+F4F848C2
 
 Double Hawk (Europe).sms
 8370F6CD
 
+Double Hawk (Europe) (Beta).sms
+F76D5CEE
+
 Double Target - Cynthia no Nemuri (Japan).sms
 52B83072
 
-Dr. HELLO (Korea) (Unl).sms
+Dr. HELLO (Korea) (En) (Unl).sms
 16537865
 
 Dr. Robotnik's Mean Bean Machine (Europe, Brazil) (En).sms
@@ -466,23 +583,26 @@ Dynamite Duke (Europe, Brazil) (En).sms
 Dynamite Dux (Europe, Brazil) (En).sms
 0E1CC1E0
 
+Dynamite Dux (Europe, Brazil) (En) (Beta).sms
+4E59175E
+
 Dynamite Headdy (Brazil) (En).sms
 7DB5B0FA
-
-E-SWAT (USA, Europe, Brazil) (En) (Beta 1).sms
-4F20694A
-
-E-SWAT (USA, Europe, Brazil) (En) (Beta 2).sms
-F7CA9801
-
-E-SWAT (USA, Europe, Brazil) (En) (Beta 3).sms
-FD91CC7E
 
 E-SWAT (USA, Europe, Brazil) (En) (Rev A).sms
 C10FCE39
 
+E-SWAT (USA, Europe, Brazil) (En) (Beta 3).sms
+FD91CC7E
+
+E-SWAT (USA, Europe, Brazil) (En) (Beta 2).sms
+F7CA9801
+
 E-SWAT (USA, Europe, Brazil) (En).sms
 C4BB1676
+
+E-SWAT (USA, Europe, Brazil) (En) (Beta 1).sms
+4F20694A
 
 E.I. - Exa Innova (Korea) (En) (Unl).sms
 DD74BCF1
@@ -499,11 +619,11 @@ Ecco - The Tides of Time (Brazil).sms
 Ecco The Dolphin (Europe, Brazil) (En).sms
 6687FAB9
 
-Enduro Racer (Japan).sms
-5D5C50B3
-
 Enduro Racer (USA, Europe, Brazil) (En).sms
 00E73541
+
+Enduro Racer (Japan).sms
+5D5C50B3
 
 Excellent Dizzy Collection, The (Europe) (En,Fr,De,Es,It) (Proto).sms
 8813514B
@@ -538,11 +658,11 @@ B9664AE1
 Fantasy Zone (Japan).sms
 0FFBCAA3
 
-Fantasy Zone (Taiwan) (Unl).sms
-5FD48352
-
 Fantasy Zone (World) (Beta).sms
 F46264FE
+
+Fantasy Zone (Taiwan) (Unl).sms
+5FD48352
 
 Fantasy Zone (World) (Rev 1).sms
 65D7E4E0
@@ -577,6 +697,15 @@ BE31D63F
 Flashpoint (Korea) (Unl).sms
 61E8806F
 
+Flight of Pigarus (World) (v1.00) (Aftermarket) (Homebrew).sms
+838574D1
+
+Flight of Pigarus (World) (v1.10) (Aftermarket) (Homebrew).sms
+1950005D
+
+Flight of Pigarus (World) (v1.11) (Aftermarket) (Homebrew).sms
+60B86F18
+
 Flintstones, The (Europe, Brazil) (En).sms
 CA5C78A5
 
@@ -595,11 +724,11 @@ G-LOC Air Battle (Europe, Brazil) (En).sms
 Gaegujangi Ggachi (Korea) (Unl).sms
 8B40F6BF
 
-Gain Ground (Europe, Brazil) (En) (Beta).sms
-D40D03C7
-
 Gain Ground (Europe, Brazil) (En).sms
 3EC5E627
+
+Gain Ground (Europe, Brazil) (En) (Beta).sms
+D40D03C7
 
 Galactic Protector (Japan).sms
 A6FA42D0
@@ -619,6 +748,9 @@ Game Box Serie Esportes Radicais (Brazil) (En).sms
 Game de Check! Koutsuu Anzen (Japan) (Proto).sms
 9AFAB511
 
+Game Mo-eumjip 188 Hap (Korea) (Unl).sms
+380D7400
+
 Gangcheol RoboCop (Korea) (En) (Unl).sms
 AD522EFD
 
@@ -634,14 +766,14 @@ A64898CE
 Geraldinho (Brazil) (En).sms
 956C416B
 
+Ghost House (USA, Europe, Brazil) (En).sms
+F1F8FF2D
+
 Ghost House (Japan).sms
 C0F3CE7E
 
 Ghost House (USA, Europe, Brazil) (En) (Beta).sms
 C3E7C1ED
-
-Ghost House (USA, Europe, Brazil) (En).sms
-F1F8FF2D
 
 Ghostbusters (USA, Europe, Brazil) (En).sms
 1DDC3059
@@ -652,11 +784,11 @@ Ghouls'n Ghosts (USA, Europe, Brazil) (En) (Demo).sms
 Ghouls'n Ghosts (USA, Europe, Brazil) (En).sms
 7A92EBA6
 
-Global Defense (USA, Europe, Brazil) (En) (Beta).sms
-91A0FC4E
-
 Global Defense (USA, Europe, Brazil) (En).sms
 B746A6F5
+
+Global Defense (USA, Europe, Brazil) (En) (Beta).sms
+91A0FC4E
 
 Global Gladiators (Europe, Brazil) (En).sms
 B67CEB76
@@ -666,6 +798,9 @@ A249FA9D
 
 Golden Axe (USA, Europe, Brazil) (En).sms
 C08132FB
+
+Golden Axe (USA, Europe, Brazil) (En) (Demo).sms
+A471F450
 
 Golden Axe Warrior (USA, Europe, Brazil) (En).sms
 C7DED988
@@ -679,14 +814,35 @@ Golfamania (Europe, Brazil) (En).sms
 Golvellius - Valley of Doom (USA, Europe, Brazil) (En).sms
 A51376FE
 
+Gotris (World) (v0.5) (Aftermarket) (Homebrew).sms
+A3F9263A
+
+Gotris (World) (v0.6) (Aftermarket) (Homebrew).sms
+79C1E9F1
+
+Gotris (Europe) (v0.7) (Aftermarket) (Homebrew).sms
+FA561C8D
+
+Gotris (USA) (v0.7) (Aftermarket) (Homebrew).sms
+2DD244D0
+
+Gotris (USA) (v0.8) (Aftermarket) (Homebrew).sms
+ADB0EFA6
+
+Gotris (Europe) (v0.8) (Aftermarket) (Homebrew).sms
+5BB3CA71
+
+Gotris (World) (v1.2p) (Aftermarket) (Homebrew).sms
+CFE301ED
+
 GP Rider (Europe, Brazil) (En).sms
 EC2DA554
 
-Great Baseball (Japan).sms
-89E98A7C
-
 Great Baseball (USA, Europe).sms
 10ED6B57
+
+Great Baseball (Japan).sms
+89E98A7C
 
 Great Basketball (World).sms
 2AC001EB
@@ -694,26 +850,26 @@ Great Basketball (World).sms
 Great Football (World).sms
 2055825F
 
-Great Golf (Japan).sms
-6586BD1F
-
 Great Golf (Korea) (En) (Unl).sms
 5DEF1BF5
-
-Great Golf (World) (Beta).sms
-4847BC91
 
 Great Golf (World).sms
 98E4AE4A
 
+Great Golf (World) (Beta).sms
+4847BC91
+
+Great Golf (Japan).sms
+6586BD1F
+
 Great Ice Hockey (Japan, USA) (En).sms
 946B8C4A
 
-Great Soccer (Europe).sms
-0ED170C9
-
 Great Soccer (Japan).sms
 2D7FD7EF
+
+Great Soccer (Europe).sms
+0ED170C9
 
 Great Soccer (Taiwan) (Unl).sms
 84665648
@@ -733,6 +889,15 @@ Gun.Smoke (Korea) (En) (Unl).sms
 Haja no Fuuin (Japan).sms
 B9FDF6D9
 
+Hang On (Europe).sms
+071B045E
+
+Hang On (Japan).sms
+5C01ADF9
+
+Hang On (Europe) (Beta).sms
+649F29E8
+
 Hang On & Astro Warrior (USA).sms
 1C5059F0
 
@@ -742,32 +907,23 @@ A120B77F
 Hang On & Safari Hunt (USA).sms
 E167A561
 
-Hang On (Europe) (Beta).sms
-649F29E8
-
-Hang On (Europe).sms
-071B045E
-
-Hang On (Japan).sms
-5C01ADF9
-
 Heavyweight Champ (Europe, Brazil) (En).sms
 FDAB876A
-
-Heroes of the Lance (Europe, Brazil) (En) (Beta).sms
-9611BEBD
 
 Heroes of the Lance (Europe, Brazil) (En).sms
 CDE13FFB
 
+Heroes of the Lance (Europe, Brazil) (En) (Beta).sms
+9611BEBD
+
 High School! Kimengumi (Japan).sms
 9EB1AA4F
 
-Hokuto no Ken (Japan).sms
-24F5FE8C
-
 Hokuto no Ken (Taiwan) (Unl).sms
 C4AB363D
+
+Hokuto no Ken (Japan).sms
+24F5FE8C
 
 Home Alone (Europe).sms
 C9DBF936
@@ -796,11 +952,11 @@ B4584DDE
 Incredible Hulk, The (Europe, Brazil) (En).sms
 BE9A7071
 
-Indiana Jones and the Last Crusade (Europe, Brazil) (En).sms
-8AEB574B
-
 Indiana Jones and the Last Crusade (USA) (Proto).sms
 ACEC894D
+
+Indiana Jones and the Last Crusade (Europe, Brazil) (En).sms
+8AEB574B
 
 James 'Buster' Douglas Knockout Boxing (USA) (Sample).sms
 CFB4BD7B
@@ -838,20 +994,20 @@ Jungle Book, The (Europe, Brazil) (En).sms
 Jurassic Park (Europe, Brazil) (En).sms
 0667ED9F
 
-Kenseiden (Japan).sms
-05EA5353
-
 Kenseiden (USA, Europe, Brazil) (En).sms
 516ED32E
+
+Kenseiden (Japan).sms
+05EA5353
 
 King & Balloon (Korea) (En) (Unl).sms
 0AE470E5
 
-King's Quest - Quest for the Crown (USA) (Beta).sms
-B7FE0A9D
-
 King's Quest - Quest for the Crown (USA).sms
 F8D33BC4
+
+King's Quest - Quest for the Crown (USA) (Beta).sms
+B7FE0A9D
 
 KLAX (Europe).sms
 2B435FD6
@@ -865,11 +1021,11 @@ Krusty's Fun House (Europe, Brazil) (En).sms
 Kujaku Ou (Japan).sms
 D11D32E4
 
-Kung Fu Kid (Taiwan) (En) (Unl).sms
-4762E022
-
 Kung Fu Kid (USA, Europe, Brazil) (En).sms
 1E949D1F
+
+Kung Fu Kid (Taiwan) (En) (Unl).sms
+4762E022
 
 Land of Illusion Starring Mickey Mouse (Europe, Brazil) (En).sms
 24E97200
@@ -907,11 +1063,17 @@ E8511B08
 Loretta no Shouzou - Sherlock Holmes (Japan).sms
 323F357F
 
+Lucky Dime Caper Starring Donald Duck, The (Europe, Brazil) (En).sms
+A1710F13
+
 Lucky Dime Caper Starring Donald Duck, The (Europe, Brazil) (En) (Beta).sms
 7F6D0DF6
 
-Lucky Dime Caper Starring Donald Duck, The (Europe, Brazil) (En).sms
-A1710F13
+Lucky Penguin (World) (v1.0) (Aftermarket) (Homebrew).sms
+01B605FB
+
+Lucky Penguin (World) (v1.1) (Aftermarket) (Homebrew).sms
+69699887
 
 Mahjong Sengoku Jidai (Japan) (Beta).sms
 996B2A07
@@ -922,20 +1084,20 @@ BCFBFC67
 Makai Retsuden (Japan).sms
 CA860451
 
-Maou Golvellius (Japan) (Beta).sms
-21A21352
-
 Maou Golvellius (Japan).sms
 BF0411AD
+
+Maou Golvellius (Japan) (Beta).sms
+21A21352
 
 Marble Madness (Europe).sms
 BF6F3E5F
 
-Marksman Shooting & Trap Shooting & Safari Hunt (Europe).sms
-E8215C2E
-
 Marksman Shooting & Trap Shooting (USA, Brazil) (En).sms
 E8EA842C
+
+Marksman Shooting & Trap Shooting & Safari Hunt (Europe).sms
+E8215C2E
 
 Master of Darkness (Europe, Brazil) (En).sms
 96FB4D4B
@@ -955,11 +1117,11 @@ Megumi Rescue (Japan).sms
 Mercs (Europe, Brazil) (En).sms
 D7416B83
 
-Michael Jackson's Moonwalker (USA, Europe, Brazil) (En) (Beta).sms
-54123936
-
 Michael Jackson's Moonwalker (USA, Europe, Brazil) (En).sms
 56CC906B
+
+Michael Jackson's Moonwalker (USA, Europe, Brazil) (En) (Beta).sms
+54123936
 
 Mickey's Ultimate Challenge (Brazil) (En).sms
 2B86BCD7
@@ -976,23 +1138,23 @@ Miracle Warriors - Seal of The Dark Lord (USA, Europe, Brazil) (En) (Beta).sms
 Miracle Warriors - Seal of The Dark Lord (USA, Europe, Brazil) (En).sms
 0E333B6E
 
-Missile Defense 3-D (USA, Europe, Brazil) (En) (Sample).sms
-43DEF05D
-
 Missile Defense 3-D (USA, Europe, Brazil) (En).sms
 FBE5CFBB
 
+Missile Defense 3-D (USA, Europe, Brazil) (En) (Sample).sms
+43DEF05D
+
 Monica no Castelo do Dragao (Brazil).sms
 01D67C0B
-
-Monopoly (Europe) (Rev A).sms
-026D94A4
 
 Monopoly (USA) (Beta).sms
 7E9D87FC
 
 Monopoly (USA, Europe).sms
 69538469
+
+Monopoly (Europe) (Rev A).sms
+026D94A4
 
 Montezuma's Revenge - Featuring PANAMA JOE (USA) (Beta).sms
 575D0FCF
@@ -1039,11 +1201,11 @@ C660FF34
 Ninja (Japan).sms
 320313EC
 
-Ninja Gaiden (Europe, Brazil) (En) (Beta).sms
-761E9396
-
 Ninja Gaiden (Europe, Brazil) (En).sms
 1B1D8CC2
+
+Ninja Gaiden (Europe, Brazil) (En) (Beta).sms
+761E9396
 
 Ninja, The (USA, Europe, Brazil) (En).sms
 66A15BD9
@@ -1069,11 +1231,11 @@ Ottifants, The (Europe, Brazil) (En,Fr,De,Es,It).sms
 OutRun (World).sms
 5589D8D2
 
-OutRun 3-D (Europe, Brazil) (En) (Beta).sms
-4E684EC0
-
 OutRun 3-D (Europe, Brazil) (En).sms
 D6F43DDA
+
+OutRun 3-D (Europe, Brazil) (En) (Beta).sms
+4E684EC0
 
 OutRun Europa (Europe, Brazil) (En).sms
 3932ADBC
@@ -1084,11 +1246,11 @@ BE57A9A5
 Paper Boy (Taiwan) (En) (Unl).sms
 354BEE78
 
-Paperboy (Europe).sms
-294E0759
-
 Paperboy (USA, Brazil) (En).sms
 327A0B4C
+
+Paperboy (Europe).sms
+294E0759
 
 Parlour Games (USA, Europe).sms
 E030E66C
@@ -1105,11 +1267,14 @@ F97E9875
 PGA Tour Golf (Europe).sms
 95B9EA95
 
+Phantasy Star (USA, Europe) (Rev A).sms
+00BEF1D7
+
 Phantasy Star (Brazil) (En).sms
 75971BEF
 
-Phantasy Star (Japan) (Virtual Console).sms
-07301F83
+Phantasy Star (USA, Europe).sms
+E4A65E79
 
 Phantasy Star (Japan).sms
 6605D36A
@@ -1117,17 +1282,14 @@ Phantasy Star (Japan).sms
 Phantasy Star (Korea) (Unl).sms
 747E83B5
 
-Phantasy Star (USA, Europe) (Rev A).sms
-00BEF1D7
-
-Phantasy Star (USA, Europe).sms
-E4A65E79
-
-Phantasy Star (World) (Ja) (Sega Ages).sms
-DF96F194
+Phantasy Star (Japan) (Virtual Console).sms
+07301F83
 
 Phantasy Star (World) (Sega Ages).sms
 A1E090B9
+
+Phantasy Star (World) (Ja) (Sega Ages).sms
+DF96F194
 
 Pit-Fighter (Brazil) (En).sms
 AA4D4B5A
@@ -1183,32 +1345,35 @@ Psychic World (Europe, Brazil) (En).sms
 Psycho Fox (USA, Europe, Brazil) (En).sms
 97993479
 
-Putt & Putter (Europe, Brazil) (En) (Beta).sms
-8167CCC4
+Psycho Fox (USA, Europe, Brazil) (En) (Beta).sms
+4BF0E1CC
 
 Putt & Putter (Europe, Brazil) (En).sms
 357D4F78
 
+Putt & Putter (Europe, Brazil) (En) (Beta).sms
+8167CCC4
+
 Puzzle Game (Korea) (En) (Unl).sms
 76E8265F
-
-Quartet (Taiwan) (En) (Unl).sms
-CACDF759
 
 Quartet (USA, Europe).sms
 E0F34FA6
 
+Quartet (Taiwan) (En) (Unl).sms
+CACDF759
+
 Quest for the Shaven Yak Starring Ren Hoek & Stimpy (Brazil) (En).sms
 F42E145C
-
-R-Type (Taiwan) (En) (Unl).sms
-E532716F
 
 R-Type (World) (Beta).sms
 0D0840D5
 
 R-Type (World).sms
 BB54B6B0
+
+R-Type (Taiwan) (En) (Unl).sms
+E532716F
 
 R.C. Grand Prix (USA, Europe, Brazil) (En) (Beta).sms
 767F11B8
@@ -1231,14 +1396,17 @@ DA5A7013
 Rampage (USA, Europe, Brazil) (En).sms
 42FC47EE
 
+Rampage (USA, Europe, Brazil) (En) (Beta).sms
+0E0D6C7A
+
 Rampart (Europe).sms
 426E5C8A
 
-Rastan (USA, Europe, Brazil) (En) (Beta).sms
-F063BFC8
-
 Rastan (USA, Europe, Brazil) (En).sms
 C547EB1B
+
+Rastan (USA, Europe, Brazil) (En) (Beta).sms
+F063BFC8
 
 Reggie Jackson Baseball (USA).sms
 6D94BB0E
@@ -1277,7 +1445,7 @@ Samgukji 3 (Korea) (Unl).sms
 97D03541
 
 Sapo Xule - O Mestre do Kung Fu (Brazil).sms
-890E83E4
+0E7A5F9F
 
 Sapo Xule - S.O.S. Lagoa Poluida (Brazil, Portugal) (Pt).sms
 7AB2946A
@@ -1342,14 +1510,23 @@ AAB67EC3
 Shangwei Mingling (Taiwan) (En) (Unl).sms
 89EFCC22
 
-Shinobi (Japan, Brazil) (Ja).sms
-E1FFF1BB
-
 Shinobi (USA, Europe, Brazil) (En) (Rev 1).sms
 0C6FAC4E
 
+Shinobi (Japan, Brazil) (Ja).sms
+E1FFF1BB
+
 Shooting Gallery (USA, Europe, Brazil) (En).sms
 4B051022
+
+Simpsons Trivia (World) (v1.00) (Aftermarket) (Homebrew).sms
+E66C6EB3
+
+Simpsons Trivia (World) (v1.01) (Aftermarket) (Homebrew).sms
+B308015E
+
+Simpsons Trivia (World) (v1.02) (Aftermarket) (Homebrew).sms
+8A915056
 
 Simpsons, The - Bart vs. The Space Mutants (Europe, Brazil) (En).sms
 D1CC08EE
@@ -1363,14 +1540,17 @@ ABDF3923
 Sky Fighter (Korea) (En) (Unl).sms
 77BA2667
 
-Sky Jaguar (Korea) (Clover) (Unl).sms
-E3F260CA
-
 Sky Jaguar (Korea) (Unl).sms
 5B8E65E4
 
+Sky Jaguar (Korea) (Clover) (Unl).sms
+E3F260CA
+
 Slap Shoot (USA) (Beta).sms
 FBB0A92A
+
+Slap Shot (USA, Europe, Brazil) (En).sms
+702C3E98
 
 Slap Shot (Europe) (Sample).sms
 D33B296A
@@ -1378,29 +1558,26 @@ D33B296A
 Slap Shot (Europe).sms
 C93BD0E9
 
-Slap Shot (USA, Europe, Brazil) (En).sms
-702C3E98
-
 Smurfs, The (Europe, Brazil) (En,Fr,De,Es).sms
 3E63768A
-
-Solomon no Kagi - Oujo Rihita no Namida (Japan) (Beta).sms
-92DC4CD6
 
 Solomon no Kagi - Oujo Rihita no Namida (Japan).sms
 11645549
 
+Solomon no Kagi - Oujo Rihita no Namida (Japan) (Beta).sms
+92DC4CD6
+
 Sonic Blast (Brazil) (En).sms
 96B3F29E
+
+Sonic Chaos (Europe, Brazil) (En).sms
+AEDF3BDF
 
 Sonic Chaos (Europe, Brazil) (En) (Beta) (1993-06-30).sms
 D3AD67FA
 
 Sonic Chaos (Europe, Brazil) (En) (Beta) (1993-07-13).sms
 765234D8
-
-Sonic Chaos (Europe, Brazil) (En).sms
-AEDF3BDF
 
 Sonic Spinball (Europe, Brazil) (En).sms
 11C1BC8A
@@ -1420,11 +1597,11 @@ D9096263
 Space Gun (Europe).sms
 A908CFF5
 
+Space Harrier (Japan, USA) (En).sms
+BEDDF80E
+
 Space Harrier (Europe).sms
 CA1D3752
-
-Space Harrier (Japan, USA) (Ja).sms
-BEDDF80E
 
 Space Harrier 3-D (USA, Europe, Brazil) (En).sms
 6BD5C2BF
@@ -1465,11 +1642,11 @@ Sports Pad Soccer (Japan).sms
 Spy vs Spy (Japan).sms
 D41B9A08
 
-Spy vs Spy (Taiwan) (Unl).sms
-689F58A2
-
 Spy vs Spy (USA, Europe, Brazil) (En).sms
 78D7FAAB
+
+Spy vs Spy (Taiwan) (Unl).sms
+689F58A2
 
 Star Wars (Europe, Brazil) (En).sms
 D4B8F66D
@@ -1510,11 +1687,14 @@ Suho Jeonsa (Korea) (Unl).sms
 Sukeban Deka II - Shoujo Tekkamen Densetsu (Japan).sms
 B13DF647
 
-Summer Games (Europe, Brazil) (En) (Beta).sms
-80EB1FFF
-
 Summer Games (Europe, Brazil) (En).sms
 8DA5C93F
+
+Summer Games (Europe, Brazil) (En) (Beta 2).sms
+80EB1FFF
+
+Summer Games (Europe, Brazil) (En) (Beta 1).sms
+4F530CB2
 
 Super Arkanoid (Korea) (Unl).sms
 C9DD4E5F
@@ -1543,29 +1723,32 @@ Super Bubble Bobble (Korea) (En) (Unl).sms
 Super Columns & Tetris (Korea) (Unl).sms
 6CE7F694
 
+Super Futebol II (Brazil).sms
+551E6F51
+
 Super Golf (Europe) (Beta).sms
 7F7B568D
 
 Super Kick Off (Europe, Brazil) (En,Fr,De,Es,It,Nl,Pt,Sv).sms
 406AA0C2
 
+Super Monaco GP (USA).sms
+3EF12BAA
+
 Super Monaco GP (Europe, Brazil) (En) (Beta).sms
 A1D6D963
-
-Super Monaco GP (Europe, Brazil) (En).sms
-55BF81A0
 
 Super Monaco GP (USA) (Beta).sms
 DD7ADBCC
 
-Super Monaco GP (USA).sms
-3EF12BAA
-
-Super Off Road (Europe) (Beta).sms
-CE8D6846
+Super Monaco GP (Europe, Brazil) (En).sms
+55BF81A0
 
 Super Off Road (Europe).sms
 54F68C2A
+
+Super Off Road (Europe) (Beta).sms
+CE8D6846
 
 Super Racing (Japan).sms
 7E0EF8CB
@@ -1591,11 +1774,11 @@ Superman - The Man of Steel (Europe, Brazil) (En).sms
 T2 - The Arcade Game (Europe).sms
 93CA8152
 
-Taito Chase H.Q. (Europe) (Beta).sms
-1CDCF415
-
 Taito Chase H.Q. (Europe).sms
 85CFC9C9
+
+Taito Chase H.Q. (Europe) (Beta).sms
+1CDCF415
 
 Taz in Escape from Mars (Brazil) (En).sms
 11CE074C
@@ -1639,6 +1822,9 @@ EDC5C012
 Three Dragon Story, The (Korea) (Unl).sms
 8640E7E8
 
+Thunder Blade (USA, Europe, Brazil) (En).sms
+AE920E4B
+
 Thunder Blade (Japan).sms
 C0CE19B1
 
@@ -1647,9 +1833,6 @@ Thunder Blade (Taiwan) (En) (Unl).sms
 
 Thunder Blade (USA, Europe, Brazil) (En) (Beta).sms
 BAB9533B
-
-Thunder Blade (USA, Europe, Brazil) (En).sms
-AE920E4B
 
 Time Soldiers (USA, Europe, Brazil) (En).sms
 51BD14BE
@@ -1663,11 +1846,11 @@ BF7B7285
 Toto World 3 (Korea) (Unl).sms
 4F8D75EC
 
-TransBot (USA, Europe, Brazil) (En) (Beta).sms
-58B99750
-
 TransBot (USA, Europe, Brazil) (En).sms
 4BC42857
+
+TransBot (USA, Europe, Brazil) (En) (Beta).sms
+58B99750
 
 Trivial Pursuit - Genus Edition (Europe) (En,Fr,De,Es).sms
 E5374022
@@ -1678,11 +1861,11 @@ Ttoriui Moheom (Korea) (En) (Unl).sms
 Turma da Monica em O Resgate (Brazil).sms
 22CCA9BB
 
-Ultima IV - Quest of the Avatar (Europe, Brazil) (En) (Beta).sms
-DE9F8517
-
 Ultima IV - Quest of the Avatar (Europe, Brazil) (En).sms
 B52D60C8
+
+Ultima IV - Quest of the Avatar (Europe, Brazil) (En) (Beta).sms
+DE9F8517
 
 Ultimate Soccer (Europe, Brazil) (En,Fr,De,Es,It).sms
 15668CA4
@@ -1702,38 +1885,44 @@ Walter Payton Football (USA).sms
 Wanted (USA, Europe, Brazil) (En).sms
 5359762D
 
-Where in the World is Carmen Sandiego (Brazil) (En).sms
-88AA8CA6
+Waternet (World) (Aftermarket) (Homebrew).sms
+6078CCDD
 
 Where in the World is Carmen Sandiego (USA).sms
 428B1E7C
 
+Where in the World is Carmen Sandiego (Brazil) (En).sms
+88AA8CA6
+
 Wimbledon (Europe).sms
 912D92AF
+
+Wimbledon (Brazil) (En).sms
+B14B6195
 
 Wimbledon II (Europe, Brazil) (En).sms
 7F3AFE58
 
-Winter Olympics (Brazil) (En,Fr,De,Es,It,Pt,Sv,No).sms
-2FEC2B4A
-
 Winter Olympics (Europe) (En,Fr,De,Es,It,Pt,Sv,No).sms
 A20290B6
+
+Winter Olympics (Brazil) (En,Fr,De,Es,It,Pt,Sv,No).sms
+2FEC2B4A
 
 Wolfchild (Europe, Brazil) (En).sms
 1F8EFA1D
 
-Wonder Boy (Japan, Europe) (En).sms
-E2FCB6F3
-
 Wonder Boy (USA, Europe, Brazil) (En) (Rev 1).sms
 73705C02
 
-Wonder Boy III - The Dragon's Trap (USA, Europe) (Aftermarket) (Unl).sms
-525F4F3D
+Wonder Boy (Japan, Europe) (En).sms
+E2FCB6F3
 
 Wonder Boy III - The Dragon's Trap (USA, Europe).sms
 679E1676
+
+Wonder Boy III - The Dragon's Trap (USA, Europe) (Aftermarket) (Unl).sms
+525F4F3D
 
 Wonder Boy in Monster Land (USA, Europe) (Beta).sms
 8312C429
@@ -1756,26 +1945,26 @@ Woody Pop - Shinjinrui no Block Kuzushi (Japan).sms
 World Class Leaderboard (Europe, Brazil) (En).sms
 C9A449B7
 
-World Cup Italia '90 (Europe, Brazil) (En).sms
-6E1AD6FD
-
 World Cup Italia '90 (USA) (Demo).sms
 A0CF8B15
+
+World Cup Italia '90 (Europe, Brazil) (En).sms
+6E1AD6FD
 
 World Cup USA 94 (Europe, Brazil) (En,Fr,De,Es,It,Nl,Pt,Sv).sms
 A6BF8F9E
 
-World Games (Europe, Brazil) (En) (Beta).sms
-914D3FC4
-
 World Games (Europe, Brazil) (En).sms
 A2A60BC8
 
-World Grand Prix (Europe).sms
-4AAAD0D6
+World Games (Europe, Brazil) (En) (Beta).sms
+914D3FC4
 
 World Grand Prix (USA, Brazil) (En) (Beta).sms
 B5A9F824
+
+World Grand Prix (Europe).sms
+4AAAD0D6
 
 World Grand Prix (USA, Brazil) (En).sms
 7B369892
@@ -1789,11 +1978,11 @@ WWF Wrestlemania - Steel Cage Challenge (Europe, Brazil) (En).sms
 X-Men - Mojo World (Brazil) (En).sms
 3E1387F6
 
-Xenon 2 - Megablast (Europe) (Rev 1).sms
-EC726C0D
-
 Xenon 2 - Megablast (Europe).sms
 5C205EE1
+
+Xenon 2 - Megablast (Europe) (Rev 1).sms
+EC726C0D
 
 Xyzolog (Korea) (En) (Unl).sms
 565C799F
@@ -1816,60 +2005,21 @@ BBA74147
 Zaxxon 3-D (World).sms
 A3EF13CB
 
-Zillion (Europe, Brazil) (En) (Rev 2).sms
-7BA54510
-
 Zillion (Japan, Europe) (En,Ja).sms
 60C19645
 
 Zillion (USA, Europe) (Rev 1).sms
 5718762C
 
-Zillion II - The Tri Formation (World) (Beta).sms
-5B1CF392
+Zillion (Europe, Brazil) (En) (Rev 2).sms
+7BA54510
 
 Zillion II - The Tri Formation (World).sms
 2F2E3BC9
 
+Zillion II - The Tri Formation (World) (Beta).sms
+5B1CF392
+
 Zool - Ninja of the 'Nth' Dimension (Europe).sms
 9D9D0A5F
-
-[BIOS] Alex Kidd in Miracle World (BIOS Version) (World) (Sega Ages).sms
-025790FF
-
-[BIOS] Alex Kidd in Miracle World (Korea) (Unl).sms
-9C5BAD91
-
-[BIOS] Alex Kidd in Miracle World (USA, Europe).sms
-CF4A09EA
-
-[BIOS] Hang On & Safari Hunt (USA, Europe, Brazil) (En) (v2.4).sms
-91E93385
-
-[BIOS] Hang On (USA, Europe) (v3.4).sms
-8EDF7AC6
-
-[BIOS] Missile Defense 3-D (USA, Europe) (v4.4).sms
-E79BB689
-
-[BIOS] Sega Master System (Europe) (v2.0).sms
-B3D854F8
-
-[BIOS] Sega Master System (Japan) (v2.1).sms
-48D44A13
-
-[BIOS] Sega Master System (USA) (M404) (Proto).sms
-1A15DFCC
-
-[BIOS] Sega Master System (USA) (Store Display Unit).sms
-EE2C29BA
-
-[BIOS] Sega Master System (USA) (v1.0) (Proto).sms
-72BEC693
-
-[BIOS] Sega Master System (USA, Europe) (v1.3).sms
-0072ED54
-
-[BIOS] Sonic The Hedgehog (Europe).sms
-81C3476B
 
