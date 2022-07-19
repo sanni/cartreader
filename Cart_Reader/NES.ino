@@ -4012,7 +4012,7 @@ void NESmaker_ResetFlash() { // Reset Flash
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xFF); // Reset
+  write_prg_byte(0x9555, 0xF0); // Reset
 }
 
 // SST 39SF040 Software ID
