@@ -56,7 +56,7 @@ Example:
 BA58ED29,716956B4,4E45531A100010080000070700000001    
 
 Name    
-CRC32 (prg+chr combined), CRC32 (16 bytes), iNES Header   
+CRC32 (prg+chr combined), CRC32 (512 bytes), iNES Header   
 
 ## snes.txt    
 This file is needed for odd sized SNES games like Final Fantasy (JAP), Super Metroid(US/JAP) or Tales of Symphonia. Without this file you will get overdumps and the checksum calculation will fail.    
