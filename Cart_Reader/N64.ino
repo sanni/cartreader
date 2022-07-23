@@ -4759,7 +4759,10 @@ void flashGameshark_N64() {
 
       if (writeErrors == 0) {
         println_Msg(F("OK"));
+        println_Msg(F(""));
+        println_Msg(F("Turn Cart Reader off now"));
         display_Update();
+        while (1);
       }
       else {
         print_Msg(writeErrors);

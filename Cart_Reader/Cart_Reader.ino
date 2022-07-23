@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             18.07.2022
-   Version:          9.1
+   Date:             23.07.2022
+   Version:          9.2 Alpha
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -25,7 +25,7 @@
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
-   skaman - Cart ROM READER SNES ENHANCED & Famicom Cart Dumper
+   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco- and Intellivision modules
    Tamanegi_taro - PCE and Satellaview modules
    splash5 - GBSmart, Wonderswan and NGP modules
    hkz & themanbehindthecurtain - N64 flashram commands
@@ -40,7 +40,8 @@
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
-   Uzlopak, sakman55, Tombo89, scrap-a, Tombo89, borti4938, vogelfreiheit, CaitSith2, Modman, philenotfound
+   Uzlopak, sakman55, Tombo89, scrap-a, Tombo89, borti4938, vogelfreiheit, CaitSith2, Modman,
+   philenotfound, karimhadjsalem, nsx0r
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
@@ -59,7 +60,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "9.1";
+char ver[5] = "9.2A";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -81,7 +82,7 @@ char ver[5] = "9.1";
 //******************************************
 // remove // before #define to enable a module
 #define enable_SNES
-#define enable_NP
+#define enable_SFM
 #define enable_SV
 #define enable_MD
 #define enable_SMS
@@ -93,6 +94,9 @@ char ver[5] = "9.1";
 //#define enable_PCE
 //#define enable_WS
 //#define enable_NGP
+//#define enable_INTV
+//#define enable_COLV
+//#define enable_VBOY
 
 //******************************************
 // HW CONFIGS
@@ -111,12 +115,14 @@ char ver[5] = "9.1";
 #if (defined(HW2) || defined(HW3))
 #define enable_OLED
 #define enable_Button2
-// #define clockgen_installed
-// #define fastcrc
+#define clockgen_installed
+#define fastcrc
 #endif
 
 #if defined(HW1)
 #define enable_OLED
+// #define clockgen_installed
+// #define fastcrc
 #endif
 
 #if defined(SERIAL_MONITOR)
@@ -296,6 +302,9 @@ bool i2c_found;
 #define mode_GB_GBSmart_Game 20
 #define mode_WS 21
 #define mode_NGP 22
+#define mode_INTV 23
+#define mode_COL 24
+#define mode_VBOY 25
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
@@ -686,13 +695,16 @@ static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char modeItem7[] PROGMEM = "PC Engine/TG16";
 static const char modeItem8[] PROGMEM = "WonderSwan";
 static const char modeItem9[] PROGMEM = "NeoGeo Pocket";
-static const char modeItem10[] PROGMEM = "Flashrom Programmer";
-static const char modeItem11[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11};
+static const char modeItem10[] PROGMEM = "Intellvision";
+static const char modeItem11[] PROGMEM = "Colecovision";
+static const char modeItem12[] PROGMEM = "Virtual Boy";
+static const char modeItem13[] PROGMEM = "Flashrom Programmer";
+static const char modeItem14[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14};
 
 // All included slots
 void mainMenu() {
-  // create menu with title and 11 options to choose from
+  // create menu with title and 13 options to choose from
   unsigned char modeMenu;
 
   // Main menu spans across two pages
@@ -708,8 +720,8 @@ void mainMenu() {
     }
     if (currPage == 2) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 7, 4);
-      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 4, 0);
+      convertPgm(modeOptions, 7, 7);
+      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
     }
     if (numPages == 0) {
       // Execute choice
@@ -793,8 +805,29 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_INTV
     case 9:
+      setup_INTV();
+      intvMenu();
+      break;
+#endif
+
+#ifdef enable_COLV
+    case 10:
+      setup_COL();
+      colMenu();
+      break;
+#endif
+
+#ifdef enable_VBOY
+    case 11:
+      setup_VBOY();
+      vboyMenu();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 12:
 #ifdef enable_FLASH16
       flashMenu();
 #else
@@ -803,7 +836,7 @@ void mainMenu() {
       break;
 #endif
 
-    case 10:
+    case 13:
       aboutScreen();
       break;
 
@@ -830,14 +863,27 @@ static const char modeItem7[] PROGMEM = "Reset";
 static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7};
 
 // Add-ons submenu
-static const char addonsItem1[] PROGMEM = "NES/Famicom";
-static const char addonsItem2[] PROGMEM = "Flashrom Programmer";
-static const char addonsItem3[] PROGMEM = "PC Engine/TG16";
-static const char addonsItem4[] PROGMEM = "SMS/GG/MIII/SG-1000";
-static const char addonsItem5[] PROGMEM = "WonderSwan";
-static const char addonsItem6[] PROGMEM = "NeoGeo Pocket";
-static const char addonsItem7[] PROGMEM = "Reset";
-static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, addonsItem6, addonsItem7};
+static const char addonsItem1[] PROGMEM = "Consoles";
+static const char addonsItem2[] PROGMEM = "Handhelds";
+static const char addonsItem3[] PROGMEM = "Flashrom Programmer";
+static const char addonsItem4[] PROGMEM = "Reset";
+static const char* const addonsOptions[] PROGMEM = {addonsItem1, addonsItem2, addonsItem3, addonsItem4};
+
+// Consoles submenu
+static const char consolesItem1[] PROGMEM = "NES/Famicom";
+static const char consolesItem2[] PROGMEM = "PC Engine/TG16";
+static const char consolesItem3[] PROGMEM = "SMS/GG/MIII/SG-1000";
+static const char consolesItem4[] PROGMEM = "Intellivision";
+static const char consolesItem5[] PROGMEM = "Colecovision";
+static const char consolesItem6[] PROGMEM = "Reset";
+static const char* const consolesOptions[] PROGMEM = {consolesItem1, consolesItem2, consolesItem3, consolesItem4, consolesItem5, consolesItem6};
+
+// Handhelds submenu
+static const char handheldsItem1[] PROGMEM = "Virtual Boy";
+static const char handheldsItem2[] PROGMEM = "WonderSwan";
+static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket";
+static const char handheldsItem4[] PROGMEM = "Reset";
+static const char* const handheldsOptions[] PROGMEM = {handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4};
 
 // All included slots
 void mainMenu() {
@@ -851,7 +897,7 @@ void mainMenu() {
   switch (modeMenu)
   {
     case 0:
-      addonsMenu();
+      addonMenu();
       break;
 
 #ifdef enable_SNES
@@ -889,15 +935,54 @@ void mainMenu() {
 }
 
 // Everything that needs an adapter
-void addonsMenu() {
-  // create menu with title and 7 options to choose from
+void addonMenu() {
+  // create menu with title and 4 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 7);
-  addonsMenu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
+  convertPgm(addonsOptions, 4);
+  addonsMenu = question_box(F("Type"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu)
+  {
+    // Consoles
+    case 0:
+      consoleMenu();
+      break;
+
+    // Handhelds
+    case 1:
+      handheldMenu();
+      break;
+
+#ifdef enable_FLASH
+    case 2:
+      flashMenu();
+      break;
+#endif
+
+    case 3:
+      resetArduino();
+      break;
+
+    default:
+      display_Clear();
+      println_Msg(F("Please enable module"));
+      print_Error(F("in Cart_Reader.ino."), true);
+      break;
+  }
+}
+
+// Everything that needs an adapter
+void consoleMenu() {
+  // create menu with title and 6 options to choose from
+  unsigned char consolesMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(consolesOptions, 6);
+  consolesMenu = question_box(F("Choose Adapter"), menuOptions, 6, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (consolesMenu)
   {
 #ifdef enable_NES
     case 0:
@@ -914,26 +999,66 @@ void addonsMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
-    case 1:
-      flashMenu();
-      break;
-#endif
-
 #ifdef enable_PCE
-    case 2:
+    case 1:
       pcsMenu();
       break;
 #endif
 
 #ifdef enable_SMS
-    case 3:
+    case 2:
       smsMenu();
       break;
 #endif
 
-#ifdef enable_WS
+#ifdef enable_INTV
+    case 3:
+      setup_INTV();
+      intvMenu();
+      break;
+#endif
+
+#ifdef enable_COLV
     case 4:
+      setup_COL();
+      colMenu();
+      break;
+#endif
+
+    case 5:
+      resetArduino();
+      break;
+
+    default:
+      display_Clear();
+      println_Msg(F("Please enable module"));
+      print_Error(F("in Cart_Reader.ino."), true);
+      break;
+  }
+}
+
+// Everything that needs an adapter
+void handheldMenu() {
+  // create menu with title and 4 options to choose from
+  unsigned char handheldsMenu;
+  // Copy menuOptions out of progmem
+  convertPgm(handheldsOptions, 4);
+  handheldsMenu = question_box(F("Choose Adapter"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (handheldsMenu)
+  {
+#ifdef enable_VBOY
+    case 0:
+      mode = mode_VBOY;
+      display_Clear();
+      display_Update();
+      setup_VBOY();
+      break;
+#endif
+
+#ifdef enable_WS
+    case 1:
       display_Clear();
       display_Update();
       setup_WS();
@@ -942,7 +1067,7 @@ void addonsMenu() {
 #endif
 
 #ifdef enable_NGP
-    case 5:
+    case 2:
       display_Clear();
       display_Update();
       setup_NGP();
@@ -950,7 +1075,7 @@ void addonsMenu() {
       break;
 #endif
 
-    case 6:
+    case 3:
       resetArduino();
       break;
 
@@ -2929,7 +3054,7 @@ void loop() {
   }
 #endif
 #endif
-#ifdef enable_NP
+#ifdef enable_SFM
   else if (mode == mode_SFM) {
     sfmMenu();
   }
@@ -2942,7 +3067,7 @@ void loop() {
     gbaMenu();
   }
 #endif
-#ifdef enable_NP
+#ifdef enable_SFM
 #ifdef enable_FLASH
   else if (mode == mode_SFM_Flash) {
     sfmFlashMenu();
@@ -3006,6 +3131,21 @@ void loop() {
 #ifdef enable_NGP
   else if (mode == mode_NGP) {
     ngpMenu();
+  }
+#endif
+#ifdef enable_INTV
+  else if (mode == mode_INTV) {
+    intvMenu();
+  }
+#endif
+#ifdef enable_COLV
+  else if (mode == mode_COL) {
+    colMenu();
+  }
+#endif
+#ifdef enable_VBOY
+  else if (mode == mode_VBOY) {
+    vboyMenu();
   }
 #endif
   else {

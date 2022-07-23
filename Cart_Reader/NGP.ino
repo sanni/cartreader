@@ -241,7 +241,7 @@ void readROM_NGP(char *outPathBuf, size_t bufferSize) {
     progress += 512;
     draw_progressbar(progress, cartSize);
   }
-  
+
   myFile.close();
 }
 

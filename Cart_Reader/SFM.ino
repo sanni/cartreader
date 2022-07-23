@@ -1,7 +1,7 @@
 //******************************************
-// NINTENDO POWER SF MEMORY MODULE
+// SF MEMORY MODULE
 //******************************************
-#ifdef enable_NP
+#ifdef enable_SFM
 
 /******************************************
    SF Memory Clock Source
