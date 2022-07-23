@@ -55,6 +55,7 @@ static const byte PROGMEM mapsize [] = {
   37, 4, 4, 6, 6, 0, 0, // (super mario bros + tetris + world cup)
   47, 4, 4, 6, 6, 0, 0, // (super spike vball + world cup)
   48, 3, 4, 6, 6, 0, 0, // taito tc0690
+  64, 2, 3, 4, 5, 0, 0, // tengen rambo-1
   65, 3, 4, 5, 6, 0, 0, // irem h-3001
   66, 2, 3, 2, 3, 0, 0, // gxrom/mhrom
   67, 3, 3, 5, 5, 0, 0, // sunsoft 3
@@ -89,6 +90,7 @@ static const byte PROGMEM mapsize [] = {
   153, 5, 5, 0, 0, 1, 1, // (famicom jump ii)                                 [sram r/w]
   154, 3, 3, 5, 5, 0, 0, // namcot-3453 (devil man)
   155, 3, 3, 3, 5, 0, 1, // mmc1 variant                                      [sram r/w]
+  158, 3, 3, 5, 5, 0, 0, // tengen rambo-1 variant (alien syndrome (u))
   159, 3, 4, 5, 6, 1, 1, // bandai x24c01                                     [eep r/w]
   180, 3, 3, 0, 0, 0, 0, // unrom variant (crazy climber)
   184, 1, 1, 2, 3, 0, 0, // sunsoft 1
@@ -2366,8 +2368,10 @@ void readPRG(boolean readrom) {
 
       case 4:
       case 47:
+      case 64:
       case 118:
       case 119:
+      case 158:
         banks = ((int_pow(2, prgsize) * 2)) - 2;  // Set Number of Banks
         if (mapper == 47)
           write_prg_byte(0xA001, 0x80); // Block Register - PRG RAM Chip Enable, Writable
@@ -2385,6 +2389,10 @@ void readPRG(boolean readrom) {
           for (word address = 0x0; address < 0x4000; address += 512) {
             dumpPRG(base, address);
           }
+        }
+        if ((mapper == 64) || (mapper == 158)) {
+          write_prg_byte(0x8000, 15); // PRG Bank 2 ($C000-$DFFF)
+          write_prg_byte(0x8001, banks);
         }
         for (word address = 0x4000; address < 0x8000; address += 512) { // Final 2 Banks ($C000-$FFFF)
           dumpPRG(base, address);
@@ -2870,8 +2878,10 @@ void readCHR(boolean readrom) {
 
         case 4:
         case 47:
+        case 64:
         case 118:
         case 119:
+        case 158:
           banks = int_pow(2, chrsize) * 4;
           if (mapper == 47)
             write_prg_byte(0xA001, 0x80); // Block Register - PRG RAM Chip Enable, Writable
@@ -4012,7 +4022,7 @@ void NESmaker_ResetFlash() { // Reset Flash
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xF0); // Reset
+  write_prg_byte(0x9555, 0xFF); // Reset
 }
 
 // SST 39SF040 Software ID
@@ -4027,7 +4037,12 @@ void NESmaker_ID() { // Read Flash ID
   unsigned char ID1 = read_prg_byte(0x8000);
   unsigned char ID2 = read_prg_byte(0x8001);
   sprintf(flashid, "%02X%02X", ID1, ID2);
-  NESmaker_ResetFlash(); // Software ID Exit
+  write_prg_byte(0xC000, 0x01);
+  write_prg_byte(0x9555, 0xAA);
+  write_prg_byte(0xC000, 0x00);
+  write_prg_byte(0xAAAA, 0x55);
+  write_prg_byte(0xC000, 0x01);
+  write_prg_byte(0x9555, 0xF0); // Software ID Exit
   if (strcmp(flashid, "BFB7") == 0) // SST 39SF040
     flashfound = 1;
 }
@@ -4105,7 +4120,6 @@ void writeFLASH() {
 
     //open file on sd card
     if (myFile.open(filePath, O_READ)) {
-      myFile.seekSet(16);
       banks = int_pow(2, prgsize); // 256K/512K
       for (int i = 0; i < banks; i++) { // 16K Banks
         for (word sector = 0; sector < 0x4000; sector += 0x1000) { // 4K Sectors ($8000/$9000/$A000/$B000)

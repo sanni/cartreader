@@ -154,7 +154,7 @@ void snsMenu() {
       mode = mode_SNES;
       break;
 
-#ifdef enable_NP
+#ifdef enable_SFM
     case 1:
       display_Clear();
       display_Update();
