@@ -350,19 +350,46 @@ void gbaMenu() {
           // 512K FLASH
           idFlash_GBA();
           resetFLASH_GBA();
-          if (strcmp(flashid, "BFD4") != 0) {
-            println_Msg(F("Flashrom Type not supported"));
-            print_Msg(F("ID: "));
-            println_Msg(flashid);
-            print_Error(F(""), true);
+          
+          print_Msg(F("Flashrom ID: "));
+          println_Msg(flashid);
+          println_Msg(F(""));
+          println_Msg(F("Flashrom Type: "));
+          if (strcmp(flashid, "1F3D") == 0) {
+            println_Msg(F("Atmel AT29LV512"));
           }
-          eraseFLASH_GBA();
-          if (blankcheckFLASH_GBA(65536)) {
-            writeFLASH_GBA(1, 65536, 0);
-            verifyFLASH_GBA(65536, 0);
+          else if (strcmp(flashid, "BFD4") == 0) {
+            println_Msg(F("SST 39VF512"));
+          }
+          else if (strcmp(flashid, "C21C") == 0) {
+            println_Msg(F("Macronix MX29L512"));
+          }
+          else if (strcmp(flashid, "321B") == 0) {
+            println_Msg(F("Panasonic MN63F805MNP"));
           }
           else {
-            print_Error(F("Erase failed"), false);
+            println_Msg(F("Unknown"));
+            //print_Error(F(""), true);
+          }
+          println_Msg(F(""));
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+          display_Clear();
+          display_Update();
+          
+          if (strcmp(flashid, "1F3D") == 0) { // Atmel
+            writeFLASH_GBA(1, 65536, 0, 1);
+            verifyFLASH_GBA(65536, 0);
+          } else {
+            eraseFLASH_GBA();
+            if (blankcheckFLASH_GBA(65536)) {
+              writeFLASH_GBA(1, 65536, 0, 0);
+              verifyFLASH_GBA(65536, 0);
+            }
+            else {
+              print_Error(F("Erase failed"), false);
+            }
           }
           setROM_GBA();
           break;
@@ -373,18 +400,34 @@ void gbaMenu() {
           // 1M FLASH
           idFlash_GBA();
           resetFLASH_GBA();
-          if (strcmp(flashid, "C209") != 0) {
-            println_Msg(F("Flashrom Type not supported"));
-            print_Msg(F("ID: "));
-            println_Msg(flashid);
-            print_Error(F(""), true);
+          
+          print_Msg(F("Flashrom ID: "));
+          println_Msg(flashid);
+          println_Msg(F(""));
+          println_Msg(F("Flashrom Type: "));
+          if (strcmp(flashid, "C209") == 0) {
+            println_Msg(F("Macronix MX29L010"));
           }
+          else if (strcmp(flashid, "6213") == 0) {
+            println_Msg(F("SANYO LE26FV10N1TS"));
+          }
+          else {
+            println_Msg(F("Unknown"));
+            //print_Error(F(""), true);
+          }
+          println_Msg(F(""));
+          println_Msg(F("Press Button..."));
+          display_Update();
+          wait();
+          display_Clear();
+          display_Update();
+
           eraseFLASH_GBA();
           // 131072 bytes are divided into two 65536 byte banks
           switchBank_GBA(0x0);
           setROM_GBA();
           if (blankcheckFLASH_GBA(65536)) {
-            writeFLASH_GBA(1, 65536, 0);
+            writeFLASH_GBA(1, 65536, 0, 0);
             verifyFLASH_GBA(65536, 0);
           }
           else {
@@ -393,7 +436,7 @@ void gbaMenu() {
           switchBank_GBA(0x1);
           setROM_GBA();
           if (blankcheckFLASH_GBA(65536)) {
-            writeFLASH_GBA(0, 65536, 65536);
+            writeFLASH_GBA(0, 65536, 65536, 0);
             verifyFLASH_GBA(65536, 65536);
           }
           else {
@@ -920,7 +963,7 @@ void readROM_GBA() {
   draw_progressbar(0, totalProgressBar);
 
   // Read rom
-  for (int myAddress = 0; myAddress < cartSize; myAddress += 512) {
+  for (unsigned long myAddress = 0; myAddress < cartSize; myAddress += 512) {
     // Blink led
     if (myAddress % 16384 == 0)
       blinkLED();
@@ -1599,7 +1642,7 @@ void busyCheck_GBA(int currByte) {
   DDRC = 0xFF;
 }
 
-void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) {
+void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos, boolean isAtmel) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
 
@@ -1631,20 +1674,37 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos) 
     // Output a LOW signal on CE_FLASH(PH0)
     PORTH &= ~(1 << 0);
 
-    for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
-      //fill sdBuffer
-      myFile.read(sdBuffer, 512);
-
-      for (int c = 0; c < 512; c++) {
+    if (!isAtmel) {
+      for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+        //fill sdBuffer
+        myFile.read(sdBuffer, 512);
+  
+        for (int c = 0; c < 512; c++) {
+          // Write command sequence
+          writeByteFlash_GBA(0x5555, 0xaa);
+          writeByteFlash_GBA(0x2aaa, 0x55);
+          writeByteFlash_GBA(0x5555, 0xa0);
+          // Write current byte
+          writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
+  
+          // Wait
+          busyCheck_GBA(c);
+        }
+      }
+    }
+    else {
+      for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 128) {
+        //fill sdBuffer
+        myFile.read(sdBuffer, 128);
+  
         // Write command sequence
         writeByteFlash_GBA(0x5555, 0xaa);
         writeByteFlash_GBA(0x2aaa, 0x55);
         writeByteFlash_GBA(0x5555, 0xa0);
-        // Write current byte
-        writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
-
-        // Wait
-        busyCheck_GBA(c);
+        for (int c = 0; c < 128; c++) {
+          writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
+        }
+        delay(15);
       }
     }
     // Set CS_FLASH(PH0) high
