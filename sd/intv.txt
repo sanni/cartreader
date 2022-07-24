@@ -1,0 +1,579 @@
+ABPA Backgammon ~ Backgammon (USA, Europe).int
+A60E25FC,C36165EC,0,08,0
+
+Advanced Dungeons & Dragons (USA, Europe).int
+F8B1F2B7,E1F0B155,0,16,0
+
+Advanced Dungeons & Dragons - Treasure of Tarmin (USA).int
+16C3B62F,95A8ADB2,0,16,0
+
+Adventure (USA, Europe).int
+11C3BCFA,14A044B2,0,16,0
+
+Air Strike (USA) (Proto).int
+2C668249,1BB8CBB9,0,08,0
+
+All-Star Major League Baseball (USA) (Beta).int
+B45633CF,154D6C18,0,24,0
+
+Armor Battle (USA, Europe).int
+6F91FBC1,C8512074,0,08,0
+
+Astrosmash (USA, Europe).int
+FAB2992C,ACF729A9,0,08,0
+
+Atlantis (USA, Europe).int
+13FF363C,5FA1ADEE,7,16,0
+
+Auto Racing (USA, Europe).int
+B35C1101,C69AE3EC,0,08,0
+
+B-17 Bomber (USA, Europe).int
+8AD19AB3,AB263A2B,0,24,0
+
+BattleTanks (USA).int
+22A1F245,51237146,0,08,0
+
+Beamrider (USA, Europe).int
+EAF650CC,808DA491,0,16,0
+
+Beauty & the Beast (USA, Europe).int
+C047D487,342895CD,7,16,0
+
+Biplanes (USA).int
+44519F2D,20E177E5,0,08,0
+
+Blockade Runner (USA).int
+B03F739B,666EBB72,0,16,0
+
+Body Slam! - Super Pro Wrestling (USA).int
+515E1D7E,8D929130,2,32,0
+
+Bomb Squad (USA).int
+32697B72,D2EC7D12,0,24,0
+
+Boxing (USA, Europe).int
+AB87C16F,882D9CE0,0,08,0
+
+Brickout! (USA) (Proto).int
+9F85015B,BC12378E,0,08,0
+
+Bump 'n' Jump (USA).int
+999CCEED,81DA458C,0,32,0
+
+BurgerTime (USA, Europe).int
+43806375,6C79BAD3,0,16,0
+
+Buzz Bombers (USA, Europe) (Alt).int
+2A1E0C1C,DA291698,0,16,0
+
+Buzz Bombers (USA, Europe).int
+FA492BBD,DA291698,0,16,0
+
+Carnival (USA, Europe).int
+43870908,185D7B3A,0,08,0
+
+Centipede (USA).int
+D5363B8C,16881D87,6,16,0
+
+Championship Tennis (Europe).int
+4CC46A04,DCF67785,1,32,0
+
+Checkers ~ Draughts (USA, Europe).int
+36E1D858,477D5860,0,08,0
+
+Chip Shot - Super Pro Golf (USA).int
+0BF464C6,EF1019FF,2,32,0
+
+Commando (USA).int
+3289C8BA,3FFF5609,2,32,0
+
+Congo Bongo (USA).int
+4B23A757,560927CA,5,24,0
+
+Crazy Clones (USA) (Proto).int
+E1EE408F,102B6DE1,0,08,0
+
+Crosswords (USA).int
+32162105,9B61C8C1,0,16,0
+
+Deadly Dogs (USA, Europe) (Beta).int
+CDC14ED8,4ABB962D,0,08,0
+
+Deep Pockets - Super Pro Pool & Billiards (USA) (Proto).int
+6802B191,C6724EE0,0,32,0
+
+Defender (USA).int
+D8F99AA2,056F30A3,5,24,0
+
+Demon Attack (USA, Europe).int
+5E6A8CD8,25554AAB,7,16,0
+
+Demonstration Cartridge - Blue (USA).int
+02919024,78C428C7,0,16,0
+
+Demonstration Cartridge - Green (USA).int
+A3ACD160,3BC5456A,0,32,0
+
+Demonstration Cartridge - Red (USA).int
+0487675C,DD3C5CC9,0,16,0
+
+Dig Dug (USA).int
+159AF7F7,FE382C98,5,32,0
+
+Diner (USA).int
+13EE56F1,B04CAD24,2,32,0
+
+Donkey Kong (USA, Europe).int
+C30F61C0,67DFAA6A,0,08,0
+
+Donkey Kong Junior (USA, Europe).int
+6DF61A9F,C387455F,0,16,0
+
+Dracula (USA, Europe).int
+84BEDCC1,C9BD95C8,0,16,0
+
+Dragonfire (USA, Europe).int
+AF8718A1,44A6B99C,0,08,0
+
+Dreadnaught Factor, The (USA) (Beta).int
+BF4D0E9B,7B46960A,0,16,0
+
+Dreadnaught Factor, The (USA).int
+3B99B889,3D384683,0,16,0
+
+Duncan's Thin Ice (USA).int
+F3DF94E0,BDB66897,0,32,0
+
+Electric Company, The - Math Fun (USA, Europe).int
+54A3FC11,5A83A949,0,08,0
+
+Electric Company, The - Word Fun (USA, Europe).int
+C9EAACAB,58D0067F,0,08,0
+
+Factor Fun (USA).int
+F3AE29EA,09F657FA,0,16,0
+
+Fathom (USA, Europe).int
+4221EDE7,88A1F92B,0,16,0
+
+Frog Bog (USA, Europe).int
+37222762,621DE7FB,0,08,0
+
+Frogger (USA, Europe).int
+D27495E9,44F825D6,0,08,0
+
+Game Factory (USA) (Proto).int
+CE8FC699,8CB87C57,0,48,0
+
+Go for the Gold (USA) (Proto).int
+DBCA82C5,F3FA5716,0,16,0
+
+Grid Shock (USA) (Proto).int
+291AC826,5AA83F48,0,08,0
+
+Happy Holidays - Easter Eggcitement (USA) (Proto).int
+20ACE89D,1C4B3CDE,0,08,0
+
+Happy Holidays - Santa's Helper (USA) (Proto).int
+E221808C,08238550,0,08,0
+
+Happy Trails (USA, Europe).int
+4B8C5932,7095EA8D,0,08,0
+
+Horse Racing (USA, Europe).int
+B5C7F25D,A505F4C6,0,08,0
+
+Hover Force (USA).int
+FF83FF80,624785F2,2,48,0
+
+Hypnotic Lights (USA) (Proto).int
+A3147630,7DEB5F26,0,08,0
+
+Ice Trek (USA, Europe).int
+4F3E3F69,98DB94E0,0,16,0
+
+Illusions (USA) (Proto).int
+851F3CCB,6844341D,0,16,0
+
+IMI Test Cartridge (USA).int
+7217CA7B,2DB4CB7F,0,08,0
+
+International Demonstration Cartridge (World).int
+6A02C7E8,58C6EDBE,0,24,0
+
+Jetsons' Ways with Words, The (USA).int
+EE5F1BE2,8368BCD1,0,24,0
+
+King of the Mountain (USA) (Proto).int
+4422868E,D66A374F,0,32,0
+
+Kool-Aid Man (USA).int
+8C9819A2,D9947031,0,16,0
+
+Lady Bug (USA, Europe).int
+A6840736,A6EC87AB,0,16,0
+
+Land Battle (USA) (Proto).int
+3825C25B,29566141,0,16,0
+
+Las Vegas Poker & Blackjack (USA, Europe).int
+604611C0,32858BA8,0,08,0
+
+Las Vegas Roulette (USA, Europe).int
+48D74D3C,82DACC08,0,08,0
+
+League of Light (USA) (Proto).int
+B4287B95,51BDCF67,0,16,0
+
+Learning Fun I - Math Master, Factor Fun (USA).int
+2C5FD5FA,09F657FA,2,16,0
+
+Learning Fun II - Word Wizard, Memory Fun (USA).int
+632F6ADF,26B6387C,2,16,0
+
+Lock 'N' Chase (USA, Europe) (Rev 1).int
+5C7E9848,E48B1C19,0,16,0
+
+Lock 'N' Chase (USA, Europe).int
+E00D1399,DCC7DDF1,0,16,0
+
+Loco-Motion (USA).int
+6B6E80EE,DF82461E,0,16,0
+
+Magic Carousel (USA) (Proto) (Alt).int
+B25B22CB,AB318052,0,32,0
+
+Magic Carousel (USA) (Proto).int
+F3B0C759,7F5828FC,0,32,0
+
+Major League Baseball ~ Big League Baseball ~ Baseball (USA, Europe).int
+DAB36628,F14AA2C0,0,08,0
+
+Masters of the Universe - The Power of He-Man (USA, Europe).int
+573B9B6D,BB865611,0,32,0
+
+Math Master (USA).int
+662E2812,09F657FA,0,16,0
+
+Melody Blaster (USA, Europe).int
+FF68AA22,9713E1EB,0,24,0
+
+Memory Fun (USA).int
+96E000EB,DACB7978,0,16,0
+
+Meteor (USA, Europe) (Beta).int
+00BE8BBA,DE0507CA,0,08,0
+
+Microsurgeon (USA, Europe).int
+E806AD91,AA0B1043,7,16,0
+
+Mind Strike (USA, Europe).int
+9D57498F,0F004AFA,0,24,0
+
+Minotaur (USA).int
+BD731E3C,443899D8,0,16,0
+
+Mission X (USA, Europe).int
+11FB9974,87E900F4,0,16,0
+
+Motocross (USA).int
+5F6E1AF6,40DB7B64,0,16,0
+
+Mountain Madness - Super Pro Skiing (USA).int
+6B5EA9C4,DD19D34B,0,16,0
+
+Mouse Trap (USA, Europe).int
+598662F2,DA94B747,0,08,0
+
+Mr. BASIC Meets Bits 'N Bytes (USA).int
+BEF0B0C7,37088E19,0,24,0
+
+MTE201 Intellivision Test Cartridge (USA).int
+C83EEA4C,F14AA2C0,0,16,0
+
+NASL Soccer ~ Soccer (USA, Europe).int
+DBAB54CA,2D07627A,0,08,0
+
+NBA Basketball ~ Basketball (USA, Europe).int
+81E7FB8C,9576C2F9,0,08,0
+
+NFL Football ~ Football (USA, Europe).int
+4B91CF16,E0AD6B4A,0,08,0
+
+NHL Hockey ~ Hockey (USA, Europe).int
+76564A13,04F4C137,0,08,0
+
+Night Stalker (USA, Europe).int
+7334CD44,73C43D56,0,08,0
+
+Nova Blast (USA, Europe).int
+5EE2CC2A,730B4F52,0,16,0
+
+Number Jumble (USA) (Proto) (Alt).int
+0E4920C1,E2D7EB41,0,32,0
+
+Number Jumble (USA) (Proto).int
+E5D1A8D2,E2D7EB41,0,32,0
+
+Pac-Man (USA) (Atarisoft).int
+A21C31C3,784C5852,5,24,0
+
+Pac-Man (USA) (INTV Corp.).int
+6E4E8EB4,784C5852,5,24,0
+
+Party Line - Blow Out (USA) (Proto).int
+A63AA3D8,12A4B8AC,0,16,0
+
+Party Line - Hard Hat (USA) (Proto).int
+B6A3D4DE,015DA141,0,16,0
+
+Party Line - Space Cadet (USA) (Proto) (Alt).int
+4B88FA8E,24DB7D78,0,16,0
+
+Party Line - Space Cadet (USA) (Proto).int
+F8EF3E5A,916BC680,0,16,0
+
+PBA Bowling ~ Bowling (USA, Europe).int
+169E3584,92A5CC45,0,08,0
+
+PGA Golf ~ Golf (USA, Europe).int
+FF87FAEC,6AB812CC,0,08,0
+
+Pinball (USA).int
+D7C5849C,B4EAAD8E,0,24,0
+
+Pitfall! (USA, Europe).int
+9C75EFCC,7A686C7A,0,08,0
+
+Pole Position (USA).int
+BB939881,099FBB17,2,32,0
+
+Popeye (USA, Europe).int
+C51464E0,F82CB303,0,16,0
+
+Q-bert (USA, Europe).int
+D8C9856A,2AF7CB8E,0,16,0
+
+Racing Cars (USA).int
+156A5645,47D4FDE8,0,08,0
+
+Reversi (USA, Europe).int
+C7BB1B0E,007A3CFA,0,08,0
+
+River Raid (USA, Europe) (Beta).int
+95466AD3,9A3BB87D,0,16,0
+
+River Raid (USA, Europe).int
+8910C37A,C602EFD5,0,16,0
+
+Robot Rubble (USA) (Proto 1).int
+7473916D,8223FE20,0,08,0
+
+Robot Rubble (USA) (Proto 2).int
+A5E28783,9CD166A3,0,08,0
+
+Robot Rubble (USA) (Proto 3).int
+243B0812,B7EF0D22,0,16,0
+
+Rocky & Bullwinckle (USA) (Proto).int
+867F1941,5897B25B,0,16,0
+
+Royal Dealer (USA, Europe).int
+DCF4B15D,9E0D5725,0,16,0
+
+Safecracker (USA, Europe).int
+47AA7977,D8A856C3,0,16,0
+
+Scarfinger (USA) (Proto).int
+23DC808D,F9459608,0,32,0
+
+Scooby Doo's Maze Chase (USA, Europe).int
+E9E3F60D,32BA11D5,0,16,0
+
+Sea Battle (USA, Europe).int
+99AE29A9,3E9C2F57,0,08,0
+
+Sewer Sam (USA).int
+E0F0D3DA,547255AE,0,16,0
+
+Shark! Shark! (USA, Europe).int
+2A4C761D,FAD18815,0,16,0
+
+Sharp Shot (USA, Europe).int
+FF7CB79E,D3755257,0,08,0
+
+Slam Dunk - Super Pro Basketball (USA).int
+800B572F,73E1B160,2,32,0
+
+Slap Shot - Super Pro Hockey (USA).int
+BA68FF28,28E12B2A,0,16,0
+
+SNAFU (USA, Europe).int
+8F959A6E,A8D4F530,0,08,0
+
+Space Armada (USA, Europe).int
+E8B8EBA5,37448F0E,0,08,0
+
+Space Battle (USA, Europe).int
+F95504E0,4B01266E,0,08,0
+
+Space Hawk (USA, Europe).int
+39D3B895,98C36FD6,0,08,0
+
+Space Spartans (USA, Europe).int
+3784DC52,ABEC143B,0,16,0
+
+Spiker - Super Pro Volleyball (USA).int
+A95021FC,9863F705,2,32,0
+
+Stadium Mud Buggies (USA).int
+B745C1CA,05C25ADA,2,32,0
+
+Stampede (USA, Europe).int
+2DEACD15,70EA291B,0,08,0
+
+Star Strike (USA, Europe).int
+72E11FCA,03BC8D15,0,08,0
+
+Star Wars - The Empire Strikes Back (USA, Europe).int
+D5B0135A,D4F28D1E,0,08,0
+
+Street ~ Happy Holidays - Trick or Treat (USA) (Proto).int
+4830F720,73C73B20,0,08,0
+
+Sub Hunt (USA, Europe).int
+3D9949EA,EA26DB5E,0,16,0
+
+Super Cobra (Europe, Canada).int
+7C32C9B8,8683587D,0,16,0
+
+Super Masters! (USA) (Proto).int
+BAB638F2,AC5708E7,0,16,0
+
+Super NFL Footbal (USA) (Proto).int
+BE4D7996,099E7ED0,0,48,0
+
+Super Pro Decathlon (USA).int
+16BFB8EB,1BDEA222,2,32,0
+
+Super Pro Football (USA).int
+32076E9D,8EB44B60,2,32,0
+
+Super Soccer (USA) (Proto).int
+51B82EB7,956E56B2,0,32,0
+
+Swords & Serpents (USA, Europe).int
+15E88FCE,F1083D3F,0,16,0
+
+Takeover (USA) (Proto).int
+1F584A69,B1893993,0,08,0
+
+Tennis (USA, Europe).int
+03E9E62E,7AFAD623,0,08,0
+
+Thin Ice (USA) (Beta).int
+D6495910,C1201C5A,0,16,0
+
+Thin Ice (USA).int
+975AE6DF,683F4AAE,0,16,0
+
+Thunder Castle (USA).int
+C1F1CA74,0C13E05A,0,32,0
+
+Tower of Doom (USA).int
+D1D352A0,003BCCB5,3,48,0
+
+Triple Action (USA).int
+1AC989E2,09BE6581,0,08,0
+
+Triple Challenge - Chess, Checkers, Backgammon (USA).int
+095638C0,D324817A,9,44,2
+
+TRON (USA) (Proto).int
+5A144835,695A7D09,0,16,0
+
+TRON Deadly Discs (USA, Europe).int
+CA447BBD,C1E344F4,0,08,0
+
+TRON Maze-A-Tron (USA, Europe).int
+7A558CF5,116665E4,0,16,0
+
+TRON Solar Sailer (USA, Europe).int
+07FB9435,6E89D53D,0,24,0
+
+Tropical Trouble (USA, Europe).int
+6F23A741,294930FB,0,16,0
+
+Truckin' (USA).int
+734F3260,E331CF32,0,16,0
+
+Turbo (USA, Europe).int
+275F3512,161559AC,0,16,0
+
+Tutankham (Europe).int
+6FA698B3,C62F1AE6,0,16,0
+
+US Ski Team Skiing ~ Skiing (USA, Europe).int
+F093E801,E6451829,0,08,0
+
+USCF Chess ~ Chess (USA, Europe).int
+752FD927,BB6E44A4,4,16,1
+
+Utopia (USA, Europe).int
+F9E0789E,AA5E9866,0,08,0
+
+Vectron (USA, Europe) (Alt).int
+8F48030F,A04A5320,0,24,0
+
+Vectron (USA, Europe).int
+A4A20354,3423D224,0,24,0
+
+Venture (USA, Europe).int
+6EFA67B2,1633E494,0,16,0
+
+White Water! (USA, Europe).int
+F1ED7D27,2879662D,0,16,0
+
+Word Hunt (USA).int
+B8AE7E3B,3B4664D4,0,16,0
+
+Word Rockets (USA).int
+4B35D11D,9178C542,0,16,0
+
+World Championship Baseball (USA).int
+10D64E48,154D6C18,0,24,0
+
+World Cup Football (Europe).int
+15D9D27A,D6E2244E,0,32,0
+
+World Series Major League Baseball (USA).int
+C2063C08,61769915,1,48,0
+
+Worm Whomper (USA, Europe).int
+24B667B9,D4F8C427,0,08,0
+
+Yogi's Frustration (USA) (Proto).int
+752B73DD,D9D9F880,0,32,0
+
+Zaxxon (USA, Europe).int
+15C65DC5,6E360908,0,16,0
+
+Zzzz! Spina the Bee (Europe) (Proto).int
+01EFA214,F042D89F,0,16,0
+
+[BIOS] Entertainment Computer System EXEC-BASIC (USA, Europe).int
+EA790A06,ED1875C1,0,24,0
+
+[BIOS] Intellivision Executive ROM (World).int
+CBCE86F7,99A84E42,0,08,0
+
+[BIOS] Intellivision Graphic ROM (World).int
+683A4158,CA1FBEEA,0,02,0
+
+[BIOS] Intellivoice (USA, Europe).int
+0DE7579D,7184B7ED,0,02,0
+
+[BIOS] Sears Super Video Arcade (USA, Europe).int
+EA552A22,C8F183A2,0,08,0
+

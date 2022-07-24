@@ -1,0 +1,585 @@
+2010 - The Graphic Action Game (USA) (Beta).col
+3657F3CD,3CB1141E,32
+
+2010 - The Graphic Action Game (USA).col
+C575A831,B8783441,32
+
+A.E. (USA) (Proto).col
+DB845695,9F44CA64,17
+
+Activision Decathlon, The (USA).col
+51FE49C8,3E31149C,16
+
+Adam's Musicbox Demo (USA) (Demo).col
+164C8C26,553F630F,24
+
+Alcazar - The Forgotten Fortress (USA).col
+FCE3AA06,95F206CB,16
+
+Alphabet Zoo (USA).col
+4FFB4E8C,38A49330,16
+
+Amazing Bumpman (USA).col
+78A738AF,282C6DBC,16
+
+Antarctic Adventure (USA, Europe) (Beta).col
+A66E5ED1,C33D14FD,16
+
+Antarctic Adventure (USA, Europe).col
+275C800E,9901D388,16
+
+Aquattack (USA).col
+947437EC,4C8B623E,16
+
+Artillery Duel (USA).col
+6F88FCF0,48474D52,16
+
+BC's Quest for Tires (Canada).col
+0AE39F2C,87B6CF32,16
+
+BC's Quest for Tires (USA).col
+4359A3E5,87B6CF32,16
+
+BC's Quest for Tires II - Grog's Revenge (Canada).col
+1CA853D5,17A7F95F,24
+
+BC's Quest for Tires II - Grog's Revenge (USA).col
+D464E5E4,8C6A5008,24
+
+Beamrider (USA).col
+7A93C6E5,D6D4679A,16
+
+Berenstain Bears, The (USA) (Demo).col
+18864ABC,B6CC56CD,08
+
+Blockade Runner (USA).col
+DF65FC87,8060714A,16
+
+Boulder Dash (USA) (Beta).col
+1796DE5E,EA21183F,16
+
+Boulder Dash (USA).col
+9B547BA8,EA21183F,16
+
+Brain Strainers (USA).col
+829C967D,282151C7,16
+
+Buck Rogers - Planet of Zoom (USA, Europe).col
+00B37475,842F347E,24
+
+Bump 'n' Jump (USA, Europe) (Beta).col
+EB498F97,4F166045,16
+
+Bump 'n' Jump (USA, Europe).col
+9E1FAB59,D4FCAA6D,20
+
+BurgerTime (USA, Europe) (Beta).col
+E5C5EA20,10122744,16
+
+BurgerTime (USA, Europe).col
+91346341,F2357051,16
+
+Cabbage Patch Kids - Adventures in the Park (USA, Europe) (Beta 1).col
+BEACBFF5,9E16DCEE,16
+
+Cabbage Patch Kids - Adventures in the Park (USA, Europe) (Beta 2).col
+5DA13DFD,E013DC2D,16
+
+Cabbage Patch Kids - Adventures in the Park (USA, Europe).col
+6AF19E75,389EB985,16
+
+Cabbage Patch Kids - Picture Show (USA).col
+75B08D99,B6B465E8,24
+
+Campaign '84 (USA).col
+5AA22D66,8472B350,16
+
+Carnival (USA, Europe).col
+70F315C2,B0DA7360,16
+
+Castelo (Brazil) (Unl).col
+07A3D3DB,D938FEDD,08
+
+CAT S.O.S. Game, The (USA) (Promo).col
+13886C96,ACF99CCB,16
+
+Centipede (USA).col
+17EDBFD4,44B93BF2,16
+
+Choplifter! (USA).col
+030E0D48,265FB333,16
+
+Chuck Norris - Superkicks (USA).col
+5EEB81DE,4D35BB5F,16
+
+ColecoVision Monitor Test (USA, Europe).col
+71AE16ED,B7D70699,16
+
+Congo Bongo (USA).col
+4E8B4C1D,48D23917,24
+
+Cosmic Avenger (USA, Europe).col
+39D4215B,DBB3EB55,16
+
+Cosmic Crisis (Europe).col
+7C2C7C41,0A423AD5,16
+
+Dam Busters, The (Canada).col
+C75FAD5A,2377BFD3,32
+
+Dam Busters, The (USA).col
+890682B3,7BF11C02,32
+
+Dance Fantasy (USA).col
+BFF86A98,2BB06580,08
+
+Defender (USA) (BUG Fixed).col
+46A909CC,A177666A,24
+
+Defender (USA).col
+6CF594E5,E1F9C3BA,24
+
+Destructor (USA, Europe).col
+56C358A6,1E16150A,32
+
+Dig Dug (USA) (Proto).col
+1038E0A1,740902A4,24
+
+Donkey Kong (USA).col
+94C4CD4A,BDA4BDCB,24
+
+Donkey Kong (USA, Europe) (v1.1).col
+3C77198C,9D6974E5,16
+
+Donkey Kong Junior (USA, Europe).col
+FD11508D,FDBC3ABD,16
+
+Dr. Seuss - Fix-Up the Mix-Up Puzzler (USA).col
+109699E2,C40A40AE,16
+
+Dragon's Lair (USA) (Proto).col
+DA521D6D,06FFC55B,24
+
+Dragonfire (USA).col
+DCB8F9E8,245688E4,16
+
+Dukes of Hazzard, The (USA).col
+4025AC94,F6AB8029,32
+
+Escape from the Mindmaster (USA) (Proto).col
+3678AB6F,3E678351,16
+
+Evolution (Canada).col
+4CD4E185,5E2E852E,16
+
+Evolution (USA) (Unl).col
+4C933007,A4CD9F3D,16
+
+Facemaker (USA).col
+EC9DFB07,F617D27F,08
+
+Fall Guy (USA) (Proto).col
+8A731B38,79995D1D,16
+
+Fathom (USA).col
+B3B767AE,46D0F427,16
+
+Final Test Cartridge (USA).col
+3AE4B58C,ABBF8979,08
+
+Fireman (USA) (Proto).col
+64EC761E,F4884314,32
+
+Flipper Slipper (USA) (Unl).col
+9788BCA7,AAB827E7,16
+
+Flipper Slipper (USA, Europe).col
+2A49F507,AAB827E7,16
+
+Fortune Builder (USA).col
+65BBBCB4,0482ADC7,32
+
+Fraction Fever (USA).col
+964DB3BC,4C68AD09,08
+
+Frantic Freddy (USA).col
+8615C6E8,C21DDEFB,16
+
+Frenzy (USA, Europe).col
+3CACDDFB,B1256096,20
+
+Frogger (USA).col
+798002A2,710B74BD,12
+
+Frogger II - ThreeeDeep! (USA).col
+4229EA5A,E51DFEB1,16
+
+Front Line (USA, Europe) (Standard Controller).col
+D0110137,56B56187,24
+
+Front Line (USA, Europe) (Super Action Controller).col
+E16E0917,56B56187,24
+
+Galaxian (USA).col
+6A7A162A,F9E340CC,20
+
+Gateway to Apshai (USA, Europe).col
+FDB75BE6,914F8730,12
+
+Gorf (USA, Europe).col
+FF46BECC,A816BFBF,16
+
+Gust Buster (USA).col
+29FEA563,C0E4D626,16
+
+Gyruss (USA) (Beta).col
+B35D4DC9,7D380FC3,08
+
+Gyruss (USA).col
+27CBF26D,E14AD648,16
+
+H.E.R.O. - Helicopter Emergency Rescue Operation (USA).col
+685AB9B5,7297F27A,16
+
+Heist, The (USA).col
+987491CE,E3F1E5B4,24
+
+Illusions (USA).col
+2787516D,45DD7024,16
+
+It's Only Rock 'N' Roll (USA).col
+CC43EBF7,7C4EAB43,16
+
+James Bond 007 (USA).col
+561F2530,4B7E2737,12
+
+Joust (USA) (Proto).col
+52228000,A8FDC432,24
+
+Jukebox (USA).col
+A5511418,B0F2CBF8,08
+
+Julius Erving and Larry Bird Go - One-on-One (USA).col
+EF50E1C5,CA0EC8D0,24
+
+Jumpman Junior (USA, Europe).col
+060C69E8,C8EB92C3,16
+
+Jungle Hunt (USA).col
+58E886D2,83D027D7,24
+
+Ken Uston Blackjack-Poker (USA, Europe).col
+8C7B7803,3D04A03D,16
+
+Keystone Kapers (USA).col
+69FC2966,1A28393E,16
+
+Lady Bug (USA, Europe).col
+2C3097B8,A43B5682,16
+
+Learning with Leeper (USA).col
+1641044F,D2C49B1B,16
+
+Linking Logic (USA).col
+918F12C0,ED0A0DE0,08
+
+Logic Levels (USA).col
+D54C581B,C771F891,08
+
+Looping (USA, Europe).col
+6A2D637B,B086D523,16
+
+Lord of the Dungeon (USA) (Beta).col
+FEE15196,E2D12B7E,32
+
+M.A.S.H (Europe) (Proto).col
+FC95B302,2D12DFAB,16
+
+Matt Patrol (USA) (Proto) (Alt).col
+FBE12DE7,89BB45A0,32
+
+Matt Patrol (USA) (Proto).col
+90007079,89BB45A0,32
+
+Memory Manor (USA).col
+BAB520EA,CC95C9C1,08
+
+Meteoric Shower (Europe).col
+6A162C7D,45B35860,08
+
+Miner 2049er Starring Bounty Bob (USA, Europe) (v1.1).col
+B24F10FD,1BC25953,24
+
+Miner 2049er Starring Bounty Bob (USA, Europe).col
+F37AF58C,8273A504,24
+
+Monkey Academy (USA) (Beta).col
+D1E8DF85,21843798,16
+
+Monkey Academy (USA).col
+D92B09C8,7471922A,20
+
+Montezuma's Revenge (USA).col
+CED0D16E,B74A0EAE,12
+
+Moonsweeper (USA, Europe).col
+8A303F5A,0B2533AF,16
+
+Motocross Racer (USA).col
+0F4D800A,7E1470F0,16
+
+Mountain King (USA).col
+C173BBEC,584B324D,16
+
+Mouse Trap (USA, Europe).col
+DE47C29F,29559C6D,12
+
+Mr. Do! (USA, Europe).col
+461AB6AD,D260CCE6,24
+
+Mr. Do!'s Castle (USA).col
+546F2C54,92CAEEDA,12
+
+Nova Blast (USA, Europe).col
+4491A35B,5FC00884,12
+
+Number Bumper (USA) (Beta).col
+6AF8B439,784EF6D4,32
+
+Oil's Well (USA).col
+ADD10242,2656B380,16
+
+Omega Race (USA, Europe).col
+0A0511C7,A30D5929,16
+
+Orbit (USA) (Proto).col
+2CC6F4AA,75EA08EA,08
+
+Pac-Man (USA) (Proto).col
+A40A07E8,00BE69A8,16
+
+Pepper II (USA, Europe).col
+53B85E20,342F6627,16
+
+Pitfall II - Lost Caverns (USA).col
+851A455F,2F85B443,16
+
+Pitfall! (USA).col
+D4F180DF,D595C041,16
+
+Pitstop (USA).col
+E627FCF0,4B16BBAC,16
+
+Pitstop (USA, Europe) (v1.1).col
+81BE4F55,4B16BBAC,16
+
+Popeye (USA).col
+A095454D,5DACAB86,16
+
+Porky's (USA) (Proto).col
+46FC1C00,1C553BAA,16
+
+Power Lords - Quest for Volcan (USA) (Proto).col
+2EBF88C4,E193F828,32
+
+Q-bert (USA).col
+532F61BA,00E98801,08
+
+Q-bert's Qubes (USA).col
+79D90D26,F07E1222,12
+
+Quest for Quintana Roo (USA).col
+EEC81C42,38E58F3F,16
+
+River Raid (USA).col
+FE897F9C,9782C5FC,16
+
+Robin Hood (USA).col
+CDB8D3CF,0304EDF1,16
+
+Roc 'N Rope (USA, Europe).col
+AF885D76,A914EDB3,24
+
+Rock n' Bolt (USA).col
+AF49A0C3,BD3F0779,16
+
+Rocky - Super Action Boxing (USA, Europe).col
+37F144D3,284FE4FD,20
+
+Rolloverture (USA).col
+0364FB81,D44E2571,16
+
+Root Beer Tapper (USA).col
+8AFD7DB2,3EC12C37,32
+
+Sammy Lightfoot (USA).col
+3563286B,76970E50,16
+
+Sector Alpha (USA).col
+0EC63A5C,C2F5A857,20
+
+Sewer Sam (USA).col
+4591F393,699B2977,24
+
+Sir Lancelot (USA).col
+DF84FFB5,105B2F82,16
+
+Skiing (USA).col
+B37D48BD,E5DDB615,08
+
+Slither (USA, Europe).col
+53D2651C,D47C697C,16
+
+Slurpy (USA).col
+8871E9FD,0D6FFEC7,16
+
+Smurf - Paint 'n' Play WORKSHOP (USA, Europe).col
+97C0382D,6489B6C9,24
+
+Smurf - Rescue in Gargamel's Castle (USA, Europe).col
+42850379,3F1B4C65,16
+
+Smurfs Save the Day (USA) (Demo).col
+9A3B8587,D2C507D6,16
+
+Space Fury (USA, Europe).col
+DF8DE30F,2D5C3A57,16
+
+Space Panic (USA, Europe).col
+5BDF2997,2DCD450F,16
+
+Spectron (USA).col
+A6401C46,6B94A3B2,16
+
+Spy Hunter (USA) (Beta).col
+1969B9B7,B01AC7F9,32
+
+Spy Hunter (USA).col
+36478923,C69534AA,32
+
+Squish'em Featuring Sam (USA).col
+AC92862D,9C6D8BFE,16
+
+Star Fire (USA) (Proto).col
+EA3AA29E,586407DB,18
+
+Star Trek - Strategic Operations Simulator (USA).col
+95824F1E,4D408160,24
+
+Star Wars - The Arcade Game (USA).col
+0E75B3BF,6D959AC5,16
+
+Steamroller (USA) (Proto).col
+153AC4EF,104689AB,16
+
+Strike It! (Europe).col
+D247A1C8,30A334C0,16
+
+Subroc (USA, Europe).col
+A417F25F,803CA108,20
+
+Super Action Baseball (USA).col
+B3BCF3F9,DF5574E1,20
+
+Super Action Football (Europe).col
+4D6C0458,9F789CB6,32
+
+Super Action Football (USA).col
+62619DC0,7DB4E3FB,32
+
+Super Cobra (USA).col
+F84622D2,3786802D,08
+
+Super Controller Tester (USA).col
+EB6CB4D8,3D686741,16
+
+Super Cross Force (USA, Europe).col
+84350129,9839D795,12
+
+Super DK! (USA) (Proto).col
+EF25AF90,CED33BBC,32
+
+Super DK! Junior (USA) (Proto).col
+C2E7F0E0,FE08AD87,32
+
+Super Sketch - Sketch Master (USA) (Program) (Unl).col
+8627300A,2250D743,08
+
+Sword and the Sorcerer, The (USA) (Demo).col
+8BDA7C48,FCAEB945,16
+
+Tank Wars (Europe).col
+AF6BBC7E,97C476D2,12
+
+Tarzan (USA, Europe).col
+7CD7A702,F3AB882D,24
+
+Telly Turtle (USA).col
+C8BC1950,A94DF24E,16
+
+Threshold (USA).col
+1593F7DF,7E49B267,16
+
+Time Pilot (USA, Europe).col
+B3A1EACB,5476F334,16
+
+TOMARC the Barbarian (USA).col
+1E14397E,547120B3,16
+
+Tournament Tennis (USA).col
+C1D5A702,5480DF10,16
+
+Tunnels & Trolls (USA) (Demo).col
+291A0004,87BDF623,32
+
+Turbo (USA, Europe).col
+BD6AB02A,03900583,16
+
+Tutankham (USA).col
+0408F58C,4CFBA0D0,12
+
+Up 'n Down (USA).col
+FDD52CA0,C46A4E58,16
+
+Venture (USA, Europe).col
+8E5A4AA3,223F18AE,16
+
+Victory (Europe).col
+B1FDA1C5,32EC956E,20
+
+Victory (USA).col
+70142655,32EC956E,20
+
+Video Hustler (USA) (Proto 1).col
+841D168F,26E8E3C5,08
+
+Video Hustler (USA) (Proto 2).col
+A9177B20,A8487DAF,08
+
+War Room (USA).col
+261B7D56,98BF88BE,24
+
+WarGames (USA, Europe).col
+FD25ADB3,EF6F31E7,24
+
+Wing War (USA).col
+29EC00C9,D3764554,16
+
+Wizard of Id's - WizMath (USA).col
+B9BA2BB6,E623A108,16
+
+Word Feud (USA).col
+F7A29C01,04845B0D,08
+
+Yolk's on you, The (Europe) (Proto).col
+997AD8DE,3B10279E,16
+
+Zaxxon (Taiwan) (En) (Unl).col
+5B0E2ADF,C597E8C2,24
+
+Zaxxon (USA, Europe).col
+8CB0891A,CB5CE263,24
+
+Zenji (USA).col
+6E523E50,ACA855D4,16
+
