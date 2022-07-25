@@ -12,7 +12,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
 - Easy to modify open-source code, write your own extensions and share them with others      
-- Portable thanks to a battery  
+- Portable thanks to a battery/power bank  
 - Modular design using mostly off-the-shelf components    
 
 ![image](https://dl.dropboxusercontent.com/s/mhlx620tmbnglx1/hw5wframe.jpg?dl=1)   
