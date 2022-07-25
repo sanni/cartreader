@@ -66,7 +66,12 @@ void _smsMenu() {
       // Change working dir to root
       sd.chdir("/");
       readROM_SMS();
-      compareCRC("sms.txt", 0, 0);
+      if (retrode_mode && !retrode_mode_sms) {
+        compareCRC("gg.txt", 0, 0);
+      }
+      else {
+        compareCRC("sms.txt", 0, 0);
+      }
 #ifdef global_log
       save_log();
 #endif
@@ -487,7 +492,7 @@ void getCartInfo_SMS() {
     }
 
     display_Clear();
-    println_Msg(F("SMS Header not found"));
+    println_Msg(F("SMS/GG Header not found"));
     println_Msg(F(" "));
     print_Msg(F("Name: "));
     println_Msg(romName);
@@ -501,7 +506,12 @@ void getCartInfo_SMS() {
   // Header found
   else {
     display_Clear();
-    println_Msg(F("SMS Header Info"));
+    if (retrode_mode && !retrode_mode_sms) {
+      println_Msg(F("GG Header Info"));
+    }
+    else {
+      println_Msg(F("SMS Header Info"));
+    }
     println_Msg(F(" "));
     print_Msg(F("Name: "));
     println_Msg(romName);
@@ -525,11 +535,21 @@ void getCartInfo_SMS() {
 void readROM_SMS() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
-  strcat(fileName, ".SMS");
+  if (retrode_mode && !retrode_mode_sms) {
+    strcat(fileName, ".gg");
+  }
+  else {
+    strcat(fileName, ".sms");
+  }
 
   // create a new folder
   EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SMS/ROM/%s/%d", romName, foldern);
+  if (retrode_mode && !retrode_mode_sms) {
+    sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
+  }
+  else {
+    sprintf(folder, "SMS/ROM/%s/%d", romName, foldern);
+  }
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
@@ -604,11 +624,16 @@ void readROM_SMS() {
 void readSRAM_SMS() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
-  strcat(fileName, ".SAV");
+  strcat(fileName, ".sav");
 
   // create a new folder
   EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
+  if (retrode_mode && !retrode_mode_sms) {
+    sprintf(folder, "GG/SAVE/%s/%d", romName, foldern);
+  }
+  else {
+    sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
+  }
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
