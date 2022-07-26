@@ -2115,6 +2115,7 @@ void printCartInfo_N64() {
 
   // Print start page
   if (cartSize != 0) {
+    display_Clear();
     println_Msg(F("N64 Cartridge Info"));
     println_Msg(F(""));
     print_Msg(F("Name: "));
@@ -2155,6 +2156,7 @@ void printCartInfo_N64() {
   }
   else {
     // Display error
+    display_Clear();
     println_Msg(F("GAMEPAK ERROR"));
     println_Msg("");
     print_Msg(F("Name: "));
@@ -2167,6 +2169,9 @@ void printCartInfo_N64() {
 
     strcpy(romName, "GPERROR");
     print_Error(F("Cartridge unknown"), false);
+    println_Msg("");
+    println_Msg(F("Press Button..."));
+    display_Update();
     wait();
 
     // Set cartsize manually
@@ -2287,6 +2292,10 @@ void getCartInfo_N64() {
 
   // Read cart id
   idCart();
+
+  display_Clear();
+  println_Msg(F("Searching database..."));
+  display_Update();
 
   if (myFile.open("n64.txt", O_READ)) {
     // Loop through file

@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             23.07.2022
+   Date:             26.07.2022
    Version:          9.2 Alpha
 
    SD lib: https://github.com/greiman/SdFat
@@ -116,7 +116,7 @@ char ver[5] = "9.2A";
 #define enable_OLED
 #define enable_Button2
 #define clockgen_installed
-#define fastcrc
+//#define fastcrc
 #endif
 
 #if defined(HW1)
@@ -127,8 +127,8 @@ char ver[5] = "9.2A";
 
 #if defined(SERIAL_MONITOR)
 #define enable_serial
-#define clockgen_installed
-#define fastcrc
+//#define clockgen_installed
+//#define fastcrc
 #endif
 
 //******************************************

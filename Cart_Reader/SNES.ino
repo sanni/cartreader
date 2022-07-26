@@ -1180,7 +1180,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
 }
 
 boolean compare_checksum() {
-  print_Msg(F("Internal Checksum..."));
+  print_Msg(F("Chksum..."));
   display_Update();
 
   strcpy(fileName, romName);
@@ -1200,9 +1200,9 @@ boolean compare_checksum() {
     return 1;
   }
   else {
-    print_Msg(F("Checksum Error: "));
-    println_Msg(calcsumStr);
-    print_Error(F(""), false);
+    print_Msg(F("Error "));
+    print_Msg(calcsumStr);
+    print_Error(F(" "), false);
     display_Update();
     return 0;
   }
