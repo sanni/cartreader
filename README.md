@@ -18,7 +18,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 ![image](https://dl.dropboxusercontent.com/s/mhlx620tmbnglx1/hw5wframe.jpg?dl=1)   
 
 #### Supported Systems:    
-- Reads NES, Famicom and Family Basic cartridges including save    
+- Reads official NES, Famicom and Family Basic cartridges including save    
 - Supports Mapper 30/NESmaker and flashes INL NM30 boards        
 - Reads SNES roms and reads/writes save games from and to the SNES cartridge  
   Supported cartridge types so far: LoRom, HiRom, ExHiRom, DSP, SuperFX, SuperFX2, SDD1, CX4, SPC7110, SA1 (last two chips need Adafruit Clock Generator)     
