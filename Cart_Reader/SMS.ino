@@ -570,8 +570,8 @@ void readROM_SMS() {
 
   word bankSize = 16 * 1024UL;
 
-  if (raphnet_mode_sg1000) {
-    // cart with no mapper
+  // carts with no mapper (SG1000 or GG 32KB)
+  if (raphnet_mode_sg1000 || (retrode_mode && !retrode_mode_sms && cartSize == 32 * 1024UL)) {
     bankSize = cartSize;
   }
 
@@ -592,7 +592,7 @@ void readROM_SMS() {
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS((raphnet_mode_sg1000 ?  0 : 0x8000) + currBuffer + currByte);
+        sdBuffer[currByte] = readByte_SMS((raphnet_mode_sg1000 || (retrode_mode && !retrode_mode_sms && cartSize == 32 * 1024UL) ?  0 : 0x8000) + currBuffer + currByte);
       }
       // hexdump for debugging:
       // if (currBank == 0 && currBuffer == 0) {
