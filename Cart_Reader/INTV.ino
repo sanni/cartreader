@@ -859,7 +859,10 @@ void setCart_INTV() {
         else if (b == 2) {
           for (byte count_newline = 0; count_newline < 7; count_newline++) {
             while (1) {
-              if (myFile.peek() == '\n') {
+              if (myFile.curPosition() == 0) {
+                break;
+              }
+              else if (myFile.peek() == '\n') {
                 myFile.seekSet(myFile.curPosition() - 1);
                 break;
               }
@@ -868,7 +871,8 @@ void setCart_INTV() {
               }
             }
           }
-          myFile.seekSet(myFile.curPosition() + 2);
+          if (myFile.curPosition() != 0)
+            myFile.seekSet(myFile.curPosition() + 2);
           break;
         }
 
