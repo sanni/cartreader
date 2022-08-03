@@ -103,7 +103,6 @@ void colMenu()
     case 0:
       // Select Cart
       setCart_COL();
-      wait();
       setup_COL();
       break;
 
@@ -357,6 +356,8 @@ void checkStatus_COL()
   print_Msg(F("ROM SIZE: "));
   print_Msg(COL[colsize]);
   println_Msg(F("K"));
+  println_Msg(F(""));
+  println_Msg(F("Press Button..."));
   display_Update();
   wait();
 #else
@@ -370,246 +371,150 @@ void checkStatus_COL()
 //******************************************
 // CART SELECT CODE
 //******************************************
+void setCart_COL() {
+  //Search for CRC32 in file
+  char gamename[100];
+  char tempStr2[2];
+  char crc_search[9];
 
-FsFile colcsvFile;
-char colgame[36]; // title
-char colrr[3];    // romsize
-char colll[4];    // linelength (previous line)
-unsigned long colcsvpos; // CSV File Position
-char colcartCSV[] = "colcart.txt"; // CSV List
-char colcsvEND[] = "EOF";    // CSV End Marker for scrolling
+  //go to root
+  sd.chdir();
 
-bool readLine_COL(FsFile &f, char* line, size_t maxLen)
-{
-  for (size_t n = 0; n < maxLen; n++) {
-    int c = f.read();
-    if ( c < 0 && n == 0) return false;  // EOF
-    if (c < 0 || c == '\n') {
-      line[n] = 0;
-      return true;
-    }
-    line[n] = c;
-  }
-  return false; // line too long
-}
-
-bool readVals_COL(char* colgame, char* colrr, char* colll)
-{
-  char line[42];
-  colcsvpos = colcsvFile.position();
-  if (!readLine_COL(colcsvFile, line, sizeof(line))) {
-    return false;  // EOF or too long
-  }
-  char* comma = strtok(line, ",");
-  int x = 0;
-  while (comma != NULL) {
-    if (x == 0)
-      strcpy(colgame, comma);
-    else if (x == 1)
-      strcpy(colrr, comma);
-    else if (x == 2)
-      strcpy(colll, comma);
-    comma = strtok(NULL, ",");
-    x += 1;
-  }
-  return true;
-}
-
-bool getCartListInfo_COL()
-{
-  bool buttonreleased = 0;
-  bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
-  display_Clear();
-  println_Msg(F(" HOLD TO FAST CYCLE"));
-  display_Update();
-#else
-  Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
-#endif
-  delay(2000);
-#if defined(enable_OLED)
-  buttonVal1 = (PIND & (1 << 7)); // PD7
-#elif defined(enable_LCD)
-  boolean buttonVal1 = (PING & (1 << 2)); // PG2
-#endif
-  if (buttonVal1 == LOW) { // Button Held - Fast Cycle
-    while (1) { // Scroll Game List
-      while (readVals_COL(colgame, colrr, colll)) {
-        if (strcmp(colcsvEND, colgame) == 0) {
-          colcsvFile.seek(0); // Restart
-        }
-        else {
-#if (defined(enable_OLED) || defined(enable_LCD))
-          display_Clear();
-          println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
-          println_Msg(colgame);
-          display_Update();
-#else
-          Serial.print(F("CART TITLE:"));
-          Serial.println(colgame);
-#endif
-#if defined(enable_OLED)
-          buttonVal1 = (PIND & (1 << 7)); // PD7
-#elif defined(enable_LCD)
-          boolean buttonVal1 = (PING & (1 << 2)); // PG2
-#endif
-          if (buttonVal1 == HIGH) { // Button Released
-            buttonreleased = 1;
-            break;
-          }
-          if (buttonreleased) {
-            buttonreleased = 0; // Reset Flag
-            break;
-          }
-        }
-      }
-#if defined(enable_OLED)
-      buttonVal1 = (PIND & (1 << 7)); // PD7
-#elif defined(enable_LCD)
-      boolean buttonVal1 = (PING & (1 << 2)); // PG2
-#endif
-      if (buttonVal1 == HIGH) // Button Released
-        break;
-    }
-  }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  display.setCursor(0, 56);
-  println_Msg(F("FAST CYCLE OFF"));
-  display_Update();
-#else
-  Serial.println(F(""));
-  Serial.println(F("FAST CYCLE OFF"));
-  Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
-  Serial.println(F("DOUBLE CLICK TO STEP BACK"));
-  Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
-#endif
-  while (readVals_COL(colgame, colrr, colll)) {
-    if (strcmp(colcsvEND, colgame) == 0) {
-      colcsvFile.seek(0); // Restart
-    }
-    else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+  // Open database
+  if (myFile.open("colv.txt", O_READ)) {
+    while (myFile.available()) {
       display_Clear();
-      println_Msg(F("CART TITLE:"));
+
+      // Read game name
+      get_line(gamename, &myFile, 96);
+
+      // Read CRC32 checksum
+      sprintf(checksumStr, "%c", myFile.read());
+      for (byte i = 0; i < 7; i++) {
+        sprintf(tempStr2, "%c", myFile.read());
+        strcat(checksumStr, tempStr2);
+      }
+
+      // Skip over semicolon
+      myFile.seekSet(myFile.curPosition() + 1);
+
+      // Read CRC32 of first 512 bytes
+      sprintf(crc_search, "%c", myFile.read());
+      for (byte i = 0; i < 7; i++) {
+        sprintf(tempStr2, "%c", myFile.read());
+        strcat(crc_search, tempStr2);
+      }
+
+      // Skip over semicolon
+      myFile.seekSet(myFile.curPosition() + 1);
+
+      // Read rom size
+      // Read the next ascii character and subtract 48 to convert to decimal
+      cartSize = myFile.read() - 48;
+
+      // Remove leading 0 for single digit cart sizes
+      if (cartSize != 0) {
+        cartSize = cartSize * 10 +  myFile.read() - 48;
+      }
+      else {
+        cartSize = myFile.read() - 48;
+      }
+
+      // Skip rest of line
+      myFile.seekSet(myFile.curPosition() + 2);
+
+      // Skip every 3rd line
+      skip_line(&myFile);
+
+      println_Msg(F("Select your cartridge:"));
       println_Msg(F(""));
-      println_Msg(colgame);
-      display.setCursor(0, 48);
+      print_Msg(F("Name: "));
+      println_Msg(gamename);
+      print_Msg(F("Size: "));
+      print_Msg(cartSize);
+      println_Msg(F("KB"));
+      println_Msg(F(""));
 #if defined(enable_OLED)
       println_Msg(F("Press left to Change"));
       println_Msg(F("and right to Select"));
 #elif defined(enable_LCD)
       println_Msg(F("Rotate to Change"));
       println_Msg(F("Press to Select"));
+#elif defined(SERIAL_MONITOR)
+      println_Msg(F("U/D to Change"));
+      println_Msg(F("Space to Select"));
 #endif
       display_Update();
-#else
-      Serial.print(F("CART TITLE:"));
-      Serial.println(colgame);
-#endif
-      while (1) { // Single Step
-        int b = checkButton();
-        if (b == 1) { // Continue (press)
+
+      int b = 0;
+      while (1) {
+        // Check button input
+        b = checkButton();
+
+        // Next
+        if (b == 1) {
           break;
         }
-        if (b == 2) { // Reset to Start of List (doubleclick)
-          byte prevline = strtol(colll, NULL, 10);
-          colcsvpos -= prevline;
-          colcsvFile.seek(colcsvpos);
+
+        // Previous
+        else if (b == 2) {
+          for (byte count_newline = 0; count_newline < 7; count_newline++) {
+            while (1) {
+              if (myFile.peek() == '\n') {
+                myFile.seekSet(myFile.curPosition() - 1);
+                break;
+              }
+              else {
+                myFile.seekSet(myFile.curPosition() - 1);
+              }
+            }
+          }
+          myFile.seekSet(myFile.curPosition() + 2);
           break;
         }
-        if (b == 3) { // Long Press - Select Cart (hold)
-          newcolsize = strtol(colrr, NULL, 10);
-          EEPROM_writeAnything(8, newcolsize);
-          cartselected = 1; // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
-          println_Msg(F("SELECTION MADE"));
-          display_Update();
-#else
-          Serial.println(F("SELECTION MADE"));
-#endif
+
+        // Selection
+        else if (b == 3) {
+          //byte COL[] = {8, 12, 16, 20, 24, 32};
+          switch (cartSize) {
+            case 8:
+              colsize = 0;
+              break;
+
+            case 12:
+              colsize = 1;
+              break;
+
+            case 16:
+              colsize = 2;
+              break;
+
+            case 20:
+              colsize = 3;
+              break;
+
+            case 24:
+              colsize = 4;
+              break;
+
+            case 32:
+              colsize = 5;
+              break;
+
+            default:
+              colsize = 0;
+              break;
+          }
+          EEPROM_writeAnything(8, colsize);
+          myFile.close();
           break;
         }
-      }
-      if (cartselected) {
-        cartselected = 0; // Reset Flag
-        return true;
       }
     }
-  }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
-  println_Msg(F("END OF FILE"));
-  display_Update();
-#else
-  Serial.println(F("END OF FILE"));
-#endif
-
-  return false;
-}
-
-void checkCSV_COL()
-{
-  if (getCartListInfo_COL()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
-    display_Clear();
-    println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
-    println_Msg(colgame);
-    display_Update();
-    // Display Settings
-    display.setCursor(0, 56);
-    print_Msg(F("CODE: R"));
-    println_Msg(newcolsize);
-    display_Update();
-#else
-    Serial.println(F(""));
-    Serial.println(F("CART SELECTED"));
-    Serial.println(colgame);
-    // Display Settings
-    Serial.print(F("CODE: R"));
-    Serial.println(newcolsize);
-    Serial.println(F(""));
-#endif
   }
   else {
-#if (defined(enable_OLED) || defined(enable_LCD))
-    display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
-    display_Update();
-#else
-    Serial.println(F("NO SELECTION"));
-#endif
+    println_Msg(F("Database file not found"));
+    return 0;
   }
-}
-
-void setCart_COL()
-{
-#if (defined(enable_OLED) || defined(enable_LCD))
-  display_Clear();
-  println_Msg(colcartCSV);
-  display_Update();
-#endif
-  sd.chdir();
-  sprintf(folder, "COL/CSV");
-  sd.chdir(folder); // Switch Folder
-  colcsvFile = sd.open(colcartCSV, O_READ);
-  if (!colcsvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
-    display_Clear();
-    println_Msg(F("CSV FILE NOT FOUND!"));
-    display_Update();
-#else
-    Serial.println(F("CSV FILE NOT FOUND!"));
-#endif
-    while (1) {
-      if (checkButton() != 0)
-        setup_COL();
-    }
-  }
-  checkCSV_COL();
-
-  colcsvFile.close();
 }
 #endif

@@ -329,6 +329,9 @@ void nesChipMenu() {
       CreateROMFolderInSD();
       readCHR(false);
       resetROM();
+
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
 #else
       display_Clear();
       // Change working dir to root

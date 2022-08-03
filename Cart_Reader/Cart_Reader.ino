@@ -5,7 +5,7 @@
    an easy to build and easy to modify cartridge dumper.
 
    Date:             03.08.2022
-   Version:          9.2 Alpha
+   Version:          9.3
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -60,7 +60,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "9.2A";
+char ver[5] = "9.3";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -2075,6 +2075,27 @@ unsigned char question_box(const __FlashStringHelper * question, char answers[7]
   Serial Out
 *****************************************/
 #ifdef enable_serial
+int checkButton() {
+  while (Serial.available() == 0) {
+  }
+  incomingByte = Serial.read() - 48;
+
+  //Next
+  if (incomingByte == 52) {
+    return 1;
+  }
+
+  //Previous
+  else if (incomingByte == 69) {
+    return 2;
+  }
+
+  //Selection
+  else if (incomingByte == 240) {
+    return 3;
+  }
+}
+
 void wait_serial() {
   if (errorLvl) {
     // Debug
