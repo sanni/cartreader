@@ -91,12 +91,12 @@ char ver[5] = "9.3";
 #define enable_NES
 #define enable_FLASH
 #define enable_FLASH16
-//#define enable_PCE
-//#define enable_WS
-//#define enable_NGP
-//#define enable_INTV
-//#define enable_COLV
-//#define enable_VBOY
+// #define enable_PCE
+// #define enable_WS
+// #define enable_NGP
+// #define enable_INTV
+// #define enable_COLV
+// #define enable_VBOY
 
 //******************************************
 // HW CONFIGS

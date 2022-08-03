@@ -386,7 +386,7 @@ void setCart_COL() {
       display_Clear();
 
       // Read game name
-      get_line(gamename, &myFile, 96);
+      get_line(gamename, &myFile, 42);
 
       // Read CRC32 checksum
       sprintf(checksumStr, "%c", myFile.read());
@@ -426,9 +426,8 @@ void setCart_COL() {
       // Skip every 3rd line
       skip_line(&myFile);
 
-      println_Msg(F("Select your cartridge:"));
+      println_Msg(F("Select your cartridge"));
       println_Msg(F(""));
-      print_Msg(F("Name: "));
       println_Msg(gamename);
       print_Msg(F("Size: "));
       print_Msg(cartSize);
