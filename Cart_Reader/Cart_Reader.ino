@@ -1966,14 +1966,14 @@ void println_Msg(const char myString[]) {
   if ((display.tx + strlen(myString) * 6) > 128) {
     int strPos = 0;
     // Print until end of display
-    while (display.tx < 122) {
+    while ((display.tx < 122) && (myString[strPos] != '\0')) {
       display.print(myString[strPos]);
       strPos++;
     }
     // Newline
     display.setCursor(0, display.ty + 8);
     // Print until end of display and ignore remaining characters
-    while ((strPos < strlen(myString)) && (display.tx < 122)) {
+    while ((strPos < strlen(myString)) && (display.tx < 122) && (myString[strPos] != '\0')) {
       display.print(myString[strPos]);
       strPos++;
     }
