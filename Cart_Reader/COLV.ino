@@ -220,7 +220,7 @@ void readROM_COL()
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Compare CRC32 to database and rename ROM if found
-  compareCRC("colv.txt", 0, 0);
+  compareCRC("colv.txt", 0, 1, 0);
 
   println_Msg(F(""));
   println_Msg(F("Press Button..."));

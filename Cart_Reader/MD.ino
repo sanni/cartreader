@@ -1308,7 +1308,7 @@ void readROM_MD() {
   }
 
   // Calculate and compare CRC32 with no-intro
-  compareCRC("md.txt", 0, 0);
+  compareCRC("md.txt", 0, 1, 0);
 
   // More checksums
   if (SnKmode >= 2) {

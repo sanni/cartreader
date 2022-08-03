@@ -196,23 +196,28 @@ int b = 0;
 *****************************************/
 // NES start menu
 static const char nesMenuItem1[] PROGMEM = "Change Mapper";
-static const char nesMenuItem2[] PROGMEM = "Read Rom";
-static const char nesMenuItem3[] PROGMEM = "Read Sram";
-static const char nesMenuItem4[] PROGMEM = "Write Sram";
-static const char nesMenuItem5[] PROGMEM = "Read PRG/CHR";
+static const char nesMenuItem2[] PROGMEM = "Read iNES Rom";
+static const char nesMenuItem3[] PROGMEM = "Read PRG/CHR";
+static const char nesMenuItem4[] PROGMEM = "Read Sram";
+static const char nesMenuItem5[] PROGMEM = "Write Sram";
 static const char nesMenuItem6[] PROGMEM = "Flash NESMaker";
 static const char nesMenuItem7[] PROGMEM = "Reset";
 static const char* const menuOptionsNES[] PROGMEM = {nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, nesMenuItem7};
 
 // NES chips menu
-static const char  nesChipsMenuItem1[] PROGMEM = "Read PRG";
-static const char  nesChipsMenuItem2[] PROGMEM = "Read CHR";
-static const char  nesChipsMenuItem3[] PROGMEM = "Back";
-static const char* const menuOptionsNESChips[] PROGMEM = {nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3};
+#ifndef no-intro
+static const char  nesChipsMenuItem1[] PROGMEM = "Read PRG & CHR";
+#else
+static const char  nesChipsMenuItem1[] PROGMEM = "Combined PRG+CHR";
+#endif
+static const char  nesChipsMenuItem2[] PROGMEM = "Read only PRG";
+static const char  nesChipsMenuItem3[] PROGMEM = "Read only CHR";
+static const char  nesChipsMenuItem4[] PROGMEM = "Back";
+static const char* const menuOptionsNESChips[] PROGMEM = {nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3, nesChipsMenuItem4};
 
 // NES start menu
 void nesMenu() {
-  // create menu with title "NES CART READER" and 5 options to choose from
+  // create menu with title "NES CART READER" and 7 options to choose from
   convertPgm(menuOptionsNES, 7);
   unsigned char answer = question_box(F("NES CART READER"), menuOptions, 7, 0);
 
@@ -257,8 +262,13 @@ void nesMenu() {
 #endif
       break;
 
-    // Read RAM
+    // Read single chip
     case 2:
+      nesChipMenu();
+      break;
+
+    // Read RAM
+    case 3:
       CreateROMFolderInSD();
       readRAM();
       resetROM();
@@ -269,18 +279,13 @@ void nesMenu() {
       break;
 
     // Write RAM
-    case 3:
+    case 4:
       writeRAM();
       resetROM();
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
       display_Update();
       wait();
-      break;
-
-    // Read single chip
-    case 4:
-      nesChipMenu();
       break;
 
     // Write FLASH
@@ -309,13 +314,38 @@ void nesMenu() {
 
 void nesChipMenu() {
   // create menu with title "Select NES Chip" and 4 options to choose from
-  convertPgm(menuOptionsNESChips, 3);
-  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 3, 0);
+  convertPgm(menuOptionsNESChips, 4);
+  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
-    // Read PRG
+    // Read combined PRG/CHR
     case 0:
+#ifndef no-intro
+      CreateROMFolderInSD();
+      readPRG(false);
+      resetROM();
+
+      CreateROMFolderInSD();
+      readCHR(false);
+      resetROM();
+#else
+      display_Clear();
+      // Change working dir to root
+      sd.chdir("/");
+      readRaw_NES();
+      println_Msg(F(""));
+      println_Msg(F("Press Button..."));
+#ifdef global_log
+      save_log();
+#endif
+#endif
+      display_Update();
+      wait();
+      break;
+
+    // Read PRG
+    case 1:
       CreateROMFolderInSD();
       readPRG(false);
       resetROM();
@@ -326,7 +356,7 @@ void nesChipMenu() {
       break;
 
     // Read CHR
-    case 1:
+    case 2:
       CreateROMFolderInSD();
       readCHR(false);
       resetROM();
@@ -337,7 +367,7 @@ void nesChipMenu() {
       break;
 
     // Return to Main Menu
-    case 2:
+    case 3:
       nesMenu();
       wait();
       break;
@@ -626,7 +656,59 @@ void readRom_NES() {
   myFile.close();
 
   // Compare CRC32 with database
-  compareCRC("nes.txt", 0, 16);
+  compareCRC("nes.txt", 0, 1, 16);
+}
+
+void readRaw_NES() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".bin");
+
+  // create a new folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "NES/ROM/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(prgsize * 16  * 1024 + chrsize * 4 * 1024);
+  draw_progressbar(0, totalProgressBar);
+
+  //Write PRG
+  readPRG(true);
+
+  // update progress bar
+  processedProgressBar += prgsize * 16 * 1024;
+  draw_progressbar(processedProgressBar, totalProgressBar);
+
+  //Write CHR
+  readCHR(true);
+
+  // update progress bar
+  processedProgressBar += chrsize * 4 * 1024;
+  draw_progressbar(processedProgressBar, totalProgressBar);
+
+  // Close the file:
+  myFile.close();
+
+  // Compare CRC32 with database
+  compareCRC("nes.txt", 0, 0, 0);
 }
 #endif
 

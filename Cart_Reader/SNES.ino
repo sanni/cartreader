@@ -214,7 +214,7 @@ void snesMenu() {
           // Internal Checksum
           compare_checksum();
           // CRC32
-          compareCRC("snes.txt", 0, 0);
+          compareCRC("snes.txt", 0, 1, 0);
 #ifdef global_log
           save_log();
 #endif

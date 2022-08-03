@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             26.07.2022
+   Date:             03.08.2022
    Version:          9.2 Alpha
 
    SD lib: https://github.com/greiman/SdFat
@@ -552,6 +552,9 @@ void skip_line(FsFile* readfile)
 //Get line from file
 void get_line(char* str_buf, FsFile* readfile, uint8_t maxi)
 {
+  // Status LED on
+  statusLED(true);
+
   int i = 0;
 
   while (readfile->available())
@@ -577,7 +580,7 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi)
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
-boolean compareCRC(char* database, char* crcString, int offset) {
+boolean compareCRC(char* database, char* crcString, boolean renamerom, int offset) {
 #ifdef no-intro
   char crcStr[9];
   if (crcString == 0) {
@@ -616,7 +619,7 @@ boolean compareCRC(char* database, char* crcString, int offset) {
       if (strcmp(crc_search, crcStr) == 0)
       {
 #ifdef enable_NES
-        if (mode == mode_NES) {
+        if ((mode == mode_NES) && (offset != 0)) {
           // Rewind to iNES Header
           myFile.seekSet(myFile.curPosition() - 36);
 
@@ -640,7 +643,7 @@ boolean compareCRC(char* database, char* crcString, int offset) {
 
         //Write iNES header
 #ifdef enable_NES
-        if (mode == mode_NES) {
+        if ((mode == mode_NES) && (offset != 0)) {
           // Write iNES header
           sd.chdir(folder);
           if (!myFile.open(fileName, O_RDWR)) {
@@ -653,14 +656,21 @@ boolean compareCRC(char* database, char* crcString, int offset) {
         }
 #endif
         print_Msg(F(" -> "));
-        println_Msg(gamename);
+        display_Update();
 
-        // Rename file to no-intro
-        sd.chdir(folder);
-        if (myFile.open(fileName, O_READ)) {
-          myFile.rename(gamename);
-          // Close the file:
-          myFile.close();
+        if (renamerom) {
+          println_Msg(gamename);
+
+          // Rename file to no-intro
+          sd.chdir(folder);
+          if (myFile.open(fileName, O_READ)) {
+            myFile.rename(gamename);
+            // Close the file:
+            myFile.close();
+          }
+        }
+        else {
+          println_Msg("OK");
         }
         return 1;
         break;
@@ -1634,6 +1644,10 @@ void setup() {
   SdFile::dateTimeCallback(dateTime);
 #endif
 
+  // status LED ON
+  statusLED(true);
+
+  // Start menu system
   startMenu();
 }
 
@@ -1714,6 +1728,8 @@ void print_Error(const __FlashStringHelper * errorMessage, boolean forceReset) {
 }
 
 void wait() {
+  // Switch status LED off
+  statusLED(false);
 #if defined(enable_LCD)
   wait_btn();
 #elif defined (enable_OLED)
@@ -2226,6 +2242,38 @@ void blinkLED() {
 #elif defined(enable_serial)
   PORTB ^= (1 << 4);
   PORTB ^= (1 << 7);
+#endif
+}
+
+void statusLED(boolean on) {
+#if defined(HW5)
+  if (!on)
+    PORTD |= (1 << 7);
+  else
+    PORTD &= ~(1 << 7);
+  /*
+    #elif defined(enable_OLED)
+    if (!on)
+      PORTB |= (1 << 4);
+    else
+      PORTB &= ~(1 << 4);
+
+    #elif defined(enable_LCD)
+    if (!on)
+      PORTE |= (1 << 1);
+    else
+      PORTE &= ~(1 << 1);
+
+    #elif defined(enable_serial)
+    if (!on) {
+      PORTB |= (1 << 4);
+      PORTB |= (1 << 7);
+    }
+    else {
+      PORTB &= ~(1 << 4);
+      PORTB &= ~(1 << 7);
+    }
+  */
 #endif
 }
 

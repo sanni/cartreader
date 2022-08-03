@@ -417,7 +417,7 @@ void readROM_INTV()
   myFile.close();
 
   // Compare CRC32 to database and rename ROM if found
-  compareCRC("intv.txt", 0, 0);
+  compareCRC("intv.txt", 0, 1, 0);
 
   println_Msg(F(""));
   println_Msg(F("Press Button..."));

@@ -67,10 +67,10 @@ void _smsMenu() {
       sd.chdir("/");
       readROM_SMS();
       if (retrode_mode && !retrode_mode_sms) {
-        compareCRC("gg.txt", 0, 0);
+        compareCRC("gg.txt", 0, 1, 0);
       }
       else {
-        compareCRC("sms.txt", 0, 0);
+        compareCRC("sms.txt", 0, 1, 0);
       }
 #ifdef global_log
       save_log();

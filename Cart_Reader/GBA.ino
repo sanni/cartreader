@@ -128,7 +128,7 @@ void gbaMenu() {
       // Internal Checksum
       compare_checksum_GBA();
       // CRC32
-      compareCRC("gba.txt", 0, 0);
+      compareCRC("gba.txt", 0, 1, 0);
 #ifdef global_log
       save_log();
 #endif
@@ -350,7 +350,7 @@ void gbaMenu() {
           // 512K FLASH
           idFlash_GBA();
           resetFLASH_GBA();
-          
+
           print_Msg(F("Flashrom ID: "));
           println_Msg(flashid);
           println_Msg(F(""));
@@ -377,7 +377,7 @@ void gbaMenu() {
           wait();
           display_Clear();
           display_Update();
-          
+
           if (strcmp(flashid, "1F3D") == 0) { // Atmel
             writeFLASH_GBA(1, 65536, 0, 1);
             verifyFLASH_GBA(65536, 0);
@@ -400,7 +400,7 @@ void gbaMenu() {
           // 1M FLASH
           idFlash_GBA();
           resetFLASH_GBA();
-          
+
           print_Msg(F("Flashrom ID: "));
           println_Msg(flashid);
           println_Msg(F(""));
@@ -1678,7 +1678,7 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos, 
       for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
         //fill sdBuffer
         myFile.read(sdBuffer, 512);
-  
+
         for (int c = 0; c < 512; c++) {
           // Write command sequence
           writeByteFlash_GBA(0x5555, 0xaa);
@@ -1686,7 +1686,7 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos, 
           writeByteFlash_GBA(0x5555, 0xa0);
           // Write current byte
           writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
-  
+
           // Wait
           busyCheck_GBA(c);
         }
@@ -1696,7 +1696,7 @@ void writeFLASH_GBA (boolean browseFile, unsigned long flashSize, uint32_t pos, 
       for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 128) {
         //fill sdBuffer
         myFile.read(sdBuffer, 128);
-  
+
         // Write command sequence
         writeByteFlash_GBA(0x5555, 0xaa);
         writeByteFlash_GBA(0x2aaa, 0x55);
