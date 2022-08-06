@@ -773,9 +773,6 @@ byte starting_letter() {
 
     else if (b == 3) { // Long Press - Execute
       display_Clear();
-      println_Msg(F(""));
-      println_Msg(F(""));
-      println_Msg(F(""));
       println_Msg(F("Please wait..."));
       display_Update();
       break;

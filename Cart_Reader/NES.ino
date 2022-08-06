@@ -621,13 +621,21 @@ void selectMapping() {
     if ((myLetter > 0) && (myLetter <= 26)) {
       while (myFile.available()) {
         // Read current name
+#if defined(enable_OLED)
+        get_line(gamename, &myFile, 42);
+#else
         get_line(gamename, &myFile, 96);
+#endif
 
         // Compare selected letter with first letter of current name until match
         while (gamename[0] != 64 + myLetter) {
           skip_line(&myFile);
           skip_line(&myFile);
+#if defined(enable_OLED)
+          get_line(gamename, &myFile, 42);
+#else
           get_line(gamename, &myFile, 96);
+#endif
         }
         break;
       }
@@ -748,27 +756,7 @@ void selectMapping() {
           ram = 1; // 1K
       }
 
-      // Get name
-      byte myLength = 0;
-      for (unsigned int i = 0; i < 20; i++) {
-        // Stop at first "(" to remove "(Country)"
-        if (char(gamename[i]) == 40) {
-          break;
-        }
-        if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122) || (char(gamename[i]) == 32)) && (myLength < 15)) {
-          romName[myLength] = char(gamename[i]);
-          myLength++;
-        }
-      }
-
-      // If name consists out of all japanese characters use CART as name
-      if (myLength == 0) {
-        romName[0] = 'C';
-        romName[1] = 'A';
-        romName[2] = 'R';
-        romName[3] = 'T';
-      }
-      println_Msg(romName);
+      println_Msg(gamename);
       print_Msg(F("MAPPER:   "));
       println_Msg(mapper);
       print_Msg(F("PRG SIZE: "));
@@ -801,7 +789,6 @@ void selectMapping() {
         print_Msg(ram);
         println_Msg(F("K"));
       }
-      println_Msg(F(""));
 #if defined(enable_OLED)
       println_Msg(F("Press left to Change"));
       println_Msg(F("and right to Select"));
@@ -847,6 +834,27 @@ void selectMapping() {
 
         // Selection
         else if (b == 3) {
+          // Get name
+          byte myLength = 0;
+          for (unsigned int i = 0; i < 20; i++) {
+            // Stop at first "(" to remove "(Country)"
+            if (char(gamename[i]) == 40) {
+              break;
+            }
+            if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122)) && (myLength < 15)) {
+              romName[myLength] = char(gamename[i]);
+              myLength++;
+            }
+          }
+
+          // If name consists out of all japanese characters use CART as name
+          if (myLength == 0) {
+            romName[0] = 'C';
+            romName[1] = 'A';
+            romName[2] = 'R';
+            romName[3] = 'T';
+          }
+
           // Save Mapper
           EEPROM_writeAnything(7, mapper);
           EEPROM_writeAnything(8, prgsize);
