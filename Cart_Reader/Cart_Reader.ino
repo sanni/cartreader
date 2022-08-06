@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             03.08.2022
-   Version:          9.3
+   Date:             06.08.2022
+   Version:          9.4
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -60,7 +60,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "9.3";
+char ver[5] = "9.4";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -691,6 +691,108 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
 #endif
 }
 
+byte starting_letter() {
+#if (defined(enable_LCD) || defined(enable_OLED))
+  byte selection = 0;
+  byte line = 0;
+
+  display_Clear();
+#if defined(enable_LCD)
+  println_Msg(F("[#] [A] [B] [C] [D] [E] [F]"));
+  println_Msg(F(""));
+  println_Msg(F("[G] [H] [ I ] [J] [K] [L] [M]"));
+  println_Msg(F(""));
+  println_Msg(F("[N] [O] [P] [Q] [R] [S] [T]"));
+  println_Msg(F(""));
+  println_Msg(F("[U] [V] [W] [X] [Y] [Z] [?]"));
+#elif defined(enable_OLED)
+  println_Msg(F("#  A  B  C  D  E  F"));
+  println_Msg(F(""));
+  println_Msg(F("G  H  I  J  K  L  M"));
+  println_Msg(F(""));
+  println_Msg(F("N  O  P  Q  R  S  T"));
+  println_Msg(F(""));
+  println_Msg(F("U  V  W  X  Y  Z  ?"));
+#endif
+
+  // Draw selection line
+#if defined(enable_LCD)
+  display.setDrawColor(1);
+  display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
+#elif defined(enable_OLED)
+  display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
+#endif
+  display_Update();
+
+  while (1) {
+    int b = checkButton();
+    if (b == 2) { // Previous
+      if ((selection == 0) && (line > 0)) {
+        line--;
+        selection = 6;
+      }
+      else if (selection > 0) {
+        selection--;
+      }
+#if defined(enable_LCD)
+      display.setDrawColor(0);
+      display.drawLine(0, 10 + (line + 1) * 16, 128, 10 + (line + 1) * 16);
+      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16);
+      display.setDrawColor(1);
+      display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
+#elif defined(enable_OLED)
+      display.drawLine(0, 10 + (line + 1) * 16, 128, 10 + (line + 1) * 16, BLACK);
+      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16, BLACK);
+      display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
+#endif
+      display_Update();
+
+    }
+
+    else if (b == 1) { // Next
+      if ((selection == 6) && (line < 3)) {
+        line++;
+        selection = 0;
+      }
+      else if (selection < 6) {
+        selection++;
+      }
+#if defined(enable_LCD)
+      display.setDrawColor(0);
+      display.drawLine(0, 10 + (line - 1) * 16, 128, 10 + (line - 1) * 16);
+      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16);
+      display.setDrawColor(1);
+      display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
+#elif defined(enable_OLED)
+      display.drawLine(0, 10 + (line - 1) * 16, 128, 10 + (line - 1) * 16, BLACK);
+      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16, BLACK);
+      display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
+#endif
+      display_Update();
+    }
+
+    else if (b == 3) { // Long Press - Execute
+      display_Clear();
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F(""));
+      println_Msg(F("Please wait..."));
+      display_Update();
+      break;
+    }
+  }
+  return (selection + line * 7);
+#elif defined(SERIAL_MONITOR)
+  Serial.println(F("Enter first letter: "));
+  while (Serial.available() == 0) {
+  }
+
+  // Read the incoming byte:
+  byte incomingByte = Serial.read();
+  return incomingByte;
+#endif
+}
+
 /******************************************
   Main menu optimized for rotary encoder
 *****************************************/
@@ -759,7 +861,13 @@ void mainMenu() {
       display_Update();
       setup_NES();
 #ifdef no-intro
-      checkStatus_NES(getMapping());
+      if (getMapping() == 0) {
+        selectMapping();
+        checkStatus_NES(0);
+      }
+      else {
+        checkStatus_NES(1);
+      }
 #else
       checkStatus_NES(0);
 #endif
@@ -1001,7 +1109,13 @@ void consoleMenu() {
       display_Update();
       setup_NES();
 #ifdef no-intro
-      checkStatus_NES(getMapping());
+      if (getMapping() == 0) {
+        selectMapping();
+        checkStatus_NES(0);
+      }
+      else {
+        checkStatus_NES(1);
+      }
 #else
       checkStatus_NES(0);
 #endif

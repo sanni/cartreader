@@ -372,7 +372,6 @@ void checkStatus_COL()
 // CART SELECT CODE
 //******************************************
 void setCart_COL() {
-  //Search for CRC32 in file
   char gamename[100];
   char tempStr2[2];
   char crc_search[9];
@@ -380,8 +379,46 @@ void setCart_COL() {
   //go to root
   sd.chdir();
 
+  // Select starting letter
+  byte myLetter = starting_letter();
+
   // Open database
   if (myFile.open("colv.txt", O_READ)) {
+    // Skip ahead to selected starting letter
+    if ((myLetter > 0) && (myLetter <= 26)) {
+      while (myFile.available()) {
+        // Read current name
+        get_line(gamename, &myFile, 96);
+
+        // Compare selected letter with first letter of current name until match
+        while (gamename[0] != 64 + myLetter) {
+          skip_line(&myFile);
+          skip_line(&myFile);
+          get_line(gamename, &myFile, 96);
+        }
+        break;
+      }
+
+      // Rewind one line
+      for (byte count_newline = 0; count_newline < 2; count_newline++) {
+        while (1) {
+          if (myFile.curPosition() == 0) {
+            break;
+          }
+          else if (myFile.peek() == '\n') {
+            myFile.seekSet(myFile.curPosition() - 1);
+            break;
+          }
+          else {
+            myFile.seekSet(myFile.curPosition() - 1);
+          }
+        }
+      }
+      if (myFile.curPosition() != 0)
+        myFile.seekSet(myFile.curPosition() + 2);
+    }
+
+    // Display database
     while (myFile.available()) {
       display_Clear();
 
@@ -520,8 +557,7 @@ void setCart_COL() {
     }
   }
   else {
-    println_Msg(F("Database file not found"));
-    return 0;
+    print_Error(F("Database file not found"), true);
   }
 }
 #endif
