@@ -83,7 +83,7 @@ SD lib: https://github.com/greiman/SdFat
 OLED lib: https://github.com/adafruit/Adafruit_SSD1306    
 GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library    
 BusIO: https://github.com/adafruit/Adafruit_BusIO    
-LCD lib: https://github.com/olikraus/u8g2     
+LCD lib: https://github.com/olikraus/U8g2_Arduino     
 RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools (you need to move the files from the src subdir to the root dir of the library)    
 Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel    
 Rotary Enc lib: https://github.com/mathertel/RotaryEncoder    
