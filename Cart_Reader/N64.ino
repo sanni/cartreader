@@ -2004,34 +2004,54 @@ void readMPK() {
     print_Error(F("Can't open file on SD"), true);
   }
 
-  println_Msg(F("Please wait..."));
+  print_Msg(F("Saving N64/MPK/"));
+  println_Msg(fileName);
   display_Update();
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(0x7FFF);
+  draw_progressbar(0, totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   for (word i = 0x0000; i < 0x8000; i += 32) {
     // Read one block of the Controller Pak into array myBlock
     readBlock(i);
+
+    // Delay to prevent write errors
+    delay(1);
+
     // Write block to SD card
     for (byte j = 0; j < 32; j++) {
       myFile.write(myBlock[j]);
     }
+
+    // Blink led
+    blinkLED();
+    // Update progress bar
+    processedProgressBar += 32;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved as N64/MPK/"));
-  println_Msg(fileName);
-  display_Update();
 }
 
 void writeMPK() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
-  println_Msg(filePath);
+  print_Msg(F("Writing "));
+  print_Msg(filePath);
+  println_Msg(F("..."));
   display_Update();
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)(0x7FFF);
+    draw_progressbar(0, totalProgressBar);
+
     for (word myAddress = 0x0000; myAddress < 0x8000; myAddress += 32) {
       // Read 32 bytes into SD buffer
       myFile.read(sdBuffer, 32);
@@ -2058,11 +2078,17 @@ void writeMPK() {
       N64_stop();
       // Enable interrupts
       interrupts();
+
+      // Blink led
+      blinkLED();
+      // Update progress bar
+      processedProgressBar += 32;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+      // Delay to prevent write errors
+      delay(1);
     }
     // Close the file:
     myFile.close();
-    println_Msg(F("Done"));
-    display_Update();
   }
   else {
     print_Error(F("Can't create file on SD"), true);
@@ -2081,17 +2107,31 @@ void verifyMPK() {
     print_Error(F("Can't create file on SD"), true);
   }
 
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(0x7FFF);
+  draw_progressbar(0, totalProgressBar);
+
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   for (word i = 0x0000; i < 0x8000; i += 32) {
     // Read one block of the Controller Pak into array myBlock
     readBlock(i);
+    // Delay to prevent read errors
+    delay(1);
     // Check against file on SD card
     for (byte j = 0; j < 32; j++) {
       if (myFile.read() != myBlock[j]) {
         writeErrors++;
       }
     }
+
+    // Blink led
+    blinkLED();
+    // Update progress bar
+    processedProgressBar += 32;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
+
   // Close the file:
   myFile.close();
   if (writeErrors == 0) {
