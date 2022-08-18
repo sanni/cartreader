@@ -210,6 +210,7 @@ void n64ControllerMenu() {
       display_Clear();
       display_Update();
       writeMPK();
+      delay(500);
       verifyMPK();
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
@@ -2013,23 +2014,36 @@ void readMPK() {
   uint32_t totalProgressBar = (uint32_t)(0x7FFF);
   draw_progressbar(0, totalProgressBar);
 
+  // Dummy write because first write to file takes 1 second and messes up timing
+  blinkLED();
+  myFile.write(0xFF);
+  myFile.rewind();
+  blinkLED();
+
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
-  for (word i = 0x0000; i < 0x8000; i += 32) {
-    // Read one block of the Controller Pak into array myBlock
-    readBlock(i);
+  // Read 512 byte into sdBuffer
+  for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
+    // Read 32 byte block
+    for (word currBlock = 0; currBlock < 512; currBlock += 32) {
+      // Read one block of the Controller Pak into array myBlock
+      readBlock(currSdBuffer + currBlock);
 
-    // Delay to prevent write errors
-    delay(1);
+      // Copy block to SdBuffer
+      for (byte currByte = 0; currByte < 32; currByte++) {
+        sdBuffer[currBlock + currByte] = myBlock[currByte];
+      }
 
-    // Write block to SD card
-    for (byte j = 0; j < 32; j++) {
-      myFile.write(myBlock[j]);
+      // Real N64 has about 627us pause between banks, loop takes 500us, add a bit extra delay
+      if (currBlock < 479)
+        delayMicroseconds(800);
     }
-
+    // This will take 1300us
+    blinkLED();
+    myFile.write(sdBuffer, 512);
     // Blink led
     blinkLED();
     // Update progress bar
-    processedProgressBar += 32;
+    processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
@@ -2052,40 +2066,50 @@ void writeMPK() {
     uint32_t totalProgressBar = (uint32_t)(0x7FFF);
     draw_progressbar(0, totalProgressBar);
 
-    for (word myAddress = 0x0000; myAddress < 0x8000; myAddress += 32) {
-      // Read 32 bytes into SD buffer
-      myFile.read(sdBuffer, 32);
+    for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
+      // Read 512 bytes into SD buffer, takes 1500us
+      myFile.read(sdBuffer, 512);
 
-      // Calculate the address CRC
-      word myAddressCRC = addrCRC(myAddress);
+      // Write 32 byte block
+      for (word currBlock = 0; currBlock < 512; currBlock += 32) {
+        // Calculate the address CRC
+        word myAddressCRC = addrCRC(currSdBuffer + currBlock);
 
-      // Write Controller Pak command
-      unsigned char command[] = {0x03};
-      // Address Command
-      unsigned char addressHigh[] = {(unsigned char)(myAddressCRC >> 8)};
-      unsigned char addressLow[] = {(unsigned char)(myAddressCRC & 0xff)};
+        // Copy 32 byte block from SdBuffer
+        for (byte currByte = 0; currByte < 32; currByte++) {
+          myBlock[currByte] = sdBuffer[currBlock + currByte] ;
+        }
 
-      // don't want interrupts getting in the way
-      noInterrupts();
-      // Send write command
-      N64_send(command, 1);
-      // Send block number
-      N64_send(addressHigh, 1);
-      N64_send(addressLow, 1);
-      // Send data to write
-      N64_send(sdBuffer, 32);
-      // Send stop
-      N64_stop();
-      // Enable interrupts
-      interrupts();
+        // Write Controller Pak command
+        unsigned char command[] = {0x03};
+        // Address Command
+        unsigned char addressHigh[] = {(unsigned char)(myAddressCRC >> 8)};
+        unsigned char addressLow[] = {(unsigned char)(myAddressCRC & 0xff)};
+
+        // don't want interrupts getting in the way
+        noInterrupts();
+        // Send write command
+        N64_send(command, 1);
+        // Send block number
+        N64_send(addressHigh, 1);
+        N64_send(addressLow, 1);
+        // Send data to write
+        N64_send(myBlock, 32);
+        // Send stop
+        N64_stop();
+        // Enable interrupts
+        interrupts();
+
+        // Real N64 has about 627us pause between banks, add a bit extra delay
+        if (currBlock < 479)
+          delayMicroseconds(1500);
+      }
 
       // Blink led
       blinkLED();
       // Update progress bar
-      processedProgressBar += 32;
+      processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
-      // Delay to prevent write errors
-      delay(1);
     }
     // Close the file:
     myFile.close();
@@ -2113,22 +2137,30 @@ void verifyMPK() {
   draw_progressbar(0, totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
-  for (word i = 0x0000; i < 0x8000; i += 32) {
-    // Read one block of the Controller Pak into array myBlock
-    readBlock(i);
-    // Delay to prevent read errors
-    delay(1);
-    // Check against file on SD card
-    for (byte j = 0; j < 32; j++) {
-      if (myFile.read() != myBlock[j]) {
-        writeErrors++;
+  for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
+    // Read 512 bytes into SD buffer
+    myFile.read(sdBuffer, 512);
+
+    // Compare 32 byte block
+    for (word currBlock = 0; currBlock < 512; currBlock += 32) {
+      // Read one block of the Controller Pak into array myBlock
+      readBlock(currSdBuffer + currBlock);
+
+      // Check against file on SD card
+      for (byte currByte = 0; currByte < 32; currByte++) {
+        if (sdBuffer[currBlock + currByte] != myBlock[currByte]) {
+          writeErrors++;
+        }
       }
+      // Real N64 has about 627us pause between banks, add a bit extra delay
+      if (currBlock < 479)
+        delayMicroseconds(1500);
     }
 
     // Blink led
     blinkLED();
     // Update progress bar
-    processedProgressBar += 32;
+    processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
