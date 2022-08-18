@@ -177,6 +177,7 @@ void n64ControllerMenu() {
   switch (mainMenu)
   {
     case 0:
+      resetController();
       display_Clear();
       display_Update();
 #if defined(enable_OLED)
@@ -190,6 +191,7 @@ void n64ControllerMenu() {
       break;
 
     case 1:
+      resetController();
       display_Clear();
       display_Update();
       readMPK();
@@ -200,6 +202,7 @@ void n64ControllerMenu() {
       break;
 
     case 2:
+      resetController();
       display_Clear();
       display_Update();
       // Change to root
@@ -1933,6 +1936,21 @@ void controllerTest_OLED() {
    N64 Controller Pak Functions
    (connected via Controller)
  *****************************************/
+// Reset the controller
+void resetController() {
+  // Reset controller
+  unsigned char command[] = {0xFF};
+  // don't want interrupts getting in the way
+  noInterrupts();
+  // Send command
+  N64_send(command, 1);
+  // Send stop
+  N64_stop();
+  // Enable interrupts
+  interrupts();
+  delay(100);
+}
+
 // read 32bytes from controller pak
 void readBlock(word myAddress) {
   // Calculate the address CRC
