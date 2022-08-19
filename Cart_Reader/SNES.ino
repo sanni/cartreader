@@ -852,11 +852,14 @@ void checkAltConf() {
         byte numBanks2  = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
         if ((romSize != romSize2) || (numBanks != numBanks2)) {
-          romSize = romSize2;
-          numBanks  = numBanks2;
-          altconf = 1;
-          println_Msg(F("Correcting size"));
-          display_Update();
+          // Only correct if non-standard size found in database, else trust header info to be correct
+          if ((romSize2 == 6) || (romSize2 == 7) || (romSize2 == 10) || (romSize2 == 12) || (romSize2 == 16) || (romSize2 == 24)) {
+            romSize = romSize2;
+            numBanks  = numBanks2;
+            altconf = 1;
+            println_Msg(F("Correcting size"));
+            display_Update();
+          }
         }
         break;
       }
