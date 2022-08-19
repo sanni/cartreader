@@ -2205,7 +2205,7 @@ void writeMPK() {
     myFile.close();
   }
   else {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(F("Can't open file on SD"), true);
   }
 }
 
@@ -2217,8 +2217,8 @@ void verifyMPK() {
   display_Update();
 
   //open file on sd card
-  if (!myFile.open(filePath, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+  if (!myFile.open(filePath, O_READ)) {
+    print_Error(F("Can't open file on SD"), true);
   }
 
   //Initialize progress bar
