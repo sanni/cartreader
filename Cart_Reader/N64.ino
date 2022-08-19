@@ -2133,7 +2133,7 @@ void checksumMPK() {
   if (writeErrors > 1)
     println_Msg("Error");
   else
-    println_Msg("Ok");
+    println_Msg("OK");
   display_Update();
 
   // Close the file:
