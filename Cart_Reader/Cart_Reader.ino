@@ -365,8 +365,8 @@ char menuOptions[7][20];
 boolean ignoreError = 0;
 
 // File browser
-#define FILENAME_LENGTH 32
-#define FILEPATH_LENGTH 64
+#define FILENAME_LENGTH 100
+#define FILEPATH_LENGTH 132
 #define FILEOPTS_LENGTH 20
 
 char fileName[FILENAME_LENGTH];
