@@ -195,6 +195,7 @@ void n64ControllerMenu() {
       display_Clear();
       display_Update();
       readMPK();
+      checksumMPK();
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
       display_Update();
@@ -2064,6 +2065,77 @@ void readMPK() {
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
+  // Close the file:
+  myFile.close();
+}
+
+// Calculates the checksum of the header
+boolean checkHeader(byte startAddress) {
+  word sum = 0;
+
+  // first 28 bytes are the header, then comes the checksum(word) followed by the reverse checksum(0xFFF2 - checksum)
+  for (int i = 0; i < 28; i += 2) {
+    word tempword = (((sdBuffer[startAddress + i] & 0xFF) << 8) | (sdBuffer[startAddress + i + 1] & 0xFF));
+    sum += tempword;
+  }
+
+  if ((((sdBuffer[startAddress + 28] & 0xFF) << 8) | (sdBuffer[startAddress + 29] & 0xFF)) != (sum & 0xFFFF)) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
+// verifies if read was successful
+void checksumMPK() {
+  println_Msg(F(""));
+  print_Msg(F("Header..."));
+  display_Update();
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_READ)) {
+    print_Error(F("Can't open file"), true);
+  }
+
+  // Read first 256 byte which contains the header including checksum and reverse checksum and three copies of it
+  myFile.read(sdBuffer, 256);
+
+  // At least one header copy needs to be ok
+  if ((checkHeader(0x20)) || (checkHeader(0x60)) || (checkHeader(0x80)) || (checkHeader(0xC0)))
+    println_Msg(F("OK"));
+  else
+    println_Msg(F("Error"));
+  display_Update();
+
+  // Check both TOC copies
+  writeErrors = 0;
+  print_Msg(F("TOC..."));
+  display_Update();
+  word sum = 0;
+
+  // Read 2nd and 3rd 256 byte page with TOC info
+  for (word currSdBuffer = 0x100; currSdBuffer < 0x300; currSdBuffer += 256) {
+    sum = 0;
+
+    // Read 256 bytes into SD buffer
+    myFile.read(sdBuffer, 256);
+
+    // Calculate TOC checksum
+    for (int i = 5; i < 128; i++ ) {
+      sum += sdBuffer[(i << 1) + 1];
+    }
+
+    if (sdBuffer[1] != (sum & 0xFF))
+      writeErrors++;
+  }
+  // Both TOCs damaged
+  if (writeErrors > 1)
+    println_Msg("Error");
+  else
+    println_Msg("Ok");
+  display_Update();
+
   // Close the file:
   myFile.close();
 }

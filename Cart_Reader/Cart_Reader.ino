@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             18.08.2022
+   Date:             19.08.2022
    Version:          9.5
 
    SD lib: https://github.com/greiman/SdFat
@@ -30,7 +30,7 @@
    splash5 - GBSmart, Wonderswan and NGP modules
    hkz & themanbehindthecurtain - N64 flashram commands
    Andrew Brown & Peter Den Hartog - N64 controller protocol
-   Shaun Taylor - N64 controller CRC functions
+   libdragon - N64 controller checksum functions
    Angus Gratton - CRC32
    Snes9x - SuperFX sram fix
    insidegadgets - GBCartRead
@@ -1994,6 +1994,51 @@ void print_Msg(long unsigned int message) {
 }
 
 void print_Msg(byte message, int outputFormat) {
+#ifdef enable_LCD
+  display.print(message, outputFormat);
+#endif
+#ifdef enable_OLED
+  display.print(message, outputFormat);
+#endif
+#ifdef enable_serial
+  Serial.print(message, outputFormat);
+#endif
+#ifdef global_log
+  myLog.print(message, outputFormat);
+#endif
+}
+
+void print_Msg(word message, int outputFormat) {
+#ifdef enable_LCD
+  display.print(message, outputFormat);
+#endif
+#ifdef enable_OLED
+  display.print(message, outputFormat);
+#endif
+#ifdef enable_serial
+  Serial.print(message, outputFormat);
+#endif
+#ifdef global_log
+  myLog.print(message, outputFormat);
+#endif
+}
+
+void print_Msg(int message, int outputFormat) {
+#ifdef enable_LCD
+  display.print(message, outputFormat);
+#endif
+#ifdef enable_OLED
+  display.print(message, outputFormat);
+#endif
+#ifdef enable_serial
+  Serial.print(message, outputFormat);
+#endif
+#ifdef global_log
+  myLog.print(message, outputFormat);
+#endif
+}
+
+void print_Msg(long unsigned int message, int outputFormat) {
 #ifdef enable_LCD
   display.print(message, outputFormat);
 #endif
