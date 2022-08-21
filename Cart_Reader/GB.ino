@@ -16,7 +16,7 @@ word lastByte = 0;
  *****************************************/
 // GBx start menu
 static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
-static const char gbxMenuItem2[] PROGMEM = "Game Boy Advance";
+static const char gbxMenuItem2[] PROGMEM = "GB Advance (3V)";
 static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
 static const char gbxMenuItem5[] PROGMEM = "Reset";

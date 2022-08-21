@@ -798,7 +798,7 @@ byte starting_letter() {
 static const char modeItem1[] PROGMEM = "Game Boy";
 static const char modeItem2[] PROGMEM = "NES/Famicom";
 static const char modeItem3[] PROGMEM = "Super Nintendo";
-static const char modeItem4[] PROGMEM = "Nintendo 64";
+static const char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
 static const char modeItem5[] PROGMEM = "Mega Drive";
 static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char modeItem7[] PROGMEM = "PC Engine/TG16";
@@ -971,7 +971,7 @@ void mainMenu() {
 static const char modeItem1[] PROGMEM = "Add-ons";
 static const char modeItem2[] PROGMEM = "Super Nintendo";
 static const char modeItem3[] PROGMEM = "Mega Drive";
-static const char modeItem4[] PROGMEM = "Nintendo 64";
+static const char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
 static const char modeItem5[] PROGMEM = "Game Boy";
 static const char modeItem6[] PROGMEM = "About";
 static const char modeItem7[] PROGMEM = "Reset";
