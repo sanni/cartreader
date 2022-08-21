@@ -1,0 +1,207 @@
+2 in 1 - Block Buster + Cross High (USA, Europe).sv
+7E05D84F,057195A3,64
+
+2 in 1 - Hash Blocks + Eagle Plan (USA, Europe).sv
+C1354952,21795D9D,64
+
+4 in 1 - Hash Block + Challenger Tank + Brain Power + Jacky Lucky (USA, Europe).sv
+AB3BBF1A,B2AA7578,64
+
+Alien (USA, Europe).sv
+8DBB2C53,B587490C,64
+
+Balloon Fight (USA, Europe).sv
+8188B755,F59A28E2,64
+
+Block Buster (USA, Europe).sv
+0A3DB285,B2AA7578,64
+
+Brain Power (USA, Europe).sv
+5E6706B9,69BED4DE,64
+
+Bubble World (USA, Europe).sv
+E5C2CFB5,137FA3A1,64
+
+Carrier (USA, Europe).sv
+5ECFB674,A74DF889,32
+
+Cave Wonders (USA, Europe).sv
+E0266CE7,B61BDFB4,64
+
+Challenger Tank (USA, Europe).sv
+C92382CE,B2AA7578,64
+
+Chimera (USA, Europe).sv
+4A458AA8,FFA4C239,64
+
+Chinese Checkers (USA, Europe).sv
+EDED8AEC,9574D04D,64
+
+Classic Casino (USA, Europe).sv
+72A96443,3E796E26,64
+
+Climber (USA, Europe).sv
+12C45309,52CC2CD7,32
+
+Cross High (USA, Europe).sv
+1E6836A2,0176ECF0,64
+
+Crystball (USA, Europe).sv
+10DCC110,B2AA7578,64
+
+Dancing Block (USA, Europe).sv
+345CA42A,D08490A7,32
+
+Delta Hero (USA, Europe).sv
+32CCDF89,4EFE40D0,64
+
+Dream World (USA, Europe).sv
+DB0F463F,8DD1E2E9,64
+
+Eagle Plan (USA, Europe).sv
+01CB8364,B2AA7578,64
+
+Earth Defender (USA, Europe).sv
+A6CBB074,B2AA7578,64
+
+Fatal Craft (USA, Europe).sv
+917CAB48,B2AA7578,64
+
+Final Combat (USA, Europe).sv
+2861DE5E,A1DBD9A6,32
+
+Galactic Crusader (USA, Europe).sv
+B494BC5C,DB41A00C,64
+
+Galaxy Fighter (USA, Europe).sv
+581703BE,083694D0,64
+
+Grand Prix (USA, Europe).sv
+CEF3F295,E8F8829F,64
+
+Happy Pairs (USA, Europe).sv
+112F5EED,089CC77D,64
+
+Happy Race (USA, Europe).sv
+552AFA89,50376A85,64
+
+Hash Blocks (USA, Europe).sv
+6BD7C885,B2AA7578,64
+
+Hero Hawk (USA, Europe).sv
+99BF6CF5,E69938C1,64
+
+Hero Kid (USA, Europe).sv
+25DDD6E1,162F0753,64
+
+Honey Bee (USA, Europe).sv
+E856875A,1961B97C,64
+
+Jacky Lucky (USA, Europe).sv
+7D8A607F,ACFF2095,64
+
+Jaguar Bomber (USA, Europe).sv
+AA4372D4,6F0A43E8,64
+
+John Adventure (USA, Europe).sv
+E9EA3AE0,874EEC5A,64
+
+Journey to the West (USA).sv
+9FB4DB9A,B1F9E5FE,51
+
+Juggler (USA, Europe).sv
+32E68D6F,D0CA45AE,64
+
+Kabi Island - Gold in Island (USA, Europe).sv
+2BC03096,C723789D,64
+
+Kitchen War (USA, Europe).sv
+20225F5C,B2AA7578,64
+
+Kung-Fu Street (USA, Europe).sv
+7DAED2EB,8D2E613A,64
+
+Linear Racing (USA, Europe).sv
+6F8ABAF9,42DE0B39,64
+
+Magincross (USA, Europe).sv
+E406A91C,C64A27A7,64
+
+Majong (USA, Europe).sv
+96E2E6D7,B2AA7578,64
+
+Matta Blatta (USA, Europe).sv
+21864295,F846E93F,64
+
+Olympic Trials (USA, Europe).sv
+85DC8111,1DFFC61C,64
+
+P-52 Sea Battle (USA, Europe).sv
+748F9DAE,FDB5A1D1,64
+
+PacBoy & Mouse (USA, Europe).sv
+1A89AC88,B2AA7578,64
+
+Pacific Battle (USA, Europe).sv
+E5DCE795,D26572CA,64
+
+Penguin Hideout (USA, Europe).sv
+FE5F9774,16D33C46,32
+
+Police Bust (USA, Europe).sv
+531F0B51,B2AA7578,64
+
+Popo Team (USA, Europe).sv
+E11A756C,9DF52936,64
+
+Pyramid (USA, Europe).sv
+E0BFE163,74388E90,32
+
+Recycle Design (USA, Europe).sv
+C36BD216,5A5C19A8,64
+
+Scaffolder (USA, Europe).sv
+46FB22C5,3B167A03,64
+
+Soccer Champion (USA, Europe).sv
+45204DC4,B2AA7578,64
+
+Sonny X'Press (USA, Europe).sv
+C99B985A,ADC6B8C6,64
+
+Space Fighter (USA, Europe).sv
+7CD650C8,75FE30AA,64
+
+SSSnake (USA, Europe).sv
+BE9B6F10,8EA0C5AB,64
+
+Super Block (USA, Europe).sv
+02E2C7AD,5F1DD5D7,32
+
+Super Kong (USA, Europe).sv
+59C7FF64,3438D914,64
+
+Super Pang (USA, Europe).sv
+181D12DD,653576B2,64
+
+Tasac 2010 (USA, Europe).sv
+3D5F3964,9B451BB4,64
+
+Tennis Pro '92 (USA, Europe).sv
+BD004CB7,22802ED1,64
+
+Thunder Shooting (USA, Europe).sv
+AD147842,73276EBC,64
+
+Treasure Hunter (USA, Europe).sv
+DB35B809,B2AA7578,64
+
+TV-Link (USA, Europe).sv
+AF3EA0DD,96C646A2,32
+
+Untouchable (USA, Europe).sv
+DB3FE76A,9B4B4770,64
+
+Witty Cat (USA, Europe).sv
+24A115F9,964FBC96,64
+

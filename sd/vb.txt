@@ -1,0 +1,99 @@
+3-D Tetris (USA).vb
+BB71B522
+
+Bound High (Japan) (En) (Proto).vb
+E81A3703
+
+Galactic Pinball (Japan, USA) (En).vb
+C9710A36
+
+Golf (USA).vb
+2199AF41
+
+Hyper Fighting (World) (Aftermarket) (Pirate).vb
+3F2A6BA2
+
+Hyper Fighting (World) (Beta) (Aftermarket) (Pirate).vb
+4450EDE0
+
+Innsmouth no Yakata (Japan).vb
+83CB6A00
+
+Jack Bros. (USA).vb
+A44DE03C
+
+Jack Bros. no Meiro de Hiihoo! (Japan).vb
+CAB61E8B
+
+Mario Clash (Japan, USA) (En).vb
+A47DE78C
+
+Mario's Tennis (Japan, USA) (En).vb
+7CE7460D
+
+Nester's Funky Bowling (USA).vb
+DF4D56B4
+
+Niko-chan Battle (Japan) (Proto).vb
+F3CD40DD
+
+Panic Bomber (USA).vb
+19BB2DFB
+
+Red Alarm (Japan).vb
+7E85C45D
+
+Red Alarm (USA).vb
+AA10A7B4
+
+SD Gundam - Dimension War (Japan).vb
+44788197
+
+Space Invaders - Virtual Collection (Japan).vb
+FA44402D
+
+Space Pinball (Japan) (En) (Proto).vb
+44C2B723
+
+Space Squash (Japan).vb
+60895693
+
+T&E Virtual Golf (Japan).vb
+6BA07915
+
+Teleroboxer (Japan, USA) (En).vb
+36103000
+
+Tobidase! Panibon (Japan).vb
+40498F5E
+
+V-Tetris (Japan).vb
+3CCB67AE
+
+Vertical Force (Japan).vb
+9E9B8B92
+
+Vertical Force (USA).vb
+4C32BA5E
+
+Virtual Bowling (Japan).vb
+20688279
+
+Virtual Boy Wario Land (Japan, USA) (En).vb
+133E9372
+
+Virtual Fishing (Japan).vb
+526CC969
+
+Virtual Lab (Japan).vb
+8989FE0A
+
+Virtual League Baseball (USA).vb
+736B40D6
+
+Virtual Pro Yakyuu '95 (Japan).vb
+9BA8BB5E
+
+Waterworld (USA).vb
+82A95E51
+
