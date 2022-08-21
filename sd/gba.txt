@@ -1,3 +1,54 @@
+Sabrina the Teenage Witch - Potion Commotion (Europe) (En,Fr,De,Es,It,Nl).gba
+CAA8225B,A3BP,04,0
+
+Donkey Kong Country (USA).gba
+12F7A968,A5NE,08,1
+
+All-Star Baseball 2003 (USA).gba
+E30691FE,AA3E,04,3
+
+Duel Masters - Sempai Legends (Europe) (En,Fr,De,Es,It).gba
+2FFF9BA9,AA9P,08,1
+
+Dungeons & Dragons - Eye of the Beholder (USA).gba
+91B16892,AD4E,04,3
+
+Mega Man Battle Network 2 (USA).gba
+6D961F82,AE2E,08,3
+
+Earthworm Jim (USA, Europe).gba
+C4991D13,AEJE,08,0
+
+Fire Emblem - Fuuin no Tsurugi (Japan).gba
+D38763E1,AFEJ,08,3
+
+GetBackers Dakkanya - Jigoku no Scaramouche (Japan).gba
+C0A0A979,AGBJ,04,4
+
+Nicktoons Racing (Europe) (En,Fr,De,Es,It).gba
+BABCCEFD,ANQP,04,1
+
+SEGA Rally Championship (Europe).gba
+D125A6BB,AYLP,08,3
+
+Rayman 3 (USA) (En,Fr,Es).gba
+D1613266,AYZE,08,1
+
+Ace Combat Advance (USA, Europe).gba
+43F5E157,BAEE,04,0
+
+Asterix & Obelix XXL (Europe) (En,Fr,De,Es,It,Nl).gba
+A9B1ECE5,BLXP,08,1
+
+Metroid - Zero Mission (USA).gba
+5C61A844,BMXE,08,3
+
+Metroid - Zero Mission (Europe) (En,Fr,De,Es,It).gba
+F1D92E63,BMXP,08,3
+
+Rebelstar - Tactical Command (USA).gba
+FB6C590F,BRLE,04,2
+
 007 - Everything or Nothing (Japan).gba
 CAF2E99F,BJBJ,08,1
 
@@ -9735,3 +9786,4 @@ ZooCube (Japan).gba
 
 ZooCube (USA).gba
 AF20BE72,ANCE,04,1
+
