@@ -1,6 +1,7 @@
 //******************************************
 // WS MODULE
 //******************************************
+#ifdef enable_WS
 // Cartridge pinout
 // 48P 1.25mm pitch connector
 // C1, C48     : GND
@@ -21,8 +22,6 @@
 // C45         : /CART? (L when accessing cartridge (ROM/SRAM/PORT))
 // C46         : INT (for RTC alarm interrupt)
 // C47         : CLK (384KHz on WS)
-
-#ifdef enable_WS
 
 #ifdef ws_adapter_v2
 #define WS_CLK_BIT 5  // USE PE5 as CLK

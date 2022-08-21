@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             19.08.2022
-   Version:          9.5
+   Date:             21.08.2022
+   Version:          9.6
 
    SD lib: https://github.com/greiman/SdFat
    OLED lib: https://github.com/adafruit/Adafruit_SSD1306
@@ -25,7 +25,7 @@
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
-   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco- and Intellivision modules
+   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV modules
    Tamanegi_taro - PCE and Satellaview modules
    splash5 - GBSmart, Wonderswan and NGP modules
    hkz & themanbehindthecurtain - N64 flashram commands
@@ -60,7 +60,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "9.5";
+char ver[5] = "9.6";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -97,6 +97,7 @@ char ver[5] = "9.5";
 // #define enable_INTV
 // #define enable_COLV
 // #define enable_VBOY
+// #define enable_WSV
 
 //******************************************
 // HW CONFIGS
@@ -305,6 +306,7 @@ bool i2c_found;
 #define mode_INTV 23
 #define mode_COL 24
 #define mode_VBOY 25
+#define mode_WSV 26
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__ ("nop\n\t")
@@ -683,7 +685,8 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
     }
   }
   else {
-    println_Msg(F(" -> database file not found"));
+    println_Msg(F(" -> Error"));
+    println_Msg(F("Database missing"));
     return 0;
   }
 #else
@@ -807,19 +810,20 @@ static const char modeItem9[] PROGMEM = "NeoGeo Pocket";
 static const char modeItem10[] PROGMEM = "Intellvision";
 static const char modeItem11[] PROGMEM = "Colecovision";
 static const char modeItem12[] PROGMEM = "Virtual Boy";
-static const char modeItem13[] PROGMEM = "Flashrom Programmer";
-static const char modeItem14[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14};
+static const char modeItem13[] PROGMEM = "Watara Supervision";
+static const char modeItem14[] PROGMEM = "Flashrom Programmer";
+static const char modeItem15[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = {modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15};
 
 // All included slots
 void mainMenu() {
-  // create menu with title and 13 options to choose from
+  // create menu with title and 15 options to choose from
   unsigned char modeMenu;
 
   // Main menu spans across two pages
   currPage = 1;
   lastPage = 1;
-  numPages = 2;
+  numPages = 3;
 
   while (1) {
     if (currPage == 1) {
@@ -831,6 +835,11 @@ void mainMenu() {
       // Copy menuOptions out of progmem
       convertPgm(modeOptions, 7, 7);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
+    }
+    if (currPage == 3) {
+      // Copy menuOptions out of progmem
+      convertPgm(modeOptions, 14, 1);
+      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 1, 0);
     }
     if (numPages == 0) {
       // Execute choice
@@ -941,8 +950,15 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_WSV
     case 12:
+      setup_WSV();
+      wsvMenu();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 13:
 #ifdef enable_FLASH16
       flashMenu();
 #else
@@ -951,7 +967,7 @@ void mainMenu() {
       break;
 #endif
 
-    case 13:
+    case 14:
       aboutScreen();
       break;
 
@@ -997,8 +1013,9 @@ static const char* const consolesOptions[] PROGMEM = {consolesItem1, consolesIte
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
 static const char handheldsItem2[] PROGMEM = "WonderSwan";
 static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket";
-static const char handheldsItem4[] PROGMEM = "Reset";
-static const char* const handheldsOptions[] PROGMEM = {handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4};
+static const char handheldsItem4[] PROGMEM = "Watara Supervision";
+static const char handheldsItem5[] PROGMEM = "Reset";
+static const char* const handheldsOptions[] PROGMEM = {handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5};
 
 // All included slots
 void mainMenu() {
@@ -1160,21 +1177,19 @@ void consoleMenu() {
 
 // Everything that needs an adapter
 void handheldMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char handheldsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(handheldsOptions, 4);
-  handheldsMenu = question_box(F("Choose Adapter"), menuOptions, 4, 0);
+  convertPgm(handheldsOptions, 5);
+  handheldsMenu = question_box(F("Choose Adapter"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (handheldsMenu)
   {
 #ifdef enable_VBOY
     case 0:
-      mode = mode_VBOY;
-      display_Clear();
-      display_Update();
       setup_VBOY();
+      vboyMenu();
       break;
 #endif
 
@@ -1196,7 +1211,14 @@ void handheldMenu() {
       break;
 #endif
 
+#ifdef enable_WSV
     case 3:
+      setup_WSV();
+      wsvMenu();
+      break;
+#endif
+
+    case 4:
       resetArduino();
       break;
 
@@ -3371,6 +3393,11 @@ void loop() {
 #ifdef enable_VBOY
   else if (mode == mode_VBOY) {
     vboyMenu();
+  }
+#endif
+#ifdef enable_WSV
+  else if (mode == mode_WSV) {
+    wsvMenu();
   }
 #endif
   else {
