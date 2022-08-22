@@ -859,7 +859,7 @@ void checkAltConf(char crcStr[9]) {
         // Some games have the same checksum, so compare CRC32 of header area with database too
         if (strcmp(tempStr3, crcStr) == 0)  {
           // Game found, check if ROM sizes differ but only change ROM size if non- standard size found in database, else trust the header to be right and the database to be wrong
-          if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24))) {
+          if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24) || (romSize2 == 48))) {
             // Correct size
             romSize = romSize2;
             numBanks  = numBanks2;
