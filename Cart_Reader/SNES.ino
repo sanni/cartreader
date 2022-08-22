@@ -806,9 +806,9 @@ void getCartInfo_SNES() {
   }
 }
 
-void checkAltConf() {
-  char tempStr1[2];
+void checkAltConf(char crcStr[9]) {
   char tempStr2[5];
+  char tempStr3[9];
   altconf = 0;
 
   if (myFile.open("snes.txt", O_READ)) {
@@ -824,20 +824,25 @@ void checkAltConf() {
       // Skip over the CRC checksum
       myFile.seekSet(myFile.curPosition() + 9);
 
-      // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
-      sprintf(tempStr1, "%c", myFile.read());
-      strcpy(tempStr2, tempStr1);
-      sprintf(tempStr1, "%c", myFile.read());
-      strcat(tempStr2, tempStr1);
-      sprintf(tempStr1, "%c", myFile.read());
-      strcat(tempStr2, tempStr1);
-      sprintf(tempStr1, "%c", myFile.read());
-      strcat(tempStr2, tempStr1);
+      // Get internal ROM checksum as string
+      for (byte j = 0; j < 4; j++) {
+        tempStr2[j] = char(myFile.read());
+      }
+      tempStr2[4] = '\0';
 
-      // Check if string is a match
+      // Check if checksum string is a match else go to next entry in database
       if (strcmp(tempStr2, checksumStr) == 0) {
-        println_Msg(F("Found"));
+        println_Msg(F("Found in database"));
         display_Update();
+
+        // Skip the , in the file
+        myFile.seekSet(myFile.curPosition() + 1);
+
+        // Read the CRC32 of the SNES header out of database
+        for (byte k = 0; k < 8; k++) {
+          tempStr3[k] = char(myFile.read());
+        }
+        tempStr3[8] = '\0';
 
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
@@ -851,22 +856,24 @@ void checkAltConf() {
         // Read number of banks
         byte numBanks2  = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
-        if ((romSize != romSize2) || (numBanks != numBanks2)) {
-          // Only correct if non-standard size found in database, else trust header info to be correct
-          if ((romSize2 == 6) || (romSize2 == 7) || (romSize2 == 10) || (romSize2 == 12) || (romSize2 == 16) || (romSize2 == 24)) {
+        // Some games have the same checksum, so compare CRC32 of header area with database too
+        if (strcmp(tempStr3, crcStr) == 0)  {
+          // Game found, check if ROM sizes differ but only change ROM size if non- standard size found in database, else trust the header to be right and the database to be wrong
+          if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24))) {
+            // Correct size
             romSize = romSize2;
             numBanks  = numBanks2;
             altconf = 1;
             println_Msg(F("Correcting size"));
             display_Update();
           }
+          break;
         }
-        break;
       }
-      // If no match empty string advance by 9 and try again
+      // If no match go to next entry
       else {
         // skip rest of line
-        myFile.seekSet(myFile.curPosition() + 9);
+        myFile.seekSet(myFile.curPosition() + 18);
         // skip third empty line
         skip_line(&myFile);
       }
@@ -882,11 +889,11 @@ boolean checkcart_SNES() {
   dataIn();
 
   uint16_t c = 0;
-  uint16_t headerStart = 0xFFC0;
+  uint16_t headerStart = 0xFFB0;
   uint16_t currByte = headerStart;
-  byte snesHeader[64] = { 0 };
+  byte snesHeader[80] = { 0 };
   PORTL = 0;
-  while (c < 64) {
+  while (c < 80) {
     PORTF = (currByte & 0xFF);
     PORTK = ((currByte >> 8) & 0xFF);
 
@@ -896,6 +903,14 @@ boolean checkcart_SNES() {
     c++;
     currByte++;
   }
+
+  // Calculate CRC32 of header
+  uint32_t oldcrc32 = 0xFFFFFFFF;
+  for (int c = 0; c < 80; c++) {
+    oldcrc32 = updateCRC(snesHeader[c], oldcrc32);
+  }
+  char crcStr[9];
+  sprintf(crcStr, "%08lX", ~oldcrc32);
 
   // Get Checksum as string
   sprintf(checksumStr, "%02X%02X", snesHeader[0xFFDF - headerStart], snesHeader[0xFFDE - headerStart]);
@@ -959,8 +974,10 @@ boolean checkcart_SNES() {
     }
   }
 
-  //Check SD card for alt config
-  checkAltConf();
+  //Check SD card for alt config, pass CRC32 of snesHeader but filter out 0000 and FFFF checksums
+  if (!(strcmp(checksumStr, "0000") == 0) && !(strcmp(checksumStr, "FFFF") == 0)) {
+    checkAltConf(crcStr);
+  }
 
   // Get name
   byte myByte = 0;

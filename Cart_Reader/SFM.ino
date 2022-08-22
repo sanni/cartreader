@@ -762,6 +762,20 @@ boolean checkcart_SFM() {
   // set control to read
   dataIn();
 
+  // Read ROM header
+  byte snesHeader[80] = { 0 };
+  for (byte c = 0; c < 80; c++) {
+    snesHeader[c] = readBank_SFM(0, 0xFFB0 + c);
+  }
+
+  // Calculate CRC32 of header
+  uint32_t oldcrc32 = 0xFFFFFFFF;
+  for (int c = 0; c < 80; c++) {
+    oldcrc32 = updateCRC(snesHeader[c], oldcrc32);
+  }
+  char crcStr[9];
+  sprintf(crcStr, "%08lX", ~oldcrc32);
+
   // Get Checksum as string
   sprintf(checksumStr, "%02X%02X", readBank_SFM(0, 65503), readBank_SFM(0, 65502));
 
@@ -781,8 +795,10 @@ boolean checkcart_SFM() {
 
   numBanks = (long(romSize) * 1024 * 1024 / 8) / (32768 + (long(romType) * 32768));
 
-  //Check SD card for alt config
-  checkAltConf();
+  //Check SD card for alt config, pass CRC32 of snesHeader but filter out 0000 and FFFF checksums
+  if (!(strcmp(checksumStr, "0000") == 0) && !(strcmp(checksumStr, "FFFF") == 0)) {
+    checkAltConf(crcStr);
+  }
 
   // Get name
   byte myByte = 0;
