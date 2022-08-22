@@ -814,7 +814,7 @@ void checkAltConf(char crcStr[9]) {
   if (myFile.open("snes.txt", O_READ)) {
     // Get cart info
     display_Clear();
-    println_Msg(F("Searching database..."));
+    print_Msg(F("Searching database..."));
     display_Update();
 
     while (myFile.available()) {
@@ -832,7 +832,7 @@ void checkAltConf(char crcStr[9]) {
 
       // Check if checksum string is a match else go to next entry in database
       if (strcmp(tempStr2, checksumStr) == 0) {
-        println_Msg(F("Found in database"));
+        print_Msg(F("..."));
         display_Update();
 
         // Skip the , in the file
@@ -858,14 +858,31 @@ void checkAltConf(char crcStr[9]) {
 
         // Some games have the same checksum, so compare CRC32 of header area with database too
         if (strcmp(tempStr3, crcStr) == 0)  {
+          println_Msg(F(""));
+          println_Msg(F("Found"));
+          display_Update();
           // Game found, check if ROM sizes differ but only change ROM size if non- standard size found in database, else trust the header to be right and the database to be wrong
           if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24) || (romSize2 == 48))) {
             // Correct size
+            println_Msg(F("Correcting size"));
+            print_Msg(F("Size: "));
+            print_Msg(romSize);
+            print_Msg(F(" -> "));
+            print_Msg(romSize2);
+            println_Msg(F("Mbit"));
+            print_Msg(F("Banks: "));
+            print_Msg(numBanks);
+            print_Msg(F(" -> "));
+            println_Msg(numBanks2);
+            println_Msg(F(""));
+            println_Msg(F(""));
+            print_Msg(F("Header CRC: "));
+            println_Msg(crcStr);
+            display_Update();
+            delay(1000);
             romSize = romSize2;
             numBanks  = numBanks2;
             altconf = 1;
-            println_Msg(F("Correcting size"));
-            display_Update();
           }
           break;
         }
