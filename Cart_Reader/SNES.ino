@@ -748,6 +748,9 @@ void getCartInfo_SNES() {
     println_Msg(F("SA1 RAM BATT"));
     romType = SA;
   }
+  else if (romChips == 67) {
+    println_Msg(F("SDD1"));
+  }
   else if (romChips == 69) {
     println_Msg(F("SDD1 BATT"));
   }
@@ -955,6 +958,11 @@ boolean checkcart_SNES() {
   if (romChips == 69) {
     romSize = 48;
     numBanks = 96;
+    romType = HI;
+  }
+  else if (romChips == 67) {
+    romSize = 32;
+    numBanks = 64;
     romType = HI;
   }
   else if (romChips == 243) {
@@ -1338,7 +1346,7 @@ void readROM_SNES() {
   }
 
   // Dump SDD1 High-type ROM
-  else if ((romType == HI) && (romChips == 69)) {
+  else if ((romType == HI) && (romChips == 69 || romChips == 67)) {
     println_Msg(F("Dumping SDD1 HiRom"));
     display_Update();
     controlIn_SNES();
