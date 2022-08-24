@@ -1122,6 +1122,11 @@ void readROM_MD() {
   // get current time
   unsigned long startTime = millis();
 
+  // Phantasy Star/Beyond Oasis with 74HC74 and 74HC139 switch ROM/SRAM at address 0x200000
+  if (0x200000 < cartSize < 0x400000) {
+    enableSram_MD(0);
+  }
+
   // Prepare SSF2 Banks
   if (cartSize > 0x400000) {
     writeSSF2Map(0x50987E, 6); // 0xA130FD
@@ -1142,11 +1147,11 @@ void readROM_MD() {
     if (currBuffer % 16384 == 0)
       blinkLED();
 
-    if (currBuffer == 0x200000) {
+    if ((currBuffer == 0x200000) && (cartSize > 0x400000)) {
       writeSSF2Map(0x50987E, 8); // 0xA130FD
       offsetSSF2Bank = 1;
     }
-    else if (currBuffer == 0x240000) {
+    else if ((currBuffer == 0x240000) && (cartSize > 0x400000)) {
       writeSSF2Map(0x50987F, 9); // 0xA130FF
       offsetSSF2Bank = 1;
     }
