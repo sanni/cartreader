@@ -2062,6 +2062,9 @@ E6B34387,BDA8F143,12,0
 Quest 64 (USA).z64
 D75B45C6,C8BB4DD9,16,0
 
+R64 by Remute (World) (Aftermarket).z64
+9B30252E,3747B49B,08,0
+
 Racing Simulation 2 (Germany).z64
 BA73A7E4,2877AC2D,16,5
 
