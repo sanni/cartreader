@@ -12,7 +12,6 @@
    GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library
    BusIO: https://github.com/adafruit/Adafruit_BusIO
    LCD lib: https://github.com/olikraus/u8g2
-   RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools
    Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel
    Rotary Enc lib: https://github.com/mathertel/RotaryEncoder
    SI5351 lib: https://github.com/etherkit/Si5351Arduino
@@ -230,13 +229,6 @@ int rotaryPos = 0;
 // Neopixel
 #include <Adafruit_NeoPixel.h>
 Adafruit_NeoPixel pixels(3, 13, NEO_GRB + NEO_KHZ800);
-#else
-#ifndef enable_LCD
-// 4 Pin RGB LED
-#include <RGBTools.h>
-// Set pins of red, green and blue
-RGBTools rgb(12, 11, 10);
-#endif
 #endif
 
 typedef enum COLOR_T {
@@ -1718,6 +1710,13 @@ void setup() {
 #if !(defined(enable_serial) || defined(HW5))
   DDRE |= (1 << 1);
 #endif
+#else
+  #ifndef enable_LCD
+    // Configure 4 Pin RGB LED pins as output
+    DDRB |= (1 << DDB6); // Red LED (pin 12)
+    DDRB |= (1 << DDB5); // Green LED (pin 11)
+    DDRB |= (1 << DDB4); // Blue LED (pin 10)
+  #endif
 #endif
 
 #ifdef enable_OLED
@@ -1816,7 +1815,10 @@ void setColor_RGB(byte r, byte g, byte b) {
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
 #else
-  rgb.setColor(r, g, b);
+  // Set color of analog 4 Pin RGB LED
+  analogWrite(12, r);
+  analogWrite(11, g);
+  analogWrite(10, b);
 #endif
 }
 
