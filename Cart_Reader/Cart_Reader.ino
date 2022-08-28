@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             22.08.2022
+   Date:             28.08.2022
    Version:          9.6
 
    SD lib: https://github.com/greiman/SdFat
@@ -39,8 +39,8 @@
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
-   Uzlopak, sakman55, Tombo89, scrap-a, Tombo89, borti4938, vogelfreiheit, CaitSith2, Modman,
-   philenotfound, karimhadjsalem, nsx0r
+   Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
+   philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, lesserkuma
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
@@ -116,6 +116,7 @@ char ver[5] = "9.6";
 #define enable_OLED
 #define enable_Button2
 #define clockgen_installed
+#define CA_LED
 //#define fastcrc
 #endif
 
@@ -1711,12 +1712,18 @@ void setup() {
   DDRE |= (1 << 1);
 #endif
 #else
-  #ifndef enable_LCD
-    // Configure 4 Pin RGB LED pins as output
-    DDRB |= (1 << DDB6); // Red LED (pin 12)
-    DDRB |= (1 << DDB5); // Green LED (pin 11)
-    DDRB |= (1 << DDB4); // Blue LED (pin 10)
-  #endif
+#ifndef enable_LCD
+#ifdef CA_LED
+  // Turn LED off
+  digitalWrite(12, 1);
+  digitalWrite(11, 1);
+  digitalWrite(10, 1);
+#endif
+  // Configure 4 Pin RGB LED pins as output
+  DDRB |= (1 << DDB6); // Red LED (pin 12)
+  DDRB |= (1 << DDB5); // Green LED (pin 11)
+  DDRB |= (1 << DDB4); // Blue LED (pin 10)
+#endif
 #endif
 
 #ifdef enable_OLED
@@ -1804,7 +1811,7 @@ void dataIn() {
  *****************************************/
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
-#ifdef enable_neopixel
+#if defined(enable_neopixel)
   // Dim Neopixel LEDs
   if (r >= 100) r = 100;
   if (g >= 100) g = 100;
@@ -1814,8 +1821,13 @@ void setColor_RGB(byte r, byte g, byte b) {
   pixels.setPixelColor(1, pixels.Color(g, r, b));
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
+#elif defined(CA_LED)
+  // Set color of analog 4 Pin common anode RGB LED
+  analogWrite(12, 255 - r);
+  analogWrite(11, 255 - g);
+  analogWrite(10, 255 - b);
 #else
-  // Set color of analog 4 Pin RGB LED
+  // Set color of analog 4 Pin common cathode RGB LED
   analogWrite(12, r);
   analogWrite(11, g);
   analogWrite(10, b);
