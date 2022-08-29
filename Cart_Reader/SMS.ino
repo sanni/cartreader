@@ -4,10 +4,6 @@
 #ifdef enable_SMS
 
 /******************************************
-   Variables
- *****************************************/
-
-/******************************************
    Menu
  *****************************************/
 // Adapter menu
@@ -15,7 +11,8 @@ static const char SMSAdapterItem1[] PROGMEM = "SMS/Mark 3 raphnet";
 static const char SMSAdapterItem2[] PROGMEM = "SG-1000 raphnet";
 static const char SMSAdapterItem3[] PROGMEM = "SMS Retrode";
 static const char SMSAdapterItem4[] PROGMEM = "GG Retrode";
-static const char* const menuAdapterSMS[] PROGMEM = {SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4};
+static const char SMSAdapterItem5[] PROGMEM = "GG Retron 3in1";
+static const char* const menuAdapterSMS[] PROGMEM = {SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5};
 
 // MD menu items
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
@@ -39,6 +36,8 @@ static const char* const romOptionsSMS[] PROGMEM = {SMSRomItem1, SMSRomItem2, SM
 static bool retrode_mode = false;
 static bool retrode_mode_sms = false; // true: SMS/Mark3 false: GG
 static bool raphnet_mode_sg1000 = false; //  true: SG-1000 false: SMS/Mark3
+static bool retron_mode = false;
+
 
 void _smsMenu() {
   // create menu with title and n options to choose from
@@ -49,6 +48,11 @@ void _smsMenu() {
     int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
     convertPgm(menuOptionsSMS, noptions);
     mainMenu = question_box(retrode_mode ? (retrode_mode_sms ? F("Retrode:SMS") : F("Retrode:GG")) : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
+  }
+  else if (retron_mode) {
+    // Copy menuOptions out of progmem
+    convertPgm(menuOptionsSMS, 4);
+    mainMenu = question_box(F("Game Gear"), menuOptions, 4, 0);
   }
   else {
     // Copy menuOptions out of progmem
@@ -66,7 +70,7 @@ void _smsMenu() {
       // Change working dir to root
       sd.chdir("/");
       readROM_SMS();
-      if (retrode_mode && !retrode_mode_sms) {
+      if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
         compareCRC("gg.txt", 0, 1, 0);
       }
       else {
@@ -126,8 +130,8 @@ void smsMenu() {
   // create main menu with title and 4 options to choose from
   unsigned char SMSAdapterMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuAdapterSMS, 4);
-  SMSAdapterMenu = question_box(F("Select System/Adapter"), menuOptions, 4, 0);
+  convertPgm(menuAdapterSMS, 5);
+  SMSAdapterMenu = question_box(F("Select System/Adapter"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (SMSAdapterMenu)
@@ -137,6 +141,7 @@ void smsMenu() {
       retrode_mode = false;
       retrode_mode_sms = false;
       raphnet_mode_sg1000 = false;
+      retron_mode = false;
       break;
 
     case 1:
@@ -144,6 +149,7 @@ void smsMenu() {
       retrode_mode = false;
       retrode_mode_sms = false;
       raphnet_mode_sg1000 = true;
+      retron_mode = false;
       break;
 
     case 2:
@@ -151,6 +157,7 @@ void smsMenu() {
       retrode_mode = true;
       retrode_mode_sms = true;
       raphnet_mode_sg1000 = false;
+      retron_mode = false;
       break;
 
     case 3:
@@ -158,7 +165,15 @@ void smsMenu() {
       retrode_mode = true;
       retrode_mode_sms = false;
       raphnet_mode_sg1000 = false;
+      retron_mode = false;
       break;
+
+    case 4:
+      // retron 3in1 GG
+      retrode_mode = false;
+      retrode_mode_sms = false;
+      raphnet_mode_sg1000 = false;
+      retron_mode = true;
   }
   for (;;) _smsMenu();
 }
@@ -350,7 +365,7 @@ byte readNibble(byte data, byte number) {
 }
 
 /******************************************
-  MASTER SYSTEM functions
+  Cartridges functions
 *****************************************/
 void getCartInfo_SMS() {
   // Rom size
@@ -389,10 +404,10 @@ void getCartInfo_SMS() {
       break;
     default:
       cartSize =  48 * 1024UL;
+      
       // LED Error
       setColor_RGB(0, 0, 255);
       break;
-
   }
 
   // Read TMR SEGA string
@@ -506,7 +521,7 @@ void getCartInfo_SMS() {
   // Header found
   else {
     display_Clear();
-    if (retrode_mode && !retrode_mode_sms) {
+    if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
       println_Msg(F("GG Header Info"));
     }
     else {
@@ -535,7 +550,7 @@ void getCartInfo_SMS() {
 void readROM_SMS() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
-  if (retrode_mode && !retrode_mode_sms) {
+  if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
     strcat(fileName, ".gg");
   }
   else {
@@ -544,7 +559,7 @@ void readROM_SMS() {
 
   // create a new folder
   EEPROM_readAnything(0, foldern);
-  if (retrode_mode && !retrode_mode_sms) {
+  if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
     sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
   }
   else {
@@ -568,10 +583,11 @@ void readROM_SMS() {
     print_Error(F("SD Error"), true);
   }
 
+  // set default bank size to 16KB
   word bankSize = 16 * 1024UL;
 
-  // carts with no mapper (SG1000 or GG 32KB)
-  if (raphnet_mode_sg1000 || (retrode_mode && !retrode_mode_sms && cartSize == 32 * 1024UL)) {
+  // for carts not using mappers (SG1000 or SMS/GG 32KB)
+  if (raphnet_mode_sg1000 || (cartSize == 32 * 1024UL)) {
     bankSize = cartSize;
   }
 
@@ -588,11 +604,12 @@ void readROM_SMS() {
 
     // Blink led
     blinkLED();
+    
     // Read 16KB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS((raphnet_mode_sg1000 || (retrode_mode && !retrode_mode_sms && cartSize == 32 * 1024UL) ?  0 : 0x8000) + currBuffer + currByte);
+        sdBuffer[currByte] = readByte_SMS((raphnet_mode_sg1000 || (cartSize == 32 * 1024UL) ?  0 : 0x8000) + currBuffer + currByte);
       }
       // hexdump for debugging:
       // if (currBank == 0 && currBuffer == 0) {
@@ -628,7 +645,7 @@ void readSRAM_SMS() {
 
   // create a new folder
   EEPROM_readAnything(0, foldern);
-  if (retrode_mode && !retrode_mode_sms) {
+  if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
     sprintf(folder, "GG/SAVE/%s/%d", romName, foldern);
   }
   else {
