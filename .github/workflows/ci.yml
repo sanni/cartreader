@@ -1,0 +1,29 @@
+name: CI
+
+on: [push]
+
+jobs:
+  HW5:
+    uses: ./.github/workflows/build.yml
+    with:
+      hwVersion: "HW5"
+
+  HW4:
+    uses: ./.github/workflows/build.yml
+    with:
+      hwVersion: "HW4"
+
+  HW3:
+    uses: ./.github/workflows/build.yml
+    with:
+      hwVersion: "HW3"
+
+  HW2:
+    uses: ./.github/workflows/build.yml
+    with:
+      hwVersion: "HW2"
+
+  HW1:
+    uses: ./.github/workflows/build.yml
+    with:
+      hwVersion: "HW1"
