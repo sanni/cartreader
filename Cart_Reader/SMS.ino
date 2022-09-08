@@ -404,7 +404,7 @@ void getCartInfo_SMS() {
       break;
     default:
       cartSize =  48 * 1024UL;
-      
+
       // LED Error
       setColor_RGB(0, 0, 255);
       break;
@@ -604,7 +604,7 @@ void readROM_SMS() {
 
     // Blink led
     blinkLED();
-    
+
     // Read 16KB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer

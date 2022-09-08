@@ -22,9 +22,9 @@ bool tempBits[65];
 int eepPages;
 
 // N64 Controller
-// 256 bits of received Controller data
-char N64_raw_dump[257];
-// Array that holds one Controller Pak block of 32 bytes
+// 256 bits of received Controller data + 8 bit CRC
+char N64_raw_dump[265];
+// Array that holds one Controller Pak block of 32 bytes data
 byte myBlock[33];
 String rawStr = ""; // above char array read into a string
 struct {
@@ -192,6 +192,7 @@ void n64ControllerMenu() {
 
     case 1:
       resetController();
+      checkController();
       display_Clear();
       display_Update();
       readMPK();
@@ -204,6 +205,7 @@ void n64ControllerMenu() {
 
     case 2:
       resetController();
+      checkController();
       display_Clear();
       display_Update();
       // Change to root
@@ -605,26 +607,25 @@ static word addrCRC(word address) {
   return address | crc;
 }
 
-// unused
-//static byte dataCRC(byte * data) {
-//  byte ret = 0;
-//  for (byte i = 0; i <= 32; i++) {
-//    for (byte j = 7; j >= 0; j--) {
-//      int tmp = 0;
-//      if (ret & 0x80) {
-//        tmp = 0x85;
-//      }
-//      ret <<= 1;
-//      if ( i < 32 ) {
-//        if (data[i] & (0x01 << j)) {
-//          ret |= 0x1;
-//        }
-//      }
-//      ret ^= tmp;
-//    }
-//  }
-//  return ret;
-//}
+static uint8_t dataCRC( uint8_t *data ) {
+  uint8_t ret = 0;
+  for ( int i = 0; i <= 32; i++ ) {
+    for ( int j = 7; j >= 0; j-- ) {
+      int tmp = 0;
+      if ( ret & 0x80 ) {
+        tmp = 0x85;
+      }
+      ret <<= 1;
+      if ( i < 32 ) {
+        if ( data[i] & (0x01 << j) ) {
+          ret |= 0x1;
+        }
+      }
+      ret ^= tmp;
+    }
+  }
+  return ret;
+}
 
 /******************************************
    N64 Controller Protocol Functions
@@ -1952,7 +1953,57 @@ void resetController() {
   delay(100);
 }
 
-// read 32bytes from controller pak
+// read 3 bytes from controller
+void checkController() {
+  display_Clear();
+
+  // Check if line is HIGH
+  if (!N64_QUERY)
+    print_Error(F("Data line LOW"), true);
+
+  // Send status command
+  unsigned char command[] = {0x0};
+
+  // don't want interrupts getting in the way
+  noInterrupts();
+  N64_send(command, 1);
+  N64_stop();
+  // read in data
+  N64_get(32);
+  // end of time sensitive code
+  interrupts();
+
+  // Empty N64_raw_dump into myBlock
+  for (word i = 0; i < 32; i += 8) {
+    boolean byteFlipped[9];
+
+    // Flip byte order
+    byteFlipped[0] = N64_raw_dump[i + 7];
+    byteFlipped[1] = N64_raw_dump[i + 6];
+    byteFlipped[2] = N64_raw_dump[i + 5];
+    byteFlipped[3] = N64_raw_dump[i + 4];
+    byteFlipped[4] = N64_raw_dump[i + 3];
+    byteFlipped[5] = N64_raw_dump[i + 2];
+    byteFlipped[6] = N64_raw_dump[i + 1];
+    byteFlipped[7] = N64_raw_dump[i + 0];
+
+    // Join bits into one byte
+    unsigned char myByte = 0;
+    for (byte j = 0; j < 8; ++j) {
+      if (byteFlipped[j]) {
+        myByte |= 1 << j;
+      }
+    }
+    if ((i == 0) && (myByte != 0x05))
+      print_Error(F("Controller not found"), true);
+    if ((i == 16) && (myByte != 0x01))
+      print_Error(F("Controller Pak not found"), true);
+    if ((i == 16) && (myByte == 0x04))
+      print_Error(F("CRC Error"), true);
+  }
+}
+
+// read 32bytes from controller pak and calculate CRC
 void readBlock(word myAddress) {
   // Calculate the address CRC
   word myAddressCRC = addrCRC(myAddress);
@@ -1970,8 +2021,8 @@ void readBlock(word myAddress) {
   N64_send(addressHigh, 1);
   N64_send(addressLow, 1);
   N64_stop();
-  // read in data
-  N64_get(256);
+  // read in 32 byte data + 1 byte crc
+  N64_get(264);
   // end of time sensitive code
   interrupts();
 
@@ -1998,6 +2049,34 @@ void readBlock(word myAddress) {
     }
     // Save byte into block array
     myBlock[i / 8] = myByte;
+  }
+
+  // Get CRC of block send
+  boolean byteFlipped[9];
+  // Flip byte order
+  byteFlipped[0] = N64_raw_dump[256 + 7];
+  byteFlipped[1] = N64_raw_dump[256 + 6];
+  byteFlipped[2] = N64_raw_dump[256 + 5];
+  byteFlipped[3] = N64_raw_dump[256 + 4];
+  byteFlipped[4] = N64_raw_dump[256 + 3];
+  byteFlipped[5] = N64_raw_dump[256 + 2];
+  byteFlipped[6] = N64_raw_dump[256 + 1];
+  byteFlipped[7] = N64_raw_dump[256 + 0];
+
+  unsigned char blockCRC = 0;
+  for (byte k = 0; k < 8; ++k) {
+    if (byteFlipped[k]) {
+      blockCRC |= 1 << k;
+    }
+  }
+
+  // Calculate CRC of block received
+  unsigned char myCRC = dataCRC(&myBlock[0]);
+
+  // Compare
+  if (blockCRC != myCRC) {
+    display_Clear();
+    print_Error(F("CRC ERROR"), true);
   }
 }
 
@@ -2052,7 +2131,7 @@ void readMPK() {
         sdBuffer[currBlock + currByte] = myBlock[currByte];
       }
 
-      // Real N64 has about 627us pause between banks, loop takes 500us, add a bit extra delay
+      // Real N64 has about 627us pause between banks, add a bit extra delay
       if (currBlock < 479)
         delayMicroseconds(800);
     }
@@ -2087,7 +2166,7 @@ boolean checkHeader(byte startAddress) {
   }
 }
 
-// verifies if read was successful
+// verifies if Controller Pak holds valid header data
 void checksumMPK() {
   println_Msg(F(""));
   print_Msg(F("Header..."));
