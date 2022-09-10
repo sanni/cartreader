@@ -798,6 +798,11 @@ void get_button()
     0x01
   };
 
+  // Empty buffer
+  for (word i = 0; i < 265; i++) {
+    N64_raw_dump[i] = 0xFF;
+  }
+
   // don't want interrupts getting in the way
   noInterrupts();
   // send those 3 bytes
@@ -1965,6 +1970,11 @@ void checkController() {
   // Send status command
   unsigned char command[] = {0x0};
 
+  // Empty buffer
+  for (word i = 0; i < 265; i++) {
+    N64_raw_dump[i] = 0xFF;
+  }
+
   // don't want interrupts getting in the way
   noInterrupts();
   N64_send(command, 1);
@@ -2014,6 +2024,11 @@ byte readBlock(word myAddress) {
   // Address Command
   unsigned char addressHigh[] = {(unsigned char)(myAddressCRC >> 8)};
   unsigned char addressLow[] = {(unsigned char)(myAddressCRC & 0xff)};
+
+  // Empty buffer
+  for (word i = 0; i < 265; i++) {
+    N64_raw_dump[i] = 0xFF;
+  }
 
   // don't want interrupts getting in the way
   noInterrupts();
@@ -2122,16 +2137,16 @@ void readMPK() {
   println_Msg(fileName);
   display_Update();
 
-  //Initialize progress bar
-  uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(0x7FFF);
-  draw_progressbar(0, totalProgressBar);
-
   // Dummy write because first write to file takes 1 second and messes up timing
   blinkLED();
   myFile.write(0xFF);
   myFile.rewind();
   blinkLED();
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(0x7FFF);
+  draw_progressbar(0, totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   // Read 512 byte into sdBuffer
@@ -2409,7 +2424,7 @@ void verifyMPK() {
   // Close the file:
   myFile.close();
   if (writeErrors == 0) {
-    println_Msg(F("OK"));
+    println_Msg(F("Written successfully"));
     display_Update();
   }
   else {
