@@ -2260,7 +2260,7 @@ void validateMPK() {
   if (!checkHeader(0xC0))
     writeErrors++;
 
-  print_Msg(F("Header: "));
+  print_Msg(F("HDR: "));
   print_Msg(4 - writeErrors);
   print_Msg(F("/4 - "));
   display_Update();
