@@ -196,7 +196,8 @@ void n64ControllerMenu() {
       display_Clear();
       display_Update();
       readMPK();
-      checksumMPK();
+      verifyCRC();
+      validateMPK();
       println_Msg(F(""));
       println_Msg(F("Press Button..."));
       display_Update();
@@ -2004,7 +2005,7 @@ void checkController() {
 }
 
 // read 32bytes from controller pak and calculate CRC
-void readBlock(word myAddress) {
+byte readBlock(word myAddress) {
   // Calculate the address CRC
   word myAddressCRC = addrCRC(myAddress);
 
@@ -2076,8 +2077,14 @@ void readBlock(word myAddress) {
   // Compare
   if (blockCRC != myCRC) {
     display_Clear();
-    print_Error(F("CRC ERROR"), true);
+    // Close the file:
+    myFile.close();
+    println_Msg(F("Controller Pak was"));
+    println_Msg(F("not dumped due to a"));
+    print_Error(F("protocol CRC error"), true);
   }
+
+  return blockCRC;
 }
 
 // reads the MPK file to the sd card
@@ -2098,7 +2105,15 @@ void readMPK() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  //open file on sd card
+  //open crc file on sd card
+  sprintf(filePath, "%d", foldern - 1);
+  strcat(filePath, ".crc");
+  FsFile crcFile;
+  if (!crcFile.open(filePath, O_RDWR | O_CREAT)) {
+    print_Error(F("Can't open file on SD"), true);
+  }
+
+  //open mpk file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("Can't open file on SD"), true);
   }
@@ -2123,8 +2138,8 @@ void readMPK() {
   for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
     // Read 32 byte block
     for (word currBlock = 0; currBlock < 512; currBlock += 32) {
-      // Read one block of the Controller Pak into array myBlock
-      readBlock(currSdBuffer + currBlock);
+      // Read one block of the Controller Pak into array myBlock and write CRC of that block to crc file
+      crcFile.write(readBlock(currSdBuffer + currBlock));
 
       // Copy block to SdBuffer
       for (byte currByte = 0; currByte < 32; currByte++) {
@@ -2146,6 +2161,64 @@ void readMPK() {
   }
   // Close the file:
   myFile.close();
+  crcFile.close();
+}
+
+// verifies if read was successful
+void verifyCRC() {
+  writeErrors = 0;
+
+  println_Msg(F("Verifying..."));
+  display_Update();
+
+  //open CRC file on sd card
+  FsFile crcFile;
+  if (!crcFile.open(filePath, O_READ)) {
+    print_Error(F("Can't open file on SD"), true);
+  }
+
+  //open MPK file on sd card
+  if (!myFile.open(fileName, O_READ)) {
+    print_Error(F("Can't open file on SD"), true);
+  }
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(0x7FFF);
+  draw_progressbar(0, totalProgressBar);
+
+  // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
+  for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
+    // Read 32 bytes into SD buffer
+    myFile.read(sdBuffer, 512);
+
+    // Compare 32 byte block CRC to CRC from file
+    for (word currBlock = 0; currBlock < 512; currBlock += 32) {
+      // Calculate CRC of block and compare against crc file
+      if (dataCRC(&sdBuffer[currBlock]) != crcFile.read())
+        writeErrors++;
+    }
+
+    // Blink led
+    blinkLED();
+    // Update progress bar
+    processedProgressBar += 512;
+    draw_progressbar(processedProgressBar, totalProgressBar);
+  }
+  // Close the file:
+  myFile.close();
+  crcFile.close();
+
+  if (writeErrors == 0) {
+    println_Msg(F("Read successfully"));
+    display_Update();
+  }
+  else {
+    print_Msg(F("Error: "));
+    print_Msg(writeErrors);
+    println_Msg(F(" blocks "));
+    print_Error(F("did not verify."), false);
+  }
 }
 
 // Calculates the checksum of the header
@@ -2167,11 +2240,7 @@ boolean checkHeader(byte startAddress) {
 }
 
 // verifies if Controller Pak holds valid header data
-void checksumMPK() {
-  println_Msg(F(""));
-  print_Msg(F("Header..."));
-  display_Update();
-
+void validateMPK() {
   //open file on sd card
   if (!myFile.open(fileName, O_READ)) {
     print_Error(F("Can't open file"), true);
@@ -2180,17 +2249,24 @@ void checksumMPK() {
   // Read first 256 byte which contains the header including checksum and reverse checksum and three copies of it
   myFile.read(sdBuffer, 256);
 
-  // At least one header copy needs to be ok
-  if ((checkHeader(0x20)) || (checkHeader(0x60)) || (checkHeader(0x80)) || (checkHeader(0xC0)))
-    println_Msg(F("OK"));
-  else
-    println_Msg(F("Error"));
+  //Check all four header copies
+  writeErrors = 0;
+  if (!checkHeader(0x20))
+    writeErrors++;
+  if (!checkHeader(0x60))
+    writeErrors++;
+  if (!checkHeader(0x80))
+    writeErrors++;
+  if (!checkHeader(0xC0))
+    writeErrors++;
+
+  print_Msg(F("Header: "));
+  print_Msg(4 - writeErrors);
+  print_Msg(F("/4 - "));
   display_Update();
 
   // Check both TOC copies
   writeErrors = 0;
-  print_Msg(F("TOC..."));
-  display_Update();
   word sum = 0;
 
   // Read 2nd and 3rd 256 byte page with TOC info
@@ -2204,15 +2280,12 @@ void checksumMPK() {
     for (int i = 5; i < 128; i++ ) {
       sum += sdBuffer[(i << 1) + 1];
     }
-
     if (sdBuffer[1] != (sum & 0xFF))
       writeErrors++;
   }
-  // Both TOCs damaged
-  if (writeErrors > 1)
-    println_Msg("Error");
-  else
-    println_Msg("OK");
+  print_Msg(F("ToC: "));
+  print_Msg(2 - writeErrors);
+  println_Msg(F("/2"));
   display_Update();
 
   // Close the file:
