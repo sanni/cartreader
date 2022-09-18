@@ -1113,14 +1113,9 @@ void consoleMenu() {
 #ifdef no-intro
       if (getMapping() == 0) {
         selectMapping();
-        checkStatus_NES(0);
       }
-      else {
-        checkStatus_NES(1);
-      }
-#else
-      checkStatus_NES(0);
 #endif
+      checkStatus_NES();
       nesMenu();
       break;
 #endif
