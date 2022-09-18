@@ -1,0 +1,639 @@
+32X Sample Program - PWM Sound Demo (Unknown) (SDK Build).32x
+542AD12E
+
+After Burner Complete (Europe).32x
+029106F5
+
+After Burner Complete (Japan, USA) (En).32x
+204044C4
+
+Amazing Spider-Man, The - Web of Fire (USA).32x
+29DCE257
+
+BC Racers (USA).32x
+936C3D27
+
+Blackthorne (USA).32x
+D1A60A47
+
+Brutal - Above the Claw (USA).32x
+7A72C939
+
+ClayFighter 2 (USA) (Proto) (1995-04-28).32x
+59701755
+
+Cosmic Carnage (Europe).32x
+9F3FDBC2
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-09-06).32x
+D4166241
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-09-21).32x
+7B58141C
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-09-26).32x
+F04F4366
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-09-28).32x
+CF89175F
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-10-04).32x
+C6867772
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-10-05).32x
+BFE27F56
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-10-07).32x
+D8B04C24
+
+Cosmic Carnage (Japan, USA) (En) (Beta) (1994-10-11).32x
+E483498B
+
+Cosmic Carnage (Japan, USA) (En).32x
+7C7BE6A2
+
+Darxide (Europe) (En,Fr,De,Es).32x
+22D7C906
+
+Doom (Europe) (Beta) (1994-10-02).32x
+6182E821
+
+Doom (Europe).32x
+53734E3A
+
+Doom (Japan, USA) (En) (Beta) (1994-09-06).32x
+646D5C47
+
+Doom (Japan, USA) (En) (Beta) (1994-09-09).32x
+8D757B51
+
+Doom (Japan, USA) (En) (Beta) (1994-09-14).32x
+102678B3
+
+Doom (Japan, USA) (En) (Beta) (1994-09-16).32x
+B554596F
+
+Doom (Japan, USA) (En) (Beta) (1994-09-21).32x
+2D09B919
+
+Doom (Japan, USA) (En) (Beta) (1994-09-23).32x
+ABC3EB89
+
+Doom (Japan, USA) (En) (Beta) (1994-09-25).32x
+B9AE1316
+
+Doom (Japan, USA) (En) (Beta) (1994-09-27).32x
+12991053
+
+Doom (Japan, USA) (En) (Beta) (1994-12-01).32x
+7DCC1C18
+
+Doom (Japan, USA) (En).32x
+208332FD
+
+Doom RR (Japan, USA) (En) (Beta) (1995-02-15).32x
+48399BC5
+
+Doom RR (Japan, USA) (En) (Beta) (1995-02-21).32x
+6F1572F9
+
+Doom RR (Japan, USA) (En) (Beta) (1995-03-07).32x
+955CF84A
+
+Ecco the Dolphin (USA) (Demo) (Developer Cart).32x
+B06178DF
+
+FIFA Soccer 96 (Europe) (En,Fr,De,Es,It,Sv).32x
+FB14A7C8
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Europe) (Beta) (1994-12-14).32x
+A63B0636
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Europe) (Beta) (1994-12-21).32x
+CC0334BB
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Europe).32x
+6EF99202
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-07-06).
+6726C100
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-10-11).
+622A34A5
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-10-17).
+CBD33FC7
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-10-18).
+E39BA17F
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-10-24).
+FFE279CC
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-10-26).
+37A79C9C
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-01).
+91106A69
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-03).
+D261A6C3
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-05).
+1559541E
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-07).
+36B1708E
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-08).
+BCAF23FD
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-09).
+5226EF71
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-16).
+CCB9FEAD
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-18).
+DC4C7C27
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-19) 
+DA1026C8
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-19).
+8FA32086
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-21).
+8D0713CE
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-22) 
+E1E98CAC
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-22).
+6B656643
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-23).
+0B58F6A5
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-26).
+2ECE26DB
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-27).
+B5E82F07
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-28) 
+38D09772
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-28).
+8F4F6479
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-29).
+9C5011B0
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-11-30).
+41E2D54D
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-12-02).
+323C2935
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-12-03).
+3F30C0D2
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-12-06).
+ECFE5A0F
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-12-13).
+34BF7C6D
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-12-19).
+C073149F
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En) (Beta) (1994-12-21).
+3893DCFE
+
+Golf Magazine Presents - 36 Great Holes Starring Fred Couples (Japan, USA) (En).32x
+D3D0A2FE
+
+Knuckles' Chaotix (Europe).32x
+41D63572
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1994-12-07).32x
+D62AE235
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1994-12-27).32x
+4307D738
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1994-12-30).32x
+36A294E0
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-01-12).32x
+5523EA78
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-01-19).32x
+468AD032
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-07).32x
+7B32E440
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-08).32x
+B099E5F6
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-09).32x
+E95D7F57
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-10).32x
+7B716175
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-13) (Alt).32x
+AFF06BFF
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-13).32x
+14F43E14
+
+Knuckles' Chaotix (Japan, USA) (En) (Beta) (1995-02-14).32x
+BA0A1108
+
+Knuckles' Chaotix (Japan, USA) (En).32x
+D0B0B842
+
+Kolibri (USA, Europe).32x
+20CA53EF
+
+Mars Check Program Version 1.0 (Unknown) (SDK Build) (Set 1).32x
+8F7260FB
+
+Mars Check Program Version 1.0 (Unknown) (SDK Build) (Set 2).32x
+A2DA35FD
+
+Mars Sample Program - Gnu Sierra (Unknown) (SDK Build).32x
+5F0DF42C
+
+Mars Sample Program - Pharaoh (Unknown) (SDK Build).32x
+969C80D4
+
+Mars Sample Program - Runlength Mode Test (Unknown) (SDK Build).32x
+D630E343
+
+Mars Sample Program - Texture Test (Unknown) (SDK Build).32x
+9B2AD63F
+
+Metal Head (Europe) (En,Ja).32x
+BF9B8376
+
+Metal Head (Japan, USA) (En) (Beta) (1994-11-14).32x
+2EA0FF81
+
+Metal Head (Japan, USA) (En) (Beta) (1994-11-18).32x
+A0343749
+
+Metal Head (Japan, USA) (En) (Beta) (1994-11-21).32x
+398BCB98
+
+Metal Head (Japan, USA) (En) (Beta) (1994-12-02).32x
+8B7BC8A4
+
+Metal Head (Japan, USA) (En) (Beta) (1994-12-07) (Alt).32x
+FA0FC326
+
+Metal Head (Japan, USA) (En) (Beta) (1994-12-07).32x
+476D29B0
+
+Metal Head (Japan, USA) (En) (Beta) (1994-12-09).32x
+5369D23F
+
+Metal Head (Japan, USA) (En) (Beta) (1994-12-13).32x
+3302B1A1
+
+Metal Head (Japan, USA) (En) (Beta) (1994-12-20).32x
+DE99C9CE
+
+Metal Head (Japan, USA) (En,Ja).32x
+EF5553FF
+
+Mortal Kombat II (Europe).32x
+211085CE
+
+Mortal Kombat II (Japan, USA) (En).32x
+773C0A85
+
+Motherbase (Europe) (Sample).32x
+E181C5D0
+
+Motherbase (Europe).32x
+0D6523A3
+
+Motocross Championship (Europe).32x
+AE3364E9
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-12).32x
+0A075812
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-17).32x
+F3163D21
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-18).32x
+2C2DC4DF
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-19).32x
+385ED8C7
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-20).32x
+AC6CF708
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-24).32x
+20C49183
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-10-28).32x
+59107472
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-01).32x
+46970275
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-02) (Alt).32x
+CEFEF428
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-02).32x
+EFE307FF
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-03).32x
+C652C802
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-04).32x
+6E12D410
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-07).32x
+63DB2FB0
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-08).32x
+5FF9EAB9
+
+Motocross Championship (Japan, USA) (En) (Beta) (1994-11-11).32x
+37F78D3D
+
+Motocross Championship (USA).32x
+A21C5761
+
+NBA Jam - Tournament Edition (World).32x
+6B7994AA
+
+NFL Quarterback Club (World).32x
+0BC7018D
+
+Pinocchio (Europe) (Proto) (1995-06-12).32x
+390A90F9
+
+Pitfall - The Mayan Adventure (USA).32x
+F9126F15
+
+Primal Rage (USA, Europe).32x
+E78A4D28
+
+RBI Baseball '95 (USA).32x
+FF795FDC
+
+Sangokushi IV (Japan).32x
+E4DE7625
+
+Soulstar X (USA) (Proto).32x
+5EA52F22
+
+Space Harrier (Europe).32x
+5CAC3587
+
+Space Harrier (Japan, USA) (En) (Beta) (1994-09-20).32x
+2C65FA40
+
+Space Harrier (Japan, USA) (En).32x
+86E7F989
+
+Spot Goes to Hollywood (USA) (Proto).32x
+CE6C4B99
+
+Star Trek - Starfleet Academy - Starship Bridge Simulator (USA).32x
+DD9708B9
+
+Star Wars Arcade (Europe) (Beta) (1994-09-23).32x
+8E7BFC7C
+
+Star Wars Arcade (Europe) (Beta) (1994-09-29).32x
+7682FE72
+
+Star Wars Arcade (Europe) (Beta) (1994-10-06).32x
+C00AF920
+
+Star Wars Arcade (Europe) (Beta) (1994-10-07).32x
+57AFC1AC
+
+Star Wars Arcade (Europe).32x
+82E82660
+
+Star Wars Arcade (Japan) (Beta) (1994-09-30).32x
+6074F26C
+
+Star Wars Arcade (Japan) (Beta) (1994-10-03).32x
+A653A183
+
+Star Wars Arcade (Japan) (Beta) (1994-10-05).32x
+9861E21F
+
+Star Wars Arcade (Japan).32x
+F4E9B846
+
+Star Wars Arcade (USA) (Beta) (1994-08-30).32x
+10D4A078
+
+Star Wars Arcade (USA) (Beta) (1994-09-01).32x
+B0BB29EB
+
+Star Wars Arcade (USA) (Beta) (1994-09-06).32x
+B8D9317C
+
+Star Wars Arcade (USA) (Beta) (1994-09-07).32x
+C6A8582B
+
+Star Wars Arcade (USA) (Beta) (1994-09-09).32x
+5BDD86D3
+
+Star Wars Arcade (USA) (Beta) (1994-09-12).32x
+118A011C
+
+Star Wars Arcade (USA) (Beta) (1994-09-13).32x
+DC5628BA
+
+Star Wars Arcade (USA) (Beta) (1994-09-14).32x
+EFC980FE
+
+Star Wars Arcade (USA) (Beta) (1994-09-15).32x
+34C6A769
+
+Star Wars Arcade (USA) (Beta) (1994-09-16).32x
+150A0DFD
+
+Star Wars Arcade (USA) (Beta) (1994-09-18).32x
+02933D44
+
+Star Wars Arcade (USA).32x
+2F16B44A
+
+Stellar Assault (Japan) (En) (Beta) (1995-02-06).32x
+24057310
+
+Stellar Assault (Japan) (En) (Beta) (1995-02-13).32x
+CA0DE10E
+
+Stellar Assault (Japan).32x
+FCE4C8C7
+
+Stellar Assault (USA, Europe) (Beta) (1995-02-22).32x
+48EF9EE9
+
+Stellar Assault (USA, Europe) (Beta) (1995-03-02).32x
+25BDDE61
+
+Stellar Assault (USA, Europe) (Beta) (1995-03-06).32x
+7EEC3665
+
+Stellar Assault (USA, Europe) (Beta) (1995-03-13) (Alt).32x
+58962105
+
+Stellar Assault (USA, Europe) (Beta) (1995-03-13).32x
+FD7FEDB2
+
+Stellar Assault (USA, Europe).32x
+60C49E4D
+
+T-MEK (USA, Europe).32x
+66D2C48F
+
+Tempo (Japan, USA) (En) (Beta) (1994-12-21).32x
+7BFE49A3
+
+Tempo (Japan, USA) (En) (Beta) (1995-01-19).32x
+48CC1645
+
+Tempo (Japan, USA) (En) (Beta) (1995-01-24).32x
+7A02C17B
+
+Tempo (Japan, USA) (En) (Beta) (1995-01-26).32x
+86637AE4
+
+Tempo (Japan, USA) (En) (Beta) (1995-02-04).32x
+6E2BCC9F
+
+Tempo (Japan, USA) (En) (Beta) (1995-02-06) (Alt).32x
+E2502FE6
+
+Tempo (Japan, USA) (En) (Beta) (1995-02-06).32x
+6D0775F3
+
+Tempo (Japan, USA) (En) (Beta) (1995-02-07).32x
+A2EBC91C
+
+Tempo (Japan, USA) (En).32x
+14E5C575
+
+Time Warner 32X CMD Download Cartridge (USA) (Program).32x
+6C2176CA
+
+Toughman Contest (USA, Europe).32x
+14EAC7A6
+
+Virtua Fighter (Europe).32x
+25AEA73C
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-05-30).32x
+46A88625
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-06-15).32x
+8DF6401C
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-06-30).32x
+3B88F987
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-07-17).32x
+6A364BCE
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-07-21).32x
+1C4C13F3
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-07-24).32x
+D4F5484B
+
+Virtua Fighter (Japan, USA) (En) (Beta) (1995-07-25).32x
+AFF4D320
+
+Virtua Fighter (Japan, USA) (En).32x
+B5DE9626
+
+Virtua Hamster (USA) (Proto).32x
+CD54AC37
+
+Virtua Racing Deluxe (Europe).32x
+27F14B5F
+
+Virtua Racing Deluxe (Japan).32x
+0908E888
+
+Virtua Racing Deluxe (USA) (Beta) (1994-08-22).32x
+6EBB3EDA
+
+Virtua Racing Deluxe (USA) (Beta) (1994-08-29).32x
+86A318DE
+
+Virtua Racing Deluxe (USA) (Beta) (1994-09-05).32x
+99F38344
+
+Virtua Racing Deluxe (USA).32x
+7896B62E
+
+World Series Baseball Starring Deion Sanders (USA).32x
+6DE1BC75
+
+WWF Raw (World).32x
+8EB7CD2C
+
+WWF WrestleMania - The Arcade Game (USA).32x
+61833503
+
+X-Men (USA) (Proto).32x
+D61FEBC0
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-02-10).32x
+C65693AF
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-02-21).32x
+061C0CF2
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-02-23).32x
+E92B36C5
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-02-27).32x
+A1EF9787
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-03-03).32x
+5856082D
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-03-06).32x
+90692A18
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-03-10).32x
+20FAF0C3
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-03-15).32x
+ADFD5BC6
+
+Zaxxon's Motherbase (Japan, USA) (En) (Beta) (1995-03-31).32x
+1344F08B
+
+Zaxxon's Motherbase 2000 (Japan, USA) (En).32x
+447D44BE
+
+[BIOS] 32X M68000 (USA).bin
+5C12EAE8
+
+[BIOS] 32X SH-2 Master (USA).bin
+DD9C46B8
+
+[BIOS] 32X SH-2 Slave (USA).bin
+BFDA1FE5
+
