@@ -1313,7 +1313,11 @@ void readROM_MD() {
   }
 
   // Calculate and compare CRC32 with no-intro
-  compareCRC("md.txt", 0, 1, 0);
+  if (readWord_MD(0x105) == 0x3332)
+    //database, crcString, renamerom, offset
+    compareCRC("32x.txt", 0, 1, 0);
+  else
+    compareCRC("md.txt", 0, 1, 0);
 
   // More checksums
   if (SnKmode >= 2) {
