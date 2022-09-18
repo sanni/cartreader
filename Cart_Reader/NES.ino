@@ -230,7 +230,7 @@ void nesMenu() {
       setPRGSize();
       setCHRSize();
       setRAMSize();
-      checkStatus_NES(0);
+      checkStatus_NES();
       break;
 
     // Read Rom
@@ -493,97 +493,233 @@ boolean getMapping() {
 
         //if checksum search successful set mapper and end search
         if (strcmp(crc_search, crcStr) == 0) {
-          // Close the file:
-          myFile.close();
 
-          // Convert "4E4553" to (0x4E, 0x45, 0x53)
-          byte iNES_BUF[2];
-          for (byte j = 0; j < 16; j++) {
-            sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-            iNES_HEADER[j] = iNES_BUF[0];
-          }
-
-          // Convert iNES garbage to useful info (thx to fceux)
-          mapper = (iNES_HEADER[6] >> 4);
-          mapper |= (iNES_HEADER[7] & 0xF0);
-          mapper |= ((iNES_HEADER[8] & 0x0F) << 8);
-
-          // Check if it's a supported mapper
-          boolean validMapper = 0;
-          byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
-          for (byte currMaplist = 0; currMaplist < mapcount; currMaplist++) {
-            if (pgm_read_byte(mapsize + currMaplist * 7) == mapper)
-              validMapper = 1;
-          }
-
-          if (!validMapper) {
-            println_Msg(F("Mapper not supported"));
-            return 0;
-            break;
-          }
-
-          // Save Mapper
-          EEPROM_writeAnything(7, mapper);
-
-          // PRG size
-          if ((iNES_HEADER[9] & 0x0F) != 0x0F) {
-            // simple notation
-            prgsize = (iNES_HEADER[4] | ((iNES_HEADER[9] & 0x0F) << 8)); //*16
-          }
-          else {
-            // exponent-multiplier notation
-            prgsize = (((1 << (iNES_HEADER[4] >> 2)) * ((iNES_HEADER[4] & 0b11) * 2 + 1)) >> 14); //*16
-          }
-          if (prgsize != 0)
-            prgsize = (int(log(prgsize) / log(2)));
-          EEPROM_writeAnything(8, prgsize);
-
-          // CHR size
-          if ((iNES_HEADER[9] & 0xF0) != 0xF0) {
-            // simple notation
-            chrsize = (uppow2(iNES_HEADER[5] | ((iNES_HEADER[9] & 0xF0) << 4))) * 2; //*4
-          }
-          else {
-            chrsize = (((1 << (iNES_HEADER[5] >> 2)) * ((iNES_HEADER[5] & 0b11) * 2 + 1)) >> 13) * 2; //*4
-          }
-          if (chrsize != 0)
-            chrsize = (int(log(chrsize) / log(2)));
-          EEPROM_writeAnything(9, chrsize);
-
-          // RAM size
-          ramsize = ((iNES_HEADER[10] & 0xF0) ? (64 << ((iNES_HEADER[10] & 0xF0) >> 4)) : 0) / 4096; //*4
-          if (ramsize != 0)
-            ramsize = (int(log(ramsize) / log(2)));
-          EEPROM_writeAnything(10, ramsize);
-
-
-          // Get name
-          byte myLength = 0;
-          for (unsigned int i = 0; i < 20; i++) {
-            // Stop at first "(" to remove "(Country)"
-            if (char(gamename[i]) == 40) {
-              break;
-            }
-            if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122)) && (myLength < 15)) {
-              romName[myLength] = char(gamename[i]);
-              myLength++;
+          // Rewind to start of entry
+          for (byte count_newline = 0; count_newline < 4; count_newline++) {
+            while (1) {
+              if (myFile.curPosition() == 0) {
+                break;
+              }
+              else if (myFile.peek() == '\n') {
+                myFile.seekSet(myFile.curPosition() - 1);
+                break;
+              }
+              else {
+                myFile.seekSet(myFile.curPosition() - 1);
+              }
             }
           }
+          if (myFile.curPosition() != 0)
+            myFile.seekSet(myFile.curPosition() + 2);
 
-          // If name consists out of all japanese characters use CART as name
-          if (myLength == 0) {
-            romName[0] = 'C';
-            romName[1] = 'A';
-            romName[2] = 'R';
-            romName[3] = 'T';
+
+          // Display database
+          while (myFile.available()) {
+            display_Clear();
+
+            // Read game name
+#if defined(enable_OLED)
+            get_line(gamename, &myFile, 42);
+#else
+            get_line(gamename, &myFile, 96);
+#endif
+
+            // Read CRC32 checksum
+            sprintf(checksumStr, "%c", myFile.read());
+            for (byte i = 0; i < 7; i++) {
+              sprintf(tempStr2, "%c", myFile.read());
+              strcat(checksumStr, tempStr2);
+            }
+
+            // Skip over semicolon
+            myFile.seekSet(myFile.curPosition() + 1);
+
+            // Read CRC32 of first 512 bytes
+            sprintf(crc_search, "%c", myFile.read());
+            for (byte i = 0; i < 7; i++) {
+              sprintf(tempStr2, "%c", myFile.read());
+              strcat(crc_search, tempStr2);
+            }
+
+            // Skip over semicolon
+            myFile.seekSet(myFile.curPosition() + 1);
+
+            // Read iNES header
+            get_line(iNES_STR, &myFile, 33);
+
+            // Skip every 3rd line
+            skip_line(&myFile);
+
+            // Convert "4E4553" to (0x4E, 0x45, 0x53)
+            byte iNES_BUF[2];
+            for (byte j = 0; j < 16; j++) {
+              sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
+              iNES_HEADER[j] = iNES_BUF[0];
+            }
+
+            // Convert iNES garbage to useful info (thx to fceux)
+            mapper = (iNES_HEADER[6] >> 4);
+            mapper |= (iNES_HEADER[7] & 0xF0);
+            mapper |= ((iNES_HEADER[8] & 0x0F) << 8);
+
+            // PRG size
+            if ((iNES_HEADER[9] & 0x0F) != 0x0F) {
+              // simple notation
+              prgsize = (iNES_HEADER[4] | ((iNES_HEADER[9] & 0x0F) << 8)); //*16
+            }
+            else {
+              // exponent-multiplier notation
+              prgsize = (((1 << (iNES_HEADER[4] >> 2)) * ((iNES_HEADER[4] & 0b11) * 2 + 1)) >> 14); //*16
+            }
+            if (prgsize != 0)
+              prgsize = (int(log(prgsize) / log(2)));
+
+            // CHR size
+            if ((iNES_HEADER[9] & 0xF0) != 0xF0) {
+              // simple notation
+              chrsize = (uppow2(iNES_HEADER[5] | ((iNES_HEADER[9] & 0xF0) << 4))) * 2; //*4
+            }
+            else {
+              chrsize = (((1 << (iNES_HEADER[5] >> 2)) * ((iNES_HEADER[5] & 0b11) * 2 + 1)) >> 13) * 2; //*4
+            }
+            if (chrsize != 0)
+              chrsize = (int(log(chrsize) / log(2)));
+
+            // RAM size
+            ramsize = ((iNES_HEADER[10] & 0xF0) ? (64 << ((iNES_HEADER[10] & 0xF0) >> 4)) : 0) / 4096; //*4
+            if (ramsize != 0)
+              ramsize = (int(log(ramsize) / log(2)));
+
+            prg = (int_pow(2, prgsize)) * 16;
+            if (chrsize == 0)
+              chr = 0; // 0K
+            else
+              chr = (int_pow(2, chrsize)) * 4;
+            if (ramsize == 0)
+              ram = 0; // 0K
+            else if (mapper == 82)
+              ram = 5; // 5K
+            else
+              ram = (int_pow(2, ramsize)) * 4;
+
+            // Mapper Variants
+            // Identify variant for use across multiple functions
+            if (mapper == 4) { // Check for MMC6/MMC3
+              checkMMC6();
+              if (mmc6)
+                ram = 1; // 1K
+            }
+
+            println_Msg(gamename);
+            print_Msg(F("MAPPER:   "));
+            println_Msg(mapper);
+            print_Msg(F("PRG SIZE: "));
+            print_Msg(prg);
+            println_Msg(F("K"));
+            print_Msg(F("CHR SIZE: "));
+            print_Msg(chr);
+            println_Msg(F("K"));
+            print_Msg(F("RAM SIZE: "));
+            if (mapper == 0) {
+              print_Msg(ram / 4);
+              println_Msg(F("K"));
+            }
+            else if ((mapper == 16) || (mapper == 80) || (mapper == 159)) {
+              if (mapper == 16)
+                print_Msg(ram * 32);
+              else
+                print_Msg(ram * 16);
+              println_Msg(F("B"));
+            }
+            else if (mapper == 19) {
+              if (ramsize == 2)
+                println_Msg(F("128B"));
+              else {
+                print_Msg(ram);
+                println_Msg(F("K"));
+              }
+            }
+            else {
+              print_Msg(ram);
+              println_Msg(F("K"));
+            }
+#if defined(enable_OLED)
+            println_Msg(F("Press left to Change"));
+            println_Msg(F("and right to Select"));
+#elif defined(enable_LCD)
+            println_Msg(F("Rotate to Change"));
+            println_Msg(F("Press to Select"));
+#elif defined(SERIAL_MONITOR)
+            println_Msg(F("U/D to Change"));
+            println_Msg(F("Space to Select"));
+#endif
+            display_Update();
+
+            int b = 0;
+            while (1) {
+              // Check button input
+              b = checkButton();
+
+              // Next
+              if (b == 1) {
+                break;
+              }
+
+              // Previous
+              else if (b == 2) {
+                for (byte count_newline = 0; count_newline < 7; count_newline++) {
+                  while (1) {
+                    if (myFile.curPosition() == 0) {
+                      break;
+                    }
+                    else if (myFile.peek() == '\n') {
+                      myFile.seekSet(myFile.curPosition() - 1);
+                      break;
+                    }
+                    else {
+                      myFile.seekSet(myFile.curPosition() - 1);
+                    }
+                  }
+                }
+                if (myFile.curPosition() != 0)
+                  myFile.seekSet(myFile.curPosition() + 2);
+                break;
+              }
+
+              // Selection
+              else if (b == 3) {
+                // Get name
+                byte myLength = 0;
+                for (unsigned int i = 0; i < 20; i++) {
+                  // Stop at first "(" to remove "(Country)"
+                  if (char(gamename[i]) == 40) {
+                    break;
+                  }
+                  if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122)) && (myLength < 15)) {
+                    romName[myLength] = char(gamename[i]);
+                    myLength++;
+                  }
+                }
+
+                // If name consists out of all japanese characters use CART as name
+                if (myLength == 0) {
+                  romName[0] = 'C';
+                  romName[1] = 'A';
+                  romName[2] = 'R';
+                  romName[3] = 'T';
+                }
+
+                // Save Mapper
+                EEPROM_writeAnything(7, mapper);
+                EEPROM_writeAnything(8, prgsize);
+                EEPROM_writeAnything(9, chrsize);
+                EEPROM_writeAnything(10, ramsize);
+                myFile.close();
+                return 1;
+                break;
+              }
+            }
           }
-
-          // Print name
-          display_Clear();
-          println_Msg(romName);
-          display_Update();
-          return 1;
-          break;
         }
       }
       // File searched until end but nothing found
@@ -2548,7 +2684,7 @@ void checkMMC6() { // Detect MMC6 Carts - read PRG 0x3E00A ("STARTROPICS")
     mmc6 = true; // MMC6 Cart
 }
 
-void checkStatus_NES(boolean clrscn) {
+void checkStatus_NES() {
   EEPROM_readAnything(7, mapper);
   EEPROM_readAnything(8, prgsize);
   EEPROM_readAnything(9, chrsize);
@@ -2575,12 +2711,10 @@ void checkStatus_NES(boolean clrscn) {
   else if (mapper == 30) // Check for Flashable/Non-Flashable
     NESmaker_ID(); // Flash ID
 
-  if (!clrscn) {
-    display_Clear();
-    println_Msg(F("NES CART READER"));
-    println_Msg(F(""));
-    println_Msg(F("CURRENT SETTINGS"));
-  }
+  display_Clear();
+  println_Msg(F("NES CART READER"));
+  println_Msg(F(""));
+  println_Msg(F("CURRENT SETTINGS"));
   println_Msg(F(""));
   print_Msg(F("MAPPER:   "));
   println_Msg(mapper);
