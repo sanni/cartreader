@@ -418,9 +418,15 @@ void showCartInfo_GB() {
       print_Msg(F("MBC4"));
     else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
       print_Msg(F("MBC5"));
-    if (romType == 252)
+    else if (romType == 34)
+      print_Msg(F("MBC7"));
+    else if (romType == 252)
       print_Msg(F("Camera"));
-
+    else if (romType == 254)
+      print_Msg(F("HuC-3"));
+    else if (romType == 255)
+      print_Msg(F("HuC-1"));
+    
     println_Msg(F(" "));
     print_Msg(F("Rom Size: "));
     switch (romSize) {
