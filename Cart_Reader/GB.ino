@@ -418,9 +418,15 @@ void showCartInfo_GB() {
       print_Msg(F("MBC4"));
     else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
       print_Msg(F("MBC5"));
-    if (romType == 252)
+    else if (romType == 34)
+      print_Msg(F("MBC7"));
+    else if (romType == 252)
       print_Msg(F("Camera"));
-
+    else if (romType == 254)
+      print_Msg(F("HuC-3"));
+    else if (romType == 255)
+      print_Msg(F("HuC-1"));
+    
     println_Msg(F(" "));
     print_Msg(F("Rom Size: "));
     switch (romSize) {
@@ -787,10 +793,16 @@ void getCartInfo_GB() {
 
   // Get name
   byte myLength = 0;
-
-  for (int addr = 0x0134; addr <= 0x13C; addr++) {
-    if (((char(sdBuffer[addr]) >= 48 && char(sdBuffer[addr]) <= 57) || (char(sdBuffer[addr]) >= 65 && char(sdBuffer[addr]) <= 122)) && myLength < 15) {
+  byte x = 0;
+  if (sdBuffer[0x143] == 0x80 || sdBuffer[0x143] == 0xC0) {
+    x++;
+  }
+  for (int addr = 0x0134; addr <= 0x0143-x; addr++) {
+    if (isprint(sdBuffer[addr]) && sdBuffer[addr] != '<' && sdBuffer[addr] != '>' && sdBuffer[addr] != ':' && sdBuffer[addr] != '"' && sdBuffer[addr] != '/' && sdBuffer[addr] != '\\' && sdBuffer[addr] != '|' && sdBuffer[addr] != '?' && sdBuffer[addr] != '*') {
       romName[myLength] = char(sdBuffer[addr]);
+      myLength++;
+    } else if (char(sdBuffer[addr]) != 0) {
+      romName[myLength] = 0x5F;
       myLength++;
     }
   }
