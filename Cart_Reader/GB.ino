@@ -818,9 +818,18 @@ void getCartInfo_GB() {
     myLength--;
   }
 
-  // Detect M161 game
-  if ((strncmp(romName, "TETRIS SET", 9) == 0) && (sdBuffer[0x14D] == 0x3F)) {
+  // M161 (Mani 4 in 1)
+  if ((strncmp(romName, "TETRIS SET", 10) == 0) && (sdBuffer[0x14D] == 0x3F)) {
     romType = 0x104;
+  }
+
+  // MMM01 (Mani 4 in 1)
+  if (
+    (strncmp(romName, "BOUKENJIMA2 SET", 15) == 0) && (sdBuffer[0x14D] == 0) ||
+    (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0) && (sdBuffer[0x14D] == 0xC6) ||
+    (strncmp(romName, "GANBARUGA SET", 13) == 0) && (sdBuffer[0x14D] == 0x90) ||
+    (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
+    romType = 0x0B;
   }
 }
 
