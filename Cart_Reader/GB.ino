@@ -426,6 +426,8 @@ void showCartInfo_GB() {
       print_Msg(F("HuC-3"));
     else if (romType == 255)
       print_Msg(F("HuC-1"));
+    else if (romType == 0x104)
+      print_Msg(F("M161"));
     
     println_Msg(F(" "));
     print_Msg(F("Rom Size: "));
@@ -815,6 +817,11 @@ void getCartInfo_GB() {
     romName[i] = 0x00;
     myLength--;
   }
+
+  // Detect M161 game
+  if ((strncmp(romName, "TETRIS SET", 9) == 0) && (sdBuffer[0x14D] == 0x3F)) {
+    romType = 0x104;
+  }
 }
 
 /******************************************
@@ -847,21 +854,39 @@ void readROM_GB() {
     print_Error(F("Can't create file on SD"), true);
   }
 
+  int endAddress = 0x7FFF;
   word romAddress = 0;
+  word startBank = 1;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
   draw_progressbar(0, totalProgressBar);
-
-  for (word currBank = 1; currBank < romBanks; currBank++) {
+  
+  // M161 banks are double size and start with 0
+  if (romType == 0x104) {
+    startBank = 0;
+    romBanks >>= 1;
+  }
+  
+  for (word currBank = startBank; currBank < romBanks; currBank++) {
     // Second bank starts at 0x4000
     if (currBank > 1) {
       romAddress = 0x4000;
     }
 
+    // M161 banks are double size and need mapper reset
+    if (romType == 0x104) {
+      romAddress = 0;
+      endAddress = 0x7FFF;
+      PORTH &= ~(1 << 0);
+      delay(50);
+      PORTH |= (1 << 0);
+      writeByte_GB(0x4000, currBank & 0x7);
+    }
+    
     // Set ROM bank for MBC2/3/4/5
-    if (romType >= 5) {
+    else if (romType >= 5) {
       if (romType >= 11 && romType <= 13) {
         if ((currBank & 0x1f) == 0) {
           // reset MMM01
@@ -896,7 +921,7 @@ void readROM_GB() {
     }
 
     // Read banks and save to SD
-    while (romAddress <= 0x7FFF) {
+    while (romAddress <= endAddress) {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readByte_GB(romAddress + i);
       }
