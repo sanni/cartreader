@@ -463,6 +463,10 @@ void showCartInfo_GB() {
       case 7:
         print_Msg(F("4MB"));
         break;
+
+      case 8:
+        print_Msg(F("8MB"));
+        break;
     }
 
     println_Msg(F(""));
@@ -751,6 +755,9 @@ void getCartInfo_GB() {
     case 0x07:
       romBanks = 256;
       break;
+    case 0x08:
+      romBanks = 512;
+      break;
     default:
       romBanks = 2;
   }
@@ -919,7 +926,10 @@ void readROM_GB() {
         }
       }
       else {
-        writeByte_GB(0x2100, currBank);
+        if ((romType >= 0x19 && romType <= 0x1E) && (currBank == 0 || currBank == 256)) {
+          writeByte_GB(0x3000, (currBank >> 8) & 0xFF);
+        }
+        writeByte_GB(0x2100, currBank & 0xFF);
       }
     }
     // Set ROM bank for MBC1

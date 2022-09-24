@@ -40,7 +40,7 @@
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
    Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
-   philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, lesserkuma
+   philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
