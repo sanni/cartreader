@@ -1009,11 +1009,22 @@ boolean checkcart_SNES() {
   byte myLength = 0;
   for (unsigned int i = 0xFFC0; i < 0xFFD4; i++) {
     myByte = snesHeader[i - headerStart];
-    if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 15) {
+    if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
       romName[myLength] = char(myByte);
-      myLength++;
+    } else {
+      if (romName[myLength-1] == 0x5F) myLength--;
+      romName[myLength] = 0x5F;
     }
+    myLength++;
   }
+  
+  // Strip trailing white space
+  for (unsigned int i = myLength - 1; i > 0; i--) {
+    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
+    romName[i] = 0x00;
+    myLength--;
+  }
+  
   // If name consists out of all japanese characters use game code
   if (myLength == 0) {
     // Get rom code
@@ -1225,7 +1236,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
 }
 
 boolean compare_checksum() {
-  print_Msg(F("Chksum..."));
+  print_Msg(F("Checksum..."));
   display_Update();
 
   strcpy(fileName, romName);

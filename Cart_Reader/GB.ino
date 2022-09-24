@@ -792,19 +792,28 @@ void getCartInfo_GB() {
   sprintf(checksumStr, "%02X%02X", eepbit[6], eepbit[7]);
 
   // Get name
+  byte myByte = 0;
   byte myLength = 0;
   byte x = 0;
   if (sdBuffer[0x143] == 0x80 || sdBuffer[0x143] == 0xC0) {
     x++;
   }
   for (int addr = 0x0134; addr <= 0x0143-x; addr++) {
-    if (isprint(sdBuffer[addr]) && sdBuffer[addr] != '<' && sdBuffer[addr] != '>' && sdBuffer[addr] != ':' && sdBuffer[addr] != '"' && sdBuffer[addr] != '/' && sdBuffer[addr] != '\\' && sdBuffer[addr] != '|' && sdBuffer[addr] != '?' && sdBuffer[addr] != '*') {
-      romName[myLength] = char(sdBuffer[addr]);
-      myLength++;
-    } else if (char(sdBuffer[addr]) != 0) {
+    myByte = sdBuffer[addr];
+    if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
+      romName[myLength] = char(myByte);
+    } else {
+      if (romName[myLength-1] == 0x5F) myLength--;
       romName[myLength] = 0x5F;
-      myLength++;
     }
+    myLength++;
+  }
+  
+  // Strip trailing white space
+  for (unsigned int i = myLength - 1; i > 0; i--) {
+    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
+    romName[i] = 0x00;
+    myLength--;
   }
 }
 
