@@ -43,7 +43,7 @@ static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2,
 #endif
 
 // SNES menu items
-static const char SnesMenuItem1[] PROGMEM = "Read Rom";
+static const char SnesMenuItem1[] PROGMEM = "Read ROM";
 static const char SnesMenuItem2[] PROGMEM = "Read Save";
 static const char SnesMenuItem3[] PROGMEM = "Write Save";
 static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
@@ -54,17 +54,17 @@ static const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuIte
 
 // Manual config menu items
 static const char confMenuItem1[] PROGMEM = "Use header info";
-static const char confMenuItem2[] PROGMEM = "4MB LoRom 256K Sram";
-static const char confMenuItem3[] PROGMEM = "4MB HiRom 64K Sram";
-static const char confMenuItem4[] PROGMEM = "6MB ExRom 256K Sram";
+static const char confMenuItem2[] PROGMEM = "4MB LoROM 256K SRAM";
+static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
+static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
 static const char confMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsConfManual[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
 
 // Repro menu items
-static const char reproMenuItem1[] PROGMEM = "LoRom (P0)";
-static const char reproMenuItem2[] PROGMEM = "HiRom (P0)";
-static const char reproMenuItem3[] PROGMEM = "ExLoRom (P1)";
-static const char reproMenuItem4[] PROGMEM = "ExHiRom (P1)";
+static const char reproMenuItem1[] PROGMEM = "LoROM (P0)";
+static const char reproMenuItem2[] PROGMEM = "HiROM (P0)";
+static const char reproMenuItem3[] PROGMEM = "ExLoROM (P1)";
+static const char reproMenuItem4[] PROGMEM = "ExHiROM (P1)";
 static const char reproMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsRepro[] PROGMEM = {reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5};
 
@@ -355,21 +355,21 @@ void confMenuManual() {
       romType = LO;
       numBanks = 128;
       sramSize = 256;
-      strcpy(romName, "LOROM");
+      strcpy(romName, "LoROM");
       break;
 
     case 2:
       romType = HI;
       numBanks = 64;
       sramSize = 64;
-      strcpy(romName, "HIROM");
+      strcpy(romName, "HiROM");
       break;
 
     case 3:
       romType = EX;
       numBanks = 96;
       sramSize = 256;
-      strcpy(romName, "EXROM");
+      strcpy(romName, "ExROM");
       break;
 
     case 4:
@@ -703,8 +703,11 @@ void getCartInfo_SNES() {
   }
 
   display_Clear();
-  print_Msg(F("Name: "));
+  print_Msg(F("Title: "));
   println_Msg(romName);
+
+  print_Msg(F("Revision: "));
+  println_Msg(romVersion);
 
   print_Msg(F("Type: "));
   if (romType == HI)
@@ -772,20 +775,23 @@ void getCartInfo_SNES() {
     print_Msg(F("Rom Size: "));
   else
     print_Msg(F("ROM Size: "));
-  print_Msg(romSize);
-  println_Msg(F("Mbit"));
-
-  print_Msg(F("Banks: "));
+  if ((romSize >> 3) < 1) {
+    print_Msg(1024 * romSize >> 3);
+    print_Msg(F(" KB"));
+  } else {
+    print_Msg(romSize >> 3);
+    print_Msg(F(" MB"));
+  }
+  print_Msg(F(" ("));
   print_Msg(numBanks);
-  print_Msg(F(" Chips: "));
-  println_Msg(romChips);
+  println_Msg(F(" banks)"));
+  
+  //print_Msg(F("Chips: "));
+  //println_Msg(romChips);
 
-  print_Msg(F("Sram Size: "));
-  print_Msg(sramSize);
-  println_Msg(F("Kbit"));
-
-  print_Msg(F("ROM Version: 1."));
-  println_Msg(romVersion);
+  print_Msg(F("Save Size: "));
+  print_Msg(sramSize >> 3);
+  println_Msg(F(" KB"));
 
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
@@ -793,8 +799,6 @@ void getCartInfo_SNES() {
 
   // Wait for user input
 #if (defined(enable_LCD) || defined(enable_OLED))
-  println_Msg(F(" "));
-  println_Msg(F(" "));
   println_Msg(F("Press Button..."));
   display_Update();
   wait();
@@ -1236,7 +1240,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
 }
 
 boolean compare_checksum() {
-  print_Msg(F("Checksum..."));
+  print_Msg(F("Checksum... "));
   display_Update();
 
   strcpy(fileName, romName);
@@ -1248,17 +1252,17 @@ boolean compare_checksum() {
 
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
-
+  print_Msg(calcsumStr);
+  
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    println_Msg(F("OK"));
-    //println_Msg(calcsumStr);
+    println_Msg(F(" -> OK"));
     display_Update();
     return 1;
   }
   else {
-    print_Msg(F("Error "));
-    print_Msg(calcsumStr);
-    print_Error(F(" "), false);
+    print_Msg(F(" != "));
+    println_Msg(checksumStr);
+    print_Error(F("Invalid Checksum"), false);
     display_Update();
     return 0;
   }

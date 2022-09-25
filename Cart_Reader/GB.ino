@@ -23,7 +23,7 @@ static const char gbxMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5};
 
 // GB menu items
-static const char GBMenuItem1[] PROGMEM = "Read Rom";
+static const char GBMenuItem1[] PROGMEM = "Read ROM";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
 static const char GBMenuItem4[] PROGMEM = "Reset";
@@ -312,7 +312,7 @@ void gbMenu() {
         readSRAM_GB();
       }
       else {
-        print_Error(F("Cart has no Sram"), false);
+        print_Error(F("No save or unsupported type"), false);
       }
       println_Msg(F(""));
       break;
@@ -340,7 +340,7 @@ void gbMenu() {
         }
       }
       else {
-        print_Error(F("Cart has no Sram"), false);
+        print_Error(F("No save or unsupported type"), false);
       }
       println_Msg(F(""));
       break;
@@ -399,11 +399,13 @@ void setup_GB() {
 void showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
-    println_Msg(F("GB Cart Info"));
-    print_Msg(F("Name: "));
+    print_Msg(F("Title: "));
     println_Msg(romName);
-    print_Msg(F("Mapper: "));
+    
+    print_Msg(F("Revision: "));
+    println_Msg(romVersion);
 
+    print_Msg(F("Mapper: "));
     if ((romType == 0) || (romType == 8) || (romType == 9))
       print_Msg(F("none"));
     else if ((romType == 1) || (romType == 2) || (romType == 3))
@@ -418,10 +420,14 @@ void showCartInfo_GB() {
       print_Msg(F("MBC4"));
     else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
       print_Msg(F("MBC5"));
+    else if (romType == 32)
+      print_Msg(F("MBC6 (no support)"));
     else if (romType == 34)
       print_Msg(F("MBC7"));
     else if (romType == 252)
       print_Msg(F("Camera"));
+    else if (romType == 253)
+      print_Msg(F("TAMA5 (no support)"));
     else if (romType == 254)
       print_Msg(F("HuC-3"));
     else if (romType == 255)
@@ -429,77 +435,96 @@ void showCartInfo_GB() {
     else if (romType == 0x104)
       print_Msg(F("M161"));
     
-    println_Msg(F(" "));
-    print_Msg(F("Rom Size: "));
+    println_Msg(F(""));
+    print_Msg(F("ROM Size: "));
     switch (romSize) {
       case 0:
-        print_Msg(F("32KB"));
+        print_Msg(F("32 KB"));
         break;
 
       case 1:
-        print_Msg(F("64KB"));
+        print_Msg(F("64 KB"));
         break;
 
       case 2:
-        print_Msg(F("128KB"));
+        print_Msg(F("128 KB"));
         break;
 
       case 3:
-        print_Msg(F("256KB"));
+        print_Msg(F("256 KB"));
         break;
 
       case 4:
-        print_Msg(F("512KB"));
+        print_Msg(F("512 KB"));
         break;
 
       case 5:
-        print_Msg(F("1MB"));
+        print_Msg(F("1 MB"));
         break;
 
       case 6:
-        print_Msg(F("2MB"));
+        print_Msg(F("2 MB"));
         break;
 
       case 7:
-        print_Msg(F("4MB"));
+        print_Msg(F("4 MB"));
         break;
 
       case 8:
-        print_Msg(F("8MB"));
+        print_Msg(F("8 MB"));
         break;
     }
 
     println_Msg(F(""));
-    print_Msg(F("Banks: "));
-    println_Msg(romBanks);
+    //print_Msg(F("Banks: "));
+    //println_Msg(romBanks);
 
-    print_Msg(F("Sram Size: "));
+    print_Msg(F("Save Size: "));
     switch (sramSize) {
       case 0:
         if (romType == 6) {
-          print_Msg(F("512B"));
+          print_Msg(F("512 Byte"));
+        }
+        else if (romType == 0x22) {
+          if (strncmp(romName, "CMASTER_KCEJ", 12) == 0) {
+            print_Msg(F("512 Byte"));
+          }
+          else {
+            print_Msg(F("256 Byte"));
+          }
+        }
+        else if (romType == 0xFD) {
+          print_Msg(F("32 Byte"));
         }
         else {
-          print_Msg(F("none"));
+          print_Msg(F("None"));
         }
         break;
       case 1:
-        print_Msg(F("2KB"));
+        print_Msg(F("2 KB"));
         break;
 
       case 2:
-        print_Msg(F("8KB"));
+        print_Msg(F("8 KB"));
         break;
 
       case 3:
-        print_Msg(F("32KB"));
+        if (romType == 0x20) {
+          print_Msg(F("1.03 MB"));
+        } else {
+          print_Msg(F("32 KB"));
+        }
         break;
 
       case 4:
-        print_Msg(F("128KB"));
+        print_Msg(F("128 KB"));
         break;
 
-      default: print_Msg(F("none"));
+      case 5:
+        print_Msg(F("64 KB"));
+        break;
+
+      default: print_Msg(F("None"));
     }
     println_Msg(F(""));
     print_Msg(F("Checksum: "));
@@ -507,6 +532,7 @@ void showCartInfo_GB() {
     display_Update();
 
     // Wait for user input
+    println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
@@ -838,6 +864,9 @@ void getCartInfo_GB() {
     (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
     romType = 0x0B;
   }
+
+  // ROM revision
+  romVersion = sdBuffer[0x14C];
 }
 
 /******************************************
@@ -1002,15 +1031,15 @@ void compare_checksums_GB() {
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
 
+  print_Msg(F("Checksum: "));
+  print_Msg(calcsumStr);
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    print_Msg(F("Internal: "));
-    print_Msg(calcsumStr);
     println_Msg(F(" -> OK"));
   }
   else {
-    print_Msg(F("Internal: "));
-    println_Msg(calcsumStr);
-    print_Error(F("Checksum Error"), false);
+    print_Msg(F(" != "));
+    println_Msg(checksumStr);
+    print_Error(F("Invalid Checksum"), false);
   }
   compareCRC("gb.txt", 0, 1, 0);
   display_Update();
