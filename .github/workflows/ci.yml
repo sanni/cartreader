@@ -1,29 +1,50 @@
 name: CI
 
-on: [push]
+on:
+  push:
+
+  pull_request:
+
+env:
+  ARDUINO_LIBRARY_ENABLE_UNSAFE_INSTALL: false
 
 jobs:
-  HW5:
-    uses: ./.github/workflows/build.yml
-    with:
-      hwVersion: "HW5"
+  ci:
+    name: ${{ matrix.hwVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hwVersion: [HW5, HW4, HW3, HW2, HW1]
 
-  HW4:
-    uses: ./.github/workflows/build.yml
-    with:
-      hwVersion: "HW4"
+    steps:
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
 
-  HW3:
-    uses: ./.github/workflows/build.yml
-    with:
-      hwVersion: "HW3"
+      - name: Install platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
 
-  HW2:
-    uses: ./.github/workflows/build.yml
-    with:
-      hwVersion: "HW2"
+      - name: Install libraries
+        run: |
+          arduino-cli lib install \
+            "SdFat" \
+            "Adafruit SSD1306" \
+            "Adafruit GFX Library" \
+            "Adafruit BusIO" \
+            "U8g2" \
+            "Adafruit NeoPixel" \
+            "RotaryEncoder" \
+            "Etherkit Si5351" \
+            "RTClib" \
+            "FreqCount"
 
-  HW1:
-    uses: ./.github/workflows/build.yml
-    with:
-      hwVersion: "HW1"
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Compile
+        run: |
+          cd Cart_Reader/
+          # Select hardware version by uncommenting it (using regular expression)
+          sed -i 's/^\/\/[\t ]*#define ${{ matrix.hwVersion }}/#define ${{ matrix.hwVersion }}/g' Cart_Reader.ino
+          arduino-cli compile --fqbn arduino:avr:mega

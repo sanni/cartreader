@@ -384,7 +384,7 @@ void readROM_VB() {
   strcpy(fileName, romName);
   strcat(fileName, ".vb");
 
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "VBOY/ROM/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -396,7 +396,7 @@ void readROM_VB() {
   display_Update();
 
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
@@ -482,13 +482,13 @@ void readSRAM_VB() {
   strcpy(fileName, romName);
   strcat(fileName, ".srm");
 
-  EEPROM_readAnything(10, foldern);
+  EEPROM_readAnything(0, foldern);
   sprintf(folder, "VBOY/SAVE/%s/%d", romName, foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
   foldern = foldern + 1;
-  EEPROM_writeAnything(10, foldern);
+  EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("SD Error"), true);
@@ -532,3 +532,6 @@ unsigned long verifySRAM_VB() {
   return writeErrors;
 }
 #endif
+//******************************************
+// End of File
+//******************************************

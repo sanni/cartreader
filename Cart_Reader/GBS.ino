@@ -808,3 +808,6 @@ uint8_t gbSmartGetResizeParam(uint8_t rom_size, uint8_t sram_size)
 }
 
 #endif
+//******************************************
+// End of File
+//******************************************
