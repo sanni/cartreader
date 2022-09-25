@@ -428,7 +428,7 @@ void showCartInfo_GB() {
       print_Msg(F("HuC-1"));
     else if (romType == 0x104)
       print_Msg(F("M161"));
-    
+
     println_Msg(F(" "));
     print_Msg(F("Rom Size: "));
     switch (romSize) {
@@ -800,17 +800,17 @@ void getCartInfo_GB() {
   if (sdBuffer[0x143] == 0x80 || sdBuffer[0x143] == 0xC0) {
     x++;
   }
-  for (int addr = 0x0134; addr <= 0x0143-x; addr++) {
+  for (int addr = 0x0134; addr <= 0x0143 - x; addr++) {
     myByte = sdBuffer[addr];
     if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
       romName[myLength] = char(myByte);
     } else {
-      if (romName[myLength-1] == 0x5F) myLength--;
+      if (romName[myLength - 1] == 0x5F) myLength--;
       romName[myLength] = 0x5F;
     }
     myLength++;
   }
-  
+
   // Strip trailing white space
   for (unsigned int i = myLength - 1; i > 0; i--) {
     if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
@@ -871,13 +871,13 @@ void readROM_GB() {
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
   draw_progressbar(0, totalProgressBar);
-  
+
   // M161 banks are double size and start with 0
   if (romType == 0x104) {
     startBank = 0;
     romBanks >>= 1;
   }
-  
+
   for (word currBank = startBank; currBank < romBanks; currBank++) {
     // Second bank starts at 0x4000
     if (currBank > 1) {
@@ -893,7 +893,7 @@ void readROM_GB() {
       PORTH |= (1 << 0);
       writeByte_GB(0x4000, currBank & 0x7);
     }
-    
+
     // Set ROM bank for MBC2/3/4/5
     else if (romType >= 5) {
       if (romType >= 11 && romType <= 13) {

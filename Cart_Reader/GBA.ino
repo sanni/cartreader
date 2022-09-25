@@ -898,19 +898,19 @@ void getCartInfo_GBA() {
       if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
         romName[myLength] = char(myByte);
       } else {
-        if (romName[myLength-1] == 0x5F) myLength--;
+        if (romName[myLength - 1] == 0x5F) myLength--;
         romName[myLength] = 0x5F;
       }
       myLength++;
     }
-    
+
     // Strip trailing white space
     for (unsigned int i = myLength - 1; i > 0; i--) {
       if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
       romName[i] = 0x00;
       myLength--;
     }
-    
+
     // Get ROM version
     romVersion = sdBuffer[0xBC];
 
