@@ -1,6 +1,8 @@
 //******************************************
 // BENESSE POCKET CHALLENGE W MODULE
 //******************************************
+#ifdef enable_PCW
+
 // Benesse Pocket Challenge W
 // Cartridge Pinout
 // 38P 1.27mm pitch connector
@@ -605,3 +607,7 @@ unsigned long verifySRAM_PCW() {
 
   return writeErrors;
 }
+#endif
+//******************************************
+// End of File
+//******************************************

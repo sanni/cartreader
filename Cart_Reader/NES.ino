@@ -9,19 +9,20 @@
 
 //Line Content
 //28   Supported Mappers
-//103  Defines
-//133  Variables
-//194  Menus
-//333  Setup
-//362  Low Level Functions
-//609  CRC Functions
-//669  File Functions
-//864  NES 2.0 Header Functions
-//1145 Config Functions
-//1946 ROM Functions
-//3044 RAM Functions
-//3477 Eeprom Functions
-//3667 NESmaker Flash Cart Functions
+//106  Defines
+//136  Variables
+//197  Menus
+//383  Setup
+//412  No-Intro SD Database Functions
+//1125 Low Level Functions
+//1372 CRC Functions
+//1426 File Functions
+//1527 NES 2.0 Header Functions
+//1957 Config Functions
+//2760 ROM Functions
+//3951 RAM Functions
+//4384 Eeprom Functions
+//4574 NESmaker Flash Cart Functions
 
 /******************************************
   Supported Mappers
@@ -53,9 +54,10 @@ static const byte PROGMEM mapsize [] = {
   33, 3, 4, 5, 6, 0, 0, // taito tc0190
   34, 3, 3, 0, 0, 0, 0, // bnrom [nina-1 NOT SUPPORTED]
   37, 4, 4, 6, 6, 0, 0, // (super mario bros + tetris + world cup)
+  45, 3, 6, 0, 8, 0, 0, // ga23c asic multicart [UNLICENSED]
   47, 4, 4, 6, 6, 0, 0, // (super spike vball + world cup)
   48, 3, 4, 6, 6, 0, 0, // taito tc0690
-  64, 2, 3, 4, 5, 0, 0, // tengen rambo-1
+  64, 2, 3, 4, 5, 0, 0, // tengen rambo-1 [UNLICENSED]
   65, 3, 4, 5, 6, 0, 0, // irem h-3001
   66, 2, 3, 2, 3, 0, 0, // gxrom/mhrom
   67, 3, 3, 5, 5, 0, 0, // sunsoft 3
@@ -90,7 +92,7 @@ static const byte PROGMEM mapsize [] = {
   153, 5, 5, 0, 0, 1, 1, // (famicom jump ii)                                 [sram r/w]
   154, 3, 3, 5, 5, 0, 0, // namcot-3453 (devil man)
   155, 3, 3, 3, 5, 0, 1, // mmc1 variant                                      [sram r/w]
-  158, 3, 3, 5, 5, 0, 0, // tengen rambo-1 variant (alien syndrome (u))
+  158, 3, 3, 5, 5, 0, 0, // tengen rambo-1 variant (alien syndrome (u)) [UNLICENSED]
   159, 3, 4, 5, 6, 1, 1, // bandai x24c01                                     [eep r/w]
   180, 3, 3, 0, 0, 0, 0, // unrom variant (crazy climber)
   184, 1, 1, 2, 3, 0, 0, // sunsoft 1
@@ -138,13 +140,13 @@ byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
 boolean mapfound = false;
 byte mapselect;
 
-int PRG[] = {16, 32, 64, 128, 256, 512};
+int PRG[] = {16, 32, 64, 128, 256, 512, 1024};
 byte prglo = 0; // Lowest Entry
-byte prghi = 5; // Highest Entry
+byte prghi = 6; // Highest Entry
 
-int CHR[] = {0, 8, 16, 32, 64, 128, 256, 512};
+int CHR[] = {0, 8, 16, 32, 64, 128, 256, 512, 1024};
 byte chrlo = 0; // Lowest Entry
-byte chrhi = 7; // Highest Entry
+byte chrhi = 8; // Highest Entry
 
 byte RAM[] = {0, 8, 16, 32};
 byte ramlo = 0; // Lowest Entry
@@ -192,7 +194,7 @@ byte newramsize;
 int b = 0;
 
 /******************************************
-  Menu
+  Menus
 *****************************************/
 // NES start menu
 static const char nesMenuItem1[] PROGMEM = "Change Mapper";
@@ -2771,6 +2773,14 @@ void dumpCHR(word address) {
   myFile.write(sdBuffer, 512);
 }
 
+void dumpCHR_M2(word address) { // MAPPER 45 - PULSE M2 LO/HI
+  for (int x = 0; x < 512; x++) {
+    PHI2_LOW;
+    sdBuffer[x] = read_chr_byte(address + x);
+  }
+  myFile.write(sdBuffer, 512);
+}
+
 void dumpMMC5RAM(word base, word address) { // MMC5 SRAM DUMP - PULSE M2 LO/HI
   for (int x = 0; x < 512; x++) {
     PHI2_LOW;
@@ -3061,6 +3071,37 @@ void readPRG(boolean readrom) {
           write_prg_byte(0x8000, 7); // PRG Bank 1 ($A000-$BFFF)
           write_prg_byte(0x8001, i + 1);
           for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        for (word address = 0x4000; address < 0x8000; address += 512) { // Final 2 Banks ($C000-$FFFF)
+          dumpPRG(base, address);
+        }
+        break;
+
+      case 45: // MMC3 Clone with Outer Registers
+        banks = ((int_pow(2, prgsize) * 2)) - 2;  // Set Number of Banks
+        for (int i = 0; i < banks; i += 2) { // 128K/256K/512K/1024K
+          // set outer bank registers
+          write_prg_byte(0x6000, 0x00); // CHR-OR
+          write_prg_byte(0x6000, (i & 0xC0)); // PRG-OR
+          write_prg_byte(0x6000, ((i >> 2) & 0xC0)); // CHR-AND,CHR-OR/PRG-OR
+          write_prg_byte(0x6000, 0x80); // PRG-AND
+          // set inner bank registers
+          write_prg_byte(0x8000, 6); // PRG Bank 0 ($8000-$9FFF)
+          write_prg_byte(0x8001, i);
+          for (word address = 0x0; address < 0x2000; address += 512) {
+            dumpPRG(base, address);
+          }
+          // set outer bank registers
+          write_prg_byte(0x6000, 0x00); // CHR-OR
+          write_prg_byte(0x6000, ((i + 1) & 0xC0)); // PRG-OR
+          write_prg_byte(0x6000, (((i + 1) >> 2) & 0xC0)); // CHR-AND,CHR-OR/PRG-OR
+          write_prg_byte(0x6000, 0x80); // PRG-AND
+          // set inner bank registers
+          write_prg_byte(0x8000, 7); // PRG Bank 1 ($A000-$BFFF)
+          write_prg_byte(0x8001, i + 1);
+          for (word address = 0x2000; address < 0x4000; address += 512) {
             dumpPRG(base, address);
           }
         }
@@ -3604,6 +3645,35 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8001, i + 2);
             for (word address = 0x0; address < 0x1000; address += 512) {
               dumpCHR(address);
+            }
+          }
+          break;
+
+        case 45: // 128K/256K/512K/1024K
+          banks = int_pow(2, chrsize) * 4;
+          write_prg_byte(0xA001, 0x80); // Unlock Write Protection - not used by some carts
+          for (int i = 0; i < banks; i++) {
+            // set outer bank registers
+            write_prg_byte(0x6000, 0x00); // CHR-OR
+            write_prg_byte(0x6000, 0x00); // PRG-OR
+            write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F)); // CHR-AND,CHR-OR/PRG-OR
+            write_prg_byte(0x6000, 0x80); // PRG-AND
+            // set inner bank registers
+            write_prg_byte(0x8000, 0x2); // CHR Bank 2 ($1000-$13FF)
+            write_prg_byte(0x8001, i);
+            for (word address = 0x1000; address < 0x1200; address += 512) {
+              dumpCHR_M2(address); // Read CHR with M2 Pulse
+            }
+            // set outer bank registers
+            write_prg_byte(0x6000, 0x00); // CHR-OR
+            write_prg_byte(0x6000, 0x00); // PRG-OR
+            write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F)); // CHR-AND,CHR-OR/PRG-OR
+            write_prg_byte(0x6000, 0x80); // PRG-AND
+            // set inner bank registers
+            write_prg_byte(0x8000, 0x2); // CHR Bank 2 ($1000-$13FF)
+            write_prg_byte(0x8001, i);
+            for (word address = 0x1200; address < 0x1400; address += 512) {
+              dumpCHR_M2(address); // Read CHR with M2 Pulse
             }
           }
           break;
