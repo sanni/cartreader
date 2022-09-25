@@ -432,6 +432,8 @@ void showCartInfo_GB() {
       print_Msg(F("HuC-3"));
     else if (romType == 255)
       print_Msg(F("HuC-1"));
+    else if ((romType == 0x101) || (romType == 0x103))
+      print_Msg(F("MBC1M"));
     else if (romType == 0x104)
       print_Msg(F("M161"));
     
@@ -865,6 +867,17 @@ void getCartInfo_GB() {
     romType = 0x0B;
   }
 
+  // MBC1M
+  if (
+    (strncmp(romName, "MOMOCOL", 7) == 0) && (sdBuffer[0x14D] == 0x28) ||
+    (strncmp(romName, "BOMCOL", 6) == 0) && (sdBuffer[0x14D] == 0x86) ||
+    (strncmp(romName, "GENCOL", 6) == 0) && (sdBuffer[0x14D] == 0x8A) ||
+    (strncmp(romName, "SUPERCHINESE 123", 16) == 0) && (sdBuffer[0x14D] == 0xE4) ||
+    (strncmp(romName, "MORTALKOMBATI&II", 16) == 0) && (sdBuffer[0x14D] == 0xB9) ||
+    (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
+    romType += 0x100;
+  }
+  
   // ROM revision
   romVersion = sdBuffer[0x14C];
 }
@@ -929,7 +942,18 @@ void readROM_GB() {
       PORTH |= (1 << 0);
       writeByte_GB(0x4000, currBank & 0x7);
     }
-    
+
+    // Set ROM bank for MBC1M
+    else if (romType == 0x101 || romType == 0x103) {
+      if (currBank < 10) {
+          writeByte_GB(0x4000, currBank >> 4);
+          writeByte_GB(0x2000, (currBank & 0x1f));
+      } else {
+          writeByte_GB(0x4000, currBank >> 4);
+          writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
+      }
+    }
+
     // Set ROM bank for MBC2/3/4/5
     else if (romType >= 5) {
       if (romType >= 11 && romType <= 13) {
