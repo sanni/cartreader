@@ -427,7 +427,7 @@ void showCartInfo_GB() {
     else if (romType == 252)
       print_Msg(F("Camera"));
     else if (romType == 253)
-      print_Msg(F("TAMA5 (no support)"));
+      print_Msg(F("TAMA5"));
     else if (romType == 254)
       print_Msg(F("HuC-3"));
     else if (romType == 255)
@@ -594,7 +594,6 @@ void writeByte_GB(int myAddress, byte myData) {
 
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
-
   // Leave WR high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
@@ -652,7 +651,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  if (romType == 252) {
+  if (romType == 252 || romType == 253) {
     // Pull CS(PH3) LOW
     PORTH &= ~(1 << 3);
     // Pull CLK(PH1)(for GB CAM) HIGH
@@ -670,7 +669,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
   // Leave WR low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  if (romType == 252) {
+  if (romType == 252 || romType == 253) {
     // Pull WR(PH5) HIGH
     PORTH |= (1 << 5);
     // Pull CS(PH3) HIGH
@@ -952,6 +951,14 @@ void readROM_GB() {
           writeByte_GB(0x4000, currBank >> 4);
           writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
       }
+    }
+
+    // Set ROM bank for TAMA5
+    else if (romType == 0xFD) {
+      writeByteSRAM_GB(0xA001, 0);
+      writeByteSRAM_GB(0xA000, currBank & 0x0f);
+      writeByteSRAM_GB(0xA001, 1);
+      writeByteSRAM_GB(0xA000, (currBank >> 4) & 0x0f);
     }
 
     // Set ROM bank for MBC2/3/4/5
