@@ -1066,7 +1066,7 @@ void getCartInfo_GBA() {
       6 = 512K Sram
     */
 
-    if (saveTypeStr[0] == '0') {
+    if (saveTypeStr[0] == 'N') {
       saveType = 0;
     }
     else if (saveTypeStr[0] == 'E') {
