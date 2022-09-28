@@ -421,7 +421,7 @@ void showCartInfo_GB() {
     else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
       print_Msg(F("MBC5"));
     else if (romType == 32)
-      print_Msg(F("MBC6 (no support)"));
+      print_Msg(F("MBC6"));
     else if (romType == 34)
       print_Msg(F("MBC7"));
     else if (romType == 252)
@@ -924,18 +924,28 @@ void readROM_GB() {
   if (romType == 0x104) {
     startBank = 0;
     romBanks >>= 1;
+    endAddress = 0x7FFF;
+  }
+  // MBC6 banks are half size
+  else if (romType == 32) {
+    romBanks <<= 1;
+    endAddress = 0x3FFF;
   }
 
   for (word currBank = startBank; currBank < romBanks; currBank++) {
     // Second bank starts at 0x4000
     if (currBank > 1) {
       romAddress = 0x4000;
+
+      // MBC6 banks are half size
+      if (romType == 32) {
+        endAddress = 0x5FFF;
+      }
     }
 
-    // M161 banks are double size and need mapper reset
+    // Set ROM bank for M161
     if (romType == 0x104) {
       romAddress = 0;
-      endAddress = 0x7FFF;
       PORTH &= ~(1 << 0);
       delay(50);
       PORTH |= (1 << 0);
@@ -951,6 +961,14 @@ void readROM_GB() {
           writeByte_GB(0x4000, currBank >> 4);
           writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
       }
+    }
+
+    // Set ROM bank for MBC6
+    else if (romType == 32) {
+      writeByte_GB(0x2800, 0);
+      writeByte_GB(0x3800, 0);
+      writeByte_GB(0x2000, currBank);
+      writeByte_GB(0x3000, currBank);
     }
 
     // Set ROM bank for TAMA5
