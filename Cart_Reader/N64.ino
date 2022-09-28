@@ -2447,7 +2447,7 @@ void printCartInfo_N64() {
     display_Clear();
     print_Msg(F("Title: "));
     println_Msg(romName);
-    print_Msg(F("Code: "));
+    print_Msg(F("Serial: "));
     println_Msg(cartID);
     print_Msg(F("Revision: "));
     println_Msg(romVersion);

@@ -545,7 +545,7 @@ void setup_GBA() {
   // Print start page
   print_Msg(F("Title: "));
   println_Msg(romName);
-  print_Msg(F("Code: "));
+  print_Msg(F("Serial: "));
   println_Msg(cartID);
   print_Msg(F("Revision: "));
   println_Msg(romVersion);
@@ -921,12 +921,12 @@ void getCartInfo_GBA() {
 
             // Print current database entry
             println_Msg(gamename);
-            print_Msg(F("Cart ID: "));
+            print_Msg(F("Serial: "));
             println_Msg(tempStr);
             print_Msg(F("ROM Size: "));
             print_Msg(cartSize);
             println_Msg(F(" MB"));
-            print_Msg(F("Save: "));
+            print_Msg(F("Save Lib: "));
             println_Msg(saveTypeStr);
 
 #if defined(enable_OLED)

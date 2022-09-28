@@ -410,7 +410,10 @@ void showCartInfo_GB() {
   if (strcmp(checksumStr, "00") != 0) {
     print_Msg(F("Title: "));
     println_Msg(romName);
-    
+    if (cartID[0] != 0) {
+      print_Msg(F("Serial: "));
+      println_Msg(cartID);
+    }
     print_Msg(F("Revision: "));
     println_Msg(romVersion);
 
@@ -497,7 +500,7 @@ void showCartInfo_GB() {
           print_Msg(F("512 Byte"));
         }
         else if (romType == 0x22) {
-          if (strncmp(romName, "CMASTER_KCEJ", 12) == 0) {
+          if (strncmp(cartID, "KCEJ", 4) == 0) {
             print_Msg(F("512 Byte"));
           }
           else {
@@ -538,9 +541,9 @@ void showCartInfo_GB() {
       default: print_Msg(F("None"));
     }
     println_Msg(F(""));
-    print_Msg(F("Checksum: "));
-    println_Msg(checksumStr);
-    display_Update();
+    //print_Msg(F("Checksum: "));
+    //println_Msg(checksumStr);
+    //display_Update();
 
     // Wait for user input
     println_Msg(F(""));
@@ -858,6 +861,20 @@ void getCartInfo_GB() {
       romName[myLength] = 0x5F;
     }
     myLength++;
+  }
+
+  // Find Game Serial
+  cartID[0] = 0;
+  if (sdBuffer[0x143] == 0x80 || sdBuffer[0x143] == 0xC0) {
+    Serial.println(romName[myLength - 4]);
+    if ((romName[myLength - 4] == 'A' || romName[myLength - 4] == 'B' || romName[myLength - 4] == 'H' || romName[myLength - 4] == 'K' || romName[myLength - 4] == 'V') && (romName[myLength - 1] == 'A' || romName[myLength - 1] == 'B' || romName[myLength - 1] == 'D' || romName[myLength - 1] == 'E' || romName[myLength - 1] == 'F' || romName[myLength - 1] == 'I' || romName[myLength - 1] == 'J' || romName[myLength - 1] == 'K' || romName[myLength - 1] == 'P' || romName[myLength - 1] == 'S' || romName[myLength - 1] == 'U' || romName[myLength - 1] == 'X' || romName[myLength - 1] == 'Y')) {
+      cartID[0] = romName[myLength - 4];
+      cartID[1] = romName[myLength - 3];
+      cartID[2] = romName[myLength - 2];
+      cartID[3] = romName[myLength - 1];
+      myLength -= 4;
+      romName[myLength] = 0;
+    }
   }
 
   // Strip trailing white space
@@ -1274,7 +1291,7 @@ unsigned long verifySRAM_GB() {
   }
 }
 
-// Read MBC6 (SRAM + FLASH) save data
+// Read SRAM + FLASH save data of MBC6
 void readSRAMFLASH_MBC6_GB() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
@@ -1369,7 +1386,7 @@ void readSRAMFLASH_MBC6_GB() {
   display_Update();
 }
 
-// Write MBC6 (SRAM + FLASH) save data
+// Write RAM
 void writeSRAMFLASH_MBC6_GB() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
