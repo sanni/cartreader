@@ -428,7 +428,7 @@ uint32_t uppow2(uint32_t n) {
 
 boolean getMapping() {
   display_Clear();
-  println_Msg(F("Searching database..."));
+  println_Msg(F("Searching database"));
   display_Update();
 
   // Read first 512 bytes of prg rom
@@ -446,8 +446,19 @@ boolean getMapping() {
   char iNES_STR[33];
   sprintf(crcStr, "%08lX", ~oldcrc32);
 
+  print_Msg(F("for "));
+  print_Msg(crcStr);
+  println_Msg(F("..."));
+  display_Update();
+
   // Filter out 0xFF checksum
   if (strcmp(crcStr, "BD7BC39F") == 0) {
+    delay(500);
+    println_Msg(F(""));
+    println_Msg(F("No data found at 0x8000"));
+    println_Msg(F("Using manual selection"));
+    display_Update();
+    delay(1000);
     romName[0] = 'C';
     romName[1] = 'A';
     romName[2] = 'R';
@@ -726,7 +737,11 @@ boolean getMapping() {
       }
       // File searched until end but nothing found
       if (strcmp(crc_search, crcStr) != 0) {
-        println_Msg(F("Not found"));
+        println_Msg(F(""));
+        println_Msg(F("CRC not found in database"));
+        println_Msg(F("Using manual selection"));
+        display_Update();
+        delay(1000);
         romName[0] = 'C';
         romName[1] = 'A';
         romName[2] = 'R';
