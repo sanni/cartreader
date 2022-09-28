@@ -309,7 +309,10 @@ void gbMenu() {
       if (lastByte > 0) {
         // Change working dir to root
         sd.chdir("/");
-        readSRAM_GB();
+        if (romType == 32)
+          readSRAMFLASH_GB_MBC6();
+        else
+          readSRAM_GB();
       }
       else {
         print_Error(F("No save or unsupported type"), false);
@@ -821,7 +824,13 @@ void getCartInfo_GB() {
   else if (sramSize > 1) {
     lastByte = 0xBFFF;
   }
-
+  
+  // MBC6
+  if (romType == 32) {
+    sramBanks = 8;
+    lastByte = 0xAFFF;
+  }
+  
   // Get Checksum as string
   eepbit[6] = sdBuffer[0x14E];
   eepbit[7] = sdBuffer[0x14F];
@@ -1257,6 +1266,198 @@ unsigned long verifySRAM_GB() {
   else {
     print_Error(F("Can't open file"), true);
   }
+}
+
+// Read SRAM + FLASH save data of MBC6
+void readSRAMFLASH_GB_MBC6() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".sav");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = 0x108000;
+  draw_progressbar(0, totalProgressBar);
+  
+  // Enable Mapper and SRAM
+  writeByte_GB(0x0000, 0x0A);
+
+  // Switch SRAM banks
+  for (byte currBank = 0; currBank < sramBanks; currBank++) {
+    writeByte_GB(0x0400, currBank);
+    writeByte_GB(0x0800, currBank);
+
+    // Read SRAM
+    for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
+      for (byte i = 0; i < 64; i++) {
+        sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
+      }
+      myFile.write(sdBuffer, 64);
+      processedProgressBar += 64;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+
+  // Disable SRAM
+  writeByte_GB(0x0000, 0x00);
+
+  // Enable flash save memory (map to ROM)
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x01);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x08);
+  writeByte_GB(0x3800, 0x08);
+  
+  word romAddress = 0x4000;
+  for (byte currBank = 0; currBank < 128; currBank++) {
+    writeByte_GB(0x2800, 8);
+    writeByte_GB(0x3800, 8);
+    writeByte_GB(0x2000, currBank);
+    writeByte_GB(0x3000, currBank);
+
+    romAddress = 0x4000;
+    // Read banks and save to SD
+    while (romAddress <= 0x5FFF) {
+      for (int i = 0; i < 512; i++) {
+        sdBuffer[i] = readByte_GB(romAddress + i);
+      }
+      myFile.write(sdBuffer, 512);
+      romAddress += 512;
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+
+  // Disable flash save memory
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x00);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x00);
+  writeByte_GB(0x3800, 0x00);
+  
+  // Close the file:
+  myFile.close();
+
+  // Signal end of process
+  println_Msg(F("OK"));
+  display_Update();
+}
+
+// Read SRAM + FLASH save data of MBC6
+void readSRAMFLASH_GB_MBC6() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".sav");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = 0x108000;
+  draw_progressbar(0, totalProgressBar);
+  
+  // Enable Mapper and SRAM
+  writeByte_GB(0x0000, 0x0A);
+
+  // Switch SRAM banks
+  for (byte currBank = 0; currBank < sramBanks; currBank++) {
+    writeByte_GB(0x0400, currBank);
+    writeByte_GB(0x0800, currBank);
+
+    // Read SRAM
+    for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
+      for (byte i = 0; i < 64; i++) {
+        sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
+      }
+      myFile.write(sdBuffer, 64);
+      processedProgressBar += 64;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+
+  // Disable SRAM
+  writeByte_GB(0x0000, 0x00);
+
+  // Enable flash save memory (map to ROM)
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x01);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x08);
+  writeByte_GB(0x3800, 0x08);
+  
+  word romAddress = 0x4000;
+  for (byte currBank = 0; currBank < 128; currBank++) {
+    writeByte_GB(0x2800, 8);
+    writeByte_GB(0x3800, 8);
+    writeByte_GB(0x2000, currBank);
+    writeByte_GB(0x3000, currBank);
+
+    romAddress = 0x4000;
+    // Read banks and save to SD
+    while (romAddress <= 0x5FFF) {
+      for (int i = 0; i < 512; i++) {
+        sdBuffer[i] = readByte_GB(romAddress + i);
+      }
+      myFile.write(sdBuffer, 512);
+      romAddress += 512;
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+
+  // Disable flash save memory
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x00);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x00);
+  writeByte_GB(0x3800, 0x00);
+  
+  // Close the file:
+  myFile.close();
+
+  // Signal end of process
+  println_Msg(F("OK"));
+  display_Update();
 }
 
 /******************************************
