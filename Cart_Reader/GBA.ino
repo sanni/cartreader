@@ -13,7 +13,7 @@ boolean readType;
    Menu
  *****************************************/
 // GBA menu items
-static const char GBAMenuItem1[] PROGMEM = "Read Rom";
+static const char GBAMenuItem1[] PROGMEM = "Read ROM";
 static const char GBAMenuItem2[] PROGMEM = "Read Save";
 static const char GBAMenuItem3[] PROGMEM = "Write Save";
 static const char GBAMenuItem4[] PROGMEM = "Force Savetype";
@@ -22,12 +22,12 @@ static const char GBAMenuItem6[] PROGMEM = "Reset";
 static const char* const menuOptionsGBA[] PROGMEM = {GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4, GBAMenuItem5, GBAMenuItem6};
 
 // Rom menu
-static const char GBARomItem1[] PROGMEM = "1MB";
-static const char GBARomItem2[] PROGMEM = "2MB";
-static const char GBARomItem3[] PROGMEM = "4MB";
-static const char GBARomItem4[] PROGMEM = "8MB";
-static const char GBARomItem5[] PROGMEM = "16MB";
-static const char GBARomItem6[] PROGMEM = "32MB";
+static const char GBARomItem1[] PROGMEM = "1 MB";
+static const char GBARomItem2[] PROGMEM = "2 MB";
+static const char GBARomItem3[] PROGMEM = "4 MB";
+static const char GBARomItem4[] PROGMEM = "8 MB";
+static const char GBARomItem5[] PROGMEM = "16 MB";
+static const char GBARomItem6[] PROGMEM = "32 MB";
 static const char* const romOptionsGBA[] PROGMEM = {GBARomItem1, GBARomItem2, GBARomItem3, GBARomItem4, GBARomItem5, GBARomItem6};
 
 // Save menu
@@ -35,8 +35,8 @@ static const char GBASaveItem1[] PROGMEM = "4K EEPROM";
 static const char GBASaveItem2[] PROGMEM = "64K EEPROM";
 static const char GBASaveItem3[] PROGMEM = "256K SRAM/FRAM";
 static const char GBASaveItem4[] PROGMEM = "512K SRAM/FRAM";
-static const char GBASaveItem5[] PROGMEM = "512K FLASHROM";
-static const char GBASaveItem6[] PROGMEM = "1M FLASHROM";
+static const char GBASaveItem5[] PROGMEM = "512K FLASH";
+static const char GBASaveItem6[] PROGMEM = "1M FLASH";
 static const char* const saveOptionsGBA[] PROGMEM = {GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6};
 
 void gbaMenu() {
@@ -175,7 +175,7 @@ void gbaMenu() {
             break;
 
           case 5:
-            // 1024K FLASH
+            // 1M FLASH
             saveType = 5;
             break;
         }
@@ -217,7 +217,7 @@ void gbaMenu() {
         case 5:
           display_Clear();
           sd.chdir("/");
-          // 1024K FLASH (divided into two banks)
+          // 1M FLASH (divided into two banks)
           switchBank_GBA(0x0);
           setROM_GBA();
           readFLASH_GBA(1, 65536, 0);
@@ -278,7 +278,7 @@ void gbaMenu() {
             break;
 
           case 5:
-            // 1024K FLASH
+            // 1M FLASH
             saveType = 5;
             break;
         }
@@ -351,10 +351,10 @@ void gbaMenu() {
           idFlash_GBA();
           resetFLASH_GBA();
 
-          print_Msg(F("Flashrom ID: "));
+          print_Msg(F("FLASH ID: "));
           println_Msg(flashid);
           println_Msg(F(""));
-          println_Msg(F("Flashrom Type: "));
+          println_Msg(F("FLASH Type: "));
           if (strcmp(flashid, "1F3D") == 0) {
             println_Msg(F("Atmel AT29LV512"));
           }
@@ -508,7 +508,7 @@ void gbaMenu() {
           break;
 
         case 5:
-          // 1024K FLASH
+          // 1M FLASH
           saveType = 5;
           break;
       }
@@ -543,48 +543,48 @@ void setup_GBA() {
   display_Clear();
 
   // Print start page
-  print_Msg(F("Name: "));
+  print_Msg(F("Title: "));
   println_Msg(romName);
-  print_Msg(F("Cart ID: "));
+  print_Msg(F("Serial: "));
   println_Msg(cartID);
-  print_Msg(F("Rom Size: "));
+  print_Msg(F("Revision: "));
+  println_Msg(romVersion);
+  print_Msg(F("ROM Size: "));
   if (cartSize == 0)
     println_Msg(F("Unknown"));
   else {
     print_Msg(cartSize);
-    println_Msg(F("MB"));
+    println_Msg(F(" MB"));
   }
-  print_Msg(F("Save: "));
+  print_Msg(F("Save Type: "));
   switch (saveType)
   {
     case 0:
-      println_Msg(F("Unknown"));
+      println_Msg(F("None/Unknown"));
       break;
 
     case 1:
-      println_Msg(F("4K Eeprom"));
+      println_Msg(F("4K EEPROM"));
       break;
 
     case 2:
-      println_Msg(F("64K Eeprom"));
+      println_Msg(F("64K EEPROM"));
       break;
 
     case 3:
-      println_Msg(F("256K Sram"));
+      println_Msg(F("256K SRAM"));
       break;
 
     case 4:
-      println_Msg(F("512K Flash"));
+      println_Msg(F("512K FLASH"));
       break;
 
     case 5:
-      println_Msg(F("1024K Flash"));
+      println_Msg(F("1M FLASH"));
       break;
   }
-  print_Msg(F("Checksum: "));
+  print_Msg(F("Header Checksum: "));
   println_Msg(checksumStr);
-  print_Msg(F("Version: 1."));
-  println_Msg(romVersion);
 
   // Wait for user input
   println_Msg("");
@@ -921,12 +921,12 @@ void getCartInfo_GBA() {
 
             // Print current database entry
             println_Msg(gamename);
-            print_Msg(F("Cart ID: "));
+            print_Msg(F("Serial: "));
             println_Msg(tempStr);
-            print_Msg(F("Rom Size: "));
+            print_Msg(F("ROM Size: "));
             print_Msg(cartSize);
-            println_Msg(F("MB"));
-            print_Msg(F("Save: "));
+            println_Msg(F(" MB"));
+            print_Msg(F("Save Lib: "));
             println_Msg(saveTypeStr);
 
 #if defined(enable_OLED)
@@ -1058,12 +1058,12 @@ void getCartInfo_GBA() {
 
       Save types in Cart Reader Code
       0 = Unknown or no save
-      1 = 4k Eeprom
-      2 = 64K Eeprom
-      3 = 256K Sram
-      4 = 512K Flash
-      5 = 1024K Flash
-      6 = 512K Sram
+      1 = 4K EEPROM
+      2 = 64K EEPROM
+      3 = 256K SRAM
+      4 = 512K FLASH
+      5 = 1M FLASH
+      6 = 512K SRAM
     */
 
     if (saveTypeStr[0] == 'N') {
@@ -1083,7 +1083,7 @@ void getCartInfo_GBA() {
 
       saveType = 1;
 
-      // Reading 4kbit Eeprom as 64kbit just gives the same 8 bytes repeated
+      // Reading 4kbit EEPROM as 64kbit just gives the same 8 bytes repeated
       for (int currByte = 0; currByte < 512 - 8; currByte++) {
         if (sdBuffer[currByte] != sdBuffer[currByte + 8]) {
           saveType = 2;
@@ -1161,7 +1161,7 @@ void readROM_GBA() {
 
 // Calculate the checksum of the dumped rom
 boolean compare_checksum_GBA () {
-  print_Msg(F("Internal Checksum..."));
+  print_Msg(F("Checksum: "));
   display_Update();
 
   strcpy(fileName, romName);
@@ -1187,17 +1187,17 @@ boolean compare_checksum_GBA () {
 
     // Turn into string
     sprintf(calcChecksumStr, "%02X", calcChecksum);
+    print_Msg(calcChecksumStr);
 
     if (strcmp(calcChecksumStr, checksumStr) == 0) {
-      println_Msg(F("OK"));
+      println_Msg(F(" -> OK"));
       display_Update();
       return 1;
     }
     else {
-      println_Msg("");
-      print_Msg(F("Result: "));
-      println_Msg(calcChecksumStr);
-      print_Error(F("Checksum Error"), false);
+      print_Msg(F(" != "));
+      println_Msg(checksumStr);
+      print_Error(F("Invalid Checksum"), false);
       return 0;
     }
   }
@@ -1963,7 +1963,7 @@ void writeEeprom_GBA(word eepSize) {
   sprintf(filePath, "%s/%s", filePath, fileName);
   display_Clear();
 
-  print_Msg(F("Writing eeprom..."));
+  print_Msg(F("Writing EEPROM..."));
   display_Update();
 
   //open file on sd card

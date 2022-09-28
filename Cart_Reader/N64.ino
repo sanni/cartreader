@@ -70,7 +70,7 @@ static const char N64ContMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, N64ContMenuItem4};
 
 // N64 cart menu items
-static const char N64CartMenuItem1[] PROGMEM = "Read Rom";
+static const char N64CartMenuItem1[] PROGMEM = "Read ROM";
 static const char N64CartMenuItem2[] PROGMEM = "Read Save";
 static const char N64CartMenuItem3[] PROGMEM = "Write Save";
 static const char N64CartMenuItem4[] PROGMEM = "Force Savetype";
@@ -85,12 +85,12 @@ static const char N64CRCMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsN64CRC[] PROGMEM = {N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4};
 
 // Rom menu
-static const char N64RomItem1[] PROGMEM = "4MB";
-static const char N64RomItem2[] PROGMEM = "8MB";
-static const char N64RomItem3[] PROGMEM = "12MB";
-static const char N64RomItem4[] PROGMEM = "16MB";
-static const char N64RomItem5[] PROGMEM = "32MB";
-static const char N64RomItem6[] PROGMEM = "64MB";
+static const char N64RomItem1[] PROGMEM = "4 MB";
+static const char N64RomItem2[] PROGMEM = "8 MB";
+static const char N64RomItem3[] PROGMEM = "12 MB";
+static const char N64RomItem4[] PROGMEM = "16 MB";
+static const char N64RomItem5[] PROGMEM = "32 MB";
+static const char N64RomItem6[] PROGMEM = "64 MB";
 static const char* const romOptionsN64[] PROGMEM = {N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6};
 
 // Save menu
@@ -98,21 +98,21 @@ static const char N64SaveItem1[] PROGMEM = "None";
 static const char N64SaveItem2[] PROGMEM = "4K EEPROM";
 static const char N64SaveItem3[] PROGMEM = "16K EEPROM";
 static const char N64SaveItem4[] PROGMEM = "SRAM";
-static const char N64SaveItem5[] PROGMEM = "FLASHRAM";
+static const char N64SaveItem5[] PROGMEM = "FLASH";
 static const char* const saveOptionsN64[] PROGMEM = {N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5};
 
 // Repro write buffer menu
-static const char N64BufferItem1[] PROGMEM = "no buffer";
+static const char N64BufferItem1[] PROGMEM = "No buffer";
 static const char N64BufferItem2[] PROGMEM = "32 Byte";
 static const char N64BufferItem3[] PROGMEM = "64 Byte";
 static const char N64BufferItem4[] PROGMEM = "128 Byte";
 static const char* const bufferOptionsN64[] PROGMEM = {N64BufferItem1, N64BufferItem2, N64BufferItem3, N64BufferItem4};
 
 // Repro sector size menu
-static const char N64SectorItem1[] PROGMEM = "8 KByte";
-static const char N64SectorItem2[] PROGMEM = "32 KByte";
-static const char N64SectorItem3[] PROGMEM = "64 KByte";
-static const char N64SectorItem4[] PROGMEM = "128 KByte";
+static const char N64SectorItem1[] PROGMEM = "8 KB";
+static const char N64SectorItem2[] PROGMEM = "32 KB";
+static const char N64SectorItem3[] PROGMEM = "64 KB";
+static const char N64SectorItem4[] PROGMEM = "128 KB";
 static const char* const sectorOptionsN64[] PROGMEM = {N64SectorItem1, N64SectorItem2, N64SectorItem3, N64SectorItem4};
 
 // N64 start menu
@@ -252,18 +252,18 @@ void n64CartMenu() {
       display_Clear();
 
       if (saveType == 1) {
-        println_Msg(F("Reading Sram..."));
+        println_Msg(F("Reading SRAM..."));
         display_Update();
         readSram(32768, 1);
       }
       else  if (saveType == 4) {
         getFramType();
-        println_Msg(F("Reading Flashram..."));
+        println_Msg(F("Reading FLASH..."));
         display_Update();
         readFram(flashramType);
       }
       else if ((saveType == 5) || (saveType == 6)) {
-        println_Msg(F("Reading Eep..."));
+        println_Msg(F("Reading EEPROM..."));
         display_Update();
 #ifdef clockgen_installed
         readEeprom();
@@ -291,7 +291,7 @@ void n64CartMenu() {
         writeSram(32768);
         writeErrors = verifySram(32768, 1);
         if (writeErrors == 0) {
-          println_Msg(F("Sram verified OK"));
+          println_Msg(F("SRAM verified OK"));
           display_Update();
         }
         else {
@@ -336,7 +336,7 @@ void n64CartMenu() {
 #endif
 
         if (writeErrors == 0) {
-          println_Msg(F("Eeprom verified OK"));
+          println_Msg(F("EEPROM verified OK"));
           display_Update();
         }
         else {
@@ -348,7 +348,7 @@ void n64CartMenu() {
       }
       else {
         display_Clear();
-        print_Error(F("Savetype Error"), false);
+        print_Error(F("Save Type Error"), false);
       }
       println_Msg(F("Press Button..."));
       display_Update();
@@ -2445,37 +2445,38 @@ void printCartInfo_N64() {
   // Print start page
   if (cartSize != 0) {
     display_Clear();
-    println_Msg(F("N64 Cartridge Info"));
-    println_Msg(F(""));
-    print_Msg(F("Name: "));
+    print_Msg(F("Title: "));
     println_Msg(romName);
-    print_Msg(F("ID: "));
-    print_Msg(cartID);
-    print_Msg(F(" Size: "));
+    print_Msg(F("Serial: "));
+    println_Msg(cartID);
+    print_Msg(F("Revision: "));
+    println_Msg(romVersion);
+    print_Msg(F("ROM Size: "));
     print_Msg(cartSize);
-    println_Msg(F("MB"));
-    print_Msg(F("Save: "));
+    println_Msg(F(" MB"));
+    print_Msg(F("Save Type: "));
     switch (saveType) {
       case 1:
-        println_Msg(F("Sram"));
+        println_Msg(F("SRAM"));
         break;
       case 4:
-        println_Msg(F("Flashram"));
+        println_Msg(F("FLASH"));
         break;
       case 5:
-        println_Msg(F("4K Eeprom"));
+        println_Msg(F("4K EEPROM"));
         eepPages = 64;
         break;
       case 6:
-        println_Msg(F("16K Eeprom"));
+        println_Msg(F("16K EEPROM"));
         eepPages = 256;
         break;
       default:
-        println_Msg(F("unknown"));
+        println_Msg(F("None/Unknown"));
         break;
     }
-    print_Msg(F("Version: 1."));
-    println_Msg(romVersion);
+
+    print_Msg(F("CRC1: "));
+    println_Msg(checksumStr);
 
     // Wait for user input
     println_Msg(F(" "));
@@ -2488,9 +2489,9 @@ void printCartInfo_N64() {
     display_Clear();
     println_Msg(F("GAMEPAK ERROR"));
     println_Msg("");
-    print_Msg(F("Name: "));
+    print_Msg(F("Title: "));
     println_Msg(romName);
-    print_Msg(F("ID: "));
+    print_Msg(F("Serial: "));
     println_Msg(cartID);
     print_Msg(F("CRC1: "));
     println_Msg(checksumStr);
@@ -3984,24 +3985,24 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   myFile.print(F("Size\t: "));
   myFile.print(cartSize);
 
-  myFile.println(F("MB"));
+  myFile.println(F(" MB"));
   myFile.print(F("Save\t: "));
 
   switch (saveType) {
     case 1:
-      myFile.println(F("Sram"));
+      myFile.println(F("SRAM"));
       break;
     case 4:
-      myFile.println(F("Flashram"));
+      myFile.println(F("FLASH"));
       break;
     case 5:
-      myFile.println(F("4K Eeprom"));
+      myFile.println(F("4K EEPROM"));
       break;
     case 6:
-      myFile.println(F("16K Eeprom"));
+      myFile.println(F("16K EEPROM"));
       break;
     default:
-      myFile.println(F("unknown"));
+      myFile.println(F("None/Unknown"));
       break;
   }
 

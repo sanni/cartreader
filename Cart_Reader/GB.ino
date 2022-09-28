@@ -23,7 +23,7 @@ static const char gbxMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5};
 
 // GB menu items
-static const char GBMenuItem1[] PROGMEM = "Read Rom";
+static const char GBMenuItem1[] PROGMEM = "Read ROM";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
 static const char GBMenuItem4[] PROGMEM = "Reset";
@@ -309,10 +309,13 @@ void gbMenu() {
       if (lastByte > 0) {
         // Change working dir to root
         sd.chdir("/");
-        readSRAM_GB();
+        if (romType == 32)
+          readSRAMFLASH_MBC6_GB();
+        else
+          readSRAM_GB();
       }
       else {
-        print_Error(F("Cart has no Sram"), false);
+        print_Error(F("No save or unsupported type"), false);
       }
       println_Msg(F(""));
       break;
@@ -325,22 +328,28 @@ void gbMenu() {
         sd.chdir("/");
         filePath[0] = '\0';
         fileBrowser(F("Select sav file"));
-        writeSRAM_GB();
-        unsigned long wrErrors;
-        wrErrors = verifySRAM_GB();
-        if (wrErrors == 0) {
-          println_Msg(F("Verified OK"));
-          display_Update();
+
+        if (romType == 32) {
+          writeSRAMFLASH_MBC6_GB();
         }
         else {
-          print_Msg(F("Error: "));
-          print_Msg(wrErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          writeSRAM_GB();
+          unsigned long wrErrors;
+          wrErrors = verifySRAM_GB();
+          if (wrErrors == 0) {
+            println_Msg(F("Verified OK"));
+            display_Update();
+          }
+          else {
+            print_Msg(F("Error: "));
+            print_Msg(wrErrors);
+            println_Msg(F(" bytes "));
+            print_Error(F("did not verify."), false);
+          }
         }
       }
       else {
-        print_Error(F("Cart has no Sram"), false);
+        print_Error(F("No save or unsupported type"), false);
       }
       println_Msg(F(""));
       break;
@@ -399,11 +408,16 @@ void setup_GB() {
 void showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
-    println_Msg(F("GB Cart Info"));
-    print_Msg(F("Name: "));
+    print_Msg(F("Title: "));
     println_Msg(romName);
-    print_Msg(F("Mapper: "));
+    if (cartID[0] != 0) {
+      print_Msg(F("Serial: "));
+      println_Msg(cartID);
+    }
+    print_Msg(F("Revision: "));
+    println_Msg(romVersion);
 
+    print_Msg(F("Mapper: "));
     if ((romType == 0) || (romType == 8) || (romType == 9))
       print_Msg(F("none"));
     else if ((romType == 1) || (romType == 2) || (romType == 3))
@@ -418,91 +432,121 @@ void showCartInfo_GB() {
       print_Msg(F("MBC4"));
     else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
       print_Msg(F("MBC5"));
+    else if (romType == 32)
+      print_Msg(F("MBC6"));
     else if (romType == 34)
       print_Msg(F("MBC7"));
     else if (romType == 252)
       print_Msg(F("Camera"));
+    else if (romType == 253)
+      print_Msg(F("TAMA5"));
     else if (romType == 254)
       print_Msg(F("HuC-3"));
     else if (romType == 255)
       print_Msg(F("HuC-1"));
+    else if ((romType == 0x101) || (romType == 0x103))
+      print_Msg(F("MBC1M"));
     else if (romType == 0x104)
       print_Msg(F("M161"));
 
-    println_Msg(F(" "));
-    print_Msg(F("Rom Size: "));
+    println_Msg(F(""));
+    print_Msg(F("ROM Size: "));
     switch (romSize) {
       case 0:
-        print_Msg(F("32KB"));
+        print_Msg(F("32 KB"));
         break;
 
       case 1:
-        print_Msg(F("64KB"));
+        print_Msg(F("64 KB"));
         break;
 
       case 2:
-        print_Msg(F("128KB"));
+        print_Msg(F("128 KB"));
         break;
 
       case 3:
-        print_Msg(F("256KB"));
+        print_Msg(F("256 KB"));
         break;
 
       case 4:
-        print_Msg(F("512KB"));
+        print_Msg(F("512 KB"));
         break;
 
       case 5:
-        print_Msg(F("1MB"));
+        print_Msg(F("1 MB"));
         break;
 
       case 6:
-        print_Msg(F("2MB"));
+        print_Msg(F("2 MB"));
         break;
 
       case 7:
-        print_Msg(F("4MB"));
+        print_Msg(F("4 MB"));
+        break;
+
+      case 8:
+        print_Msg(F("8 MB"));
         break;
     }
 
     println_Msg(F(""));
-    print_Msg(F("Banks: "));
-    println_Msg(romBanks);
+    //print_Msg(F("Banks: "));
+    //println_Msg(romBanks);
 
-    print_Msg(F("Sram Size: "));
+    print_Msg(F("Save Size: "));
     switch (sramSize) {
       case 0:
         if (romType == 6) {
-          print_Msg(F("512B"));
+          print_Msg(F("512 Byte"));
+        }
+        else if (romType == 0x22) {
+          if (strncmp(cartID, "KCEJ", 4) == 0) {
+            print_Msg(F("512 Byte"));
+          }
+          else {
+            print_Msg(F("256 Byte"));
+          }
+        }
+        else if (romType == 0xFD) {
+          print_Msg(F("32 Byte"));
         }
         else {
-          print_Msg(F("none"));
+          print_Msg(F("None"));
         }
         break;
       case 1:
-        print_Msg(F("2KB"));
+        print_Msg(F("2 KB"));
         break;
 
       case 2:
-        print_Msg(F("8KB"));
+        print_Msg(F("8 KB"));
         break;
 
       case 3:
-        print_Msg(F("32KB"));
+        if (romType == 0x20) {
+          print_Msg(F("1.03 MB"));
+        } else {
+          print_Msg(F("32 KB"));
+        }
         break;
 
       case 4:
-        print_Msg(F("128KB"));
+        print_Msg(F("128 KB"));
         break;
 
-      default: print_Msg(F("none"));
+      case 5:
+        print_Msg(F("64 KB"));
+        break;
+
+      default: print_Msg(F("None"));
     }
     println_Msg(F(""));
-    print_Msg(F("Checksum: "));
-    println_Msg(checksumStr);
-    display_Update();
+    //print_Msg(F("Checksum: "));
+    //println_Msg(checksumStr);
+    //display_Update();
 
     // Wait for user input
+    println_Msg(F(""));
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
@@ -562,7 +606,6 @@ void writeByte_GB(int myAddress, byte myData) {
 
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
-
   // Leave WR high for at least 50ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
@@ -620,7 +663,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
 
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  if (romType == 252) {
+  if (romType == 252 || romType == 253) {
     // Pull CS(PH3) LOW
     PORTH &= ~(1 << 3);
     // Pull CLK(PH1)(for GB CAM) HIGH
@@ -638,7 +681,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
   // Leave WR low for at least 60ns
   __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
-  if (romType == 252) {
+  if (romType == 252 || romType == 253) {
     // Pull WR(PH5) HIGH
     PORTH |= (1 << 5);
     // Pull CS(PH3) HIGH
@@ -751,6 +794,9 @@ void getCartInfo_GB() {
     case 0x07:
       romBanks = 256;
       break;
+    case 0x08:
+      romBanks = 512;
+      break;
     default:
       romBanks = 2;
   }
@@ -787,7 +833,13 @@ void getCartInfo_GB() {
   else if (sramSize > 1) {
     lastByte = 0xBFFF;
   }
-
+  
+  // MBC6
+  if (romType == 32) {
+    sramBanks = 8;
+    lastByte = 0xAFFF;
+  }
+  
   // Get Checksum as string
   eepbit[6] = sdBuffer[0x14E];
   eepbit[7] = sdBuffer[0x14F];
@@ -811,6 +863,19 @@ void getCartInfo_GB() {
     myLength++;
   }
 
+  // Find Game Serial
+  cartID[0] = 0;
+  if (sdBuffer[0x143] == 0x80 || sdBuffer[0x143] == 0xC0) {
+    if ((romName[myLength - 4] == 'A' || romName[myLength - 4] == 'B' || romName[myLength - 4] == 'H' || romName[myLength - 4] == 'K' || romName[myLength - 4] == 'V') && (romName[myLength - 1] == 'A' || romName[myLength - 1] == 'B' || romName[myLength - 1] == 'D' || romName[myLength - 1] == 'E' || romName[myLength - 1] == 'F' || romName[myLength - 1] == 'I' || romName[myLength - 1] == 'J' || romName[myLength - 1] == 'K' || romName[myLength - 1] == 'P' || romName[myLength - 1] == 'S' || romName[myLength - 1] == 'U' || romName[myLength - 1] == 'X' || romName[myLength - 1] == 'Y')) {
+      cartID[0] = romName[myLength - 4];
+      cartID[1] = romName[myLength - 3];
+      cartID[2] = romName[myLength - 2];
+      cartID[3] = romName[myLength - 1];
+      myLength -= 4;
+      romName[myLength] = 0;
+    }
+  }
+
   // Strip trailing white space
   for (unsigned int i = myLength - 1; i > 0; i--) {
     if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
@@ -831,6 +896,20 @@ void getCartInfo_GB() {
     (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
     romType = 0x0B;
   }
+
+  // MBC1M
+  if (
+    (strncmp(romName, "MOMOCOL", 7) == 0) && (sdBuffer[0x14D] == 0x28) ||
+    (strncmp(romName, "BOMCOL", 6) == 0) && (sdBuffer[0x14D] == 0x86) ||
+    (strncmp(romName, "GENCOL", 6) == 0) && (sdBuffer[0x14D] == 0x8A) ||
+    (strncmp(romName, "SUPERCHINESE 123", 16) == 0) && (sdBuffer[0x14D] == 0xE4) ||
+    (strncmp(romName, "MORTALKOMBATI&II", 16) == 0) && (sdBuffer[0x14D] == 0xB9) ||
+    (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
+    romType += 0x100;
+  }
+  
+  // ROM revision
+  romVersion = sdBuffer[0x14C];
 }
 
 /******************************************
@@ -876,22 +955,59 @@ void readROM_GB() {
   if (romType == 0x104) {
     startBank = 0;
     romBanks >>= 1;
+    endAddress = 0x7FFF;
+  }
+  // MBC6 banks are half size
+  else if (romType == 32) {
+    romBanks <<= 1;
+    endAddress = 0x3FFF;
   }
 
   for (word currBank = startBank; currBank < romBanks; currBank++) {
     // Second bank starts at 0x4000
     if (currBank > 1) {
       romAddress = 0x4000;
+
+      // MBC6 banks are half size
+      if (romType == 32) {
+        endAddress = 0x5FFF;
+      }
     }
 
-    // M161 banks are double size and need mapper reset
+    // Set ROM bank for M161
     if (romType == 0x104) {
       romAddress = 0;
-      endAddress = 0x7FFF;
       PORTH &= ~(1 << 0);
       delay(50);
       PORTH |= (1 << 0);
       writeByte_GB(0x4000, currBank & 0x7);
+    }
+
+    // Set ROM bank for MBC1M
+    else if (romType == 0x101 || romType == 0x103) {
+      if (currBank < 10) {
+          writeByte_GB(0x4000, currBank >> 4);
+          writeByte_GB(0x2000, (currBank & 0x1f));
+      } else {
+          writeByte_GB(0x4000, currBank >> 4);
+          writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
+      }
+    }
+
+    // Set ROM bank for MBC6
+    else if (romType == 32) {
+      writeByte_GB(0x2800, 0);
+      writeByte_GB(0x3800, 0);
+      writeByte_GB(0x2000, currBank);
+      writeByte_GB(0x3000, currBank);
+    }
+
+    // Set ROM bank for TAMA5
+    else if (romType == 0xFD) {
+      writeByteSRAM_GB(0xA001, 0);
+      writeByteSRAM_GB(0xA000, currBank & 0x0f);
+      writeByteSRAM_GB(0xA001, 1);
+      writeByteSRAM_GB(0xA000, (currBank >> 4) & 0x0f);
     }
 
     // Set ROM bank for MBC2/3/4/5
@@ -919,7 +1035,10 @@ void readROM_GB() {
         }
       }
       else {
-        writeByte_GB(0x2100, currBank);
+        if ((romType >= 0x19 && romType <= 0x1E) && (currBank == 0 || currBank == 256)) {
+          writeByte_GB(0x3000, (currBank >> 8) & 0xFF);
+        }
+        writeByte_GB(0x2100, currBank & 0xFF);
       }
     }
     // Set ROM bank for MBC1
@@ -992,15 +1111,15 @@ void compare_checksums_GB() {
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
 
+  print_Msg(F("Checksum: "));
+  print_Msg(calcsumStr);
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    print_Msg(F("Internal: "));
-    print_Msg(calcsumStr);
     println_Msg(F(" -> OK"));
   }
   else {
-    print_Msg(F("Internal: "));
-    println_Msg(calcsumStr);
-    print_Error(F("Checksum Error"), false);
+    print_Msg(F(" != "));
+    println_Msg(checksumStr);
+    print_Error(F("Invalid Checksum"), false);
   }
   compareCRC("gb.txt", 0, 1, 0);
   display_Update();
@@ -1168,6 +1287,243 @@ unsigned long verifySRAM_GB() {
   }
   else {
     print_Error(F("Can't open file"), true);
+  }
+}
+
+// Read SRAM + FLASH save data of MBC6
+void readSRAMFLASH_MBC6_GB() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".sav");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_Msg(F("Saving to "));
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("SD Error"), true);
+  }
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = 0x108000;
+  draw_progressbar(0, totalProgressBar);
+  
+  // Enable Mapper and SRAM
+  writeByte_GB(0x0000, 0x0A);
+
+  // Switch SRAM banks
+  for (byte currBank = 0; currBank < sramBanks; currBank++) {
+    writeByte_GB(0x0400, currBank);
+    writeByte_GB(0x0800, currBank);
+
+    // Read SRAM
+    for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
+      for (byte i = 0; i < 64; i++) {
+        sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
+      }
+      myFile.write(sdBuffer, 64);
+      processedProgressBar += 64;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+
+  // Disable SRAM
+  writeByte_GB(0x0000, 0x00);
+
+  // Enable flash save memory (map to ROM)
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x01);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x08);
+  writeByte_GB(0x3800, 0x08);
+
+  // Switch FLASH banks
+  for (byte currBank = 0; currBank < 128; currBank++) {
+    word romAddress = 0x4000;
+    
+    writeByte_GB(0x2000, currBank);
+    writeByte_GB(0x3000, currBank);
+
+    // Read banks and save to SD
+    while (romAddress <= 0x5FFF) {
+      for (int i = 0; i < 512; i++) {
+        sdBuffer[i] = readByte_GB(romAddress + i);
+      }
+      myFile.write(sdBuffer, 512);
+      romAddress += 512;
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  }
+
+  // Disable flash save memory
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x00);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x00);
+  writeByte_GB(0x3800, 0x00);
+  
+  // Close the file:
+  myFile.close();
+
+  // Signal end of process
+  println_Msg(F("OK"));
+  display_Update();
+}
+
+// Write RAM
+void writeSRAMFLASH_MBC6_GB() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  //open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    display_Clear();
+    println_Msg(F("Writing MBC6 save..."));
+    display_Update();
+    
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = 0x108000;
+    draw_progressbar(0, totalProgressBar);
+
+    // Enable Mapper and SRAM
+    writeByte_GB(0x0000, 0x0A);
+  
+    // Switch SRAM banks
+    for (byte currBank = 0; currBank < sramBanks; currBank++) {
+      writeByte_GB(0x0400, currBank);
+      writeByte_GB(0x0800, currBank);
+
+      // Write SRAM
+      for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
+        writeByteSRAM_GB(sramAddress, myFile.read());
+      }
+
+      processedProgressBar += (lastByte + 1) - 0xA000;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+    
+    // Disable SRAM
+    writeByte_GB(0x0000, 0x00);
+  
+    // Enable flash save memory (map to ROM)
+    writeByte_GB(0x1000, 0x01);
+    writeByte_GB(0x0C00, 0x01);
+    writeByte_GB(0x1000, 0x01);
+    writeByte_GB(0x2800, 0x08);
+    writeByte_GB(0x3800, 0x08);
+    
+    for (byte currBank = 0; currBank < 128; currBank++) {
+      word romAddress = 0x4000;
+      
+      // Erase FLASH sector
+      if (((processedProgressBar - 0x8000) % 0x20000) == 0) {
+        writeByte_GB(0x2800, 0x08);
+        writeByte_GB(0x3800, 0x08);
+        writeByte_GB(0x2000, 0x01);
+        writeByte_GB(0x3000, 0x02);
+        writeByte_GB(0x7555, 0xAA);
+        writeByte_GB(0x4AAA, 0x55);
+        writeByte_GB(0x7555, 0x80);
+        writeByte_GB(0x7555, 0xAA);
+        writeByte_GB(0x4AAA, 0x55);
+        writeByte_GB(0x2800, 0x08);
+        writeByte_GB(0x3800, 0x08);
+        writeByte_GB(0x2000, currBank);
+        writeByte_GB(0x3000, currBank);
+        writeByte_GB(0x4000, 0x30);
+        byte lives = 100;
+        while (1) {
+          byte sr = readByte_GB(0x4000);
+          if (sr == 0x80) break;
+          delay(1);
+          if (lives-- <= 0) {
+            // Disable flash save memory
+            writeByte_GB(0x1000, 0x01);
+            writeByte_GB(0x0C00, 0x00);
+            writeByte_GB(0x1000, 0x00);
+            writeByte_GB(0x2800, 0x00);
+            writeByte_GB(0x3800, 0x00);
+            myFile.close();
+            display_Clear();
+            print_Error(F("Error erasing FLASH sector."), true);
+          }
+        }
+      }
+      else {
+        writeByte_GB(0x2800, 0x08);
+        writeByte_GB(0x3800, 0x08);
+        writeByte_GB(0x2000, currBank);
+        writeByte_GB(0x3000, currBank);
+      }
+      
+      // Write to FLASH
+      while (romAddress <= 0x5FFF) {
+        writeByte_GB(0x2000, 0x01);
+        writeByte_GB(0x3000, 0x02);
+        writeByte_GB(0x7555, 0xAA);
+        writeByte_GB(0x4AAA, 0x55);
+        writeByte_GB(0x7555, 0xA0);
+        writeByte_GB(0x2800, 0x08);
+        writeByte_GB(0x3800, 0x08);
+        writeByte_GB(0x2000, currBank);
+        writeByte_GB(0x3000, currBank);
+        for (int i = 0; i < 128; i++) {
+          writeByte_GB(romAddress++, myFile.read());
+        }
+        writeByte_GB(romAddress - 1, 0x00);
+        byte lives = 100;
+        while (1) {
+          byte sr = readByte_GB(romAddress - 1);
+          if (sr == 0x80) break;
+          delay(1);
+          if (lives-- <= 0) {
+            // Disable flash save memory
+            writeByte_GB(0x1000, 0x01);
+            writeByte_GB(0x0C00, 0x00);
+            writeByte_GB(0x1000, 0x00);
+            writeByte_GB(0x2800, 0x00);
+            writeByte_GB(0x3800, 0x00);
+            myFile.close();
+            display_Clear();
+            print_Error(F("Error writing to FLASH."), true);
+          }
+        }
+        writeByte_GB(romAddress - 1, 0xF0);
+        processedProgressBar += 128;
+        draw_progressbar(processedProgressBar, totalProgressBar);
+      }
+    }
+
+    // Disable flash save memory
+    writeByte_GB(0x1000, 0x01);
+    writeByte_GB(0x0C00, 0x00);
+    writeByte_GB(0x1000, 0x00);
+    writeByte_GB(0x2800, 0x00);
+    writeByte_GB(0x3800, 0x00);
+
+    // Close the file:
+    myFile.close();
+    println_Msg(F("Save writing finished"));
+    display_Update();
+  }
+  else {
+    print_Error(F("File doesnt exist"), false);
   }
 }
 
