@@ -474,9 +474,9 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size, uint32_t crc)
           print_Msg(folder_p);
           print_Msg(F("/"));
           print_Msg(gamename);
-          print_Msg(F(".pce"));
+          //print_Msg(F(".pce"));
           flag = CHKSUM_OK;
-          strcat(gamename, ".pce");
+          //strcat(gamename, ".pce");
           rom.rename(gamename);
           break;
         }
