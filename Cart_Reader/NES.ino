@@ -3171,7 +3171,6 @@ void readPRG(boolean readrom) {
 
       case 70:
       case 89:
-      case 93: // 128K
       case 152: // 64K/128K
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) { // 128K
@@ -3276,7 +3275,18 @@ void readPRG(boolean readrom) {
           }
         }
         break;
-
+      
+      case 93:
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x6000, i);
+          write_prg_byte(0x8000, i << 4 | 0x01);
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
       case 94:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) { // 128K
