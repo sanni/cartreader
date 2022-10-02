@@ -3039,9 +3039,9 @@ void readPRG(boolean readrom) {
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) { // 256K/512K
           if (flashfound)
-            write_prg_byte(0xC000, i); // Flashable
+            write_prg_byte(0xC000+i, i); // Flashable
           else
-            write_prg_byte(0x8000, i); // Non-Flashable
+            write_prg_byte(0x8000+i, i); // Non-Flashable
           for (word address = 0x0; address < 0x4000; address += 512) { // 16K Banks ($8000-$BFFF)
             dumpPRG(base, address);
           }
