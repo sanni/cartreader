@@ -833,13 +833,13 @@ void getCartInfo_GB() {
   else if (sramSize > 1) {
     lastByte = 0xBFFF;
   }
-  
+
   // MBC6
   if (romType == 32) {
     sramBanks = 8;
     lastByte = 0xAFFF;
   }
-  
+
   // Get Checksum as string
   eepbit[6] = sdBuffer[0x14E];
   eepbit[7] = sdBuffer[0x14F];
@@ -907,7 +907,7 @@ void getCartInfo_GB() {
     (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
     romType += 0x100;
   }
-  
+
   // ROM revision
   romVersion = sdBuffer[0x14C];
 }
@@ -986,11 +986,11 @@ void readROM_GB() {
     // Set ROM bank for MBC1M
     else if (romType == 0x101 || romType == 0x103) {
       if (currBank < 10) {
-          writeByte_GB(0x4000, currBank >> 4);
-          writeByte_GB(0x2000, (currBank & 0x1f));
+        writeByte_GB(0x4000, currBank >> 4);
+        writeByte_GB(0x2000, (currBank & 0x1f));
       } else {
-          writeByte_GB(0x4000, currBank >> 4);
-          writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
+        writeByte_GB(0x4000, currBank >> 4);
+        writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
       }
     }
 
@@ -1321,7 +1321,7 @@ void readSRAMFLASH_MBC6_GB() {
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = 0x108000;
   draw_progressbar(0, totalProgressBar);
-  
+
   // Enable Mapper and SRAM
   writeByte_GB(0x0000, 0x0A);
 
@@ -1354,7 +1354,7 @@ void readSRAMFLASH_MBC6_GB() {
   // Switch FLASH banks
   for (byte currBank = 0; currBank < 128; currBank++) {
     word romAddress = 0x4000;
-    
+
     writeByte_GB(0x2000, currBank);
     writeByte_GB(0x3000, currBank);
 
@@ -1376,7 +1376,7 @@ void readSRAMFLASH_MBC6_GB() {
   writeByte_GB(0x1000, 0x00);
   writeByte_GB(0x2800, 0x00);
   writeByte_GB(0x3800, 0x00);
-  
+
   // Close the file:
   myFile.close();
 
@@ -1395,7 +1395,7 @@ void writeSRAMFLASH_MBC6_GB() {
     display_Clear();
     println_Msg(F("Writing MBC6 save..."));
     display_Update();
-    
+
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = 0x108000;
@@ -1403,7 +1403,7 @@ void writeSRAMFLASH_MBC6_GB() {
 
     // Enable Mapper and SRAM
     writeByte_GB(0x0000, 0x0A);
-  
+
     // Switch SRAM banks
     for (byte currBank = 0; currBank < sramBanks; currBank++) {
       writeByte_GB(0x0400, currBank);
@@ -1417,20 +1417,20 @@ void writeSRAMFLASH_MBC6_GB() {
       processedProgressBar += (lastByte + 1) - 0xA000;
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
-    
+
     // Disable SRAM
     writeByte_GB(0x0000, 0x00);
-  
+
     // Enable flash save memory (map to ROM)
     writeByte_GB(0x1000, 0x01);
     writeByte_GB(0x0C00, 0x01);
     writeByte_GB(0x1000, 0x01);
     writeByte_GB(0x2800, 0x08);
     writeByte_GB(0x3800, 0x08);
-    
+
     for (byte currBank = 0; currBank < 128; currBank++) {
       word romAddress = 0x4000;
-      
+
       // Erase FLASH sector
       if (((processedProgressBar - 0x8000) % 0x20000) == 0) {
         writeByte_GB(0x2800, 0x08);
@@ -1471,7 +1471,7 @@ void writeSRAMFLASH_MBC6_GB() {
         writeByte_GB(0x2000, currBank);
         writeByte_GB(0x3000, currBank);
       }
-      
+
       // Write to FLASH
       while (romAddress <= 0x5FFF) {
         writeByte_GB(0x2000, 0x01);

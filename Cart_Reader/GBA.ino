@@ -841,6 +841,11 @@ void getCartInfo_GBA() {
     if (myFile.open("gba.txt", O_READ)) {
       char gamename[100];
 
+#ifdef global_log
+      // Disable log to prevent unnecessary logging
+      dont_log = true;
+#endif
+
       // Loop through file
       while (myFile.available()) {
         // Skip first line with name
@@ -994,6 +999,11 @@ void getCartInfo_GBA() {
       }
       // Close the file:
       myFile.close();
+
+#ifdef global_log
+      // Enable log again
+      dont_log = false;
+#endif
     }
     else {
       print_Error(F("GBA.txt missing"), true);

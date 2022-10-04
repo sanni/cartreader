@@ -785,7 +785,7 @@ void getCartInfo_SNES() {
   print_Msg(F(" ("));
   print_Msg(numBanks);
   println_Msg(F(" banks)"));
-  
+
   //print_Msg(F("Chips: "));
   //println_Msg(romChips);
 
@@ -1253,7 +1253,7 @@ boolean compare_checksum() {
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
   print_Msg(calcsumStr);
-  
+
   if (strcmp(calcsumStr, checksumStr) == 0) {
     println_Msg(F(" -> OK"));
     display_Update();

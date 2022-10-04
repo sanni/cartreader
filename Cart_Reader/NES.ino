@@ -650,6 +650,10 @@ boolean getMapping() {
                 ram = 1; // 1K
             }
 
+#ifdef global_log
+            // Disable log to prevent unnecessary logging
+            dont_log = true;
+#endif
             println_Msg(gamename);
             print_Msg(F("MAPPER:   "));
             println_Msg(mapper);
@@ -695,6 +699,10 @@ boolean getMapping() {
 #endif
             display_Update();
 
+#ifdef global_log
+            // Enable log again
+            dont_log = false;
+#endif
             int b = 0;
             while (1) {
               // Check button input
@@ -800,6 +808,12 @@ void selectMapping() {
 
   // Open database
   if (myFile.open("nes.txt", O_READ)) {
+
+#ifdef global_log
+    // Disable log to prevent unnecessary logging
+    dont_log = true;
+#endif
+
     // Skip ahead to selected starting letter
     if ((myLetter > 0) && (myLetter <= 26)) {
       while (myFile.available()) {
@@ -1049,6 +1063,10 @@ void selectMapping() {
         }
       }
     }
+#ifdef global_log
+    // Enable log again
+    dont_log = false;
+#endif
   }
   else {
     print_Error(F("Database file not found"), true);
