@@ -227,6 +227,11 @@ void nesMenu() {
   switch (answer) {
     // Change Mapper
     case 0:
+      romName[0] = 'C';
+      romName[1] = 'A';
+      romName[2] = 'R';
+      romName[3] = 'T';
+      romName[4] = '\0';
       setMapper();
       checkMapperSize();
       setPRGSize();
@@ -426,6 +431,27 @@ uint32_t uppow2(uint32_t n) {
   return n;
 }
 
+void printPRG() {
+  display_Clear();
+  println_Msg(F("Printing PRG at 0x8000"));
+
+  char myBuffer[3];
+
+  for (word currLine = 0; currLine < 512; currLine += 16) {
+    for (byte currByte = 0; currByte < 16; currByte++) {
+      itoa (read_prg_byte(0x8000 + currLine + currByte), myBuffer, 16);
+      for (word i = 0; i < 2 - strlen(myBuffer); i++) {
+        print_Msg(F("0"));
+      }
+      // Now print the significant bits
+      print_Msg(myBuffer);
+      print_Msg(" ");
+    }
+    println_Msg("");
+  }
+  display_Update();
+}
+
 boolean getMapping() {
   display_Clear();
   println_Msg(F("Searching database"));
@@ -463,6 +489,7 @@ boolean getMapping() {
     romName[1] = 'A';
     romName[2] = 'R';
     romName[3] = 'T';
+    romName[4] = '\0';
     return 0;
   }
   else {
@@ -720,6 +747,7 @@ boolean getMapping() {
                   romName[1] = 'A';
                   romName[2] = 'R';
                   romName[3] = 'T';
+                  romName[4] = '\0';
                 }
 
                 // Save Mapper
@@ -742,10 +770,12 @@ boolean getMapping() {
         println_Msg(F("Using manual selection"));
         display_Update();
         delay(1000);
+        printPRG();
         romName[0] = 'C';
         romName[1] = 'A';
         romName[2] = 'R';
         romName[3] = 'T';
+        romName[4] = '\0';
         return 0;
       }
     }
@@ -1006,6 +1036,7 @@ void selectMapping() {
             romName[1] = 'A';
             romName[2] = 'R';
             romName[3] = 'T';
+            romName[4] = '\0';
           }
 
           // Save Mapper
@@ -3039,9 +3070,9 @@ void readPRG(boolean readrom) {
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) { // 256K/512K
           if (flashfound)
-            write_prg_byte(0xC000+i, i); // Flashable
+            write_prg_byte(0xC000 + i, i); // Flashable
           else
-            write_prg_byte(0x8000+i, i); // Non-Flashable
+            write_prg_byte(0x8000 + i, i); // Non-Flashable
           for (word address = 0x0; address < 0x4000; address += 512) { // 16K Banks ($8000-$BFFF)
             dumpPRG(base, address);
           }
@@ -3275,7 +3306,7 @@ void readPRG(boolean readrom) {
           }
         }
         break;
-      
+
       case 93:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) {
@@ -3286,7 +3317,7 @@ void readPRG(boolean readrom) {
           }
         }
         break;
-        
+
       case 94:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) { // 128K
