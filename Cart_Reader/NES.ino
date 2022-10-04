@@ -2021,6 +2021,11 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
    Config Functions
  *****************************************/
 void setMapper() {
+#ifdef global_log
+  // Disable log to prevent unnecessary logging
+  dont_log = true;
+#endif
+
   // OLED
 #if defined(enable_OLED)
 chooseMapper:
@@ -2256,6 +2261,11 @@ setmapper:
 #endif
   EEPROM_writeAnything(7, newmapper);
   mapper = newmapper;
+
+#ifdef global_log
+  // Enable log again
+  dont_log = false;
+#endif
 }
 
 void checkMapperSize() {
@@ -2275,6 +2285,11 @@ void checkMapperSize() {
 }
 
 void setPRGSize() {
+#ifdef global_log
+  // Disable log to prevent unnecessary logging
+  dont_log = true;
+#endif
+
 #if (defined(enable_LCD) || defined(enable_OLED))
   display_Clear();
   if (prglo == prghi)
@@ -2381,9 +2396,19 @@ setprg:
 #endif
   EEPROM_writeAnything(8, newprgsize);
   prgsize = newprgsize;
+
+#ifdef global_log
+  // Enable log again
+  dont_log = false;
+#endif
 }
 
 void setCHRSize() {
+#ifdef global_log
+  // Disable log to prevent unnecessary logging
+  dont_log = true;
+#endif
+
 #if (defined(enable_LCD) || defined(enable_OLED))
   display_Clear();
   if (chrlo == chrhi)
@@ -2491,9 +2516,19 @@ setchr:
 #endif
   EEPROM_writeAnything(9, newchrsize);
   chrsize = newchrsize;
+
+#ifdef global_log
+  // Enable log again
+  dont_log = false;
+#endif
 }
 
 void setRAMSize() {
+#ifdef global_log
+  // Disable log to prevent unnecessary logging
+  dont_log = true;
+#endif
+
 #if (defined(enable_LCD) || defined(enable_OLED))
   display_Clear();
   if (ramlo == ramhi)
@@ -2734,6 +2769,11 @@ setram:
 #endif
   EEPROM_writeAnything(10, newramsize);
   ramsize = newramsize;
+
+#ifdef global_log
+  // Enable log again
+  dont_log = false;
+#endif
 }
 
 // MMC6 Detection
