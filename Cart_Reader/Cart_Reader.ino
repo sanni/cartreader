@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             28.09.2022
+   Date:             06.10.2022
    Version:          10.0
 
    SD lib: https://github.com/greiman/SdFat
@@ -376,7 +376,8 @@ boolean root = 0;
 boolean filebrowse = 0;
 
 // Common
-char romName[17];
+// 21 chars for SNES ROM name, one char for termination
+char romName[22];
 unsigned long sramSize = 0;
 int romType = 0;
 byte saveType;
@@ -401,9 +402,10 @@ unsigned long writeErrors;
 // Operation mode
 byte mode;
 
-//remember folder number to create a new folder for every save
+//remember folder number to create a new folder for every game
 int foldern;
-char folder[36];
+// 4 chars for console type, 4 chars for SAVE/ROM, 21 chars for ROM name, 4 chars for folder number, 3 chars for slashes, one char for termination, one char savety
+char folder[38];
 
 // Array that holds the data
 byte sdBuffer[512];

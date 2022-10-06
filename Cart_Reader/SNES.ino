@@ -1011,7 +1011,7 @@ boolean checkcart_SNES() {
   // Get name
   byte myByte = 0;
   byte myLength = 0;
-  for (unsigned int i = 0xFFC0; i < 0xFFD4; i++) {
+  for (unsigned int i = 0xFFC0; i < 0xFFD5; i++) {
     myByte = snesHeader[i - headerStart];
     if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
       romName[myLength] = char(myByte);
