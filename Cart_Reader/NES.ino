@@ -457,7 +457,7 @@ boolean getMapping() {
   println_Msg(F("Searching database"));
   display_Update();
 
-  // Read first 512 bytes of prg rom
+  // Read first 512 bytes of PRG ROM
   for (int x = 0; x < 512; x++) {
     sdBuffer[x] = read_prg_byte(0x8000 + x);
   }
@@ -472,8 +472,25 @@ boolean getMapping() {
   char iNES_STR[33];
   sprintf(crcStr, "%08lX", ~oldcrc32);
 
+  //MMC3 maps the last 8KB block of PRG ROM to 0xE000 while 0x8000 can contain random data after bootup
+  char crcStrMMC3[9];
+  // Read first 512 bytes of last block of PRG ROM
+  for (int x = 0; x < 512; x++) {
+    sdBuffer[x] = read_prg_byte(0xE000 + x);
+  }
+  // Calculate CRC32
+  oldcrc32 = 0xFFFFFFFF;
+  for (int c = 0; c < 512; c++) {
+    oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
+  }
+  sprintf(crcStrMMC3, "%08lX", ~oldcrc32);
+
   print_Msg(F("for "));
   print_Msg(crcStr);
+  if (strcmp(crcStrMMC3, crcStr) != 0) {
+    print_Msg(F(" or "));
+    print_Msg(crcStrMMC3);
+  }
   println_Msg(F("..."));
   display_Update();
 
@@ -532,7 +549,7 @@ boolean getMapping() {
         skip_line(&myFile);
 
         //if checksum search successful set mapper and end search
-        if (strcmp(crc_search, crcStr) == 0) {
+        if ((strcmp(crc_search, crcStr) == 0) || (strcmp(crc_search, crcStrMMC3) == 0)) {
 
           // Rewind to start of entry
           for (byte count_newline = 0; count_newline < 4; count_newline++) {
