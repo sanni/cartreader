@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             06.10.2022
+   Date:             07.10.2022
    Version:          10.0
 
    SD lib: https://github.com/greiman/SdFat
@@ -737,18 +737,26 @@ byte starting_letter() {
         line--;
         selection = 6;
       }
+      else if ((selection == 0) && (line == 0)) {
+        line = 3;
+        selection = 6;
+      }
       else if (selection > 0) {
         selection--;
       }
 #if defined(enable_LCD)
       display.setDrawColor(0);
-      display.drawLine(0, 10 + (line + 1) * 16, 128, 10 + (line + 1) * 16);
-      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16);
+      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16);
+      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16);
+      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16);
+      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16);
       display.setDrawColor(1);
       display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
 #elif defined(enable_OLED)
-      display.drawLine(0, 10 + (line + 1) * 16, 128, 10 + (line + 1) * 16, BLACK);
-      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16, BLACK);
+      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16, BLACK);
+      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16, BLACK);
+      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16, BLACK);
+      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16, BLACK);
       display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
 #endif
       display_Update();
@@ -760,18 +768,26 @@ byte starting_letter() {
         line++;
         selection = 0;
       }
+      else if ((selection == 6) && (line == 3)) {
+        line = 0;
+        selection = 0;
+      }
       else if (selection < 6) {
         selection++;
       }
 #if defined(enable_LCD)
       display.setDrawColor(0);
-      display.drawLine(0, 10 + (line - 1) * 16, 128, 10 + (line - 1) * 16);
-      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16);
+      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16);
+      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16);
+      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16);
+      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16);
       display.setDrawColor(1);
       display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
 #elif defined(enable_OLED)
-      display.drawLine(0, 10 + (line - 1) * 16, 128, 10 + (line - 1) * 16, BLACK);
-      display.drawLine(0, 10 + line * 16, 128, 10 + line * 16, BLACK);
+      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16, BLACK);
+      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16, BLACK);
+      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16, BLACK);
+      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16, BLACK);
       display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
 #endif
       display_Update();
