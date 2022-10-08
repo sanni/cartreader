@@ -62,16 +62,18 @@ void print_Msg(long unsigned int message) {
 }
 ```
 
-Before uploading the code to your Arduino you need to select your hardware version in options.h        
+Before uploading the code to your Arduino you need to select your hardware version in Cart_Reader.ino        
 ```
-//******************************************     
-// CHOOSE HARDWARE VERSION     
-//******************************************    
-#define HW4    
-//#define HW3    
-//#define HW2    
-//#define HW1    
-//#define SERIAL_MONITOR    
+//******************************************
+// !!! CHOOSE HARDWARE VERSION !!!
+//******************************************
+// Remove // in front of the line with your hardware version
+// #define HW5
+// #define HW4
+#define HW3
+// #define HW2
+// #define HW1
+// #define SERIAL_MONITOR
 
 ```
 
@@ -80,11 +82,7 @@ For more info please have a look at [this wiki article](https://github.com/sanni
 Needed libraries(already included in the portable Arduino IDE under Releases)   
 
 SD lib: https://github.com/greiman/SdFat    
-OLED lib: https://github.com/adafruit/Adafruit_SSD1306    
-GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library    
-BusIO: https://github.com/adafruit/Adafruit_BusIO    
 LCD lib: https://github.com/olikraus/U8g2_Arduino     
-RGB Tools lib: https://github.com/joushx/Arduino-RGB-Tools (you need to move the files from the src subdir to the root dir of the library)    
 Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel    
 Rotary Enc lib: https://github.com/mathertel/RotaryEncoder    
 SI5351 lib: https://github.com/etherkit/Si5351Arduino        
