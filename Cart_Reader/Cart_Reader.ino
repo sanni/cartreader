@@ -4,13 +4,10 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             07.10.2022
-   Version:          10.0
+   Date:             08.10.2022
+   Version:          10.1
 
    SD lib: https://github.com/greiman/SdFat
-   OLED lib: https://github.com/adafruit/Adafruit_SSD1306
-   GFX Lib: https://github.com/adafruit/Adafruit-GFX-Library
-   BusIO: https://github.com/adafruit/Adafruit_BusIO
    LCD lib: https://github.com/olikraus/u8g2
    Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel
    Rotary Enc lib: https://github.com/mathertel/RotaryEncoder
@@ -59,7 +56,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "10.0";
+char ver[5] = "10.1";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -246,13 +243,8 @@ typedef enum COLOR_T {
 
 // Graphic I2C OLED
 #ifdef enable_OLED
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#include <U8g2lib.h>
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 #endif
 
 // Adafruit Clock Generator
@@ -703,7 +695,7 @@ byte starting_letter() {
   byte line = 0;
 
   display_Clear();
-#if defined(enable_LCD)
+
   println_Msg(F("[#] [A] [B] [C] [D] [E] [F]"));
   println_Msg(F(""));
   println_Msg(F("[G] [H] [ I ] [J] [K] [L] [M]"));
@@ -711,23 +703,10 @@ byte starting_letter() {
   println_Msg(F("[N] [O] [P] [Q] [R] [S] [T]"));
   println_Msg(F(""));
   println_Msg(F("[U] [V] [W] [X] [Y] [Z] [?]"));
-#elif defined(enable_OLED)
-  println_Msg(F("#  A  B  C  D  E  F"));
-  println_Msg(F(""));
-  println_Msg(F("G  H  I  J  K  L  M"));
-  println_Msg(F(""));
-  println_Msg(F("N  O  P  Q  R  S  T"));
-  println_Msg(F(""));
-  println_Msg(F("U  V  W  X  Y  Z  ?"));
-#endif
 
   // Draw selection line
-#if defined(enable_LCD)
   display.setDrawColor(1);
   display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
-#elif defined(enable_OLED)
-  display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
-#endif
   display_Update();
 
   while (1) {
@@ -744,7 +723,6 @@ byte starting_letter() {
       else if (selection > 0) {
         selection--;
       }
-#if defined(enable_LCD)
       display.setDrawColor(0);
       display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16);
       display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16);
@@ -752,13 +730,6 @@ byte starting_letter() {
       display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16);
       display.setDrawColor(1);
       display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
-#elif defined(enable_OLED)
-      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16, BLACK);
-      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16, BLACK);
-      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16, BLACK);
-      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16, BLACK);
-      display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
-#endif
       display_Update();
 
     }
@@ -775,7 +746,6 @@ byte starting_letter() {
       else if (selection < 6) {
         selection++;
       }
-#if defined(enable_LCD)
       display.setDrawColor(0);
       display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16);
       display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16);
@@ -783,13 +753,6 @@ byte starting_letter() {
       display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16);
       display.setDrawColor(1);
       display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
-#elif defined(enable_OLED)
-      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16, BLACK);
-      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16, BLACK);
-      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16, BLACK);
-      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16, BLACK);
-      display.drawLine(selection * 18, 10 + line * 16, 5 + selection * 18, 10 + line * 16, WHITE);
-#endif
       display_Update();
     }
 
@@ -1764,14 +1727,9 @@ void setup() {
 #endif
 
 #ifdef enable_OLED
-  // GLCD
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  // Clear the screen buffer.
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.display();
+  display.begin();
+  //isplay.setContrast(40);
+  display.setFont(u8g2_font_haxrcorp4089_tr);
 #endif
 
 #ifdef enable_serial
@@ -2004,10 +1962,7 @@ void save_log() {
 #endif
 
 void print_Msg(const __FlashStringHelper * string) {
-#ifdef enable_LCD
-  display.print(string);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(string);
 #endif
 #ifdef enable_serial
@@ -2019,7 +1974,7 @@ void print_Msg(const __FlashStringHelper * string) {
 }
 
 void print_Msg(const char myString[]) {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
     int strPos = 0;
@@ -2040,9 +1995,6 @@ void print_Msg(const char myString[]) {
     display.print(myString);
   }
 #endif
-#ifdef enable_OLED
-  display.print(myString);
-#endif
 #ifdef enable_serial
   Serial.print(myString);
 #endif
@@ -2052,10 +2004,7 @@ void print_Msg(const char myString[]) {
 }
 
 void print_Msg(long unsigned int message) {
-#ifdef enable_LCD
-  display.print(message);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message);
 #endif
 #ifdef enable_serial
@@ -2067,10 +2016,7 @@ void print_Msg(long unsigned int message) {
 }
 
 void print_Msg(byte message, int outputFormat) {
-#ifdef enable_LCD
-  display.print(message, outputFormat);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message, outputFormat);
 #endif
 #ifdef enable_serial
@@ -2082,10 +2028,7 @@ void print_Msg(byte message, int outputFormat) {
 }
 
 void print_Msg(word message, int outputFormat) {
-#ifdef enable_LCD
-  display.print(message, outputFormat);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message, outputFormat);
 #endif
 #ifdef enable_serial
@@ -2097,10 +2040,7 @@ void print_Msg(word message, int outputFormat) {
 }
 
 void print_Msg(int message, int outputFormat) {
-#ifdef enable_LCD
-  display.print(message, outputFormat);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message, outputFormat);
 #endif
 #ifdef enable_serial
@@ -2112,10 +2052,7 @@ void print_Msg(int message, int outputFormat) {
 }
 
 void print_Msg(long unsigned int message, int outputFormat) {
-#ifdef enable_LCD
-  display.print(message, outputFormat);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message, outputFormat);
 #endif
 #ifdef enable_serial
@@ -2127,10 +2064,7 @@ void print_Msg(long unsigned int message, int outputFormat) {
 }
 
 void print_Msg(String string) {
-#ifdef enable_LCD
-  display.print(string);
-#endif
-#ifdef enable_OLED
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(string);
 #endif
 #ifdef enable_serial
@@ -2158,12 +2092,9 @@ void print_Msg_PaddedHex32(unsigned long message) {
   print_Msg_PaddedHexByte((message >>  0) & 0xFF);
 }
 void println_Msg(String string) {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(string);
   display.setCursor(0, display.ty + 8);
-#endif
-#ifdef enable_OLED
-  display.println(string);
 #endif
 #ifdef enable_serial
   Serial.println(string);
@@ -2174,12 +2105,9 @@ void println_Msg(String string) {
 }
 
 void println_Msg(byte message, int outputFormat) {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message, outputFormat);
   display.setCursor(0, display.ty + 8);
-#endif
-#ifdef enable_OLED
-  display.println(message, outputFormat);
 #endif
 #ifdef enable_serial
   Serial.println(message, outputFormat);
@@ -2190,7 +2118,7 @@ void println_Msg(byte message, int outputFormat) {
 }
 
 void println_Msg(const char myString[]) {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
     int strPos = 0;
@@ -2212,9 +2140,6 @@ void println_Msg(const char myString[]) {
   }
   display.setCursor(0, display.ty + 8);
 #endif
-#ifdef enable_OLED
-  display.println(myString);
-#endif
 #ifdef enable_serial
   Serial.println(myString);
 #endif
@@ -2224,12 +2149,9 @@ void println_Msg(const char myString[]) {
 }
 
 void println_Msg(const __FlashStringHelper * string) {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(string);
   display.setCursor(0, display.ty + 8);
-#endif
-#ifdef enable_OLED
-  display.println(string);
 #endif
 #ifdef enable_serial
   Serial.println(string);
@@ -2244,12 +2166,9 @@ void println_Msg(const __FlashStringHelper * string) {
 }
 
 void println_Msg(long unsigned int message) {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.print(message);
   display.setCursor(0, display.ty + 8);
-#endif
-#ifdef enable_OLED
-  display.println(message);
 #endif
 #ifdef enable_serial
   Serial.println(message);
@@ -2260,11 +2179,8 @@ void println_Msg(long unsigned int message) {
 }
 
 void display_Update() {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.updateDisplay();
-#endif
-#ifdef enable_OLED
-  display.display();
 #endif
 #ifdef enable_serial
   delay(100);
@@ -2275,99 +2191,103 @@ void display_Update() {
 }
 
 void display_Clear() {
-#ifdef enable_LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
   display.clearDisplay();
   display.setCursor(0, 8);
-#endif
-#ifdef enable_OLED
-  display.clearDisplay();
-  display.setCursor(0, 0);
 #endif
 #ifdef global_log
   if (!dont_log)myLog.println("");
 #endif
 }
 
-unsigned char question_box(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
-#ifdef enable_LCD
-  return questionBox_LCD(question, answers, num_answers, default_choice);
+/******************************************
+  RGB LED
+*****************************************/
+void rgbLed(byte Color) {
+  switch (Color) {
+    case blue_color:
+      setColor_RGB(0, 0, 255);
+      break;
+    case red_color:
+      setColor_RGB(255, 0, 0);
+      break;
+    case purple_color:
+      setColor_RGB(255, 0, 255);
+      break;
+    case green_color:
+      setColor_RGB(0, 255, 0);
+      break;
+    case turquoise_color:
+      setColor_RGB(0, 255, 255);
+      break;
+    case yellow_color:
+      setColor_RGB(255, 255, 0);
+      break;
+    case white_color:
+      setColor_RGB(255, 255, 255);
+      break;
+  }
+}
+
+void blinkLED() {
+#if defined(HW5)
+  PORTD ^= (1 << 7);
+#elif defined(enable_OLED)
+  PORTB ^= (1 << 4);
+#elif defined(enable_LCD)
+  PORTE ^= (1 << 1);
+#elif defined(enable_serial)
+  PORTB ^= (1 << 4);
+  PORTB ^= (1 << 7);
 #endif
-#ifdef enable_OLED
-  return questionBox_OLED(question, answers, num_answers, default_choice);
+}
+
+void statusLED(boolean on) {
+#if defined(HW5)
+  if (!on)
+    PORTD |= (1 << 7);
+  else
+    PORTD &= ~(1 << 7);
+  /*
+    #elif defined(enable_OLED)
+    if (!on)
+      PORTB |= (1 << 4);
+    else
+      PORTB &= ~(1 << 4);
+
+    #elif defined(enable_LCD)
+    if (!on)
+      PORTE |= (1 << 1);
+    else
+      PORTE &= ~(1 << 1);
+
+    #elif defined(enable_serial)
+    if (!on) {
+      PORTB |= (1 << 4);
+      PORTB |= (1 << 7);
+    }
+    else {
+      PORTB &= ~(1 << 4);
+      PORTB &= ~(1 << 7);
+    }
+  */
+#endif
+}
+
+/******************************************
+  Menu system
+*****************************************/
+unsigned char question_box(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
+#if (defined(enable_LCD) || defined(enable_OLED))
+  return questionBox_Display(question, answers, num_answers, default_choice);
 #endif
 #ifdef enable_serial
   return questionBox_Serial(question, answers, num_answers, default_choice);
 #endif
 }
 
-/******************************************
-  Serial Out
-*****************************************/
-#ifdef enable_serial
-int checkButton() {
-  while (Serial.available() == 0) {
-  }
-  incomingByte = Serial.read() - 48;
-
-  //Next
-  if (incomingByte == 52) {
-    return 1;
-  }
-
-  //Previous
-  else if (incomingByte == 69) {
-    return 2;
-  }
-
-  //Selection
-  else if (incomingByte == 240) {
-    return 3;
-  }
-}
-
-void wait_serial() {
-  if (errorLvl) {
-    // Debug
-#ifdef debug_mode
-    ignoreError = 1;
-#endif
-    errorLvl = 0;
-  }
-  while (Serial.available() == 0) {
-  }
-  incomingByte = Serial.read() - 48;
-  /* if ((incomingByte == 53) && (fileName[0] != '\0')) {
-      // Open file on sd card
-      sd.chdir(folder);
-      if (myFile.open(fileName, O_READ)) {
-        // Get rom size from file
-        fileSize = myFile.fileSize();
-
-        // Send filesize
-        char tempStr[16];
-        sprintf(tempStr, "%d", fileSize);
-        Serial.write(tempStr);
-
-        // Wait for ok
-        while (Serial.available() == 0) {
-        }
-
-        // Send file
-        for (unsigned long currByte = 0; currByte < fileSize; currByte++) {
-          // Blink led
-          if (currByte % 1024 == 0)
-            blinkLED();
-          Serial.write(myFile.read());
-        }
-        // Close the file:
-        myFile.close();
-      }
-      else {
-        print_Error(F("Can't open file"), true);
-      }
-    }*/
-}
-
+#if defined(enable_serial)
+// Serial Monitor
 byte questionBox_Serial(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
   //Serial.println(question);
@@ -2453,221 +2373,10 @@ byte questionBox_Serial(const __FlashStringHelper * question, char answers[7][20
 }
 #endif
 
-/******************************************
-  RGB LED
-*****************************************/
-void rgbLed(byte Color) {
-  switch (Color) {
-    case blue_color:
-      setColor_RGB(0, 0, 255);
-      break;
-    case red_color:
-      setColor_RGB(255, 0, 0);
-      break;
-    case purple_color:
-      setColor_RGB(255, 0, 255);
-      break;
-    case green_color:
-      setColor_RGB(0, 255, 0);
-      break;
-    case turquoise_color:
-      setColor_RGB(0, 255, 255);
-      break;
-    case yellow_color:
-      setColor_RGB(255, 255, 0);
-      break;
-    case white_color:
-      setColor_RGB(255, 255, 255);
-      break;
-  }
-}
-
-void blinkLED() {
-#if defined(HW5)
-  PORTD ^= (1 << 7);
-#elif defined(enable_OLED)
-  PORTB ^= (1 << 4);
-#elif defined(enable_LCD)
-  PORTE ^= (1 << 1);
-#elif defined(enable_serial)
-  PORTB ^= (1 << 4);
-  PORTB ^= (1 << 7);
-#endif
-}
-
-void statusLED(boolean on) {
-#if defined(HW5)
-  if (!on)
-    PORTD |= (1 << 7);
-  else
-    PORTD &= ~(1 << 7);
-  /*
-    #elif defined(enable_OLED)
-    if (!on)
-      PORTB |= (1 << 4);
-    else
-      PORTB &= ~(1 << 4);
-
-    #elif defined(enable_LCD)
-    if (!on)
-      PORTE |= (1 << 1);
-    else
-      PORTE &= ~(1 << 1);
-
-    #elif defined(enable_serial)
-    if (!on) {
-      PORTB |= (1 << 4);
-      PORTB |= (1 << 7);
-    }
-    else {
-      PORTB &= ~(1 << 4);
-      PORTB &= ~(1 << 7);
-    }
-  */
-#endif
-}
-
-/******************************************
-  LCD Menu Module
-*****************************************/
-#if (defined(enable_LCD) && defined(enable_rotary))
-// Read encoder state
-int checkButton() {
-  // Read rotary encoder
-  encoder.tick();
-  int newPos = encoder.getPosition();
-  // Read button
-  boolean reading = (PING & (1 << PING2)) >> PING2;
-
-  // Check if rotary encoder has changed
-  if (rotaryPos != newPos) {
-    int rotaryDir = (int)encoder.getDirection();
-    if (rotaryDir == 1) {
-      rotaryPos = newPos;
-      return 1;
-    }
-    else if (rotaryDir == -1) {
-      rotaryPos = newPos;
-      return 2;
-    }
-    else {
-      return 0;
-    }
-  }
-  else if (reading == buttonState) {
-    return 0;
-  }
-  // Check if button has changed
-  else {
-    if (reading != lastButtonState) {
-      lastDebounceTime = millis();
-    }
-    // Debounce button
-    if ((millis() - lastDebounceTime) > debounceDelay) {
-      if (reading != buttonState) {
-        buttonState = reading;
-        // Button was pressed down
-        if (buttonState == 0) {
-          unsigned long pushTime = millis();
-          // Wait until button was let go again
-          while ((PING & (1 << PING2)) >> PING2 == 0);
-          lastButtonState = reading;
-
-          // If the hold time was over 10 seconds, super long press for resetting eeprom in about screen
-          if (millis() - pushTime > 10000) {
-            return 4;
-          }
-          // long press
-          else {
-            return 3;
-          }
-        }
-      }
-      else {
-        lastButtonState = reading;
-        return 0;
-      }
-    }
-    else {
-      lastButtonState = reading;
-      return 0;
-    }
-  }
-}
-
-// Wait for user to push button
-void wait_btn() {
-  // Change led to green
-  if (errorLvl == 0)
-    rgbLed(green_color);
-
-  while (1)
-  {
-    // get input button
-    int b = checkButton();
-
-#ifdef enable_N64
-#ifndef clockgen_installed
-    // Send some clock pulses to the Eeprom in case it locked up
-    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
-      pulseClock_N64(1);
-    }
-#endif
-#endif
-
-    // if the cart readers input button is pressed shortly
-    if (b == 1) {
-      errorLvl = 0;
-      break;
-    }
-
-    // if the cart readers input button is pressed long
-    if (b == 3) {
-      if (errorLvl) {
-        // Debug
-#ifdef debug_mode
-        ignoreError = 1;
-#endif
-        errorLvl = 0;
-      }
-      break;
-    }
-  }
-}
-
-// Wait for user to rotate knob
-void wait_encoder() {
-  // Change led to green
-  if (errorLvl == 0)
-    rgbLed(green_color);
-
-  while (1)
-  {
-    // Get rotary encoder
-    encoder.tick();
-    int newPos = encoder.getPosition();
-
-#ifdef enable_N64
-#ifndef clockgen_installed
-    // Send some clock pulses to the Eeprom in case it locked up
-    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
-      pulseClock_N64(1);
-    }
-#endif
-#endif
-
-    if (rotaryPos != newPos) {
-      rotaryPos = newPos;
-      errorLvl = 0;
-      break;
-    }
-  }
-}
-#endif
-
-#ifdef enable_LCD
+// OLED & LCD
+#if (defined(enable_LCD) || defined(enable_OLED))
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
-unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char questionBox_Display(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
   //clear the screen
   display.clearDisplay();
   display.updateDisplay();
@@ -2811,9 +2520,77 @@ unsigned char questionBox_LCD(const __FlashStringHelper * question, char answers
 #endif
 
 /******************************************
-  OLED Menu Module
+  User Control
 *****************************************/
-#ifdef enable_OLED
+// Using Serial Monitor
+#if defined(enable_serial)
+int checkButton() {
+  while (Serial.available() == 0) {
+  }
+  incomingByte = Serial.read() - 48;
+
+  //Next
+  if (incomingByte == 52) {
+    return 1;
+  }
+
+  //Previous
+  else if (incomingByte == 69) {
+    return 2;
+  }
+
+  //Selection
+  else if (incomingByte == 240) {
+    return 3;
+  }
+}
+
+void wait_serial() {
+  if (errorLvl) {
+    // Debug
+#ifdef debug_mode
+    ignoreError = 1;
+#endif
+    errorLvl = 0;
+  }
+  while (Serial.available() == 0) {
+  }
+  incomingByte = Serial.read() - 48;
+  /* if ((incomingByte == 53) && (fileName[0] != '\0')) {
+      // Open file on sd card
+      sd.chdir(folder);
+      if (myFile.open(fileName, O_READ)) {
+        // Get rom size from file
+        fileSize = myFile.fileSize();
+
+        // Send filesize
+        char tempStr[16];
+        sprintf(tempStr, "%d", fileSize);
+        Serial.write(tempStr);
+
+        // Wait for ok
+        while (Serial.available() == 0) {
+        }
+
+        // Send file
+        for (unsigned long currByte = 0; currByte < fileSize; currByte++) {
+          // Blink led
+          if (currByte % 1024 == 0)
+            blinkLED();
+          Serial.write(myFile.read());
+        }
+        // Close the file:
+        myFile.close();
+      }
+      else {
+        print_Error(F("Can't open file"), true);
+      }
+    }*/
+}
+#endif
+
+// Using one or two push buttons (HW1/HW2/HW3)
+#if defined(enable_OLED)
 // Read button state
 int checkButton() {
 #ifdef enable_Button2
@@ -2985,132 +2762,141 @@ void wait_btn() {
     }
   }
 }
+#endif
 
-// Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
-unsigned char questionBox_OLED(const __FlashStringHelper * question, char answers[7][20], int num_answers, int default_choice) {
-  //clear the screen
-  display.clearDisplay();
-  display.display();
-  display.setCursor(0, 0);
+// Using rotary encoder (HW4/HW5)
+#if (defined(enable_LCD) && defined(enable_rotary))
+// Read encoder state
+int checkButton() {
+  // Read rotary encoder
+  encoder.tick();
+  int newPos = encoder.getPosition();
+  // Read button
+  boolean reading = (PING & (1 << PING2)) >> PING2;
 
-  // change the rgb led to the start menu color
-  rgbLed(default_choice);
-
-  // print menu
-  display.println(question);
-  for (unsigned char i = 0; i < num_answers; i++) {
-    // Add space for the selection dot
-    display.print(" ");
-    // Print menu item
-    display.println(answers[i]);
+  // Check if rotary encoder has changed
+  if (rotaryPos != newPos) {
+    int rotaryDir = (int)encoder.getDirection();
+    if (rotaryDir == 1) {
+      rotaryPos = newPos;
+      return 1;
+    }
+    else if (rotaryDir == -1) {
+      rotaryPos = newPos;
+      return 2;
+    }
+    else {
+      return 0;
+    }
   }
-  display.display();
+  else if (reading == buttonState) {
+    return 0;
+  }
+  // Check if button has changed
+  else {
+    if (reading != lastButtonState) {
+      lastDebounceTime = millis();
+    }
+    // Debounce button
+    if ((millis() - lastDebounceTime) > debounceDelay) {
+      if (reading != buttonState) {
+        buttonState = reading;
+        // Button was pressed down
+        if (buttonState == 0) {
+          unsigned long pushTime = millis();
+          // Wait until button was let go again
+          while ((PING & (1 << PING2)) >> PING2 == 0);
+          lastButtonState = reading;
 
-  // start with the default choice
-  choice = default_choice;
-
-  // draw selection box
-  display.fillRect(0, 8 * choice + 10, 3, 4, WHITE);
-  display.display();
-
-  unsigned long idleTime = millis();
-  byte currentColor = 0;
-
-  // wait until user makes his choice
-  while (1) {
-    // Attract Mode
-    if (millis() - idleTime > 300000) {
-      if ((millis() - idleTime) % 4000 == 0) {
-        if (currentColor < 7) {
-          currentColor++;
-          if (currentColor == 1) {
-            currentColor = 2; // skip red as that signifies an error to the user
+          // If the hold time was over 10 seconds, super long press for resetting eeprom in about screen
+          if (millis() - pushTime > 10000) {
+            return 4;
+          }
+          // long press
+          else {
+            return 3;
           }
         }
-        else {
-          currentColor = 0;
-        }
-      }
-      rgbLed(currentColor);
-    }
-
-    /* Check Button
-      1 click
-      2 doubleClick
-      3 hold
-      4 longHold */
-    int b = checkButton();
-
-    if (b == 2) {
-      idleTime = millis();
-
-      // remove selection box
-      display.fillRect(0, 8 * choice + 10, 3, 4, BLACK);
-      display.display();
-
-      if ((choice == 0) && (filebrowse == 1)) {
-        if (currPage > 1) {
-          lastPage = currPage;
-          currPage--;
-          break;
-        }
-        else {
-          root = 1;
-          break;
-        }
-      }
-      else if (choice > 0) {
-        choice--;
       }
       else {
-        choice = num_answers - 1;
+        lastButtonState = reading;
+        return 0;
       }
-
-      // draw selection box
-      display.fillRect(0, 8 * choice + 10, 3, 4, WHITE);
-      display.display();
-
-      // change RGB led to the color of the current menu option
-      rgbLed(choice);
     }
+    else {
+      lastButtonState = reading;
+      return 0;
+    }
+  }
+}
 
-    // go one down in the menu if the Cart Dumpers button is clicked shortly
+// Wait for user to push button
+void wait_btn() {
+  // Change led to green
+  if (errorLvl == 0)
+    rgbLed(green_color);
 
+  while (1)
+  {
+    // get input button
+    int b = checkButton();
+
+#ifdef enable_N64
+#ifndef clockgen_installed
+    // Send some clock pulses to the Eeprom in case it locked up
+    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
+      pulseClock_N64(1);
+    }
+#endif
+#endif
+
+    // if the cart readers input button is pressed shortly
     if (b == 1) {
-      idleTime = millis();
-
-      // remove selection box
-      display.fillRect(0, 8 * choice + 10, 3, 4, BLACK);
-      display.display();
-
-      if ((choice == num_answers - 1 ) && (numPages > currPage) && (filebrowse == 1)) {
-        lastPage = currPage;
-        currPage++;
-        break;
-      }
-      else
-        choice = (choice + 1) % num_answers;
-
-      // draw selection box
-      display.fillRect(0, 8 * choice + 10, 3, 4, WHITE);
-      display.display();
-
-      // change RGB led to the color of the current menu option
-      rgbLed(choice);
+      errorLvl = 0;
+      break;
     }
 
-    // if the Cart Dumpers button is hold continiously leave the menu
-    // so the currently highlighted action can be executed
-
+    // if the cart readers input button is pressed long
     if (b == 3) {
-      idleTime = millis();
+      if (errorLvl) {
+        // Debug
+#ifdef debug_mode
+        ignoreError = 1;
+#endif
+        errorLvl = 0;
+      }
       break;
     }
   }
+}
 
-  // pass on user choice
-  setColor_RGB(0, 0, 0);
-  return choice;
+// Wait for user to rotate knob
+void wait_encoder() {
+  // Change led to green
+  if (errorLvl == 0)
+    rgbLed(green_color);
+
+  while (1)
+  {
+    // Get rotary encoder
+    encoder.tick();
+    int newPos = encoder.getPosition();
+
+#ifdef enable_N64
+#ifndef clockgen_installed
+    // Send some clock pulses to the Eeprom in case it locked up
+    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
+      pulseClock_N64(1);
+    }
+#endif
+#endif
+
+    if (rotaryPos != newPos) {
+      rotaryPos = newPos;
+      errorLvl = 0;
+      break;
+    }
+  }
 }
 #endif
 

@@ -886,11 +886,7 @@ void getCartInfo_GBA() {
             display_Clear();
 
             // Read game name
-#if defined(enable_OLED)
-            get_line(gamename, &myFile, 42);
-#else
             get_line(gamename, &myFile, 96);
-#endif
 
             // Skip over the CRC checksum
             myFile.seekSet(myFile.curPosition() + 9);

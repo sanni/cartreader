@@ -576,11 +576,7 @@ boolean getMapping() {
             display_Clear();
 
             // Read game name
-#if defined(enable_OLED)
-            get_line(gamename, &myFile, 42);
-#else
             get_line(gamename, &myFile, 96);
-#endif
 
             // Read CRC32 checksum
             sprintf(checksumStr, "%c", myFile.read());
@@ -848,21 +844,13 @@ void selectMapping() {
       if ((myLetter > 0) && (myLetter <= 26)) {
         while (myFile.available()) {
           // Read current name
-#if defined(enable_OLED)
-          get_line(gamename, &myFile, 42);
-#else
           get_line(gamename, &myFile, 96);
-#endif
 
           // Compare selected letter with first letter of current name until match
           while (gamename[0] != 64 + myLetter) {
             skip_line(&myFile);
             skip_line(&myFile);
-#if defined(enable_OLED)
-            get_line(gamename, &myFile, 42);
-#else
             get_line(gamename, &myFile, 96);
-#endif
           }
           break;
         }
@@ -891,11 +879,7 @@ void selectMapping() {
         display_Clear();
 
         // Read game name
-#if defined(enable_OLED)
-        get_line(gamename, &myFile, 42);
-#else
         get_line(gamename, &myFile, 96);
-#endif
 
         // Read CRC32 checksum
         sprintf(checksumStr, "%c", myFile.read());
@@ -2085,19 +2069,26 @@ chooseMapper:
       println_Msg(F("Press right to select"));
 
       if (digit == 0) {
-        display.drawLine(20, 30, 30, 30, WHITE);
-        display.drawLine(40, 30, 50, 30, BLACK);
-        display.drawLine(60, 30, 70, 30, BLACK);
+        display.setDrawColor(1);
+        display.drawLine(20, 30, 30, 30);
+        display.setDrawColor(0);
+        display.drawLine(40, 30, 50, 30);
+        display.drawLine(60, 30, 70, 30);
       }
       else if (digit == 1) {
-        display.drawLine(20, 30, 30, 30, BLACK);
-        display.drawLine(40, 30, 50, 30, WHITE);
-        display.drawLine(60, 30, 70, 30, BLACK);
+        display.setDrawColor(0);
+        display.drawLine(20, 30, 30, 30);
+        display.setDrawColor(1);
+        display.drawLine(40, 30, 50, 30);
+        display.setDrawColor(0);
+        display.drawLine(60, 30, 70, 30);
       }
       else if (digit == 2) {
-        display.drawLine(20, 30, 30, 30, BLACK);
-        display.drawLine(40, 30, 50, 30, BLACK);
-        display.drawLine(60, 30, 70, 30, WHITE);
+        display.setDrawColor(0);
+        display.drawLine(20, 30, 30, 30);
+        display.drawLine(40, 30, 50, 30);
+        display.setDrawColor(1);
+        display.drawLine(60, 30, 70, 30);
       }
 
       /* Check Button
@@ -4853,10 +4844,7 @@ void writeFLASH() {
           }
         }
 
-#if defined(enable_OLED)
-        display.print(F("*"));
-        display.display();
-#elif  defined(enable_LCD)
+#if (defined(enable_LCD) || defined(enable_OLED))
         display.print(F("*"));
         display.updateDisplay();
 #else

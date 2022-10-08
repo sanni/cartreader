@@ -423,11 +423,7 @@ void setCart_COL() {
       display_Clear();
 
       // Read game name
-#if defined(enable_OLED)
-      get_line(gamename, &myFile, 42);
-#else
       get_line(gamename, &myFile, 96);
-#endif
 
       // Read CRC32 checksum
       sprintf(checksumStr, "%c", myFile.read());
