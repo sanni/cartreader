@@ -29,8 +29,8 @@ boolean altconf = 0;
   Menu
 *****************************************/
 // SNES/Nintendo Power SF Memory start menu
-static const char snsMenuItem1[] PROGMEM = "Super Nintendo";
-static const char snsMenuItem2[] PROGMEM = "NPower SF Memory";
+static const char snsMenuItem1[] PROGMEM = "SNES/SFC cartridge";
+static const char snsMenuItem2[] PROGMEM = "SF Memory Cassette";
 static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "Flash repro";
 #ifdef clockgen_calibration

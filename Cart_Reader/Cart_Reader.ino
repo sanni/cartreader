@@ -789,7 +789,7 @@ byte starting_letter() {
 // Main menu
 static const char modeItem1[] PROGMEM = "Game Boy";
 static const char modeItem2[] PROGMEM = "NES/Famicom";
-static const char modeItem3[] PROGMEM = "Super Nintendo";
+static const char modeItem3[] PROGMEM = "Super Nintendo/SFC";
 static const char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
 static const char modeItem5[] PROGMEM = "Mega Drive";
 static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
@@ -977,9 +977,17 @@ void mainMenu() {
 #else
 // Main menu
 static const char modeItem1[] PROGMEM = "Add-ons";
-static const char modeItem2[] PROGMEM = "Super Nintendo";
+#if defined(clockgen_installed)
+static const char modeItem2[] PROGMEM = "SNES & SFC (CLK0+1)";
+#else
+static const char modeItem2[] PROGMEM = "SNES & SFC";
+#endif
 static const char modeItem3[] PROGMEM = "Mega Drive";
-static const char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
+#if defined(clockgen_installed)
+static const char modeItem4[] PROGMEM = "N64 (3V EEP CLK1)";
+#else
+static const char modeItem4[] PROGMEM = "Nintendo 64(3V EEP)";
+#endif
 static const char modeItem5[] PROGMEM = "Game Boy";
 static const char modeItem6[] PROGMEM = "About";
 static const char modeItem7[] PROGMEM = "Reset";
@@ -2205,6 +2213,17 @@ void display_Clear() {
 #endif
 #ifdef global_log
   if (!dont_log)myLog.println("");
+#endif
+}
+
+void display_Clear_Slow() {
+#if (defined(enable_LCD) || defined(enable_OLED))
+  display.setDrawColor(0);
+  for (byte y = 0; y < 64; y++) {
+    display.drawLine(0, y, 128, y);
+  }
+  display.setDrawColor(1);
+  display.setCursor(0, 8);
 #endif
 }
 

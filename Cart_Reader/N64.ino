@@ -181,7 +181,7 @@ void n64ControllerMenu() {
       display_Clear();
       display_Update();
 #if (defined(enable_OLED) || defined(enable_LCD))
-      controllerTest_LCD();
+      controllerTest_Display();
 #elif defined(enable_serial)
       controllerTest_Serial();
 #endif
@@ -979,7 +979,7 @@ void nextscreen()
   }
 }
 
-void controllerTest_LCD() {
+void controllerTest_Display() {
   int mode = 0;
 
   //name of the current displayed result
@@ -1028,6 +1028,12 @@ void controllerTest_LCD() {
   int results = 0;
   int prevStickX = 0;
 
+  String stickx;
+  String sticky;
+  String stickx_old;
+  String sticky_old;
+  String button_old;
+
   while (quit) {
     // Get Button and analog stick
     get_button();
@@ -1036,21 +1042,41 @@ void controllerTest_LCD() {
     {
       case 1:
         {
-          delay(20);
-          display.clearDisplay();
           display.drawStr(32, 8, "Controller Test");
           display.drawLine(0, 10, 128, 10);
 
-          // Print Button
+          // Delete old button value
+          if (button_old != button) {
+            display.setDrawColor(0);
+            for (byte y = 13; y < 22; y++) {
+              display.drawLine(0, y, 128, y);
+            }
+            display.setDrawColor(1);
+          }
+          // Print button
           printSTR("       " + button + "       ", CENTER, 20);
+          // Save value
+          button_old = button;
 
-          // Print Stick X Value
-          String stickx = String("X: " + String(N64_status.stick_x, DEC) + "   ");
+          // Update stick values
+          stickx = String("X: " + String(N64_status.stick_x, DEC) + "   ");
+          sticky = String("Y: " + String(N64_status.stick_y, DEC) + "   ");
+
+          // Delete old stick values
+          if ((stickx_old != stickx) || (sticky_old != sticky)) {
+            display.setDrawColor(0);
+            for (byte y = 31; y < 38; y++) {
+              display.drawLine(0, y, 128, y);
+            }
+            display.setDrawColor(1);
+          }
+
+          // Print stick values
           printSTR(stickx, 36, 38);
-
-          // Print Stick Y Value
-          String sticky = String("Y: " + String(N64_status.stick_y, DEC) + "   ");
           printSTR(sticky, 74, 38);
+          // Save values
+          stickx_old = stickx;
+          sticky_old = sticky;
 
           printSTR("(Continue with START)", 16, 55);
 
@@ -1102,8 +1128,7 @@ void controllerTest_LCD() {
             display.drawCircle(10 + xax + N64_status.stick_x / 4, 12 + yax - N64_status.stick_y / 4, 2);
             //Update LCD
             display.updateDisplay();
-            delay(20);
-            display.clearDisplay();
+            display_Clear_Slow();
           }
 
           // switch mode
@@ -1164,7 +1189,7 @@ void controllerTest_LCD() {
                 {
                   case 0:
                     {
-                      anastick = "YOURS";
+                      anastick = "Your Stick";
                       upx = bupx;
                       upy = bupy;
                       uprightx = buprightx;
@@ -1187,13 +1212,38 @@ void controllerTest_LCD() {
                         // reset button
                         lastbutton = "N/A";
                         results = 1;
+                        display.clearDisplay();
+                        break;
                       }
+                      printSTR(anastick, 22 + 50, 15);
 
+                      display.drawStr(22 + 50, 25, "U:");
+                      printSTR(String(upy), 100, 25);
+                      display.drawStr(22 + 50, 35, "D:");
+                      printSTR(String(downy), 100, 35);
+                      display.drawStr(22 + 50, 45, "L:");
+                      printSTR(String(leftx), 100, 45);
+                      display.drawStr(22 + 50, 55, "R:");
+                      printSTR(String(rightx), 100, 55);
+
+                      display.drawLine(xax + upx / 4, yax - upy / 4, xax + uprightx / 4, yax - uprighty / 4);
+                      display.drawLine(xax + uprightx / 4, yax - uprighty / 4, xax + rightx / 4, yax - righty / 4);
+                      display.drawLine(xax + rightx / 4, yax - righty / 4, xax + downrightx / 4, yax - downrighty / 4);
+                      display.drawLine(xax + downrightx / 4, yax - downrighty / 4, xax + downx / 4, yax - downy / 4);
+                      display.drawLine(xax + downx / 4, yax - downy / 4, xax + downleftx / 4, yax - downlefty / 4);
+                      display.drawLine(xax + downleftx / 4, yax - downlefty / 4, xax + leftx / 4, yax - lefty / 4);
+                      display.drawLine(xax + leftx / 4, yax - lefty / 4, xax + upleftx / 4, yax - uplefty / 4);
+                      display.drawLine(xax + upleftx / 4, yax - uplefty / 4, xax + upx / 4, yax - upy / 4);
+
+                      display.drawPixel(xax, yax);
+
+                      //Update LCD
+                      display.updateDisplay();
                       break;
                     }
                   case 1:
                     {
-                      anastick = "ORIG";
+                      anastick = "Original";
                       upx = 1;
                       upy = 84;
                       uprightx = 67;
@@ -1216,38 +1266,37 @@ void controllerTest_LCD() {
                         // reset button
                         lastbutton = "N/A";
                         results = 0;
+                        display.clearDisplay();
+                        break;
                       }
+                      printSTR(anastick, 22 + 50, 15);
+
+                      display.drawStr(22 + 50, 25, "U:");
+                      printSTR(String(upy), 100, 25);
+                      display.drawStr(22 + 50, 35, "D:");
+                      printSTR(String(downy), 100, 35);
+                      display.drawStr(22 + 50, 45, "L:");
+                      printSTR(String(leftx), 100, 45);
+                      display.drawStr(22 + 50, 55, "R:");
+                      printSTR(String(rightx), 100, 55);
+
+                      display.drawLine(xax + upx / 4, yax - upy / 4, xax + uprightx / 4, yax - uprighty / 4);
+                      display.drawLine(xax + uprightx / 4, yax - uprighty / 4, xax + rightx / 4, yax - righty / 4);
+                      display.drawLine(xax + rightx / 4, yax - righty / 4, xax + downrightx / 4, yax - downrighty / 4);
+                      display.drawLine(xax + downrightx / 4, yax - downrighty / 4, xax + downx / 4, yax - downy / 4);
+                      display.drawLine(xax + downx / 4, yax - downy / 4, xax + downleftx / 4, yax - downlefty / 4);
+                      display.drawLine(xax + downleftx / 4, yax - downlefty / 4, xax + leftx / 4, yax - lefty / 4);
+                      display.drawLine(xax + leftx / 4, yax - lefty / 4, xax + upleftx / 4, yax - uplefty / 4);
+                      display.drawLine(xax + upleftx / 4, yax - uplefty / 4, xax + upx / 4, yax - upy / 4);
+
+                      display.drawPixel(xax, yax);
+
+                      //Update LCD
+                      display.updateDisplay();
                       break;
                     }
 
                 } //results
-                delay(20);
-                display.clearDisplay();
-
-                printSTR(anastick, 22 + 50, 15);
-
-                display.drawStr(22 + 50, 25, "U:");
-                printSTR(String(upy), 100, 25);
-                display.drawStr(22 + 50, 35, "D:");
-                printSTR(String(downy), 100, 35);
-                display.drawStr(22 + 50, 45, "L:");
-                printSTR(String(leftx), 100, 45);
-                display.drawStr(22 + 50, 55, "R:");
-                printSTR(String(rightx), 100, 55);
-
-                display.drawLine(xax + upx / 4, yax - upy / 4, xax + uprightx / 4, yax - uprighty / 4);
-                display.drawLine(xax + uprightx / 4, yax - uprighty / 4, xax + rightx / 4, yax - righty / 4);
-                display.drawLine(xax + rightx / 4, yax - righty / 4, xax + downrightx / 4, yax - downrighty / 4);
-                display.drawLine(xax + downrightx / 4, yax - downrighty / 4, xax + downx / 4, yax - downy / 4);
-                display.drawLine(xax + downx / 4, yax - downy / 4, xax + downleftx / 4, yax - downlefty / 4);
-                display.drawLine(xax + downleftx / 4, yax - downlefty / 4, xax + leftx / 4, yax - lefty / 4);
-                display.drawLine(xax + leftx / 4, yax - lefty / 4, xax + upleftx / 4, yax - uplefty / 4);
-                display.drawLine(xax + upleftx / 4, yax - uplefty / 4, xax + upx / 4, yax - upy / 4);
-
-                display.drawPixel(xax, yax);
-
-                //Update LCD
-                display.updateDisplay();
                 break;
               } //display results
 
