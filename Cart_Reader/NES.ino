@@ -666,6 +666,7 @@ boolean getMapping() {
 
 #ifdef global_log
             // Disable log to prevent unnecessary logging
+            println_Log(F("Get Mapping from List"));
             dont_log = true;
 #endif
             println_Msg(gamename);
@@ -829,7 +830,6 @@ void selectMapping() {
     setPRGSize();
     setCHRSize();
     setRAMSize();
-    checkStatus_NES();
   }
   else {
     // Open database
@@ -837,6 +837,7 @@ void selectMapping() {
 
 #ifdef global_log
       // Disable log to prevent unnecessary logging
+      println_Log(F("Select Mapping from List"));
       dont_log = true;
 #endif
 
@@ -2038,6 +2039,7 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
 void setMapper() {
 #ifdef global_log
   // Disable log to prevent unnecessary logging
+  println_Log(F("Set Mapper manually"));
   dont_log = true;
 #endif
 
@@ -2046,51 +2048,57 @@ void setMapper() {
 chooseMapper:
   // Read stored mapper
   EEPROM_readAnything(7, newmapper);
-  if (newmapper > 220)
+  if ((newmapper > 220) || (newmapper < 0))
     newmapper = 0;
   // Split into digits
   byte hundreds = newmapper / 100;
   byte tens = newmapper / 10 - hundreds * 10;
   byte units = newmapper - hundreds * 100 - tens * 10;
 
-  // Cycle through al 3 digits
-  for (byte digit = 0; digit < 3; digit++) {
+  // Cycle through all 3 digits
+  byte digit = 0;
+  while (digit < 3) {
+    display_Clear();
+    println_Msg(F("Select Mapper:"));
+    display.setCursor(23, 20);
+    println_Msg(hundreds);
+    display.setCursor(43, 20);
+    println_Msg(tens);
+    display.setCursor(63, 20);
+    println_Msg(units);
+    println_Msg("");
+    println_Msg("");
+    println_Msg("");
+    println_Msg(F("Press left to change"));
+    println_Msg(F("Press right to select"));
+
+    if (digit == 0) {
+      display.setDrawColor(1);
+      display.drawLine(20, 30, 30, 30);
+      display.setDrawColor(0);
+      display.drawLine(40, 30, 50, 30);
+      display.drawLine(60, 30, 70, 30);
+      display.setDrawColor(1);
+    }
+    else if (digit == 1) {
+      display.setDrawColor(0);
+      display.drawLine(20, 30, 30, 30);
+      display.setDrawColor(1);
+      display.drawLine(40, 30, 50, 30);
+      display.setDrawColor(0);
+      display.drawLine(60, 30, 70, 30);
+      display.setDrawColor(1);
+    }
+    else if (digit == 2) {
+      display.setDrawColor(0);
+      display.drawLine(20, 30, 30, 30);
+      display.drawLine(40, 30, 50, 30);
+      display.setDrawColor(1);
+      display.drawLine(60, 30, 70, 30);
+    }
+    display.updateDisplay();
+
     while (1) {
-      display_Clear();
-      println_Msg(F("Select Mapper:"));
-      display.setCursor(23, 20);
-      println_Msg(hundreds);
-      display.setCursor(43, 20);
-      println_Msg(tens);
-      display.setCursor(63, 20);
-      println_Msg(units);
-      println_Msg("");
-      println_Msg(F("Press left to change"));
-      println_Msg(F("Press right to select"));
-
-      if (digit == 0) {
-        display.setDrawColor(1);
-        display.drawLine(20, 30, 30, 30);
-        display.setDrawColor(0);
-        display.drawLine(40, 30, 50, 30);
-        display.drawLine(60, 30, 70, 30);
-      }
-      else if (digit == 1) {
-        display.setDrawColor(0);
-        display.drawLine(20, 30, 30, 30);
-        display.setDrawColor(1);
-        display.drawLine(40, 30, 50, 30);
-        display.setDrawColor(0);
-        display.drawLine(60, 30, 70, 30);
-      }
-      else if (digit == 2) {
-        display.setDrawColor(0);
-        display.drawLine(20, 30, 30, 30);
-        display.drawLine(40, 30, 50, 30);
-        display.setDrawColor(1);
-        display.drawLine(60, 30, 70, 30);
-      }
-
       /* Check Button
          1 click
          2 doubleClick
@@ -2125,6 +2133,7 @@ chooseMapper:
           else
             units = 0;
         }
+        break;
       }
       else if (b == 2) {
         if (digit == 0) {
@@ -2153,12 +2162,12 @@ chooseMapper:
           else
             units = 9;
         }
-      }
-      else if (b == 3) {
         break;
       }
-
-      display.display();
+      else if (b == 3) {
+        digit++;
+        break;
+      }
     }
   }
   display_Clear();
@@ -2176,7 +2185,7 @@ chooseMapper:
   if (!validMapper) {
     errorLvl = 1;
     display.println(F("Mapper not supported"));
-    display.display();
+    display.updateDisplay();
     wait();
     goto chooseMapper;
   }
@@ -2281,6 +2290,7 @@ setmapper:
     goto setmapper;
   }
 #endif
+
   EEPROM_writeAnything(7, newmapper);
   mapper = newmapper;
 
@@ -2309,6 +2319,7 @@ void checkMapperSize() {
 void setPRGSize() {
 #ifdef global_log
   // Disable log to prevent unnecessary logging
+  println_Log(F("Set PRG Size"));
   dont_log = true;
 #endif
 
@@ -2428,6 +2439,7 @@ setprg:
 void setCHRSize() {
 #ifdef global_log
   // Disable log to prevent unnecessary logging
+  println_Log(F("Set CHR Size"));
   dont_log = true;
 #endif
 
@@ -2548,6 +2560,7 @@ setchr:
 void setRAMSize() {
 #ifdef global_log
   // Disable log to prevent unnecessary logging
+  println_Log(F("Set RAM Size"));
   dont_log = true;
 #endif
 

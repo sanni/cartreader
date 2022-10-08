@@ -757,9 +757,11 @@ byte starting_letter() {
     }
 
     else if (b == 3) { // Long Press - Execute
-      display_Clear();
-      println_Msg(F("Please wait..."));
-      display_Update();
+      if ((selection + line * 7) != 27) {
+        display_Clear();
+        println_Msg(F("Please wait..."));
+        display_Update();
+      }
       break;
     }
   }
@@ -1383,7 +1385,7 @@ void clkcal()   {
   display.setCursor(0, 0);
   display.print("Read correction: ");
   display.println(cal_factor);
-  display.display();
+  display.updateDisplay();
   delay(500);
 
   if (cal_factor > INT32_MIN) {
@@ -1958,6 +1960,12 @@ void save_log() {
   }
   // Close the file:
   myFile.close();
+}
+#endif
+
+#ifdef global_log
+void println_Log(const __FlashStringHelper * string) {
+  myLog.println(string);
 }
 #endif
 
