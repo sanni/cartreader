@@ -1698,6 +1698,7 @@ void verifyCRC() {
 
   if (writeErrors == 0) {
     println_Msg(F("Read successfully"));
+    sd.remove(filePath);
     display_Update();
   }
   else {
