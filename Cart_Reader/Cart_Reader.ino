@@ -655,6 +655,7 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
 
           // Rename file to no-intro
           sd.chdir(folder);
+          delay(100);
           if (myFile.open(fileName, O_READ)) {
             myFile.rename(gamename);
             // Close the file:
