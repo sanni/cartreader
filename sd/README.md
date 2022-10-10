@@ -69,7 +69,7 @@ Savetypes:
 6 = 16K Eeprom  
 
 ## nes.txt  
-This file stores the CRC32 of the complete ROM minus the iNES header, the CRC32 of the first 512 bytes after the iNES header and the iNES Header. The iNES header holds all the mapping info.      
+This file stores the CRC32 of the complete ROM minus the iNES header, the CRC32 calculated over the first 512 bytes of the first or last(MMC3) PRG bank and the iNES Header. The iNES header holds all the mapping info.      
 
 Example:   
 89 Dennou Kyuusei Uranai (Japan).nes    
