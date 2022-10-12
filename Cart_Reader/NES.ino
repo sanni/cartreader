@@ -71,6 +71,7 @@ static const byte PROGMEM mapsize [] = {
   76, 3, 3, 5, 5, 0, 0, // namco 109 variant (megami tensei: digital devil story)
   77, 3, 3, 3, 3, 0, 0, // (napoleon senki)
   78, 3, 3, 5, 5, 0, 0, // irem 74hc161/32
+  79, 1, 2, 2, 3, 0, 0, // NINA-03/06 by AVE [UNLICENSED]
   80, 3, 3, 5, 6, 0, 1, // taito x1-005                                       [prgram r/w]
   82, 3, 3, 5, 6, 0, 1, // taito x1-017                                       [prgram r/w]
   85, 3, 5, 0, 5, 0, 1, // vrc7                                               [sram r/w]
@@ -3344,6 +3345,16 @@ void readPRG(boolean readrom) {
         }
         break;
 
+      case 79:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x4100, i << 3);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+      
       case 80: // 128K
       case 207: // 256K [CART SOMETIMES NEEDS POWERCYCLE]
         banks = int_pow(2, prgsize) * 2;
@@ -3919,6 +3930,16 @@ void readCHR(boolean readrom) {
             }
           }
           break;
+          
+        case 79:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x4100, i);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+        break;
 
         case 80: // 128K/256K
         case 82: // 128K/256K
