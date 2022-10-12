@@ -86,5 +86,5 @@ LCD lib: https://github.com/olikraus/U8g2_Arduino
 Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel    
 Rotary Enc lib: https://github.com/mathertel/RotaryEncoder    
 SI5351 lib: https://github.com/etherkit/Si5351Arduino        
-RTC lib: https://github.com/adafruit/RTClib      
+RTC lib: https://github.com/adafruit/RTClib (needs BusIO lib: https://github.com/adafruit/Adafruit_BusIO)     
 Frequency Counter lib: https://github.com/PaulStoffregen/FreqCount    
