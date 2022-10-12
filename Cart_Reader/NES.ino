@@ -39,6 +39,7 @@ static const byte PROGMEM mapsize [] = {
   7, 2, 4, 0, 0, 0, 0, // axrom
   9, 3, 3, 5, 5, 0, 0, // mmc2 (punch out)
   10, 3, 4, 4, 5, 1, 1, // mmc4                                               [sram r/w]
+  11, 1, 3, 1, 5, 0, 0, // Color Dreams [UNLICENSED]
   13, 1, 1, 0, 0, 0, 0, // cprom (videomation)
   16, 3, 4, 5, 6, 0, 1, // bandai x24c02                                      [eep r/w]
   18, 3, 4, 5, 6, 0, 1, // jaleco ss8806                                      [sram r/w]
@@ -3085,7 +3086,17 @@ void readPRG(boolean readrom) {
           dumpPRG(base, address);
         }
         break;
-
+      
+      case 11:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0xFFB0+i, i);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+      
       case 16:
       case 159: // 128K/256K
         banks = int_pow(2, prgsize);
@@ -3625,7 +3636,17 @@ void readCHR(boolean readrom) {
             }
           }
           break;
-
+          
+        case 11:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0xFFB0+i, i << 4);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
         case 16:
         case 159: // 128K/256K
           banks = int_pow(2, chrsize) * 4;
