@@ -89,6 +89,7 @@ static const byte PROGMEM mapsize [] = {
   118, 3, 4, 5, 5, 0, 1, // txsrom/mmc3                                       [sram r/w]
   119, 3, 3, 4, 4, 0, 0, // tqrom/mmc3
   140, 3, 3, 3, 5, 0, 0, // jaleco jf-11/jf-14
+  146, 1, 2, 2, 3, 0, 0, // Sachen 3015 [UNLICENSED]
   152, 2, 3, 5, 5, 0, 0,
   153, 5, 5, 0, 0, 1, 1, // (famicom jump ii)                                 [sram r/w]
   154, 3, 3, 5, 5, 0, 0, // namcot-3453 (devil man)
@@ -3346,6 +3347,7 @@ void readPRG(boolean readrom) {
         break;
 
       case 79:
+      case 146:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x4100, i << 3);
@@ -3932,6 +3934,7 @@ void readCHR(boolean readrom) {
           break;
           
         case 79:
+        case 146:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x4100, i);
