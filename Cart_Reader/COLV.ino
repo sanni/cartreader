@@ -34,9 +34,9 @@
 // /C000(PH5) - CHIP 2 - SNES /WR
 // /E000(PH6) - CHIP 3 - SNES /RD
 
-byte COL[] = {8, 12, 16, 20, 24, 32};
-byte collo = 0; // Lowest Entry
-byte colhi = 5; // Highest Entry
+byte COL[] = { 8, 12, 16, 20, 24, 32 };
+byte collo = 0;  // Lowest Entry
+byte colhi = 5;  // Highest Entry
 
 byte colsize;
 byte newcolsize;
@@ -52,10 +52,9 @@ static const char colMenuItem1[] PROGMEM = "Select Cart";
 static const char colMenuItem2[] PROGMEM = "Read ROM";
 static const char colMenuItem3[] PROGMEM = "Set Size";
 static const char colMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsCOL[] PROGMEM = {colMenuItem1, colMenuItem2, colMenuItem3, colMenuItem4};
+static const char* const menuOptionsCOL[] PROGMEM = { colMenuItem1, colMenuItem2, colMenuItem3, colMenuItem4 };
 
-void setup_COL()
-{
+void setup_COL() {
   // Set Address Pins to Output
   // Colecovision uses A0-A14 [A15-A23 UNUSED]
   //A0-A7
@@ -67,10 +66,10 @@ void setup_COL()
 
   // Set Control Pins to Output
   //       ---(PH0)   ---(PH1)  /8000(PH3) /A000(PH4) /C000(PH5) /E000(PH6)
-  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |=  (1 << 0);
+  DDRJ |= (1 << 0);
 
   // Set Pins (D0-D7) to Input
   DDRC = 0x00;
@@ -84,8 +83,8 @@ void setup_COL()
 
   // Set Unused Pins HIGH
   PORTA = 0xFF;
-  PORTL = 0xFF; // A16-A23
-  PORTJ |= (1 << 0); // TIME(PJ0)
+  PORTL = 0xFF;       // A16-A23
+  PORTJ |= (1 << 0);  // TIME(PJ0)
 
   checkStatus_COL();
   strcpy(romName, "COLECO");
@@ -93,13 +92,11 @@ void setup_COL()
   mode = mode_COL;
 }
 
-void colMenu()
-{
+void colMenu() {
   convertPgm(menuOptionsCOL, 4);
   uint8_t mainMenu = question_box(F("COLECOVISION MENU"), menuOptions, 4, 0);
 
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       // Select Cart
       setCart_COL();
@@ -134,31 +131,29 @@ void colMenu()
 // /C000(PH5) - CHIP 2
 // /E000(PH6) - CHIP 3
 
-uint8_t readData_COL(uint32_t addr)
-{
+uint8_t readData_COL(uint32_t addr) {
   // SELECT ROM CHIP - PULL /CE LOW
   uint8_t chipdecode = ((addr >> 13) & 0x3);
-  if (chipdecode == 3) // CHIP 3
-    PORTH &= ~(1 << 6); // /E000 LOW (ENABLE)
-  else if (chipdecode == 2) // CHIP 2
-    PORTH &= ~(1 << 5); // /C000 LOW (ENABLE)
-  else if (chipdecode == 1) // CHIP 1
-    PORTH &= ~(1 << 4); // /A000 LOW (ENABLE)
-  else // CHIP 0
-    PORTH &= ~(1 << 3); // /8000 LOW (ENABLE)
+  if (chipdecode == 3)       // CHIP 3
+    PORTH &= ~(1 << 6);      // /E000 LOW (ENABLE)
+  else if (chipdecode == 2)  // CHIP 2
+    PORTH &= ~(1 << 5);      // /C000 LOW (ENABLE)
+  else if (chipdecode == 1)  // CHIP 1
+    PORTH &= ~(1 << 4);      // /A000 LOW (ENABLE)
+  else                       // CHIP 0
+    PORTH &= ~(1 << 3);      // /8000 LOW (ENABLE)
 
-  PORTF = addr & 0xFF;        // A0-A7
-  PORTK = (addr >> 8) & 0xFF; // A8-A15
+  PORTF = addr & 0xFF;         // A0-A7
+  PORTK = (addr >> 8) & 0xFF;  // A8-A15
 
   // LATCH ADDRESS - PULL /CE HIGH
-  PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6); // ALL /CE HIGH (DISABLE)
+  PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);  // ALL /CE HIGH (DISABLE)
 
   uint8_t ret = PINC;
   return ret;
 }
 
-void readSegment_COL(uint32_t startaddr, uint32_t endaddr)
-{
+void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
   for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_COL(addr + w);
@@ -168,8 +163,7 @@ void readSegment_COL(uint32_t startaddr, uint32_t endaddr)
   }
 }
 
-void readROM_COL()
-{
+void readROM_COL() {
   strcpy(fileName, romName);
   strcat(fileName, ".col");
 
@@ -197,17 +191,17 @@ void readROM_COL()
   // RESET ALL CS PINS HIGH (DISABLE)
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
-  readSegment_COL(0x8000, 0xA000); // 8K
+  readSegment_COL(0x8000, 0xA000);  // 8K
   if (colsize > 0) {
-    readSegment_COL(0xA000, 0xB000); // +4K = 12K
+    readSegment_COL(0xA000, 0xB000);  // +4K = 12K
     if (colsize > 1) {
-      readSegment_COL(0xB000, 0xC000); // +4K = 16K
+      readSegment_COL(0xB000, 0xC000);  // +4K = 16K
       if (colsize > 2) {
-        readSegment_COL(0xC000, 0xD000); // +4K = 20K
+        readSegment_COL(0xC000, 0xD000);  // +4K = 20K
         if (colsize > 3) {
-          readSegment_COL(0xD000, 0xE000); // +4K = 24K
+          readSegment_COL(0xD000, 0xE000);  // +4K = 24K
           if (colsize > 4) {
-            readSegment_COL(0xE000, 0x10000); // +8K = 32K
+            readSegment_COL(0xE000, 0x10000);  // +8K = 32K
           }
         }
       }
@@ -231,8 +225,7 @@ void readROM_COL()
 // ROM SIZE
 //******************************************
 
-void setROMSize_COL()
-{
+void setROMSize_COL() {
 #if (defined(enable_OLED) || defined(enable_LCD))
   display_Clear();
   if (collo == colhi)
@@ -256,7 +249,7 @@ void setROMSize_COL()
 
     while (1) {
       b = checkButton();
-      if (b == 2) { // Previous (doubleclick)
+      if (b == 2) {  // Previous (doubleclick)
         if (i == collo)
           i = colhi;
         else
@@ -276,7 +269,7 @@ void setROMSize_COL()
 #endif
         display_Update();
       }
-      if (b == 1) { // Next (press)
+      if (b == 1) {  // Next (press)
         if (i == colhi)
           i = collo;
         else
@@ -296,12 +289,12 @@ void setROMSize_COL()
 #endif
         display_Update();
       }
-      if (b == 3) { // Long Press - Execute (hold)
+      if (b == 3) {  // Long Press - Execute (hold)
         newcolsize = i;
         break;
       }
     }
-    display.setCursor(0, 56); // Display selection at bottom
+    display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));
   print_Msg(COL[newcolsize]);
@@ -340,8 +333,7 @@ setrom:
   colsize = newcolsize;
 }
 
-void checkStatus_COL()
-{
+void checkStatus_COL() {
   EEPROM_readAnything(8, colsize);
   if (colsize > 5) {
     colsize = 0;
@@ -404,12 +396,10 @@ void setCart_COL() {
         while (1) {
           if (myFile.curPosition() == 0) {
             break;
-          }
-          else if (myFile.peek() == '\n') {
+          } else if (myFile.peek() == '\n') {
             myFile.seekSet(myFile.curPosition() - 1);
             break;
-          }
-          else {
+          } else {
             myFile.seekSet(myFile.curPosition() - 1);
           }
         }
@@ -451,9 +441,8 @@ void setCart_COL() {
 
       // Remove leading 0 for single digit cart sizes
       if (cartSize != 0) {
-        cartSize = cartSize * 10 +  myFile.read() - 48;
-      }
-      else {
+        cartSize = cartSize * 10 + myFile.read() - 48;
+      } else {
         cartSize = myFile.read() - 48;
       }
 
@@ -498,12 +487,10 @@ void setCart_COL() {
             while (1) {
               if (myFile.curPosition() == 0) {
                 break;
-              }
-              else if (myFile.peek() == '\n') {
+              } else if (myFile.peek() == '\n') {
                 myFile.seekSet(myFile.curPosition() - 1);
                 break;
-              }
-              else {
+              } else {
                 myFile.seekSet(myFile.curPosition() - 1);
               }
             }
@@ -551,8 +538,7 @@ void setCart_COL() {
         }
       }
     }
-  }
-  else {
+  } else {
     print_Error(F("Database file not found"), true);
   }
 }

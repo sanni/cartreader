@@ -28,7 +28,7 @@ static const char flash8MenuItem4[] PROGMEM = "Write";
 static const char flash8MenuItem5[] PROGMEM = "ID";
 static const char flash8MenuItem6[] PROGMEM = "Print";
 static const char flash8MenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsFLASH8[] PROGMEM = {flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, flash8MenuItem7};
+static const char* const menuOptionsFLASH8[] PROGMEM = { flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, flash8MenuItem7 };
 
 #ifdef enable_FLASH16
 // Flash start menu
@@ -36,7 +36,7 @@ static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
 static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
 static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
 static const char flashMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsFlash[] PROGMEM = {flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4};
+static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4 };
 
 // 16bit Flash menu items
 static const char flash16MenuItem1[] PROGMEM = "Blankcheck";
@@ -46,7 +46,7 @@ static const char flash16MenuItem4[] PROGMEM = "Write";
 static const char flash16MenuItem5[] PROGMEM = "ID";
 static const char flash16MenuItem6[] PROGMEM = "Print";
 static const char flash16MenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsFLASH16[] PROGMEM = {flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7};
+static const char* const menuOptionsFLASH16[] PROGMEM = { flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7 };
 
 // Eprom menu items
 static const char epromMenuItem1[] PROGMEM = "Blankcheck";
@@ -55,7 +55,7 @@ static const char epromMenuItem3[] PROGMEM = "Write";
 static const char epromMenuItem4[] PROGMEM = "Verify";
 static const char epromMenuItem5[] PROGMEM = "Print";
 static const char epromMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsEprom[] PROGMEM = {epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5, epromMenuItem6};
+static const char* const menuOptionsEprom[] PROGMEM = { epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5, epromMenuItem6 };
 
 void flashMenu() {
   // create menu with title and 3 options to choose from
@@ -65,8 +65,7 @@ void flashMenu() {
   flashSlot = question_box(F("Select adapter PCB"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (flashSlot)
-  {
+  switch (flashSlot) {
     case 0:
       display_Clear();
       display_Update();
@@ -74,14 +73,14 @@ void flashMenu() {
       setup_Flash8();
       id_Flash8();
       wait();
-      mode =  mode_FLASH8;
+      mode = mode_FLASH8;
       break;
 
     case 1:
       display_Clear();
       display_Update();
       setup_Eprom();
-      mode =  mode_EPROM;
+      mode = mode_EPROM;
       break;
 
     case 2:
@@ -90,7 +89,7 @@ void flashMenu() {
       setup_Flash16();
       id_Flash16();
       wait();
-      mode =  mode_FLASH16;
+      mode = mode_FLASH16;
       break;
 
     case 3:
@@ -108,8 +107,7 @@ void flashromMenu8() {
   mainMenu = question_box(F("Flashrom Writer 8"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       display_Clear();
       println_Msg(F("Blankcheck"));
@@ -159,16 +157,12 @@ void flashromMenu8() {
             writeFlash29F1601();
           else if ((strcmp(flashid, "C2F1") == 0) || (strcmp(flashid, "C2F9") == 0))
             writeFlash29F1610();
-          else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) ||
-                   (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) ||
-                   (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
+          else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0))
             writeFlash29LV640();
           else if (strcmp(flashid, "017E") == 0) {
             // sector size, write buffer size
             writeFlash29GL(sectorSize, bufferSize);
-          }
-          else if ((strcmp(flashid, "0458") == 0) || (strcmp(flashid, "0158") == 0) ||
-                   (strcmp(flashid, "01AB") == 0))
+          } else if ((strcmp(flashid, "0458") == 0) || (strcmp(flashid, "0158") == 0) || (strcmp(flashid, "01AB") == 0))
             writeFlash29F800();
 
           break;
@@ -242,8 +236,7 @@ void flashromMenu16() {
   mainMenu = question_box(F("Flashrom Writer 16"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       display_Clear();
       println_Msg(F("Blankcheck"));
@@ -279,11 +272,9 @@ void flashromMenu16() {
       time = millis();
       if (strcmp(flashid, "C2F3") == 0) {
         writeFlash16_29F1601();
-      }
-      else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0) || (strcmp(flashid, "C2FC") == 0)) {
+      } else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0) || (strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0) || (strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0) || (strcmp(flashid, "C2FC") == 0)) {
         writeFlash16_29LV640();
-      }
-      else {
+      } else {
         writeFlash16();
       }
       delay(100);
@@ -338,8 +329,7 @@ void epromMenu() {
   mainMenu = question_box(F("Eprom Writer"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       display_Clear();
       println_Msg(F("Blankcheck"));
@@ -419,87 +409,71 @@ idtheflash:
     println_Msg(F("MX29F1610 detected"));
     flashSize = 2097152;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2F3") == 0) {
+  } else if (strcmp(flashid, "C2F3") == 0) {
     println_Msg(F("MX29F1601 detected"));
     flashSize = 2097152;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2F9") == 0) {
+  } else if (strcmp(flashid, "C2F9") == 0) {
     println_Msg(F("MX29L3211 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0)) {
+  } else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0)) {
     println_Msg(F("MX29LV160 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 2097152;
     flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
+  } else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
     println_Msg(F("MX29LV320 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
+  } else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
     println_Msg(F("MX29LV640 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "0141") == 0) {
+  } else if (strcmp(flashid, "0141") == 0) {
     println_Msg(F("AM29F032B detected"));
     flashSize = 4194304;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "01AD") == 0) {
+  } else if (strcmp(flashid, "01AD") == 0) {
     println_Msg(F("AM29F016B detected"));
     flashSize = 2097152;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "20AD") == 0) {
+  } else if (strcmp(flashid, "20AD") == 0) {
     println_Msg(F("AM29F016D detected"));
     flashSize = 2097152;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "04AD") == 0) {
+  } else if (strcmp(flashid, "04AD") == 0) {
     println_Msg(F("AM29F016D detected"));
     flashSize = 2097152;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "04D4") == 0) {
+  } else if (strcmp(flashid, "04D4") == 0) {
     println_Msg(F("MBM29F033C detected"));
     flashSize = 4194304;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "04D5") == 0) {
+  } else if (strcmp(flashid, "04D5") == 0) {
     println_Msg(F("MBM29F080C detected"));
     flashSize = 1048576;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "0458") == 0) {
+  } else if (strcmp(flashid, "0458") == 0) {
     println_Msg(F("MBM29F800BA detected"));
     flashSize = 1048576;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "01AB") == 0) {
+  } else if (strcmp(flashid, "01AB") == 0) {
     println_Msg(F("AM29F400AB detected"));
     flashSize = 131072 * 4;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "0158") == 0) {
+  } else if (strcmp(flashid, "0158") == 0) {
     println_Msg(F("AM29F800BB detected"));
     flashSize = 1048576;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "01A3") == 0) {
+  } else if (strcmp(flashid, "01A3") == 0) {
     println_Msg(F("AM29LV033C detected"));
     flashSize = 131072 * 32;
     flashromType = 1;
-  }
-  else if (strcmp(flashid, "017E") == 0) {
+  } else if (strcmp(flashid, "017E") == 0) {
     // S29GL032M
     if (readByte_Flash(28) == 0x1A) {
       println_Msg(F("S29GL032M detected"));
@@ -523,8 +497,7 @@ idtheflash:
     }
     println_Msg(F("ATTENTION 3.3V"));
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "B088") == 0) {
+  } else if (strcmp(flashid, "B088") == 0) {
     // LH28F016SUT
     println_Msg(F("LH28F016SUT detected"));
     println_Msg(F("ATTENTION 3/5 setting"));
@@ -532,10 +505,7 @@ idtheflash:
     sectorSize = 65536;
     bufferSize = 256;
     flashromType = 3;
-  }
-  else if ((strcmp(flashid, "8916") == 0) ||
-           (strcmp(flashid, "8917") == 0) ||
-           (strcmp(flashid, "8918") == 0)) {
+  } else if ((strcmp(flashid, "8916") == 0) || (strcmp(flashid, "8917") == 0) || (strcmp(flashid, "8918") == 0)) {
     // E28FXXXJ3A
     print_Msg(F("E28F"));
 
@@ -558,15 +528,13 @@ idtheflash:
     sectorSize = 131072;
     bufferSize = 32;
     flashromType = 3;
-  }
-  else if (secondID == 1) {
+  } else if (secondID == 1) {
     // Read ID a second time using a different command (type 1 flashrom)
     resetFlash8();
     idFlash29F032();
     secondID = 2;
     goto idtheflash;
-  }
-  else if (secondID == 2) {
+  } else if (secondID == 2) {
     // Backup first ID read-out
     strncpy(vendorID, flashid, 5);
 
@@ -575,8 +543,7 @@ idtheflash:
     idFlash29F1610();
     secondID = 0;
     goto idtheflash;
-  }
-  else {
+  } else {
     // ID not found
     display_Clear();
     println_Msg(F("Flashrom Writer 8bit"));
@@ -624,43 +591,36 @@ void id_Flash16() {
     println_Msg("");
     flashSize = 2097152;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2F3") == 0) {
+  } else if (strcmp(flashid, "C2F3") == 0) {
     println_Msg(F("MX29F1601 detected"));
     flashSize = 2097152;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2F9") == 0) {
+  } else if (strcmp(flashid, "C2F9") == 0) {
     println_Msg(F("MX29L3211 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0)) {
+  } else if ((strcmp(flashid, "C2C4") == 0) || (strcmp(flashid, "C249") == 0)) {
     println_Msg(F("MX29LV160 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 2097152;
     flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
+  } else if ((strcmp(flashid, "C2A7") == 0) || (strcmp(flashid, "C2A8") == 0)) {
     println_Msg(F("MX29LV320 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 4194304;
     flashromType = 2;
-  }
-  else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
+  } else if ((strcmp(flashid, "C2C9") == 0) || (strcmp(flashid, "C2CB") == 0)) {
     println_Msg(F("MX29LV640 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
-  }
-  else if (strcmp(flashid, "C2FC") == 0) {
+  } else if (strcmp(flashid, "C2FC") == 0) {
     println_Msg(F("MX26L6420 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
-  }
-  else {
+  } else {
     print_Error(F("Unknown flashrom"), true);
     println_Msg("");
   }
@@ -683,7 +643,7 @@ void setup_Flash8() {
   DDRL = 0xFF;
 
   // Set Control Pins to Output RST(PH0) OE(PH1) OE_SNS(PH3) WE(PH4) WE_SNS(PH5) CE(PH6)
-  DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
   // Setting RST(PH0) OE(PH1) OE_SNS(PH3) WE(PH4) WE_SNS(PH5) HIGH
   PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5);
   // Setting CE(PH6) LOW
@@ -819,10 +779,9 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
       // if PL6 is 0 set PL7 to 1
       PORTL |= (1 << 7);
-    }
-    else if (((myAddress >> 16) & 0xFF) & 0x40) {
+    } else if (((myAddress >> 16) & 0xFF) & 0x40) {
       // if PL6 is 1 set PL7 to 0
-      PORTL &= ~ (1 << 7);
+      PORTL &= ~(1 << 7);
     }
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
@@ -833,19 +792,34 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WE(PH4) WE_SNS(PH5) to LOW
   PORTH &= ~((1 << 4) | (1 << 5));
 
   // Leave WE low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WE(PH4) WE_SNS(PH5) to HIGH
   PORTH |= (1 << 4) | (1 << 5);
 
   // Leave WE high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 }
 
 byte readByte_Flash(unsigned long myAddress) {
@@ -889,29 +863,43 @@ byte readByte_Flash(unsigned long myAddress) {
     if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
       // if PL6 is 0 set PL7 to 1
       PORTL |= (1 << 7);
-    }
-    else if (((myAddress >> 16) & 0xFF) & 0x40) {
+    } else if (((myAddress >> 16) & 0xFF) & 0x40) {
       // if PL6 is 1 set PL7 to 0
-      PORTL &= ~ (1 << 7);
+      PORTL &= ~(1 << 7);
     }
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
   }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Setting OE(PH1) OE_SNS(PH3) LOW
   PORTH &= ~((1 << 1) | (1 << 3));
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
   byte tempByte = PINC;
 
   // Setting OE(PH1) OE_SNS(PH3) HIGH
   PORTH |= (1 << 1) | (1 << 3);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempByte;
 }
@@ -932,13 +920,23 @@ void writeWord_Flash(unsigned long myAddress, word myData) {
   PORTH &= ~(1 << 4);
 
   // Leave WE low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WE(PH4) to HIGH
   PORTH |= (1 << 4);
 
   // Leave WE high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 }
 
 word readWord_Flash(unsigned long myAddress) {
@@ -952,16 +950,26 @@ word readWord_Flash(unsigned long myAddress) {
   // Setting OE(PH1) LOW
   PORTH &= ~(1 << 1);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
-  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+  word tempWord = ((PINA & 0xFF) << 8) | (PINC & 0xFF);
 
   __asm__("nop\n\t");
 
   // Setting OE(PH1) HIGH
   PORTH |= (1 << 1);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempWord;
 }
@@ -1104,8 +1112,7 @@ void writeFlash29F032() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file"));
     display_Update();
   }
@@ -1119,7 +1126,7 @@ int busyCheck29F032(uint32_t addr, byte c) {
   // Setting OE(PH1) OE_SNS(PH3) CE(PH6)LOW
   PORTH &= ~((1 << 1) | (1 << 3) | (1 << 6));
   // Setting WE(PH4) WE_SNES(PH5) HIGH
-  PORTH |=  (1 << 4) | (1 << 5);
+  PORTH |= (1 << 4) | (1 << 5);
 
   //When the Embedded Program algorithm is complete, the device outputs the datum programmed to D7
   for (;;) {
@@ -1217,8 +1224,7 @@ void writeFlash29F1610() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1277,8 +1283,7 @@ void writeFlash29F1601() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1406,8 +1411,7 @@ void writeFlash29LV640() {
     dataIn8();
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1474,8 +1478,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     dataIn8();
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1524,8 +1527,7 @@ void writeFlash29F800() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1562,14 +1564,14 @@ uint8_t statusFlash28FXXX() {
 
 void eraseFlash28FXXX() {
   // only can erase block by block
-  for (uint32_t ba = 0; ba < flashSize; ba += sectorSize)
-  {
+  for (uint32_t ba = 0; ba < flashSize; ba += sectorSize) {
     dataOut();
     writeByte_Flash(ba, 0x20);
     writeByte_Flash(ba, 0xd0);
 
     dataIn8();
-    while ((readByte_Flash(ba) & 0x80) == 0x00);
+    while ((readByte_Flash(ba) & 0x80) == 0x00)
+      ;
 
     // blink LED
     blinkLED();
@@ -1586,15 +1588,12 @@ void writeFlash28FXXX() {
   if (myFile.open(filePath, O_READ)) {
     if ((strcmp(flashid, "B088") == 0))
       writeFlashLH28F0XX();
-    else if ((strcmp(flashid, "8916") == 0) ||
-             (strcmp(flashid, "8917") == 0) ||
-             (strcmp(flashid, "8918") == 0)) {
+    else if ((strcmp(flashid, "8916") == 0) || (strcmp(flashid, "8917") == 0) || (strcmp(flashid, "8918") == 0)) {
       writeFlashE28FXXXJ3A();
     }
 
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1627,7 +1626,8 @@ void writeFlashE28FXXXJ3A() {
 
       // waiting for buffer available
       dataIn8();
-      while ((readByte_Flash(block_addr) & 0x80) == 0x00);
+      while ((readByte_Flash(block_addr) & 0x80) == 0x00)
+        ;
       dataOut();
 
       // set write byte count
@@ -1642,7 +1642,8 @@ void writeFlashE28FXXXJ3A() {
 
       // waiting for finishing
       dataIn8();
-      while ((readByte_Flash(block_addr) & 0x80) == 0x00);
+      while ((readByte_Flash(block_addr) & 0x80) == 0x00)
+        ;
     }
   }
 
@@ -1667,20 +1668,21 @@ void writeFlashLH28F0XX() {
       // sequence load to page
       dataOut();
       writeByte_Flash(0x0, 0xe0);
-      writeByte_Flash(0x0, bufferSize - 1); // BCL
-      writeByte_Flash(0x0, 0x00); // BCH should be 0x00
+      writeByte_Flash(0x0, bufferSize - 1);  // BCL
+      writeByte_Flash(0x0, 0x00);            // BCH should be 0x00
 
       for (uint32_t d = 0; d < bufferSize; d++)
         writeByte_Flash(d, sdBuffer[c + d]);
 
       // start flashing page
       writeByte_Flash(0x0, 0x0c);
-      writeByte_Flash(0x0, bufferSize - 1); // BCL
-      writeByte_Flash(currByte + c, 0x00); // BCH should be 0x00
+      writeByte_Flash(0x0, bufferSize - 1);  // BCL
+      writeByte_Flash(currByte + c, 0x00);   // BCH should be 0x00
 
       // waiting for finishing
       dataIn8();
-      while ((readByte_Flash(currByte + c) & 0x80) == 0x00);
+      while ((readByte_Flash(currByte + c) & 0x80) == 0x00)
+        ;
     }
   }
 
@@ -1705,8 +1707,7 @@ void blankcheck_Flash() {
   if (blank) {
     println_Msg(F("Flashrom is empty"));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("Error: Not blank"), false);
   }
 }
@@ -1735,8 +1736,7 @@ void verifyFlash() {
     if (blank == 0) {
       println_Msg(F("Flashrom verified OK"));
       display_Update();
-    }
-    else {
+    } else {
       print_Msg(F("Error: "));
       print_Msg(blank);
       println_Msg(F(" bytes "));
@@ -1744,8 +1744,7 @@ void verifyFlash() {
     }
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD"));
     display_Update();
   }
@@ -1793,7 +1792,7 @@ void printFlash(int numBytes) {
 
   for (int currByte = 0; currByte < numBytes; currByte += 10) {
     for (int c = 0; c < 10; c++) {
-      itoa (readByte_Flash(currByte + c), myBuffer, 16);
+      itoa(readByte_Flash(currByte + c), myBuffer, 16);
       for (int i = 0; i < 2 - strlen(myBuffer); i++) {
         print_Msg(F("0"));
       }
@@ -1869,7 +1868,7 @@ void writeFlash16() {
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
-        word currWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+        word currWord = ((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF);
         writeWord_Flash(currByte + c, currWord);
         d += 2;
       }
@@ -1884,8 +1883,7 @@ void writeFlash16() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
@@ -1928,7 +1926,7 @@ void writeFlash16_29F1601() {
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
-        word currWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+        word currWord = ((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF);
         writeWord_Flash(currByte + c, currWord);
 
         if (c == 63) {
@@ -1948,8 +1946,7 @@ void writeFlash16_29F1601() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
@@ -2021,8 +2018,7 @@ void blankcheck16() {
   if (blank) {
     println_Msg(F("Flashrom is empty."));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("Error: Not blank"), false);
   }
 }
@@ -2057,8 +2053,7 @@ void verifyFlash16() {
     if (blank == 0) {
       println_Msg(F("Flashrom verified OK"));
       display_Update();
-    }
-    else {
+    } else {
       println_Msg(F("Verification ERROR!"));
       print_Msg(blank);
       print_Error(F("B did not verify."), false);
@@ -2066,8 +2061,7 @@ void verifyFlash16() {
     }
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
@@ -2097,7 +2091,8 @@ void readFlash16() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     println_Msg(F("Can't create file on SD."));
     display_Update();
-    while (1);
+    while (1)
+      ;
   }
   word d = 0;
   for (unsigned long currByte = 0; currByte < flashSize / 2; currByte += 256) {
@@ -2105,7 +2100,7 @@ void readFlash16() {
       word currWord = readWord_Flash(currByte + c);
       // Split word into two bytes
       // Right
-      sdBuffer[d + 1] = (( currWord >> 8 ) & 0xFF);
+      sdBuffer[d + 1] = ((currWord >> 8) & 0xFF);
       // Left
       sdBuffer[d] = (currWord & 0xFF);
       d += 2;
@@ -2136,17 +2131,17 @@ void printFlash16(int numBytes) {
 
       // Split word into two bytes
       byte left_byte = currWord & 0xFF;
-      byte right_byte = ( currWord >> 8 ) & 0xFF;
+      byte right_byte = (currWord >> 8) & 0xFF;
 
 
-      sprintf (buf, "%x", left_byte);
+      sprintf(buf, "%x", left_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
         print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buf);
 
-      sprintf (buf, "%x", right_byte);
+      sprintf(buf, "%x", right_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
         print_Msg(F("0"));
       }
@@ -2225,7 +2220,7 @@ void writeFlash16_29LV640() {
         writeWord_Flash(0x5555, 0xa0);
 
         // Write current word
-        word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+        word myWord = ((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF);
         writeWord_Flash(currWord + c, myWord);
         d += 2;
         // Check if write is complete
@@ -2238,8 +2233,7 @@ void writeFlash16_29LV640() {
 
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
@@ -2291,7 +2285,10 @@ word writeWord_Eprom(unsigned long myAddress, word myData) {
   DDRA = 0x00;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Setting CE(PH6) LOW
   PORTH &= ~(1 << 6);
@@ -2300,15 +2297,20 @@ word writeWord_Eprom(unsigned long myAddress, word myData) {
   delayMicroseconds(3);
 
   // Read
-  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+  word tempWord = ((PINA & 0xFF) << 8) | (PINC & 0xFF);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Setting CE(PH6) HIGH
   PORTH |= (1 << 6);
 
   // Delay 130ns for Chip Enable High to Output Hi-Z
-  __asm__("nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempWord;
 }
@@ -2329,10 +2331,15 @@ word readWord_Eprom(unsigned long myAddress) {
   PORTH &= ~(1 << 6);
 
   // Delay for 100ns for Address Valid/Chip Enable Low to Output Valid
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
-  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+  word tempWord = ((PINA & 0xFF) << 8) | (PINC & 0xFF);
 
   // Setting CE(PH6) HIGH
   PORTH |= (1 << 6);
@@ -2354,8 +2361,7 @@ void blankcheck_Eprom() {
   if (blank) {
     println_Msg(F("Flashrom is empty."));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("Error: Not blank"), false);
   }
 }
@@ -2384,7 +2390,8 @@ void read_Eprom() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     println_Msg(F("Can't create file on SD."));
     display_Update();
-    while (1);
+    while (1)
+      ;
   }
   word d = 0;
   for (unsigned long currWord = 0; currWord < flashSize / 2; currWord += 256) {
@@ -2392,7 +2399,7 @@ void read_Eprom() {
       word myWord = readWord_Eprom(currWord + c);
       // Split word into two bytes
       // Right
-      sdBuffer[d + 1] = ((myWord >> 8 ) & 0xFF);
+      sdBuffer[d + 1] = ((myWord >> 8) & 0xFF);
       // Left
       sdBuffer[d] = (myWord & 0xFF);
       d += 2;
@@ -2437,7 +2444,7 @@ void write_Eprom() {
       // Work through SD buffer
       for (int c = 0; c < 256; c++) {
         word checkWord;
-        word myWord = ( ( sdBuffer[d + 1] & 0xFF ) << 8 ) | ( sdBuffer[d] & 0xFF );
+        word myWord = ((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF);
 
         // Error counter
         byte n = 0;
@@ -2457,15 +2464,13 @@ void write_Eprom() {
             print_Error(F("Press button to reset"), true);
           }
           n++;
-        }
-        while (checkWord != myWord);
+        } while (checkWord != myWord);
         d += 2;
       }
     }
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
@@ -2501,8 +2506,7 @@ void verify_Eprom() {
     if (blank == 0) {
       println_Msg(F("Eprom verified OK"));
       display_Update();
-    }
-    else {
+    } else {
       println_Msg(F("Verification ERROR!"));
       print_Msg(blank);
       print_Error(F(" words did not verify."), false);
@@ -2510,8 +2514,7 @@ void verify_Eprom() {
     }
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file on SD."));
     display_Update();
   }
@@ -2527,17 +2530,17 @@ void print_Eprom(int numBytes) {
 
       // Split word into two bytes
       byte left_byte = currWord & 0xFF;
-      byte right_byte = ( currWord >> 8 ) & 0xFF;
+      byte right_byte = (currWord >> 8) & 0xFF;
 
 
-      sprintf (buf, "%x", left_byte);
+      sprintf(buf, "%x", left_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
         print_Msg(F("0"));
       }
       // Now print the significant bits
       print_Msg(buf);
 
-      sprintf (buf, "%x", right_byte);
+      sprintf(buf, "%x", right_byte);
       for (int i = 0; i < 2 - strlen(buf); i++) {
         print_Msg(F("0"));
       }

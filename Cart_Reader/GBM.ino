@@ -14,7 +14,7 @@ static const char gbmMenuItem4[] PROGMEM = "Blankcheck";
 static const char gbmMenuItem5[] PROGMEM = "Write Flash";
 static const char gbmMenuItem6[] PROGMEM = "Read Mapping";
 static const char gbmMenuItem7[] PROGMEM = "Write Mapping";
-static const char* const menuOptionsGBM[] PROGMEM = {gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4, gbmMenuItem5, gbmMenuItem6, gbmMenuItem7};
+static const char* const menuOptionsGBM[] PROGMEM = { gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4, gbmMenuItem5, gbmMenuItem6, gbmMenuItem7 };
 
 void gbmMenu() {
   // create menu with title and 7 options to choose from
@@ -24,8 +24,7 @@ void gbmMenu() {
   mainMenu = question_box(F("GB Memory Menu"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     // Read Flash ID
     case 0:
       // Clear screen
@@ -87,8 +86,7 @@ void gbmMenu() {
       if (blankcheckFlash_GBM()) {
         println_Msg(F("OK"));
         display_Update();
-      }
-      else {
+      } else {
         println_Msg(F("ERROR"));
         display_Update();
       }
@@ -163,8 +161,7 @@ void gbmMenu() {
       if (blankcheckMapping_GBM()) {
         println_Msg(F("OK"));
         display_Update();
-      }
-      else {
+      } else {
         print_Error(F("Erasing failed"), false);
         break;
       }
@@ -211,7 +208,26 @@ void setup_GBM() {
   while (readByte_GBM(0x120) != 0x21) {
     // Enable ports 0x120h (F2)
     send_GBM(0x09);
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     timeout++;
     if (timeout > 10) {
       println_Msg(F("Error: Time Out"));
@@ -230,13 +246,19 @@ byte readByte_GBM(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch CS(PH3) and RD(PH6) to LOW
   PORTH &= ~(1 << 3);
   PORTH &= ~(1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
   byte tempByte = PINC;
@@ -260,13 +282,19 @@ void writeByte_GBM(word myAddress, byte myData) {
   PORTH &= ~(1 << 3);
   PORTH &= ~(1 << 5);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Pull CS(PH3) and write(PH5) high
   PORTH |= (1 << 5);
   PORTH |= (1 << 3);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Set data pins to Input (or read errors??!)
   DDRC = 0x0;
@@ -306,8 +334,7 @@ void readROM_GBM(word numBanks) {
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("Can't create file on SD"), true);
-  }
-  else {
+  } else {
     // Read rom
     word currAddress = 0;
 
@@ -472,8 +499,7 @@ boolean readFlashID_GBM() {
     display_Update();
     resetFlash_GBM();
     return 1;
-  }
-  else {
+  } else {
     print_Msg(F("Flash ID: "));
     println_Msg(flashid);
     print_Error(F("Unknown Flash ID"), true);
@@ -652,8 +678,7 @@ void writeFlash_GBM() {
     // Close the file:
     myFile.close();
     println_Msg(F("Done"));
-  }
-  else {
+  } else {
     print_Error(F("Can't open file"), false);
   }
 }
@@ -692,8 +717,7 @@ void readMapping_GBM() {
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(F("Can't create file on SD"), true);
-  }
-  else {
+  } else {
     for (byte currByte = 0; currByte < 128; currByte++) {
       sdBuffer[currByte] = readByte_GBM(currByte);
     }
@@ -868,8 +892,7 @@ void writeMapping_GBM() {
     // Close the file:
     myFile.close();
     println_Msg(F("Done"));
-  }
-  else {
+  } else {
     print_Error(F("Can't open file"), false);
   }
 }

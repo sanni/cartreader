@@ -16,10 +16,10 @@
    Variables
  *****************************************/
 // Define SNES Cart Reader Variables
-int romSpeed = 0;      // 0 = SlowROM, 3 = FastROM
-int romChips = 0;      // 0 = ROM only, 1 = ROM & RAM, 2 = ROM & Save RAM,  3 = ROM & DSP1, 4 = ROM & RAM & DSP1, 5 = ROM & Save RAM & DSP1, 19 = ROM & SFX
+int romSpeed = 0;  // 0 = SlowROM, 3 = FastROM
+int romChips = 0;  // 0 = ROM only, 1 = ROM & RAM, 2 = ROM & Save RAM,  3 = ROM & DSP1, 4 = ROM & RAM & DSP1, 5 = ROM & Save RAM & DSP1, 19 = ROM & SFX
 // 227 = ROM & RAM & GameBoy data, 243 = CX4, 246 = ROM & DSP2
-byte romSizeExp = 0;   // ROM-Size Exponent
+byte romSizeExp = 0;  // ROM-Size Exponent
 boolean NP = false;
 byte cx4Type = 0;
 byte cx4Map = 0;
@@ -36,10 +36,10 @@ static const char snsMenuItem4[] PROGMEM = "Flash repro";
 #ifdef clockgen_calibration
 static const char snsMenuItem5[] PROGMEM = "Calibrate Clock";
 static const char snsMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6};
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6 };
 #else
 static const char snsMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsSNS[] PROGMEM = {snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5};
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5 };
 #endif
 
 // SNES menu items
@@ -50,7 +50,7 @@ static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
 static const char SnesMenuItem5[] PROGMEM = "Cycle cart";
 static const char SnesMenuItem6[] PROGMEM = "Force cart type";
 static const char SnesMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsSNES[] PROGMEM = {SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, SnesMenuItem7};
+static const char* const menuOptionsSNES[] PROGMEM = { SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, SnesMenuItem7 };
 
 // Manual config menu items
 static const char confMenuItem1[] PROGMEM = "Use header info";
@@ -58,7 +58,7 @@ static const char confMenuItem2[] PROGMEM = "4MB LoROM 256K SRAM";
 static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
 static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
 static const char confMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsConfManual[] PROGMEM = {confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5};
+static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5 };
 
 // Repro menu items
 static const char reproMenuItem1[] PROGMEM = "LoROM (P0)";
@@ -66,7 +66,7 @@ static const char reproMenuItem2[] PROGMEM = "HiROM (P0)";
 static const char reproMenuItem3[] PROGMEM = "ExLoROM (P1)";
 static const char reproMenuItem4[] PROGMEM = "ExHiROM (P1)";
 static const char reproMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsRepro[] PROGMEM = {reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5};
+static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5 };
 
 // SNES repro menu
 void reproMenu() {
@@ -77,8 +77,7 @@ void reproMenu() {
   snsRepro = question_box(F("Select Repro Type"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (snsRepro)
-  {
+  switch (snsRepro) {
 #ifdef enable_FLASH
     case 0:
       // LoRom
@@ -145,8 +144,7 @@ void snsMenu() {
 #endif
 
   // wait for user choice to come back from the question box menu
-  switch (snsCart)
-  {
+  switch (snsCart) {
     case 0:
       display_Clear();
       display_Update();
@@ -199,8 +197,7 @@ void snesMenu() {
   mainMenu = question_box(F("SNES Cart Reader"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       {
         if (numBanks > 0) {
@@ -219,8 +216,7 @@ void snesMenu() {
           save_log();
 #endif
           display_Update();
-        }
-        else {
+        } else {
           display_Clear();
           print_Error(F("Does not have ROM"), false);
         }
@@ -233,8 +229,7 @@ void snesMenu() {
         // Change working dir to root
         sd.chdir("/");
         readSRAM();
-      }
-      else {
+      } else {
         display_Clear();
         print_Error(F("Does not have SRAM"), false);
       }
@@ -251,15 +246,13 @@ void snesMenu() {
         if (wrErrors == 0) {
           println_Msg(F("Verified OK"));
           display_Update();
-        }
-        else {
+        } else {
           print_Msg(F("Error: "));
           print_Msg(wrErrors);
           println_Msg(F(" bytes "));
           print_Error(F("did not verify."), false);
         }
-      }
-      else {
+      } else {
         display_Clear();
         print_Error(F("Does not have SRAM"), false);
       }
@@ -288,15 +281,13 @@ void snesMenu() {
         if (wrErrors == 0) {
           println_Msg(F("Restored OK"));
           display_Update();
-        }
-        else {
+        } else {
           print_Msg(F("Error: "));
           print_Msg(wrErrors);
           println_Msg(F(" bytes "));
           print_Error(F("did not verify."), false);
         }
-      }
-      else {
+      } else {
         display_Clear();
         print_Error(F("Does not have SRAM"), false);
       }
@@ -346,8 +337,7 @@ void confMenuManual() {
   subMenu = question_box(F("Choose mapping"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (subMenu)
-  {
+  switch (subMenu) {
     case 0:
       break;
 
@@ -381,14 +371,14 @@ void confMenuManual() {
 }
 
 void stopSnesClocks_resetCic_resetCart() {
-  DDRG |= (1 << 1);   // Set cicrstPin(PG1) to Output
-  PORTG |= (1 << 1);  // pull high = reset CIC
-  DDRH |= (1 << 0);   // Set RST(PH0) pin to Output
-  PORTH &= ~(1 << 0); // Switch RST(PH0) to LOW
+  DDRG |= (1 << 1);    // Set cicrstPin(PG1) to Output
+  PORTG |= (1 << 1);   // pull high = reset CIC
+  DDRH |= (1 << 0);    // Set RST(PH0) pin to Output
+  PORTH &= ~(1 << 0);  // Switch RST(PH0) to LOW
   if (i2c_found) {
-    clockgen.output_enable(SI5351_CLK1, 0); // CPU clock
-    clockgen.output_enable(SI5351_CLK2, 0); // CIC clock
-    clockgen.output_enable(SI5351_CLK0, 0); // master clock
+    clockgen.output_enable(SI5351_CLK1, 0);  // CPU clock
+    clockgen.output_enable(SI5351_CLK2, 0);  // CIC clock
+    clockgen.output_enable(SI5351_CLK0, 0);  // master clock
   }
 }
 
@@ -460,14 +450,14 @@ void setup_Snes() {
 
   if (i2c_found) {
     // Set clocks to 4Mhz/1Mhz for better SA-1 unlocking
-    clockgen.set_freq(100000000ULL, SI5351_CLK1); // CPU
-    clockgen.set_freq(100000000ULL, SI5351_CLK2); // CIC
-    clockgen.set_freq(400000000ULL, SI5351_CLK0); // EXT
+    clockgen.set_freq(100000000ULL, SI5351_CLK1);  // CPU
+    clockgen.set_freq(100000000ULL, SI5351_CLK2);  // CIC
+    clockgen.set_freq(400000000ULL, SI5351_CLK0);  // EXT
 
     // Start outputting master clock, CIC clock
-    clockgen.output_enable(SI5351_CLK1, 0); // no CPU clock yet; seems to affect SA-1 success a lot
-    clockgen.output_enable(SI5351_CLK2, 1); // CIC clock (should go before master clock)
-    clockgen.output_enable(SI5351_CLK0, 1); // master clock
+    clockgen.output_enable(SI5351_CLK1, 0);  // no CPU clock yet; seems to affect SA-1 success a lot
+    clockgen.output_enable(SI5351_CLK2, 1);  // CIC clock (should go before master clock)
+    clockgen.output_enable(SI5351_CLK0, 1);  // master clock
 
     // Wait for clock generator
     clockgen.update_status();
@@ -528,19 +518,56 @@ void writeBank_SNES(byte myBank, word myAddress, byte myData) {
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WR(PH5) to LOW
   PORTH &= ~(1 << 5);
 
   // Leave WR low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WR(PH5) to HIGH
   PORTH |= (1 << 5);
 
   // Leave WR high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 }
 
 // Read one byte of data from a location specified by bank and address, 00:0000
@@ -553,15 +580,19 @@ byte readBank_SNES(byte myBank, word myAddress) {
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
   // let's be conservative and use 6 x 62.5 = 375ns
-  NOP; NOP; NOP; NOP; NOP; NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
 
   // Read
   byte tempByte = PINC;
   return tempByte;
 }
 
-void readLoRomBanks( unsigned int start, unsigned int total, FsFile *file)
-{
+void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   byte buffer[1024] = { 0 };
 
   uint16_t c = 0;
@@ -589,7 +620,12 @@ void readLoRomBanks( unsigned int start, unsigned int total, FsFile *file)
         // Arduino running at 16Mhz -> one nop = 62.5ns
         // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
         // let's be conservative and use 6 x 62.5 = 375ns
-        NOP; NOP; NOP; NOP; NOP; NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
 
         buffer[c] = PINC;
         c++;
@@ -607,8 +643,7 @@ void readLoRomBanks( unsigned int start, unsigned int total, FsFile *file)
   }
 }
 
-void readHiRomBanks( unsigned int start, unsigned int total, FsFile *file)
-{
+void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   byte buffer[1024] = { 0 };
 
   uint16_t c = 0;
@@ -636,7 +671,12 @@ void readHiRomBanks( unsigned int start, unsigned int total, FsFile *file)
         // Arduino running at 16Mhz -> one nop = 62.5ns
         // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
         // let's be conservative and use 6 x 62.5 = 375ns
-        NOP; NOP; NOP; NOP; NOP; NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
 
         buffer[c] = PINC;
         c++;
@@ -673,7 +713,12 @@ void getCartInfo_SNES() {
     // Arduino running at 16Mhz -> one nop = 62.5ns
     // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
     // let's be conservative and use 6 x 62.5 = 375ns
-    NOP; NOP; NOP; NOP; NOP; NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
 
     buffer[c] = PINC;
     c++;
@@ -746,18 +791,14 @@ void getCartInfo_SNES() {
   else if (romChips == 52) {
     println_Msg(F("SA1 RAM"));
     romType = SA;
-  }
-  else if (romChips == 53) {
+  } else if (romChips == 53) {
     println_Msg(F("SA1 RAM BATT"));
     romType = SA;
-  }
-  else if (romChips == 67) {
+  } else if (romChips == 67) {
     println_Msg(F("SDD1"));
-  }
-  else if (romChips == 69) {
+  } else if (romChips == 69) {
     println_Msg(F("SDD1 BATT"));
-  }
-  else if (romChips == 227)
+  } else if (romChips == 227)
     println_Msg(F("RAM GBoy"));
   else if (romChips == 243)
     println_Msg(F("CX4"));
@@ -861,10 +902,10 @@ void checkAltConf(char crcStr[9]) {
         myFile.seekSet(myFile.curPosition() + 1);
 
         // Read number of banks
-        byte numBanks2  = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
+        byte numBanks2 = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
         // Some games have the same checksum, so compare CRC32 of header area with database too
-        if (strcmp(tempStr3, crcStr) == 0)  {
+        if (strcmp(tempStr3, crcStr) == 0) {
           println_Msg(F(""));
           println_Msg(F("Found"));
           display_Update();
@@ -888,7 +929,7 @@ void checkAltConf(char crcStr[9]) {
             display_Update();
             delay(1000);
             romSize = romSize2;
-            numBanks  = numBanks2;
+            numBanks = numBanks2;
             altconf = 1;
           }
           break;
@@ -921,7 +962,18 @@ boolean checkcart_SNES() {
     PORTF = (currByte & 0xFF);
     PORTK = ((currByte >> 8) & 0xFF);
 
-    NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP; NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
 
     snesHeader[c] = PINC;
     c++;
@@ -941,16 +993,13 @@ boolean checkcart_SNES() {
 
   romType = snesHeader[0xFFD5 - headerStart];
   if ((romType >> 5) != 1) {  // Detect invalid romType byte due to too long ROM name (22 chars)
-    romType = LO; // LoROM   // Krusty's Super Fun House (U) 1.0 & Contra 3 (U)
-  }
-  else if (romType == 0x35) {
-    romType = EX; // Check if ExHiROM
-  }
-  else if (romType == 0x3A) {
-    romType = HI; // Check if SPC7110
-  }
-  else {
-    romType &= 1; // Must be LoROM or HiROM
+    romType = LO;             // LoROM   // Krusty's Super Fun House (U) 1.0 & Contra 3 (U)
+  } else if (romType == 0x35) {
+    romType = EX;  // Check if ExHiROM
+  } else if (romType == 0x3A) {
+    romType = HI;  // Check if SPC7110
+  } else {
+    romType &= 1;  // Must be LoROM or HiROM
   }
 
   // Check RomSpeed
@@ -963,32 +1012,26 @@ boolean checkcart_SNES() {
     romSize = 48;
     numBanks = 96;
     romType = HI;
-  }
-  else if (romChips == 67) {
+  } else if (romChips == 67) {
     romSize = 32;
     numBanks = 64;
     romType = HI;
-  }
-  else if (romChips == 243) {
+  } else if (romChips == 243) {
     cx4Type = snesHeader[0xFFC9 - headerStart] & 0xF;
-    if (cx4Type == 2) { // X2
+    if (cx4Type == 2) {  // X2
       romSize = 12;
       numBanks = 48;
-    }
-    else if (cx4Type == 3) { // X3
+    } else if (cx4Type == 3) {  // X3
       romSize = 16;
       numBanks = 64;
     }
-  }
-  else if ((romChips == 245) && (romType == HI)) {
+  } else if ((romChips == 245) && (romType == HI)) {
     romSize = 24;
     numBanks = 48;
-  }
-  else if ((romChips == 249) && (romType == HI)) {
+  } else if ((romChips == 249) && (romType == HI)) {
     romSize = 40;
     numBanks = 80;
-  }
-  else {
+  } else {
     // Check RomSize
     byte romSizeExp = snesHeader[0xFFD7 - headerStart] - 7;
     romSize = 1;
@@ -997,8 +1040,7 @@ boolean checkcart_SNES() {
 
     if ((romType == EX) || (romType == SA)) {
       numBanks = long(romSize) * 2;
-    }
-    else {
+    } else {
       numBanks = (long(romSize) * 1024 * 1024 / 8) / (32768 + (long(romType) * 32768));
     }
   }
@@ -1062,17 +1104,14 @@ boolean checkcart_SNES() {
     // SuperFX
     if (snesHeader[0x7FDA - headerStart] == 0x33) {
       sramSizeExp = snesHeader[0x7FBD - headerStart];
-    }
-    else {
+    } else {
       if (strncmp(romName, "STARFOX2", 8) == 0) {
         sramSizeExp = 6;
-      }
-      else {
+      } else {
         sramSizeExp = 5;
       }
     }
-  }
-  else {
+  } else {
     // No SuperFX
     sramSizeExp = snesHeader[0xFFD8 - headerStart];
   }
@@ -1084,8 +1123,7 @@ boolean checkcart_SNES() {
     sramSize = 1;
     while (sramSizeExp--)
       sramSize *= 2;
-  }
-  else {
+  } else {
     sramSize = 0;
   }
 
@@ -1096,11 +1134,10 @@ boolean checkcart_SNES() {
   romVersion = snesHeader[0xFFDB - headerStart];
 
   // Test if checksum is equal to reverse checksum
-  if (((word(snesHeader[0xFFDC - headerStart]) + (word(snesHeader[0xFFDD - headerStart]) * 256)) + (word(snesHeader[0xFFDE - headerStart]) + (word(snesHeader[0xFFDF - headerStart]) * 256))) == 65535 ) {
+  if (((word(snesHeader[0xFFDC - headerStart]) + (word(snesHeader[0xFFDD - headerStart]) * 256)) + (word(snesHeader[0xFFDE - headerStart]) + (word(snesHeader[0xFFDF - headerStart]) * 256))) == 65535) {
     if (strcmp("0000", checksumStr) == 0) {
       return 0;
-    }
-    else {
+    } else {
       return 1;
     }
   }
@@ -1110,7 +1147,7 @@ boolean checkcart_SNES() {
   }
 }
 
-unsigned int calc_checksum (char* fileName, char* folder) {
+unsigned int calc_checksum(char* fileName, char* folder) {
   unsigned int calcChecksum = 0;
   unsigned int calcChecksumChunk = 0;
   int calcFilesize = 0;
@@ -1135,9 +1172,8 @@ unsigned int calc_checksum (char* fileName, char* folder) {
         }
         calcChecksum = calcChecksumChunk;
       }
-      calcChecksum += 0xF47C; // FFs from 0x60000-0x80000
-    }
-    else if ((calcFilesize == 10) || (calcFilesize == 12) || (calcFilesize == 20) || (calcFilesize == 24)) {
+      calcChecksum += 0xF47C;  // FFs from 0x60000-0x80000
+    } else if ((calcFilesize == 10) || (calcFilesize == 12) || (calcFilesize == 20) || (calcFilesize == 24)) {
       unsigned long calcBase = 0;
       unsigned long calcMirror = 0;
       byte calcMirrorCount = 0;
@@ -1157,8 +1193,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
           }
         }
         calcChecksum = 2 * calcChecksumChunk;
-      }
-      else {
+      } else {
         // Base 8/16 Mbit chunk
         for (j = 0; j < (calcBase / 512); j++) {
           myFile.read(sdBuffer, 512);
@@ -1175,10 +1210,9 @@ unsigned int calc_checksum (char* fileName, char* folder) {
             calcChecksumChunk += sdBuffer[c];
           }
         }
-        calcChecksum +=  calcMirrorCount * calcChecksumChunk;
+        calcChecksum += calcMirrorCount * calcChecksumChunk;
       }
-    }
-    else if ((calcFilesize == 40) && (romChips == 85)) {
+    } else if ((calcFilesize == 40) && (romChips == 85)) {
       // Daikaijuu Monogatari 2 Fix 5MB (40Mbit)
       // Add the 4MB (32Mbit) start
       for (j = 0; j < (4194304 / 512); j++) {
@@ -1196,9 +1230,8 @@ unsigned int calc_checksum (char* fileName, char* folder) {
           calcChecksumChunk += sdBuffer[c];
         }
       }
-      calcChecksum +=  4 * calcChecksumChunk;
-    }
-    else if (calcFilesize == 48) {
+      calcChecksum += 4 * calcChecksumChunk;
+    } else if (calcFilesize == 48) {
       // Star Ocean/Tales of Phantasia Fix 6MB (48Mbit)
       // Add the 4MB (32Mbit) start
       for (j = 0; j < (4194304 / 512); j++) {
@@ -1216,9 +1249,8 @@ unsigned int calc_checksum (char* fileName, char* folder) {
           calcChecksumChunk += sdBuffer[c];
         }
       }
-      calcChecksum +=  2 * calcChecksumChunk;
-    }
-    else {
+      calcChecksum += 2 * calcChecksumChunk;
+    } else {
       //calcFilesize == 2 || 4 || 8 || 16 || 32 || 40 || etc
       for (i = 0; i < (myFile.fileSize() / 512); i++) {
         myFile.read(sdBuffer, 512);
@@ -1231,8 +1263,7 @@ unsigned int calc_checksum (char* fileName, char* folder) {
     myFile.close();
     sd.chdir();
     return (calcChecksum);
-  }
-  else {
+  } else {
     // Else show error
     print_Error(F("DUMP ROM 1ST"), false);
     return 0;
@@ -1258,8 +1289,7 @@ boolean compare_checksum() {
     println_Msg(F(" -> OK"));
     display_Update();
     return 1;
-  }
-  else {
+  } else {
     print_Msg(F(" != "));
     println_Msg(checksumStr);
     print_Error(F("Invalid Checksum"), false);
@@ -1326,35 +1356,34 @@ void readROM_SNES() {
 
   //Dump Low-type ROM
   else if (romType == LO) {
-    if (romChips == 243) { //0xF3
-      cx4Map = readBank_SNES(0, 32594); //0x7F52
-      if ((cx4Type == 2) && (cx4Map != 0)) { //X2
+    if (romChips == 243) {                    //0xF3
+      cx4Map = readBank_SNES(0, 32594);       //0x7F52
+      if ((cx4Type == 2) && (cx4Map != 0)) {  //X2
         dataOut();
         controlOut_SNES();
-        writeBank_SNES(0, 32594, 0); // Set 0x7F52 to 0
+        writeBank_SNES(0, 32594, 0);  // Set 0x7F52 to 0
         dataIn();
         controlIn_SNES();
-      }
-      else if ((cx4Type == 3) && (cx4Map == 0)) { //X3
+      } else if ((cx4Type == 3) && (cx4Map == 0)) {  //X3
         dataOut();
         controlOut_SNES();
-        writeBank_SNES(0, 32594, 1); // Set 0x7F52 to 1
+        writeBank_SNES(0, 32594, 1);  // Set 0x7F52 to 1
         dataIn();
         controlIn_SNES();
       }
     }
     if (romSize > 24) {
       // ROM > 96 banks (up to 128 banks)
-      readLoRomBanks( 0x80, numBanks + 0x80, &myFile );
+      readLoRomBanks(0x80, numBanks + 0x80, &myFile);
     } else {
       // Read up to 96 banks starting at bank 0×00.
-      readLoRomBanks( 0, numBanks, &myFile );
+      readLoRomBanks(0, numBanks, &myFile);
     }
-    if (romChips == 243) { //0xF3
+    if (romChips == 243) {  //0xF3
       // Restore CX4 Mapping Register
       dataOut();
       controlOut_SNES();
-      writeBank_SNES(0, 32594, cx4Map); // 0x7F52
+      writeBank_SNES(0, 32594, cx4Map);  // 0x7F52
       dataIn();
       controlIn_SNES();
     }
@@ -1377,7 +1406,7 @@ void readROM_SNES() {
       dataIn();
       controlIn_SNES();
 
-      readHiRomBanks( 240, 256, &myFile );
+      readHiRomBanks(240, 256, &myFile);
       if (currMemmap == 2) display_Clear();  // need more space for the progress bars
     }
 
@@ -1398,13 +1427,13 @@ void readROM_SNES() {
     // 0xC00000-0xDFFFFF
     //print_Msg(F("Part 1"));
     display_Update();
-    readHiRomBanks( 192, 224, &myFile );
+    readHiRomBanks(192, 224, &myFile);
 
     if (numBanks > 32) {
       dataOut();
       controlOut_SNES();
       // Set 0x4834 to 0xFF
-      writeBank_SNES( 0, 0x4834, 0xFF );
+      writeBank_SNES(0, 0x4834, 0xFF);
 
       dataIn();
       controlIn_SNES();
@@ -1412,19 +1441,19 @@ void readROM_SNES() {
       // 0xE00000-0xEFFFFF
       //print_Msg(F(" 2"));
       display_Update();
-      readHiRomBanks( 224, 240, &myFile );
+      readHiRomBanks(224, 240, &myFile);
 
       if (numBanks > 48) {
         // 0xF00000-0xFFFFFF
         //print_Msg(F(" 3"));
         display_Update();
-        readHiRomBanks( 240, 256, &myFile );
+        readHiRomBanks(240, 256, &myFile);
 
         dataOut();
         controlOut_SNES();
 
         // Set 0x4833 to 3
-        writeBank_SNES( 0, 0x4833, 3 );
+        writeBank_SNES(0, 0x4833, 3);
 
         dataIn();
         controlIn_SNES();
@@ -1432,7 +1461,7 @@ void readROM_SNES() {
         // 0xF00000-0xFFFFFF
         //print_Msg(F(" 4"));
         display_Update();
-        readHiRomBanks( 240, 256, &myFile );
+        readHiRomBanks(240, 256, &myFile);
       }
       //println_Msg(F(""));
       display_Clear();  // need more space due to the 4 progress bars
@@ -1441,8 +1470,8 @@ void readROM_SNES() {
       dataOut();
       controlOut_SNES();
 
-      writeBank_SNES( 0, 0x4833, 2 );
-      writeBank_SNES( 0, 0x4834, 0 );
+      writeBank_SNES(0, 0x4833, 2);
+      writeBank_SNES(0, 0x4834, 0);
 
       dataIn();
       controlIn_SNES();
@@ -1454,7 +1483,7 @@ void readROM_SNES() {
     println_Msg(F("Dumping HiRom..."));
     display_Update();
 
-    readHiRomBanks( 192, numBanks + 192, &myFile );
+    readHiRomBanks(192, numBanks + 192, &myFile);
   }
 
   // Close the file:
@@ -1465,7 +1494,7 @@ void readROM_SNES() {
   SNES SRAM Functions
 *****************************************/
 // Write file to SRAM
-void writeSRAM (boolean browseFile) {
+void writeSRAM(boolean browseFile) {
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
@@ -1473,8 +1502,7 @@ void writeSRAM (boolean browseFile) {
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
-  }
-  else
+  } else
     sprintf(filePath, "%s", fileName);
 
   //open file on sd card
@@ -1492,38 +1520,35 @@ void writeSRAM (boolean browseFile) {
       // Sram size
       long lastByte = (long(sramSize) * 128);
 
-      if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) { // SuperFX
-        if (lastByte > 0x10000) { // Large SuperFX SRAM (no known carts)
+      if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+        if (lastByte > 0x10000) {                                                          // Large SuperFX SRAM (no known carts)
           sramBanks = lastByte / 0x10000;
           for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
             for (long currByte = 0x0000; currByte < 0x10000; currByte++) {
               writeBank_SNES(currBank, currByte, myFile.read());
             }
           }
-        }
-        else { // SuperFX SRAM
+        } else {  // SuperFX SRAM
           for (long currByte = 0; currByte < lastByte; currByte++) {
             writeBank_SNES(0x70, currByte, myFile.read());
           }
         }
-      }
-      else if (lastByte > 0x8000) { // Large SRAM Fix
+      } else if (lastByte > 0x8000) {  // Large SRAM Fix
         sramBanks = lastByte / 0x8000;
         for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
           for (long currByte = 0x0000; currByte < 0x8000; currByte++) {
             writeBank_SNES(currBank, currByte, myFile.read());
           }
         }
-      }
-      else {
-        for (long currByte = 0; currByte <  lastByte; currByte++) {
+      } else {
+        for (long currByte = 0; currByte < lastByte; currByte++) {
           writeBank_SNES(0x70, currByte, myFile.read());
         }
       }
     }
     // HiRom
     else if (romType == HI) {
-      if ((romChips == 245) || (romChips == 249)) { // SPC7110 SRAM
+      if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
         // Configure SPC7110 SRAM Register
         // Set 0x4830 to 0x80
         writeBank_SNES(0, 0x4830, 0x80);
@@ -1538,21 +1563,19 @@ void writeSRAM (boolean browseFile) {
         // Reset 0x4830 to 0x0
         writeBank_SNES(0, 0x4830, 0);
         dataIn();
-      }
-      else {
+      } else {
         // Writing SRAM on HiRom needs CS(PH3) to be high
-        PORTH |=  (1 << 3);
+        PORTH |= (1 << 3);
         // Sram size
         long lastByte = (long(sramSize) * 128);
-        if (lastByte > 0x2000) { // Large SRAM Fix
+        if (lastByte > 0x2000) {  // Large SRAM Fix
           sramBanks = lastByte / 0x2000;
           for (int currBank = 0x30; currBank < sramBanks + 0x30; currBank++) {
             for (long currByte = 0x6000; currByte < 0x8000; currByte++) {
               writeBank_SNES(currBank, currByte, myFile.read());
             }
           }
-        }
-        else {
+        } else {
           lastByte += 0x6000;
           // Write to sram bank
           for (long currByte = 0x6000; currByte < lastByte; currByte++) {
@@ -1564,7 +1587,7 @@ void writeSRAM (boolean browseFile) {
     // ExHiRom
     else if (romType == EX) {
       // Writing SRAM on HiRom needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      PORTH |= (1 << 3);
       // Sram size
       long lastByte = (long(sramSize) * 128) + 0x6000;
       for (long currByte = 0x6000; currByte < lastByte; currByte++) {
@@ -1632,13 +1655,12 @@ void writeSRAM (boolean browseFile) {
     println_Msg(F("SRAM writing finished"));
     display_Update();
 
-  }
-  else {
+  } else {
     print_Error(F("File doesnt exist"), false);
   }
 }
 
-void readSRAM () {
+void readSRAM() {
   // set control
   controlIn_SNES();
 
@@ -1664,37 +1686,33 @@ void readSRAM () {
   if (romType == LO) {
     // Sram size
     long lastByte = (long(sramSize) * 128);
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) { // SuperFX
-      if (lastByte > 0x10000) { // Large SuperFX SRAM (no known carts)
+    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+      if (lastByte > 0x10000) {                                                          // Large SuperFX SRAM (no known carts)
         sramBanks = lastByte / 0x10000;
         for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
           for (long currByte = 0x0000; currByte < 0x10000; currByte++) {
             myFile.write(readBank_SNES(currBank, currByte));
           }
         }
-      }
-      else { // SuperFX SRAM
+      } else {  // SuperFX SRAM
         for (long currByte = 0; currByte < lastByte; currByte++) {
           myFile.write(readBank_SNES(0x70, currByte));
         }
       }
-    }
-    else if (lastByte > 0x8000) { // Large SRAM Fix
+    } else if (lastByte > 0x8000) {  // Large SRAM Fix
       sramBanks = lastByte / 0x8000;
       for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
         for (long currByte = 0x0000; currByte < 0x8000; currByte++) {
           myFile.write(readBank_SNES(currBank, currByte));
         }
       }
-    }
-    else {
+    } else {
       for (long currByte = 0; currByte < lastByte; currByte++) {
         myFile.write(readBank_SNES(0x70, currByte));
       }
     }
-  }
-  else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) { // SPC7110 SRAM
+  } else if (romType == HI) {
+    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
       // Configure SPC7110 SRAM Register
       dataOut();
       // Set 0x4830 to 0x80
@@ -1709,40 +1727,36 @@ void readSRAM () {
       // Reset 0x4830 to 0x0
       writeBank_SNES(0, 0x4830, 0);
       dataIn();
-    }
-    else {
+    } else {
       // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      PORTH |= (1 << 3);
       // Sram size
       long lastByte = (long(sramSize) * 128);
-      if (lastByte > 0x2000) { // Large SRAM Fix
+      if (lastByte > 0x2000) {  // Large SRAM Fix
         sramBanks = lastByte / 0x2000;
         for (int currBank = 0x30; currBank < sramBanks + 0x30; currBank++) {
           for (long currByte = 0x6000; currByte < 0x8000; currByte++) {
             myFile.write(readBank_SNES(currBank, currByte));
           }
         }
-      }
-      else {
+      } else {
         lastByte += 0x6000;
         for (long currByte = 0x6000; currByte < lastByte; currByte++) {
           myFile.write(readBank_SNES(0x30, currByte));
         }
       }
     }
-  }
-  else if (romType == EX) {
+  } else if (romType == EX) {
     // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |=  (1 << 3);
+    PORTH |= (1 << 3);
     // Sram size
     long lastByte = (long(sramSize) * 128) + 0x6000;
     for (long currByte = 0x6000; currByte < lastByte; currByte++) {
       myFile.write(readBank_SNES(0xB0, currByte));
     }
-  }
-  else if (romType == SA) {
+  } else if (romType == SA) {
     // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |=  (1 << 3);
+    PORTH |= (1 << 3);
     // Sram size
     long lastByte = (long(sramSize) * 128);
     if (lastByte > 0x10000) {
@@ -1752,8 +1766,7 @@ void readSRAM () {
           myFile.write(readBank_SNES(currBank, currByte));
         }
       }
-    }
-    else {
+    } else {
       for (long currByte = 0x0; currByte < lastByte; currByte++) {
         myFile.write(readBank_SNES(0x40, currByte));
       }
@@ -1786,8 +1799,8 @@ unsigned long verifySRAM() {
     if (romType == LO) {
       // Sram size
       long lastByte = (long(sramSize) * 128);
-      if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) { // SuperFX
-        if (lastByte > 0x10000) { // Large SuperFX SRAM (no known carts)
+      if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+        if (lastByte > 0x10000) {                                                          // Large SuperFX SRAM (no known carts)
           sramBanks = lastByte / 0x10000;
           for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
             for (long currByte = 0; currByte < 0x10000; currByte += 512) {
@@ -1800,8 +1813,7 @@ unsigned long verifySRAM() {
               }
             }
           }
-        }
-        else { // SuperFX SRAM
+        } else {  // SuperFX SRAM
           for (long currByte = 0; currByte < lastByte; currByte += 512) {
             //fill sdBuffer
             myFile.read(sdBuffer, 512);
@@ -1812,8 +1824,7 @@ unsigned long verifySRAM() {
             }
           }
         }
-      }
-      else if (lastByte > 0x8000) { // Large SRAM Fix
+      } else if (lastByte > 0x8000) {  // Large SRAM Fix
         sramBanks = lastByte / 0x8000;
         for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
           for (long currByte = 0; currByte < 0x8000; currByte += 512) {
@@ -1826,8 +1837,7 @@ unsigned long verifySRAM() {
             }
           }
         }
-      }
-      else {
+      } else {
         for (long currByte = 0; currByte < lastByte; currByte += 512) {
           //fill sdBuffer
           myFile.read(sdBuffer, 512);
@@ -1838,9 +1848,8 @@ unsigned long verifySRAM() {
           }
         }
       }
-    }
-    else if (romType == HI) {
-      if ((romChips == 245) || (romChips == 249)) { // SPC7110 SRAM
+    } else if (romType == HI) {
+      if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
         // Configure SPC7110 SRAM Register
         dataOut();
         // Set 0x4830 to 0x80
@@ -1861,13 +1870,12 @@ unsigned long verifySRAM() {
         // Reset 0x4830 to 0x0
         writeBank_SNES(0, 0x4830, 0);
         dataIn();
-      }
-      else {
+      } else {
         // Dumping SRAM on HiRom needs CS(PH3) to be high
-        PORTH |=  (1 << 3);
+        PORTH |= (1 << 3);
         // Sram size
         long lastByte = (long(sramSize) * 128);
-        if (lastByte > 0x2000) { // Large SRAM Fix
+        if (lastByte > 0x2000) {  // Large SRAM Fix
           sramBanks = lastByte / 0x2000;
           for (int currBank = 0x30; currBank < sramBanks + 0x30; currBank++) {
             for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
@@ -1880,8 +1888,7 @@ unsigned long verifySRAM() {
               }
             }
           }
-        }
-        else {
+        } else {
           lastByte += 0x6000;
           for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
             //fill sdBuffer
@@ -1894,10 +1901,9 @@ unsigned long verifySRAM() {
           }
         }
       }
-    }
-    else if (romType == EX) {
+    } else if (romType == EX) {
       // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      PORTH |= (1 << 3);
       // Sram size
       long lastByte = (long(sramSize) * 128) + 0x6000;
       for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
@@ -1909,10 +1915,9 @@ unsigned long verifySRAM() {
           }
         }
       }
-    }
-    else if (romType == SA) {
+    } else if (romType == SA) {
       // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      PORTH |= (1 << 3);
       // Sram size
       long lastByte = (long(sramSize) * 128);
 
@@ -1929,8 +1934,7 @@ unsigned long verifySRAM() {
             }
           }
         }
-      }
-      else {
+      } else {
         for (long currByte = 0x0; currByte < lastByte; currByte += 512) {
           //fill sdBuffer
           myFile.read(sdBuffer, 512);
@@ -1948,8 +1952,7 @@ unsigned long verifySRAM() {
       myFile.close();
       if (writeErrors == 0) {
         println_Msg(F("Verified OK"));
-      }
-      else {
+      } else {
         print_Msg(F("Error: "));
         print_Msg(writeErrors);
         println_Msg(F(" bytes "));
@@ -1969,14 +1972,13 @@ unsigned long verifySRAM() {
     // Close the file:
     myFile.close();
     return writeErrors;
-  }
-  else {
+  } else {
     print_Error(F("Can't open file"), false);
   }
 }
 
 // Overwrite the entire SRAM
-boolean eraseSRAM (byte b) {
+boolean eraseSRAM(byte b) {
   print_Msg(F("0x"));
   print_Msg(b, HEX);
   print_Msg(F(": "));
@@ -1993,37 +1995,33 @@ boolean eraseSRAM (byte b) {
     // Sram size
     long lastByte = (long(sramSize) * 128);
 
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) { // SuperFX
-      if (lastByte > 0x10000) { // Large SuperFX SRAM (no known carts)
+    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+      if (lastByte > 0x10000) {                                                          // Large SuperFX SRAM (no known carts)
         sramBanks = lastByte / 0x10000;
         for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
           for (long currByte = 0x0000; currByte < 0x10000; currByte++) {
             writeBank_SNES(currBank, currByte, b);
           }
         }
-      }
-      else { // SuperFX SRAM
+      } else {  // SuperFX SRAM
         for (long currByte = 0; currByte < lastByte; currByte++) {
           writeBank_SNES(0x70, currByte, b);
         }
       }
-    }
-    else if (lastByte > 0x8000) { // Large SRAM Fix
+    } else if (lastByte > 0x8000) {  // Large SRAM Fix
       sramBanks = lastByte / 0x8000;
       for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
         for (long currByte = 0x0000; currByte < 0x8000; currByte++) {
           writeBank_SNES(currBank, currByte, b);
         }
       }
-    }
-    else {
-      for (long currByte = 0; currByte <  lastByte; currByte++) {
+    } else {
+      for (long currByte = 0; currByte < lastByte; currByte++) {
         writeBank_SNES(0x70, currByte, b);
       }
     }
-  }
-  else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) { // SPC7110 SRAM
+  } else if (romType == HI) {
+    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
       // Configure SPC7110 SRAM Register
       // Set 0x4830 to 0x80
       writeBank_SNES(0, 0x4830, 0x80);
@@ -2038,21 +2036,19 @@ boolean eraseSRAM (byte b) {
       // Reset 0x4830 to 0x0
       writeBank_SNES(0, 0x4830, 0);
       dataIn();
-    }
-    else {
+    } else {
       // Writing SRAM on HiRom needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      PORTH |= (1 << 3);
       // Sram size
       long lastByte = (long(sramSize) * 128);
-      if (lastByte > 0x2000) { // Large SRAM Fix
+      if (lastByte > 0x2000) {  // Large SRAM Fix
         sramBanks = lastByte / 0x2000;
         for (int currBank = 0x30; currBank < sramBanks + 0x30; currBank++) {
           for (long currByte = 0x6000; currByte < 0x8000; currByte++) {
             writeBank_SNES(currBank, currByte, b);
           }
         }
-      }
-      else {
+      } else {
         lastByte += 0x6000;
         // Write to sram bank
         for (long currByte = 0x6000; currByte < lastByte; currByte++) {
@@ -2064,7 +2060,7 @@ boolean eraseSRAM (byte b) {
   // ExHiRom
   else if (romType == EX) {
     // Writing SRAM on HiRom needs CS(PH3) to be high
-    PORTH |=  (1 << 3);
+    PORTH |= (1 << 3);
     // Sram size
     long lastByte = (long(sramSize) * 128) + 0x6000;
     for (long currByte = 0x6000; currByte < lastByte; currByte++) {
@@ -2133,8 +2129,8 @@ boolean eraseSRAM (byte b) {
   if (romType == LO) {
     // Sram size
     long lastByte = (long(sramSize) * 128);
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) { // SuperFX
-      if (lastByte > 0x10000) { // Large SuperFX SRAM (no known carts)
+    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+      if (lastByte > 0x10000) {                                                          // Large SuperFX SRAM (no known carts)
         sramBanks = lastByte / 0x10000;
         for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
           for (long currByte = 0; currByte < 0x10000; currByte += 512) {
@@ -2145,8 +2141,7 @@ boolean eraseSRAM (byte b) {
             }
           }
         }
-      }
-      else { // SuperFX SRAM
+      } else {  // SuperFX SRAM
         for (long currByte = 0; currByte < lastByte; currByte += 512) {
           for (int c = 0; c < 512; c++) {
             if ((readBank_SNES(0x70, currByte + c)) != b) {
@@ -2155,8 +2150,7 @@ boolean eraseSRAM (byte b) {
           }
         }
       }
-    }
-    else if (lastByte > 0x8000) { // Large SRAM Fix
+    } else if (lastByte > 0x8000) {  // Large SRAM Fix
       sramBanks = lastByte / 0x8000;
       for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
         for (long currByte = 0; currByte < 0x8000; currByte += 512) {
@@ -2167,8 +2161,7 @@ boolean eraseSRAM (byte b) {
           }
         }
       }
-    }
-    else {
+    } else {
       for (long currByte = 0; currByte < lastByte; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           if ((readBank_SNES(0x70, currByte + c)) != b) {
@@ -2177,9 +2170,8 @@ boolean eraseSRAM (byte b) {
         }
       }
     }
-  }
-  else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) { // SPC7110 SRAM
+  } else if (romType == HI) {
+    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
       // Configure SPC7110 SRAM Register
       dataOut();
       // Set 0x4830 to 0x80
@@ -2198,13 +2190,12 @@ boolean eraseSRAM (byte b) {
       // Reset 0x4830 to 0x0
       writeBank_SNES(0, 0x4830, 0);
       dataIn();
-    }
-    else {
+    } else {
       // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |=  (1 << 3);
+      PORTH |= (1 << 3);
       // Sram size
       long lastByte = (long(sramSize) * 128);
-      if (lastByte > 0x2000) { // Large SRAM Fix
+      if (lastByte > 0x2000) {  // Large SRAM Fix
         sramBanks = lastByte / 0x2000;
         for (int currBank = 0x30; currBank < sramBanks + 0x30; currBank++) {
           for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
@@ -2215,8 +2206,7 @@ boolean eraseSRAM (byte b) {
             }
           }
         }
-      }
-      else {
+      } else {
         lastByte += 0x6000;
         for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
           for (int c = 0; c < 512; c++) {
@@ -2227,10 +2217,9 @@ boolean eraseSRAM (byte b) {
         }
       }
     }
-  }
-  else if (romType == EX) {
+  } else if (romType == EX) {
     // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |=  (1 << 3);
+    PORTH |= (1 << 3);
     // Sram size
     long lastByte = (long(sramSize) * 128) + 0x6000;
     for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
@@ -2240,10 +2229,9 @@ boolean eraseSRAM (byte b) {
         }
       }
     }
-  }
-  else if (romType == SA) {
+  } else if (romType == SA) {
     // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |=  (1 << 3);
+    PORTH |= (1 << 3);
     // Sram size
     long lastByte = (long(sramSize) * 128);
     if (lastByte > 0x10000) {
@@ -2257,8 +2245,7 @@ boolean eraseSRAM (byte b) {
           }
         }
       }
-    }
-    else {
+    } else {
       for (long currByte = 0x0; currByte < lastByte; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           if ((readBank_SNES(0x40, currByte + c)) != b) {
@@ -2271,8 +2258,7 @@ boolean eraseSRAM (byte b) {
   if (writeErrors == 0) {
     println_Msg(F("OK"));
     return 1;
-  }
-  else {
+  } else {
     println_Msg(F("ERROR"));
     return 0;
   }

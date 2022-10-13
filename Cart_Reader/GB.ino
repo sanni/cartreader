@@ -20,14 +20,14 @@ static const char gbxMenuItem2[] PROGMEM = "GB Advance (3V)";
 static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
 static const char gbxMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsGBx[] PROGMEM = {gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5};
+static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5 };
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read ROM";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
 static const char GBMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsGB[] PROGMEM = {GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4};
+static const char* const menuOptionsGB[] PROGMEM = { GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4 };
 
 // GB Flash items
 static const char GBFlashItem1[] PROGMEM = "29F Cart (MBC3)";
@@ -37,7 +37,7 @@ static const char GBFlashItem4[] PROGMEM = "CFI Cart";
 static const char GBFlashItem5[] PROGMEM = "CFI Cart and Save";
 static const char GBFlashItem6[] PROGMEM = "GB Smart";
 static const char GBFlashItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsGBFlash[] PROGMEM = {GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, GBFlashItem7};
+static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, GBFlashItem7 };
 
 // Start menu for both GB and GBA
 void gbxMenu() {
@@ -48,20 +48,19 @@ void gbxMenu() {
   gbType = question_box(F("Select Game Boy"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (gbType)
-  {
+  switch (gbType) {
     case 0:
       display_Clear();
       display_Update();
       setup_GB();
-      mode =  mode_GB;
+      mode = mode_GB;
       break;
 
     case 1:
       display_Clear();
       display_Update();
       setup_GBA();
-      mode =  mode_GBA;
+      mode = mode_GBA;
       break;
 
     case 2:
@@ -72,14 +71,13 @@ void gbxMenu() {
       gbFlash = question_box(F("Select type"), menuOptions, 7, 0);
 
       // wait for user choice to come back from the question box menu
-      switch (gbFlash)
-      {
+      switch (gbFlash) {
         case 0:
           //Flash MBC3
           display_Clear();
           display_Update();
           setup_GB();
-          mode =  mode_GB;
+          mode = mode_GB;
 
           // Change working dir to root
           sd.chdir("/");
@@ -97,7 +95,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GB();
-          mode =  mode_GB;
+          mode = mode_GB;
 
           // Change working dir to root
           sd.chdir("/");
@@ -115,7 +113,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GB();
-          mode =  mode_GB;
+          mode = mode_GB;
 
           //Flash first bank with erase
           // Change working dir to root
@@ -156,7 +154,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GB();
-          mode =  mode_GB;
+          mode = mode_GB;
 
           // Change working dir to root
           sd.chdir("/");
@@ -183,7 +181,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GB();
-          mode =  mode_GB;
+          mode = mode_GB;
 
           // Change working dir to root
           sd.chdir("/");
@@ -231,8 +229,7 @@ void gbxMenu() {
                   if (wrErrors == 0) {
                     println_Msg(F("Verified OK"));
                     display_Update();
-                  }
-                  else {
+                  } else {
                     print_Msg(F("Error: "));
                     print_Msg(wrErrors);
                     println_Msg(F(" bytes "));
@@ -245,8 +242,7 @@ void gbxMenu() {
             if (!saveFound) {
               println_Msg(F("Error: No save found."));
             }
-          }
-          else {
+          } else {
             print_Error(F("Cart has no Sram"), false);
           }
           // Reset
@@ -273,7 +269,7 @@ void gbxMenu() {
       display_Clear();
       display_Update();
       setup_GBM();
-      mode =  mode_GBM;
+      mode = mode_GBM;
       break;
 
     case 4:
@@ -290,8 +286,7 @@ void gbMenu() {
   mainMenu = question_box(F("GB Cart Reader"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       display_Clear();
       // Change working dir to root
@@ -313,8 +308,7 @@ void gbMenu() {
           readSRAMFLASH_MBC6_GB();
         else
           readSRAM_GB();
-      }
-      else {
+      } else {
         print_Error(F("No save or unsupported type"), false);
       }
       println_Msg(F(""));
@@ -331,24 +325,21 @@ void gbMenu() {
 
         if (romType == 32) {
           writeSRAMFLASH_MBC6_GB();
-        }
-        else {
+        } else {
           writeSRAM_GB();
           unsigned long wrErrors;
           wrErrors = verifySRAM_GB();
           if (wrErrors == 0) {
             println_Msg(F("Verified OK"));
             display_Update();
-          }
-          else {
+          } else {
             print_Msg(F("Error: "));
             print_Msg(wrErrors);
             println_Msg(F(" bytes "));
             print_Error(F("did not verify."), false);
           }
         }
-      }
-      else {
+      } else {
         print_Error(F("No save or unsupported type"), false);
       }
       println_Msg(F(""));
@@ -498,19 +489,15 @@ void showCartInfo_GB() {
       case 0:
         if (romType == 6) {
           print_Msg(F("512 Byte"));
-        }
-        else if (romType == 0x22) {
+        } else if (romType == 0x22) {
           if (strncmp(cartID, "KCEJ", 4) == 0) {
             print_Msg(F("512 Byte"));
-          }
-          else {
+          } else {
             print_Msg(F("256 Byte"));
           }
-        }
-        else if (romType == 0xFD) {
+        } else if (romType == 0xFD) {
           print_Msg(F("32 Byte"));
-        }
-        else {
+        } else {
           print_Msg(F("None"));
         }
         break;
@@ -550,8 +537,7 @@ void showCartInfo_GB() {
     println_Msg(F("Press Button..."));
     display_Update();
     wait();
-  }
-  else {
+  } else {
     print_Error(F("GAMEPAK ERROR"), true);
   }
 }
@@ -568,12 +554,18 @@ byte readByte_GB(word myAddress) {
   // Enable pullups
   PORTC = 0xFF;
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch RD(PH6) to LOW
   PORTH &= ~(1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
   byte tempByte = PINC;
@@ -581,7 +573,10 @@ byte readByte_GB(word myAddress) {
   // Switch and RD(PH6) to HIGH
   PORTH |= (1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempByte;
 }
@@ -596,18 +591,27 @@ void writeByte_GB(int myAddress, byte myData) {
   DDRC = 0xFF;
 
   // Wait till output is stable
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Pull WR(PH5) low
   PORTH &= ~(1 << 5);
 
   // Leave WR low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
   // Leave WR high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch data pins to input
   DDRC = 0x00;
@@ -624,29 +628,37 @@ byte readByteSRAM_GB(word myAddress) {
   // Enable pullups
   PORTC = 0xFF;
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Pull CS(PH3) CLK(PH1)(for FRAM MOD) LOW
   PORTH &= ~((1 << 3) | (1 << 1));
   // Pull RD(PH6) LOW
   PORTH &= ~(1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
   byte tempByte = PINC;
 
   // Pull RD(PH6) HIGH
-  PORTH |=  (1 << 6);
+  PORTH |= (1 << 6);
   if (romType == 252) {
     // Pull CS(PH3) HIGH
     PORTH |= (1 << 3);
-  }
-  else {
+  } else {
     // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
     PORTH |= (1 << 3) | (1 << 1);
   }
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempByte;
 }
@@ -661,7 +673,10 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
   // Switch data pins to output
   DDRC = 0xFF;
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   if (romType == 252 || romType == 253) {
     // Pull CS(PH3) LOW
@@ -670,8 +685,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
     PORTH |= (1 << 1);
     // Pull WR(PH5) low
     PORTH &= ~(1 << 5);
-  }
-  else {
+  } else {
     // Pull CS(PH3) CLK(PH1)(for FRAM MOD) LOW
     PORTH &= ~((1 << 3) | (1 << 1));
     // Pull WR(PH5) low
@@ -679,7 +693,10 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
   }
 
   // Leave WR low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   if (romType == 252 || romType == 253) {
     // Pull WR(PH5) HIGH
@@ -688,8 +705,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
     PORTH |= (1 << 3);
     // Pull  CLK(PH1) LOW (for GB CAM)
     PORTH &= ~(1 << 1);
-  }
-  else {
+  } else {
     // Pull WR(PH5) HIGH
     PORTH |= (1 << 5);
     // Pull CS(PH3) CLK(PH1)(for FRAM MOD) HIGH
@@ -697,7 +713,10 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
   }
 
   // Leave WR high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch data pins to input
   DDRC = 0x00;
@@ -829,8 +848,7 @@ void getCartInfo_GB() {
   }
   if (sramSize == 1) {
     lastByte = 0xA7FF;
-  }
-  else if (sramSize > 1) {
+  } else if (sramSize > 1) {
     lastByte = 0xBFFF;
   }
 
@@ -890,21 +908,13 @@ void getCartInfo_GB() {
 
   // MMM01 (Mani 4 in 1)
   if (
-    (strncmp(romName, "BOUKENJIMA2 SET", 15) == 0) && (sdBuffer[0x14D] == 0) ||
-    (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0) && (sdBuffer[0x14D] == 0xC6) ||
-    (strncmp(romName, "GANBARUGA SET", 13) == 0) && (sdBuffer[0x14D] == 0x90) ||
-    (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
+    (strncmp(romName, "BOUKENJIMA2 SET", 15) == 0) && (sdBuffer[0x14D] == 0) || (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0) && (sdBuffer[0x14D] == 0xC6) || (strncmp(romName, "GANBARUGA SET", 13) == 0) && (sdBuffer[0x14D] == 0x90) || (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
     romType = 0x0B;
   }
 
   // MBC1M
   if (
-    (strncmp(romName, "MOMOCOL", 7) == 0) && (sdBuffer[0x14D] == 0x28) ||
-    (strncmp(romName, "BOMCOL", 6) == 0) && (sdBuffer[0x14D] == 0x86) ||
-    (strncmp(romName, "GENCOL", 6) == 0) && (sdBuffer[0x14D] == 0x8A) ||
-    (strncmp(romName, "SUPERCHINESE 123", 16) == 0) && (sdBuffer[0x14D] == 0xE4) ||
-    (strncmp(romName, "MORTALKOMBATI&II", 16) == 0) && (sdBuffer[0x14D] == 0xB9) ||
-    (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
+    (strncmp(romName, "MOMOCOL", 7) == 0) && (sdBuffer[0x14D] == 0x28) || (strncmp(romName, "BOMCOL", 6) == 0) && (sdBuffer[0x14D] == 0x86) || (strncmp(romName, "GENCOL", 6) == 0) && (sdBuffer[0x14D] == 0x8A) || (strncmp(romName, "SUPERCHINESE 123", 16) == 0) && (sdBuffer[0x14D] == 0xE4) || (strncmp(romName, "MORTALKOMBATI&II", 16) == 0) && (sdBuffer[0x14D] == 0xB9) || (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
     romType += 0x100;
   }
 
@@ -948,7 +958,7 @@ void readROM_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
+  uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
   draw_progressbar(0, totalProgressBar);
 
   // M161 banks are double size and start with 0
@@ -1028,13 +1038,11 @@ void readROM_GB() {
           // for every 4Mbits ROM, restart from 0x0000
           romAddress = 0x0000;
           currBank++;
-        }
-        else {
+        } else {
           writeByte_GB(0x6000, 0);
           writeByte_GB(0x2000, (currBank & 0x1f));
         }
-      }
-      else {
+      } else {
         if ((romType >= 0x19 && romType <= 0x1E) && (currBank == 0 || currBank == 256)) {
           writeByte_GB(0x3000, (currBank >> 8) & 0xFF);
         }
@@ -1065,7 +1073,7 @@ void readROM_GB() {
 }
 
 // Calculate checksum
-unsigned int calc_checksum_GB (char* fileName, char* folder) {
+unsigned int calc_checksum_GB(char* fileName, char* folder) {
   unsigned int calcChecksum = 0;
   //  int calcFilesize = 0; // unused
   unsigned long i = 0;
@@ -1115,8 +1123,7 @@ void compare_checksums_GB() {
   print_Msg(calcsumStr);
   if (strcmp(calcsumStr, checksumStr) == 0) {
     println_Msg(F(" -> OK"));
-  }
-  else {
+  } else {
     print_Msg(F(" != "));
     println_Msg(checksumStr);
     print_Error(F("Invalid Checksum"), false);
@@ -1188,8 +1195,7 @@ void readSRAM_GB() {
     print_Msg(folder);
     println_Msg(F("/"));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("Cart has no SRAM"), false);
   }
 }
@@ -1232,12 +1238,10 @@ void writeSRAM_GB() {
       println_Msg(F("SRAM writing finished"));
       display_Update();
 
-    }
-    else {
+    } else {
       print_Error(F("File doesnt exist"), false);
     }
-  }
-  else {
+  } else {
     print_Error(F("Cart has no SRAM"), false);
   }
 }
@@ -1256,8 +1260,8 @@ unsigned long verifySRAM_GB() {
 
     // Check SRAM size
     if (lastByte > 0) {
-      if (romType <= 4) { // MBC1
-        writeByte_GB(0x6000, 1); // Set RAM Mode
+      if (romType <= 4) {         // MBC1
+        writeByte_GB(0x6000, 1);  // Set RAM Mode
       }
 
       // Initialise MBC
@@ -1284,8 +1288,7 @@ unsigned long verifySRAM_GB() {
     // Close the file:
     myFile.close();
     return writeErrors;
-  }
-  else {
+  } else {
     print_Error(F("Can't open file"), true);
   }
 }
@@ -1464,8 +1467,7 @@ void writeSRAMFLASH_MBC6_GB() {
             print_Error(F("Error erasing FLASH sector."), true);
           }
         }
-      }
-      else {
+      } else {
         writeByte_GB(0x2800, 0x08);
         writeByte_GB(0x3800, 0x08);
         writeByte_GB(0x2000, currBank);
@@ -1521,8 +1523,7 @@ void writeSRAMFLASH_MBC6_GB() {
     myFile.close();
     println_Msg(F("Save writing finished"));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("File doesnt exist"), false);
   }
 }
@@ -1606,36 +1607,31 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
-    }
-    else if (strcmp(flashid, "0141") == 0) {
+    } else if (strcmp(flashid, "0141") == 0) {
       println_Msg(F("AM29F032B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
-    }
-    else if (strcmp(flashid, "01AD") == 0) {
+    } else if (strcmp(flashid, "01AD") == 0) {
       println_Msg(F("AM29F016B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
-    }
-    else if (strcmp(flashid, "04AD") == 0) {
+    } else if (strcmp(flashid, "04AD") == 0) {
       println_Msg(F("AM29F016D"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
-    }
-    else if (strcmp(flashid, "01D5") == 0) {
+    } else if (strcmp(flashid, "01D5") == 0) {
       println_Msg(F("AM29F080B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/64"));
       display_Update();
-    }
-    else {
+    } else {
       print_Msg(F("Flash ID: "));
       println_Msg(flashid);
       display_Update();
@@ -1703,7 +1699,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
+      uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
@@ -1753,7 +1749,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       // Write flash
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
+      uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
       for (int currBank = 0; currBank < romBanks; currBank++) {
@@ -1805,13 +1801,12 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
     // Read number of banks and switch banks
     for (word bank = 1; bank < romBanks; bank++) {
-      if (romType >= 5) { // MBC2 and above
-        writeByte_GB(0x2100, bank); // Set ROM bank
-      }
-      else { // MBC1
-        writeByte_GB(0x6000, 0); // Set ROM Mode
-        writeByte_GB(0x4000, bank >> 5); // Set bits 5 & 6 (01100000) of ROM bank
-        writeByte_GB(0x2000, bank & 0x1F); // Set bits 0 & 4 (00011111) of ROM bank
+      if (romType >= 5) {                   // MBC2 and above
+        writeByte_GB(0x2100, bank);         // Set ROM bank
+      } else {                              // MBC1
+        writeByte_GB(0x6000, 0);            // Set ROM Mode
+        writeByte_GB(0x4000, bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
+        writeByte_GB(0x2000, bank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
       }
 
       if (bank > 1) {
@@ -1839,15 +1834,13 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     if (writeErrors == 0) {
       println_Msg(F("OK"));
       display_Update();
-    }
-    else {
+    } else {
       println_Msg(F("Error"));
       print_Msg(writeErrors);
       println_Msg(F(" bytes "));
       print_Error(F("did not verify."), true);
     }
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file"));
     display_Update();
   }
@@ -1890,15 +1883,15 @@ byte writeByteCompensated(int address, byte data) {
 
 void startCFIMode(boolean x16Mode) {
   if (x16Mode) {
-    writeByte_GB(0x555, 0xf0); //x16 mode reset command
+    writeByte_GB(0x555, 0xf0);  //x16 mode reset command
     delay(500);
-    writeByte_GB(0x555, 0xf0); //Double reset to get out of possible Autoselect + CFI mode
+    writeByte_GB(0x555, 0xf0);  //Double reset to get out of possible Autoselect + CFI mode
     delay(500);
     writeByte_GB(0x55, 0x98);  //x16 CFI Query command
   } else {
-    writeByte_GB(0xAAA, 0xf0); //x8  mode reset command
+    writeByte_GB(0xAAA, 0xf0);  //x8  mode reset command
     delay(100);
-    writeByte_GB(0xAAA, 0xf0); //Double reset to get out of possible Autoselect + CFI mode
+    writeByte_GB(0xAAA, 0xf0);  //Double reset to get out of possible Autoselect + CFI mode
     delay(100);
     writeByte_GB(0xAA, 0x98);  //x8 CFI Query command
   }
@@ -1910,42 +1903,42 @@ void startCFIMode(boolean x16Mode) {
 void identifyCFI_GB() {
   // Reset flash
   display_Clear();
-  writeByte_GB(0x6000, 0); // Set ROM Mode
-  writeByte_GB(0x2000, 0); // Set Bank to 0
+  writeByte_GB(0x6000, 0);  // Set ROM Mode
+  writeByte_GB(0x2000, 0);  // Set Bank to 0
   writeByte_GB(0x3000, 0);
 
-  startCFIMode(false); // Trying x8 mode first
+  startCFIMode(false);  // Trying x8 mode first
 
   display_Clear();
   // Try x8 mode first
   char cfiQRYx8[7];
   char cfiQRYx16[7];
   sprintf(cfiQRYx8, "%02X%02X%02X", readByte_GB(0x20), readByte_GB(0x22), readByte_GB(0x24));
-  sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12)); // some devices use x8-style CFI Query command even though they are in x16 command mode
-  if (strcmp(cfiQRYx8, "515259") == 0) { // QRY in x8 mode
+  sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));  // some devices use x8-style CFI Query command even though they are in x16 command mode
+  if (strcmp(cfiQRYx8, "515259") == 0) {                                                        // QRY in x8 mode
     println_Msg(F("Normal CFI x8 Mode"));
     flashX16Mode = false;
     flashSwitchLastBits = false;
-  } else if (strcmp(cfiQRYx8, "52515A") == 0) { // QRY in x8 mode with switched last bit
+  } else if (strcmp(cfiQRYx8, "52515A") == 0) {  // QRY in x8 mode with switched last bit
     println_Msg(F("Switched CFI x8 Mode"));
     flashX16Mode = false;
     flashSwitchLastBits = true;
-  } else if (strcmp(cfiQRYx16, "515259") == 0) { // QRY in x16 mode
+  } else if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
     println_Msg(F("Normal CFI x16 Mode"));
     flashX16Mode = true;
     flashSwitchLastBits = false;
-  } else if (strcmp(cfiQRYx16, "52515A") == 0) { // QRY in x16 mode with switched last bit
+  } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
     println_Msg(F("Switched CFI x16 Mode"));
     flashX16Mode = true;
     flashSwitchLastBits = true;
   } else {
-    startCFIMode(true); // Try x16 mode next
+    startCFIMode(true);  // Try x16 mode next
     sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));
-    if (strcmp(cfiQRYx16, "515259") == 0) { // QRY in x16 mode
+    if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
       println_Msg(F("Normal CFI x16 Mode"));
       flashX16Mode = true;
       flashSwitchLastBits = false;
-    } else if (strcmp(cfiQRYx16, "52515A") == 0) { // QRY in x16 mode with switched last bit
+    } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
       println_Msg(F("Switched CFI x16 Mode"));
       flashX16Mode = true;
       flashSwitchLastBits = true;
@@ -1956,7 +1949,7 @@ void identifyCFI_GB() {
       return;
     }
   }
-  flashBanks = 1 << (readByteCompensated(0x4E) - 14); // - flashX16Mode);
+  flashBanks = 1 << (readByteCompensated(0x4E) - 14);  // - flashX16Mode);
 
   // Reset flash
   writeByteCompensated(0xAAA, 0xf0);
@@ -2134,12 +2127,12 @@ bool writeCFI_GB() {
           while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
             i++;
             if (i > 500) {
-              if (currAddr < 0x4000) { // This happens when trying to flash an MBC5 as if it was an MBC3. Retry to flash as MBC5, starting from last successfull byte.
+              if (currAddr < 0x4000) {  // This happens when trying to flash an MBC5 as if it was an MBC3. Retry to flash as MBC5, starting from last successfull byte.
                 currByte--;
                 currAddr += 0x4000;
                 endAddr = 0x7FFF;
                 break;
-              } else { // If a timeout happens while trying to flash MBC5-style, flashing failed.
+              } else {  // If a timeout happens while trying to flash MBC5-style, flashing failed.
                 return false;
               }
             }
@@ -2147,8 +2140,7 @@ bool writeCFI_GB() {
 
           // Switch CS(PH3) and OE/RD(PH6) to HIGH
           PORTH |= (1 << 3) | (1 << 6);
-          __asm__("nop\n\tnop\n\tnop\n\t"); // Waste a few CPU cycles to remove write errors
-
+          __asm__("nop\n\tnop\n\tnop\n\t");  // Waste a few CPU cycles to remove write errors
         }
         currAddr += 512;
       }
@@ -2168,13 +2160,12 @@ bool writeCFI_GB() {
 
     // Read number of banks and switch banks
     for (word bank = 1; bank < romBanks; bank++) {
-      if (romType >= 5) { // MBC2 and above
-        writeByte_GB(0x2100, bank); // Set ROM bank
-      }
-      else { // MBC1
-        writeByte_GB(0x6000, 0); // Set ROM Mode
-        writeByte_GB(0x4000, bank >> 5); // Set bits 5 & 6 (01100000) of ROM bank
-        writeByte_GB(0x2000, bank & 0x1F); // Set bits 0 & 4 (00011111) of ROM bank
+      if (romType >= 5) {                   // MBC2 and above
+        writeByte_GB(0x2100, bank);         // Set ROM bank
+      } else {                              // MBC1
+        writeByte_GB(0x6000, 0);            // Set ROM Mode
+        writeByte_GB(0x4000, bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
+        writeByte_GB(0x2000, bank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
       }
 
       if (bank > 1) {
@@ -2202,15 +2193,13 @@ bool writeCFI_GB() {
     if (writeErrors == 0) {
       println_Msg(F("OK"));
       display_Update();
-    }
-    else {
+    } else {
       print_Msg(F("Error: "));
       print_Msg(writeErrors);
       println_Msg(F(" bytes "));
       print_Error(F("did not verify."), false);
     }
-  }
-  else {
+  } else {
     println_Msg(F("Can't open file"));
     display_Update();
   }

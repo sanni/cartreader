@@ -75,19 +75,23 @@
 #define NAND_1A_HIGH PORTH |= (1 << 3)
 #define NAND_1A_LOW PORTH &= ~(1 << 3)
 #define NAND_1B_HIGH PORTH |= (1 << 4)
-#define NAND_1B_LOW PORTH &= ~(1 << 4) // Built-in RAM + I/O
+#define NAND_1B_LOW PORTH &= ~(1 << 4)  // Built-in RAM + I/O
 #define WE_HIGH PORTH |= (1 << 5)
 #define WE_LOW PORTH &= ~(1 << 5)
 #define OE_HIGH PORTH |= (1 << 6)
 #define OE_LOW PORTH &= ~(1 << 6)
 
-#define MODE_READ DDRC = 0 // [INPUT]
-#define MODE_WRITE DDRC = 0xFF //[OUTPUT]
+#define MODE_READ DDRC = 0      // [INPUT]
+#define MODE_WRITE DDRC = 0xFF  //[OUTPUT]
 
-#define DATA_READ { DDRC = 0; PORTC = 0xFF; } // [INPUT PULLUP]
-#define ADDR_WRITE DDRC = 0xFF // [OUTPUT]
+#define DATA_READ \
+  { \
+    DDRC = 0; \
+    PORTC = 0xFF; \
+  }                             // [INPUT PULLUP]
+#define ADDR_WRITE DDRC = 0xFF  // [OUTPUT]
 
-boolean multipack = 0; // Multi-Pack Cart
+boolean multipack = 0;  // Multi-Pack Cart
 byte bank0;
 byte bank1;
 
@@ -107,17 +111,17 @@ void setup_PCW() {
   DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |=  (1 << 0);
+  DDRJ |= (1 << 0);
 
   // Set Address/Data Pins AD0-AD7 (PC0-PC7) to Input
-  MODE_READ; // DDRC = 0
+  MODE_READ;  // DDRC = 0
 
   // Setting Control Pins to HIGH
   //        LE(PH0)   ---(PH1)    1A(PH3)    1B(PH4)    WE(PH5)    OE(PH6)
   PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set Unused Pins HIGH
-  PORTJ |= (1 << 0); // TIME(PJ0)
+  PORTJ |= (1 << 0);  // TIME(PJ0)
 
   // Multi-Pack Cart Check
   check_multi_PCW();
@@ -134,15 +138,13 @@ static const char pcwmenuItem1[] PROGMEM = "Read ROM";
 static const char pcwmenuItem2[] PROGMEM = "Read SRAM";
 static const char pcwmenuItem3[] PROGMEM = "Write SRAM";
 static const char pcwmenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsPCW[] PROGMEM = {pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, pcwmenuItem4};
+static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, pcwmenuItem4 };
 
-void pcwMenu()
-{
+void pcwMenu() {
   convertPgm(menuOptionsPCW, 4);
   uint8_t mainMenu = question_box(F(" POCKET CHALLENGE W"), menuOptions, 4, 0);
 
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       // Read ROM
       sd.chdir("/");
@@ -178,8 +180,7 @@ void pcwMenu()
       if (writeErrors == 0) {
         println_Msg(F("SRAM verified OK"));
         display_Update();
-      }
-      else {
+      } else {
         print_Msg(F("Error: "));
         print_Msg(writeErrors);
         println_Msg(F(" bytes "));
@@ -215,14 +216,15 @@ unsigned char read_rom_byte_PCW(unsigned long address) {
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
   ADDR_WRITE;
-  LE_HIGH; // Latch Enable
-  PORTC = address & 0xFF; // A0-A7
-  LE_LOW; // Address Latched
-  __asm__("nop\n\t""nop\n\t");
+  LE_HIGH;                 // Latch Enable
+  PORTC = address & 0xFF;  // A0-A7
+  LE_LOW;                  // Address Latched
+  __asm__("nop\n\t"
+          "nop\n\t");
   // Read Data on AD0-AD7
   OE_LOW;
   DATA_READ;
-  delayMicroseconds(5); // 3+ Microseconds for Problem Carts
+  delayMicroseconds(5);  // 3+ Microseconds for Problem Carts
   unsigned char data = PINC;
   OE_HIGH;
 
@@ -237,18 +239,33 @@ unsigned char read_ram_byte_1A_PCW(unsigned long address) {
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
   ADDR_WRITE;
-  LE_HIGH; // Latch Enable
-  PORTC = address & 0xFF; // A0-A7
-  LE_LOW; // Address Latched
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  LE_HIGH;                 // Latch Enable
+  PORTC = address & 0xFF;  // A0-A7
+  LE_LOW;                  // Address Latched
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   // Read Data on AD0-AD7
   OE_LOW;
   DATA_READ;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   unsigned char data = PINC;
   OE_HIGH;
   NAND_1A_HIGH;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return data;
 }
@@ -267,18 +284,33 @@ unsigned char read_ram_byte_1B_PCW(unsigned long address) {
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
   ADDR_WRITE;
-  LE_HIGH; // Latch Enable
-  PORTC = address & 0xFF; // A0-A7
-  LE_LOW; // Address Latched
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  LE_HIGH;                 // Latch Enable
+  PORTC = address & 0xFF;  // A0-A7
+  LE_LOW;                  // Address Latched
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   // Read Data on AD0-AD7
   OE_LOW;
   DATA_READ;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   unsigned char data = PINC;
   OE_HIGH;
   NAND_1B_HIGH;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return data;
 }
@@ -290,13 +322,16 @@ void write_ram_byte_1A_PCW(unsigned long address, unsigned char data) {
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
   ADDR_WRITE;
-  LE_HIGH; // Latch Enable
-  PORTC = address & 0xFF; // A0-A7
-  LE_LOW; // Address Latched
+  LE_HIGH;                 // Latch Enable
+  PORTC = address & 0xFF;  // A0-A7
+  LE_LOW;                  // Address Latched
   // Write Data on AD0-AD7 - WE LOW ~240-248ns
   WE_LOW;
   PORTC = data;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   WE_HIGH;
   NAND_1A_HIGH;
 }
@@ -311,14 +346,22 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data) {
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
   ADDR_WRITE;
-  LE_HIGH; // Latch Enable
-  PORTC = address & 0xFF; // A0-A7
-  LE_LOW; // Address Latched
+  LE_HIGH;                 // Latch Enable
+  PORTC = address & 0xFF;  // A0-A7
+  LE_LOW;                  // Address Latched
   // Write Data on AD0-AD7 - WE LOW ~740ns
   WE_LOW;
   PORTC = data;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   WE_HIGH;
   NAND_1B_HIGH;
 }
@@ -353,18 +396,18 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data) {
 // MULTI-PACK CART CHECK
 void check_multi_PCW() {
   read_setup_PCW();
-  byte tempbyte = read_rom_byte_PCW(0x3FFC); // Bank 0 Switch
+  byte tempbyte = read_rom_byte_PCW(0x3FFC);  // Bank 0 Switch
   if (tempbyte) {
-    bank0 = tempbyte; // Store Bank 0 Switch
-    tempbyte = read_rom_byte_PCW(0x3FFD); // Bank 1 Switch
+    bank0 = tempbyte;                      // Store Bank 0 Switch
+    tempbyte = read_rom_byte_PCW(0x3FFD);  // Bank 1 Switch
     if (tempbyte) {
-      bank1 = tempbyte; // Store Bank 1 Switch
+      bank1 = tempbyte;  // Store Bank 1 Switch
       // Check for 00s
-      tempbyte = read_rom_byte_PCW(0x3FFB); // Should be 00
+      tempbyte = read_rom_byte_PCW(0x3FFB);  // Should be 00
       if (!tempbyte) {
-        tempbyte = read_rom_byte_PCW(0x3FFF); // Should be 00
+        tempbyte = read_rom_byte_PCW(0x3FFF);  // Should be 00
         if (!tempbyte)
-          multipack = 1; // Flag Multi-Cart
+          multipack = 1;  // Flag Multi-Cart
         else {
           bank0 = 0;
           bank1 = 0;
@@ -380,26 +423,33 @@ void write_bank_byte_PCW(unsigned char data) {
   NAND_1B_LOW;
   // Write to Address 0xFFFF
   PORTL = 0x00;
-  PORTK = 0xFF; // A8-A15
+  PORTK = 0xFF;  // A8-A15
   // Latch Address on AD0-AD7
   ADDR_WRITE;
-  LE_HIGH; // Latch Enable
-  PORTC = 0xFF; // A0-A7
-  LE_LOW; // Address Latched
+  LE_HIGH;       // Latch Enable
+  PORTC = 0xFF;  // A0-A7
+  LE_LOW;        // Address Latched
   // Write Data on AD0-AD7 - WE LOW ~728-736ns
   WE_LOW;
   PORTC = data;
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
   WE_HIGH;
   NAND_1B_HIGH;
 }
 
 void switchBank_PCW(int bank) {
-  if (bank == 1) { // Upper Half
+  if (bank == 1) {  // Upper Half
     write_bank_byte_PCW(bank1);
-  }
-  else { // Lower Half (default)
+  } else {  // Lower Half (default)
     write_bank_byte_PCW(bank0);
   }
 }
@@ -430,7 +480,7 @@ void readROM_PCW() {
     print_Error(F("SD Error"), true);
   }
   read_setup_PCW();
-  for (unsigned long address = 0; address < 0x400000; address += 512) { // 4MB
+  for (unsigned long address = 0; address < 0x400000; address += 512) {  // 4MB
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
@@ -478,7 +528,7 @@ void readMultiROM_PCW() {
   read_setup_PCW();
   // Lower Half
   switchBank_PCW(0);
-  for (unsigned long address = 0; address < 0x200000; address += 512) { // 2MB
+  for (unsigned long address = 0; address < 0x200000; address += 512) {  // 2MB
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
@@ -487,7 +537,7 @@ void readMultiROM_PCW() {
   read_setup_PCW();
   // Upper Half
   switchBank_PCW(1);
-  for (unsigned long address = 0x200000; address < 0x400000; address += 512) { // 2MB
+  for (unsigned long address = 0x200000; address < 0x400000; address += 512) {  // 2MB
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
@@ -513,7 +563,7 @@ void readMultiROM_PCW() {
 // SRAM
 //******************************************
 
-void readSRAM_PCW() { // readSRAM_1A()
+void readSRAM_PCW() {  // readSRAM_1A()
   strcpy(fileName, romName);
   strcat(fileName, ".srm");
 
@@ -530,7 +580,7 @@ void readSRAM_PCW() { // readSRAM_1A()
   }
   display_Clear();
   read_setup_PCW();
-  for (unsigned long address = 0x0; address < 0x8000; address += 512) { // 32K
+  for (unsigned long address = 0x0; address < 0x8000; address += 512) {  // 32K
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_ram_byte_1A_PCW(address + x);
     }
@@ -563,7 +613,7 @@ void writeSRAM_PCW() {
     //open file on sd card
     if (myFile.open(filePath, O_READ)) {
       read_setup_PCW();
-      for (unsigned int address = 0x0; address < 0x8000; address += 512) { // 32K
+      for (unsigned int address = 0x0; address < 0x8000; address += 512) {  // 32K
         myFile.read(sdBuffer, 512);
         for (unsigned int x = 0; x < 512; x++) {
           write_ram_byte_1A_PCW(address + x, sdBuffer[x]);
@@ -572,12 +622,10 @@ void writeSRAM_PCW() {
       myFile.close();
       println_Msg(F("Done"));
       display_Update();
-    }
-    else {
+    } else {
       print_Error(F("SD Error"), true);
     }
-  }
-  else {
+  } else {
     print_Error(F("SD Error"), true);
   }
   display_Clear();
@@ -588,7 +636,7 @@ unsigned long verifySRAM_PCW() {
 
   if (myFile.open(filePath, O_READ)) {
     read_setup_PCW();
-    for (unsigned int address = 0x0; address < 0x8000; address += 512) { // 32K
+    for (unsigned int address = 0x0; address < 0x8000; address += 512) {  // 32K
       for (unsigned int x = 0; x < 512; x++) {
         byte myByte = read_ram_byte_1A_PCW(address + x);
         sdBuffer[x] = myByte;
@@ -600,8 +648,7 @@ unsigned long verifySRAM_PCW() {
       }
     }
     myFile.close();
-  }
-  else {
+  } else {
     print_Error(F("SD Error"), true);
   }
 

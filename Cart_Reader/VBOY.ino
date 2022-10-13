@@ -55,8 +55,7 @@
 // SETUP
 //******************************************
 
-void setup_VBOY()
-{
+void setup_VBOY() {
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
@@ -70,7 +69,7 @@ void setup_VBOY()
   DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |=  (1 << 0);
+  DDRJ |= (1 << 0);
 
   // Set Pins (D0-D15) to Input
   DDRC = 0x00;
@@ -83,7 +82,7 @@ void setup_VBOY()
   PORTH &= ~(1 << 0);
 
   // Set Unused Pins HIGH
-  PORTJ |= (1 << 0); // TIME(PJ0)
+  PORTJ |= (1 << 0);  // TIME(PJ0)
 
   getCartInfo_VB();
 
@@ -99,15 +98,13 @@ static const char vboyMenuItem1[] PROGMEM = "Read ROM";
 static const char vboyMenuItem2[] PROGMEM = "Read SRAM";
 static const char vboyMenuItem3[] PROGMEM = "Write SRAM";
 static const char vboyMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsVBOY[] PROGMEM = {vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, vboyMenuItem4};
+static const char* const menuOptionsVBOY[] PROGMEM = { vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, vboyMenuItem4 };
 
-void vboyMenu()
-{
+void vboyMenu() {
   convertPgm(menuOptionsVBOY, 4);
   uint8_t mainMenu = question_box(F("VIRTUALBOY MENU"), menuOptions, 4, 0);
 
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
       // Read ROM
       sd.chdir("/");
@@ -124,8 +121,7 @@ void vboyMenu()
         display_Update();
         readSRAM_VB();
         sd.chdir("/");
-      }
-      else {
+      } else {
         print_Error(F("Cart has no SRAM"), false);
       }
 #if (defined(enable_OLED) || defined(enable_LCD))
@@ -148,15 +144,13 @@ void vboyMenu()
         if (writeErrors == 0) {
           println_Msg(F("SRAM verified OK"));
           display_Update();
-        }
-        else {
+        } else {
           print_Msg(F("Error: "));
           print_Msg(writeErrors);
           println_Msg(F(" bytes "));
           print_Error(F("did not verify."), false);
         }
-      }
-      else {
+      } else {
         print_Error(F("Cart has no SRAM"), false);
       }
 #if (defined(enable_OLED) || defined(enable_LCD))
@@ -192,12 +186,22 @@ void writeByte_VB(unsigned long myAddress, byte myData) {
   // Set /CS1(PH4), /WE0(PH5) to LOW
   PORTH &= ~(1 << 4) & ~(1 << 5);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Set CS2(PH0), /CS1(PH4), /WE0(PH5) to HIGH
   PORTH |= (1 << 0) | (1 << 4) | (1 << 5);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 }
 
 word readWord_VB(unsigned long myAddress) {
@@ -212,21 +216,31 @@ word readWord_VB(unsigned long myAddress) {
   // Set /CE(PH3), /OE(PH6) to LOW
   PORTH &= ~(1 << 3) & ~(1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
-  word tempWord = ( ( PINA & 0xFF ) << 8 ) | ( PINC & 0xFF );
+  word tempWord = ((PINA & 0xFF) << 8) | (PINC & 0xFF);
 
   // Set /CE(PH3), /OE(PH6) to HIGH
   PORTH |= (1 << 3) | (1 << 6);
   // Setting CS2(PH0) LOW
   PORTH &= ~(1 << 0);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempWord;
 }
 
-byte readByte_VB(unsigned long myAddress) { // SRAM BYTE
+byte readByte_VB(unsigned long myAddress) {  // SRAM BYTE
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTL = (myAddress >> 16) & 0xFF;
@@ -238,18 +252,33 @@ byte readByte_VB(unsigned long myAddress) { // SRAM BYTE
   // Set /CS1(PH4), /OE(PH6) to LOW
   PORTH &= ~(1 << 4) & ~(1 << 6);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   byte tempByte = PINA;
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Set /CS1(PH4), /OE(PH6) to HIGH
   PORTH |= (1 << 3) | (1 << 6);
   // Setting CS2(PH0) LOW
   PORTH &= ~(1 << 0);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempByte;
 }
@@ -277,52 +306,51 @@ void getCartInfo_VB() {
   cartSize = 0;
   for (unsigned long address = 0x80000; address <= 0x400000; address *= 2) {
     // Get Serial
-    word vbSerial = readWord_VB((address - 0x204) / 2); // Cart Serial
+    word vbSerial = readWord_VB((address - 0x204) / 2);  // Cart Serial
 
-    switch (vbSerial)
-    {
-      case 0x4D54: // MT = Mario's Tennis
-      case 0x4832: // H2 = Panic Bomber/Tobidase! Panibomb
-      case 0x5350: // SP = Space Invaders
-      case 0x5353: // SS = Space Squash
-      case 0x5452: // TR = V-Tetris
-        cartSize = 0x80000; // 512KB
+    switch (vbSerial) {
+      case 0x4D54:           // MT = Mario's Tennis
+      case 0x4832:           // H2 = Panic Bomber/Tobidase! Panibomb
+      case 0x5350:           // SP = Space Invaders
+      case 0x5353:           // SS = Space Squash
+      case 0x5452:           // TR = V-Tetris
+        cartSize = 0x80000;  // 512KB
         break;
 
-      case 0x494D: // IM = Insmouse no Yakata
-      case 0x4A42: // JB = Jack Bros.
-      case 0x4D43: // MC = Mario Clash
-      case 0x5245: // RE = Red Alarm
-      case 0x4833: // H3 = Vertical Force
-      case 0x5642: // VB = Virtual Bowling
-      case 0x5646: // VF = Virtual Fishing
-      case 0x4A56: // JV = Virtual Lab
-      case 0x5650: // VP = Virtual League Baseball/Virtual Pro Yakyuu '95
-        cartSize = 0x100000; // 1MB
+      case 0x494D:            // IM = Insmouse no Yakata
+      case 0x4A42:            // JB = Jack Bros.
+      case 0x4D43:            // MC = Mario Clash
+      case 0x5245:            // RE = Red Alarm
+      case 0x4833:            // H3 = Vertical Force
+      case 0x5642:            // VB = Virtual Bowling
+      case 0x5646:            // VF = Virtual Fishing
+      case 0x4A56:            // JV = Virtual Lab
+      case 0x5650:            // VP = Virtual League Baseball/Virtual Pro Yakyuu '95
+        cartSize = 0x100000;  // 1MB
         break;
 
-      case 0x5042: // PB = 3-D Tetris
-      case 0x4750: // GP = Galactic Pinball
-      case 0x5344: // SD = SD Gundam Dimension War
-      case 0x5442: // TB = Teleroboxer
-        cartSize = 0x100000; // 1MB
-        sramSize = 0x2000; // 8KB
+      case 0x5042:            // PB = 3-D Tetris
+      case 0x4750:            // GP = Galactic Pinball
+      case 0x5344:            // SD = SD Gundam Dimension War
+      case 0x5442:            // TB = Teleroboxer
+        cartSize = 0x100000;  // 1MB
+        sramSize = 0x2000;    // 8KB
         break;
 
-      case 0x5647: // VG = Golf/T&E Virtual Golf
-      case 0x4E46: // NF = Nester's Funky Bowling
-      case 0x5745: // WE = Waterworld
-        cartSize = 0x200000; // 2MB
+      case 0x5647:            // VG = Golf/T&E Virtual Golf
+      case 0x4E46:            // NF = Nester's Funky Bowling
+      case 0x5745:            // WE = Waterworld
+        cartSize = 0x200000;  // 2MB
         break;
 
-      case 0x5743: // WC = Virtual Boy Wario Land
-        cartSize = 0x200000; // 2MB
-        sramSize = 0x2000; // 8KB
+      case 0x5743:            // WC = Virtual Boy Wario Land
+        cartSize = 0x200000;  // 2MB
+        sramSize = 0x2000;    // 8KB
         break;
 
-      case 0x4644: // FD = Hyper Fighting
-        cartSize = 0x400000; // 4MB
-        sramSize = 0x2000; // 8KB
+      case 0x4644:            // FD = Hyper Fighting
+        cartSize = 0x400000;  // 4MB
+        sramSize = 0x2000;    // 8KB
         break;
     }
 
@@ -355,14 +383,13 @@ void getCartInfo_VB() {
   print_Msg(F("Name: "));
   println_Msg(romName);
   print_Msg(F("Size: "));
-  print_Msg(cartSize * 8 / 1024 / 1024 );
+  print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
   print_Msg(F("Sram: "));
   if (sramSize > 0) {
     print_Msg(sramSize * 8 / 1024);
     println_Msg(F(" KBit"));
-  }
-  else
+  } else
     println_Msg(F("None"));
   println_Msg(F(" "));
 
@@ -413,20 +440,19 @@ void readROM_VB() {
       for (int currWord = 0; currWord < 256; currWord++) {
         word myWord = readWord_VB(currBuffer + currWord);
         // Split word into two bytes
-        sdBuffer[d] = (( myWord >> 8 ) & 0xFF);
+        sdBuffer[d] = ((myWord >> 8) & 0xFF);
         sdBuffer[d + 1] = (myWord & 0xFF);
         d += 2;
       }
       myFile.write(sdBuffer, 512);
       d = 0;
     }
-  }
-  else {
+  } else {
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
       for (int currWord = 0; currWord < 256; currWord++) {
         word myWord = readWord_VB(currBuffer + currWord);
         // Split word into two bytes
-        sdBuffer[d] = (( myWord >> 8 ) & 0xFF);
+        sdBuffer[d] = ((myWord >> 8) & 0xFF);
         sdBuffer[d + 1] = (myWord & 0xFF);
         d += 2;
       }
@@ -469,8 +495,7 @@ void writeSRAM_VB() {
     myFile.close();
     println_Msg(F("Done"));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("SD Error"), true);
   }
   dataIn_VB();
@@ -524,8 +549,7 @@ unsigned long verifySRAM_VB() {
       }
     }
     myFile.close();
-  }
-  else {
+  } else {
     print_Error(F("SD Error"), true);
   }
 

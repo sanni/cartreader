@@ -6,13 +6,13 @@
 static const char ngpMenuItem1[] PROGMEM = "Read Rom";
 static const char ngpMenuItem2[] PROGMEM = "Read chip info";
 static const char ngpMenuItemReset[] PROGMEM = "Reset";
-static const char* const menuOptionsNGP[] PROGMEM = {ngpMenuItem1, ngpMenuItem2, ngpMenuItemReset};
+static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, ngpMenuItemReset };
 
 static const char ngpRomItem1[] PROGMEM = "4 Mbits / 512 KB";
 static const char ngpRomItem2[] PROGMEM = "8 Mbits / 1 MB";
 static const char ngpRomItem3[] PROGMEM = "16 Mbits / 2 MB";
 static const char ngpRomItem4[] PROGMEM = "32 Mbits / 4 MB";
-static const char* const ngpRomOptions[] PROGMEM = {ngpRomItem1, ngpRomItem2, ngpRomItem3, ngpRomItem4};
+static const char* const ngpRomOptions[] PROGMEM = { ngpRomItem1, ngpRomItem2, ngpRomItem3, ngpRomItem4 };
 
 char ngpRomVersion[3];
 uint8_t ngpSystemType;
@@ -79,7 +79,7 @@ void ngpMenu() {
 }
 
 bool getCartInfo_NGP() {
-  uint8_t *tmp;
+  uint8_t* tmp;
 
   // enter autoselect mode
   dataOut();
@@ -99,13 +99,13 @@ bool getCartInfo_NGP() {
 
 
   switch (romSize) {
-    case 0xffff: return false; break; // detection error (no cart inserted or hw problem)
-    case 0x98ab: cartSize = 524288; break; // 4 Mbits - Toshiba
-    case 0x204c: cartSize = 524288; break; // 4 Mbits - STMicroelectronics ?
-    case 0x982c: cartSize = 1048576; break; // 8 Mbits - Toshiba
-    case 0xec2c: cartSize = 1048576; break; // 8 Mbits - Samsung
-    case 0x982f: cartSize = 2097152; break; // 16 Mbits - Toshiba
-    case 0xec2f: cartSize = 2097152; break; // 16 Mbits - Samsung
+    case 0xffff: return false; break;        // detection error (no cart inserted or hw problem)
+    case 0x98ab: cartSize = 524288; break;   // 4 Mbits - Toshiba
+    case 0x204c: cartSize = 524288; break;   // 4 Mbits - STMicroelectronics ?
+    case 0x982c: cartSize = 1048576; break;  // 8 Mbits - Toshiba
+    case 0xec2c: cartSize = 1048576; break;  // 8 Mbits - Samsung
+    case 0x982f: cartSize = 2097152; break;  // 16 Mbits - Toshiba
+    case 0xec2f: cartSize = 2097152; break;  // 16 Mbits - Samsung
   }
 
   // reset to read mode
@@ -123,7 +123,7 @@ bool getCartInfo_NGP() {
   snprintf(cartID, 5, "%02X%02X", readByte_NGP(0x21), readByte_NGP(0x20));
 
   // force rom size to 32 Mbits for few titles
-  if (strcmp(cartID, "0060") == 0 || strcmp(cartID, "0061") == 0 || strcmp(cartID, "0069") == 0 )
+  if (strcmp(cartID, "0060") == 0 || strcmp(cartID, "0061") == 0 || strcmp(cartID, "0069") == 0)
     cartSize = 4194304;
 
   // get app version
@@ -164,8 +164,7 @@ void printCartInfo_NGP() {
   print_Msg(F("ROM Size: "));
   if (cartSize == 0) {
     println_Msg(F("Unknown"));
-  }
-  else {
+  } else {
     print_Msg((cartSize >> 17));
     println_Msg(F(" Mbits"));
   }
@@ -175,7 +174,7 @@ void printCartInfo_NGP() {
   wait();
 }
 
-void readROM_NGP(char *outPathBuf, size_t bufferSize) {
+void readROM_NGP(char* outPathBuf, size_t bufferSize) {
   // Set cartsize manually if chip ID is unknown
   if (cartSize == 0) {
     unsigned char ngpRomMenu;
@@ -300,8 +299,7 @@ void scanChip_NGP() {
       myFile.println("Warning: this cart is 32Mbits. Only the first 16Mbits chip will be scanned.");
       myFile.println("");
       addrMax = 2097152;
-    }
-    else
+    } else
       addrMax = cartSize;
 
     myFile.println("Sector | Start address | Status");
@@ -309,7 +307,7 @@ void scanChip_NGP() {
     // browse sectors
     for (uint32_t addr = 0; addr < addrMax; addr += 0x1000) {
 
-      if ( (addr % 0x10000 == 0) || (addr == addrMax - 0x8000) || (addr == addrMax - 0x6000) || (addr == addrMax - 0x4000)) {
+      if ((addr % 0x10000 == 0) || (addr == addrMax - 0x8000) || (addr == addrMax - 0x6000) || (addr == addrMax - 0x4000)) {
 
         myFile.print("#" + String(sectorID) + " | 0x" + String(addr, HEX) + " | ");
 
@@ -344,7 +342,8 @@ void writeByte_NGP(uint32_t addr, uint8_t data) {
 
   PORTH |= data;
   PORTH |= (1 << 5);
-  NOP; NOP;
+  NOP;
+  NOP;
 }
 
 uint8_t readByte_NGP(uint32_t addr) {
@@ -361,7 +360,9 @@ uint8_t readByte_NGP(uint32_t addr) {
 
   PORTH &= ~data;
   PORTH &= ~(1 << 6);
-  NOP; NOP; NOP;
+  NOP;
+  NOP;
+  NOP;
 
   data = PINC;
 

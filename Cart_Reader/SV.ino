@@ -17,7 +17,7 @@ extern void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 //void svMenu();
 void readROM_SV();
 //void setup_SV();
-void writeROM_SV (void);
+void writeROM_SV(void);
 void eraseCheck_SV(void);
 void supplyCheck_SV(void);
 void writeCheck_SV(void);
@@ -38,7 +38,7 @@ static const char svFlashMenuItem2[] PROGMEM = "Write Memory Pack";
 static const char svFlashMenuItem3[] PROGMEM = "Read BS-X Sram";
 static const char svFlashMenuItem4[] PROGMEM = "Write BS-X Sram";
 static const char svFlashMenuItem5[] PROGMEM = "Back";
-static const char* const menuOptionsSVFlash[] PROGMEM = {svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, svFlashMenuItem5};
+static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, svFlashMenuItem5 };
 
 
 void svMenu() {
@@ -49,8 +49,7 @@ void svMenu() {
   mainMenu = question_box(F("Satellaview 8M Memory"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     // Read memory pack
     case 0:
       // Change working dir to root
@@ -82,8 +81,7 @@ void svMenu() {
       if (wrErrors == 0) {
         println_Msg(F("Verified OK"));
         display_Update();
-      }
-      else {
+      } else {
         print_Msg(F("Error: "));
         print_Msg(wrErrors);
         println_Msg(F(" bytes "));
@@ -181,7 +179,7 @@ void setup_SV() {
   //PORTJ &= ~(1 << 0);
 
   // Start CIC by outputting a low signal to cicrstPin(PG1)
-  PORTG  &= ~(1 << 1);
+  PORTG &= ~(1 << 1);
 
   // Wait for CIC reset
   delay(1000);
@@ -199,19 +197,56 @@ void writeBank_SV(byte myBank, word myAddress, byte myData) {
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   // Wait till output is stable
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WR(PH5) to LOW
   PORTH &= ~(1 << 5);
 
   // Leave WR low for at least 60ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Switch WR(PH5) to HIGH
   PORTH |= (1 << 5);
 
   // Leave WR high for at least 50ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 }
 
 // Read one byte of data from a location specified by bank and address, 00:0000
@@ -221,7 +256,22 @@ byte readBank_SV(byte myBank, word myAddress) {
   PORTK = (myAddress >> 8) & 0xFF;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns -> 1000ns total
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
   byte tempByte = PINC;
@@ -231,7 +281,7 @@ byte readBank_SV(byte myBank, word myAddress) {
 /******************************************
    SatellaView BS-X Sram functions
  *****************************************/
-void readSRAM_SV () {
+void readSRAM_SV() {
   // set control
   controlIn_SNES();
 
@@ -254,7 +304,7 @@ void readSRAM_SV () {
   }
   int sramBanks = 0;
 
-  readBank_SV(0x10, 0); // Preconfigure to fix corrupt 1st byte
+  readBank_SV(0x10, 0);  // Preconfigure to fix corrupt 1st byte
   // Sram size
   long lastByte = (long(sramSize) * 0x80);
 
@@ -325,8 +375,7 @@ void writeSRAM_SV() {
     println_Msg("");
     println_Msg(F("SRAM writing finished"));
     display_Update();
-  }
-  else {
+  } else {
     print_Error(F("File doesnt exist"), false);
   }
 }
@@ -361,8 +410,7 @@ unsigned long verifySRAM_SV() {
     // Close the file:
     myFile.close();
     return writeErrors;
-  }
-  else {
+  } else {
     print_Error(F("Can't open file"), false);
   }
 }
@@ -412,7 +460,7 @@ void readROM_SV() {
       myFile.write(sdBuffer, 512);
     }
   }
-  draw_progressbar(0x100000, 0x100000); //Finish drawing progress bar
+  draw_progressbar(0x100000, 0x100000);  //Finish drawing progress bar
 
   // Close the file:
   myFile.close();
@@ -421,15 +469,14 @@ void readROM_SV() {
   wait();
 }
 
-void writeROM_SV (void) {
+void writeROM_SV(void) {
   // Get Checksum as string to make sure that BS-X cart is inserted
   dataIn();
   controlIn_SNES();
   sprintf(checksumStr, "%02X%02X", readBank_SV(0, 65503), readBank_SV(0, 65502));
 
   //if CRC is not 8B86, BS-X cart is not inserted. Display error and reset
-  if (strcmp("8B86", checksumStr) != 0)
-  {
+  if (strcmp("8B86", checksumStr) != 0) {
     display_Clear();
     print_Error(F("Error: Must use BS-X cart"), true);
   }
@@ -457,8 +504,8 @@ void writeROM_SV (void) {
     //Disable 8M memory pack write protection
     dataOut();
     controlOut_SNES();
-    writeBank_SV(0x0C, 0x5000, 0x80); //Modify write enable register
-    writeBank_SV(0x0E, 0x5000, 0x80); //Commit register modification
+    writeBank_SV(0x0C, 0x5000, 0x80);  //Modify write enable register
+    writeBank_SV(0x0E, 0x5000, 0x80);  //Commit register modification
 
     //Erase memory pack
     println_Msg(F("Erasing pack..."));
@@ -474,8 +521,7 @@ void writeROM_SV (void) {
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        if (0xFF != readBank_SV(currBank, currByte))
-        {
+        if (0xFF != readBank_SV(currBank, currByte)) {
           println_Msg(F(""));
           println_Msg(F("Erase failed"));
           display_Update();
@@ -496,30 +542,29 @@ void writeROM_SV (void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
 
-        writeBank_SV(0xC0, 0x0000, 0x10); //Program Byte
+        writeBank_SV(0xC0, 0x0000, 0x10);  //Program Byte
         writeBank_SV(currBank, currByte, myFile.read());
-        writeBank_SV(0xC0, 0x0000, 0x70); //Status Mode
+        writeBank_SV(0xC0, 0x0000, 0x70);  //Status Mode
         writeCheck_SV();
       }
     }
 
-    writeBank_SV(0xC0, 0x0000, 0x70); //Status Mode
+    writeBank_SV(0xC0, 0x0000, 0x70);  //Status Mode
     writeCheck_SV();
-    writeBank_SV(0xC0, 0x0000, 0xFF); //Terminate write
+    writeBank_SV(0xC0, 0x0000, 0xFF);  //Terminate write
     draw_progressbar(0x100000, 0x100000);
 
 
     //Verify
-    dataIn();    //Set pins to input
+    dataIn();  //Set pins to input
     controlIn_SNES();
-    myFile.seekSet(0);    // Go back to file beginning
+    myFile.seekSet(0);  // Go back to file beginning
     println_Msg(F("Verifying..."));
     display_Update();
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
-        if (myFile.read() != readBank_SV(currBank, currByte))
-        {
+        if (myFile.read() != readBank_SV(currBank, currByte)) {
           println_Msg(F(""));
           println_Msg(F("Verify failed"));
           display_Update();
@@ -537,8 +582,7 @@ void writeROM_SV (void) {
     display_Update();
     wait();
 
-  }
-  else {
+  } else {
     print_Error(F("File doesn't exist"), false);
   }
 }
@@ -553,15 +597,25 @@ void eraseCheck_SV(void) {
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
-  while ((ret & 0x80) == 0x00) { //Wait until X.bit7 = 1
+  while ((ret & 0x80) == 0x00) {  //Wait until X.bit7 = 1
     controlOut_SNES();
     // Switch CS(PH3) High
     PORTH |= (1 << 3);
     // Leave CE high for at least 60ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     controlIn_SNES();
     // Leave CE low for at least 50ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     // Read register
     ret = readBank_SV(0xC0, 0x0004);
   }
@@ -580,15 +634,25 @@ void supplyCheck_SV(void) {
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
-  while ((ret & 0x08) == 0x08) { //Wait until X.bit3 = 0
+  while ((ret & 0x08) == 0x08) {  //Wait until X.bit3 = 0
     controlOut_SNES();
     // Switch CS(PH3) High
     PORTH |= (1 << 3);
     // Leave CE high for at least 60ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     controlIn_SNES();
     // Leave CE low for at least 50ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     // Read register
     ret = readBank_SV(0xC0, 0x0004);
   }
@@ -612,10 +676,20 @@ void writeCheck_SV(void) {
     // Switch CS(PH3) High
     PORTH |= (1 << 3);
     // Leave CE high for at least 60ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     controlIn_SNES();
     // Leave CE low for at least 50ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     // Read register
     ret = readBank_SV(0xC0, 0x0000);
   }
@@ -638,8 +712,7 @@ void detectCheck_SV(void) {
   // completion of a program or erase operation will not be evident.
   while ((ret & 0x80) == 0x00) {
     i++;
-    if ( i > 10000)
-    {
+    if (i > 10000) {
       //timeout
       break;
     }
@@ -647,10 +720,20 @@ void detectCheck_SV(void) {
     // Switch CS(PH3) High
     PORTH |= (1 << 3);
     // Leave CE high for at least 60ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     controlIn_SNES();
     // Leave CE low for at least 50ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
     // Read register
     ret = readBank_SV(0xC0, 0x0002);
   }
@@ -660,18 +743,17 @@ void detectCheck_SV(void) {
 }
 
 
-void eraseAll_SV(void)
-{
+void eraseAll_SV(void) {
   dataOut();
   controlOut_SNES();
-  writeBank_SV(0xC0, 0x0000, 0x50); //Clear Status Registers
-  writeBank_SV(0xC0, 0x0000, 0x71); //Status Mode
+  writeBank_SV(0xC0, 0x0000, 0x50);  //Clear Status Registers
+  writeBank_SV(0xC0, 0x0000, 0x71);  //Status Mode
   supplyCheck_SV();
-  writeBank_SV(0xC0, 0x0000, 0xA7); //Chip Erase
-  writeBank_SV(0xC0, 0x0000, 0xD0); //Confirm
-  writeBank_SV(0xC0, 0x0000, 0x71); //Status Mode
+  writeBank_SV(0xC0, 0x0000, 0xA7);  //Chip Erase
+  writeBank_SV(0xC0, 0x0000, 0xD0);  //Confirm
+  writeBank_SV(0xC0, 0x0000, 0x71);  //Status Mode
   eraseCheck_SV();
-  writeBank_SV(0xC0, 0x0000, 0xFF); //Teriminate
+  writeBank_SV(0xC0, 0x0000, 0xFF);  //Teriminate
 }
 
 #endif
