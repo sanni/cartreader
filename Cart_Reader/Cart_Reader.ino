@@ -2416,14 +2416,14 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       rgbLed(currentColor);
     }
 
-    /* Check Button
-      1 click
-      2 doubleClick
-      3 hold
+    /* Check Button/rotary encoder
+      1 click/clockwise rotation
+      2 doubleClick/counter clockwise rotation
+      3 hold/press
       4 longHold */
     int b = checkButton();
 
-    // go one up in the menu if button is pressed twice
+    // if button is pressed twice or rotary encoder turned left/counter clockwise
     if (b == 2) {
       idleTime = millis();
 
@@ -2433,19 +2433,27 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       display.setDrawColor(1);
       display.updateDisplay();
 
+      // If cursor on top list entry
       if (choice == 0) {
+        // On 2nd, 3rd, ... page go back one page
         if (currPage > 1) {
           lastPage = currPage;
           currPage--;
           break;
-        } else if (filebrowse == 1) {
+        }
+        // In file browser go to root dir
+        else if ((filebrowse == 1) && (root != 1)) {
           root = 1;
           break;
         }
-      } else if (choice > 0) {
+        // Else go to bottom of list as a shortcut
+        else {
+          choice = num_answers - 1;
+        }
+      }
+      // If not top entry go up/back one entry
+      else {
         choice--;
-      } else {
-        choice = num_answers - 1;
       }
 
       // draw selection box
