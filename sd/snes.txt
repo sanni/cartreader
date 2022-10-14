@@ -8369,7 +8369,7 @@ Star Glider (Japan) (Beta) (1992-09-23).sfc
 E9771C0D,FFFF,DDFEE38A,00,000
 
 Star Ocean (Japan).sfc
-3DBDFDBF,13B8,83DA941E,48,96
+3DBDFDBF,13B8,83DA941E,48,096
 
 Star Trek - Deep Space Nine - Crossroads of Time (Europe).sfc
 75BFF780,F9A0,A851C9E6,08,032
@@ -8459,10 +8459,10 @@ Street Combat (USA).sfc
 1969BBD9,C0F9,9FFECA5F,08,032
 
 Street Fighter Alpha 2 (Europe).sfc
-2F109101,535A,DB68115F,32,128
+2F109101,535A,DB68115F,32,064
 
 Street Fighter Alpha 2 (USA).sfc
-9C59DDFF,DB9A,39008F3E,32,128
+9C59DDFF,DB9A,39008F3E,32,064
 
 Street Fighter EX (World) (Pirate).sfc
 DAD59B9F,1000,367311F9,01,004
@@ -8516,7 +8516,7 @@ Street Fighter Zero 2 (Japan) (En) (Proto) (1996-09-15).sfc
 349D8084,0000,ADA747D3,32,064
 
 Street Fighter Zero 2 (Japan).sfc
-7455A7CF,01F7,8A646B9F,32,128
+7455A7CF,01F7,8A646B9F,32,064
 
 Street Hockey '95 (USA) (Beta).sfc
 29296976,BB03,DB3E8DA5,24,048
