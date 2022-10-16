@@ -12,6 +12,7 @@ int eepSize;
 word addrhi;
 word addrlo;
 word chksum;
+boolean is32x = 0;
 
 //***********************************************
 // EEPROM SAVE TYPES
@@ -672,6 +673,11 @@ void getCartInfo_MD() {
   dataIn_MD();
 
   cartSize = ((long(readWord_MD(0xD2)) << 16) | readWord_MD(0xD3)) + 1;
+
+  if ((readWord_MD(0x104 / 2) == 0x2033) && (readWord_MD(0x106 / 2) == 0x3258))
+    is32x = 1;
+  else
+    is32x = 0;
 
   // Cart Checksum
   chksum = readWord_MD(0xC7);
@@ -1372,7 +1378,7 @@ void readROM_MD() {
   }
 
   // Calculate and compare CRC32 with nointro
-  if (readWord_MD(0x105) == 0x3332)
+  if (is32x)
     //database, crcString, renamerom, offset
     compareCRC("32x.txt", 0, 1, 0);
   else
