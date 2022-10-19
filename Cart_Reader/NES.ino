@@ -41,6 +41,7 @@ static const byte PROGMEM mapsize[] = {
   10, 3, 4, 4, 5, 1, 1,  // mmc4                                               [sram r/w]
   11, 1, 3, 1, 5, 0, 0,  // Color Dreams [UNLICENSED]
   13, 1, 1, 0, 0, 0, 0,  // cprom (videomation)
+  15, 6, 6, 0, 0, 0, 0,  // K-1029/K-1030P [UNLICENSED]
   16, 3, 4, 5, 6, 0, 1,  // bandai x24c02                                      [eep r/w]
   18, 3, 4, 5, 6, 0, 1,  // jaleco ss8806                                      [sram r/w]
   19, 3, 4, 5, 6, 0, 1,  // namco 106/163                                      [sram/prgram r/w]
@@ -3043,6 +3044,16 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 15:
+        banks = int_pow(2, prgsize);
+        for(int i = 0; i < banks; i += 2){
+          write_prg_byte(0x8000, i);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+      break;
 
       case 16:
       case 159:  // 128K/256K
