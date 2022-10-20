@@ -106,6 +106,7 @@ static const byte PROGMEM mapsize[] = {
   207, 4, 4, 5, 5, 0, 0,  // taito x1-005 variant (fudou myouou den)
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
   235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
+  242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
 };
 
 /******************************************
@@ -3506,6 +3507,21 @@ void readPRG(boolean readrom) {
               dumpPRG(base, address);
               }
             }
+          }
+        }
+      break;
+        
+      case 242: // total size is 640k THIS IS NORMAL
+        for (int i = 0; i < 32; i++) { // dump 1st chip of 512k
+          write_prg_byte(0x8400 + (i * 4), 0);
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        for (int i = 0; i < 8; i++) { // dump 2nd chip of 128k
+          write_prg_byte(0x8000 + (i * 4), 0);
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
           }
         }
       break;
