@@ -105,6 +105,7 @@ static const byte PROGMEM mapsize[] = {
   206, 1, 3, 2, 4, 0, 0,  // dxrom
   207, 4, 4, 5, 5, 0, 0,  // taito x1-005 variant (fudou myouou den)
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
+  235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
 };
 
 /******************************************
@@ -149,9 +150,9 @@ byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
 boolean mapfound = false;
 byte mapselect;
 
-int PRG[] = { 16, 32, 64, 128, 256, 512, 1024, 2048 };
+int PRG[] = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 byte prglo = 0;  // Lowest Entry
-byte prghi = 7;  // Highest Entry
+byte prghi = 8;  // Highest Entry
 
 int CHR[] = { 0, 8, 16, 32, 64, 128, 256, 512, 1024 };
 byte chrlo = 0;  // Lowest Entry
@@ -3477,6 +3478,37 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 235:
+        for (int i = 0; i < 32; i++) {
+          write_prg_byte(0x8000+i, 0);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+           dumpPRG(base, address);
+          }
+        }
+        if (prgsize > 6) {
+          for (int i = 32; i < 64; i++) {
+            write_prg_byte(0x80E0+i, 0);
+            for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+            }
+          }
+          if (prgsize > 7) {
+            for (int i = 64; i < 96; i++) {
+              write_prg_byte(0x81E0+i, 0);
+              for (word address = 0x0; address < 0x8000; address += 512) {
+              dumpPRG(base, address);
+              }
+            }
+            for (int i = 96; i < 128; i++) {
+              write_prg_byte(0x82E0+i, 0);
+              for (word address = 0x0; address < 0x8000; address += 512) {
+              dumpPRG(base, address);
+              }
+            }
+          }
+        }
+      break;
     }
     if (!readrom) {
       myFile.flush();
