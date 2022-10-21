@@ -51,8 +51,8 @@ byte newcolsize;
 static const char colMenuItem1[] PROGMEM = "Select Cart";
 static const char colMenuItem2[] PROGMEM = "Read ROM";
 static const char colMenuItem3[] PROGMEM = "Set Size";
-static const char colMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsCOL[] PROGMEM = { colMenuItem1, colMenuItem2, colMenuItem3, colMenuItem4 };
+//static const char colMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsCOL[] PROGMEM = { colMenuItem1, colMenuItem2, colMenuItem3, string_reset2 };
 
 void setup_COL() {
   // Set Address Pins to Output
@@ -175,14 +175,14 @@ void readROM_COL() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -216,7 +216,8 @@ void readROM_COL() {
   compareCRC("colv.txt", 0, 1, 0);
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -239,11 +240,11 @@ void setROMSize_COL() {
     println_Msg(COL[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to Change"));
-    println_Msg(F("and right to Select"));
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to Change"));
-    println_Msg(F("Press to Select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
@@ -261,11 +262,11 @@ void setROMSize_COL() {
         println_Msg(COL[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to Change"));
-        println_Msg(F("and right to Select"));
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to Change"));
-        println_Msg(F("Press to Select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -281,11 +282,11 @@ void setROMSize_COL() {
         println_Msg(COL[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to Change"));
-        println_Msg(F("and right to Select"));
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to Change"));
-        println_Msg(F("Press to Select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -349,7 +350,8 @@ void checkStatus_COL() {
   print_Msg(COL[colsize]);
   println_Msg(F("K"));
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #else
@@ -460,11 +462,11 @@ void setCart_COL() {
       println_Msg(F("KB"));
       println_Msg(F(""));
 #if defined(enable_OLED)
-      println_Msg(F("Press left to Change"));
-      println_Msg(F("and right to Select"));
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-      println_Msg(F("Rotate to Change"));
-      println_Msg(F("Press to Select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
       println_Msg(F("U/D to Change"));
       println_Msg(F("Space to Select"));

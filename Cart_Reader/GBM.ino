@@ -42,7 +42,8 @@ void gbmMenu() {
       println_Msg(F("cartreader directly"));
       println_Msg(F("before reading"));
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       // Clear screen
@@ -71,7 +72,8 @@ void gbmMenu() {
       println_Msg(F("NP Cartridge."));
       println_Msg("");
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       // Clear screen
@@ -131,7 +133,8 @@ void gbmMenu() {
       println_Msg(F("NP Cartridge's"));
       println_Msg(F("mapping data"));
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
 
@@ -171,7 +174,8 @@ void gbmMenu() {
       break;
   }
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -333,7 +337,7 @@ void readROM_GBM(word numBanks) {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   } else {
     // Read rom
     word currAddress = 0;
@@ -677,7 +681,7 @@ void writeFlash_GBM() {
     }
     // Close the file:
     myFile.close();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
   } else {
     print_Error(F("Can't open file"), false);
   }
@@ -716,7 +720,7 @@ void readMapping_GBM() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   } else {
     for (byte currByte = 0; currByte < 128; currByte++) {
       sdBuffer[currByte] = readByte_GBM(currByte);
@@ -891,7 +895,7 @@ void writeMapping_GBM() {
 
     // Close the file:
     myFile.close();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
   } else {
     print_Error(F("Can't open file"), false);
   }

@@ -192,8 +192,8 @@ void mdLoadConf() {
 static const char MDMenuItem1[] PROGMEM = "Game Cartridge";
 static const char MDMenuItem2[] PROGMEM = "SegaCD RamCart";
 static const char MDMenuItem3[] PROGMEM = "Flash Repro";
-static const char MDMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsMD[] PROGMEM = { MDMenuItem1, MDMenuItem2, MDMenuItem3, MDMenuItem4 };
+//static const char MDMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsMD[] PROGMEM = { MDMenuItem1, MDMenuItem2, MDMenuItem3, string_reset2 };
 
 // Cart menu items
 static const char MDCartMenuItem1[] PROGMEM = "Read Rom";
@@ -202,14 +202,14 @@ static const char MDCartMenuItem3[] PROGMEM = "Write Sram";
 static const char MDCartMenuItem4[] PROGMEM = "Read EEPROM";
 static const char MDCartMenuItem5[] PROGMEM = "Write EEPROM";
 static const char MDCartMenuItem6[] PROGMEM = "Cycle cart";
-static const char MDCartMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsMDCart[] PROGMEM = { MDCartMenuItem1, MDCartMenuItem2, MDCartMenuItem3, MDCartMenuItem4, MDCartMenuItem5, MDCartMenuItem6, MDCartMenuItem7 };
+//static const char MDCartMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsMDCart[] PROGMEM = { MDCartMenuItem1, MDCartMenuItem2, MDCartMenuItem3, MDCartMenuItem4, MDCartMenuItem5, MDCartMenuItem6, string_reset2 };
 
 // Sega CD Ram Backup Cartridge menu items
 static const char SCDMenuItem1[] PROGMEM = "Read Backup RAM";
 static const char SCDMenuItem2[] PROGMEM = "Write Backup RAM";
-static const char SCDMenuItem3[] PROGMEM = "Reset";
-static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2, SCDMenuItem3 };
+//static const char SCDMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2, string_reset2 };
 
 // Sega start menu
 void mdMenu() {
@@ -275,7 +275,8 @@ void mdMenu() {
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -350,10 +351,10 @@ void mdCartMenu() {
           println_Msg(F("Sram verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         print_Error(F("Cart has no Sram"), false);
@@ -400,7 +401,8 @@ void mdCartMenu() {
       resetArduino();
       break;
   }
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -441,7 +443,8 @@ void segaCDMenu() {
       break;
   }
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -1082,7 +1085,8 @@ void getCartInfo_MD() {
 
   // Wait for user input
 #if (defined(enable_LCD) || defined(enable_OLED))
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
@@ -1155,7 +1159,7 @@ void readROM_MD() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1166,7 +1170,7 @@ void readROM_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   byte buffer[1024] = { 0 };
@@ -1489,10 +1493,10 @@ void writeSram_MD() {
 
     // Close the file:
     myFile.close();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   dataIn_MD();
 }
@@ -1517,7 +1521,7 @@ void readSram_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
@@ -1611,7 +1615,7 @@ unsigned long verifySram_MD() {
     // Close the file:
     myFile.close();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   // Return 0 if verified ok, or number of errors
   return writeErrors;
@@ -1637,7 +1641,7 @@ void resetFlash_MD() {
 void write29F1610_MD() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  print_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 0);
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -1647,7 +1651,7 @@ void write29F1610_MD() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
     }
     // Set data pins to output
     dataOut_MD();
@@ -1686,7 +1690,7 @@ void write29F1610_MD() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1764,7 +1768,7 @@ void verifyFlash_MD() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
     }
 
     blank = 0;
@@ -1789,15 +1793,15 @@ void verifyFlash_MD() {
       println_Msg(F("Flashrom verified OK"));
       display_Update();
     } else {
-      print_Msg(F("Error: "));
+      print_STR(error_STR, 0);
       print_Msg(blank);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -2382,7 +2386,7 @@ void readEEP_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   if (eepSize > 0x100) {  // 24C04+
     for (word currByte = 0; currByte < eepSize; currByte += 256) {
@@ -2448,10 +2452,10 @@ void writeEEP_MD() {
     myFile.close();
     println_Msg(F(""));
     display_Clear();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   dataIn_MD();
 }
@@ -2481,7 +2485,7 @@ void readBram_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
@@ -2527,10 +2531,10 @@ void writeBram_MD() {
     myFile.close();
     println_Msg(F(""));
     display_Clear();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   dataIn_MD();
 }
@@ -2568,7 +2572,7 @@ void readRealtec_MD() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -2579,7 +2583,7 @@ void readRealtec_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Realtec Registers

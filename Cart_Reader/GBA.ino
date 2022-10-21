@@ -18,8 +18,8 @@ static const char GBAMenuItem2[] PROGMEM = "Read Save";
 static const char GBAMenuItem3[] PROGMEM = "Write Save";
 static const char GBAMenuItem4[] PROGMEM = "Force Savetype";
 static const char GBAMenuItem5[] PROGMEM = "Flash Repro";
-static const char GBAMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsGBA[] PROGMEM = { GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4, GBAMenuItem5, GBAMenuItem6 };
+//static const char GBAMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBA[] PROGMEM = { GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4, GBAMenuItem5, string_reset2 };
 
 // Rom menu
 static const char GBARomItem1[] PROGMEM = "1 MB";
@@ -129,7 +129,8 @@ void gbaMenu() {
 #ifdef global_log
       save_log();
 #endif
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -231,7 +232,8 @@ void gbaMenu() {
           break;
       }
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -289,10 +291,10 @@ void gbaMenu() {
             println_Msg(F("Verified OK"));
             display_Update();
           } else {
-            print_Msg(F("Error: "));
+            print_STR(error_STR, 0);
             print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
+            print_STR(_bytes_STR, 1);
+            print_Error(did_not_verify_STR, false);
           }
           setROM_GBA();
           break;
@@ -307,10 +309,10 @@ void gbaMenu() {
             println_Msg(F("Verified OK"));
             display_Update();
           } else {
-            print_Msg(F("Error: "));
+            print_STR(error_STR, 0);
             print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
+            print_STR(_bytes_STR, 1);
+            print_Error(did_not_verify_STR, false);
           }
           setROM_GBA();
           break;
@@ -326,10 +328,10 @@ void gbaMenu() {
             println_Msg(F("Verified OK"));
             display_Update();
           } else {
-            print_Msg(F("Error: "));
+            print_STR(error_STR, 0);
             print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
+            print_STR(_bytes_STR, 1);
+            print_Error(did_not_verify_STR, false);
           }
           setROM_GBA();
           break;
@@ -358,7 +360,8 @@ void gbaMenu() {
             //print_Error(F(""), true);
           }
           println_Msg(F(""));
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           display_Clear();
@@ -399,7 +402,8 @@ void gbaMenu() {
             //print_Error(F(""), true);
           }
           println_Msg(F(""));
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           display_Clear();
@@ -437,16 +441,17 @@ void gbaMenu() {
             println_Msg(F("Verified OK"));
             display_Update();
           } else {
-            print_Msg(F("Error: "));
+            print_STR(error_STR, 0);
             print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
+            print_STR(_bytes_STR, 1);
+            print_Error(did_not_verify_STR, false);
           }
           setROM_GBA();
           break;
       }
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -498,7 +503,8 @@ void gbaMenu() {
       display_Clear();
       flashRepro_GBA();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       resetArduino();
@@ -565,7 +571,8 @@ void setup_GBA() {
 
   // Wait for user input
   println_Msg("");
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -942,12 +949,12 @@ void getCartInfo_GBA() {
             println_Msg(saveTypeStr);
 
 #if defined(enable_OLED)
-            println_Msg(F("Press left to Change"));
-            println_Msg(F("and right to Select"));
+            print_STR(press_to_change_STR, 1);
+            print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
             println_Msg(F(""));
-            println_Msg(F("Rotate to Change"));
-            println_Msg(F("Press to Select"));
+            print_STR(rotate_to_change_STR, 1);
+            print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
             println_Msg(F(""));
             println_Msg(F("U/D to Change"));
@@ -1056,7 +1063,8 @@ void getCartInfo_GBA() {
       println_Msg(calcChecksumStr);
       print_Error(F("Checksum Error"), false);
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
     }
@@ -1127,7 +1135,7 @@ void readROM_GBA() {
 
   //clear the screen
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1138,7 +1146,7 @@ void readROM_GBA() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   //Initialize progress bar
@@ -1234,7 +1242,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
     sd.chdir(folder);
 
     // Save location
-    print_Msg(F("Saving to "));
+    print_STR(saving_to_STR, 0);
     print_Msg(folder);
     println_Msg(F("/..."));
     display_Update();
@@ -1245,7 +1253,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Seek to a new position in the file
@@ -1265,7 +1273,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
   myFile.close();
 
   // Signal end of process
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -1363,7 +1371,7 @@ void readFRAM_GBA(unsigned long framSize) {
   sd.chdir(folder);
 
   // Save location
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1373,7 +1381,7 @@ void readFRAM_GBA(unsigned long framSize) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1407,7 +1415,7 @@ void readFRAM_GBA(unsigned long framSize) {
   myFile.close();
 
   // Signal end of process
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -1790,7 +1798,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
     sd.chdir(folder);
 
     // Save location
-    print_Msg(F("Saving to "));
+    print_STR(saving_to_STR, 0);
     print_Msg(folder);
     println_Msg(F("/..."));
     display_Update();
@@ -1802,7 +1810,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Seek to a new position in the file
@@ -1829,7 +1837,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
   PORTH |= (1 << 0);
 
   // Signal end of process
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -1915,7 +1923,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
 
     // Close the file:
     myFile.close();
-    println_Msg(F("done"));
+    print_STR(done_STR, 1);
     display_Update();
 
   } else {
@@ -1947,7 +1955,7 @@ void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Seek to a new position in the file
@@ -2010,7 +2018,7 @@ void writeEeprom_GBA(word eepSize) {
 
     // Close the file:
     myFile.close();
-    println_Msg(F("done"));
+    print_STR(done_STR, 1);
     display_Update();
   } else {
     println_Msg(F("Error"));
@@ -2032,7 +2040,7 @@ void readEeprom_GBA(word eepSize) {
   sd.chdir(folder);
 
   // Save location
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -2043,7 +2051,7 @@ void readEeprom_GBA(word eepSize) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
@@ -2285,7 +2293,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Fill sd Buffer
@@ -2779,7 +2787,7 @@ boolean verifyFlashrom_GBA() {
       return 0;
     }
   } else {
-    print_Error(F("Can't open file"), true);
+    print_Error(open_file_STR, true);
     return 9999;
   }
 }
@@ -2824,7 +2832,8 @@ void flashRepro_GBA() {
     println_Msg(F("Repro Cartridge."));
     println_Msg(F(""));
     println_Msg("");
-    println_Msg(F("Press Button"));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
 
@@ -2903,7 +2912,7 @@ void flashRepro_GBA() {
       myFile.close();
 
       // Verify
-      print_Msg(F("Verifying..."));
+      print_STR(verifying_STR, 0);
       display_Update();
       if (strcmp(flashid, "8802") == 0) {
         // Don't know the correct size so just take some guesses
@@ -2935,7 +2944,7 @@ void flashRepro_GBA() {
         }
       */
     } else {
-      print_Error(F("Can't open file"), true);
+      print_Error(open_file_STR, true);
     }
   } else {
     println_Msg(F("Error"));

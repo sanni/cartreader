@@ -11,8 +11,8 @@
 // GB Smart menu items
 static const char gbSmartMenuItem1[] PROGMEM = "Game Menu";
 static const char gbSmartMenuItem2[] PROGMEM = "Flash Menu";
-static const char gbSmartMenuItem3[] PROGMEM = "Reset";
-static const char* const menuOptionsGBSmart[] PROGMEM = { gbSmartMenuItem1, gbSmartMenuItem2, gbSmartMenuItem3 };
+//static const char gbSmartMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBSmart[] PROGMEM = { gbSmartMenuItem1, gbSmartMenuItem2, string_reset2 };
 
 static const char gbSmartFlashMenuItem1[] PROGMEM = "Read Flash";
 static const char gbSmartFlashMenuItem2[] PROGMEM = "Write Flash";
@@ -23,8 +23,8 @@ static const char gbSmartGameMenuItem1[] PROGMEM = "Read Game";
 static const char gbSmartGameMenuItem2[] PROGMEM = "Read SRAM";
 static const char gbSmartGameMenuItem3[] PROGMEM = "Write SRAM";
 static const char gbSmartGameMenuItem4[] PROGMEM = "Switch Game";
-static const char gbSmartGameMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, gbSmartGameMenuItem5 };
+//static const char gbSmartGameMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, string_reset2 };
 
 typedef struct
 {
@@ -216,10 +216,10 @@ void gbSmartGameOptions() {
           println_Msg(F("Verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(wrErrors);
           println_Msg(F(" bytes"));
-          print_Error(F("did not verify."), false);
+          print_Error(did_not_verify_STR, false);
         }
         break;
       }
@@ -238,7 +238,8 @@ void gbSmartGameOptions() {
 
   if (gameSubMenu != 3) {
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   }
@@ -310,7 +311,8 @@ void gbSmartFlashMenu() {
         println_Msg(F("This will erase your"));
         println_Msg(F("GB Smart Cartridge."));
         println_Msg(F(""));
-        println_Msg(F("Press Button..."));
+        // Prints string out of the common strings array either with or without newline
+        print_STR(press_button_STR, 1);
         display_Update();
         wait();
 
@@ -331,7 +333,8 @@ void gbSmartFlashMenu() {
   }
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -419,7 +422,7 @@ void gbSmartReadFlash() {
   display_Update();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   // reset flash to read array state
   for (int i = 0x00; i < gbSmartBanks; i += gbSmartBanksPerFlashChip)
@@ -470,7 +473,7 @@ void gbSmartWriteFlash() {
     gbSmartEraseFlash(bank);
     gbSmartResetFlash(bank);
 
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
     print_Msg(F("Blankcheck..."));
     display_Update();
 
@@ -487,7 +490,7 @@ void gbSmartWriteFlash() {
     gbSmartWriteFlashByte(0x0000, 0xff);
   }
 
-  print_Msg(F("Verifying..."));
+  print_STR(verifying_STR, 0);
   display_Update();
 
   writeErrors = gbSmartVerifyFlash();
@@ -495,16 +498,16 @@ void gbSmartWriteFlash() {
     println_Msg(F("OK"));
     display_Update();
   } else {
-    print_Msg(F("Error: "));
+    print_STR(error_STR, 0);
     print_Msg(writeErrors);
-    println_Msg(F(" bytes "));
-    print_Error(F("did not verify."), true);
+    print_STR(_bytes_STR, 1);
+    print_Error(did_not_verify_STR, true);
   }
 }
 
 void gbSmartWriteFlash(uint32_t start_bank) {
   if (!myFile.open(filePath, O_READ))
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
 
   // switch to flash base bank
   gbSmartRemapStartBank(start_bank, gbSmartFlashSizeGB, gbSmartSramSizeGB);

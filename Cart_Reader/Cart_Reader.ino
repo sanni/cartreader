@@ -56,7 +56,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "10.3";
+char ver[5] = "10.4";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -262,6 +262,57 @@ bool i2c_found;
 #ifdef clockgen_calibration
 #include "FreqCount.h"
 #endif
+
+/******************************************
+  Common Strings
+ *****************************************/
+#define press_button_STR 0
+#define sd_error_STR 1
+#define reset_STR 2
+#define did_not_verify_STR 3
+#define _bytes_STR 4
+#define error_STR 5
+#define create_file_STR 6
+#define open_file_STR 7
+#define file_too_big_STR 8
+#define done_STR 9
+#define saving_to_STR 10
+#define verifying_STR 11
+#define flashing_file_STR 12
+#define press_to_change_STR 13
+#define right_to_select_STR 14
+#define rotate_to_change_STR 15
+#define press_to_select_STR 16
+
+// This arrays holds the most often uses strings
+static const char string_press_button0[] PROGMEM = "Press Button...";
+static const char string_sd_error1[] PROGMEM = "SD Error";
+static const char string_reset2[] PROGMEM = "Reset";
+static const char string_did_not_verify3[] PROGMEM = "did not verify";
+static const char string_bytes4[] PROGMEM = " bytes ";
+static const char string_error5[] PROGMEM = "Error: ";
+static const char string_create_file6[] PROGMEM = "Can't create file";
+static const char string_open_file7[] PROGMEM = "Can't open file";
+static const char string_file_too_big8[] PROGMEM = "File too big";
+static const char string_done9[] PROGMEM = "Done";
+static const char string_saving_to10[] PROGMEM = "Saving to ";
+static const char string_verifying11[] PROGMEM = "Verifying...";
+static const char string_flashing_file12[] PROGMEM = "Flashing file ";
+static const char string_press_to_change13[] PROGMEM = "Press left to Change";
+static const char string_right_to_select14[] PROGMEM = "and right to Select";
+static const char string_rotate_to_change15[] PROGMEM = "Rotate to Change";
+static const char string_press_to_select16[] PROGMEM = "Press to Select";
+
+static const char* const string_table[] PROGMEM = { string_press_button0, string_sd_error1, string_reset2, string_did_not_verify3, string_bytes4, string_error5, string_create_file6, string_open_file7, string_file_too_big8, string_done9, string_saving_to10, string_verifying11, string_flashing_file12, string_press_to_change13, string_right_to_select14, string_rotate_to_change15, string_press_to_select16 };
+
+void print_STR(byte string_number, boolean newline) {
+  char string_buffer[22];
+  strcpy_P(string_buffer, (char*)pgm_read_word(&(string_table[string_number])));
+  if (newline)
+    println_Msg(string_buffer);
+  else
+    print_Msg(string_buffer);
+}
 
 /******************************************
   Defines
@@ -629,7 +680,7 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
           // Write iNES header
           sd.chdir(folder);
           if (!myFile.open(fileName, O_RDWR)) {
-            print_Error(F("SD Error"), true);
+            print_Error(sd_error_STR, true);
           }
           for (byte z = 0; z < 16; z++) {
             myFile.write(iNES_HEADER[z]);
@@ -973,15 +1024,15 @@ static const char modeItem4[] PROGMEM = "Nintendo 64(3V EEP)";
 #endif
 static const char modeItem5[] PROGMEM = "Game Boy";
 static const char modeItem6[] PROGMEM = "About";
-static const char modeItem7[] PROGMEM = "Reset";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7 };
+// static const char modeItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, string_reset2 };
 
 // Add-ons submenu
 static const char addonsItem1[] PROGMEM = "Consoles";
 static const char addonsItem2[] PROGMEM = "Handhelds";
 static const char addonsItem3[] PROGMEM = "Flashrom Programmer";
-static const char addonsItem4[] PROGMEM = "Reset";
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4 };
+//static const char addonsItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, string_reset2 };
 
 // Consoles submenu
 static const char consolesItem1[] PROGMEM = "NES/Famicom";
@@ -989,8 +1040,8 @@ static const char consolesItem2[] PROGMEM = "PC Engine/TG16";
 static const char consolesItem3[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char consolesItem4[] PROGMEM = "Intellivision";
 static const char consolesItem5[] PROGMEM = "Colecovision";
-static const char consolesItem6[] PROGMEM = "Reset";
-static const char* const consolesOptions[] PROGMEM = { consolesItem1, consolesItem2, consolesItem3, consolesItem4, consolesItem5, consolesItem6 };
+//static const char consolesItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const consolesOptions[] PROGMEM = { consolesItem1, consolesItem2, consolesItem3, consolesItem4, consolesItem5, string_reset2 };
 
 // Handhelds submenu
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
@@ -998,8 +1049,8 @@ static const char handheldsItem2[] PROGMEM = "WonderSwan";
 static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket";
 static const char handheldsItem4[] PROGMEM = "Watara Supervision";
 static const char handheldsItem5[] PROGMEM = "Pocket Challenge W";
-static const char handheldsItem6[] PROGMEM = "Reset";
-static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, handheldsItem6 };
+//static const char handheldsItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -1227,7 +1278,8 @@ void aboutScreen() {
   println_Msg(F(""));
   println_Msg(F(""));
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
 
   while (1) {
@@ -1539,14 +1591,14 @@ void savetofile() {
   delay(2000);
 
   if (!myFile.open("/snes_clk.txt", O_WRITE | O_CREAT | O_TRUNC)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   // Write calibration factor to file
   myFile.print(cal_factor);
 
   // Close the file:
   myFile.close();
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
   delay(1000);
   resetArduino();
@@ -1726,12 +1778,12 @@ void setup() {
   // Init SD card
   if (!sd.begin(SS)) {
     display_Clear();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
 #ifdef global_log
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   println_Msg(F(""));
 #if defined(HW1)
@@ -1849,6 +1901,32 @@ void print_Error(const __FlashStringHelper* errorMessage, boolean forceReset) {
   }
 }
 
+void print_Error(byte errorMessage, boolean forceReset) {
+  errorLvl = 1;
+  setColor_RGB(255, 0, 0);
+  print_STR(errorMessage, 1);
+  display_Update();
+
+  if (forceReset) {
+    println_Msg(F(""));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+    if (ignoreError == 0) {
+      resetArduino();
+    } else {
+      ignoreError = 0;
+      display_Clear();
+      println_Msg(F(""));
+      println_Msg(F("Error Overwrite"));
+      println_Msg(F(""));
+      display_Update();
+      delay(2000);
+    }
+  }
+}
+
 void wait() {
   // Switch status LED off
   statusLED(false);
@@ -1916,7 +1994,7 @@ void save_log() {
   strcpy(fileName, romName);
   strcat(fileName, ".txt");
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   while (myLog.available()) {
@@ -2310,7 +2388,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
       EEPROM_readAnything(0, foldern);
       sprintf(fileName, "IMPORT/%d.bin", foldern);
       if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-        print_Error(F("Can't create file on SD"), true);
+        print_Error(create_file_STR, true);
       }
 
       // Read file from serial
@@ -2577,7 +2655,7 @@ void wait_serial() {
         myFile.close();
       }
       else {
-        print_Error(F("Can't open file"), true);
+        print_Error(open_file_STR, true);
       }
     }*/
 }
@@ -2915,7 +2993,7 @@ browserstart:
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Count files in directory
@@ -2973,7 +3051,8 @@ page:
     println_Msg(F("Too many files"));
     display_Update();
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   }
@@ -2981,7 +3060,7 @@ page:
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   int countFile = 0;
@@ -3231,7 +3310,8 @@ void loop() {
     print_Msg(F("Mode = "));
     print_Msg(mode);
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
     resetArduino();

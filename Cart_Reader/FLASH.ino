@@ -27,16 +27,16 @@ static const char flash8MenuItem3[] PROGMEM = "Read";
 static const char flash8MenuItem4[] PROGMEM = "Write";
 static const char flash8MenuItem5[] PROGMEM = "ID";
 static const char flash8MenuItem6[] PROGMEM = "Print";
-static const char flash8MenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsFLASH8[] PROGMEM = { flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, flash8MenuItem7 };
+//static const char flash8MenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsFLASH8[] PROGMEM = { flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, string_reset2 };
 
 #ifdef enable_FLASH16
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
 static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
 static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
-static const char flashMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4 };
+// static const char flashMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, string_reset2 };
 
 // 16bit Flash menu items
 static const char flash16MenuItem1[] PROGMEM = "Blankcheck";
@@ -45,8 +45,8 @@ static const char flash16MenuItem3[] PROGMEM = "Read";
 static const char flash16MenuItem4[] PROGMEM = "Write";
 static const char flash16MenuItem5[] PROGMEM = "ID";
 static const char flash16MenuItem6[] PROGMEM = "Print";
-static const char flash16MenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsFLASH16[] PROGMEM = { flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, flash16MenuItem7 };
+//static const char flash16MenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsFLASH16[] PROGMEM = { flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, string_reset2 };
 
 // Eprom menu items
 static const char epromMenuItem1[] PROGMEM = "Blankcheck";
@@ -54,8 +54,8 @@ static const char epromMenuItem2[] PROGMEM = "Read";
 static const char epromMenuItem3[] PROGMEM = "Write";
 static const char epromMenuItem4[] PROGMEM = "Verify";
 static const char epromMenuItem5[] PROGMEM = "Print";
-static const char epromMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsEprom[] PROGMEM = { epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5, epromMenuItem6 };
+// static const char epromMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsEprom[] PROGMEM = { epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5, string_reset2 };
 
 void flashMenu() {
   // create menu with title and 3 options to choose from
@@ -222,7 +222,8 @@ void flashromMenu8() {
     println_Msg(F("s"));
     display_Update();
   }
-  print_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 0);
   display_Update();
   wait();
 }
@@ -555,7 +556,8 @@ idtheflash:
     println_Msg("");
     println_Msg(F("UNKNOWN FLASHROM"));
     println_Msg("");
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
 
@@ -570,7 +572,8 @@ idtheflash:
     print_Error(F("Press Button to reset"), true);
   }
   println_Msg("");
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
 
   resetFlash8();
@@ -625,7 +628,8 @@ void id_Flash16() {
     println_Msg("");
   }
   println_Msg("");
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
 }
 #endif
@@ -1038,7 +1042,7 @@ void eraseFlash29F032() {
 void writeFlash29F032() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  print_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 0);
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -1048,7 +1052,7 @@ void writeFlash29F032() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut();
@@ -1113,7 +1117,7 @@ void writeFlash29F032() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1179,7 +1183,7 @@ void resetFlash29F1610() {
 void writeFlash29F1610() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1188,7 +1192,7 @@ void writeFlash29F1610() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut();
@@ -1225,7 +1229,7 @@ void writeFlash29F1610() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1233,7 +1237,7 @@ void writeFlash29F1610() {
 void writeFlash29F1601() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1242,7 +1246,7 @@ void writeFlash29F1601() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut();
@@ -1284,7 +1288,7 @@ void writeFlash29F1601() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1376,7 +1380,7 @@ void busyCheck29LV640(unsigned long myAddress, byte myData) {
 void writeFlash29LV640() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1385,7 +1389,7 @@ void writeFlash29LV640() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut();
@@ -1412,7 +1416,7 @@ void writeFlash29LV640() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1423,7 +1427,7 @@ void writeFlash29LV640() {
 void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1432,7 +1436,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut();
@@ -1479,7 +1483,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1490,7 +1494,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
 void writeFlash29F800() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1499,7 +1503,7 @@ void writeFlash29F800() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut();
@@ -1528,7 +1532,7 @@ void writeFlash29F800() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1580,7 +1584,7 @@ void eraseFlash28FXXX() {
 
 void writeFlash28FXXX() {
   sprintf(filePath, "%s/%s", filePath, fileName);
-  print_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 0);
   println_Msg(filePath);
   display_Update();
 
@@ -1594,7 +1598,7 @@ void writeFlash28FXXX() {
 
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1602,7 +1606,7 @@ void writeFlash28FXXX() {
 void writeFlashE28FXXXJ3A() {
   fileSize = myFile.fileSize();
   if (fileSize > flashSize) {
-    print_Error(F("File size exceeds flash size."), false);
+    print_Error(file_too_big_STR, false);
     return;
   }
 
@@ -1653,7 +1657,7 @@ void writeFlashE28FXXXJ3A() {
 void writeFlashLH28F0XX() {
   fileSize = myFile.fileSize();
   if (fileSize > flashSize) {
-    print_Error(F("File size exceeds flash size."), false);
+    print_Error(file_too_big_STR, false);
     return;
   }
 
@@ -1713,7 +1717,7 @@ void blankcheck_Flash() {
 }
 
 void verifyFlash() {
-  println_Msg(F("Verifying..."));
+  print_STR(verifying_STR, 1);
   display_Update();
 
   // Open file on sd card
@@ -1721,7 +1725,7 @@ void verifyFlash() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     blank = 0;
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
@@ -1737,15 +1741,15 @@ void verifyFlash() {
       println_Msg(F("Flashrom verified OK"));
       display_Update();
     } else {
-      print_Msg(F("Error: "));
+      print_STR(error_STR, 0);
       print_Msg(blank);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("Can't open file on SD"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1772,7 +1776,7 @@ void readFlash() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
   for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1834,7 +1838,7 @@ void resetFlash16() {
 void writeFlash16() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1843,7 +1847,7 @@ void writeFlash16() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut16();
@@ -1892,7 +1896,7 @@ void writeFlash16() {
 void writeFlash16_29F1601() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -1901,7 +1905,7 @@ void writeFlash16_29F1601() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut16();
@@ -2024,7 +2028,7 @@ void blankcheck16() {
 }
 
 void verifyFlash16() {
-  println_Msg(F("Verifying..."));
+  print_STR(verifying_STR, 1);
   display_Update();
 
   // Open file on sd card
@@ -2032,7 +2036,7 @@ void verifyFlash16() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
     }
 
     blank = 0;
@@ -2190,7 +2194,7 @@ void busyCheck16_29LV640(unsigned long myAddress, word myData) {
 void writeFlash16_29LV640() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -2199,7 +2203,7 @@ void writeFlash16_29LV640() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Set data pins to output
     dataOut16();
@@ -2417,7 +2421,7 @@ void read_Eprom() {
 void write_Eprom() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Flashing file "));
+  print_STR(flashing_file_STR, 1);
   println_Msg(filePath);
   display_Update();
 
@@ -2426,7 +2430,7 @@ void write_Eprom() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
 
     // Switch VPP/OE(PH5) to HIGH
     PORTH |= (1 << 5);
@@ -2477,7 +2481,7 @@ void write_Eprom() {
 }
 
 void verify_Eprom() {
-  println_Msg(F("Verifying..."));
+  print_STR(verifying_STR, 1);
   display_Update();
 
   // Open file on sd card
@@ -2485,7 +2489,7 @@ void verify_Eprom() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(F("File size exceeds flash size."), true);
+      print_Error(file_too_big_STR, true);
     }
 
     blank = 0;

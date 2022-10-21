@@ -227,8 +227,8 @@ static const char nesMenuItem3[] PROGMEM = "Read Sram";
 static const char nesMenuItem4[] PROGMEM = "Write Sram";
 static const char nesMenuItem5[] PROGMEM = "Change Mapper";
 static const char nesMenuItem6[] PROGMEM = "Flash NESMaker";
-static const char nesMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsNES[] PROGMEM = { nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, nesMenuItem7 };
+//static const char nesMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsNES[] PROGMEM = { nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, string_reset2 };
 
 // NES chips menu
 #ifndef nointro
@@ -269,7 +269,8 @@ void nesMenu() {
       sd.chdir("/");
       readRom_NES();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
 #ifdef global_log
       save_log();
 #endif
@@ -289,7 +290,8 @@ void nesMenu() {
       readRAM();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -299,7 +301,8 @@ void nesMenu() {
       writeRAM();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -329,7 +332,8 @@ void nesMenu() {
         println_Msg(F("Error:"));
         println_Msg(F("Can't write to this cartridge"));
         println_Msg(F(""));
-        println_Msg(F("Press Button..."));
+        // Prints string out of the common strings array either with or without newline
+        print_STR(press_button_STR, 1);
         display_Update();
       }
       wait();
@@ -361,14 +365,16 @@ void nesChipMenu() {
       resetROM();
 
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
 #else
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
       readRaw_NES();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
 #ifdef global_log
       save_log();
 #endif
@@ -383,7 +389,8 @@ void nesChipMenu() {
       readPRG(false);
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -394,7 +401,8 @@ void nesChipMenu() {
       readCHR(false);
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -717,11 +725,11 @@ boolean getMapping() {
               println_Msg(F("K"));
             }
 #if defined(enable_OLED)
-            println_Msg(F("Press left to Change"));
-            println_Msg(F("and right to Select"));
+            print_STR(press_to_change_STR, 1);
+            print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-            println_Msg(F("Rotate to Change"));
-            println_Msg(F("Press to Select"));
+            print_STR(rotate_to_change_STR, 1);
+            print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
             println_Msg(F("U/D to Change"));
             println_Msg(F("Space to Select"));
@@ -1005,11 +1013,11 @@ void selectMapping() {
           println_Msg(F("K"));
         }
 #if defined(enable_OLED)
-        println_Msg(F("Press left to Change"));
-        println_Msg(F("and right to Select"));
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to Change"));
-        println_Msg(F("Press to Select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
         println_Msg(F("U/D to Change"));
         println_Msg(F("Space to Select"));
@@ -1101,7 +1109,7 @@ void readRom_NES() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1112,7 +1120,7 @@ void readRom_NES() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Initialize progress bar
@@ -1160,7 +1168,7 @@ void readRaw_NES() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1171,7 +1179,7 @@ void readRaw_NES() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Initialize progress bar
@@ -1530,7 +1538,7 @@ void CreatePRGFileInSD() {
     display_Clear();
     println_Msg(F("PRG FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
 
     LED_RED_OFF;
   }
@@ -1555,7 +1563,7 @@ void CreateCHRFileInSD() {
     display_Clear();
     println_Msg(F("CHR FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
 
     LED_RED_OFF;
   }
@@ -1580,7 +1588,7 @@ void CreateRAMFileInSD() {
     display_Clear();
     println_Msg(F("RAM FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
 
     LED_RED_OFF;
   }
@@ -1682,7 +1690,7 @@ void outputNES() {
     display_Clear();
     println_Msg(F("PRG FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   if (has_header) {
@@ -1702,7 +1710,7 @@ void outputNES() {
     display_Clear();
     println_Msg(F("NES FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   if (has_header) {
@@ -1726,7 +1734,7 @@ void outputNES() {
       display_Clear();
       println_Msg(F("CHR FILE FAILED!"));
       display_Update();
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
     while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
       nesFile.write(sdBuffer, n);
@@ -2065,7 +2073,7 @@ chooseMapper:
     println_Msg("");
     println_Msg("");
     println_Msg("");
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 
     if (digit == 0) {
@@ -2185,8 +2193,8 @@ chooseMapper:
   print_Msg(F("Mapper: "));
   println_Msg(mapselect);
   println_Msg(F(""));
-  println_Msg(F("Rotate to change"));
-  println_Msg(F("Press to select"));
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
   display_Update();
 
   while (1) {
@@ -2203,8 +2211,8 @@ chooseMapper:
       print_Msg(F("Mapper: "));
       println_Msg(mapselect);
       println_Msg(F(""));
-      println_Msg(F("Rotate to change"));
-      println_Msg(F("Press to select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
       display_Update();
     }
 
@@ -2219,8 +2227,8 @@ chooseMapper:
       print_Msg(F("Mapper: "));
       println_Msg(mapselect);
       println_Msg(F(""));
-      println_Msg(F("Rotate to change"));
-      println_Msg(F("Press to select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
       display_Update();
     }
 
@@ -2321,11 +2329,11 @@ void setPRGSize() {
     println_Msg(PRG[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to change"));
-    println_Msg(F("Press to select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
@@ -2343,11 +2351,11 @@ void setPRGSize() {
         println_Msg(PRG[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2362,11 +2370,11 @@ void setPRGSize() {
         println_Msg(PRG[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2441,11 +2449,11 @@ void setCHRSize() {
     println_Msg(CHR[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to change"));
-    println_Msg(F("Press to select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
@@ -2463,11 +2471,11 @@ void setCHRSize() {
         println_Msg(CHR[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2483,11 +2491,11 @@ void setCHRSize() {
         println_Msg(CHR[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2576,11 +2584,11 @@ void setRAMSize() {
       println_Msg(RAM[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to change"));
-    println_Msg(F("Press to select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
@@ -2612,11 +2620,11 @@ void setRAMSize() {
           println_Msg(RAM[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2646,11 +2654,11 @@ void setRAMSize() {
           println_Msg(RAM[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2859,7 +2867,8 @@ void checkStatus_NES() {
     println_Msg(F("K"));
   }
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -4808,7 +4817,7 @@ void writeRAM() {
       display_Update();
 
     } else {
-      print_Error(F("SD ERROR"), true);
+      print_Error(sd_error_STR, true);
     }
   }
 

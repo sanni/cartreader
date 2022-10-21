@@ -34,8 +34,8 @@ boolean hirom[8];
 // SFM menu items
 static const char sfmMenuItem1[] PROGMEM = "Game Menu";
 static const char sfmMenuItem2[] PROGMEM = "Flash Menu";
-static const char sfmMenuItem3[] PROGMEM = "Reset";
-static const char* const menuOptionsSFM[] PROGMEM = { sfmMenuItem1, sfmMenuItem2, sfmMenuItem3 };
+//static const char sfmMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSFM[] PROGMEM = { sfmMenuItem1, sfmMenuItem2, string_reset2 };
 
 // SFM flash menu items
 static const char sfmFlashMenuItem1[] PROGMEM = "Read Flash";
@@ -51,8 +51,8 @@ static const char sfmGameMenuItem1[] PROGMEM = "Read Sram";
 static const char sfmGameMenuItem2[] PROGMEM = "Read Game";
 static const char sfmGameMenuItem3[] PROGMEM = "Write Sram";
 static const char sfmGameMenuItem4[] PROGMEM = "Switch Game";
-static const char sfmGameMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsSFMGame[] PROGMEM = { sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, sfmGameMenuItem5 };
+//static const char sfmGameMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSFMGame[] PROGMEM = { sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, string_reset2 };
 
 void sfmMenu() {
   // create menu with title and 3 options to choose from
@@ -182,10 +182,10 @@ void sfmGameOptions() {
         println_Msg(F("Verified OK"));
         display_Update();
       } else {
-        print_Msg(F("Error: "));
+        print_STR(error_STR, 0);
         print_Msg(wrErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_STR(_bytes_STR, 1);
+        print_Error(did_not_verify_STR, false);
       }
       break;
 
@@ -201,7 +201,8 @@ void sfmGameOptions() {
   }
   if (gameSubMenu != 3) {
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   }
@@ -267,7 +268,8 @@ void sfmFlashMenu() {
       println_Msg(F("This will erase your"));
       println_Msg(F("NP Cartridge."));
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
 
@@ -379,7 +381,8 @@ void sfmFlashMenu() {
       println_Msg(F("This will erase your"));
       println_Msg(F("NP Cartridge."));
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
 
@@ -429,7 +432,8 @@ void sfmFlashMenu() {
   }
   if (flashSubMenu != 5) {
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   }
@@ -784,7 +788,8 @@ void getCartInfo_SFM() {
   print_Msg(F("Sram: "));
   print_Msg(sramSize);
   println_Msg(F("Kbit"));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   // Wait for user input
   wait();
@@ -927,7 +932,7 @@ void readROM_SFM() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   // Check if LoROM or HiROM...
@@ -1098,7 +1103,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
     myFile.close();
     println_Msg("");
   } else {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 }
 
@@ -1261,7 +1266,7 @@ void readFlash_SFM() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
   if (romType) {
     for (int currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
@@ -1405,7 +1410,7 @@ void readMapping() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Read the mapping info out of the 1st chip
@@ -1730,7 +1735,7 @@ void write_SFM(int startBank, uint32_t pos) {
         display_Update();
         eraseFlash_SFM(startBank);
         resetFlash_SFM(startBank);
-        println_Msg(F("Done"));
+        print_STR(done_STR, 1);
         print_Msg(F("Blankcheck..."));
         display_Update();
         if (blankcheck_SFM(startBank)) {
@@ -1747,17 +1752,17 @@ void write_SFM(int startBank, uint32_t pos) {
       resetFlash_SFM(startBank);
 
       // Checking for errors
-      print_Msg(F("Verifying..."));
+      print_STR(verifying_STR, 0);
       display_Update();
       writeErrors = verifyFlash_SFM(startBank, pos);
       if (writeErrors == 0) {
         println_Msg(F("OK"));
         display_Update();
       } else {
-        print_Msg(F("Error: "));
+        print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), true);
+        print_STR(_bytes_STR, 1);
+        print_Error(did_not_verify_STR, true);
       }
     } else {
       print_Error(F("Error: Wrong Flash ID"), true);

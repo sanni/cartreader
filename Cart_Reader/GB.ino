@@ -19,15 +19,15 @@ static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "GB Advance (3V)";
 static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
-static const char gbxMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5 };
+//static const char gbxMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, string_reset2 };
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read ROM";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
-static const char GBMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsGB[] PROGMEM = { GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4 };
+//static const char GBMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGB[] PROGMEM = { GBMenuItem1, GBMenuItem2, GBMenuItem3, string_reset2 };
 
 // GB Flash items
 static const char GBFlashItem1[] PROGMEM = "29F Cart (MBC3)";
@@ -36,8 +36,8 @@ static const char GBFlashItem3[] PROGMEM = "29F Cart (CAM)";
 static const char GBFlashItem4[] PROGMEM = "CFI Cart";
 static const char GBFlashItem5[] PROGMEM = "CFI Cart and Save";
 static const char GBFlashItem6[] PROGMEM = "GB Smart";
-static const char GBFlashItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, GBFlashItem7 };
+//static const char GBFlashItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, string_reset2 };
 
 // Start menu for both GB and GBA
 void gbxMenu() {
@@ -84,7 +84,8 @@ void gbxMenu() {
           //MBC3
           writeFlash29F_GB(3, 1);
           // Reset
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           resetArduino();
@@ -102,7 +103,8 @@ void gbxMenu() {
           //MBC5
           writeFlash29F_GB(5, 1);
           // Reset
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           resetArduino();
@@ -120,7 +122,8 @@ void gbxMenu() {
           sd.chdir("/");
           //MBC3
           writeFlash29F_GB(3, 1);
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
 
@@ -131,7 +134,8 @@ void gbxMenu() {
           println_Msg(F("if you want to flash"));
           println_Msg(F("a second game"));
           println_Msg(F(""));
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
 
@@ -143,7 +147,8 @@ void gbxMenu() {
 
           // Reset
           println_Msg(F(""));
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           resetArduino();
@@ -167,7 +172,8 @@ void gbxMenu() {
           if (!writeCFI_GB()) {
             display_Clear();
             println_Msg(F("Flashing failed, time out!"));
-            println_Msg(F("Press Button..."));
+            // Prints string out of the common strings array either with or without newline
+            print_STR(press_button_STR, 1);
             display_Update();
             wait();
           }
@@ -194,7 +200,8 @@ void gbxMenu() {
           if (!writeCFI_GB()) {
             display_Clear();
             println_Msg(F("Flashing failed, time out!"));
-            println_Msg(F("Press Button..."));
+            // Prints string out of the common strings array either with or without newline
+            print_STR(press_button_STR, 1);
             display_Update();
             wait();
             resetArduino();
@@ -230,10 +237,10 @@ void gbxMenu() {
                     println_Msg(F("Verified OK"));
                     display_Update();
                   } else {
-                    print_Msg(F("Error: "));
+                    print_STR(error_STR, 0);
                     print_Msg(wrErrors);
-                    println_Msg(F(" bytes "));
-                    print_Error(F("did not verify."), false);
+                    print_STR(_bytes_STR, 1);
+                    print_Error(did_not_verify_STR, false);
                   }
                   break;
                 }
@@ -333,10 +340,10 @@ void gbMenu() {
             println_Msg(F("Verified OK"));
             display_Update();
           } else {
-            print_Msg(F("Error: "));
+            print_STR(error_STR, 0);
             print_Msg(wrErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
+            print_STR(_bytes_STR, 1);
+            print_Error(did_not_verify_STR, false);
           }
         }
       } else {
@@ -349,7 +356,8 @@ void gbMenu() {
       resetArduino();
       break;
   }
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -534,7 +542,8 @@ void showCartInfo_GB() {
 
     // Wait for user input
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   } else {
@@ -938,7 +947,7 @@ void readROM_GB() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -949,7 +958,7 @@ void readROM_GB() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   int endAddress = 0x7FFF;
@@ -1158,7 +1167,7 @@ void readSRAM_GB() {
 
     //open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
 
     // MBC2 Fix
@@ -1289,7 +1298,7 @@ unsigned long verifySRAM_GB() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"), true);
+    print_Error(open_file_STR, true);
   }
 }
 
@@ -1306,7 +1315,7 @@ void readSRAMFLASH_MBC6_GB() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1317,7 +1326,7 @@ void readSRAMFLASH_MBC6_GB() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Initialize progress bar
@@ -1788,7 +1797,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       }
     }
 
-    print_Msg(F("Verifying..."));
+    print_STR(verifying_STR, 0);
     display_Update();
 
     // Go back to file beginning
@@ -1837,11 +1846,11 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     } else {
       println_Msg(F("Error"));
       print_Msg(writeErrors);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), true);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, true);
     }
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -2018,7 +2027,8 @@ bool writeCFI_GB() {
       print_Msg(F("but needs "));
       print_Msg(romBanks);
       println_Msg(F("."));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       resetArduino();
@@ -2194,13 +2204,13 @@ bool writeCFI_GB() {
       println_Msg(F("OK"));
       display_Update();
     } else {
-      print_Msg(F("Error: "));
+      print_STR(error_STR, 0);
       print_Msg(writeErrors);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
   return true;

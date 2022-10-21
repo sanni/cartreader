@@ -54,14 +54,14 @@ uint8_t tennokoe_bank_index = 0;
 static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
 static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
 static const char pceMenuItem3[] PROGMEM = "Turbochip";
-static const char pceMenuItem4[] PROGMEM = "Reset";
-static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, pceMenuItem4 };
+//static const char pceMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, string_reset2 };
 
 // PCE card menu items
 static const char pceCartMenuItem1[] = "Read ROM";
 static char pceCartMenuItem2[20];
 static char pceCartMenuItem3[20];
-static const char pceCartMenuItem4[] = "Reset";
+//static const char pceCartMenuItem4[] = "Reset"; (stored in common strings array)
 static const char pceCartMenuItem5[] = "Inc Bank Number";
 static const char pceCartMenuItem6[] = "Dec Bank Number";
 static char pceCartMenuItem7[20];
@@ -69,8 +69,8 @@ static char menuOptionspceCart[7][20];
 
 // Turbochip menu items
 static const char pceTCMenuItem1[] PROGMEM = "Read ROM";
-static const char pceTCMenuItem2[] PROGMEM = "Reset";
-static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, pceTCMenuItem2 };
+//static const char pceTCMenuItem2[] PROGMEM = "Reset"; (stored in common strings array)
+static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_reset2 };
 
 // PCE start menu
 void pcsMenu(void) {
@@ -549,7 +549,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   pin_read_write_PCE();
@@ -688,8 +688,8 @@ void write_tennokoe_bank_PCE(int bank_index) {
     } else {
       println_Msg(F("Verify failed..."));
       print_Msg(diffcnt);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
 
     pin_init_PCE();
@@ -743,7 +743,7 @@ void read_rom_PCE(void) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   pin_read_write_PCE();
@@ -800,7 +800,7 @@ void pceMenu() {
     strcpy(menuOptionspceCart[0], pceCartMenuItem1);
     strcpy(menuOptionspceCart[1], pceCartMenuItem2);
     strcpy(menuOptionspceCart[2], pceCartMenuItem3);
-    strcpy(menuOptionspceCart[3], pceCartMenuItem4);
+    strcpy(menuOptionspceCart[3], string_reset2);  // (stored in common strings array)
     strcpy(menuOptionspceCart[4], pceCartMenuItem5);
     strcpy(menuOptionspceCart[5], pceCartMenuItem6);
     if (pce_force_rom_size > 0) {
@@ -865,7 +865,8 @@ void pceMenu() {
   }
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }

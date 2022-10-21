@@ -35,11 +35,11 @@ static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "Flash repro";
 #ifdef clockgen_calibration
 static const char snsMenuItem5[] PROGMEM = "Calibrate Clock";
-static const char snsMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6 };
+//static const char snsMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, string_reset2 };
 #else
-static const char snsMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5 };
+//static const char snsMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, string_reset2 };
 #endif
 
 // SNES menu items
@@ -49,24 +49,24 @@ static const char SnesMenuItem3[] PROGMEM = "Write Save";
 static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
 static const char SnesMenuItem5[] PROGMEM = "Cycle cart";
 static const char SnesMenuItem6[] PROGMEM = "Force cart type";
-static const char SnesMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsSNES[] PROGMEM = { SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, SnesMenuItem7 };
+//static const char SnesMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNES[] PROGMEM = { SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, string_reset2 };
 
 // Manual config menu items
 static const char confMenuItem1[] PROGMEM = "Use header info";
 static const char confMenuItem2[] PROGMEM = "4MB LoROM 256K SRAM";
 static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
 static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
-static const char confMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5 };
+//static const char confMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, string_reset2 };
 
 // Repro menu items
 static const char reproMenuItem1[] PROGMEM = "LoROM (P0)";
 static const char reproMenuItem2[] PROGMEM = "HiROM (P0)";
 static const char reproMenuItem3[] PROGMEM = "ExLoROM (P1)";
 static const char reproMenuItem4[] PROGMEM = "ExHiROM (P1)";
-static const char reproMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5 };
+//static const char reproMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, string_reset2 };
 
 // SNES repro menu
 void reproMenu() {
@@ -247,10 +247,10 @@ void snesMenu() {
           println_Msg(F("Verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         display_Clear();
@@ -282,10 +282,10 @@ void snesMenu() {
           println_Msg(F("Restored OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         display_Clear();
@@ -323,7 +323,8 @@ void snesMenu() {
       break;
   }
   //println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -840,7 +841,8 @@ void getCartInfo_SNES() {
 
   // Wait for user input
 #if (defined(enable_LCD) || defined(enable_OLED))
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
@@ -1314,7 +1316,7 @@ void readROM_SNES() {
 
   //clear the screen
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1325,7 +1327,7 @@ void readROM_SNES() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   //Dump Derby Stallion '96 (Japan) Actual Size is 24Mb
@@ -1678,7 +1680,7 @@ void readSRAM() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   int sramBanks = 0;
   if (romType == LO) {
@@ -1951,10 +1953,10 @@ unsigned long verifySRAM() {
       if (writeErrors == 0) {
         println_Msg(F("Verified OK"));
       } else {
-        print_Msg(F("Error: "));
+        print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_STR(_bytes_STR, 1);
+        print_Error(did_not_verify_STR, false);
       }
       display_Update();
       wait();

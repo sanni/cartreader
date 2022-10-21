@@ -58,30 +58,30 @@ static const char n64MenuItem1[] PROGMEM = "Game Cartridge";
 static const char n64MenuItem2[] PROGMEM = "Controller";
 static const char n64MenuItem3[] PROGMEM = "Flash Repro";
 static const char n64MenuItem4[] PROGMEM = "Flash Gameshark";
-static const char n64MenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsN64[] PROGMEM = { n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4, n64MenuItem5 };
+//static const char n64MenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsN64[] PROGMEM = { n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4, string_reset2 };
 
 // N64 controller menu items
 static const char N64ContMenuItem1[] PROGMEM = "Test Controller";
 static const char N64ContMenuItem2[] PROGMEM = "Read ControllerPak";
 static const char N64ContMenuItem3[] PROGMEM = "Write ControllerPak";
-static const char N64ContMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsN64Controller[] PROGMEM = { N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, N64ContMenuItem4 };
+//static const char N64ContMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsN64Controller[] PROGMEM = { N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, string_reset2 };
 
 // N64 cart menu items
 static const char N64CartMenuItem1[] PROGMEM = "Read ROM";
 static const char N64CartMenuItem2[] PROGMEM = "Read Save";
 static const char N64CartMenuItem3[] PROGMEM = "Write Save";
 static const char N64CartMenuItem4[] PROGMEM = "Force Savetype";
-static const char N64CartMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsN64Cart[] PROGMEM = { N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4, N64CartMenuItem5 };
+//static const char N64CartMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsN64Cart[] PROGMEM = { N64CartMenuItem1, N64CartMenuItem2, N64CartMenuItem3, N64CartMenuItem4, string_reset2 };
 
 // N64 CRC32 error menu items
 static const char N64CRCMenuItem1[] PROGMEM = "No";
 static const char N64CRCMenuItem2[] PROGMEM = "Yes and keep old";
 static const char N64CRCMenuItem3[] PROGMEM = "Yes and delete old";
-static const char N64CRCMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsN64CRC[] PROGMEM = { N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, N64CRCMenuItem4 };
+//static const char N64CRCMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsN64CRC[] PROGMEM = { N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, string_reset2 };
 
 // Rom menu
 static const char N64RomItem1[] PROGMEM = "4 MB";
@@ -194,7 +194,8 @@ void n64ControllerMenu() {
       verifyCRC();
       validateMPK();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -215,7 +216,8 @@ void n64ControllerMenu() {
       delay(500);
       verifyMPK();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -266,7 +268,8 @@ void n64CartMenu() {
         print_Error(F("Savetype Error"), false);
       }
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -285,10 +288,10 @@ void n64CartMenu() {
           println_Msg(F("SRAM verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else if (saveType == 4) {
         // Launch file browser
@@ -296,7 +299,7 @@ void n64CartMenu() {
         display_Clear();
         getFramType();
         writeFram(flashramType);
-        print_Msg(F("Verifying..."));
+        print_STR(verifying_STR, 0);
         display_Update();
         writeErrors = verifyFram(flashramType);
         if (writeErrors == 0) {
@@ -304,10 +307,10 @@ void n64CartMenu() {
           display_Update();
         } else {
           println_Msg("");
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else if ((saveType == 5) || (saveType == 6)) {
         // Launch file browser
@@ -326,16 +329,17 @@ void n64CartMenu() {
           println_Msg(F("EEPROM verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         display_Clear();
         print_Error(F("Save Type Error"), false);
       }
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -1611,12 +1615,12 @@ void readMPK() {
   strcat(filePath, ".crc");
   FsFile crcFile;
   if (!crcFile.open(filePath, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 
   //open mpk file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 
   print_Msg(F("Saving N64/MPK/"));
@@ -1669,18 +1673,18 @@ void readMPK() {
 void verifyCRC() {
   writeErrors = 0;
 
-  println_Msg(F("Verifying..."));
+  print_STR(verifying_STR, 1);
   display_Update();
 
   //open CRC file on sd card
   FsFile crcFile;
   if (!crcFile.open(filePath, O_READ)) {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 
   //open MPK file on sd card
   if (!myFile.open(fileName, O_READ)) {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 
   //Initialize progress bar
@@ -1715,10 +1719,10 @@ void verifyCRC() {
     sd.remove(filePath);
     display_Update();
   } else {
-    print_Msg(F("Error: "));
+    print_STR(error_STR, 0);
     print_Msg(writeErrors);
     println_Msg(F(" blocks "));
-    print_Error(F("did not verify."), false);
+    print_Error(did_not_verify_STR, false);
   }
 }
 
@@ -1743,7 +1747,7 @@ boolean checkHeader(byte startAddress) {
 void validateMPK() {
   //open file on sd card
   if (!myFile.open(fileName, O_READ)) {
-    print_Error(F("Can't open file"), true);
+    print_Error(open_file_STR, true);
   }
 
   // Read first 256 byte which contains the header including checksum and reverse checksum and three copies of it
@@ -1856,7 +1860,7 @@ void writeMPK() {
     // Close the file:
     myFile.close();
   } else {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 }
 
@@ -1864,12 +1868,12 @@ void writeMPK() {
 void verifyMPK() {
   writeErrors = 0;
 
-  println_Msg(F("Verifying..."));
+  print_STR(verifying_STR, 1);
   display_Update();
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("Can't open file on SD"), true);
+    print_Error(open_file_STR, true);
   }
 
   //Initialize progress bar
@@ -1911,10 +1915,10 @@ void verifyMPK() {
     println_Msg(F("Written successfully"));
     display_Update();
   } else {
-    print_Msg(F("Error: "));
+    print_STR(error_STR, 0);
     print_Msg(writeErrors);
-    println_Msg(F(" bytes "));
-    print_Error(F("did not verify."), false);
+    print_STR(_bytes_STR, 1);
+    print_Error(did_not_verify_STR, false);
   }
 }
 
@@ -1963,7 +1967,8 @@ void printCartInfo_N64() {
 
     // Wait for user input
     println_Msg(F(" "));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   } else {
@@ -1982,7 +1987,8 @@ void printCartInfo_N64() {
     strcpy(romName, "GPERROR");
     print_Error(F("Cartridge unknown"), false);
     println_Msg("");
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
 
@@ -2344,11 +2350,11 @@ void writeEeprom_CLK() {
 
       // Close the file:
       myFile.close();
-      println_Msg(F("Done"));
+      print_STR(done_STR, 1);
       display_Update();
       delay(600);
     } else {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
   } else {
     print_Error(F("Savetype Error"), true);
@@ -2378,7 +2384,7 @@ void readEeprom_CLK() {
 
     // Open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_Error(F("Can't create file on SD"), true);
+      print_Error(create_file_STR, true);
     }
 
     for (byte i = 0; i < (eepPages / 64); i++) {
@@ -2481,7 +2487,7 @@ unsigned long verifyEeprom_CLK() {
     } else {
       // SD Error
       writeErrors = 999999;
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
     // Return 0 if verified ok, or number of errors
     return writeErrors;
@@ -2713,11 +2719,11 @@ void writeEeprom() {
 
       // Close the file:
       myFile.close();
-      println_Msg(F("Done"));
+      print_STR(done_STR, 1);
       display_Update();
       delay(600);
     } else {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
   } else {
     print_Error(F("Savetype Error"), true);
@@ -2743,7 +2749,7 @@ void readEeprom() {
 
     // Open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_Error(F("Can't create file on SD"), true);
+      print_Error(create_file_STR, true);
     }
 
     for (byte i = 0; i < (eepPages / 64); i++) {
@@ -2847,7 +2853,7 @@ unsigned long verifyEeprom() {
     } else {
       // SD Error
       writeErrors = 999999;
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
     // Return 0 if verified ok, or number of errors
     return writeErrors;
@@ -2888,10 +2894,10 @@ void writeSram(unsigned long sramSize) {
       }
       // Close the file:
       myFile.close();
-      println_Msg(F("Done"));
+      print_STR(done_STR, 1);
       display_Update();
     } else {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
 
   } else {
@@ -2931,7 +2937,7 @@ void readSram(unsigned long sramSize, byte flashramType) {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
@@ -2994,7 +3000,7 @@ unsigned long verifySram(unsigned long sramSize, byte flashramType) {
     // Close the file:
     myFile.close();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   // Return 0 if verified ok, or number of errors
   return writeErrors;
@@ -3100,7 +3106,7 @@ void writeFram(byte flashramType) {
       // Close the file:
       myFile.close();
     } else {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
   } else {
     print_Error(F("Savetype Error"), true);
@@ -3327,7 +3333,7 @@ redumpnewfolder:
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -3339,7 +3345,7 @@ redumpnewfolder:
 redumpsamefolder:
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // dumping rom slow
@@ -3478,7 +3484,8 @@ redumpsamefolder:
     print_Msg(timeElapsed);  // include elapsed time
     println_Msg(F("s)"));
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     // This saves a tt file with rom info next to the dumped rom
 #ifdef savesummarytotxt
@@ -3493,7 +3500,8 @@ redumpsamefolder:
     errorLvl = 1;
     setColor_RGB(255, 0, 0);
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     // This saves a tt file with rom info next to the dumped rom
 #ifdef savesummarytotxt
@@ -3528,7 +3536,7 @@ redumpsamefolder:
         sd.chdir(folder);
         // Delete old file
         if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-          print_Error(F("SD Error"), true);
+          print_Error(sd_error_STR, true);
         }
         if (!myFile.remove()) {
           print_Error(F("Delete Error"), true);
@@ -3554,7 +3562,7 @@ redumpsamefolder:
 void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElapsed) {
   // Open file on sd card
   if (!myFile.open("N64/ROM/n64log.txt", O_RDWR | O_CREAT | O_APPEND)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Write the info
@@ -3675,7 +3683,8 @@ void flashRepro_N64() {
     println_Msg(F("Repro Cartridge."));
     println_Msg(F("Attention: Use 3.3V!"));
     println_Msg("");
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   } else {
@@ -3821,7 +3830,7 @@ void flashRepro_N64() {
 
     // Compare file size to flashrom size
     if ((fileSize / 1048576) > cartSize) {
-      print_Error(F("File too big"), true);
+      print_Error(file_too_big_STR, true);
     }
 
     // Erase needed sectors
@@ -3879,7 +3888,7 @@ void flashRepro_N64() {
       myFile.close();
 
       // Verify
-      print_Msg(F("Verifying..."));
+      print_STR(verifying_STR, 0);
       display_Update();
       writeErrors = verifyFlashrom_N64();
       if (writeErrors == 0) {
@@ -3888,7 +3897,7 @@ void flashRepro_N64() {
       } else {
         print_Msg(writeErrors);
         print_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_Error(did_not_verify_STR, false);
       }
     } else {
       // Close the file
@@ -3899,7 +3908,8 @@ void flashRepro_N64() {
     print_Error(F("Can't open file"), false);
   }
 
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
   display_Clear();
@@ -4598,7 +4608,7 @@ unsigned long verifyFlashrom_N64() {
     myFile.close();
     return writeErrors;
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
     return 9999;
   }
@@ -4627,7 +4637,8 @@ void flashGameshark_N64() {
     println_Msg(F("Gameshark cartridge"));
     println_Msg(F("Attention: Use 3.3V!"));
     println_Msg(F("Power OFF if Unsure!"));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
 
@@ -4652,7 +4663,7 @@ void flashGameshark_N64() {
 
       // Compare file size to flashrom size
       if (fileSize > 262144) {
-        print_Error(F("File too big"), true);
+        print_Error(file_too_big_STR, true);
       }
 
       // SST 29LE010, chip erase not needed as this eeprom automaticly erases during the write cycle
@@ -4668,7 +4679,7 @@ void flashGameshark_N64() {
       myFile.close();
 
       // Verify
-      print_Msg(F("Verifying..."));
+      print_STR(verifying_STR, 0);
       display_Update();
       writeErrors = verifyGameshark_N64();
 
@@ -4682,7 +4693,7 @@ void flashGameshark_N64() {
       } else {
         print_Msg(writeErrors);
         print_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_Error(did_not_verify_STR, false);
       }
     } else {
       print_Error(F("Can't open file"), false);
@@ -4695,7 +4706,8 @@ void flashGameshark_N64() {
     print_Error(F("Unknown flashrom"), false);
   }
 
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
   display_Clear();
@@ -4755,7 +4767,7 @@ void backupGameshark_N64() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   for (unsigned long currByte = romBase + 0xC00000; currByte < (romBase + 0xC00000 + 262144); currByte += 512) {
@@ -4865,7 +4877,7 @@ unsigned long verifyGameshark_N64() {
     myFile.close();
     return writeErrors;
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
     return 9999;
   }
