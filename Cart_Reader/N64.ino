@@ -597,35 +597,25 @@ void writeWord_N64(word myWord) {
    N64 Controller CRC Functions
  *****************************************/
 static word addrCRC(word address) {
-  // CRC table
-  word xor_table[16] = { 0x0, 0x0, 0x0, 0x0, 0x0, 0x15, 0x1F, 0x0B, 0x16, 0x19, 0x07, 0x0E, 0x1C, 0x0D, 0x1A, 0x01 };
-  word crc = 0;
-  // Make sure we have a valid address
-  address &= ~0x1F;
-  // Go through each bit in the address, and if set, xor the right value into the output
-  for (int i = 15; i >= 5; i--) {
-    // Is this bit set?
-    if (((address >> i) & 0x1)) {
-      crc ^= xor_table[i];
+  const char n64_address_crc_table[] = { 0x15, 0x1F, 0x0B, 0x16, 0x19, 0x07, 0x0E, 0x1C, 0x0D, 0x1A, 0x01 };
+  const char *cur_xor = n64_address_crc_table;
+  byte crc = 0;
+  for (word mask = 0x0020; mask; mask <<= 1, cur_xor++) {
+    if (address & mask) {
+      crc ^= *cur_xor;
     }
   }
-  // Just in case
-  crc &= 0x1F;
-  // Create a new address with the CRC appended
-  return address | crc;
+  return (address & 0xFFE0) | crc;
 }
 
 static uint8_t dataCRC(uint8_t* data) {
   uint8_t ret = 0;
-  for (int i = 0; i <= 32; i++) {
-    for (int j = 7; j >= 0; j--) {
-      int tmp = 0;
-      if (ret & 0x80) {
-        tmp = 0x85;
-      }
+  for (uint8_t i = 0; i <= 32; i++) {
+    for (uint8_t mask = 0x80; mask; mask >>= 1) {
+      uint8_t tmp = ret & 0x80 ? 0x85 : 0;
       ret <<= 1;
       if (i < 32) {
-        if (data[i] & (0x01 << j)) {
+        if (data[i] & mask) {
           ret |= 0x1;
         }
       }
