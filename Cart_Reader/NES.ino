@@ -59,7 +59,8 @@ static const byte PROGMEM mapsize[] = {
   45, 3, 6, 0, 8, 0, 0,  // ga23c asic multicart [UNLICENSED]
   47, 4, 4, 6, 6, 0, 0,  // (super spike vball + world cup)
   48, 3, 4, 6, 6, 0, 0,  // taito tc0690
-  62, 7, 7, 8, 8, 0, 0, // K-1017P [UNLICENSED]
+  60, 2, 2, 3, 3, 0, 0,  // Reset-based NROM-128 4-in-1 multicarts [UNLICENSED]
+  62, 7, 7, 8, 8, 0, 0,  // K-1017P [UNLICENSED]
   64, 2, 3, 4, 5, 0, 0,  // tengen rambo-1 [UNLICENSED]
   65, 3, 4, 5, 6, 0, 0,  // irem h-3001
   66, 2, 3, 2, 3, 0, 0,  // gxrom/mhrom
@@ -3233,6 +3234,19 @@ void readPRG(boolean readrom) {
         }
         break;
         
+      case 60:
+        for (word address = 0; address < 0x4000; address += 512) {
+          dumpPRG(base, address);
+        }
+        for (int i = 0; i < 3; i++) {
+          write_prg_byte(0x8D8D, i);
+          delay(500);
+          for (word address = 0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
       case 66:  // 64K/128K
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {                               // 64K/128K
@@ -3873,6 +3887,16 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8001, i);
             for (word address = 0x1200; address < 0x1400; address += 512) {
               dumpCHR_M2(address);  // Read CHR with M2 Pulse
+            }
+          }
+          break;
+          
+        case 60:
+          for (int i = 0; i < 4; i++) {
+            write_prg_byte(0x8D8D, i);
+            delay(500);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
             }
           }
           break;
