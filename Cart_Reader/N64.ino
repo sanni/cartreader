@@ -2033,15 +2033,6 @@ void printCartInfo_N64() {
   }
 }
 
-// improved strcmp function that ignores case to prevent checksum comparison issues
-int strcicmp(char const* a, char const* b) {
-  for (;; a++, b++) {
-    int d = tolower((unsigned char)*a) - tolower((unsigned char)*b);
-    if (d != 0 || !*a)
-      return d;
-  }
-}
-
 /* look-up the calculated crc in the file n64.txt on sd card
   boolean searchCRC(char crcStr[9]) {
   boolean result = 0;
@@ -2063,7 +2054,7 @@ int strcicmp(char const* a, char const* b) {
       }
 
       // Check if string is a match
-      if (strcicmp(tempStr1, crcStr) == 0) {
+      if (strcasecmp(tempStr1, crcStr) == 0) {
         // Skip the , in the file
         myFile.seekSet(myFile.curPosition() + 1);
 
