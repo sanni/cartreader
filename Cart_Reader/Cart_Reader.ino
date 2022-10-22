@@ -2972,6 +2972,7 @@ void fileBrowser(const __FlashStringHelper* browserTitle) {
   char fileNames[7][FILENAME_LENGTH];
   int currFile;
   FsFile myDir;
+  div_t page_layout;
 
   filebrowse = 1;
 
@@ -3000,32 +3001,15 @@ browserstart:
 
   // Count files in directory
   while (myFile.openNext(&myDir, O_READ)) {
-    // Ignore if hidden
-    if (myFile.isHidden()) {
-    }
-    // Indicate a directory.
-    else if (myFile.isDir()) {
-      currFile++;
-    }
-    // It's just a file
-    else if (myFile.isFile()) {
+    if (!myFile.isHidden() && (myFile.isDir() || myFile.isFile())) {
       currFile++;
     }
     myFile.close();
   }
   myDir.close();
 
-  // "Calculate number of needed pages"
-  if (currFile < 8)
-    numPages = 1;
-  else if (currFile < 15)
-    numPages = 2;
-  else if (currFile < 22)
-    numPages = 3;
-  else if (currFile < 29)
-    numPages = 4;
-  else if (currFile < 36)
-    numPages = 5;
+  page_layout = div(currFile, 7);
+  numPages = page_layout.quot + 1;
 
   // Fill the array "answers" with 7 options to choose from in the file browser
   char answers[7][20];
@@ -3033,31 +3017,7 @@ browserstart:
 page:
 
   // If there are less than 7 entries, set count to that number so no empty options appear
-  byte count;
-  if (currFile < 8)
-    count = currFile;
-  else if (currPage == 1)
-    count = 7;
-  else if (currFile < 15)
-    count = currFile - 7;
-  else if (currPage == 2)
-    count = 7;
-  else if (currFile < 22)
-    count = currFile - 14;
-  else if (currPage == 3)
-    count = 7;
-  else if (currFile < 29)
-    count = currFile - 21;
-  else {
-    display_Clear();
-    println_Msg(F("Too many files"));
-    display_Update();
-    println_Msg(F(""));
-    // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
-  }
+  byte count = currPage == numPages ? page_layout.rem : 7;
 
   // Open filepath directory
   if (!myDir.open(filePath)) {
