@@ -1998,7 +1998,7 @@ void save_log() {
       myFile.write(sdBuffer, 512);
     } else {
       word i = 0;
-      for (i = 0; i < myLog.available(); i++) {
+      for (; i < myLog.available(); i++) {
         sdBuffer[i] = myLog.read();
       }
       myFile.write(sdBuffer, i);
