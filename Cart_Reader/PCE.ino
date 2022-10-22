@@ -58,14 +58,15 @@ static const char pceMenuItem3[] PROGMEM = "Turbochip";
 static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, string_reset2 };
 
 // PCE card menu items
-static const char pceCartMenuItem1[] = "Read ROM";
-static char pceCartMenuItem2[20];
-static char pceCartMenuItem3[20];
-//static const char pceCartMenuItem4[] = "Reset"; (stored in common strings array)
-static const char pceCartMenuItem5[] = "Inc Bank Number";
-static const char pceCartMenuItem6[] = "Dec Bank Number";
-static char pceCartMenuItem7[20];
-static char menuOptionspceCart[7][20];
+static char menuOptionspceCart[7][20] = {
+  "Read ROM",
+  "", // Read RAM Bank %d
+  "", //Write RAM Bank %d
+  "Reset",
+  "Inc Bank Number",
+  "Dec Bank Number",
+  "" // ROM size now %dK / Force ROM size
+};
 
 // Turbochip menu items
 static const char pceTCMenuItem1[] PROGMEM = "Read ROM";
@@ -795,20 +796,13 @@ void pceMenu() {
   unsigned char mainMenu;
 
   if (pce_internal_mode == HUCARD || pce_internal_mode == HUCARD_NOSWAP) {
-    sprintf(pceCartMenuItem2, "Read RAM Bank %d", tennokoe_bank_index + 1);
-    sprintf(pceCartMenuItem3, "Write RAM Bank %d", tennokoe_bank_index + 1);
-    strcpy(menuOptionspceCart[0], pceCartMenuItem1);
-    strcpy(menuOptionspceCart[1], pceCartMenuItem2);
-    strcpy(menuOptionspceCart[2], pceCartMenuItem3);
-    strcpy(menuOptionspceCart[3], string_reset2);  // (stored in common strings array)
-    strcpy(menuOptionspceCart[4], pceCartMenuItem5);
-    strcpy(menuOptionspceCart[5], pceCartMenuItem6);
+    sprintf(menuOptionspceCart[1], "Read RAM Bank %d", tennokoe_bank_index + 1);
+    sprintf(menuOptionspceCart[2], "Write RAM Bank %d", tennokoe_bank_index + 1);
     if (pce_force_rom_size > 0) {
-      sprintf(pceCartMenuItem7, "ROM size now %dK", pce_force_rom_size);
+      sprintf(menuOptionspceCart[6], "ROM size now %dK", pce_force_rom_size);
     } else {
-      sprintf(pceCartMenuItem7, "Force ROM size");
+      sprintf(menuOptionspceCart[6], "Force ROM size");
     }
-    strcpy(menuOptionspceCart[6], pceCartMenuItem7);
     mainMenu = question_box(F("PCE HuCARD menu"), menuOptionspceCart, 7, 0);
 
     // wait for user choice to come back from the question box menu
