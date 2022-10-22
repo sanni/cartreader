@@ -853,17 +853,17 @@ void mainMenu() {
   while (1) {
     if (currPage == 1) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 0, 7);
+      convertPgm(modeOptions + 0, 7);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
     }
     if (currPage == 2) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 7, 7);
+      convertPgm(modeOptions + 7, 7);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
     }
     if (currPage == 3) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 14, 2);
+      convertPgm(modeOptions + 14, 2);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 2, 0);
     }
     if (numPages == 0) {
@@ -1860,13 +1860,6 @@ void setColor_RGB(byte r, byte g, byte b) {
   analogWrite(11, g);
   analogWrite(10, b);
 #endif
-}
-
-// Converts a progmem array into a ram array
-void convertPgm(const char* const pgmOptions[], byte startArray, byte numArrays) {
-  for (int i = 0; i < numArrays; i++) {
-    strlcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i + startArray])), 20);
-  }
 }
 
 // Converts a progmem array into a ram array
