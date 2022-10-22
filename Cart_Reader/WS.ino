@@ -981,7 +981,7 @@ boolean compareChecksum_WS(const char *wsFilePath) {
   }
 
   uint32_t calLength = myFile.fileSize() - 512;
-  uint32_t checksum = 0;
+  uint16_t checksum = 0;
 
   if (wsWitch) {
     // only calcuate last 128Kbytes for wonderwitch (OS and BIOS region)
@@ -1003,18 +1003,12 @@ boolean compareChecksum_WS(const char *wsFilePath) {
 
   myFile.close();
 
-  checksum &= 0x0000ffff;
-  calLength = wsGameChecksum;
-
-  // don't know why formating string "%04X(%04X)" always output "xxxx(0000)"
-  // so split into two snprintf
   char result[11];
-  snprintf(result, 5, "%04X", calLength);
-  snprintf(result + 4, 11 - 4, "(%04X)", checksum);
+  snprintf(result, 11, "%04X(%04X)", wsGameChecksum, checksum);
   print_Msg(F("Result: "));
   println_Msg(result);
 
-  if (checksum == calLength) {
+  if (checksum == wsGameChecksum) {
     println_Msg(F("Checksum matches"));
     display_Update();
     return 1;

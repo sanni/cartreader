@@ -871,7 +871,7 @@ void setCart_INTV() {
       myFile.seekSet(myFile.curPosition() + 1);
 
       // Read SRAM size
-      byte sramSize = myFile.read() - 48;
+      byte sramSize __attribute__ ((unused)) = myFile.read() - 48;
 
       // Skip rest of line
       myFile.seekSet(myFile.curPosition() + 2);

@@ -62,7 +62,7 @@ boolean compare_checksum_GBS() {
   sprintf(folder, "GB/ROM/%s/%d", romName, foldern - 1);
 
   char calcsumStr[5];
-  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
+  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName));
 
   if (strcmp(calcsumStr, checksumStr) == 0) {
     print_Msg(F("Result: "));
@@ -404,7 +404,7 @@ void gbSmartReadFlash() {
     print_Error(create_file_STR, true);
 
   // reset flash to read array state
-  for (int i = 0x00; i < gbSmartBanks; i += gbSmartBanksPerFlashChip)
+  for (uint16_t i = 0x00; i < gbSmartBanks; i += gbSmartBanksPerFlashChip)
     gbSmartResetFlash(i);
 
   // remaps mmc to full access
@@ -443,7 +443,7 @@ void gbSmartReadFlash() {
 }
 
 void gbSmartWriteFlash() {
-  for (int bank = 0x00; bank < gbSmartBanks; bank += gbSmartBanksPerFlashChip) {
+  for (uint16_t bank = 0x00; bank < gbSmartBanks; bank += gbSmartBanksPerFlashChip) {
     display_Clear();
 
     print_Msg(F("Erasing..."));

@@ -186,7 +186,7 @@ byte prgchk1;
 boolean mmc6 = false;
 byte prgchk2;
 byte prgchk3;
-int eepsize;
+word eepsize;
 byte bytecheck;
 byte firstbyte;
 boolean flashfound = false;  // NESmaker 39SF040 Flash Cart
@@ -206,7 +206,6 @@ char fileBIN[] = "CART.bin";
 
 // Cartridge Config
 byte mapper;
-byte newmapper;
 byte prgsize;
 byte newprgsize;
 byte chrsize;
@@ -632,10 +631,10 @@ boolean getMapping() {
             skip_line(&myFile);
 
             // Convert "4E4553" to (0x4E, 0x45, 0x53)
-            byte iNES_BUF[2];
+            unsigned int iNES_BUF;
             for (byte j = 0; j < 16; j++) {
-              sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-              iNES_HEADER[j] = iNES_BUF[0];
+              sscanf(iNES_STR + j * 2, "%2X", &iNES_BUF);
+              iNES_HEADER[j] = iNES_BUF;
             }
 
             // Convert iNES garbage to useful info (thx to fceux)
@@ -925,10 +924,10 @@ void selectMapping() {
         skip_line(&myFile);
 
         // Convert "4E4553" to (0x4E, 0x45, 0x53)
-        byte iNES_BUF[2];
+        unsigned int iNES_BUF;
         for (byte j = 0; j < 16; j++) {
-          sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-          iNES_HEADER[j] = iNES_BUF[0];
+          sscanf(iNES_STR + j * 2, "%2X", &iNES_BUF);
+          iNES_HEADER[j] = iNES_BUF;
         }
 
         // Convert iNES garbage to useful info (thx to fceux)
@@ -1212,17 +1211,6 @@ void readRaw_NES() {
 /******************************************
    Low Level Functions
  *****************************************/
-static void phi2_init() {
-  int i = 0x80;
-  unsigned char h = PORTF |= (1 << 0);
-  unsigned char l = PORTF &= ~(1 << 0);
-  while (i != 0) {
-    PORTL = l;
-    PORTL = h;
-    i--;
-  }
-}
-
 static void set_address(unsigned int address) {
   unsigned char l = address & 0xFF;
   unsigned char h = address >> 8;
@@ -1293,60 +1281,6 @@ static void write_prg_byte(unsigned int address, uint8_t data) {
   //  _delay_us(1);
   PHI2_HI;
   //  _delay_us(1);
-}
-
-static void write_chr_byte(unsigned int address, uint8_t data) {
-  PHI2_LOW;
-  ROMSEL_HI;
-  MODE_WRITE;
-  PORTK = data;
-
-  set_address(address);  // PHI2 low, ROMSEL always HIGH
-  //_delay_us(10);
-  CHR_WRITE_LOW;
-  _delay_us(1);  // WRITING
-  //_delay_ms(1); // WRITING
-  CHR_WRITE_HI;
-  //_delay_us(1);
-  MODE_READ;
-  set_address(0);
-  PHI2_HI;
-  //_delay_us(1);
-}
-
-static void write_prg(unsigned int address, unsigned int len, uint8_t* data) {
-  LED_RED_ON;
-  while (len > 0) {
-    write_prg_byte(address, *data);
-    address++;
-    len--;
-    data++;
-  }
-  //_delay_ms(1);
-  LED_RED_OFF;
-}
-
-static void write_chr(unsigned int address, unsigned int len, uint8_t* data) {
-  LED_RED_ON;
-  while (len > 0) {
-    write_chr_byte(address, *data);
-    address++;
-    len--;
-    data++;
-  }
-  //_delay_ms(1);
-  LED_RED_OFF;
-}
-
-static void reset_phi2() {
-  LED_RED_ON;
-  LED_GREEN_ON;
-  PHI2_LOW;
-  ROMSEL_HI;
-  _delay_ms(100);
-  PHI2_HI;
-  LED_RED_OFF;
-  LED_GREEN_OFF;
 }
 
 void resetROM() {
@@ -2017,6 +1951,7 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
    Config Functions
  *****************************************/
 void setMapper() {
+  byte newmapper;
 #ifdef global_log
   // Disable log to prevent unnecessary logging
   println_Log(F("Set Mapper manually"));
@@ -2028,7 +1963,7 @@ void setMapper() {
 chooseMapper:
   // Read stored mapper
   EEPROM_readAnything(7, newmapper);
-  if ((newmapper > 220) || (newmapper < 0))
+  if (newmapper > 220)
     newmapper = 0;
   // Split into digits
   byte hundreds = newmapper / 100;
@@ -2920,7 +2855,7 @@ void readPRG(boolean readrom) {
       case 87:                                                                             // 16K/32K
       case 184:                                                                            // 32K
       case 185:                                                                            // 16K/32K
-        for (word address = 0; address < ((prgsize * 0x4000) + 0x4000); address += 512) {  // 16K or 32K
+        for (word address = 0; address < (((word) prgsize) * 0x4000) + 0x4000; address += 512) {  // 16K or 32K
           dumpPRG(base, address);
         }
         break;
@@ -2948,7 +2883,7 @@ void readPRG(boolean readrom) {
       case 2:                          // 128K/256K
         for (int i = 0; i < 8; i++) {  // 128K/256K
           write_prg_byte(0x8000, i);
-          for (word address = 0x0; address < (((prgsize - 3) * 0x4000) + 0x4000); address += 512) {
+          for (word address = 0x0; address < (((word) prgsize - 3) * 0x4000) + 0x4000; address += 512) {
             dumpPRG(base, address);
           }
         }
@@ -5113,11 +5048,11 @@ void writeFLASH() {
             myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
               word location = base + sector + addr + x;
-              NESmaker_ByteProgram(i, base + sector + addr + x, sdBuffer[x]);
+              NESmaker_ByteProgram(i, location, sdBuffer[x]);
               delayMicroseconds(14);          // Typical 14us
               for (byte k = 0; k < 2; k++) {  // Confirm write twice
                 do {
-                  bytecheck = read_prg_byte(base + sector + addr + x);
+                  bytecheck = read_prg_byte(location);
                   delayMicroseconds(14);
                 } while (bytecheck != sdBuffer[x]);
               }
@@ -5152,6 +5087,11 @@ void writeFLASH() {
   sd.chdir();          // root
   filePath[0] = '\0';  // Reset filePath
 }
+
+// avoid warnings
+#undef MODE_READ
+#undef MODE_WRITE
+
 #endif
 //******************************************
 // End of File

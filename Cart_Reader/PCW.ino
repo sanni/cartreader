@@ -657,6 +657,11 @@ unsigned long verifySRAM_PCW() {
 
   return writeErrors;
 }
+
+// avoid warnings
+#undef MODE_READ
+#undef MODE_WRITE
+
 #endif
 //******************************************
 // End of File

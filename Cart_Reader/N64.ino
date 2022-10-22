@@ -981,7 +981,6 @@ void controllerTest_Display() {
   // Graph
   int xax = 24;  // midpoint x
   int yax = 24;  // midpoint y
-  int zax = 24;  // size
 
   // variables to display test data of different sticks
   int upx = 0;
@@ -1727,20 +1726,16 @@ void verifyCRC() {
 }
 
 // Calculates the checksum of the header
-boolean checkHeader(byte startAddress) {
+boolean checkHeader(byte *buf) {
   word sum = 0;
+  word buf_sum = (buf[28] << 8) + buf[29];
 
   // first 28 bytes are the header, then comes the checksum(word) followed by the reverse checksum(0xFFF2 - checksum)
-  for (int i = 0; i < 28; i += 2) {
-    word tempword = (((sdBuffer[startAddress + i] & 0xFF) << 8) | (sdBuffer[startAddress + i + 1] & 0xFF));
-    sum += tempword;
+  for (byte i = 0; i < 28; i += 2) {
+    sum += (buf[i] << 8) + buf[i + 1];
   }
 
-  if ((((sdBuffer[startAddress + 28] & 0xFF) << 8) | (sdBuffer[startAddress + 29] & 0xFF)) != (sum & 0xFFFF)) {
-    return 0;
-  } else {
-    return 1;
-  }
+  return sum == buf_sum;
 }
 
 // verifies if Controller Pak holds valid header data
@@ -1755,13 +1750,13 @@ void validateMPK() {
 
   //Check all four header copies
   writeErrors = 0;
-  if (!checkHeader(0x20))
+  if (!checkHeader(&sdBuffer[0x20]))
     writeErrors++;
-  if (!checkHeader(0x60))
+  if (!checkHeader(&sdBuffer[0x60]))
     writeErrors++;
-  if (!checkHeader(0x80))
+  if (!checkHeader(&sdBuffer[0x80]))
     writeErrors++;
-  if (!checkHeader(0xC0))
+  if (!checkHeader(&sdBuffer[0xC0]))
     writeErrors++;
 
   print_Msg(F("HDR: "));
@@ -2484,6 +2479,7 @@ unsigned long verifyEeprom_CLK() {
     return writeErrors;
   } else {
     print_Error(F("Savetype Error"), true);
+    return 1;
   }
 }
 
@@ -2850,6 +2846,7 @@ unsigned long verifyEeprom() {
     return writeErrors;
   } else {
     print_Error(F("Savetype Error"), true);
+    return 1;
   }
 }
 
@@ -3630,8 +3627,8 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
    N64 Repro Flashrom Functions
  *****************************************/
 void flashRepro_N64() {
-  unsigned long sectorSize;
-  byte bufferSize;
+  unsigned long sectorSize = 0;
+  byte bufferSize = 0;
   // Check flashrom ID's
   idFlashrom_N64();
 
@@ -3870,10 +3867,14 @@ void flashRepro_N64() {
         // Intel 4400L0ZDQ0
         writeIntel4400_N64();
         resetIntel4400_N64();
-      } else if (bufferSize == 0) {
-        writeFlashrom_N64(sectorSize);
+      } else if (sectorSize) {
+        if (bufferSize) {
+          writeFlashBuffer_N64(sectorSize, bufferSize);
+        } else {
+          writeFlashrom_N64(sectorSize);
+        }
       } else {
-        writeFlashBuffer_N64(sectorSize, bufferSize);
+        print_Error(F("sectorSize not set"), true);
       }
 
       // Close the file:
@@ -4498,7 +4499,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
         writeWord_N64((bufferSize / 2) - 1);
 
         // Define variable before loop so we can use it later when reading the status register
-        word currWord;
+        word currWord = 0;
 
         for (byte currByte = 0; currByte < bufferSize; currByte += 2) {
           // Join two bytes into one word

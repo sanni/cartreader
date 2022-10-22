@@ -248,7 +248,6 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
 
 void scanChip_NGP() {
   display_Clear();
-  uint32_t block_addr = 0;
 
   // generate name of report file
   snprintf(fileName, FILENAME_LENGTH, "%s.txt", romName);

@@ -564,6 +564,7 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
     //print_Msg(F("/"));
     //print_Msg(fileName);
     print_Error(F(" not found"), true);
+    return 0;
   }
 }
 
@@ -616,7 +617,7 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
-boolean compareCRC(char* database, char* crcString, boolean renamerom, int offset) {
+boolean compareCRC(const char* database, char* crcString, boolean renamerom, int offset) {
 #ifdef nointro
   char crcStr[9];
   if (crcString == 0) {
@@ -661,15 +662,15 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
           get_line(iNES_STR, &myFile, 33);
 
           // Convert "4E4553" to (0x4E, 0x45, 0x53)
-          byte iNES_BUF[2];
+          unsigned int iNES_BUF;
           for (byte j = 0; j < 16; j++) {
-            sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-            iNES_HEADER[j] = iNES_BUF[0];
+            sscanf(iNES_STR + j * 2, "%2X", &iNES_BUF);
+            iNES_HEADER[j] = iNES_BUF;
           }
           //Skip CRLF
           myFile.seekSet(myFile.curPosition() + 4);
         }
-#endif
+#endif // enable_NES
 
         // Close the file:
         myFile.close();
@@ -687,7 +688,7 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
           }
           myFile.close();
         }
-#endif
+#endif // enable_NES
         print_Msg(F(" -> "));
         display_Update();
 
@@ -718,9 +719,10 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
     println_Msg(F("Database missing"));
     return 0;
   }
-#else
+#else // nointro
   println_Msg("");
-#endif
+#endif // !nointro
+  return 0;
 }
 
 byte starting_letter() {
@@ -1877,7 +1879,7 @@ void print_Error(const __FlashStringHelper* errorMessage, boolean forceReset) {
 
   if (forceReset) {
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
     if (ignoreError == 0) {
@@ -1997,7 +1999,7 @@ void save_log() {
       }
       myFile.write(sdBuffer, 512);
     } else {
-      word i = 0;
+      int i = 0;
       for (; i < myLog.available(); i++) {
         sdBuffer[i] = myLog.read();
       }
@@ -2031,7 +2033,7 @@ void print_Msg(const char myString[]) {
 #if (defined(enable_LCD) || defined(enable_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
-    int strPos = 0;
+    unsigned int strPos = 0;
     // Print until end of display
     while (display.tx < 122) {
       display.print(myString[strPos]);
@@ -2174,7 +2176,7 @@ void println_Msg(const char myString[]) {
 #if (defined(enable_LCD) || defined(enable_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
-    int strPos = 0;
+    unsigned int strPos = 0;
     // Print until end of display
     while ((display.tx < 122) && (myString[strPos] != '\0')) {
       display.print(myString[strPos]);
@@ -2305,8 +2307,8 @@ void blinkLED() {
 #endif
 }
 
-void statusLED(boolean on) {
 #if defined(HW5)
+void statusLED(boolean on) {
   if (!on)
     PORTD |= (1 << 7);
   else
@@ -2334,8 +2336,11 @@ void statusLED(boolean on) {
       PORTB &= ~(1 << 7);
     }
   */
-#endif
 }
+#else
+void statusLED(boolean on __attribute__ ((unused))) {
+}
+#endif
 
 /******************************************
   Menu system

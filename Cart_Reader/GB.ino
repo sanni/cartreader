@@ -7,8 +7,8 @@
    Variables
  *****************************************/
 // Game Boy
-int sramBanks;
-int romBanks;
+word sramBanks;
+word romBanks;
 word lastByte = 0;
 
 /******************************************
@@ -911,19 +911,41 @@ void getCartInfo_GB() {
   }
 
   // M161 (Mani 4 in 1)
-  if ((strncmp(romName, "TETRIS SET", 10) == 0) && (sdBuffer[0x14D] == 0x3F)) {
+  if (strncmp(romName, "TETRIS SET", 10) == 0 && sdBuffer[0x14D] == 0x3F) {
     romType = 0x104;
   }
 
   // MMM01 (Mani 4 in 1)
   if (
-    (strncmp(romName, "BOUKENJIMA2 SET", 15) == 0) && (sdBuffer[0x14D] == 0) || (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0) && (sdBuffer[0x14D] == 0xC6) || (strncmp(romName, "GANBARUGA SET", 13) == 0) && (sdBuffer[0x14D] == 0x90) || (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
+    (
+      strncmp(romName, "BOUKENJIMA2 SET", 15) == 0 && sdBuffer[0x14D] == 0
+    ) || (
+      strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0 && sdBuffer[0x14D] == 0xC6
+    ) || (
+      strncmp(romName, "GANBARUGA SET", 13) == 0 && sdBuffer[0x14D] == 0x90
+    ) || (
+      strncmp(romName, "RTYPE 2 SET", 11) == 0 && sdBuffer[0x14D] == 0x32
+    )
+  ) {
     romType = 0x0B;
   }
 
   // MBC1M
   if (
-    (strncmp(romName, "MOMOCOL", 7) == 0) && (sdBuffer[0x14D] == 0x28) || (strncmp(romName, "BOMCOL", 6) == 0) && (sdBuffer[0x14D] == 0x86) || (strncmp(romName, "GENCOL", 6) == 0) && (sdBuffer[0x14D] == 0x8A) || (strncmp(romName, "SUPERCHINESE 123", 16) == 0) && (sdBuffer[0x14D] == 0xE4) || (strncmp(romName, "MORTALKOMBATI&II", 16) == 0) && (sdBuffer[0x14D] == 0xB9) || (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
+    (
+      strncmp(romName, "MOMOCOL", 7) == 0 && sdBuffer[0x14D] == 0x28
+    ) || (
+      strncmp(romName, "BOMCOL", 6) == 0 && sdBuffer[0x14D] == 0x86
+    ) || (
+      strncmp(romName, "GENCOL", 6) == 0 && sdBuffer[0x14D] == 0x8A
+    ) || (
+      strncmp(romName, "SUPERCHINESE 123", 16) == 0 && sdBuffer[0x14D] == 0xE4
+    ) || (
+      strncmp(romName, "MORTALKOMBATI&II", 16) == 0 && sdBuffer[0x14D] == 0xB9
+    ) || (
+      strncmp(romName, "MORTALKOMBAT DUO", 16) == 0 && sdBuffer[0x14D] == 0xA7
+    )
+  ) {
     romType += 0x100;
   }
 
@@ -961,7 +983,7 @@ void readROM_GB() {
     print_Error(create_file_STR, true);
   }
 
-  int endAddress = 0x7FFF;
+  word endAddress = 0x7FFF;
   word romAddress = 0;
   word startBank = 1;
 
@@ -1082,7 +1104,7 @@ void readROM_GB() {
 }
 
 // Calculate checksum
-unsigned int calc_checksum_GB(char* fileName, char* folder) {
+unsigned int calc_checksum_GB(char* fileName) {
   unsigned int calcChecksum = 0;
   //  int calcFilesize = 0; // unused
   unsigned long i = 0;
@@ -1126,7 +1148,7 @@ void compare_checksums_GB() {
 
   // Internal ROM checksum
   char calcsumStr[5];
-  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
+  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName));
 
   print_Msg(F("Checksum: "));
   print_Msg(calcsumStr);
@@ -1299,6 +1321,7 @@ unsigned long verifySRAM_GB() {
     return writeErrors;
   } else {
     print_Error(open_file_STR, true);
+    return 1;
   }
 }
 
@@ -1679,7 +1702,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       display_Update();
 
       // Read x number of banks
-      for (int currBank = 0; currBank < romBanks; currBank++) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
 
@@ -1713,7 +1736,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
 
@@ -1763,7 +1786,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
 
@@ -1885,7 +1908,7 @@ byte readByteCompensated(int address) {
    .
    address needs to be the x8 mode address of the flash register that should be read.
 */
-byte writeByteCompensated(int address, byte data) {
+void writeByteCompensated(int address, byte data) {
   if (flashSwitchLastBits) {
     data = (data & 0b11111100) | ((data << 1) & 0b10) | ((data >> 1) & 0b01);
   }
@@ -2078,7 +2101,7 @@ bool writeCFI_GB() {
     display_Update();
 
     // Read x number of banks
-    for (int currBank = 0; currBank < romBanks; currBank++) {
+    for (word currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
       blinkLED();
 
@@ -2105,7 +2128,7 @@ bool writeCFI_GB() {
     word currAddr = 0;
     word endAddr = 0x3FFF;
 
-    for (int currBank = 0; currBank < romBanks; currBank++) {
+    for (word currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
       blinkLED();
 

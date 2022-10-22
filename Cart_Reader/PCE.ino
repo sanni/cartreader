@@ -440,9 +440,8 @@ uint32_t calculate_crc32(int n, unsigned char c[], uint32_t r) {
   return r;
 }
 
-void crc_search(char *file_p, char *folder_p, uint32_t rom_size, uint32_t crc) {
+void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__ ((unused)), uint32_t crc) {
   FsFile rom, script;
-  uint32_t r, processedsize;
   char gamename[100];
   char crc_file[9], crc_search[9];
   uint8_t flag;
@@ -519,10 +518,6 @@ void lock_tennokoe_bank_RAM() {
 }
 
 void read_tennokoe_bank_PCE(int bank_index) {
-  uint32_t processed_size = 0;
-  uint32_t verify_loop;
-  uint8_t verify_flag = 1;
-
   //clear the screen
   display_Clear();
 

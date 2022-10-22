@@ -308,7 +308,7 @@ void writeByte_GBM(word myAddress, byte myData) {
   HELPER FUNCTIONS
 **********************/
 void printSdBuffer(word startByte, word numBytes) {
-  for (int currByte = 0; currByte < numBytes; currByte += 10) {
+  for (word currByte = 0; currByte < numBytes; currByte += 10) {
     for (byte c = 0; c < 10; c++) {
       // Convert to char array so we don't lose leading zeros
       char currByteStr[2];

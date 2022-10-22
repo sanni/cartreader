@@ -941,7 +941,7 @@ void readROM_SFM() {
     display_Update();
 
     // Read up to 96 banks starting at bank 0×00.
-    for (int currBank = 0; currBank < numBanks; currBank++) {
+    for (byte currBank = 0; currBank < numBanks; currBank++) {
       // Dump the bytes to SD 512B at a time
       for (long currByte = 32768; currByte < 65536; currByte += 512) {
         for (int c = 0; c < 512; c++) {
@@ -956,7 +956,7 @@ void readROM_SFM() {
     println_Msg(F("Dumping HiRom..."));
     display_Update();
 
-    for (int currBank = 192; currBank < (numBanks + 192); currBank++) {
+    for (byte currBank = 192; currBank < (numBanks + 192); currBank++) {
       for (long currByte = 0; currByte < 65536; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
@@ -1056,7 +1056,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
 
     if (romType) {
       // Write hirom
-      for (int currBank = startBank; currBank < startBank + numBanks; currBank++) {
+      for (byte currBank = startBank; currBank < startBank + numBanks; currBank++) {
         // Fill SDBuffer with 1 page at a time then write it repeat until all bytes are written
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
@@ -1081,7 +1081,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       }
     } else {
       // Write lorom
-      for (int currBank = 0; currBank < numBanks; currBank++) {
+      for (byte currBank = 0; currBank < numBanks; currBank++) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
           // Write command sequence
@@ -1184,7 +1184,7 @@ byte blankcheck_SFM(int startBank) {
 
   byte blank = 1;
   if (romType) {
-    for (int currBank = startBank; currBank < startBank + numBanks; currBank++) {
+    for (byte currBank = startBank; currBank < startBank + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte++) {
         if (readBank_SFM(currBank, currByte) != 0xFF) {
           currBank = startBank + numBanks;
@@ -1193,7 +1193,7 @@ byte blankcheck_SFM(int startBank) {
       }
     }
   } else {
-    for (int currBank = 0; currBank < numBanks; currBank++) {
+    for (byte currBank = 0; currBank < numBanks; currBank++) {
       for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte++) {
         if (readBank_SFM(currBank, currByte) != 0xFF) {
           currBank = numBanks;
@@ -1221,7 +1221,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
     controlIn_SFM();
 
     if (romType) {
-      for (int currBank = startBank; currBank < startBank + numBanks; currBank++) {
+      for (byte currBank = startBank; currBank < startBank + numBanks; currBank++) {
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
           // Fill SDBuffer
           myFile.read(sdBuffer, 512);
@@ -1233,7 +1233,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
         }
       }
     } else {
-      for (int currBank = 0; currBank < numBanks; currBank++) {
+      for (byte currBank = 0; currBank < numBanks; currBank++) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 512) {
           // Fill SDBuffer
           myFile.read(sdBuffer, 512);
@@ -1273,7 +1273,7 @@ void readFlash_SFM() {
     print_Error(create_file_STR, true);
   }
   if (romType) {
-    for (int currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
+    for (byte currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
@@ -1282,7 +1282,7 @@ void readFlash_SFM() {
       }
     }
   } else {
-    for (int currBank = 0; currBank < numBanks; currBank++) {
+    for (byte currBank = 0; currBank < numBanks; currBank++) {
       for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
@@ -1348,10 +1348,10 @@ void printMapping() {
   // Read the mapping out of the first chip
   char buffer[3];
 
-  for (int currByte = 0xFF00; currByte < 0xFF50; currByte += 10) {
+  for (unsigned int currByte = 0xFF00; currByte < 0xFF50; currByte += 10) {
     for (int c = 0; c < 10; c++) {
       itoa(readBank_SFM(0xC0, currByte + c), buffer, 16);
-      for (int i = 0; i < 2 - strlen(buffer); i++) {
+      for (size_t i = 0; i < 2 - strlen(buffer); i++) {
         print_Msg(F("0"));
       }
       // Now print the significant bits

@@ -8,7 +8,7 @@
    Variables
  *****************************************/
 unsigned long sramEnd;
-int eepSize;
+word eepSize;
 word addrhi;
 word addrlo;
 word chksum;
@@ -1176,10 +1176,10 @@ void readROM_MD() {
   byte buffer[1024] = { 0 };
 
   // get current time
-  unsigned long startTime = millis();
+  // unsigned long startTime = millis();
 
   // Phantasy Star/Beyond Oasis with 74HC74 and 74HC139 switch ROM/SRAM at address 0x200000
-  if (0x200000 < cartSize < 0x400000) {
+  if (0x200000 < cartSize && cartSize < 0x400000) {
     enableSram_MD(0);
   }
 
@@ -1561,7 +1561,7 @@ void readSram_MD() {
     }
     unsigned long padsize = (1UL << 16) - (sramSize << 1);
     unsigned long padblockcount = padsize >> 9;  // number of 512 byte blocks
-    for (int i = 0; i < padblockcount; i++) {
+    for (unsigned long i = 0; i < padblockcount; i++) {
       myFile.write(sdBuffer, 512);
     }
   }

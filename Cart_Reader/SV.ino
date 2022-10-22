@@ -302,11 +302,8 @@ void readSRAM_SV() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_Error(sd_error_STR, true);
   }
-  int sramBanks = 0;
 
   readBank_SV(0x10, 0);  // Preconfigure to fix corrupt 1st byte
-  // Sram size
-  long lastByte = (long(sramSize) * 0x80);
 
   //startBank = 0x10; endBank = 0x17; CS low
   for (byte BSBank = 0x10; BSBank < 0x18; BSBank++) {
@@ -346,8 +343,6 @@ void writeSRAM_SV() {
 
     // Set RST RD WR to High and CS to Low
     controlOut_SNES();
-
-    long lastByte = (long(sramSize) * 0x80);
 
     println_Msg(F("Writing sram..."));
     display_Update();
@@ -390,10 +385,6 @@ unsigned long verifySRAM_SV() {
     // Set control
     controlIn_SNES();
 
-    int sramBanks = 0;
-    // Sram size
-    long lastByte = (long(sramSize) * 0x80);
-
     //startBank = 0x10; endBank = 0x17; CS low
     for (byte BSBank = 0x10; BSBank < 0x18; BSBank++) {
       //startAddr = 0x5000
@@ -412,6 +403,7 @@ unsigned long verifySRAM_SV() {
     return writeErrors;
   } else {
     print_Error(F("Can't open file"), false);
+    return 1;
   }
 }
 

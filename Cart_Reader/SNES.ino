@@ -204,8 +204,6 @@ void snesMenu() {
           display_Clear();
           // Change working dir to root
           sd.chdir("/");
-          // get current time
-          unsigned long startTime = millis();
           // start reading from cart
           readROM_SNES();
           // Internal Checksum
@@ -604,7 +602,7 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
   draw_progressbar(0, totalProgressBar);
 
-  for (int currBank = start; currBank < total; currBank++) {
+  for (byte currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
 
     // Blink led
@@ -655,7 +653,7 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
   draw_progressbar(0, totalProgressBar);
 
-  for (int currBank = start; currBank < total; currBank++) {
+  for (byte currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
 
     // Blink led
@@ -700,31 +698,6 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
 ******************************************/
 void getCartInfo_SNES() {
   boolean manualConfig = 0;
-
-  //Prime SA1 cartridge
-  uint16_t c = 0;
-  uint16_t currByte = 0;
-  byte buffer[1024] = { 0 };
-  PORTL = 192;
-  while (c < 1024) {
-    PORTF = (currByte & 0xFF);
-    PORTK = ((currByte >> 8) & 0xFF);
-
-    // Wait for the Byte to appear on the data bus
-    // Arduino running at 16Mhz -> one nop = 62.5ns
-    // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
-    // let's be conservative and use 6 x 62.5 = 375ns
-    NOP;
-    NOP;
-    NOP;
-    NOP;
-    NOP;
-    NOP;
-
-    buffer[c] = PINC;
-    c++;
-    currByte++;
-  }
 
   // Print start page
   if (checkcart_SNES() == 0) {
@@ -953,12 +926,10 @@ boolean checkcart_SNES() {
   // set control to read
   dataIn();
 
-  uint16_t c = 0;
   uint16_t headerStart = 0xFFB0;
-  uint16_t currByte = headerStart;
-  byte snesHeader[80] = { 0 };
+  byte snesHeader[80];
   PORTL = 0;
-  while (c < 80) {
+  for (uint16_t c = 0, currByte = headerStart; c < 80; c++, currByte++) {
     PORTF = (currByte & 0xFF);
     PORTK = ((currByte >> 8) & 0xFF);
 
@@ -976,8 +947,6 @@ boolean checkcart_SNES() {
     NOP;
 
     snesHeader[c] = PINC;
-    c++;
-    currByte++;
   }
 
   // Calculate CRC32 of header
@@ -1396,7 +1365,7 @@ void readROM_SNES() {
     controlIn_SNES();
     byte initialSOMap = readBank_SNES(0, 18439);
 
-    for (int currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
+    for (byte currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
 
       dataOut();
       controlOut_SNES();
@@ -1974,6 +1943,7 @@ unsigned long verifySRAM() {
     return writeErrors;
   } else {
     print_Error(F("Can't open file"), false);
+    return 1;
   }
 }
 
