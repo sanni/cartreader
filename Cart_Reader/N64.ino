@@ -3647,34 +3647,34 @@ void flashRepro_N64() {
   // If the ID is known continue
   if (cartSize != 0) {
     // Print flashrom name
-    if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "2201") == 0)) {
+    if ((flashid == 0x227E) && (strcmp(cartID, "2201") == 0)) {
       print_Msg(F("Spansion S29GL256N"));
       if (cartSize == 64)
         println_Msg(F(" x2"));
       else
         println_Msg("");
-    } else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "2101") == 0)) {
+    } else if ((flashid == 0x227E) && (strcmp(cartID, "2101") == 0)) {
       print_Msg(F("Spansion S29GL128N"));
-    } else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "2100") == 0)) {
+    } else if ((flashid == 0x227E) && (strcmp(cartID, "2100") == 0)) {
       print_Msg(F("ST M29W128GL"));
-    } else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+    } else if ((flashid == 0x22C9) || (flashid == 0x22CB)) {
       print_Msg(F("Macronix MX29LV640"));
       if (cartSize == 16)
         println_Msg(F(" x2"));
       else
         println_Msg("");
-    } else if (strcmp(flashid, "8816") == 0)
+    } else if (flashid == 0x8816)
       println_Msg(F("Intel 4400L0ZDQ0"));
-    else if (strcmp(flashid, "7E7E") == 0)
+    else if (flashid == 0x7E7E)
       println_Msg(F("Fujitsu MSP55LV100S"));
-    else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "2301") == 0))
+    else if ((flashid == 0x227E) && (strcmp(cartID, "2301") == 0))
       println_Msg(F("Fujitsu MSP55LV512"));
-    else if ((strcmp(flashid, "227E") == 0) && (strcmp(cartID, "3901") == 0))
+    else if ((flashid == 0x227E) && (strcmp(cartID, "3901") == 0))
       println_Msg(F("Intel 512M29EW"));
 
     // Print info
     print_Msg(F("ID: "));
-    print_Msg(flashid);
+    print_Msg(flashid_str);
     print_Msg(F(" Size: "));
     print_Msg(cartSize);
     println_Msg(F("MB"));
@@ -3692,7 +3692,7 @@ void flashRepro_N64() {
     print_Msg(F("ID: "));
     print_Msg(vendorID);
     print_Msg(F(" "));
-    print_Msg(flashid);
+    print_Msg(flashid_str);
     print_Msg(F(" "));
     println_Msg(cartID);
     println_Msg(F(" "));
@@ -3706,7 +3706,8 @@ void flashRepro_N64() {
 
     // clear IDs
     sprintf(vendorID, "%s", "CONF");
-    sprintf(flashid, "%s", "CONF");
+    flashid = 0;
+    sprintf(flashid_str, "%s", "CONF");
     sprintf(cartID, "%s", "CONF");
 
 
@@ -3834,17 +3835,17 @@ void flashRepro_N64() {
     }
 
     // Erase needed sectors
-    if (strcmp(flashid, "227E") == 0) {
+    if (flashid == 0x227E) {
       // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
       eraseSector_N64(0x20000);
-    } else if (strcmp(flashid, "7E7E") == 0) {
+    } else if (flashid == 0x7E7E) {
       // Fujitsu MSP55LV100S
       eraseMSP55LV100_N64();
-    } else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
+    } else if ((flashid == 0x8813) || (flashid == 0x8816)) {
       // Intel 4400L0ZDQ0
       eraseIntel4400_N64();
       resetIntel4400_N64();
-    } else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+    } else if ((flashid == 0x22C9) || (flashid == 0x22CB)) {
       // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
       eraseSector_N64(0x8000);
     } else {
@@ -3859,22 +3860,22 @@ void flashRepro_N64() {
       println_Msg(filePath);
       display_Update();
 
-      if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
+      if ((strcmp(cartID, "3901") == 0) && (flashid == 0x227E)) {
         // Intel 512M29EW(64MB) with 0x20000 sector size and 128 byte buffer
         writeFlashBuffer_N64(0x20000, 128);
-      } else if ((strcmp(cartID, "2100") == 0) && (strcmp(flashid, "227E") == 0)) {
+      } else if ((strcmp(cartID, "2100") == 0) && (flashid == 0x227E)) {
         // ST M29W128GH(16MB) with 0x20000 sector size and 64 byte buffer
         writeFlashBuffer_N64(0x20000, 64);
-      } else if (strcmp(flashid, "227E") == 0) {
+      } else if (flashid == 0x227E) {
         // Spansion S29GL128N/S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
         writeFlashBuffer_N64(0x20000, 32);
-      } else if (strcmp(flashid, "7E7E") == 0) {
+      } else if (flashid == 0x7E7E) {
         //Fujitsu MSP55LV100S
         writeMSP55LV100_N64(0x20000);
-      } else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+      } else if ((flashid == 0x22C9) || (flashid == 0x22CB)) {
         // Macronix MX29LV640 without buffer and 0x8000 sector size
         writeFlashrom_N64(0x8000);
-      } else if ((strcmp(flashid, "8813") == 0) || (strcmp(flashid, "8816") == 0)) {
+      } else if ((flashid == 0x8813) || (flashid == 0x8816)) {
         // Intel 4400L0ZDQ0
         writeIntel4400_N64();
         resetIntel4400_N64();
@@ -3956,13 +3957,14 @@ void idFlashrom_N64() {
   setAddress_N64(romBase);
   sprintf(vendorID, "%02X", readWord_N64());
   // Read 2 bytes flashrom ID
-  sprintf(flashid, "%04X", readWord_N64());
+  flashid = readWord_N64();
+  sprintf(flashid_str, "%04X", flashid);
   // Read 2 bytes secondary flashrom ID
   setAddress_N64(romBase + 0x1C);
   sprintf(cartID, "%04X", ((readWord_N64() << 8) | (readWord_N64() & 0xFF)));
 
   // Spansion S29GL256N(32MB/64MB) with either one or two flashrom chips
-  if ((strcmp(cartID, "2201") == 0) && (strcmp(flashid, "227E") == 0)) {
+  if ((strcmp(cartID, "2201") == 0) && (flashid == 0x227E)) {
     cartSize = 32;
 
     // Reset flashrom
@@ -3991,7 +3993,7 @@ void idFlashrom_N64() {
   }
 
   // Macronix MX29LV640(8MB/16MB) with either one or two flashrom chips
-  else if ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0)) {
+  else if ((flashid == 0x22C9) || (flashid == 0x22CB)) {
     cartSize = 8;
 
     resetFlashrom_N64(romBase + 0x800000);
@@ -4019,7 +4021,7 @@ void idFlashrom_N64() {
   }
 
   // Intel 4400L0ZDQ0 (64MB)
-  else if (strcmp(flashid, "8816") == 0) {
+  else if (flashid == 0x8816) {
     // Found first flashrom chip, set to 32MB
     cartSize = 32;
     resetIntel4400_N64();
@@ -4039,7 +4041,8 @@ void idFlashrom_N64() {
     sprintf(cartID, "%04X", readWord_N64());
     if (strcmp(cartID, "8813") == 0) {
       cartSize = 64;
-      strncpy(flashid, cartID, 5);
+      flashid = 0x8813;
+      strncpy(flashid_str, cartID, 5);
     }
     resetIntel4400_N64();
     // Empty cartID string
@@ -4047,35 +4050,35 @@ void idFlashrom_N64() {
   }
 
   //Fujitsu MSP55LV512/Spansion S29GL512N (64MB)
-  else if ((strcmp(cartID, "2301") == 0) && (strcmp(flashid, "227E") == 0)) {
+  else if ((strcmp(cartID, "2301") == 0) && (flashid == 0x227E)) {
     cartSize = 64;
     // Reset flashrom
     resetFlashrom_N64(romBase);
   }
 
   // Spansion S29GL128N(16MB) with one flashrom chip
-  else if ((strcmp(cartID, "2101") == 0) && (strcmp(flashid, "227E") == 0)) {
+  else if ((strcmp(cartID, "2101") == 0) && (flashid == 0x227E)) {
     cartSize = 16;
     // Reset flashrom
     resetFlashrom_N64(romBase);
   }
 
   // ST M29W128GL(16MB) with one flashrom chip
-  else if ((strcmp(cartID, "2100") == 0) && (strcmp(flashid, "227E") == 0)) {
+  else if ((strcmp(cartID, "2100") == 0) && (flashid == 0x227E)) {
     cartSize = 16;
     // Reset flashrom
     resetFlashrom_N64(romBase);
   }
 
   // Intel 512M29EW(64MB) with one flashrom chip
-  else if ((strcmp(cartID, "3901") == 0) && (strcmp(flashid, "227E") == 0)) {
+  else if ((strcmp(cartID, "3901") == 0) && (flashid == 0x227E)) {
     cartSize = 64;
     // Reset flashrom
     resetFlashrom_N64(romBase);
   }
 
   // Unknown 227E type
-  else if (strcmp(flashid, "227E") == 0) {
+  else if (flashid == 0x227E) {
     cartSize = 0;
     // Reset flashrom
     resetFlashrom_N64(romBase);
@@ -4100,10 +4103,11 @@ void idFlashrom_N64() {
     if (strcmp(cartID, "7E7E") == 0) {
       resetMSP55LV100_N64(romBase);
       cartSize = 64;
-      strncpy(flashid, cartID, 5);
+      flashid = 0x7E7E;
+      strncpy(flashid_str, cartID, 5);
     }
   }
-  if ((strcmp(flashid, "1240") == 0) && (strcmp(cartID, "1240") == 0)) {
+  if ((flashid == 0x1240) && (strcmp(cartID, "1240") == 0)) {
     print_Error(F("Please reseat cartridge"), true);
   }
 }
@@ -4308,12 +4312,12 @@ void eraseSector_N64(unsigned long sectorSize) {
     blinkLED();
 
     // Spansion S29GL256N(32MB/64MB) with two flashrom chips
-    if ((currSector == 0x2000000) && (strcmp(cartID, "2201") == 0) && (strcmp(flashid, "227E") == 0)) {
+    if ((currSector == 0x2000000) && (strcmp(cartID, "2201") == 0) && (flashid == 0x227E)) {
       // Change to second chip
       flashBase = romBase + 0x2000000;
     }
     // Macronix MX29LV640(8MB/16MB) with two flashrom chips
-    else if ((currSector == 0x800000) && ((strcmp(flashid, "22C9") == 0) || (strcmp(flashid, "22CB") == 0))) {
+    else if ((currSector == 0x800000) && ((flashid == 0x22C9) || (flashid == 0x22CB))) {
       flashBase = romBase + 0x800000;
     }
 
@@ -4630,7 +4634,7 @@ void flashGameshark_N64() {
   // !!!! SST 29EE010 may have a 5V requirement for writing however dumping works at 3V. As such it is not !!!!
   // !!!!        advised to write to a cart with this chip until further testing can be completed.         !!!!
 
-  if (strcmp(flashid, "0808") == 0 || strcmp(flashid, "0404") == 0 || strcmp(flashid, "3535") == 0 || strcmp(flashid, "0707") == 0) {
+  if (flashid == 0x0808 || flashid == 0x0404 || flashid == 0x3535 || flashid == 0x0707) {
     backupGameshark_N64();
     println_Msg("");
     println_Msg(F("This will erase your"));
@@ -4702,7 +4706,7 @@ void flashGameshark_N64() {
   // If the ID is unknown show error message
   else {
     print_Msg(F("ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     print_Error(F("Unknown flashrom"), false);
   }
 
@@ -4729,7 +4733,8 @@ void idGameshark_N64() {
   // Read 1 byte vendor ID
   readWord_N64();
   // Read 2 bytes flashrom ID
-  sprintf(flashid, "%04X", readWord_N64());
+  flashid = readWord_N64();
+  sprintf(flashid_str, "%04X", flashid);
   // Reset flashrom
   resetGameshark_N64();
 }
@@ -4864,7 +4869,7 @@ unsigned long verifyGameshark_N64() {
           setAddress_N64(romBase + 0xC00000 + currSector + currSdBuffer + currByte);
           // Compare both
           if (readWord_N64() != currWord) {
-            if ((strcmp(flashid, "0808") == 0) && (currSector + currSdBuffer + currByte > 0x3F) && (currSector + currSdBuffer + currByte < 0x1080)) {
+            if ((flashid == 0x0808) && (currSector + currSdBuffer + currByte > 0x3F) && (currSector + currSdBuffer + currByte < 0x1080)) {
               // Gameshark maps this area to the bootcode of the plugged in cartridge
             } else {
               writeErrors++;

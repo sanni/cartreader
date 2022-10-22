@@ -254,8 +254,8 @@ void mdMenu() {
       idFlash_MD();
       resetFlash_MD();
       print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
-      if (strcmp(flashid, "C2F1") == 0) {
+      println_Msg(flashid_str);
+      if (flashid == 0xC2F1) {
         println_Msg(F("MX29F1610 detected"));
         flashSize = 2097152;
       } else {
@@ -1708,7 +1708,9 @@ void idFlash_MD() {
   dataIn_MD();
 
   // Read the two id bytes into a string
-  sprintf(flashid, "%02X%02X", readFlash_MD(0) & 0xFF, readFlash_MD(1) & 0xFF);
+  flashid = (readFlash_MD(0) & 0xFF) << 8;
+  flashid |= readFlash_MD(1) & 0xFF;
+  sprintf(flashid_str, "%04X", flashid);
 }
 
 byte readStatusReg_MD() {

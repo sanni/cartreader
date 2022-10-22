@@ -5035,16 +5035,16 @@ void NESmaker_ID() {  // Read Flash ID
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0x90);  // Software ID Entry
-  unsigned char ID1 = read_prg_byte(0x8000);
-  unsigned char ID2 = read_prg_byte(0x8001);
-  sprintf(flashid, "%02X%02X", ID1, ID2);
+  flashid = read_prg_byte(0x8000) << 8;
+  flashid |= read_prg_byte(0x8001);
+  sprintf(flashid_str, "%04X", flashid);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xAA);
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xF0);      // Software ID Exit
-  if (strcmp(flashid, "BFB7") == 0)  // SST 39SF040
+  if (flashid == 0xBFB7)  // SST 39SF040
     flashfound = 1;
 }
 
@@ -5098,7 +5098,7 @@ void writeFLASH() {
     display_Update();
   } else {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     println_Msg(F(""));
     println_Msg(F("NESmaker Flash Found"));
     println_Msg(F(""));

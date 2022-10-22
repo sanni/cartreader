@@ -1608,33 +1608,34 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     writeByte_GB(0x555, 0x90);
 
     // Read the two id bytes into a string
-    sprintf(flashid, "%02X%02X", readByte_GB(0), readByte_GB(1));
+    flashid = readByte_GB(0) << 8;
+    flashid |= readByte_GB(1);
 
-    if (strcmp(flashid, "04D4") == 0) {
+    if (flashid == 0x04D4) {
       println_Msg(F("MBM29F033C"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
-    } else if (strcmp(flashid, "0141") == 0) {
+    } else if (flashid == 0x0141) {
       println_Msg(F("AM29F032B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
-    } else if (strcmp(flashid, "01AD") == 0) {
+    } else if (flashid == 0x01AD) {
       println_Msg(F("AM29F016B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
-    } else if (strcmp(flashid, "04AD") == 0) {
+    } else if (flashid == 0x04AD) {
       println_Msg(F("AM29F016D"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
-    } else if (strcmp(flashid, "01D5") == 0) {
+    } else if (flashid == 0x01D5) {
       println_Msg(F("AM29F080B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
@@ -1642,7 +1643,8 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       display_Update();
     } else {
       print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
+      sprintf(flashid_str, "%04X", flashid);
+      println_Msg(flashid_str);
       display_Update();
       print_Error(F("Unknown flashrom"), true);
     }

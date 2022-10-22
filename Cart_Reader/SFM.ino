@@ -311,9 +311,9 @@ void sfmFlashMenu() {
         println_Msg(F("OK"));
         display_Update();
         idFlash_SFM(0xC0);
-        if (strcmp(flashid, "c2f3") == 0) {
+        if (flashid == 0xc2f3) {
           idFlash_SFM(0xE0);
-          if (strcmp(flashid, "c2f3") == 0) {
+          if (flashid == 0xc2f3) {
             // Reset flash
             resetFlash_SFM(0xC0);
             resetFlash_SFM(0xE0);
@@ -350,9 +350,9 @@ void sfmFlashMenu() {
         println_Msg(F("OK"));
         display_Update();
         idFlash_SFM(0xC0);
-        if (strcmp(flashid, "c2f3") == 0) {
+        if (flashid == 0xc2f3) {
           idFlash_SFM(0xE0);
-          if (strcmp(flashid, "c2f3") == 0) {
+          if (flashid == 0xc2f3) {
             // Reset flash
             resetFlash_SFM(0xC0);
             resetFlash_SFM(0xE0);
@@ -1014,7 +1014,9 @@ void idFlash_SFM(int startBank) {
     controlIn_SFM();
 
     // Read the two id bytes into a string
-    sprintf(flashid, "%x%x", readBank_SFM(startBank, 0x00), readBank_SFM(startBank, 0x02));
+    flashid = readBank_SFM(startBank, 0x00) << 8;
+    flashid |= readBank_SFM(startBank, 0x02);
+    sprintf(flashid_str, "%04x", flashid);
   } else {
     writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
     writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
@@ -1026,7 +1028,9 @@ void idFlash_SFM(int startBank) {
     controlIn_SFM();
 
     // Read the two id bytes into a string
-    sprintf(flashid, "%x%x", readBank_SFM(0, 0x8000), readBank_SFM(0, 0x8000 + 0x02));
+    flashid = readBank_SFM(0, 0x8000) << 8;
+    flashid |= readBank_SFM(0, 0x8000 + 0x02);
+    sprintf(flashid_str, "%04x", flashid);
   }
 }
 
@@ -1473,7 +1477,7 @@ void eraseMapping(byte startBank) {
   if (unlockHirom()) {
     // Get ID
     idFlash_SFM(startBank);
-    if (strcmp(flashid, "c2f3") == 0) {
+    if (flashid == 0xc2f3) {
       resetFlash_SFM(startBank);
 
       // Switch to write
@@ -1583,7 +1587,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
   if (unlockHirom()) {
     // Get ID
     idFlash_SFM(startBank);
-    if (strcmp(flashid, "c2f3") == 0) {
+    if (flashid == 0xc2f3) {
       resetFlash_SFM(startBank);
 
       // Switch to write
@@ -1716,9 +1720,9 @@ void write_SFM(int startBank, uint32_t pos) {
   if (unlockHirom()) {
     // Get ID
     idFlash_SFM(startBank);
-    if (strcmp(flashid, "c2f3") == 0) {
+    if (flashid == 0xc2f3) {
       print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
+      println_Msg(flashid_str);
       display_Update();
       resetFlash_SFM(startBank);
       delay(1000);

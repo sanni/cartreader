@@ -496,16 +496,18 @@ boolean readFlashID_GBM() {
   send_GBM(0x0F, 0x5555, 0x90);
 
   // Read the two id bytes into a string
-  sprintf(flashid, "%02X%02X", readByte_GBM(0), readByte_GBM(1));
-  if (strcmp(flashid, "C289") == 0) {
+  flashid = readByte_GBM(0) << 8;
+  flashid |= readByte_GBM(1);
+  sprintf(flashid_str, "%04X", flashid);
+  if (flashid == 0xC289) {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     display_Update();
     resetFlash_GBM();
     return 1;
   } else {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     print_Error(F("Unknown Flash ID"), true);
     resetFlash_GBM();
     return 0;
