@@ -1458,45 +1458,21 @@ int int_pow(int base, int exp) {  // Power for int
 /******************************************
    CRC Functions
  *****************************************/
-FsFile crcFile;
-char tempCRC[9];
 
-uint32_t crc32(FsFile& file, uint32_t& charcnt) {
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  charcnt = 0;
-  while (file.available()) {
-    crcFile.read(sdBuffer, 512);
-    for (int x = 0; x < 512; x++) {
-      uint8_t c = sdBuffer[x];
-      charcnt++;
-      oldcrc32 = updateCRC(c, oldcrc32);
-    }
-  }
-  return ~oldcrc32;
-}
-
-uint32_t crc32EEP(FsFile& file, uint32_t& charcnt) {
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  charcnt = 0;
-  while (file.available()) {
-    crcFile.read(sdBuffer, 128);
-    for (int x = 0; x < 128; x++) {
-      uint8_t c = sdBuffer[x];
-      charcnt++;
-      oldcrc32 = updateCRC(c, oldcrc32);
-    }
-  }
-  return ~oldcrc32;
-}
-
-void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy, unsigned long offset) {
-  uint32_t crc;
-  crcFile = sd.open(checkFile);
+void calcCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
+  uint32_t crc = 0xFFFFFFFF;
+  char tempCRC[9];
+  int byte_count;
+  FsFile crcFile = sd.open(checkFile);
   crcFile.seek(offset);
-  if (filesize < 1024)
-    crc = crc32EEP(crcFile, filesize);
-  else
-    crc = crc32(crcFile, filesize);
+  while (crcFile.available()) {
+    byte_count = crcFile.read(sdBuffer, sizeof(sdBuffer));
+    for (int x = 0; x < byte_count; x++) {
+      uint8_t c = sdBuffer[x];
+      crc = updateCRC(c, crc);
+    }
+  }
+  crc = ~crc;
   crcFile.close();
   sprintf(tempCRC, "%08lX", crc);
 
@@ -1753,7 +1729,7 @@ void outputNES() {
   println_Msg(F(""));
   display_Update();
 
-  calcCRC(outputFile, (prg + chr) * 1024, NULL, crcOffset);
+  calcCRC(outputFile, NULL, crcOffset);
   LED_RED_OFF;
   LED_GREEN_OFF;
   LED_BLUE_OFF;
@@ -3671,7 +3647,7 @@ void readPRG(boolean readrom) {
       println_Msg(F(""));
       display_Update();
 #ifndef nointro
-      calcCRC(fileName, prg * 1024, &prg_crc32, 0);
+      calcCRC(fileName, &prg_crc32, 0);
 #endif
     }
   }
@@ -4396,7 +4372,7 @@ void readCHR(boolean readrom) {
         println_Msg(F(""));
         display_Update();
 #ifndef nointro
-        calcCRC(fileName, chr * 1024, &chr_crc32, 0);
+        calcCRC(fileName, &chr_crc32, 0);
 #endif
       }
     }
@@ -4585,9 +4561,9 @@ void readRAM() {
       display_Update();
 
       if ((mapper == 16) || (mapper == 159))
-        calcCRC(fileName, eepsize, NULL, 0);
+        calcCRC(fileName, NULL, 0);
       else
-        calcCRC(fileName, ram * 1024, NULL, 0);
+        calcCRC(fileName, NULL, 0);
     }
   }
   set_address(0);
