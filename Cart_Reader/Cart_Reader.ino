@@ -176,7 +176,6 @@ char ver[5] = "10.4";
 // SD Card
 #include "SdFat.h"
 SdFs sd;
-FsFile myDir;
 FsFile myFile;
 #ifdef global_log
 FsFile myLog;
@@ -2972,6 +2971,8 @@ void wait_encoder() {
 void fileBrowser(const __FlashStringHelper* browserTitle) {
   char fileNames[7][FILENAME_LENGTH];
   int currFile;
+  FsFile myDir;
+
   filebrowse = 1;
 
   // Root
