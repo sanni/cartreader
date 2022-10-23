@@ -540,12 +540,11 @@ void getMapping() {
 
   // Filter out all 0xFF checksums at 0x8000 and 0xE000
   if (oldcrc32 == 0xBD7BC39F && oldcrc32MMC3 == 0xBD7BC39F) {
-    delay(200);
     println_Msg(F(""));
     println_Msg(F("No data found."));
     println_Msg(F("Using manual selection"));
     display_Update();
-    delay(500);
+    delay(1000);
     setDefaultRomName();
     selectMapping(database);
   } else {
