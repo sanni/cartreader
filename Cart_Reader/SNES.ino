@@ -1016,25 +1016,7 @@ boolean checkcart_SNES() {
   }
 
   // Get name
-  byte myByte = 0;
-  byte myLength = 0;
-  for (unsigned int i = 0xFFC0; i < 0xFFD5; i++) {
-    myByte = snesHeader[i - headerStart];
-    if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
-      romName[myLength] = char(myByte);
-    } else {
-      if (romName[myLength - 1] == 0x5F) myLength--;
-      romName[myLength] = 0x5F;
-    }
-    myLength++;
-  }
-
-  // Strip trailing white space
-  for (unsigned int i = myLength - 1; i > 0; i--) {
-    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
-    romName[i] = 0x00;
-    myLength--;
-  }
+  byte myLength = buildRomName(romName, &snesHeader[headerStart], 21);
 
   // If name consists out of all japanese characters use game code
   if (myLength == 0) {
@@ -1045,9 +1027,10 @@ boolean checkcart_SNES() {
     romName[3] = 'C';
     romName[4] = '-';
     for (unsigned int i = 0; i < 4; i++) {
+      byte myByte;
       myByte = snesHeader[0xFFB2 + i - headerStart];
-      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 4) {
-        romName[myLength + 5] = char(myByte);
+      if (((myByte >= '0' && myByte <= '9') || (myByte >= 'A' && myByte <= 'z')) && myLength < 4) {
+        romName[myLength + 5] = myByte;
         myLength++;
       }
     }

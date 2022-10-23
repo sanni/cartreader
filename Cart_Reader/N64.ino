@@ -2181,33 +2181,9 @@ void idCart() {
   // Get rom version
   romVersion = sdBuffer[0x3F];
 
-  // Get name
-  byte myByte = 0;
-  byte myLength = 0;
-  for (unsigned int i = 0; i < 20; i++) {
-    myByte = sdBuffer[0x20 + i];
-    if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
-      romName[myLength] = char(myByte);
-    } else {
-      if (romName[myLength - 1] == 0x5F) myLength--;
-      romName[myLength] = 0x5F;
-    }
-    myLength++;
-  }
-
-  // Strip trailing white space
-  for (unsigned int i = myLength - 1; i > 0; i--) {
-    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
-    romName[i] = 0x00;
-    myLength--;
-  }
-
   // If name consists out of all japanese characters use cart id
-  if (myLength == 0) {
-    romName[0] = sdBuffer[0x3B];
-    romName[1] = sdBuffer[0x3C];
-    romName[2] = sdBuffer[0x3D];
-    romName[3] = sdBuffer[0x3E];
+  if (buildRomName(romName, &sdBuffer[0x20], 20) == 0) {
+    strcpy(romName, cartID);
   }
 
 #ifdef savesummarytotxt

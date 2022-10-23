@@ -1884,6 +1884,32 @@ void setColor_RGB(byte r, byte g, byte b) {
 #endif
 }
 
+// Extract ASCII printable characters from input, collapsing underscores and spaces.
+// Use when extracting titles from cartridges, to build a rom title.
+byte buildRomName(char *output, const byte *input, byte length) {
+  byte input_char;
+  byte output_len = 0;
+  for (unsigned int i = 0; i < length; i++) {
+    input_char = input[i];
+    if (isprint(input_char) && input_char != '<' && input_char != '>' && input_char != ':' && input_char != '"' && input_char != '/' && input_char != '\\' && input_char != '|' && input_char != '?' && input_char != '*') {
+      output[output_len++] = input_char;
+    } else {
+      if (output_len == 0 || output[output_len - 1] != '_') {
+        output[output_len++] = '_';
+      }
+    }
+  }
+  while (
+    output_len && (
+      output[output_len - 1] == '_' || output[output_len - 1] == ' '
+    )
+  ) {
+    output_len--;
+  }
+  output[output_len] = 0;
+  return output_len;
+}
+
 // Converts a progmem array into a ram array
 void convertPgm(const char* const pgmOptions[], byte numArrays) {
   for (int i = 0; i < numArrays; i++) {

@@ -882,12 +882,10 @@ void getCartInfo_GB() {
   for (int addr = 0x0134; addr <= 0x0143 - x; addr++) {
     myByte = sdBuffer[addr];
     if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
-      romName[myLength] = char(myByte);
-    } else {
-      if (romName[myLength - 1] == 0x5F) myLength--;
-      romName[myLength] = 0x5F;
+      romName[myLength++] = char(myByte);
+    } else if (myLength == 0 || romName[myLength - 1] != '_') {
+      romName[myLength++] = '_';
     }
-    myLength++;
   }
 
   // Find Game Serial
@@ -904,11 +902,13 @@ void getCartInfo_GB() {
   }
 
   // Strip trailing white space
-  for (unsigned int i = myLength - 1; i > 0; i--) {
-    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
-    romName[i] = 0x00;
+  while (
+    myLength &&
+    (romName[myLength - 1] == '_' || romName[myLength - 1] == ' ')
+  ) {
     myLength--;
   }
+  romName[myLength] = 0;
 
   // M161 (Mani 4 in 1)
   if (strncmp(romName, "TETRIS SET", 10) == 0 && sdBuffer[0x14D] == 0x3F) {
