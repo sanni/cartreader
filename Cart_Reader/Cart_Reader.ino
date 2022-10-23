@@ -531,32 +531,48 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
                                                0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
-  uint32_t idx = ((crc) ^ (ch)) & 0xff;
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
-  return tab_value ^ ((crc) >> 8);
+// Defined as a macros, as compiler disregards inlining requests and these are
+// performance-critical functions.
+#define UPDATE_CRC(crc, ch) do { \
+  uint8_t idx = ((crc) ^ (ch)) & 0xff; \
+  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx); \
+  (crc) = tab_value ^ ((crc) >> 8); \
+} while (0)
+
+uint32_t updateCRC(const byte *buffer, size_t length, uint32_t crc) {
+  for (size_t c = 0; c < length; c++) {
+    UPDATE_CRC(crc, buffer[c]);
+  }
+  return crc;
+}
+
+uint32_t calculateCRC(const byte *buffer, size_t length) {
+  uint32_t crc = 0xFFFFFFFF;
+  updateCRC(buffer, length, crc);
+  return ~crc;
+}
+
+uint32_t calculateCRC(FsFile &infile) {
+  uint32_t byte_count;
+  uint32_t crc = 0xFFFFFFFF;
+
+  while((byte_count = infile.read(sdBuffer, sizeof(sdBuffer))) != 0) {
+    updateCRC(sdBuffer, byte_count, crc);
+  }
+  return ~crc;
 }
 
 // Calculate rom's CRC32 from SD
 uint32_t calculateCRC(char* fileName, char* folder, int offset) {
-  // Open folder
+  FsFile infile;
+  uint32_t result;
+
   sd.chdir(folder);
-  // Open file
-  if (myFile.open(fileName, O_READ)) {
-    uint32_t oldcrc32 = 0xFFFFFFFF;
-
-    // Skip iNES header
-    myFile.seek(offset);
-
-    for (unsigned long currByte = 0; currByte < ((myFile.fileSize() - offset) / 512); currByte++) {
-      myFile.read(sdBuffer, 512);
-      for (int c = 0; c < 512; c++) {
-        oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
-      }
-    }
-    // Close the file:
-    myFile.close();
-    return ~oldcrc32;
+  if (infile.open(fileName, O_READ)) {
+    infile.seek(offset);
+    result = calculateCRC(infile);
+    infile.close();
+    return result;
   } else {
     display_Clear();
     print_Msg(F("File "));

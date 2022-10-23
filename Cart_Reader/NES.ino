@@ -532,8 +532,8 @@ void getMapping() {
   // Read first 512 bytes of first and last block of PRG ROM and compute CRC32
   // MMC3 maps the last 8KB block of PRG ROM to 0xE000 while 0x8000 can contain random data after bootup
   for (int c = 0; c < 512; c++) {
-    oldcrc32 = updateCRC(read_prg_byte(0x8000 + c), oldcrc32);
-    oldcrc32MMC3 = updateCRC(read_prg_byte(0xE000 + c), oldcrc32MMC3);
+    UPDATE_CRC(oldcrc32, read_prg_byte(0x8000 + c));
+    UPDATE_CRC(oldcrc32MMC3, read_prg_byte(0xE000 + c));
   }
   oldcrc32 = ~oldcrc32;
   oldcrc32MMC3 = ~oldcrc32MMC3;
@@ -1054,27 +1054,19 @@ int int_pow(int base, int exp) {  // Power for int
    CRC Functions
  *****************************************/
 
-void calcCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
-  uint32_t crc = 0xFFFFFFFF;
+void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
+  uint32_t crc;
   char tempCRC[9];
-  int byte_count;
   FsFile crcFile = sd.open(checkFile);
+
   crcFile.seek(offset);
-  while (crcFile.available()) {
-    byte_count = crcFile.read(sdBuffer, sizeof(sdBuffer));
-    for (int x = 0; x < byte_count; x++) {
-      uint8_t c = sdBuffer[x];
-      crc = updateCRC(c, crc);
-    }
-  }
-  crc = ~crc;
+  crc = calculateCRC(crcFile);
   crcFile.close();
-  sprintf(tempCRC, "%08lX", crc);
 
   if (crcCopy != NULL) {
     *crcCopy = crc;
   }
-
+  sprintf(tempCRC, "%08lX", crc);
   print_Msg(F("CRC: "));
   println_Msg(tempCRC);
   display_Update();
@@ -1324,7 +1316,7 @@ void outputNES() {
   println_Msg(F(""));
   display_Update();
 
-  calcCRC(outputFile, NULL, crcOffset);
+  printCRC(outputFile, NULL, crcOffset);
   LED_RED_OFF;
   LED_GREEN_OFF;
   LED_BLUE_OFF;
@@ -3247,7 +3239,7 @@ void readPRG(boolean readrom) {
       println_Msg(F(""));
       display_Update();
 #ifndef nointro
-      calcCRC(fileName, &prg_crc32, 0);
+      printCRC(fileName, &prg_crc32, 0);
 #endif
     }
   }
@@ -3972,7 +3964,7 @@ void readCHR(boolean readrom) {
         println_Msg(F(""));
         display_Update();
 #ifndef nointro
-        calcCRC(fileName, &chr_crc32, 0);
+        printCRC(fileName, &chr_crc32, 0);
 #endif
       }
     }
@@ -4161,9 +4153,9 @@ void readRAM() {
       display_Update();
 
       if ((mapper == 16) || (mapper == 159))
-        calcCRC(fileName, NULL, 0);
+        printCRC(fileName, NULL, 0);
       else
-        calcCRC(fileName, NULL, 0);
+        printCRC(fileName, NULL, 0);
     }
   }
   set_address(0);

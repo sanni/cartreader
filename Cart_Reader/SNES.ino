@@ -950,12 +950,8 @@ boolean checkcart_SNES() {
   }
 
   // Calculate CRC32 of header
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  for (int c = 0; c < 80; c++) {
-    oldcrc32 = updateCRC(snesHeader[c], oldcrc32);
-  }
   char crcStr[9];
-  sprintf(crcStr, "%08lX", ~oldcrc32);
+  sprintf(crcStr, "%08lX", calculateCRC(snesHeader, 80));
 
   // Get Checksum as string
   sprintf(checksumStr, "%02X%02X", snesHeader[0xFFDF - headerStart], snesHeader[0xFFDE - headerStart]);

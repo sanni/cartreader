@@ -3379,8 +3379,6 @@ redumpsamefolder:
 
   // prepare crc32
   uint32_t oldcrc32 = 0xFFFFFFFF;
-  uint32_t tab_value = 0;
-  uint8_t idx = 0;
 
   // run combined dumper + crc32 routine for better performance, as N64 ROMs are quite large for an 8bit micro
   // currently dumps + checksums a 32MB cart in 170 seconds (down from 347 seconds)
@@ -3412,12 +3410,8 @@ redumpsamefolder:
       PORTH |= (1 << 6);
 
       // crc32 update
-      idx = ((oldcrc32) ^ (buffer[c]));
-      tab_value = pgm_read_dword(crc_32_tab + idx);
-      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
-      idx = ((oldcrc32) ^ (buffer[c + 1]));
-      tab_value = pgm_read_dword(crc_32_tab + idx);
-      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
+      UPDATE_CRC(oldcrc32, buffer[c]);
+      UPDATE_CRC(oldcrc32, buffer[c + 1]);
     }
 
     // Set the address for the next 512 bytes to dump
@@ -3443,12 +3437,8 @@ redumpsamefolder:
       PORTH |= (1 << 6);
 
       // crc32 update
-      idx = ((oldcrc32) ^ (buffer[c])) & 0xff;
-      tab_value = pgm_read_dword(crc_32_tab + idx);
-      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
-      idx = ((oldcrc32) ^ (buffer[c + 1])) & 0xff;
-      tab_value = pgm_read_dword(crc_32_tab + idx);
-      oldcrc32 = tab_value ^ ((oldcrc32) >> 8);
+      UPDATE_CRC(oldcrc32, buffer[c]);
+      UPDATE_CRC(oldcrc32, buffer[c + 1]);
     }
 
     processedProgressBar += 1024;
