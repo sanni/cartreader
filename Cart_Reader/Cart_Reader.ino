@@ -906,11 +906,6 @@ void mainMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
-      if (getMapping() == 0) {
-        selectMapping();
-      }
-#endif
       checkStatus_NES();
       nesMenu();
       break;
@@ -1170,11 +1165,6 @@ void consoleMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
-      if (getMapping() == 0) {
-        selectMapping();
-      }
-#endif
       checkStatus_NES();
       nesMenu();
       break;
