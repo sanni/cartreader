@@ -413,15 +413,15 @@ void setCart_WSV() {
           if (myFile.curPosition() == 0) {
             break;
           } else if (myFile.peek() == '\n') {
-            myFile.seekSet(myFile.curPosition() - 1);
+            myFile.seekCur(-1);
             break;
           } else {
-            myFile.seekSet(myFile.curPosition() - 1);
+            myFile.seekCur(-1);
           }
         }
       }
       if (myFile.curPosition() != 0)
-        myFile.seekSet(myFile.curPosition() + 2);
+        myFile.seekCur(2);
     }
 
     // Display database
@@ -439,7 +439,7 @@ void setCart_WSV() {
       }
 
       // Skip over semicolon
-      myFile.seekSet(myFile.curPosition() + 1);
+      myFile.seekCur(1);
 
       // Read CRC32 of first 512 bytes
       sprintf(crc_search, "%c", myFile.read());
@@ -449,7 +449,7 @@ void setCart_WSV() {
       }
 
       // Skip over semicolon
-      myFile.seekSet(myFile.curPosition() + 1);
+      myFile.seekCur(1);
 
       // Read rom size
       // Read the next ascii character and subtract 48 to convert to decimal
@@ -463,7 +463,7 @@ void setCart_WSV() {
       }
 
       // Skip rest of line
-      myFile.seekSet(myFile.curPosition() + 2);
+      myFile.seekCur(2);
 
       // Skip every 3rd line
       skip_line(&myFile);
@@ -507,15 +507,15 @@ void setCart_WSV() {
               if (myFile.curPosition() == 0) {
                 break;
               } else if (myFile.peek() == '\n') {
-                myFile.seekSet(myFile.curPosition() - 1);
+                myFile.seekCur(-1);
                 break;
               } else {
-                myFile.seekSet(myFile.curPosition() - 1);
+                myFile.seekCur(-1);
               }
             }
           }
           if (myFile.curPosition() != 0)
-            myFile.seekSet(myFile.curPosition() + 2);
+            myFile.seekCur(2);
           break;
         }
 

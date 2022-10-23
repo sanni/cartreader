@@ -559,7 +559,7 @@ boolean getMapping() {
         }
 
         // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read CRC32 of first 512 bytes
         sprintf(crc_search, "%c", myFile.read());
@@ -569,7 +569,7 @@ boolean getMapping() {
         }
 
         // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read iNES header
         get_line(iNES_STR, &myFile, 33);
@@ -586,15 +586,15 @@ boolean getMapping() {
               if (myFile.curPosition() == 0) {
                 break;
               } else if (myFile.peek() == '\n') {
-                myFile.seekSet(myFile.curPosition() - 1);
+                myFile.seekCur(-1);
                 break;
               } else {
-                myFile.seekSet(myFile.curPosition() - 1);
+                myFile.seekCur(-1);
               }
             }
           }
           if (myFile.curPosition() != 0)
-            myFile.seekSet(myFile.curPosition() + 2);
+            myFile.seekCur(2);
 
 
           // Display database
@@ -612,7 +612,7 @@ boolean getMapping() {
             }
 
             // Skip over semicolon
-            myFile.seekSet(myFile.curPosition() + 1);
+            myFile.seekCur(1);
 
             // Read CRC32 of first 512 bytes
             sprintf(crc_search, "%c", myFile.read());
@@ -622,7 +622,7 @@ boolean getMapping() {
             }
 
             // Skip over semicolon
-            myFile.seekSet(myFile.curPosition() + 1);
+            myFile.seekCur(1);
 
             // Read iNES header
             get_line(iNES_STR, &myFile, 33);
@@ -756,15 +756,15 @@ boolean getMapping() {
                     if (myFile.curPosition() == 0) {
                       break;
                     } else if (myFile.peek() == '\n') {
-                      myFile.seekSet(myFile.curPosition() - 1);
+                      myFile.seekCur(-1);
                       break;
                     } else {
-                      myFile.seekSet(myFile.curPosition() - 1);
+                      myFile.seekCur(-1);
                     }
                   }
                 }
                 if (myFile.curPosition() != 0)
-                  myFile.seekSet(myFile.curPosition() + 2);
+                  myFile.seekCur(2);
                 break;
               }
 
@@ -879,15 +879,15 @@ void selectMapping() {
             if (myFile.curPosition() == 0) {
               break;
             } else if (myFile.peek() == '\n') {
-              myFile.seekSet(myFile.curPosition() - 1);
+              myFile.seekCur(-1);
               break;
             } else {
-              myFile.seekSet(myFile.curPosition() - 1);
+              myFile.seekCur(-1);
             }
           }
         }
         if (myFile.curPosition() != 0)
-          myFile.seekSet(myFile.curPosition() + 2);
+          myFile.seekCur(2);
       }
 
       // Display database
@@ -905,7 +905,7 @@ void selectMapping() {
         }
 
         // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read CRC32 of first 512 bytes
         sprintf(crc_search, "%c", myFile.read());
@@ -915,7 +915,7 @@ void selectMapping() {
         }
 
         // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read iNES header
         get_line(iNES_STR, &myFile, 33);
@@ -1040,15 +1040,15 @@ void selectMapping() {
                 if (myFile.curPosition() == 0) {
                   break;
                 } else if (myFile.peek() == '\n') {
-                  myFile.seekSet(myFile.curPosition() - 1);
+                  myFile.seekCur(-1);
                   break;
                 } else {
-                  myFile.seekSet(myFile.curPosition() - 1);
+                  myFile.seekCur(-1);
                 }
               }
             }
             if (myFile.curPosition() != 0)
-              myFile.seekSet(myFile.curPosition() + 2);
+              myFile.seekCur(2);
             break;
           }
 

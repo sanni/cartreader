@@ -2051,7 +2051,7 @@ void printCartInfo_N64() {
       // Check if string is a match
       if (strcasecmp(tempStr1, crcStr) == 0) {
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
         sprintf(tempStr, "%c", myFile.read());
@@ -2071,7 +2071,7 @@ void printCartInfo_N64() {
       }
       // If no match, empty string, advance by 12 and try again
       else {
-        myFile.seekSet(myFile.curPosition() + 12);
+        myFile.seekCur(12);
       }
     }
     // Close the file:
@@ -2106,7 +2106,7 @@ void getCartInfo_N64() {
       skip_line(&myFile);
 
       // Skip over the CRC32 checksum
-      myFile.seekSet(myFile.curPosition() + 9);
+      myFile.seekCur(9);
 
       // Read 8 bytes into String, do it one at a time so byte order doesn't get mixed up
       sprintf(tempStr, "%c", myFile.read());
@@ -2118,7 +2118,7 @@ void getCartInfo_N64() {
       // Check if string is a match
       if (strcmp(tempStr, checksumStr) == 0) {
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read the next ascii character and subtract 48 to convert to decimal
         cartSize = myFile.read() - 48;
@@ -2130,7 +2130,7 @@ void getCartInfo_N64() {
         }
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read the next ascii character and subtract 48 to convert to decimal
         saveType = myFile.read() - 48;
@@ -2141,7 +2141,7 @@ void getCartInfo_N64() {
       // If no match skip to next entry
       else {
         // skip rest of line
-        myFile.seekSet(myFile.curPosition() + 7);
+        myFile.seekCur(7);
         // skip third empty line
         skip_line(&myFile);
       }

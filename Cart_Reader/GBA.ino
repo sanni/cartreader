@@ -873,7 +873,7 @@ void getCartInfo_GBA() {
         skip_line(&myFile);
 
         // Skip over the CRC checksum
-        myFile.seekSet(myFile.curPosition() + 9);
+        myFile.seekCur(9);
 
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
         sprintf(tempStr, "%c", myFile.read());
@@ -890,15 +890,15 @@ void getCartInfo_GBA() {
               if (myFile.curPosition() == 0) {
                 break;
               } else if (myFile.peek() == '\n') {
-                myFile.seekSet(myFile.curPosition() - 1);
+                myFile.seekCur(-1);
                 break;
               } else {
-                myFile.seekSet(myFile.curPosition() - 1);
+                myFile.seekCur(-1);
               }
             }
           }
           if (myFile.curPosition() != 0)
-            myFile.seekSet(myFile.curPosition() + 2);
+            myFile.seekCur(2);
 
           // Display database
           while (myFile.available()) {
@@ -908,7 +908,7 @@ void getCartInfo_GBA() {
             get_line(gamename, &myFile, 96);
 
             // Skip over the CRC checksum
-            myFile.seekSet(myFile.curPosition() + 9);
+            myFile.seekCur(9);
 
             // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
             sprintf(tempStr, "%c", myFile.read());
@@ -918,7 +918,7 @@ void getCartInfo_GBA() {
             }
 
             // Skip the , in the file
-            myFile.seekSet(myFile.curPosition() + 1);
+            myFile.seekCur(1);
 
             // Read the next ascii character and subtract 48 to convert to decimal
             cartSize = myFile.read() - 48;
@@ -930,7 +930,7 @@ void getCartInfo_GBA() {
             }
 
             // Skip the , in the file
-            myFile.seekSet(myFile.curPosition() + 1);
+            myFile.seekCur(1);
 
             // Read save type into string
             get_line(saveTypeStr, &myFile, 14);
@@ -980,15 +980,15 @@ void getCartInfo_GBA() {
                     if (myFile.curPosition() == 0) {
                       break;
                     } else if (myFile.peek() == '\n') {
-                      myFile.seekSet(myFile.curPosition() - 1);
+                      myFile.seekCur(-1);
                       break;
                     } else {
-                      myFile.seekSet(myFile.curPosition() - 1);
+                      myFile.seekCur(-1);
                     }
                   }
                 }
                 if (myFile.curPosition() != 0)
-                  myFile.seekSet(myFile.curPosition() + 2);
+                  myFile.seekCur(2);
                 break;
               }
 

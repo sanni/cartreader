@@ -655,7 +655,7 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
 #ifdef enable_NES
         if ((mode == mode_NES) && (offset != 0)) {
           // Rewind to iNES Header
-          myFile.seekSet(myFile.curPosition() - 36);
+          myFile.seekCur(-36);
 
           char iNES_STR[33];
           // Read iNES header
@@ -668,7 +668,7 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
             iNES_HEADER[j] = iNES_BUF;
           }
           //Skip CRLF
-          myFile.seekSet(myFile.curPosition() + 4);
+          myFile.seekCur(4);
         }
 #endif // enable_NES
 

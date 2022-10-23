@@ -847,7 +847,7 @@ void checkAltConf(char crcStr[9]) {
       skip_line(&myFile);
 
       // Skip over the CRC checksum
-      myFile.seekSet(myFile.curPosition() + 9);
+      myFile.seekCur(9);
 
       // Get internal ROM checksum as string
       for (byte j = 0; j < 4; j++) {
@@ -862,7 +862,7 @@ void checkAltConf(char crcStr[9]) {
         display_Update();
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read the CRC32 of the SNES header out of database
         for (byte k = 0; k < 8; k++) {
@@ -871,13 +871,13 @@ void checkAltConf(char crcStr[9]) {
         tempStr3[8] = '\0';
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read file size
         byte romSize2 = (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read number of banks
         byte numBanks2 = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
@@ -911,7 +911,7 @@ void checkAltConf(char crcStr[9]) {
       // If no match go to next entry
       else {
         // skip rest of line
-        myFile.seekSet(myFile.curPosition() + 18);
+        myFile.seekCur(18);
         // skip third empty line
         skip_line(&myFile);
       }
