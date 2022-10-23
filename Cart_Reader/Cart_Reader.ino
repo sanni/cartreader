@@ -616,6 +616,20 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
   }
 }
 
+void rewind_line(FsFile &readfile, byte count=1) {
+  uint32_t position = readfile.curPosition();
+  count++;
+  for (byte count_newline = 0; count_newline < count; count_newline++) {
+    while (position--) {
+      readfile.seekCur(-1);
+      if (readfile.peek() == '\n')
+        break;
+    }
+  }
+  if (position)
+    readfile.seekCur(1);
+}
+
 // Calculate CRC32 if needed and compare it to CRC read from database
 boolean compareCRC(const char* database, char* crcString, boolean renamerom, int offset) {
 #ifdef nointro

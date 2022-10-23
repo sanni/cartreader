@@ -885,20 +885,7 @@ void getCartInfo_GBA() {
         // Check if string is a match
         if (strcmp(tempStr, cartID) == 0) {
           // Rewind to start of entry
-          for (byte count_newline = 0; count_newline < 2; count_newline++) {
-            while (1) {
-              if (myFile.curPosition() == 0) {
-                break;
-              } else if (myFile.peek() == '\n') {
-                myFile.seekCur(-1);
-                break;
-              } else {
-                myFile.seekCur(-1);
-              }
-            }
-          }
-          if (myFile.curPosition() != 0)
-            myFile.seekCur(2);
+          rewind_line(myFile);
 
           // Display database
           while (myFile.available()) {
@@ -975,20 +962,7 @@ void getCartInfo_GBA() {
 
               // Previous
               else if (b == 2) {
-                for (byte count_newline = 0; count_newline < 7; count_newline++) {
-                  while (1) {
-                    if (myFile.curPosition() == 0) {
-                      break;
-                    } else if (myFile.peek() == '\n') {
-                      myFile.seekCur(-1);
-                      break;
-                    } else {
-                      myFile.seekCur(-1);
-                    }
-                  }
-                }
-                if (myFile.curPosition() != 0)
-                  myFile.seekCur(2);
+                rewind_line(myFile, 6);
                 break;
               }
 

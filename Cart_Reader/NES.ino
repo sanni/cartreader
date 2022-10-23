@@ -581,20 +581,7 @@ boolean getMapping() {
         if (((strcmp(crc_search, crcStr) == 0) || (strcmp(crc_search, crcStrMMC3) == 0)) && (strcmp(crc_search, "BD7BC39F") != 0)) {
 
           // Rewind to start of entry
-          for (byte count_newline = 0; count_newline < 4; count_newline++) {
-            while (1) {
-              if (myFile.curPosition() == 0) {
-                break;
-              } else if (myFile.peek() == '\n') {
-                myFile.seekCur(-1);
-                break;
-              } else {
-                myFile.seekCur(-1);
-              }
-            }
-          }
-          if (myFile.curPosition() != 0)
-            myFile.seekCur(2);
+          rewind_line(myFile, 3);
 
 
           // Display database
@@ -751,20 +738,7 @@ boolean getMapping() {
 
               // Previous
               else if (b == 2) {
-                for (byte count_newline = 0; count_newline < 7; count_newline++) {
-                  while (1) {
-                    if (myFile.curPosition() == 0) {
-                      break;
-                    } else if (myFile.peek() == '\n') {
-                      myFile.seekCur(-1);
-                      break;
-                    } else {
-                      myFile.seekCur(-1);
-                    }
-                  }
-                }
-                if (myFile.curPosition() != 0)
-                  myFile.seekCur(2);
+                rewind_line(myFile, 6);
                 break;
               }
 
@@ -874,20 +848,7 @@ void selectMapping() {
         }
 
         // Rewind one line
-        for (byte count_newline = 0; count_newline < 2; count_newline++) {
-          while (1) {
-            if (myFile.curPosition() == 0) {
-              break;
-            } else if (myFile.peek() == '\n') {
-              myFile.seekCur(-1);
-              break;
-            } else {
-              myFile.seekCur(-1);
-            }
-          }
-        }
-        if (myFile.curPosition() != 0)
-          myFile.seekCur(2);
+        rewind_line(myFile);
       }
 
       // Display database
@@ -1035,20 +996,7 @@ void selectMapping() {
 
           // Previous
           else if (b == 2) {
-            for (byte count_newline = 0; count_newline < 7; count_newline++) {
-              while (1) {
-                if (myFile.curPosition() == 0) {
-                  break;
-                } else if (myFile.peek() == '\n') {
-                  myFile.seekCur(-1);
-                  break;
-                } else {
-                  myFile.seekCur(-1);
-                }
-              }
-            }
-            if (myFile.curPosition() != 0)
-              myFile.seekCur(2);
+            rewind_line(myFile, 6);
             break;
           }
 

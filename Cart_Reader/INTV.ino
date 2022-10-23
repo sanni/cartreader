@@ -807,20 +807,7 @@ void setCart_INTV() {
       }
 
       // Rewind one line
-      for (byte count_newline = 0; count_newline < 2; count_newline++) {
-        while (1) {
-          if (myFile.curPosition() == 0) {
-            break;
-          } else if (myFile.peek() == '\n') {
-            myFile.seekCur(-1);
-            break;
-          } else {
-            myFile.seekCur(-1);
-          }
-        }
-      }
-      if (myFile.curPosition() != 0)
-        myFile.seekCur(2);
+      rewind_line(myFile);
     }
 
     // Display database
@@ -911,20 +898,7 @@ void setCart_INTV() {
 
         // Previous
         else if (b == 2) {
-          for (byte count_newline = 0; count_newline < 7; count_newline++) {
-            while (1) {
-              if (myFile.curPosition() == 0) {
-                break;
-              } else if (myFile.peek() == '\n') {
-                myFile.seekCur(-1);
-                break;
-              } else {
-                myFile.seekCur(-1);
-              }
-            }
-          }
-          if (myFile.curPosition() != 0)
-            myFile.seekCur(2);
+          rewind_line(myFile, 6);
           break;
         }
 
