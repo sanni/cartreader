@@ -26,14 +26,14 @@ static const char gbSmartGameMenuItem4[] PROGMEM = "Switch Game";
 //static const char gbSmartGameMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, string_reset2 };
 
-typedef struct
+struct GBSmartGameInfo
 {
   uint8_t start_bank;
   uint8_t rom_type;
   uint8_t rom_size;
   uint8_t sram_size;
   char title[16];
-} GBSmartGameInfo;
+};
 
 uint32_t gbSmartSize = 32 * 131072;
 uint16_t gbSmartBanks = 256;
@@ -46,18 +46,8 @@ uint8_t gbSmartRomSizeGB = 0x07;
 uint8_t gbSmartSramSizeGB = 0x04;
 uint8_t gbSmartFlashSizeGB = 0x06;
 
-GBSmartGameInfo gbSmartGames[GB_SMART_GAMES_PER_PAGE];
-
 byte signature[48];
 uint16_t gameMenuStartBank;
-
-#ifdef enable_SFM
-extern boolean hasMenu;
-extern byte numGames;
-#else
-boolean hasMenu;
-byte numGames;
-#endif
 
 // Compare checksum
 boolean compare_checksum_GBS() {
@@ -150,8 +140,6 @@ void setup_GBSmart() {
     signature[i] = readByte_GBS(0x0104 + i);
 
   gameMenuStartBank = 0x02;
-  hasMenu = true;
-  numGames = 0;
 
   display_Clear();
   display_Update();
@@ -246,12 +234,15 @@ void gbSmartGameOptions() {
 }
 
 void gbSmartGameMenu() {
+  boolean hasMenu;
+  byte numGames;
+  struct GBSmartGameInfo gbSmartGames[GB_SMART_GAMES_PER_PAGE];
   uint8_t gameSubMenu = 0;
 gb_smart_load_more_games:
   if (gameMenuStartBank > 0xfe)
     gameMenuStartBank = 0x02;
 
-  gbSmartGetGames();
+  gbSmartGetGames(gbSmartGames, &hasMenu, &numGames);
 
   if (hasMenu) {
     char menuOptionsGBSmartGames[7][20];
@@ -339,29 +330,44 @@ void gbSmartFlashMenu() {
   wait();
 }
 
-void gbSmartGetGames() {
+void gbSmartGetOneGame(struct GBSmartGameInfo *gbSmartGames, byte bank, word base) {
+  uint8_t myByte, myLength = 0;
+  word title_address = base + 0x0134;
+
+  for (uint8_t j = 0; j < 15; j++) {
+    myByte = readByte_GBS(title_address++);
+
+    if (((myByte >= '0' && myByte <= '9') || (myByte >= 'A' && myByte <= 'z')))
+      gbSmartGames->title[myLength++] = myByte;
+  }
+
+  gbSmartGames->title[myLength] = 0x00;
+  gbSmartGames->start_bank = bank;
+  gbSmartGames->rom_type = readByte_GBS(base + 0x0147);
+  gbSmartGames->rom_size = readByte_GBS(base + 0x0148);
+  gbSmartGames->sram_size = readByte_GBS(base + 0x0149);
+}
+
+void gbSmartGetGames(struct GBSmartGameInfo *gbSmartGames, boolean *hasMenu, byte *numGames) {
   static const byte menu_title[] = { 0x47, 0x42, 0x31, 0x36, 0x4d };
 
   // reset remap setting
   gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);
 
   uint16_t i;
-  uint8_t myByte, myLength;
 
   // check if contain menu
-  hasMenu = true;
+  *hasMenu = true;
   dataIn();
   for (i = 0; i < 5; i++) {
     if (readByte_GBS(0x0134 + i) != menu_title[i]) {
-      hasMenu = false;
+      *hasMenu = false;
       break;
     }
   }
 
-  if (hasMenu) {
-    for (i = gameMenuStartBank, numGames = 0; i < gbSmartBanks && numGames < GB_SMART_GAMES_PER_PAGE;) {
-      myLength = 0;
-
+  if (*hasMenu) {
+    for (i = gameMenuStartBank, *numGames = 0; i < gbSmartBanks && *numGames < GB_SMART_GAMES_PER_PAGE;) {
       // switch bank
       dataOut();
       writeByte_GB(0x2100, i);
@@ -371,46 +377,19 @@ void gbSmartGetGames() {
       for (uint8_t j = 0x00; j < 0x30; j++) {
         if (readByte_GBS(0x4104 + j) != signature[j]) {
           i += 0x02;
-          goto gb_smart_get_game_loop_end;
+          continue;
         }
       }
-
-      for (uint8_t j = 0; j < 15; j++) {
-        myByte = readByte_GBS(0x4134 + j);
-
-        if (((char(myByte) >= 0x30 && char(myByte) <= 0x39) || (char(myByte) >= 0x41 && char(myByte) <= 0x7a)))
-          gbSmartGames[numGames].title[myLength++] = char(myByte);
-      }
-
-      gbSmartGames[numGames].title[myLength] = 0x00;
-      gbSmartGames[numGames].start_bank = i;
-      gbSmartGames[numGames].rom_type = readByte_GBS(0x4147);
-      gbSmartGames[numGames].rom_size = readByte_GBS(0x4148);
-      gbSmartGames[numGames].sram_size = readByte_GBS(0x4149);
-
-      myByte = (2 << gbSmartGames[numGames].rom_size);
-      i += myByte;
-      numGames++;
-gb_smart_get_game_loop_end:;
+      gbSmartGetOneGame(&gbSmartGames[*numGames], i, 0x4000);
+      i += (2 << gbSmartGames[(*numGames)++].rom_size);
     }
 
     gameMenuStartBank = i;
   } else {
     dataIn();
-    for (uint8_t j = 0; j < 15; j++) {
-      myByte = readByte_GBS(0x0134 + j);
+    gbSmartGetOneGame(&gbSmartGames[0], 0, 0);
 
-      if (((char(myByte) >= 0x30 && char(myByte) <= 0x39) || (char(myByte) >= 0x41 && char(myByte) <= 0x7a)))
-        gbSmartGames[0].title[myLength++] = char(myByte);
-    }
-
-    gbSmartGames[0].title[myLength] = 0x00;
-    gbSmartGames[0].start_bank = 0x00;
-    gbSmartGames[0].rom_type = readByte_GBS(0x0147);
-    gbSmartGames[0].rom_size = readByte_GBS(0x0148);
-    gbSmartGames[0].sram_size = readByte_GBS(0x0149);
-
-    numGames = 1;
+    *numGames = 1;
     gameMenuStartBank = 0xfe;
   }
 }
