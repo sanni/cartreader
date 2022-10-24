@@ -103,10 +103,6 @@ static unsigned long cartSizeLockon;
 static unsigned long cartSizeSonic2 = 262144;
 static word chksumLockon;
 static word chksumSonic2 = 0x0635;
-static char romNameLockon[12];
-static char id[15];
-static char idLockon[15];
-static char labelLockon[17];
 
 /******************************************
    Configuration
@@ -671,6 +667,23 @@ void dataIn_MD() {
 /******************************************
   MEGA DRIVE functions
 *****************************************/
+byte copyToRomName_MD(char *output, const byte *input, byte length) {
+  byte myLength = 0;
+
+  for (byte i = 0; i < 48; i++) {
+    if (
+      (
+        (input[i] >= '0' && input[i] <= '9') ||
+        (input[i] >= 'A' && input[i] <= 'z')
+      ) && myLength < length
+    ) {
+      output[myLength++] = input[i];
+    }
+  }
+
+  return myLength;
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
@@ -709,6 +722,7 @@ void getCartInfo_MD() {
   // Sonic & Knuckles Check
   SnKmode = 0;
   if (chksum == 0xDFB3) {
+    char id[15];
 
     // Get ID
     for (byte c = 0; c < 14; c += 2) {
@@ -718,15 +732,13 @@ void getCartInfo_MD() {
       byte hiByte = myWord >> 8;
 
       // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
-    }
-    for (int i = 0; i < 14; i++) {
-      id[i] = char(sdBuffer[i]);
+      id[c] = hiByte;
+      id[c + 1] = loByte;
     }
 
     //Sonic & Knuckles ID:GM MK-1563 -00
     if (!strcmp("GM MK-1563 -00", id)) {
+      char labelLockon[17];
 
       // Get labelLockon
       for (byte c = 0; c < 16; c += 2) {
@@ -736,15 +748,13 @@ void getCartInfo_MD() {
         byte hiByte = myWord >> 8;
 
         // write to buffer
-        sdBuffer[c] = hiByte;
-        sdBuffer[c + 1] = loByte;
-      }
-      for (int i = 0; i < 16; i++) {
-        labelLockon[i] = char(sdBuffer[i]);
+        labelLockon[c] = hiByte;
+        labelLockon[c + 1] = loByte;
       }
 
       // check Lock-on game presence
       if (!(strcmp("SEGA MEGA DRIVE ", labelLockon) & strcmp("SEGA GENESIS    ", labelLockon))) {
+        char idLockon[15];
 
         // Lock-on cart checksum
         chksumLockon = readWord_MD(0x1000C7);
@@ -759,11 +769,8 @@ void getCartInfo_MD() {
           byte hiByte = myWord >> 8;
 
           // write to buffer
-          sdBuffer[c] = hiByte;
-          sdBuffer[c + 1] = loByte;
-        }
-        for (int i = 0; i < 14; i++) {
-          idLockon[i] = char(sdBuffer[i]);
+          idLockon[c] = hiByte;
+          idLockon[c + 1] = loByte;
         }
 
         if (!(strncmp("GM 00001009-0", idLockon, 13) & strncmp("GM 00004049-0", idLockon, 13))) {
@@ -968,16 +975,11 @@ void getCartInfo_MD() {
     sdBuffer[c] = hiByte;
     sdBuffer[c + 1] = loByte;
   }
-  byte myLength = 0;
-  for (unsigned int i = 0; i < 48; i++) {
-    if (((char(sdBuffer[i]) >= 48 && char(sdBuffer[i]) <= 57) || (char(sdBuffer[i]) >= 65 && char(sdBuffer[i]) <= 122)) && myLength < 15) {
-      romName[myLength] = char(sdBuffer[i]);
-      myLength++;
-    }
-  }
+  romName[copyToRomName_MD(romName, sdBuffer, sizeof(romName) - 1)] = 0;
 
   //Get Lock-on cart name
   if (SnKmode >= 2) {
+    char romNameLockon[12];
 
     //Change romName
     strcpy(romName, "SnK_");
@@ -992,13 +994,7 @@ void getCartInfo_MD() {
       sdBuffer[c] = hiByte;
       sdBuffer[c + 1] = loByte;
     }
-    byte myLength = 0;
-    for (unsigned int i = 0; i < 48; i++) {
-      if (((char(sdBuffer[i]) >= 48 && char(sdBuffer[i]) <= 57) || (char(sdBuffer[i]) >= 65 && char(sdBuffer[i]) <= 122)) && myLength < 11) {
-        romNameLockon[myLength] = char(sdBuffer[i]);
-        myLength++;
-      }
-    }
+    romNameLockon[copyToRomName_MD(romNameLockon, sdBuffer, sizeof(romNameLockon) - 1)] = 0;
 
     switch (SnKmode) {
       case 2: strcat(romName, "SONIC1"); break;
