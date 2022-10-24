@@ -3523,10 +3523,10 @@ void readPRG(boolean readrom) {
         break;
 
       case 203:
-        banks = int_pow(2, prgsize) / 2;
+        banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x8000, (i & 0x1F) << 2);
-          for (word address = 0x0; address < 0x8000; address += 512) {
+          for (word address = 0x0; address < 0x4000; address += 512) {
             dumpPRG(base, address);
           }
         }
