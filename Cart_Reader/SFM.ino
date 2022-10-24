@@ -490,8 +490,8 @@ void getGames() {
       for (int j = 0; j < 9; j++) {
         myByte = readBank_SFM(0xC6, i * 0x2000 + 0x07 + j);
         // Remove funny characters
-        if (((char(myByte) >= 44 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 9) {
-          gameCode[i][myLength] = char(myByte);
+        if (((myByte >= ',' && myByte <= '9') || (myByte >= 'A' && myByte <= 'z')) && myLength < 9) {
+          gameCode[i][myLength] = myByte;
           myLength++;
         }
       }
@@ -499,48 +499,28 @@ void getGames() {
       gameCode[i][myLength] = '\0';
     }
   } else {
+    word base;
     //check if hirom
     if (readBank_SFM(0xC0, 0xFFD5) == 0x31) {
       hirom[0] = true;
+      base = 0xFF00;
     } else {
       hirom[0] = false;
+      base = 0x7F00;
     }
 
-    if (hirom[0]) {
-      gameVersion[0] = readBank_SFM(0xC0, 0xFFDB);
-      gameCode[0][0] = 'G';
-      gameCode[0][1] = 'A';
-      gameCode[0][2] = 'M';
-      gameCode[0][3] = 'E';
-      gameCode[0][4] = '-';
-      gameCode[0][5] = char(readBank_SFM(0xC0, 0xFFB2));
-      gameCode[0][6] = char(readBank_SFM(0xC0, 0xFFB3));
-      gameCode[0][7] = char(readBank_SFM(0xC0, 0xFFB4));
-      gameCode[0][8] = char(readBank_SFM(0xC0, 0xFFB5));
-      gameCode[0][9] = '\0';
-
-      byte romSizeExp = readBank_SFM(0xC0, 0xFFD7) - 7;
-      gameSize[0] = 1;
-      while (romSizeExp--)
-        gameSize[0] *= 2;
-    } else {
-      gameVersion[0] = readBank_SFM(0xC0, 0x7FDB);
-      gameCode[0][0] = 'G';
-      gameCode[0][1] = 'A';
-      gameCode[0][2] = 'M';
-      gameCode[0][3] = 'E';
-      gameCode[0][4] = '-';
-      gameCode[0][5] = char(readBank_SFM(0xC0, 0x7FB2));
-      gameCode[0][6] = char(readBank_SFM(0xC0, 0x7FB3));
-      gameCode[0][7] = char(readBank_SFM(0xC0, 0x7FB4));
-      gameCode[0][8] = char(readBank_SFM(0xC0, 0x7FB5));
-      gameCode[0][9] = '\0';
-
-      byte romSizeExp = readBank_SFM(0xC0, 0x7FD7) - 7;
-      gameSize[0] = 1;
-      while (romSizeExp--)
-        gameSize[0] *= 2;
-    }
+    gameVersion[0] = readBank_SFM(0xC0, base + 0xDB);
+    gameCode[0][0] = 'G';
+    gameCode[0][1] = 'A';
+    gameCode[0][2] = 'M';
+    gameCode[0][3] = 'E';
+    gameCode[0][4] = '-';
+    gameCode[0][5] = readBank_SFM(0xC0, base + 0xB2);
+    gameCode[0][6] = readBank_SFM(0xC0, base + 0xB3);
+    gameCode[0][7] = readBank_SFM(0xC0, base + 0xB4);
+    gameCode[0][8] = readBank_SFM(0xC0, base + 0xB5);
+    gameCode[0][9] = '\0';
+    gameSize[0] = 1 << (readBank_SFM(0xC0, base + 0xD7) - 7);
   }
 }
 
