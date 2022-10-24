@@ -16,16 +16,11 @@
 // SF Memory status
 byte sfmReady = 0;
 
-// SF Memory Menu
-boolean hasMenu = true;
-byte numGames = 0;
-
 // Arrays that hold game info
 int gameSize[8];
 int saveSize[8];
 byte gameAddress[8];
 byte gameVersion[8];
-char gameCode[8][10];
 boolean hirom[8];
 
 /******************************************
@@ -79,20 +74,17 @@ void sfmMenu() {
 }
 
 void sfmGameMenu() {
+  char menuOptionsSFMGames[8][20];
+  byte numGames;
+  boolean hasMenu;
   // Switch to hirom all
   if (send_SFM(0x04) == 0x2A) {
     delay(300);
 
     // Fill arrays with data
-    getGames();
+    getGames(menuOptionsSFMGames, &hasMenu, &numGames);
 
     if (hasMenu) {
-      // Create submenu options
-      char menuOptionsSFMGames[8][20];
-      for (int i = 0; i < (numGames); i++) {
-        strncpy(menuOptionsSFMGames[i], gameCode[i], 10);
-      }
-
       // Create menu with title and numGames options to choose from
       unsigned char gameSubMenu;
       // wait for user choice to come back from the question box menu
@@ -121,7 +113,7 @@ void sfmGameMenu() {
         }
       }
       // Copy gameCode to romName in case of japanese chars in romName
-      strcpy(romName, gameCode[gameSubMenu + 1]);
+      strcpy(romName, menuOptionsSFMGames[gameSubMenu + 1]);
 
       // Print info
       getCartInfo_SFM();
@@ -133,7 +125,7 @@ void sfmGameMenu() {
       delay(200);
 
       // Copy gameCode to romName in case of japanese chars in romName
-      strcpy(romName, gameCode[0]);
+      strcpy(romName, menuOptionsSFMGames[0]);
 
       // Print info
       getCartInfo_SFM();
@@ -441,29 +433,31 @@ void sfmFlashMenu() {
 #endif
 
 // Read the games from the menu area
-void getGames() {
+void getGames(char gameCode[8][20], boolean *hasMenu, byte *numGames) {
   // Set data pins to input
   dataIn();
   // Set control pins to input
   controlIn_SFM();
 
   // Check if menu is present
+  *hasMenu = true;
   byte menuString[] = { 0x4D, 0x45, 0x4E, 0x55, 0x20, 0x50, 0x52, 0x4F, 0x47, 0x52, 0x41, 0x4D };
   for (int i = 0; i < 12; i++) {
     if (menuString[i] != readBank_SFM(0xC0, 0x7FC0 + i)) {
-      hasMenu = false;
+      *hasMenu = false;
     }
   }
 
-  if (hasMenu) {
+  if (*hasMenu) {
+    *numGames = 0;
     // Count number of games
     for (word i = 0x0000; i < 0xE000; i += 0x2000) {
-      if (readBank_SFM(0xC6, i) == numGames)
-        numGames++;
+      if (readBank_SFM(0xC6, i) == *numGames)
+        (*numGames)++;
     }
 
     // Get game info
-    for (int i = 0; i < numGames; i++) {
+    for (int i = 0; i < *numGames; i++) {
       // Read starting address and size
       gameAddress[i] = 0xC0 + readBank_SFM(0xC6, i * 0x2000 + 0x01) * 0x8;
       gameSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x03) * 128;
@@ -500,6 +494,7 @@ void getGames() {
     }
   } else {
     word base;
+    *numGames = 1;
     //check if hirom
     if (readBank_SFM(0xC0, 0xFFD5) == 0x31) {
       hirom[0] = true;
