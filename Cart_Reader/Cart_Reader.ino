@@ -636,7 +636,7 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
   display_Update();
 
   //Search for CRC32 in file
-  char gamename[100];
+  char gamename[96];
   char crc_search[9];
 
   //go to root
@@ -645,8 +645,8 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
     //Search for same CRC in list
     while (myFile.available()) {
       //Read 2 lines (game name and CRC)
-      get_line(gamename, &myFile, 96);
-      get_line(crc_search, &myFile, 9);
+      get_line(gamename, &myFile, sizeof(gamename));
+      get_line(crc_search, &myFile, sizeof(crc_search));
       skip_line(&myFile);  //Skip every 3rd line
 
       //if checksum search successful, rename the file and end search
