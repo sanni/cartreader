@@ -3506,7 +3506,7 @@ void readPRG(boolean readrom) {
       case 200:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) {
-          write_prg_byte(0x8000, (i & 0x07));
+          write_prg_byte(0x8000 + (i & 0x07), 0);
           for (word address = 0x0; address < 0x4000; address += 512) {
             dumpPRG(base, address);
           }
@@ -4263,7 +4263,7 @@ void readCHR(boolean readrom) {
         case 200:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, (i & 0x07));
+            write_prg_byte(0x8000 + (i & 0x07), 0);
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
