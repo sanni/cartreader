@@ -629,7 +629,6 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
   } else {
     // Use precalculated crc
     print_Msg(F("CRC32... "));
-    display_Update();
     strcpy(crcStr, crcString);
   }
   // Print checksum
