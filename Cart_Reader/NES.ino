@@ -81,7 +81,7 @@ static const byte PROGMEM mapsize[] = {
   82, 3, 3, 5, 6, 0, 1,  // taito x1-017                                       [prgram r/w]
   85, 3, 5, 0, 5, 0, 1,  // vrc7                                               [sram r/w]
   86, 3, 3, 4, 4, 0, 0,  // jaleco jf-13 (moero pro yakyuu)
-  87, 0, 1, 2, 3, 0, 0,
+  87, 0, 1, 2, 3, 0, 0,  // Jaleco/Konami CNROM (DIS_74X139X74)
   88, 3, 3, 5, 5, 0, 0,   // namco (dxrom variant)
   89, 3, 3, 5, 5, 0, 0,   // sunsoft 2 variant (tenka no goikenban: mito koumon)
   92, 4, 4, 5, 5, 0, 0,   // jaleco jf-19/jf-21
@@ -95,7 +95,7 @@ static const byte PROGMEM mapsize[] = {
   119, 3, 3, 4, 4, 0, 0,  // tqrom/mmc3
   140, 3, 3, 3, 5, 0, 0,  // jaleco jf-11/jf-14
   146, 1, 2, 2, 3, 0, 0,  // Sachen 3015 [UNLICENSED]
-  152, 2, 3, 5, 5, 0, 0,
+  152, 2, 3, 5, 5, 0, 0,  // BANDAI-74*161/161/32
   153, 5, 5, 0, 0, 1, 1,  // (famicom jump ii)                                 [sram r/w]
   154, 3, 3, 5, 5, 0, 0,  // namcot-3453 (devil man)
   155, 3, 3, 3, 5, 0, 1,  // mmc1 variant                                      [sram r/w]
