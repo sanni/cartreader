@@ -590,28 +590,29 @@ void skip_line(FsFile* readfile) {
 
 //Get line from file
 void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
+  int read_len;
+
   // Status LED on
   statusLED(true);
 
-  int i = 0;
+  read_len = readfile->read(str_buf, maxi - 1);
 
-  while (readfile->available()) {
-    //If line size is more than maximum array, limit it.
-    if (i >= maxi) {
-      i = maxi - 1;
-    }
-
-    //Read 1 byte from file
-    str_buf[i] = readfile->read();
-
+  for (int i = 0; i < read_len; i++) {
     //if end of file or newline found, execute command
     if (str_buf[i] == '\r') {
-      str_buf[i] = '\0';
-      readfile->read();  //dispose \n because \r\n
+      str_buf[i] = 0;
+      readfile->seekCur(i - read_len + 2); // +2 to skip over \n because \r\n
+      return;
+    }
+  }
+  str_buf[maxi - 1] = 0;
+  // EOL was not found, keep looking (slower)
+  while (readfile->available()) {
+    if (readfile->read() == '\r') {
+      readfile->read(); // read \n because \r\n
       break;
     }
-    i++;
-  }  //End while
+  }
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
