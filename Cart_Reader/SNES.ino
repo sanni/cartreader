@@ -1102,8 +1102,8 @@ boolean checkcart_SNES() {
   byte sramSizeExp;
   if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {
     // SuperFX
-    if (snesHeader[0x7FDA - headerStart] == 0x33) {
-      sramSizeExp = snesHeader[0x7FBD - headerStart];
+    if (snesHeader[0xFFDA - headerStart] == 0x33) {
+      sramSizeExp = snesHeader[0xFFBD - headerStart];
     } else {
       if (strncmp(romName, "STARFOX2", 8) == 0) {
         sramSizeExp = 6;
