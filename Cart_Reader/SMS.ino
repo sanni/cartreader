@@ -69,11 +69,9 @@ void _smsMenu() {
       readROM_SMS();
       if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
         compareCRC("gg.txt", 0, 1, 0);
-      }
-      else if (raphnet_mode_sg1000) {
+      } else if (raphnet_mode_sg1000) {
         compareCRC("sg1000.txt", 0, 1, 0);
-      }
-      else {
+      } else {
         compareCRC("sms.txt", 0, 1, 0);
       }
 #ifdef global_log
@@ -568,12 +566,10 @@ void readROM_SMS() {
   if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
     strcat(fileName, ".gg");
     sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
-  }
-  else if (raphnet_mode_sg1000) {
+  } else if (raphnet_mode_sg1000) {
     strcat(fileName, ".sg");
     sprintf(folder, "SG1000/ROM/%s/%d", romName, foldern);
-  }
-  else {
+  } else {
     strcat(fileName, ".sms");
     sprintf(folder, "SMS/ROM/%s/%d", romName, foldern);
   }
