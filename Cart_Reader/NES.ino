@@ -116,7 +116,10 @@ static const byte PROGMEM mapsize[] = {
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
   232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
   235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
+  240, 1, 5, 1, 5, 0, 3,  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
   242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
+  246, 5, 5, 7, 7, 0, 0,  // C&E Feng Shen Bang [UNLICENSED]
+  255, 7, 7, 8, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
 };
 
 /******************************************
@@ -3546,6 +3549,7 @@ void readPRG(boolean readrom) {
         break;
         
       case 225:
+      case 255:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i << 6), i << 6);
@@ -3612,6 +3616,16 @@ void readPRG(boolean readrom) {
         }
       break;
         
+      case 240:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x5FFF, (i & 0xF) << 4);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break; 
+        
       case 242: // total size is 640k THIS IS NORMAL
         for (int i = 0; i < 32; i++) { // dump 1st chip of 512k
           write_prg_byte(0x8400 + (i * 4), 0);
@@ -3626,6 +3640,19 @@ void readPRG(boolean readrom) {
           }
         }
       break;
+        
+      case 246:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i += 4) {
+            write_prg_byte(0x6000, (i | 0));
+            write_prg_byte(0x6001, (i | 1));
+            write_prg_byte(0x6002, (i | 2));
+            write_prg_byte(0x6003, (i | 3));
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
     }
     if (!readrom) {
       myFile.flush();
@@ -4310,6 +4337,7 @@ void readCHR(boolean readrom) {
           break;
           
          case 225:
+         case 255:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + i, i);
@@ -4327,6 +4355,30 @@ void readCHR(boolean readrom) {
             }
           }
           break;
+          
+        case 240:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x5FFF, (i & 0xF));
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+
+        case 246:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i += 4) {
+            write_prg_byte(0x6004, (i | 0));
+            write_prg_byte(0x6005, (i | 1));
+            write_prg_byte(0x6006, (i | 2));
+            write_prg_byte(0x6007, (i | 3));
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+
       }
       if (!readrom) {
         myFile.flush();
