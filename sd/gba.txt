@@ -7633,29 +7633,29 @@ Twin Series 5 - Mahou no Kuni no Cake-ya-san Monogatari + Wanwan Meitantei EX (J
 Miteluode - Lingdian Renwu (China).gba
 E951865C,BMXC,08,SRAM_V113  
 
+Metroid - Zero Mission (USA).gba
+5C61A844,BMXE,08,SRAM_V113  
+
 Metroid - Zero Mission (USA) (Beta).gba
 922C4A10,BMXE,16,SRAM_V113  
 
 Metroid - Zero Mission (USA) (Virtual Console).gba
 8825294A,BMXE,08,SRAM_V113  
 
-Metroid - Zero Mission (USA).gba
-5C61A844,BMXE,08,SRAM_V113  
+Metroid - Zero Mission (Japan).gba
+44B79E2B,BMXJ,08,SRAM_V113  
 
 Metroid - Zero Mission (Japan) (Virtual Console).gba
 220B68F5,BMXJ,08,SRAM_V113  
 
-Metroid - Zero Mission (Japan).gba
-44B79E2B,BMXJ,08,SRAM_V113  
+Metroid - Zero Mission (Europe) (En,Fr,De,Es,It).gba
+F1D92E63,BMXP,08,SRAM_V113  
 
 Metroid - Zero Mission (Europe) (En,Fr,De,Es,It) (Beta).gba
 B6438226,BMXP,16,SRAM_V113  
 
 Metroid - Zero Mission (Europe) (En,Fr,De,Es,It) (Virtual Console).gba
 3AB66D36,BMXP,08,SRAM_V113  
-
-Metroid - Zero Mission (Europe) (En,Fr,De,Es,It).gba
-F1D92E63,BMXP,08,SRAM_V113  
 
 Wagamama Fairy Mirumo de Pon! - 8 Nin no Toki no Yousei (Japan).gba
 5E5C008C,BMYJ,08,SRAM_F_V103
