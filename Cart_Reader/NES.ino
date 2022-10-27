@@ -116,9 +116,10 @@ static const byte PROGMEM mapsize[] = {
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
   232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
   235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
-  240, 1, 5, 1, 5, 0, 3, // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
+  240, 1, 5, 1, 5, 0, 3,  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
   242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
-  246, 5, 5, 7, 7, 0, 0, // C&E Feng Shen Bang [UNLICENSED]
+  246, 5, 5, 7, 7, 0, 0,  // C&E Feng Shen Bang [UNLICENSED]
+  255, 7, 7, 8, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
 };
 
 /******************************************
@@ -3548,6 +3549,7 @@ void readPRG(boolean readrom) {
         break;
         
       case 225:
+      case 255:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i << 6), i << 6);
@@ -4335,6 +4337,7 @@ void readCHR(boolean readrom) {
           break;
           
          case 225:
+         case 255:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + i, i);
