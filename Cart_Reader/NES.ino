@@ -55,6 +55,7 @@ static const byte PROGMEM mapsize[] = {
   32, 3, 4, 5, 5, 0, 0,   // irem g-101
   33, 3, 4, 5, 6, 0, 0,   // taito tc0190
   34, 3, 3, 0, 0, 0, 0,   // bnrom [nina-1 NOT SUPPORTED]
+  36, 0, 3, 1, 5, 0, 0,   // TXC 01-22000-400 Board [UNLICENSED]
   37, 4, 4, 6, 6, 0, 0,   // (super mario bros + tetris + world cup)
   45, 3, 6, 0, 8, 0, 0,   // ga23c asic multicart [UNLICENSED]
   47, 4, 4, 6, 6, 0, 0,   // (super spike vball + world cup)
@@ -2758,6 +2759,22 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 36:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0xFFA0+i, (i<<4));
+          write_prg_byte(0x4101, 0);
+          write_prg_byte(0x4102, (i<<4));
+          write_prg_byte(0x4103, 0);
+          write_prg_byte(0x4100, 0);
+          write_prg_byte(0x4103, 0xFF);
+          write_prg_byte(0xFFFF, 0xFF);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
 
       case 37:
         banks = ((int_pow(2, prgsize) * 2)) - 2;  // Set Number of Banks
@@ -3530,6 +3547,16 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8002, i);          // CHR Bank 0
             write_prg_byte(0x8003, i + 1);      // CHR Bank 1
             for (word address = 0x0; address < 0x1000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 36:
+          banks = int_pow(2, chrsize) * 4;
+          for (int i = 0; i < banks; i += 8) {
+            write_prg_byte(0x4200, i);
+            for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
           }
