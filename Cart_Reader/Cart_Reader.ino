@@ -1081,11 +1081,7 @@ static const char modeItem2[] PROGMEM = "SNES/SFC (CLK0+1)";
 static const char modeItem2[] PROGMEM = "Super Nintendo/SFC";
 #endif
 static const char modeItem3[] PROGMEM = "Mega Drive/Genesis";
-#if defined(clockgen_installed)
 static const char modeItem4[] PROGMEM = "N64 (3V EEP CLK1)";
-#else
-static const char modeItem4[] PROGMEM = "Nintendo 64(3V EEP)";
-#endif
 static const char modeItem5[] PROGMEM = "Game Boy";
 static const char modeItem6[] PROGMEM = "About";
 // static const char modeItem7[] PROGMEM = "Reset"; (stored in common strings array)
@@ -2903,15 +2899,6 @@ void wait_btn() {
     // get input button
     int b = checkButton();
 
-#ifdef enable_N64
-#ifndef clockgen_installed
-    // Send some clock pulses to the Eeprom in case it locked up
-    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
-      pulseClock_N64(1);
-    }
-#endif
-#endif
-
     // if the cart readers input button is pressed shortly
     if (b == 1) {
       errorLvl = 0;
@@ -3005,15 +2992,6 @@ void wait_btn() {
     // get input button
     int b = checkButton();
 
-#ifdef enable_N64
-#ifndef clockgen_installed
-    // Send some clock pulses to the Eeprom in case it locked up
-    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
-      pulseClock_N64(1);
-    }
-#endif
-#endif
-
     // if the cart readers input button is pressed shortly
     if (b == 1) {
       errorLvl = 0;
@@ -3044,15 +3022,6 @@ void wait_encoder() {
     // Get rotary encoder
     encoder.tick();
     int newPos = encoder.getPosition();
-
-#ifdef enable_N64
-#ifndef clockgen_installed
-    // Send some clock pulses to the Eeprom in case it locked up
-    if ((mode == mode_N64_Cart) && ((saveType == 5) || (saveType == 6))) {
-      pulseClock_N64(1);
-    }
-#endif
-#endif
 
     if (rotaryPos != newPos) {
       rotaryPos = newPos;

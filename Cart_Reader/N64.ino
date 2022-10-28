@@ -18,15 +18,9 @@
    Variables
  *****************************************/
 // Received N64 Eeprom data bits, 1 page
-bool tempBits[65];
 int eepPages;
 
 // N64 Controller
-// 256 bits of received Controller data + 8 bit CRC
-char N64_raw_dump[265];
-// Array that holds one Controller Pak block of 32 bytes data
-byte myBlock[33];
-String rawStr = "";  // above char array read into a string
 struct {
   char stick_x;
   char stick_y;
@@ -262,11 +256,7 @@ void n64CartMenu() {
       } else if ((saveType == 5) || (saveType == 6)) {
         println_Msg(F("Reading EEPROM..."));
         display_Update();
-#ifdef clockgen_installed
         readEeprom();
-#else
-        readEeprom_CLK();
-#endif
       } else {
         print_Error(F("Savetype Error"), false);
       }
@@ -320,13 +310,8 @@ void n64CartMenu() {
         fileBrowser(F("Select eep file"));
         display_Clear();
 
-#ifdef clockgen_installed
         writeEeprom();
         writeErrors = verifyEeprom();
-#else
-        writeEeprom_CLK();
-        writeErrors = verifyEeprom_CLK();
-#endif
 
         if (writeErrors == 0) {
           println_Msg(F("EEPROM verified OK"));
@@ -628,157 +613,301 @@ static uint8_t dataCRC(uint8_t* data) {
   return ret;
 }
 
+// Macro producing a delay loop waiting an number of cycles multiple of 3, with
+// a range of 3 to 768 cycles (187.5ns to 48us). It takes 6 bytes to do so
+// (3 instructions) making it the same size as the equivalent 3-cycles NOP
+// delay. For shorter delays or non-multiple-of-3-cycle delays, add your own
+// NOPs.
+#define N64_DELAY_LOOP(cycle_count) do { \
+  byte i; \
+  __asm__ __volatile__ ("\n" \
+    "\tldi %[i], %[loop_count]\n" \
+    ".delay_loop_%=:\n" \
+    "\tdec %[i]\n" \
+    "\tbrne .delay_loop_%=\n" \
+    : [i] "=r" (i) \
+    : [loop_count] "i" (cycle_count / 3) \
+    : "cc" \
+  ); \
+} while(0)
+
 /******************************************
    N64 Controller Protocol Functions
  *****************************************/
-void N64_send(unsigned char* buffer, char length) {
-  // Send these bytes
-  char bits;
+void sendJoyBus(const byte *buffer, char length) {
+  // Implemented in assembly as there is very little wiggle room, timing-wise.
+  // Overall structure:
+  //   outer_loop:
+  //     mask = 0x80
+  //     cur_byte = *(buffer++)
+  //   inner_loop:
+  //     falling edge
+  //     if (cur_byte & mask) {
+  //       wait 1us starting at the falling edge
+  //       rising edge
+  //       wait 2us starting at the rising edge
+  //     } else {
+  //       wait 3us starting at the falling edge
+  //       rising edge
+  //     }
+  //   inner_common_codepath:
+  //     mask >>= 1
+  //     if (mask == 0)
+  //       goto outer_loop_trailer
+  //     wait +1us from the rising edge
+  //     goto inner_loop
+  //   outer_loop_trailer:
+  //     length -= 1
+  //     if (length == 0)
+  //       goto stop_bit
+  //     wait +1us from the rising edge
+  //     goto outer_loop
+  //   stop_bit:
+  //     wait +1us from the rising edge
+  //     falling edge
+  //     wait 1us from the falling edge
+  //     rising edge
 
-  // This routine is very carefully timed by examining the assembly output.
-  // Do not change any statements, it could throw the timings off
-  //
-  // We get 16 cycles per microsecond, which should be plenty, but we need to
-  // be conservative. Most assembly ops take 1 cycle, but a few take 2
-  //
-  // I use manually constructed for-loops out of gotos so I have more control
-  // over the outputted assembly. I can insert nops where it was impossible
-  // with a for loop
+  byte mask, cur_byte, scratch;
+  // Note on DDRH: retrieve the current DDRH value, and pre-compute the values
+  // to write in order to drive the line high or low. This saves 3 cycles per
+  // transition: sts (2 cycles) instead of lds, or/and, sts (2 + 1 + 2 cycles).
+  // This means that no other code may run in parallel, but this function anyway
+  // requires interrupts to be disabled in order to work in the expected amount
+  // of time.
+  const byte line_low = DDRH | 0x10;
+  const byte line_high = line_low & 0xef;
+  __asm__ __volatile__("\n"
+    ".outer_loop_%=:\n"
+    // mask = 0x80
+    "\tldi  %[mask], 0x80\n"             // 1
+    // load byte to send from memory
+    "\tld   %[cur_byte], Z+\n"           // 2
+    ".inner_loop_%=:\n"
+    // Falling edge
+    "\tsts  %[out_byte], %[line_low]\n"  // 2
+    // Test cur_byte & mask, without clobbering either
+    "\tmov  %[scratch], %[cur_byte]\n"   // 1
+    "\tand  %[scratch], %[mask]\n"       // 1
+    "\tbreq .bit_is_0_%=\n"              // bit is 1: 1, bit is 0: 2
 
-  asm volatile(";Starting outer for loop");
-outer_loop:
-  {
-    asm volatile(";Starting inner for loop");
-    bits = 8;
-inner_loop:
-    {
-      // Starting a bit, set the line low
-      asm volatile(";Setting line to low");
-      N64_LOW;  // 1 op, 2 cycles
+    // bit is a 1
+    // Stay low for 1us (16 cycles).
+    // Time before: 3 cycles (mov, and, breq-false).
+    // Time after: sts (2 cycles).
+    // So 11 to go, so 3 3-cycles iterations and 2 nop.
+    "\tldi  %[scratch], 3\n"             // 1
+    ".delay_1_low_%=:\n"
+    "\tdec  %[scratch]\n"                // 1
+    "\tbrne .delay_1_low_%=\n"           // exit: 1, loop: 2
+    "\tnop\n"                            // 1
+    "\tnop\n"                            // 1
+    // Rising edge
+    "\tsts  %[out_byte], %[line_high]\n" // 2
+    // Wait for 2us (32 cycles) to sync with the bot_is_0 codepath.
+    // Time before: 0 cycles.
+    // Time after: 2 cycles (rjmp).
+    // So 30 to go, so 10 3-cycles iterations and 0 nop.
+    "\tldi  %[scratch], 10\n"            // 1
+    ".delay_1_high_%=:\n"
+    "\tdec  %[scratch]\n"                // 1
+    "\tbrne .delay_1_high_%=\n"          // exit: 1, loop: 2
+    "\trjmp .inner_common_path_%=\n"     // 2
 
-      asm volatile(";branching");
-      if (*buffer >> 7) {
-        asm volatile(";Bit is a 1");
-        // 1 bit
-        // remain low for 1us, then go high for 3us
-        // nop block 1
-        asm volatile("nop\nnop\nnop\nnop\nnop\n");
+    ".bit_is_0_%=:\n"
+    // bit is a 0
+    // Stay high for 3us (48 cycles).
+    // Time before: 4 cycles (mov, and, breq-true).
+    // Time after: 2 cycles (sts).
+    // So 42 to go, so 14 3-cycles iterations, and 0 nop.
+    "\tldi  %[scratch], 14\n"            // 1
+    ".delay_0_low_%=:\n"
+    "\tdec  %[scratch]\n"                // 1
+    "\tbrne .delay_0_low_%=\n"           // exit: 1, loop: 2
+    // Rising edge
+    "\tsts  %[out_byte], %[line_high]\n" // 2
 
-        asm volatile(";Setting line to high");
-        N64_HIGH;
+    // codepath common to both possible values
+    ".inner_common_path_%=:\n"
+    "\tnop\n"                            // 1
+    "\tlsr  %[mask]\n"                   // 1
+    "\tbreq .outer_loop_trailer_%=\n"    // mask!=0: 1, mask==0: 2
+    // Stay high for 1us (16 cycles).
+    // Time before: 3 cycles (nop, lsr, breq-false).
+    // Time after: 4 cycles (rjmp, sts)
+    // So 9 to go, so 3 3-cycles iterations and 0 nop.
+    "\tldi  %[scratch], 3\n"             // 1
+    ".delay_common_high_%=:\n"
+    "\tdec  %[scratch]\n"                // 1
+    "\tbrne .delay_common_high_%=\n"     // exit: 1, loop: 2
+    "\trjmp .inner_loop_%=\n"            // 2
 
-        // nop block 2
-        // we'll wait only 2us to sync up with both conditions
-        // at the bottom of the if statement
-        asm volatile("nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n");
-
-      } else {
-        asm volatile(";Bit is a 0");
-        // 0 bit
-        // remain low for 3us, then go high for 1us
-        // nop block 3
-        asm volatile("nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\nnop\n"
-                     "nop\n");
-
-        asm volatile(";Setting line to high");
-        N64_HIGH;
-
-        // wait for 1us
-        asm volatile("; end of conditional branch, need to wait 1us more before next bit");
-      }
-      // end of the if, the line is high and needs to remain
-      // high for exactly 16 more cycles, regardless of the previous
-      // branch path
-
-      asm volatile(";finishing inner loop body");
-      --bits;
-      if (bits != 0) {
-        // nop block 4
-        // this block is why a for loop was impossible
-        asm volatile("nop\nnop\nnop\nnop\nnop\n"
-                     "nop\nnop\nnop\nnop\n");
-        // rotate bits
-        asm volatile(";rotating out bits");
-        *buffer <<= 1;
-
-        goto inner_loop;
-      }  // fall out of inner loop
-    }
-    asm volatile(";continuing outer loop");
-    // In this case: the inner loop exits and the outer loop iterates,
-    // there are /exactly/ 16 cycles taken up by the necessary operations.
-    // So no nops are needed here (that was lucky!)
-    --length;
-    if (length != 0) {
-      ++buffer;
-      goto outer_loop;
-    }  // fall out of outer loop
-  }
+    ".outer_loop_trailer_%=:\n"
+    "\tdec %[length]\n"                  // 1
+    "\tbreq .stop_bit_%=\n"              // length!=0: 1, length==0: 2
+    // Stay high for 1us (16 cycles).
+    // Time before: 6 cycles (lsr, nop, breq-true, dec, breq-false).
+    // Time after: 7 cycles (rjmp, ldi, ld, sts).
+    // So 3 to go, so 3 nop (for simplicity).
+    "\tnop\n"                            // 1
+    "\tnop\n"                            // 1
+    "\tnop\n"                            // 1
+    "\trjmp .outer_loop_%=\n"            // 2
+    // Done sending data, send a stop bit.
+    ".stop_bit_%=:\n"
+    // Stay high for 1us (16 cycles).
+    // Time before: 7 cycles (lsr, nop, breq-true, dec, breq-true).
+    // Time after: 2 cycles (sts).
+    // So 7 to go, so 2 3-cycles iterations and 1 nop.
+    "\tldi  %[scratch], 2\n"             // 1
+    ".delay_stop_high_%=:\n"
+    "\tdec  %[scratch]\n"                // 1
+    "\tbrne .delay_stop_high_%=\n"       // exit: 1, loop: 2
+    "\tnop\n"
+    "\tsts  %[out_byte], %[line_low]\n"  // 2
+    // Stay low for 1us (16 cycles).
+    // Time before: 0 cycles.
+    // Time after: 2 cycles (sts).
+    // So 14 to go, so 4 3-cycles iterations and 2 nop.
+    "\tldi  %[scratch], 5\n"             // 1
+    ".delay_stop_low_%=:\n"
+    "\tdec  %[scratch]\n"                // 1
+    "\tbrne .delay_stop_low_%=\n"        // exit: 1, loop: 2
+    "\tnop\n"
+    "\tnop\n"
+    "\tsts  %[out_byte], %[line_high]\n" // 2
+    // Notes on arguments:
+    // - mask and scratch are used wth "ldi", which can only work on registers
+    //   16 to 31, so tag these with "a" rather than the generic "r"
+    // - mark all output-only arguments as early-clobber ("&"), as input
+    //   registers are used throughout all iterations and both sets must be
+    //   strictly distinct
+    // - tag buffer with "z", to use the "ld r?, Z+" instruction (load from
+    //   16bits RAM address and postincrement, in 2 cycles).
+    //   XXX: any pointer register pair would do, but mapping to Z explicitly
+    //   because I cannot find a way to get one of "X", "Y" or "Z" to appear
+    //   when expanding "%[buffer]", causing the assembler to reject the
+    //   instruction. Pick Z as it is the only call-used such register,
+    //   avoiding the need to preserve any value a caller may have set it to.
+    : [buffer]    "+z" (buffer),
+      [length]    "+r" (length),
+      [cur_byte]  "=&r" (cur_byte),
+      [mask]      "=&a" (mask),
+      [scratch]   "=&a" (scratch)
+    : [line_low]  "r"  (line_low),
+      [line_high] "r"  (line_high),
+      [out_byte]  "i"  (&DDRH)
+    : "cc", "memory"
+  );
 }
 
-void N64_stop() {
-  // send a single stop (1) bit
-  // nop block 5
-  asm volatile("nop\nnop\nnop\nnop\n");
-  N64_LOW;
-  // wait 1 us, 16 cycles, then raise the line
-  // 16-2=14
-  // nop block 6
-  asm volatile("nop\nnop\nnop\nnop\nnop\n"
-               "nop\nnop\nnop\nnop\nnop\n"
-               "nop\nnop\nnop\nnop\n");
-  N64_HIGH;
-}
+word recvJoyBus(byte *output, byte byte_count) {
+  // listen for expected byte_count bytes of data back from the controller
+  // return the number of bytes not (fully) received if the delay for a signal
+  // edge takes too long.
 
-void N64_get(word bitcount) {
-  // listen for the expected bitcount/8 bytes of data back from the controller and
-  // blast it out to the N64_raw_dump array, one bit per byte for extra speed.
-  asm volatile(";Starting to listen");
-  unsigned char timeout;
-  char* bitbin = N64_raw_dump;
+  // Implemented in assembly as there is very little wiggle room, timing-wise.
+  // Overall structure:
+  //     mask = 0x80
+  //     cur_byte = 0
+  //   read_loop:
+  //     wait for falling edge
+  //     wait for a bit more than 1us
+  //     if input:
+  //       cur_byte |= mask
+  //     mask >>= 1
+  //     if (mask == 0)
+  //       if (--byte_count == 0)
+  //         goto read_end
+  //       append cur_byte to output
+  //       mask = 0x80
+  //       cur_byte = 0
+  //     wait for data high
+  //     goto read_loop
+  //   read_end:
+  //     return byte_count
 
-  // Again, using gotos here to make the assembly more predictable and
-  // optimization easier (please don't kill me)
-read_loop:
-  timeout = 0x3f;
-  // wait for line to go low
-  while (N64_QUERY) {
-    if (!--timeout)
-      return;
-  }
-  // wait approx 2us and poll the line
-  asm volatile(
-    "nop\nnop\nnop\nnop\nnop\n"
-    "nop\nnop\nnop\nnop\nnop\n"
-    "nop\nnop\nnop\nnop\nnop\n"
-    "nop\nnop\nnop\nnop\nnop\n"
-    "nop\nnop\nnop\nnop\nnop\n"
-    "nop\nnop\nnop\nnop\nnop\n");
-  *bitbin = N64_QUERY;
-  ++bitbin;
-  --bitcount;
-  if (bitcount == 0)
-    return;
+  byte mask, cur_byte, timeout, scratch;
+  __asm__ __volatile__("\n"
+    "\tldi  %[mask], 0x80\n"
+    "\tclr  %[cur_byte]\n"
+    ".read_loop_%=:\n"
+    // Wait for input to be low. Time out if it takes more than ~27us (~7 bits
+    // worth of time) for it to go low.
+    // Takes 5 cycles to exit on input-low iteration (lds, sbrs-false, rjmp).
+    // Takes 7 cycles to loop on input-high iteration (lds, sbrs-true, dec,
+    //  brne-true).
+    "\tldi  %[timeout], 0x3f\n"               // 1
+    ".read_wait_falling_edge_%=:\n"
+    "\tlds  %[scratch], %[in_byte]\n"         // 2
+    "\tsbrs %[scratch], %[in_bit]\n"          // low: 1, high: 2
+    "\trjmp .read_input_low_%=\n"             // 2
+    "\tdec  %[timeout]\n"                     // 1
+    "\tbrne .read_wait_falling_edge_%=\n"     // timeout==0: 1, timeout!=0: 2
+    "\trjmp .read_end_%=\n"                   // 2
 
-  // wait for line to go high again
-  // it may already be high, so this should just drop through
-  timeout = 0x3f;
-  while (!N64_QUERY) {
-    if (!--timeout)
-      return;
-  }
-  goto read_loop;
+    ".read_input_low_%=:\n"
+    // Wait for 1500 us (24 cycles) before reading input.
+    // As it takes from 5 to 7 cycles for the prevous loop to exit,
+    // this means this loop exits from 1812.5us to 1937.5us after the falling
+    // edge, so at least 812.5us after a 1-bit rising edge, and at least
+    // 1062.5us before a 0-bit rising edge.
+    // This also leaves us with up to 2062.5us (33 cycles) to update cur_byte,
+    // possibly moving on to the next byte, waiting for a high input, and
+    // waiting for the next falling edge.
+    // Time taken until waiting for input high for non-last byte:
+    // - shift to current byte:
+    //   - 1: 4 cycles (lds, sbrc-false, or)
+    //   - 0: 4 cycles (lds, sbrc-true)
+    // - byte done: 8 cycles (lsr, brne-false, st, dec, brne-false, ldi, clr)
+    // - byte not done: 3 cycles (lsr, brne-true)
+    // Total: 7 to 12 cycles, so there are at least 21 cycles left until the
+    // next bit.
+    "\tldi  %[timeout], 8\n"                  // 1
+    ".read_wait_low_%=:\n"
+    "\tdec  %[timeout]\n"                     // 1
+    "\tbrne .read_wait_low_%=\n"              // timeout=0: 1, timeout!=0: 2
+
+    // Sample input
+    "\tlds  %[scratch], %[in_byte]\n"         // 2
+    // Add to cur_byte
+    "\tsbrc %[scratch], %[in_bit]\n"          // high: 1, low: 2
+    "\tor   %[cur_byte], %[mask]\n"           // 1
+    // Shift mask
+    "\tlsr  %[mask]\n"
+    "\tbrne .read_wait_input_high_init_%=\n"  // mask==0: 1, mask!=0: 2
+    // A wole byte was read, store in output
+    "\tst   Z+, %[cur_byte]\n"                // 2
+    // Decrement byte count
+    "\tdec  %[byte_count]\n"                  // 1
+    // Are we done reading ?
+    "\tbreq .read_end_%=\n"                   // byte_count!=0: 1, byte_count==0: 2
+    // No, prepare for reading another
+    "\tldi  %[mask], 0x80\n"
+    "\tclr  %[cur_byte]\n"
+
+    // Wait for rising edge
+    ".read_wait_input_high_init_%=:"
+    "\tldi  %[timeout], 0x3f\n"               // 1
+    ".read_wait_input_high_%=:\n"
+    "\tlds  %[scratch], %[in_byte]\n"         // 2
+    "\tsbrc %[scratch], %[in_bit]\n"          // high: 1, low: 2
+    "\trjmp .read_loop_%=\n"                   // 2
+    "\tdec  %[timeout]\n"                     // 1
+    "\tbrne .read_wait_input_high_%=\n"       // timeout==0: 1, timeout!=0: 2
+    "\trjmp .read_end_%=\n"                   // 2
+    ".read_end_%=:\n"
+    : [output]     "+z"  (output),
+      [byte_count] "+r"  (byte_count),
+      [mask]       "=&a" (mask),
+      [cur_byte]   "=&r" (cur_byte),
+      [timeout]    "=&a" (timeout),
+      [scratch]    "=&a" (scratch)
+    : [in_byte]    "i"   (&PINH),
+      [in_bit]     "i"   (4)
+    : "cc", "memory"
+  );
+  return byte_count;
 }
 
 /******************************************
@@ -787,115 +916,54 @@ read_loop:
 void get_button() {
   // Command to send to the gamecube
   // The last bit is rumble, flip it to rumble
-  // yes this does need to be inside the loop, the
-  // array gets mutilated when it goes through N64_send
-  unsigned char command[] = {
-    0x01
-  };
-
-  // Empty buffer
-  for (word i = 0; i < 265; i++) {
-    N64_raw_dump[i] = 0xFF;
-  }
+  const byte command[] = { 0x01 };
+  byte response[4];
 
   // don't want interrupts getting in the way
   noInterrupts();
-  // send those 3 bytes
-  N64_send(command, 1);
-  N64_stop();
-  // read in 32bits of data and dump it to N64_raw_dump
-  N64_get(32);
+  sendJoyBus(command, sizeof(command));
+  recvJoyBus(response, sizeof(response));
   // end of time sensitive code
   interrupts();
 
-  // The get_N64_status function sloppily dumps its data 1 bit per byte
-  // into the get_status_extended char array. It's our job to go through
-  // that and put each piece neatly into the struct N64_status
-  int i;
-  memset(&N64_status, 0, sizeof(N64_status));
-
-  // bits: joystick x value
   // These are 8 bit values centered at 0x80 (128)
-  for (i = 0; i < 8; i++) {
-    N64_status.stick_x |= N64_raw_dump[16 + i] ? (0x80 >> i) : 0;
-  }
-  for (i = 0; i < 8; i++) {
-    N64_status.stick_y |= N64_raw_dump[24 + i] ? (0x80 >> i) : 0;
-  }
-
-  // read char array N64_raw_dump into string rawStr
-  rawStr = "";
-  for (i = 0; i < 16; i++) {
-    rawStr = rawStr + String(N64_raw_dump[i], DEC);
-  }
+  N64_status.stick_x = response[2];
+  N64_status.stick_y = response[3];
 
   // Buttons (A,B,Z,S,DU,DD,DL,DR,0,0,L,R,CU,CD,CL,CR)
-  if (rawStr.substring(0, 16) == "0000000000000000") {
+  if (response[0] & 0x80)
+    button = F("A");
+  else if (response[0] & 0x40)
+    button = F("B");
+  else if (response[0] & 0x20)
+    button = F("Z");
+  else if (response[0] & 0x10)
+    button = F("START");
+  else if (response[0] & 0x08)
+    button = F("D-Up");
+  else if (response[0] & 0x04)
+    button = F("D-Down");
+  else if (response[0] & 0x02)
+    button = F("D-Left");
+  else if (response[0] & 0x01)
+    button = F("D-Right");
+  //else if (response[1] & 0x80)
+  //else if (response[1] & 0x40)
+  else if (response[1] & 0x20)
+    button = F("L");
+  else if (response[1] & 0x10)
+    button = F("R");
+  else if (response[1] & 0x08)
+    button = F("C-Up");
+  else if (response[1] & 0x04)
+    button = F("C-Down");
+  else if (response[1] & 0x02)
+    button = F("C-Left");
+  else if (response[1] & 0x01)
+    button = F("C-Right");
+  else {
     lastbutton = button;
     button = F("Press a button");
-  } else {
-    for (int i = 0; i < 16; i++) {
-      // seems to be 16, 8 or 4 depending on what pin is used
-      if (N64_raw_dump[i] == 16) {
-        switch (i) {
-          case 7:
-            button = F("D-Right");
-            break;
-
-          case 6:
-            button = F("D-Left");
-            break;
-
-          case 5:
-            button = F("D-Down");
-            break;
-
-          case 4:
-            button = F("D-Up");
-            break;
-
-          case 3:
-            button = F("START");
-            break;
-
-          case 2:
-            button = F("Z");
-            break;
-
-          case 1:
-            button = F("B");
-            break;
-
-          case 0:
-            button = F("A");
-            break;
-
-          case 15:
-            button = F("C-Right");
-            break;
-
-          case 14:
-            button = F("C-Left");
-            break;
-
-          case 13:
-            button = F("C-Down");
-            break;
-
-          case 12:
-            button = F("C-Up");
-            break;
-
-          case 11:
-            button = F("R");
-            break;
-
-          case 10:
-            button = F("L");
-            break;
-        }
-      }
-    }
   }
 }
 
@@ -1428,151 +1496,63 @@ void controllerTest_Display() {
  *****************************************/
 // Reset the controller
 void resetController() {
-  // Reset controller
-  unsigned char command[] = { 0xFF };
-  // don't want interrupts getting in the way
+  const byte command[] = { 0xFF };
   noInterrupts();
-  // Send command
-  N64_send(command, 1);
-  // Send stop
-  N64_stop();
-  // Enable interrupts
+  sendJoyBus(command, sizeof(command));
   interrupts();
   delay(100);
 }
 
 // read 3 bytes from controller
 void checkController() {
+  byte response[8];
+  const byte command[] = { 0x00 };
+
   display_Clear();
 
   // Check if line is HIGH
   if (!N64_QUERY)
     print_Error(F("Data line LOW"), true);
 
-  // Send status command
-  unsigned char command[] = { 0x0 };
-
-  // Empty buffer
-  for (word i = 0; i < 265; i++) {
-    N64_raw_dump[i] = 0xFF;
-  }
-
   // don't want interrupts getting in the way
   noInterrupts();
-  N64_send(command, 1);
-  N64_stop();
-  // read in data
-  N64_get(32);
+  sendJoyBus(command, sizeof(command));
+  recvJoyBus(response, sizeof(response));
   // end of time sensitive code
   interrupts();
 
-  // Empty N64_raw_dump into myBlock
-  for (word i = 0; i < 32; i += 8) {
-    boolean byteFlipped[9];
-
-    // Flip byte order
-    byteFlipped[0] = N64_raw_dump[i + 7];
-    byteFlipped[1] = N64_raw_dump[i + 6];
-    byteFlipped[2] = N64_raw_dump[i + 5];
-    byteFlipped[3] = N64_raw_dump[i + 4];
-    byteFlipped[4] = N64_raw_dump[i + 3];
-    byteFlipped[5] = N64_raw_dump[i + 2];
-    byteFlipped[6] = N64_raw_dump[i + 1];
-    byteFlipped[7] = N64_raw_dump[i + 0];
-
-    // Join bits into one byte
-    unsigned char myByte = 0;
-    for (byte j = 0; j < 8; ++j) {
-      if (byteFlipped[j]) {
-        myByte |= 1 << j;
-      }
-    }
-    if ((i == 0) && (myByte != 0x05))
-      print_Error(F("Controller not found"), true);
-    if ((i == 16) && (myByte != 0x01))
-      print_Error(F("Controller Pak not found"), true);
-    if ((i == 16) && (myByte == 0x04))
-      print_Error(F("CRC Error"), true);
-  }
+  if (response[0] != 0x05)
+    print_Error(F("Controller not found"), true);
+  if (response[2] != 0x01)
+    print_Error(F("Controller Pak not found"), true);
 }
 
 // read 32bytes from controller pak and calculate CRC
-byte readBlock(word myAddress) {
+byte readBlock(byte *output, word myAddress) {
+  byte response_crc;
   // Calculate the address CRC
   word myAddressCRC = addrCRC(myAddress);
-
-  // Read Controller Pak command
-  unsigned char command[] = { 0x02 };
-  // Address Command
-  unsigned char addressHigh[] = { (unsigned char)(myAddressCRC >> 8) };
-  unsigned char addressLow[] = { (unsigned char)(myAddressCRC & 0xff) };
-
-  // Empty buffer
-  for (word i = 0; i < 265; i++) {
-    N64_raw_dump[i] = 0xFF;
-  }
+  const byte command[] = { 0x02, (byte) (myAddressCRC >> 8), (byte) (myAddressCRC & 0xff) };
+  word error;
 
   // don't want interrupts getting in the way
   noInterrupts();
-  // send those 3 bytes
-  N64_send(command, 1);
-  N64_send(addressHigh, 1);
-  N64_send(addressLow, 1);
-  N64_stop();
-  // read in 32 byte data + 1 byte crc
-  N64_get(264);
+  sendJoyBus(command, sizeof(command));
+  error = recvJoyBus(output, 32);
+  if (error == 0)
+    error = recvJoyBus(&response_crc, 1);
   // end of time sensitive code
   interrupts();
 
-  // Empty N64_raw_dump into myBlock
-  for (word i = 0; i < 256; i += 8) {
-    boolean byteFlipped[9];
-
-    // Flip byte order
-    byteFlipped[0] = N64_raw_dump[i + 7];
-    byteFlipped[1] = N64_raw_dump[i + 6];
-    byteFlipped[2] = N64_raw_dump[i + 5];
-    byteFlipped[3] = N64_raw_dump[i + 4];
-    byteFlipped[4] = N64_raw_dump[i + 3];
-    byteFlipped[5] = N64_raw_dump[i + 2];
-    byteFlipped[6] = N64_raw_dump[i + 1];
-    byteFlipped[7] = N64_raw_dump[i + 0];
-
-    // Join bits into one byte
-    unsigned char myByte = 0;
-    for (byte j = 0; j < 8; ++j) {
-      if (byteFlipped[j]) {
-        myByte |= 1 << j;
-      }
-    }
-    // Save byte into block array
-    myBlock[i / 8] = myByte;
+  if (error) {
+    myFile.close();
+    println_Msg(F("Controller Pak was"));
+    println_Msg(F("not dumped due to a"));
+    print_Error(F("read timeout"), true);
   }
 
-  // Get CRC of block send
-  boolean byteFlipped[9];
-  // Flip byte order
-  byteFlipped[0] = N64_raw_dump[256 + 7];
-  byteFlipped[1] = N64_raw_dump[256 + 6];
-  byteFlipped[2] = N64_raw_dump[256 + 5];
-  byteFlipped[3] = N64_raw_dump[256 + 4];
-  byteFlipped[4] = N64_raw_dump[256 + 3];
-  byteFlipped[5] = N64_raw_dump[256 + 2];
-  byteFlipped[6] = N64_raw_dump[256 + 1];
-  byteFlipped[7] = N64_raw_dump[256 + 0];
-
-  unsigned char blockCRC = 0;
-  for (byte k = 0; k < 8; ++k) {
-    if (byteFlipped[k]) {
-      blockCRC |= 1 << k;
-    }
-  }
-
-  // Calculate CRC of block received
-  unsigned char myCRC = dataCRC(&myBlock[0]);
-
-  // Compare
-  if (blockCRC != myCRC) {
+  // Compare with computed CRC
+  if (response_crc != dataCRC(output)) {
     display_Clear();
     // Close the file:
     myFile.close();
@@ -1581,7 +1561,7 @@ byte readBlock(word myAddress) {
     print_Error(F("protocol CRC error"), true);
   }
 
-  return blockCRC;
+  return response_crc;
 }
 
 // reads the MPK file to the sd card
@@ -1631,17 +1611,11 @@ void readMPK() {
   draw_progressbar(0, totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
-  // Read 512 byte into sdBuffer
   for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
-    // Read 32 byte block
-    for (word currBlock = 0; currBlock < 512; currBlock += 32) {
+    // Read 32 byte block into sdBuffer
+    for (word currBlock = 0; currBlock < sizeof(sdBuffer); currBlock += 32) {
       // Read one block of the Controller Pak into array myBlock and write CRC of that block to crc file
-      crcFile.write(readBlock(currSdBuffer + currBlock));
-
-      // Copy block to SdBuffer
-      for (byte currByte = 0; currByte < 32; currByte++) {
-        sdBuffer[currBlock + currByte] = myBlock[currByte];
-      }
+      crcFile.write(readBlock(&sdBuffer[currBlock], currSdBuffer + currBlock));
 
       // Real N64 has about 627us pause between banks, add a bit extra delay
       if (currBlock < 479)
@@ -1707,7 +1681,7 @@ void verifyCRC() {
   crcFile.close();
 
   if (writeErrors == 0) {
-    println_Msg(F("Read successfully"));
+    println_Msg(F("Saved successfully"));
     sd.remove(filePath);
     display_Update();
   } else {
@@ -1733,24 +1707,31 @@ boolean checkHeader(byte* buf) {
 
 // verifies if Controller Pak holds valid header data
 void validateMPK() {
+  byte writeErrors = 0;
+  boolean failed = false;
+  SdFile mpk_file;
+  byte buf[256];
+
   //open file on sd card
-  if (!myFile.open(fileName, O_READ)) {
+  if (!mpk_file.open(fileName, O_READ)) {
     print_Error(open_file_STR, true);
   }
 
   // Read first 256 byte which contains the header including checksum and reverse checksum and three copies of it
-  myFile.read(sdBuffer, 256);
+  mpk_file.read(buf, sizeof(buf));
 
   //Check all four header copies
   writeErrors = 0;
-  if (!checkHeader(&sdBuffer[0x20]))
+  if (!checkHeader(&buf[0x20]))
     writeErrors++;
-  if (!checkHeader(&sdBuffer[0x60]))
+  if (!checkHeader(&buf[0x60]))
     writeErrors++;
-  if (!checkHeader(&sdBuffer[0x80]))
+  if (!checkHeader(&buf[0x80]))
     writeErrors++;
-  if (!checkHeader(&sdBuffer[0xC0]))
+  if (!checkHeader(&buf[0xC0]))
     writeErrors++;
+  if (writeErrors)
+    failed = true;
 
   print_Msg(F("HDR: "));
   print_Msg(4 - writeErrors);
@@ -1759,32 +1740,46 @@ void validateMPK() {
 
   // Check both TOC copies
   writeErrors = 0;
-  word sum = 0;
 
   // Read 2nd and 3rd 256 byte page with TOC info
   for (word currSdBuffer = 0x100; currSdBuffer < 0x300; currSdBuffer += 256) {
-    sum = 0;
+    byte sum = 0;
 
     // Read 256 bytes into SD buffer
-    myFile.read(sdBuffer, 256);
+    mpk_file.read(buf, sizeof(buf));
 
     // Calculate TOC checksum
-    for (int i = 5; i < 128; i++) {
-      sum += sdBuffer[(i << 1) + 1];
+    for (byte i = 5; i < 128; i++) {
+      sum += buf[(i << 1) + 1];
     }
-    if (sdBuffer[1] != (sum & 0xFF))
+    if (buf[1] != sum)
       writeErrors++;
   }
+  if (writeErrors)
+    failed = true;
   print_Msg(F("ToC: "));
   print_Msg(2 - writeErrors);
   println_Msg(F("/2"));
+
+  print_Msg(F("Consistency check "));
+  if (failed) {
+    errorLvl = 1;
+    print_Msg(F("failed"));
+  } else {
+    errorLvl = 0;
+    print_Msg(F("pased"));
+  }
   display_Update();
 
   // Close the file:
-  myFile.close();
+  mpk_file.close();
 }
 
 void writeMPK() {
+  // 3 command bytes, 32 data bytes
+  byte command[3 + 32];
+  command[0] = 0x03;
+
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
   print_Msg(F("Writing "));
@@ -1796,54 +1791,31 @@ void writeMPK() {
   if (myFile.open(filePath, O_READ)) {
 
     //Initialize progress bar
-    uint32_t processedProgressBar = 0;
-    uint32_t totalProgressBar = (uint32_t)(0x7FFF);
+    uint32_t totalProgressBar = 0x7FFF;
     draw_progressbar(0, totalProgressBar);
 
-    for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
-      // Read 512 bytes into SD buffer, takes 1500us
-      myFile.read(sdBuffer, 512);
+    for (word address = 0x0000; address < 0x8000; address += 32) {
+      myFile.read(command + 3, sizeof(command) - 3);
 
-      // Write 32 byte block
-      for (word currBlock = 0; currBlock < 512; currBlock += 32) {
-        // Calculate the address CRC
-        word myAddressCRC = addrCRC(currSdBuffer + currBlock);
+      word address_with_crc = addrCRC(address);
+      command[1] = (byte) (address_with_crc >> 8);
+      command[2] = (byte) (address_with_crc & 0xff);
 
-        // Copy 32 byte block from SdBuffer
-        for (byte currByte = 0; currByte < 32; currByte++) {
-          myBlock[currByte] = sdBuffer[currBlock + currByte];
-        }
+      // don't want interrupts getting in the way
+      noInterrupts();
+      sendJoyBus(command, sizeof(command));
+      // Enable interrupts
+      interrupts();
 
-        // Write Controller Pak command
-        unsigned char command[] = { 0x03 };
-        // Address Command
-        unsigned char addressHigh[] = { (unsigned char)(myAddressCRC >> 8) };
-        unsigned char addressLow[] = { (unsigned char)(myAddressCRC & 0xff) };
+      // Real N64 has about 627us pause between banks, add a bit extra delay
+      delayMicroseconds(650);
 
-        // don't want interrupts getting in the way
-        noInterrupts();
-        // Send write command
-        N64_send(command, 1);
-        // Send block number
-        N64_send(addressHigh, 1);
-        N64_send(addressLow, 1);
-        // Send data to write
-        N64_send(myBlock, 32);
-        // Send stop
-        N64_stop();
-        // Enable interrupts
-        interrupts();
-
-        // Real N64 has about 627us pause between banks, add a bit extra delay
-        if (currBlock < 479)
-          delayMicroseconds(1500);
+      if ((address & 0x1FF) == 0) {
+        // Blink led
+        // Update progress bar
+        blinkLED();
+        draw_progressbar(address, totalProgressBar);
       }
-
-      // Blink led
-      blinkLED();
-      // Update progress bar
-      processedProgressBar += 512;
-      draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Close the file:
     myFile.close();
@@ -1854,6 +1826,7 @@ void writeMPK() {
 
 // verifies if write was successful
 void verifyMPK() {
+  byte block[32];
   writeErrors = 0;
 
   print_STR(verifying_STR, 1);
@@ -1876,12 +1849,12 @@ void verifyMPK() {
 
     // Compare 32 byte block
     for (word currBlock = 0; currBlock < sizeof(sdBuffer); currBlock += 32) {
-      // Read one block of the Controller Pak into array myBlock
-      readBlock(currSdBuffer + currBlock);
+      // Read one block of the Controller Pak
+      readBlock(block, currSdBuffer + currBlock);
 
       // Check against file on SD card
       for (byte currByte = 0; currByte < 32; currByte++) {
-        if (sdBuffer[currBlock + currByte] != myBlock[currByte]) {
+        if (sdBuffer[currBlock + currByte] != block[currByte]) {
           writeErrors++;
         }
       }
@@ -2190,441 +2163,6 @@ void idCart() {
 #endif
 }
 
-/******************************************
-  Eeprom functions (without Adafruit clockgen)
-*****************************************/
-// Send a clock pulse of 2us length, 50% duty, 500kHz
-void pulseClock_N64(unsigned int times) {
-  for (unsigned int i = 0; i < (times * 2); i++) {
-    // Switch the clock pin to 0 if it's 1 and 0 if it's 1
-    PORTH ^= (1 << 1);
-    // without the delay the clock pulse would be 1.5us and 666kHz
-    //__asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t"));
-  }
-}
-
-// Send one byte of data to eeprom
-void sendData_CLK(byte data) {
-  for (byte i = 0; i < 8; i++) {
-    // pull data line low
-    N64_LOW;
-
-    // if current bit is 1, pull high after ~1us, 2 cycles
-    if (data >> 7) {
-      pulseClock_N64(2);
-      N64_HIGH;
-      pulseClock_N64(6);
-    }
-    // if current bit is 0 pull high after ~3us, 6 cycles
-    else {
-      pulseClock_N64(6);
-      N64_HIGH;
-      pulseClock_N64(2);
-    }
-
-    // rotate to the next bit
-    data <<= 1;
-  }
-}
-
-// Send stop bit to eeprom
-void sendStop_CLK() {
-  N64_LOW;
-  pulseClock_N64(2);
-  N64_HIGH;
-  pulseClock_N64(4);
-}
-
-// Capture 8 bytes in 64 bits into bit array tempBits
-void readData_CLK() {
-  for (byte i = 0; i < 64; i++) {
-
-    // pulse clock until we get response from eeprom
-    while (N64_QUERY) {
-      pulseClock_N64(1);
-    }
-
-    // Skip over the 1us low part of a high bit
-    pulseClock_N64(3);
-
-    // Read bit
-    tempBits[i] = N64_QUERY;
-
-    // wait for line to go high again
-    while (!N64_QUERY) {
-      pulseClock_N64(1);
-    }
-  }
-}
-
-// Write Eeprom to cartridge
-void writeEeprom_CLK() {
-  if ((saveType == 5) || (saveType == 6)) {
-
-    // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
-    println_Msg(F("Writing..."));
-    println_Msg(filePath);
-    display_Update();
-
-    // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
-
-      for (byte i = 0; i < (eepPages / 64); i++) {
-        myFile.read(sdBuffer, 512);
-        // Disable interrupts for more uniform clock pulses
-        noInterrupts();
-
-        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-          // Blink led
-          blinkLED();
-
-          // Wait ~50ms between page writes or eeprom will have write errors
-          pulseClock_N64(26000);
-
-          // Send write command
-          sendData_CLK(0x05);
-          // Send page number
-          sendData_CLK(pageNumber + (i * 64));
-          // Send data to write
-          for (byte j = 0; j < 8; j++) {
-            sendData_CLK(sdBuffer[(pageNumber * 8) + j]);
-          }
-          sendStop_CLK();
-        }
-        interrupts();
-      }
-
-      // Close the file:
-      myFile.close();
-      print_STR(done_STR, 1);
-      display_Update();
-      delay(600);
-    } else {
-      print_Error(sd_error_STR, true);
-    }
-  } else {
-    print_Error(F("Savetype Error"), true);
-  }
-}
-
-// Dump Eeprom to SD
-void readEeprom_CLK() {
-  if ((saveType == 5) || (saveType == 6)) {
-
-    // Wait 50ms or eeprom might lock up
-    pulseClock_N64(26000);
-
-    // Get name, add extension and convert to char array for sd lib
-    strcpy(fileName, romName);
-    strcat(fileName, ".eep");
-
-    // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
-
-    // write new folder number back to eeprom
-    foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
-
-    // Open file on sd card
-    if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_Error(create_file_STR, true);
-    }
-
-    for (byte i = 0; i < (eepPages / 64); i++) {
-      // Disable interrupts for more uniform clock pulses
-      noInterrupts();
-
-      for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-        // Blink led
-        blinkLED();
-
-        // Send read command
-        sendData_CLK(0x04);
-        // Send Page number
-        sendData_CLK(pageNumber + (i * 64));
-        // Send stop bit
-        sendStop_CLK();
-
-        // read data
-        readData_CLK();
-        sendStop_CLK();
-
-        // OR 8 bits into one byte for a total of 8 bytes
-        for (byte j = 0; j < 64; j += 8) {
-          sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
-        }
-        // Wait 50ms between pages or eeprom might lock up
-        pulseClock_N64(26000);
-      }
-      interrupts();
-
-      // Write 64 pages at once to the SD card
-      myFile.write(sdBuffer, 512);
-    }
-    // Close the file:
-    myFile.close();
-    //clear the screen
-    display_Clear();
-    print_Msg(F("Saved to "));
-    print_Msg(folder);
-    println_Msg(F("/"));
-    display_Update();
-  } else {
-    print_Error(F("Savetype Error"), true);
-  }
-}
-
-// Check if a write succeeded, returns 0 if all is ok and number of errors if not
-unsigned long verifyEeprom_CLK() {
-  if ((saveType == 5) || (saveType == 6)) {
-    writeErrors = 0;
-
-    // Wait 50ms or eeprom might lock up
-    pulseClock_N64(26000);
-
-    display_Clear();
-    print_Msg(F("Verifying against "));
-    println_Msg(filePath);
-    display_Update();
-
-    // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
-
-      for (byte i = 0; i < (eepPages / 64); i++) {
-        // Disable interrupts for more uniform clock pulses
-        noInterrupts();
-
-        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-          // Blink led
-          blinkLED();
-
-          // Send read command
-          sendData_CLK(0x04);
-          // Send Page number
-          sendData_CLK(pageNumber + (i * 64));
-          // Send stop bit
-          sendStop_CLK();
-
-          // read data
-          readData_CLK();
-          sendStop_CLK();
-
-          // OR 8 bits into one byte for a total of 8 bytes
-          for (byte j = 0; j < 64; j += 8) {
-            sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
-          }
-          // Wait 50ms between pages or eeprom might lock up
-          pulseClock_N64(26000);
-        }
-        interrupts();
-
-        // Check sdBuffer content against file on sd card
-        for (int c = 0; c < 512; c++) {
-          if (myFile.read() != sdBuffer[c]) {
-            writeErrors++;
-          }
-        }
-      }
-      // Close the file:
-      myFile.close();
-    } else {
-      // SD Error
-      writeErrors = 999999;
-      print_Error(sd_error_STR, true);
-    }
-    // Return 0 if verified ok, or number of errors
-    return writeErrors;
-  } else {
-    print_Error(F("Savetype Error"), true);
-    return 1;
-  }
-}
-
-/******************************************
-  Eeprom functions (with Adafruit clockgen)
-*****************************************/
-// Send one byte of data to eeprom
-void sendData(byte data) {
-  for (byte i = 0; i < 8; i++) {
-    // pull data line low
-    N64_LOW;
-
-    // if current bit is 1, pull high after ~1us
-    if (data >> 7) {
-      __asm__("nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t");
-      N64_HIGH;
-      __asm__("nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t");
-    }
-    // if current bit is 0 pull high after ~3us
-    else {
-      __asm__("nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t");
-      N64_HIGH;
-      __asm__("nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t"
-              "nop\n\t");
-    }
-
-    // rotate to the next bit
-    data <<= 1;
-  }
-}
-
-// Send stop bit to eeprom
-void sendStop() {
-  N64_LOW;
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-  N64_HIGH;
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-}
-
-// Capture 8 bytes in 64 bits into bit array tempBits
-void readData() {
-  for (byte i = 0; i < 64; i++) {
-
-    // wait until we get response from eeprom
-    while (N64_QUERY) {
-    }
-
-    // Skip over the 1us low part of a high bit, Arduino running at 16Mhz -> one nop = 62.5ns
-    __asm__("nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t");
-
-    // Read bit
-    tempBits[i] = N64_QUERY;
-
-    // wait for line to go high again
-    while (!N64_QUERY) {
-      __asm__("nop\n\t");
-    }
-  }
-}
-
 // Write Eeprom to cartridge
 void writeEeprom() {
   if ((saveType == 5) || (saveType == 6)) {
@@ -2637,31 +2175,26 @@ void writeEeprom() {
 
     // Open file on sd card
     if (myFile.open(filePath, O_READ)) {
+      // 2 command bytes and 8 data bytes
+      byte command[2 + 8];
+      command[0] = 0x05;
 
-      for (byte i = 0; i < (eepPages / 64); i++) {
-        myFile.read(sdBuffer, 512);
+      // Note: eepPages can be 256, so page must be able to get to 256 for the
+      // loop to exit. So it is not possible to use command[1] directly as loop
+      // counter.
+      for (int page = 0; page < eepPages; page++) {
+        command[1] = page;
+        // TODO: read 512 bytes in a 512 + 2 bytes buffer, and move the command start 32 bytes at a time
+        myFile.read(command + 2, sizeof(command) - 2);
         // Disable interrupts for more uniform clock pulses
+
+        // Blink led
+        blinkLED();
+        if (page)
+          delay(50); // Wait 50ms between pages when writing
+
         noInterrupts();
-
-        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-          // Blink led
-          blinkLED();
-
-          // Wait ~50ms between page writes or eeprom will have write errors, Arduino running at 16Mhz -> one nop = 62.5ns
-          for (long i = 0; i < 115000; i++) {
-            __asm__("nop\n\t");
-          }
-
-          // Send write command
-          sendData(0x05);
-          // Send page number
-          sendData(pageNumber + (i * 64));
-          // Send data to write
-          for (byte j = 0; j < 8; j++) {
-            sendData(sdBuffer[(pageNumber * 8) + j]);
-          }
-          sendStop();
-        }
+        sendJoyBus(command, sizeof(command));
         interrupts();
       }
 
@@ -2675,6 +2208,28 @@ void writeEeprom() {
     }
   } else {
     print_Error(F("Savetype Error"), true);
+  }
+}
+
+void readEepromPageList(byte *output, byte page_number, byte page_count) {
+  byte command[] = { 0x04, page_number };
+
+  // Disable interrupts for more uniform clock pulses
+  while (page_count--) {
+    // Blink led
+    blinkLED();
+
+    noInterrupts();
+    sendJoyBus(command, sizeof(command));
+    // XXX: is it possible to read more than 8 bytes at a time ?
+    recvJoyBus(output, 8);
+    interrupts();
+
+    if (page_count)
+      delayMicroseconds(600); // wait 600us between pages when reading
+
+    command[1]++;
+    output += 8;
   }
 }
 
@@ -2699,36 +2254,8 @@ void readEeprom() {
       print_Error(create_file_STR, true);
     }
 
-    for (byte i = 0; i < (eepPages / 64); i++) {
-      // Disable interrupts for more uniform clock pulses
-      noInterrupts();
-
-      for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-        // Blink led
-        blinkLED();
-
-        // Send read command
-        sendData(0x04);
-        // Send Page number
-        sendData(pageNumber + (i * 64));
-        // Send stop bit
-        sendStop();
-
-        // read data
-        readData();
-        sendStop();
-
-        // OR 8 bits into one byte for a total of 8 bytes
-        for (byte j = 0; j < 64; j += 8) {
-          sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
-        }
-        // Wait ~600us between pages
-        for (int i = 0; i < 2000; i++) {
-          __asm__("nop\n\t");
-        }
-      }
-      interrupts();
-
+    for (int i = 0; i < eepPages; i += sizeof(sdBuffer) / 8) {
+      readEepromPageList(sdBuffer, i, sizeof(sdBuffer) / 8);
       // Write 64 pages at once to the SD card
       myFile.write(sdBuffer, sizeof(sdBuffer));
     }
@@ -2747,6 +2274,8 @@ void readEeprom() {
 
 // Check if a write succeeded, returns 0 if all is ok and number of errors if not
 unsigned long verifyEeprom() {
+  unsigned long writeErrors;
+
   if ((saveType == 5) || (saveType == 6)) {
     writeErrors = 0;
 
@@ -2757,37 +2286,8 @@ unsigned long verifyEeprom() {
 
     // Open file on sd card
     if (myFile.open(filePath, O_READ)) {
-
-      for (byte i = 0; i < (eepPages / 64); i++) {
-        // Disable interrupts for more uniform clock pulses
-        noInterrupts();
-
-        for (byte pageNumber = 0; pageNumber < 64; pageNumber++) {
-          // Blink led
-          blinkLED();
-
-          // Send read command
-          sendData(0x04);
-          // Send Page number
-          sendData(pageNumber + (i * 64));
-          // Send stop bit
-          sendStop();
-
-          // read data
-          readData();
-          sendStop();
-
-          // OR 8 bits into one byte for a total of 8 bytes
-          for (byte j = 0; j < 64; j += 8) {
-            sdBuffer[(pageNumber * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
-          }
-          // Wait ~600us between pages
-          for (int i = 0; i < 2000; i++) {
-            __asm__("nop\n\t");
-          }
-        }
-        interrupts();
-
+      for (int i = 0; i < eepPages; i += sizeof(sdBuffer) / 8) {
+        readEepromPageList(sdBuffer, i, sizeof(sdBuffer) / 8);
         // Check sdBuffer content against file on sd card
         for (size_t c = 0; c < sizeof(sdBuffer); c++) {
           if (myFile.read() != sdBuffer[c]) {
