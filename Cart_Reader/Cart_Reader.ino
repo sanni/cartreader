@@ -1185,7 +1185,11 @@ void addonMenu() {
 
 #ifdef enable_FLASH
     case 2:
+#ifdef enable_FLASH16
       flashMenu();
+#else
+      flashromMenu8();
+#endif
       break;
 #endif
 
