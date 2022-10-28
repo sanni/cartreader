@@ -60,12 +60,12 @@ static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2
 // PCE card menu items
 static char menuOptionspceCart[7][20] = {
   "Read ROM",
-  "", // Read RAM Bank %d
-  "", //Write RAM Bank %d
+  "",  // Read RAM Bank %d
+  "",  //Write RAM Bank %d
   "Reset",
   "Inc Bank Number",
   "Dec Bank Number",
-  "" // ROM size now %dK / Force ROM size
+  ""  // ROM size now %dK / Force ROM size
 };
 
 // Turbochip menu items
@@ -440,7 +440,7 @@ uint32_t calculate_crc32(int n, unsigned char c[], uint32_t r) {
   return r;
 }
 
-void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__ ((unused)), uint32_t crc) {
+void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((unused)), uint32_t crc) {
   FsFile rom, script;
   char gamename[100];
   char crc_file[9], crc_search[9];

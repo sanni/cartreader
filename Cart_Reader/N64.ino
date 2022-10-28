@@ -1726,7 +1726,7 @@ void verifyCRC() {
 }
 
 // Calculates the checksum of the header
-boolean checkHeader(byte *buf) {
+boolean checkHeader(byte* buf) {
   word sum = 0;
   word buf_sum = (buf[28] << 8) + buf[29];
 

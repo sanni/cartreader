@@ -667,16 +667,14 @@ void dataIn_MD() {
 /******************************************
   MEGA DRIVE functions
 *****************************************/
-byte copyToRomName_MD(char *output, const byte *input, byte length) {
+byte copyToRomName_MD(char* output, const byte* input, byte length) {
   byte myLength = 0;
 
   for (byte i = 0; i < 48; i++) {
     if (
       (
-        (input[i] >= '0' && input[i] <= '9') ||
-        (input[i] >= 'A' && input[i] <= 'z')
-      ) && myLength < length
-    ) {
+        (input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'z'))
+      && myLength < length) {
       output[myLength++] = input[i];
     }
   }

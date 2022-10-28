@@ -903,9 +903,7 @@ void getCartInfo_GB() {
 
   // Strip trailing white space
   while (
-    myLength &&
-    (romName[myLength - 1] == '_' || romName[myLength - 1] == ' ')
-  ) {
+    myLength && (romName[myLength - 1] == '_' || romName[myLength - 1] == ' ')) {
     myLength--;
   }
   romName[myLength] = 0;
@@ -918,34 +916,16 @@ void getCartInfo_GB() {
   // MMM01 (Mani 4 in 1)
   if (
     (
-      strncmp(romName, "BOUKENJIMA2 SET", 15) == 0 && sdBuffer[0x14D] == 0
-    ) || (
-      strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0 && sdBuffer[0x14D] == 0xC6
-    ) || (
-      strncmp(romName, "GANBARUGA SET", 13) == 0 && sdBuffer[0x14D] == 0x90
-    ) || (
-      strncmp(romName, "RTYPE 2 SET", 11) == 0 && sdBuffer[0x14D] == 0x32
-    )
-  ) {
+      strncmp(romName, "BOUKENJIMA2 SET", 15) == 0 && sdBuffer[0x14D] == 0)
+    || (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0 && sdBuffer[0x14D] == 0xC6) || (strncmp(romName, "GANBARUGA SET", 13) == 0 && sdBuffer[0x14D] == 0x90) || (strncmp(romName, "RTYPE 2 SET", 11) == 0 && sdBuffer[0x14D] == 0x32)) {
     romType = 0x0B;
   }
 
   // MBC1M
   if (
     (
-      strncmp(romName, "MOMOCOL", 7) == 0 && sdBuffer[0x14D] == 0x28
-    ) || (
-      strncmp(romName, "BOMCOL", 6) == 0 && sdBuffer[0x14D] == 0x86
-    ) || (
-      strncmp(romName, "GENCOL", 6) == 0 && sdBuffer[0x14D] == 0x8A
-    ) || (
-      strncmp(romName, "SUPERCHINESE 123", 16) == 0 && sdBuffer[0x14D] == 0xE4
-    ) || (
-      strncmp(romName, "MORTALKOMBATI&II", 16) == 0 && sdBuffer[0x14D] == 0xB9
-    ) || (
-      strncmp(romName, "MORTALKOMBAT DUO", 16) == 0 && sdBuffer[0x14D] == 0xA7
-    )
-  ) {
+      strncmp(romName, "MOMOCOL", 7) == 0 && sdBuffer[0x14D] == 0x28)
+    || (strncmp(romName, "BOMCOL", 6) == 0 && sdBuffer[0x14D] == 0x86) || (strncmp(romName, "GENCOL", 6) == 0 && sdBuffer[0x14D] == 0x8A) || (strncmp(romName, "SUPERCHINESE 123", 16) == 0 && sdBuffer[0x14D] == 0xE4) || (strncmp(romName, "MORTALKOMBATI&II", 16) == 0 && sdBuffer[0x14D] == 0xB9) || (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0 && sdBuffer[0x14D] == 0xA7)) {
     romType += 0x100;
   }
 

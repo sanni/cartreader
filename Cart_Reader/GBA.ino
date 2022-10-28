@@ -51,7 +51,7 @@ void gbaMenu() {
     case 0:
       // Read rom
       if (cartSize == 0) {
-        const byte romOptionsGBASize[] = {1, 2, 4, 8, 16, 32};
+        const byte romOptionsGBASize[] = { 1, 2, 4, 8, 16, 32 };
         // create submenu with title and 4 options to choose from
         unsigned char GBARomMenu;
         // Copy menuOptions out of progmem
@@ -313,7 +313,7 @@ void setup_GBA() {
 *****************************************/
 static byte getSaveType() {
   if (saveType == 0) {
-    const byte saveOptionsGBAType[] = {1, 2, 3, 6, 4, 5};
+    const byte saveOptionsGBAType[] = { 1, 2, 3, 6, 4, 5 };
     // create submenu with title and 6 options to choose from
     unsigned char GBASaveMenu;
     // Copy menuOptions out of progmem

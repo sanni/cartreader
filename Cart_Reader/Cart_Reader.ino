@@ -76,25 +76,60 @@ char ver[5] = "11.0";
 //******************************************
 // ENABLE MODULES
 //******************************************
-// remove // before #define to enable a module
-#define enable_SNES
-#define enable_SFM
-#define enable_SV
-#define enable_MD
-#define enable_SMS
-#define enable_N64
-#define enable_GBX
-#define enable_NES
+// add/remove // before #define to disable/enable modules you
+// don't need/need to save programm storage space and dynamic memory
+
+// ColecoVision
+#define enable_COLV
+
+// Flashrom Programmer for SNES repros
 #define enable_FLASH
-#define enable_FLASH16
-// #define enable_PCE
-// #define enable_WS
-// #define enable_NGP
-// #define enable_INTV
-// #define enable_COLV
-// #define enable_VBOY
-// #define enable_WSV
-// #define enable_PCW
+//#define enable_FLASH16
+
+// Game Boy (Color) and Advance
+#define enable_GBX
+
+// Intellivision
+#define enable_INTV
+
+// Sega Mega Drive/Genesis
+#define enable_MD
+
+// Nintendo 64
+#define enable_N64
+
+// Nintendo Entertainment System/Family Computer
+#define enable_NES
+
+// Neo Geo Pocket
+#define enable_NGP
+
+// PC Engine/TurboGrafx 16
+#define enable_PCE
+
+// Benesse Pocket Challenge W
+//#define enable_PCW
+
+// Sega Master System
+#define enable_SMS
+
+// Super Nintendo
+#define enable_SNES
+
+// Super Famicom SF Memory Cassette
+#define enable_SFM
+
+// Super Famicom Satellaview
+#define enable_SV
+
+// Virtual Boy
+#define enable_VBOY
+
+// WonderSwan
+//#define enable_WS
+
+// Watara Supervision
+//#define enable_WSV
 
 //******************************************
 // HW CONFIGS
@@ -533,30 +568,31 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
 
 // Defined as a macros, as compiler disregards inlining requests and these are
 // performance-critical functions.
-#define UPDATE_CRC(crc, ch) do { \
-  uint8_t idx = ((crc) ^ (ch)) & 0xff; \
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx); \
-  (crc) = tab_value ^ ((crc) >> 8); \
-} while (0)
+#define UPDATE_CRC(crc, ch) \
+  do { \
+    uint8_t idx = ((crc) ^ (ch)) & 0xff; \
+    uint32_t tab_value = pgm_read_dword(crc_32_tab + idx); \
+    (crc) = tab_value ^ ((crc) >> 8); \
+  } while (0)
 
-uint32_t updateCRC(const byte *buffer, size_t length, uint32_t crc) {
+uint32_t updateCRC(const byte* buffer, size_t length, uint32_t crc) {
   for (size_t c = 0; c < length; c++) {
     UPDATE_CRC(crc, buffer[c]);
   }
   return crc;
 }
 
-uint32_t calculateCRC(const byte *buffer, size_t length) {
+uint32_t calculateCRC(const byte* buffer, size_t length) {
   uint32_t crc = 0xFFFFFFFF;
   crc = updateCRC(buffer, length, crc);
   return ~crc;
 }
 
-uint32_t calculateCRC(FsFile &infile) {
+uint32_t calculateCRC(FsFile& infile) {
   uint32_t byte_count;
   uint32_t crc = 0xFFFFFFFF;
 
-  while((byte_count = infile.read(sdBuffer, sizeof(sdBuffer))) != 0) {
+  while ((byte_count = infile.read(sdBuffer, sizeof(sdBuffer))) != 0) {
     crc = updateCRC(sdBuffer, byte_count, crc);
   }
   return ~crc;
@@ -618,7 +654,7 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
     //if end of file or newline found, execute command
     if (str_buf[i] == '\r') {
       str_buf[i] = 0;
-      readfile->seekCur(i - read_len + 2); // +2 to skip over \n because \r\n
+      readfile->seekCur(i - read_len + 2);  // +2 to skip over \n because \r\n
       return;
     }
   }
@@ -626,13 +662,13 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
   // EOL was not found, keep looking (slower)
   while (readfile->available()) {
     if (readfile->read() == '\r') {
-      readfile->read(); // read \n because \r\n
+      readfile->read();  // read \n because \r\n
       break;
     }
   }
 }
 
-void rewind_line(FsFile &readfile, byte count=1) {
+void rewind_line(FsFile& readfile, byte count = 1) {
   uint32_t position = readfile.curPosition();
   count++;
   for (byte count_newline = 0; count_newline < count; count_newline++) {
@@ -700,7 +736,7 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
           //Skip CRLF
           myFile.seekCur(4);
         }
-#endif // enable_NES
+#endif  // enable_NES
 
         // Close the file:
         myFile.close();
@@ -718,7 +754,7 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
           }
           myFile.close();
         }
-#endif // enable_NES
+#endif  // enable_NES
         print_Msg(F(" -> "));
         display_Update();
 
@@ -749,9 +785,9 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
     println_Msg(F("Database missing"));
     return 0;
   }
-#else // nointro
+#else   // nointro
   println_Msg("");
-#endif // !nointro
+#endif  // !nointro
   return 0;
 }
 
@@ -1886,7 +1922,7 @@ void setColor_RGB(byte r, byte g, byte b) {
 
 // Extract ASCII printable characters from input, collapsing underscores and spaces.
 // Use when extracting titles from cartridges, to build a rom title.
-byte buildRomName(char *output, const byte *input, byte length) {
+byte buildRomName(char* output, const byte* input, byte length) {
   byte input_char;
   byte output_len = 0;
   for (unsigned int i = 0; i < length; i++) {
@@ -1900,10 +1936,7 @@ byte buildRomName(char *output, const byte *input, byte length) {
     }
   }
   while (
-    output_len && (
-      output[output_len - 1] == '_' || output[output_len - 1] == ' '
-    )
-  ) {
+    output_len && (output[output_len - 1] == '_' || output[output_len - 1] == ' ')) {
     output_len--;
   }
   output[output_len] = 0;
@@ -2359,7 +2392,7 @@ void statusLED(boolean on) {
     PORTD |= (1 << 7);
   else
     PORTD &= ~(1 << 7);
-    /*
+  /*
     #elif defined(enable_OLED)
     if (!on)
       PORTB |= (1 << 4);
@@ -2384,7 +2417,7 @@ void statusLED(boolean on) {
   */
 }
 #else
-void statusLED(boolean on __attribute__ ((unused))) {
+void statusLED(boolean on __attribute__((unused))) {
 }
 #endif
 

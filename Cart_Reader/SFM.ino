@@ -433,7 +433,7 @@ void sfmFlashMenu() {
 #endif
 
 // Read the games from the menu area
-void getGames(char gameCode[8][20], boolean *hasMenu, byte *numGames) {
+void getGames(char gameCode[8][20], boolean* hasMenu, byte* numGames) {
   // Set data pins to input
   dataIn();
   // Set control pins to input

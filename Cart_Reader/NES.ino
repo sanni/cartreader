@@ -460,9 +460,9 @@ struct database_entry {
   char filename[128];
   char crc_str[8 + 1 + 8 + 1 + 32 + 1];
   uint32_t crc;
-  char *crc512_str;
+  char* crc512_str;
   uint32_t crc512;
-  char *iNES_str;
+  char* iNES_str;
 };
 
 void printPRG(unsigned long myOffset) {
@@ -495,7 +495,7 @@ void setDefaultRomName() {
   romName[4] = '\0';
 }
 
-void setRomnameFromString(const char *input) {
+void setRomnameFromString(const char* input) {
   byte myLength = 0;
   for (byte i = 0; i < 20 && myLength < 15; i++) {
     // Stop at first "(" to remove "(Country)"
@@ -503,10 +503,7 @@ void setRomnameFromString(const char *input) {
       break;
     }
     if (
-      (input[i] >= '0' && input[i] <= '9') ||
-      (input[i] >= 'A' && input[i] <= 'Z') ||
-      (input[i] >= 'a' && input[i] <= 'z')
-    ) {
+      (input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'Z') || (input[i] >= 'a' && input[i] <= 'z')) {
       romName[myLength++] = input[i];
     }
   }
@@ -568,10 +565,7 @@ void getMapping() {
       readDatabaseEntry(database, &entry);
       //if checksum search was successful set mapper and end search, also filter out 0xFF checksum
       if (
-        entry.crc512 != 0xBD7BC39F && (
-          entry.crc512 == oldcrc32 || entry.crc512 == oldcrc32MMC3
-        )
-      ) {
+        entry.crc512 != 0xBD7BC39F && (entry.crc512 == oldcrc32 || entry.crc512 == oldcrc32MMC3)) {
         // Rewind to start of entry
         rewind_line(database, 3);
         break;
@@ -597,8 +591,8 @@ void getMapping() {
   // Display database
   while (database.available()) {
     byte iNES[16];
-    byte *output;
-    char *input;
+    byte* output;
+    char* input;
 
     struct database_entry entry;
 
@@ -709,7 +703,7 @@ void getMapping() {
   database.close();
 }
 
-static void readDatabaseEntry(FsFile &database, struct database_entry *entry) {
+static void readDatabaseEntry(FsFile& database, struct database_entry* entry) {
   get_line(entry->filename, &database, sizeof(entry->filename));
   get_line(entry->crc_str, &database, sizeof(entry->crc_str));
   skip_line(&database);
@@ -724,7 +718,7 @@ static void readDatabaseEntry(FsFile &database, struct database_entry *entry) {
   entry->crc512 = strtoul(entry->crc512_str, NULL, 16);
 }
 
-static void selectMapping(FsFile &database) {
+static void selectMapping(FsFile& database) {
   // Select starting letter
   byte myLetter = starting_letter();
 
@@ -2511,10 +2505,10 @@ void readPRG(boolean readrom) {
       case 0:
       case 3:
       case 13:
-      case 87:                                                                             // 16K/32K
-      case 184:                                                                            // 32K
-      case 185:                                                                            // 16K/32K
-        for (word address = 0; address < (((word) prgsize) * 0x4000) + 0x4000; address += 512) {  // 16K or 32K
+      case 87:                                                                                   // 16K/32K
+      case 184:                                                                                  // 32K
+      case 185:                                                                                  // 16K/32K
+        for (word address = 0; address < (((word)prgsize) * 0x4000) + 0x4000; address += 512) {  // 16K or 32K
           dumpPRG(base, address);
         }
         break;
@@ -2542,7 +2536,7 @@ void readPRG(boolean readrom) {
       case 2:                          // 128K/256K
         for (int i = 0; i < 8; i++) {  // 128K/256K
           write_prg_byte(0x8000, i);
-          for (word address = 0x0; address < (((word) prgsize - 3) * 0x4000) + 0x4000; address += 512) {
+          for (word address = 0x0; address < (((word)prgsize - 3) * 0x4000) + 0x4000; address += 512) {
             dumpPRG(base, address);
           }
         }
@@ -2760,13 +2754,13 @@ void readPRG(boolean readrom) {
           }
         }
         break;
-        
+
       case 36:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
-          write_prg_byte(0xFFA0+i, (i<<4));
+          write_prg_byte(0xFFA0 + i, (i << 4));
           write_prg_byte(0x4101, 0);
-          write_prg_byte(0x4102, (i<<4));
+          write_prg_byte(0x4102, (i << 4));
           write_prg_byte(0x4103, 0);
           write_prg_byte(0x4100, 0);
           write_prg_byte(0x4103, 0xFF);
@@ -3014,10 +3008,10 @@ void readPRG(boolean readrom) {
           }
         }
         break;
-        
+
       case 91:
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < (banks-2); i += 2) {
+        for (int i = 0; i < (banks - 2); i += 2) {
           write_prg_byte(0x7000, (i | 0));
           write_prg_byte(0x7001, (i | 1));
           for (word address = 0x0; address < 0x4000; address += 512) {
@@ -3025,8 +3019,8 @@ void readPRG(boolean readrom) {
           }
         }
         for (word address = 0x4000; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpPRG(base, address);
+        }
         break;
 
       case 92:  // 256K
@@ -3566,7 +3560,7 @@ void readCHR(boolean readrom) {
             }
           }
           break;
-          
+
         case 36:
           banks = int_pow(2, chrsize) * 4;
           for (int i = 0; i < banks; i++) {
@@ -3850,14 +3844,14 @@ void readCHR(boolean readrom) {
             }
           }
           break;
-          
+
         case 91:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i += 8) {
-            write_prg_byte(0x6000, (i/2) | 0);
-            write_prg_byte(0x6001, (i/2) | 1);
-            write_prg_byte(0x6002, (i/2) | 2);
-            write_prg_byte(0x6003, (i/2) | 3);
+            write_prg_byte(0x6000, (i / 2) | 0);
+            write_prg_byte(0x6001, (i / 2) | 1);
+            write_prg_byte(0x6002, (i / 2) | 2);
+            write_prg_byte(0x6003, (i / 2) | 3);
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
@@ -4666,8 +4660,8 @@ void NESmaker_ID() {  // Read Flash ID
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xF0);      // Software ID Exit
-  if (flashid == 0xBFB7)  // SST 39SF040
+  write_prg_byte(0x9555, 0xF0);  // Software ID Exit
+  if (flashid == 0xBFB7)         // SST 39SF040
     flashfound = 1;
 }
 

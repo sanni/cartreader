@@ -12,22 +12,21 @@
 static const char gbSmartMenuItem1[] PROGMEM = "Game Menu";
 static const char gbSmartMenuItem2[] PROGMEM = "Flash Menu";
 //static const char gbSmartMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBSmart[] PROGMEM = { gbSmartMenuItem1, gbSmartMenuItem2, string_reset2 };
+static const char *const menuOptionsGBSmart[] PROGMEM = { gbSmartMenuItem1, gbSmartMenuItem2, string_reset2 };
 
 static const char gbSmartFlashMenuItem1[] PROGMEM = "Read Flash";
 static const char gbSmartFlashMenuItem2[] PROGMEM = "Write Flash";
 static const char gbSmartFlashMenuItem3[] PROGMEM = "Back";
-static const char* const menuOptionsGBSmartFlash[] PROGMEM = { gbSmartFlashMenuItem1, gbSmartFlashMenuItem2, gbSmartFlashMenuItem3 };
+static const char *const menuOptionsGBSmartFlash[] PROGMEM = { gbSmartFlashMenuItem1, gbSmartFlashMenuItem2, gbSmartFlashMenuItem3 };
 
 static const char gbSmartGameMenuItem1[] PROGMEM = "Read Game";
 static const char gbSmartGameMenuItem2[] PROGMEM = "Read SRAM";
 static const char gbSmartGameMenuItem3[] PROGMEM = "Write SRAM";
 static const char gbSmartGameMenuItem4[] PROGMEM = "Switch Game";
 //static const char gbSmartGameMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, string_reset2 };
+static const char *const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, string_reset2 };
 
-struct GBSmartGameInfo
-{
+struct GBSmartGameInfo {
   uint8_t start_bank;
   uint8_t rom_type;
   uint8_t rom_size;
