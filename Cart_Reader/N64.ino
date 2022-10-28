@@ -50,6 +50,9 @@ String CRC1 = "";
 String CRC2 = "";
 #endif
 
+static const char N64_EEP_FILENAME_FMT[] PROGMEM = "%s.eep";
+static const char N64_SAVE_DIRNAME_FMT[] PROGMEM = "N64/SAVE/%s/%d";
+
 /******************************************
   Menu
 *****************************************/
@@ -2687,12 +2690,11 @@ void writeEeprom() {
 void readEeprom() {
   if ((saveType == 5) || (saveType == 6)) {
     // Get name, add extension and convert to char array for sd lib
-    strcpy(fileName, romName);
-    strcat(fileName, ".eep");
+    snprintf_P(fileName, sizeof(fileName), N64_EEP_FILENAME_FMT, romName);
 
     // create a new folder for the save file
     EEPROM_readAnything(0, foldern);
-    sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
+    snprintf_P(folder, sizeof(folder), N64_SAVE_DIRNAME_FMT, romName, foldern);
     sd.mkdir(folder, true);
     sd.chdir(folder);
 
