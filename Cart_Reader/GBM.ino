@@ -42,7 +42,8 @@ void gbmMenu() {
       println_Msg(F("cartreader directly"));
       println_Msg(F("before reading"));
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       // Clear screen
@@ -71,7 +72,8 @@ void gbmMenu() {
       println_Msg(F("NP Cartridge."));
       println_Msg("");
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       // Clear screen
@@ -131,7 +133,8 @@ void gbmMenu() {
       println_Msg(F("NP Cartridge's"));
       println_Msg(F("mapping data"));
       println_Msg("");
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
 
@@ -171,7 +174,8 @@ void gbmMenu() {
       break;
   }
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -304,7 +308,7 @@ void writeByte_GBM(word myAddress, byte myData) {
   HELPER FUNCTIONS
 **********************/
 void printSdBuffer(word startByte, word numBytes) {
-  for (int currByte = 0; currByte < numBytes; currByte += 10) {
+  for (word currByte = 0; currByte < numBytes; currByte += 10) {
     for (byte c = 0; c < 10; c++) {
       // Convert to char array so we don't lose leading zeros
       char currByteStr[2];
@@ -333,7 +337,7 @@ void readROM_GBM(word numBanks) {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   } else {
     // Read rom
     word currAddress = 0;
@@ -492,16 +496,18 @@ boolean readFlashID_GBM() {
   send_GBM(0x0F, 0x5555, 0x90);
 
   // Read the two id bytes into a string
-  sprintf(flashid, "%02X%02X", readByte_GBM(0), readByte_GBM(1));
-  if (strcmp(flashid, "C289") == 0) {
+  flashid = readByte_GBM(0) << 8;
+  flashid |= readByte_GBM(1);
+  sprintf(flashid_str, "%04X", flashid);
+  if (flashid == 0xC289) {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     display_Update();
     resetFlash_GBM();
     return 1;
   } else {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     print_Error(F("Unknown Flash ID"), true);
     resetFlash_GBM();
     return 0;
@@ -677,7 +683,7 @@ void writeFlash_GBM() {
     }
     // Close the file:
     myFile.close();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
   } else {
     print_Error(F("Can't open file"), false);
   }
@@ -716,7 +722,7 @@ void readMapping_GBM() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   } else {
     for (byte currByte = 0; currByte < 128; currByte++) {
       sdBuffer[currByte] = readByte_GBM(currByte);
@@ -891,7 +897,7 @@ void writeMapping_GBM() {
 
     // Close the file:
     myFile.close();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
   } else {
     print_Error(F("Can't open file"), false);
   }

@@ -5,8 +5,8 @@
 
 static const char ngpMenuItem1[] PROGMEM = "Read Rom";
 static const char ngpMenuItem2[] PROGMEM = "Read chip info";
-static const char ngpMenuItemReset[] PROGMEM = "Reset";
-static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, ngpMenuItemReset };
+//static const char ngpMenuItemReset[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, string_reset2 };
 
 static const char ngpRomItem1[] PROGMEM = "4 Mbits / 512 KB";
 static const char ngpRomItem2[] PROGMEM = "8 Mbits / 1 MB";
@@ -73,7 +73,8 @@ void ngpMenu() {
   }
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -169,7 +170,8 @@ void printCartInfo_NGP() {
     println_Msg(F(" Mbits"));
   }
 
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -206,14 +208,14 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -246,7 +248,6 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
 
 void scanChip_NGP() {
   display_Clear();
-  uint32_t block_addr = 0;
 
   // generate name of report file
   snprintf(fileName, FILENAME_LENGTH, "%s.txt", romName);
@@ -264,7 +265,7 @@ void scanChip_NGP() {
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   // write new folder number back to EEPROM
   foldern++;

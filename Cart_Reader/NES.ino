@@ -161,7 +161,6 @@ static const byte PROGMEM mapsize[] = {
 *****************************************/
 // Mapper
 byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
-boolean mapfound = false;
 byte mapselect;
 
 int PRG[] = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
@@ -186,7 +185,7 @@ byte prgchk1;
 boolean mmc6 = false;
 byte prgchk2;
 byte prgchk3;
-int eepsize;
+word eepsize;
 byte bytecheck;
 byte firstbyte;
 boolean flashfound = false;  // NESmaker 39SF040 Flash Cart
@@ -206,16 +205,12 @@ char fileBIN[] = "CART.bin";
 
 // Cartridge Config
 byte mapper;
-byte newmapper;
 byte prgsize;
 byte newprgsize;
 byte chrsize;
 byte newchrsize;
 byte ramsize;
 byte newramsize;
-
-// Button
-int b = 0;
 
 /******************************************
   Menus
@@ -227,8 +222,8 @@ static const char nesMenuItem3[] PROGMEM = "Read Sram";
 static const char nesMenuItem4[] PROGMEM = "Write Sram";
 static const char nesMenuItem5[] PROGMEM = "Change Mapper";
 static const char nesMenuItem6[] PROGMEM = "Flash NESMaker";
-static const char nesMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsNES[] PROGMEM = { nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, nesMenuItem7 };
+//static const char nesMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsNES[] PROGMEM = { nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, string_reset2 };
 
 // NES chips menu
 #ifndef nointro
@@ -243,9 +238,11 @@ static const char* const menuOptionsNESChips[] PROGMEM = { nesChipsMenuItem1, ne
 
 // NES start menu
 void nesMenu() {
+  unsigned char answer;
+
   // create menu with title "NES CART READER" and 7 options to choose from
   convertPgm(menuOptionsNES, 7);
-  unsigned char answer = question_box(F("NES CART READER"), menuOptions, 7, 0);
+  answer = question_box(F("NES CART READER"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
@@ -269,7 +266,8 @@ void nesMenu() {
       sd.chdir("/");
       readRom_NES();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
 #ifdef global_log
       save_log();
 #endif
@@ -289,7 +287,8 @@ void nesMenu() {
       readRAM();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -299,18 +298,15 @@ void nesMenu() {
       writeRAM();
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
 
     // Change Mapper
     case 4:
-      romName[0] = 'C';
-      romName[1] = 'A';
-      romName[2] = 'R';
-      romName[3] = 'T';
-      romName[4] = '\0';
+      setDefaultRomName();
       setMapper();
       checkMapperSize();
       setPRGSize();
@@ -329,7 +325,8 @@ void nesMenu() {
         println_Msg(F("Error:"));
         println_Msg(F("Can't write to this cartridge"));
         println_Msg(F(""));
-        println_Msg(F("Press Button..."));
+        // Prints string out of the common strings array either with or without newline
+        print_STR(press_button_STR, 1);
         display_Update();
       }
       wait();
@@ -361,14 +358,16 @@ void nesChipMenu() {
       resetROM();
 
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
 #else
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
       readRaw_NES();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
 #ifdef global_log
       save_log();
 #endif
@@ -383,7 +382,8 @@ void nesChipMenu() {
       readPRG(false);
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -394,7 +394,8 @@ void nesChipMenu() {
       readCHR(false);
       resetROM();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -453,6 +454,15 @@ uint32_t uppow2(uint32_t n) {
   return n;
 }
 
+struct database_entry {
+  char filename[128];
+  char crc_str[8 + 1 + 8 + 1 + 32 + 1];
+  uint32_t crc;
+  char *crc512_str;
+  uint32_t crc512;
+  char *iNES_str;
+};
+
 void printPRG(unsigned long myOffset) {
   display_Clear();
   print_Msg(F("Printing PRG at "));
@@ -475,362 +485,244 @@ void printPRG(unsigned long myOffset) {
   display_Update();
 }
 
-boolean getMapping() {
-  display_Clear();
-  println_Msg(F("Searching database"));
-  display_Update();
+void setDefaultRomName() {
+  romName[0] = 'C';
+  romName[1] = 'A';
+  romName[2] = 'R';
+  romName[3] = 'T';
+  romName[4] = '\0';
+}
 
-  // Read first 512 bytes of PRG ROM
-  for (int x = 0; x < 512; x++) {
-    sdBuffer[x] = read_prg_byte(0x8000 + x);
+void setRomnameFromString(const char *input) {
+  byte myLength = 0;
+  for (byte i = 0; i < 20 && myLength < 15; i++) {
+    // Stop at first "(" to remove "(Country)"
+    if (input[i] == '(') {
+      break;
+    }
+    if (
+      (input[i] >= '0' && input[i] <= '9') ||
+      (input[i] >= 'A' && input[i] <= 'Z') ||
+      (input[i] >= 'a' && input[i] <= 'z')
+    ) {
+      romName[myLength++] = input[i];
+    }
   }
 
-  // Calculate CRC32
+  // If name consists out of all japanese characters use CART as name
+  if (myLength == 0) {
+    setDefaultRomName();
+  }
+}
+
+void getMapping() {
+  FsFile database;
   uint32_t oldcrc32 = 0xFFFFFFFF;
-  for (int c = 0; c < 512; c++) {
-    oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
-  }
+  uint32_t oldcrc32MMC3 = 0xFFFFFFFF;
   char crcStr[9];
-  char tempStr2[2];
-  char iNES_STR[33];
-  sprintf(crcStr, "%08lX", ~oldcrc32);
 
-  //MMC3 maps the last 8KB block of PRG ROM to 0xE000 while 0x8000 can contain random data after bootup
-  char crcStrMMC3[9];
-  // Read first 512 bytes of last block of PRG ROM
-  for (int x = 0; x < 512; x++) {
-    sdBuffer[x] = read_prg_byte(0xE000 + x);
+  display_Clear();
+
+  sd.chdir();
+  if (!database.open("nes.txt", O_READ)) {
+    print_Error(F("Database file not found"), true);
+    // never reached
   }
-  // Calculate CRC32
-  oldcrc32 = 0xFFFFFFFF;
+
+  // Read first 512 bytes of first and last block of PRG ROM and compute CRC32
+  // MMC3 maps the last 8KB block of PRG ROM to 0xE000 while 0x8000 can contain random data after bootup
   for (int c = 0; c < 512; c++) {
-    oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
+    UPDATE_CRC(oldcrc32, read_prg_byte(0x8000 + c));
+    UPDATE_CRC(oldcrc32MMC3, read_prg_byte(0xE000 + c));
   }
-  sprintf(crcStrMMC3, "%08lX", ~oldcrc32);
-
-  print_Msg(F("for "));
-  print_Msg(crcStr);
-  if (strcmp(crcStrMMC3, crcStr) != 0) {
-    print_Msg(F(" or "));
-    print_Msg(crcStrMMC3);
-  }
-  println_Msg(F("..."));
-  display_Update();
+  oldcrc32 = ~oldcrc32;
+  oldcrc32MMC3 = ~oldcrc32MMC3;
 
   // Filter out all 0xFF checksums at 0x8000 and 0xE000
-  if ((strcmp(crcStr, "BD7BC39F") == 0) && (strcmp(crcStrMMC3, "BD7BC39F") == 0)) {
-    delay(200);
+  if (oldcrc32 == 0xBD7BC39F && oldcrc32MMC3 == 0xBD7BC39F) {
     println_Msg(F(""));
     println_Msg(F("No data found."));
     println_Msg(F("Using manual selection"));
     display_Update();
-    delay(500);
-    romName[0] = 'C';
-    romName[1] = 'A';
-    romName[2] = 'R';
-    romName[3] = 'T';
-    romName[4] = '\0';
-    return 0;
+    delay(1000);
+    setDefaultRomName();
+    selectMapping(database);
   } else {
-    //Search for CRC32 in file
-    char gamename[100];
-    char crc_search[9];
+    println_Msg(F("Searching database"));
+    print_Msg(F("for "));
+    sprintf(crcStr, "%08lX", oldcrc32);
+    print_Msg(crcStr);
+    if (oldcrc32 != oldcrc32MMC3) {
+      char crcStrMMC3[9];
+      print_Msg(F(" or "));
+      sprintf(crcStrMMC3, "%08lX", oldcrc32MMC3);
+      print_Msg(crcStrMMC3);
+    }
+    println_Msg(F("..."));
+    display_Update();
+    while (database.available()) {
+      struct database_entry entry;
 
-    //go to root
-    sd.chdir();
-    if (myFile.open("nes.txt", O_READ)) {
-      //Search for same CRC in list
-      while (myFile.available()) {
-        // Read game name
-        get_line(gamename, &myFile, 96);
-
-        // Read CRC32 checksum
-        sprintf(checksumStr, "%c", myFile.read());
-        for (byte i = 0; i < 7; i++) {
-          sprintf(tempStr2, "%c", myFile.read());
-          strcat(checksumStr, tempStr2);
-        }
-
-        // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
-
-        // Read CRC32 of first 512 bytes
-        sprintf(crc_search, "%c", myFile.read());
-        for (byte i = 0; i < 7; i++) {
-          sprintf(tempStr2, "%c", myFile.read());
-          strcat(crc_search, tempStr2);
-        }
-
-        // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
-
-        // Read iNES header
-        get_line(iNES_STR, &myFile, 33);
-
-        //Skip every 3rd line
-        skip_line(&myFile);
-
-        //if checksum search was successful set mapper and end search, also filter out 0xFF checksum
-        if (((strcmp(crc_search, crcStr) == 0) || (strcmp(crc_search, crcStrMMC3) == 0)) && (strcmp(crc_search, "BD7BC39F") != 0)) {
-
-          // Rewind to start of entry
-          for (byte count_newline = 0; count_newline < 4; count_newline++) {
-            while (1) {
-              if (myFile.curPosition() == 0) {
-                break;
-              } else if (myFile.peek() == '\n') {
-                myFile.seekSet(myFile.curPosition() - 1);
-                break;
-              } else {
-                myFile.seekSet(myFile.curPosition() - 1);
-              }
-            }
-          }
-          if (myFile.curPosition() != 0)
-            myFile.seekSet(myFile.curPosition() + 2);
-
-
-          // Display database
-          while (myFile.available()) {
-            display_Clear();
-
-            // Read game name
-            get_line(gamename, &myFile, 96);
-
-            // Read CRC32 checksum
-            sprintf(checksumStr, "%c", myFile.read());
-            for (byte i = 0; i < 7; i++) {
-              sprintf(tempStr2, "%c", myFile.read());
-              strcat(checksumStr, tempStr2);
-            }
-
-            // Skip over semicolon
-            myFile.seekSet(myFile.curPosition() + 1);
-
-            // Read CRC32 of first 512 bytes
-            sprintf(crc_search, "%c", myFile.read());
-            for (byte i = 0; i < 7; i++) {
-              sprintf(tempStr2, "%c", myFile.read());
-              strcat(crc_search, tempStr2);
-            }
-
-            // Skip over semicolon
-            myFile.seekSet(myFile.curPosition() + 1);
-
-            // Read iNES header
-            get_line(iNES_STR, &myFile, 33);
-
-            // Skip every 3rd line
-            skip_line(&myFile);
-
-            // Convert "4E4553" to (0x4E, 0x45, 0x53)
-            byte iNES_BUF[2];
-            for (byte j = 0; j < 16; j++) {
-              sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-              iNES_HEADER[j] = iNES_BUF[0];
-            }
-
-            // Convert iNES garbage to useful info (thx to fceux)
-            mapper = (iNES_HEADER[6] >> 4);
-            mapper |= (iNES_HEADER[7] & 0xF0);
-            mapper |= ((iNES_HEADER[8] & 0x0F) << 8);
-
-            // PRG size
-            if ((iNES_HEADER[9] & 0x0F) != 0x0F) {
-              // simple notation
-              prgsize = (iNES_HEADER[4] | ((iNES_HEADER[9] & 0x0F) << 8));  //*16
-            } else {
-              // exponent-multiplier notation
-              prgsize = (((1 << (iNES_HEADER[4] >> 2)) * ((iNES_HEADER[4] & 0b11) * 2 + 1)) >> 14);  //*16
-            }
-            if (prgsize != 0)
-              prgsize = (int(log(prgsize) / log(2)));
-
-            // CHR size
-            if ((iNES_HEADER[9] & 0xF0) != 0xF0) {
-              // simple notation
-              chrsize = (uppow2(iNES_HEADER[5] | ((iNES_HEADER[9] & 0xF0) << 4))) * 2;  //*4
-            } else {
-              chrsize = (((1 << (iNES_HEADER[5] >> 2)) * ((iNES_HEADER[5] & 0b11) * 2 + 1)) >> 13) * 2;  //*4
-            }
-            if (chrsize != 0)
-              chrsize = (int(log(chrsize) / log(2)));
-
-            // RAM size
-            ramsize = ((iNES_HEADER[10] & 0xF0) ? (64 << ((iNES_HEADER[10] & 0xF0) >> 4)) : 0) / 4096;  //*4
-            if (ramsize != 0)
-              ramsize = (int(log(ramsize) / log(2)));
-
-            prg = (int_pow(2, prgsize)) * 16;
-            if (chrsize == 0)
-              chr = 0;  // 0K
-            else
-              chr = (int_pow(2, chrsize)) * 4;
-            if (ramsize == 0)
-              ram = 0;  // 0K
-            else if (mapper == 82)
-              ram = 5;  // 5K
-            else
-              ram = (int_pow(2, ramsize)) * 4;
-
-            // Mapper Variants
-            // Identify variant for use across multiple functions
-            if (mapper == 4) {  // Check for MMC6/MMC3
-              checkMMC6();
-              if (mmc6)
-                ram = 1;  // 1K
-            }
-
-#ifdef global_log
-            // Disable log to prevent unnecessary logging
-            println_Log(F("Get Mapping from List"));
-            dont_log = true;
-#endif
-            println_Msg(gamename);
-            print_Msg(F("MAPPER:   "));
-            println_Msg(mapper);
-            print_Msg(F("PRG SIZE: "));
-            print_Msg(prg);
-            println_Msg(F("K"));
-            print_Msg(F("CHR SIZE: "));
-            print_Msg(chr);
-            println_Msg(F("K"));
-            print_Msg(F("RAM SIZE: "));
-            if (mapper == 0) {
-              print_Msg(ram / 4);
-              println_Msg(F("K"));
-            } else if ((mapper == 16) || (mapper == 80) || (mapper == 159)) {
-              if (mapper == 16)
-                print_Msg(ram * 32);
-              else
-                print_Msg(ram * 16);
-              println_Msg(F("B"));
-            } else if (mapper == 19) {
-              if (ramsize == 2)
-                println_Msg(F("128B"));
-              else {
-                print_Msg(ram);
-                println_Msg(F("K"));
-              }
-            } else {
-              print_Msg(ram);
-              println_Msg(F("K"));
-            }
-#if defined(enable_OLED)
-            println_Msg(F("Press left to Change"));
-            println_Msg(F("and right to Select"));
-#elif defined(enable_LCD)
-            println_Msg(F("Rotate to Change"));
-            println_Msg(F("Press to Select"));
-#elif defined(SERIAL_MONITOR)
-            println_Msg(F("U/D to Change"));
-            println_Msg(F("Space to Select"));
-#endif
-            display_Update();
-
-#ifdef global_log
-            // Enable log again
-            dont_log = false;
-#endif
-            int b = 0;
-            while (1) {
-              // Check button input
-              b = checkButton();
-
-              // Next
-              if (b == 1) {
-                break;
-              }
-
-              // Previous
-              else if (b == 2) {
-                for (byte count_newline = 0; count_newline < 7; count_newline++) {
-                  while (1) {
-                    if (myFile.curPosition() == 0) {
-                      break;
-                    } else if (myFile.peek() == '\n') {
-                      myFile.seekSet(myFile.curPosition() - 1);
-                      break;
-                    } else {
-                      myFile.seekSet(myFile.curPosition() - 1);
-                    }
-                  }
-                }
-                if (myFile.curPosition() != 0)
-                  myFile.seekSet(myFile.curPosition() + 2);
-                break;
-              }
-
-              // Selection
-              else if (b == 3) {
-                // Get name
-                byte myLength = 0;
-                for (unsigned int i = 0; i < 20; i++) {
-                  // Stop at first "(" to remove "(Country)"
-                  if (char(gamename[i]) == 40) {
-                    break;
-                  }
-                  if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122)) && (myLength < 15)) {
-                    romName[myLength] = char(gamename[i]);
-                    myLength++;
-                  }
-                }
-
-                // If name consists out of all japanese characters use CART as name
-                if (myLength == 0) {
-                  romName[0] = 'C';
-                  romName[1] = 'A';
-                  romName[2] = 'R';
-                  romName[3] = 'T';
-                  romName[4] = '\0';
-                }
-
-                // Save Mapper
-                EEPROM_writeAnything(7, mapper);
-                EEPROM_writeAnything(8, prgsize);
-                EEPROM_writeAnything(9, chrsize);
-                EEPROM_writeAnything(10, ramsize);
-                myFile.close();
-                return 1;
-                break;
-              }
-            }
-          }
-        }
+      readDatabaseEntry(database, &entry);
+      //if checksum search was successful set mapper and end search, also filter out 0xFF checksum
+      if (
+        entry.crc512 != 0xBD7BC39F && (
+          entry.crc512 == oldcrc32 || entry.crc512 == oldcrc32MMC3
+        )
+      ) {
+        // Rewind to start of entry
+        rewind_line(database, 3);
+        break;
       }
+    }
+    if (!database.available()) {
       // File searched until end but nothing found
       println_Msg(F(""));
       println_Msg(F("CRC not found in database"));
       println_Msg(F("Using manual selection"));
       display_Update();
-      delay(1000);
+      delay(500);
       // Print debug
       printPRG(0x8000);
       printPRG(0xE000);
 
       // Change ROM name to CART
-      romName[0] = 'C';
-      romName[1] = 'A';
-      romName[2] = 'R';
-      romName[3] = 'T';
-      romName[4] = '\0';
-      return 0;
-    } else {
-      println_Msg(F("Database file not found"));
-      return 0;
+      setDefaultRomName();
+      selectMapping(database);
     }
   }
+
+  // Display database
+  while (database.available()) {
+    byte iNES[16];
+    byte *output;
+    char *input;
+
+    struct database_entry entry;
+
+    display_Clear();
+    readDatabaseEntry(database, &entry);
+
+    input = entry.iNES_str;
+    output = iNES;
+    for (byte i = 0; i < sizeof(iNES); i++) {
+      unsigned int buf;
+
+      sscanf(input, "%2X", &buf);
+      *(output++) = buf;
+      input += 2;
+    }
+
+    mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | (iNES[8] & 0x0F);
+
+    if ((iNES[9] & 0x0F) != 0x0F) {
+      // simple notation
+      prgsize = (iNES[4] | ((iNES[9] & 0x0F) << 8));  //*16
+    } else {
+      // exponent-multiplier notation
+      prgsize = (((1 << (iNES[4] >> 2)) * ((iNES[4] & 0b11) * 2 + 1)) >> 14);  //*16
+    }
+    if (prgsize != 0)
+      prgsize = (int(log(prgsize) / log(2)));
+
+    if ((iNES[9] & 0xF0) != 0xF0) {
+      // simple notation
+      chrsize = (uppow2(iNES[5] | ((iNES[9] & 0xF0) << 4))) * 2;  //*4
+    } else {
+      // exponent-multiplier notation
+      chrsize = (((1 << (iNES[5] >> 2)) * ((iNES[5] & 0b11) * 2 + 1)) >> 13) * 2;  //*4
+    }
+    if (chrsize != 0)
+      chrsize = (int(log(chrsize) / log(2)));
+
+    ramsize = ((iNES[10] & 0xF0) ? (64 << ((iNES[10] & 0xF0) >> 4)) : 0) / 4096;  //*4
+    if (ramsize != 0)
+      ramsize = (int(log(ramsize) / log(2)));
+
+    prg = (int_pow(2, prgsize)) * 16;
+    if (chrsize == 0)
+      chr = 0;  // 0K
+    else
+      chr = (int_pow(2, chrsize)) * 4;
+    if (ramsize == 0)
+      ram = 0;  // 0K
+    else if (mapper == 82)
+      ram = 5;  // 5K
+    else
+      ram = (int_pow(2, ramsize)) * 4;
+
+    // Mapper Variants
+    // Identify variant for use across multiple functions
+    if (mapper == 4) {  // Check for MMC6/MMC3
+      checkMMC6();
+      if (mmc6)
+        ram = 1;  // 1K
+    }
+
+#ifdef global_log
+    // Disable log to prevent unnecessary logging
+    println_Log(F("Get Mapping from List"));
+    dont_log = true;
+#endif
+    println_Msg(entry.filename);
+    printNESSettings();
+#if defined(enable_OLED)
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
+#elif defined(SERIAL_MONITOR)
+    println_Msg(F("U/D to Change"));
+    println_Msg(F("Space to Select"));
+#endif
+    display_Update();
+
+#ifdef global_log
+    // Enable log again
+    dont_log = false;
+#endif
+    int b = 0;
+    do {
+      b = checkButton();
+    } while (b == 0);
+
+    if (b == 1)
+      // 1: Next record
+      continue;
+    if (b == 2) {
+      // 2: Previous record
+      rewind_line(database, 6);
+      continue;
+    }
+    // anything else: select current record
+    setRomnameFromString(entry.filename);
+    // Save Mapper
+    EEPROM_writeAnything(7, mapper);
+    EEPROM_writeAnything(8, prgsize);
+    EEPROM_writeAnything(9, chrsize);
+    EEPROM_writeAnything(10, ramsize);
+    break;
+  }
+  database.close();
 }
 
-void selectMapping() {
-  char gamename[100];
-  char tempStr2[2];
-  char iNES_STR[33];
-  char crc_search[9];
+static void readDatabaseEntry(FsFile &database, struct database_entry *entry) {
+  get_line(entry->filename, &database, sizeof(entry->filename));
+  get_line(entry->crc_str, &database, sizeof(entry->crc_str));
+  skip_line(&database);
 
-  //go to root
-  sd.chdir();
+  entry->crc_str[8] = 0;
+  entry->crc512_str = &entry->crc_str[8 + 1];
+  entry->crc512_str[8] = 0;
+  entry->iNES_str = &entry->crc_str[8 + 1 + 8 + 1];
+  memcpy(iNES_HEADER, entry->iNES_str, sizeof(iNES_HEADER));
 
+  entry->crc = strtoul(entry->crc_str, NULL, 16);
+  entry->crc512 = strtoul(entry->crc512_str, NULL, 16);
+}
+
+static void selectMapping(FsFile &database) {
   // Select starting letter
   byte myLetter = starting_letter();
 
@@ -842,250 +734,26 @@ void selectMapping() {
     setCHRSize();
     setRAMSize();
   } else {
-    // Open database
-    if (myFile.open("nes.txt", O_READ)) {
-
 #ifdef global_log
-      // Disable log to prevent unnecessary logging
-      println_Log(F("Select Mapping from List"));
-      dont_log = true;
+    // Disable log to prevent unnecessary logging
+    println_Log(F("Select Mapping from List"));
+    dont_log = true;
 #endif
-
-      // Skip ahead to selected starting letter
-      if ((myLetter > 0) && (myLetter <= 26)) {
-        while (myFile.available()) {
-          // Read current name
-          get_line(gamename, &myFile, 96);
-
-          // Compare selected letter with first letter of current name until match
-          while (gamename[0] != 64 + myLetter) {
-            skip_line(&myFile);
-            skip_line(&myFile);
-            get_line(gamename, &myFile, 96);
-          }
-          break;
-        }
-
-        // Rewind one line
-        for (byte count_newline = 0; count_newline < 2; count_newline++) {
-          while (1) {
-            if (myFile.curPosition() == 0) {
-              break;
-            } else if (myFile.peek() == '\n') {
-              myFile.seekSet(myFile.curPosition() - 1);
-              break;
-            } else {
-              myFile.seekSet(myFile.curPosition() - 1);
-            }
-          }
-        }
-        if (myFile.curPosition() != 0)
-          myFile.seekSet(myFile.curPosition() + 2);
-      }
-
-      // Display database
-      while (myFile.available()) {
-        display_Clear();
-
-        // Read game name
-        get_line(gamename, &myFile, 96);
-
-        // Read CRC32 checksum
-        sprintf(checksumStr, "%c", myFile.read());
-        for (byte i = 0; i < 7; i++) {
-          sprintf(tempStr2, "%c", myFile.read());
-          strcat(checksumStr, tempStr2);
-        }
-
-        // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
-
-        // Read CRC32 of first 512 bytes
-        sprintf(crc_search, "%c", myFile.read());
-        for (byte i = 0; i < 7; i++) {
-          sprintf(tempStr2, "%c", myFile.read());
-          strcat(crc_search, tempStr2);
-        }
-
-        // Skip over semicolon
-        myFile.seekSet(myFile.curPosition() + 1);
-
-        // Read iNES header
-        get_line(iNES_STR, &myFile, 33);
-
-        // Skip every 3rd line
-        skip_line(&myFile);
-
-        // Convert "4E4553" to (0x4E, 0x45, 0x53)
-        byte iNES_BUF[2];
-        for (byte j = 0; j < 16; j++) {
-          sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-          iNES_HEADER[j] = iNES_BUF[0];
-        }
-
-        // Convert iNES garbage to useful info (thx to fceux)
-        mapper = (iNES_HEADER[6] >> 4);
-        mapper |= (iNES_HEADER[7] & 0xF0);
-        mapper |= ((iNES_HEADER[8] & 0x0F) << 8);
-
-        // PRG size
-        if ((iNES_HEADER[9] & 0x0F) != 0x0F) {
-          // simple notation
-          prgsize = (iNES_HEADER[4] | ((iNES_HEADER[9] & 0x0F) << 8));  //*16
-        } else {
-          // exponent-multiplier notation
-          prgsize = (((1 << (iNES_HEADER[4] >> 2)) * ((iNES_HEADER[4] & 0b11) * 2 + 1)) >> 14);  //*16
-        }
-        if (prgsize != 0)
-          prgsize = (int(log(prgsize) / log(2)));
-
-        // CHR size
-        if ((iNES_HEADER[9] & 0xF0) != 0xF0) {
-          // simple notation
-          chrsize = (uppow2(iNES_HEADER[5] | ((iNES_HEADER[9] & 0xF0) << 4))) * 2;  //*4
-        } else {
-          chrsize = (((1 << (iNES_HEADER[5] >> 2)) * ((iNES_HEADER[5] & 0b11) * 2 + 1)) >> 13) * 2;  //*4
-        }
-        if (chrsize != 0)
-          chrsize = (int(log(chrsize) / log(2)));
-
-        // RAM size
-        ramsize = ((iNES_HEADER[10] & 0xF0) ? (64 << ((iNES_HEADER[10] & 0xF0) >> 4)) : 0) / 4096;  //*4
-        if (ramsize != 0)
-          ramsize = (int(log(ramsize) / log(2)));
-
-        prg = (int_pow(2, prgsize)) * 16;
-        if (chrsize == 0)
-          chr = 0;  // 0K
-        else
-          chr = (int_pow(2, chrsize)) * 4;
-        if (ramsize == 0)
-          ram = 0;  // 0K
-        else if (mapper == 82)
-          ram = 5;  // 5K
-        else
-          ram = (int_pow(2, ramsize)) * 4;
-
-        // Mapper Variants
-        // Identify variant for use across multiple functions
-        if (mapper == 4) {  // Check for MMC6/MMC3
-          checkMMC6();
-          if (mmc6)
-            ram = 1;  // 1K
-        }
-
-        println_Msg(gamename);
-        print_Msg(F("MAPPER:   "));
-        println_Msg(mapper);
-        print_Msg(F("PRG SIZE: "));
-        print_Msg(prg);
-        println_Msg(F("K"));
-        print_Msg(F("CHR SIZE: "));
-        print_Msg(chr);
-        println_Msg(F("K"));
-        print_Msg(F("RAM SIZE: "));
-        if (mapper == 0) {
-          print_Msg(ram / 4);
-          println_Msg(F("K"));
-        } else if ((mapper == 16) || (mapper == 80) || (mapper == 159)) {
-          if (mapper == 16)
-            print_Msg(ram * 32);
-          else
-            print_Msg(ram * 16);
-          println_Msg(F("B"));
-        } else if (mapper == 19) {
-          if (ramsize == 2)
-            println_Msg(F("128B"));
-          else {
-            print_Msg(ram);
-            println_Msg(F("K"));
-          }
-        } else {
-          print_Msg(ram);
-          println_Msg(F("K"));
-        }
-#if defined(enable_OLED)
-        println_Msg(F("Press left to Change"));
-        println_Msg(F("and right to Select"));
-#elif defined(enable_LCD)
-        println_Msg(F("Rotate to Change"));
-        println_Msg(F("Press to Select"));
-#elif defined(SERIAL_MONITOR)
-        println_Msg(F("U/D to Change"));
-        println_Msg(F("Space to Select"));
-#endif
-        display_Update();
-
-        int b = 0;
-        while (1) {
-          // Check button input
-          b = checkButton();
-
-          // Next
-          if (b == 1) {
-            break;
-          }
-
-          // Previous
-          else if (b == 2) {
-            for (byte count_newline = 0; count_newline < 7; count_newline++) {
-              while (1) {
-                if (myFile.curPosition() == 0) {
-                  break;
-                } else if (myFile.peek() == '\n') {
-                  myFile.seekSet(myFile.curPosition() - 1);
-                  break;
-                } else {
-                  myFile.seekSet(myFile.curPosition() - 1);
-                }
-              }
-            }
-            if (myFile.curPosition() != 0)
-              myFile.seekSet(myFile.curPosition() + 2);
-            break;
-          }
-
-          // Selection
-          else if (b == 3) {
-            // Get name
-            byte myLength = 0;
-            for (unsigned int i = 0; i < 20; i++) {
-              // Stop at first "(" to remove "(Country)"
-              if (char(gamename[i]) == 40) {
-                break;
-              }
-              if (((char(gamename[i]) >= 48 && char(gamename[i]) <= 57) || (char(gamename[i]) >= 65 && char(gamename[i]) <= 90) || (char(gamename[i]) >= 97 && char(gamename[i]) <= 122)) && (myLength < 15)) {
-                romName[myLength] = char(gamename[i]);
-                myLength++;
-              }
-            }
-
-            // If name consists out of all japanese characters use CART as name
-            if (myLength == 0) {
-              romName[0] = 'C';
-              romName[1] = 'A';
-              romName[2] = 'R';
-              romName[3] = 'T';
-              romName[4] = '\0';
-            }
-
-            // Save Mapper
-            EEPROM_writeAnything(7, mapper);
-            EEPROM_writeAnything(8, prgsize);
-            EEPROM_writeAnything(9, chrsize);
-            EEPROM_writeAnything(10, ramsize);
-            myFile.close();
-            break;
-          }
-        }
-      }
-#ifdef global_log
-      // Enable log again
-      dont_log = false;
-#endif
-    } else {
-      print_Error(F("Database file not found"), true);
+    database.rewind();
+    // Skip ahead to selected starting letter
+    if ((myLetter > 0) && (myLetter <= 26)) {
+      myLetter += 'A' - 1;
+      struct database_entry entry;
+      // Read current name
+      do {
+        readDatabaseEntry(database, &entry);
+      } while (database.available() && entry.filename[0] != myLetter);
+      rewind_line(database, 3);
     }
+#ifdef global_log
+    // Enable log again
+    dont_log = false;
+#endif
   }
 }
 
@@ -1101,7 +769,7 @@ void readRom_NES() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1112,7 +780,7 @@ void readRom_NES() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Initialize progress bar
@@ -1160,7 +828,7 @@ void readRaw_NES() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1171,7 +839,7 @@ void readRaw_NES() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Initialize progress bar
@@ -1204,17 +872,6 @@ void readRaw_NES() {
 /******************************************
    Low Level Functions
  *****************************************/
-static void phi2_init() {
-  int i = 0x80;
-  unsigned char h = PORTF |= (1 << 0);
-  unsigned char l = PORTF &= ~(1 << 0);
-  while (i != 0) {
-    PORTL = l;
-    PORTL = h;
-    i--;
-  }
-}
-
 static void set_address(unsigned int address) {
   unsigned char l = address & 0xFF;
   unsigned char h = address >> 8;
@@ -1285,60 +942,6 @@ static void write_prg_byte(unsigned int address, uint8_t data) {
   //  _delay_us(1);
   PHI2_HI;
   //  _delay_us(1);
-}
-
-static void write_chr_byte(unsigned int address, uint8_t data) {
-  PHI2_LOW;
-  ROMSEL_HI;
-  MODE_WRITE;
-  PORTK = data;
-
-  set_address(address);  // PHI2 low, ROMSEL always HIGH
-  //_delay_us(10);
-  CHR_WRITE_LOW;
-  _delay_us(1);  // WRITING
-  //_delay_ms(1); // WRITING
-  CHR_WRITE_HI;
-  //_delay_us(1);
-  MODE_READ;
-  set_address(0);
-  PHI2_HI;
-  //_delay_us(1);
-}
-
-static void write_prg(unsigned int address, unsigned int len, uint8_t* data) {
-  LED_RED_ON;
-  while (len > 0) {
-    write_prg_byte(address, *data);
-    address++;
-    len--;
-    data++;
-  }
-  //_delay_ms(1);
-  LED_RED_OFF;
-}
-
-static void write_chr(unsigned int address, unsigned int len, uint8_t* data) {
-  LED_RED_ON;
-  while (len > 0) {
-    write_chr_byte(address, *data);
-    address++;
-    len--;
-    data++;
-  }
-  //_delay_ms(1);
-  LED_RED_OFF;
-}
-
-static void reset_phi2() {
-  LED_RED_ON;
-  LED_GREEN_ON;
-  PHI2_LOW;
-  ROMSEL_HI;
-  _delay_ms(100);
-  PHI2_HI;
-  LED_RED_OFF;
-  LED_GREEN_OFF;
 }
 
 void resetROM() {
@@ -1450,52 +1053,20 @@ int int_pow(int base, int exp) {  // Power for int
 /******************************************
    CRC Functions
  *****************************************/
-FsFile crcFile;
-char tempCRC[9];
 
-uint32_t crc32(FsFile& file, uint32_t& charcnt) {
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  charcnt = 0;
-  while (file.available()) {
-    crcFile.read(sdBuffer, 512);
-    for (int x = 0; x < 512; x++) {
-      uint8_t c = sdBuffer[x];
-      charcnt++;
-      oldcrc32 = updateCRC(c, oldcrc32);
-    }
-  }
-  return ~oldcrc32;
-}
-
-uint32_t crc32EEP(FsFile& file, uint32_t& charcnt) {
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  charcnt = 0;
-  while (file.available()) {
-    crcFile.read(sdBuffer, 128);
-    for (int x = 0; x < 128; x++) {
-      uint8_t c = sdBuffer[x];
-      charcnt++;
-      oldcrc32 = updateCRC(c, oldcrc32);
-    }
-  }
-  return ~oldcrc32;
-}
-
-void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy, unsigned long offset) {
+void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
   uint32_t crc;
-  crcFile = sd.open(checkFile);
+  char tempCRC[9];
+  FsFile crcFile = sd.open(checkFile);
+
   crcFile.seek(offset);
-  if (filesize < 1024)
-    crc = crc32EEP(crcFile, filesize);
-  else
-    crc = crc32(crcFile, filesize);
+  crc = calculateCRC(crcFile);
   crcFile.close();
-  sprintf(tempCRC, "%08lX", crc);
 
   if (crcCopy != NULL) {
     *crcCopy = crc;
   }
-
+  sprintf(tempCRC, "%08lX", crc);
   print_Msg(F("CRC: "));
   println_Msg(tempCRC);
   display_Update();
@@ -1530,7 +1101,7 @@ void CreatePRGFileInSD() {
     display_Clear();
     println_Msg(F("PRG FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
 
     LED_RED_OFF;
   }
@@ -1555,7 +1126,7 @@ void CreateCHRFileInSD() {
     display_Clear();
     println_Msg(F("CHR FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
 
     LED_RED_OFF;
   }
@@ -1580,7 +1151,7 @@ void CreateRAMFileInSD() {
     display_Clear();
     println_Msg(F("RAM FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
 
     LED_RED_OFF;
   }
@@ -1682,7 +1253,7 @@ void outputNES() {
     display_Clear();
     println_Msg(F("PRG FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   if (has_header) {
@@ -1702,7 +1273,7 @@ void outputNES() {
     display_Clear();
     println_Msg(F("NES FILE FAILED!"));
     display_Update();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   if (has_header) {
@@ -1726,7 +1297,7 @@ void outputNES() {
       display_Clear();
       println_Msg(F("CHR FILE FAILED!"));
       display_Update();
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
     while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
       nesFile.write(sdBuffer, n);
@@ -1745,7 +1316,7 @@ void outputNES() {
   println_Msg(F(""));
   display_Update();
 
-  calcCRC(outputFile, (prg + chr) * 1024, NULL, crcOffset);
+  printCRC(outputFile, NULL, crcOffset);
   LED_RED_OFF;
   LED_GREEN_OFF;
   LED_BLUE_OFF;
@@ -2033,6 +1604,7 @@ unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
    Config Functions
  *****************************************/
 void setMapper() {
+  byte newmapper;
 #ifdef global_log
   // Disable log to prevent unnecessary logging
   println_Log(F("Set Mapper manually"));
@@ -2044,7 +1616,7 @@ void setMapper() {
 chooseMapper:
   // Read stored mapper
   EEPROM_readAnything(7, newmapper);
-  if ((newmapper > 220) || (newmapper < 0))
+  if (newmapper > 220)
     newmapper = 0;
   // Split into digits
   byte hundreds = newmapper / 100;
@@ -2065,7 +1637,7 @@ chooseMapper:
     println_Msg("");
     println_Msg("");
     println_Msg("");
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 
     if (digit == 0) {
@@ -2185,8 +1757,8 @@ chooseMapper:
   print_Msg(F("Mapper: "));
   println_Msg(mapselect);
   println_Msg(F(""));
-  println_Msg(F("Rotate to change"));
-  println_Msg(F("Press to select"));
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
   display_Update();
 
   while (1) {
@@ -2203,8 +1775,8 @@ chooseMapper:
       print_Msg(F("Mapper: "));
       println_Msg(mapselect);
       println_Msg(F(""));
-      println_Msg(F("Rotate to change"));
-      println_Msg(F("Press to select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
       display_Update();
     }
 
@@ -2219,8 +1791,8 @@ chooseMapper:
       print_Msg(F("Mapper: "));
       println_Msg(mapselect);
       println_Msg(F(""));
-      println_Msg(F("Rotate to change"));
-      println_Msg(F("Press to select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
       display_Update();
     }
 
@@ -2241,7 +1813,7 @@ chooseMapper:
 #elif defined(enable_serial)
 setmapper:
   String newmap;
-  mapfound = false;
+  boolean mapfound = false;
   Serial.println(F("SUPPORTED MAPPERS:"));
   for (int i = 0; i < mapcount; i++) {
     int index = i * 7;
@@ -2313,7 +1885,6 @@ void setPRGSize() {
   if (prglo == prghi)
     newprgsize = prglo;
   else {
-    b = 0;
     int i = prglo;
 
     display_Clear();
@@ -2321,16 +1892,16 @@ void setPRGSize() {
     println_Msg(PRG[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to change"));
-    println_Msg(F("Press to select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
     while (1) {
-      b = checkButton();
+      int b = checkButton();
 
       if (b == doubleclick) {  // Previous
         if (i == prglo)
@@ -2343,11 +1914,11 @@ void setPRGSize() {
         println_Msg(PRG[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2362,11 +1933,11 @@ void setPRGSize() {
         println_Msg(PRG[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2433,7 +2004,6 @@ void setCHRSize() {
   if (chrlo == chrhi)
     newchrsize = chrlo;
   else {
-    b = 0;
     int i = chrlo;
 
     display_Clear();
@@ -2441,16 +2011,16 @@ void setCHRSize() {
     println_Msg(CHR[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to change"));
-    println_Msg(F("Press to select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
     while (1) {
-      b = checkButton();
+      int b = checkButton();
 
       if (b == doubleclick) {  // Previous
         if (i == chrlo)
@@ -2463,11 +2033,11 @@ void setCHRSize() {
         println_Msg(CHR[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2483,11 +2053,11 @@ void setCHRSize() {
         println_Msg(CHR[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2554,7 +2124,6 @@ void setRAMSize() {
   if (ramlo == ramhi)
     newramsize = ramlo;
   else {
-    b = 0;
     int i = 0;
 
     display_Clear();
@@ -2576,16 +2145,16 @@ void setRAMSize() {
       println_Msg(RAM[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to change"));
+    print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to change"));
-    println_Msg(F("Press to select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
     while (1) {
-      b = checkButton();
+      int b = checkButton();
 
       if (b == doubleclick) {  // Previous Mapper
         if (i == 0)
@@ -2612,11 +2181,11 @@ void setRAMSize() {
           println_Msg(RAM[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2646,11 +2215,11 @@ void setRAMSize() {
           println_Msg(RAM[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to change"));
+        print_STR(press_to_change_STR, 1);
         println_Msg(F("Press right to select"));
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to change"));
-        println_Msg(F("Press to select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -2799,6 +2368,9 @@ void checkMMC6() {               // Detect MMC6 Carts - read PRG 0x3E00A ("START
 }
 
 void checkStatus_NES() {
+#ifdef nointro
+  getMapping();
+#endif
   EEPROM_readAnything(7, mapper);
   EEPROM_readAnything(8, prgsize);
   EEPROM_readAnything(9, chrsize);
@@ -2829,6 +2401,15 @@ void checkStatus_NES() {
   println_Msg(F(""));
   println_Msg(F("CURRENT SETTINGS"));
   println_Msg(F(""));
+  printNESSettings();
+  println_Msg(F(""));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+}
+
+static void printNESSettings(void) {
   print_Msg(F("MAPPER:   "));
   println_Msg(mapper);
   print_Msg(F("PRG SIZE: "));
@@ -2858,10 +2439,6 @@ void checkStatus_NES() {
     print_Msg(ram);
     println_Msg(F("K"));
   }
-  println_Msg(F(""));
-  println_Msg(F("Press Button..."));
-  display_Update();
-  wait();
 }
 
 /******************************************
@@ -2935,7 +2512,7 @@ void readPRG(boolean readrom) {
       case 87:                                                                             // 16K/32K
       case 184:                                                                            // 32K
       case 185:                                                                            // 16K/32K
-        for (word address = 0; address < ((prgsize * 0x4000) + 0x4000); address += 512) {  // 16K or 32K
+        for (word address = 0; address < (((word) prgsize) * 0x4000) + 0x4000; address += 512) {  // 16K or 32K
           dumpPRG(base, address);
         }
         break;
@@ -2963,7 +2540,7 @@ void readPRG(boolean readrom) {
       case 2:                          // 128K/256K
         for (int i = 0; i < 8; i++) {  // 128K/256K
           write_prg_byte(0x8000, i);
-          for (word address = 0x0; address < (((prgsize - 3) * 0x4000) + 0x4000); address += 512) {
+          for (word address = 0x0; address < (((word) prgsize - 3) * 0x4000) + 0x4000; address += 512) {
             dumpPRG(base, address);
           }
         }
@@ -3662,7 +3239,7 @@ void readPRG(boolean readrom) {
       println_Msg(F(""));
       display_Update();
 #ifndef nointro
-      calcCRC(fileName, prg * 1024, &prg_crc32, 0);
+      printCRC(fileName, &prg_crc32, 0);
 #endif
     }
   }
@@ -4387,7 +3964,7 @@ void readCHR(boolean readrom) {
         println_Msg(F(""));
         display_Update();
 #ifndef nointro
-        calcCRC(fileName, chr * 1024, &chr_crc32, 0);
+        printCRC(fileName, &chr_crc32, 0);
 #endif
       }
     }
@@ -4576,9 +4153,9 @@ void readRAM() {
       display_Update();
 
       if ((mapper == 16) || (mapper == 159))
-        calcCRC(fileName, eepsize, NULL, 0);
+        printCRC(fileName, NULL, 0);
       else
-        calcCRC(fileName, ram * 1024, NULL, 0);
+        printCRC(fileName, NULL, 0);
     }
   }
   set_address(0);
@@ -4808,7 +4385,7 @@ void writeRAM() {
       display_Update();
 
     } else {
-      print_Error(F("SD ERROR"), true);
+      print_Error(sd_error_STR, true);
     }
   }
 
@@ -5026,16 +4603,16 @@ void NESmaker_ID() {  // Read Flash ID
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0x90);  // Software ID Entry
-  unsigned char ID1 = read_prg_byte(0x8000);
-  unsigned char ID2 = read_prg_byte(0x8001);
-  sprintf(flashid, "%02X%02X", ID1, ID2);
+  flashid = read_prg_byte(0x8000) << 8;
+  flashid |= read_prg_byte(0x8001);
+  sprintf(flashid_str, "%04X", flashid);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xAA);
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xF0);      // Software ID Exit
-  if (strcmp(flashid, "BFB7") == 0)  // SST 39SF040
+  if (flashid == 0xBFB7)  // SST 39SF040
     flashfound = 1;
 }
 
@@ -5089,7 +4666,7 @@ void writeFLASH() {
     display_Update();
   } else {
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     println_Msg(F(""));
     println_Msg(F("NESmaker Flash Found"));
     println_Msg(F(""));
@@ -5128,11 +4705,11 @@ void writeFLASH() {
             myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
               word location = base + sector + addr + x;
-              NESmaker_ByteProgram(i, base + sector + addr + x, sdBuffer[x]);
+              NESmaker_ByteProgram(i, location, sdBuffer[x]);
               delayMicroseconds(14);          // Typical 14us
               for (byte k = 0; k < 2; k++) {  // Confirm write twice
                 do {
-                  bytecheck = read_prg_byte(base + sector + addr + x);
+                  bytecheck = read_prg_byte(location);
                   delayMicroseconds(14);
                 } while (bytecheck != sdBuffer[x]);
               }
@@ -5167,6 +4744,11 @@ void writeFLASH() {
   sd.chdir();          // root
   filePath[0] = '\0';  // Reset filePath
 }
+
+// avoid warnings
+#undef MODE_READ
+#undef MODE_WRITE
+
 #endif
 //******************************************
 // End of File

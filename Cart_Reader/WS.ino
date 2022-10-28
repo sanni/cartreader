@@ -35,9 +35,9 @@
 static const char wsMenuItem1[] PROGMEM = "Read Rom";
 static const char wsMenuItem2[] PROGMEM = "Read Save";
 static const char wsMenuItem3[] PROGMEM = "Write Save";
-static const char wsMenuItem4[] PROGMEM = "Reset";
+//static const char wsMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char wsMenuItem5[] PROGMEM = "Write WitchOS";
-static const char *const menuOptionsWS[] PROGMEM = { wsMenuItem1, wsMenuItem2, wsMenuItem3, wsMenuItem4, wsMenuItem5 };
+static const char *const menuOptionsWS[] PROGMEM = { wsMenuItem1, wsMenuItem2, wsMenuItem3, string_reset2, wsMenuItem5 };
 
 static const uint8_t wwLaunchCode[] PROGMEM = { 0xea, 0x00, 0x00, 0x00, 0xe0, 0x00, 0xff, 0xff };
 
@@ -184,7 +184,8 @@ void wsMenu() {
   }
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
 
   display_Update();
   wait();
@@ -404,7 +405,8 @@ void showCartInfo_WS() {
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
 
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -487,14 +489,14 @@ void readROM_WS(char *outPathBuf, size_t bufferSize) {
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -561,7 +563,7 @@ void readSRAM_WS() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   uint32_t bank_size = (sramSize << 7);
   uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
@@ -591,7 +593,7 @@ void readSRAM_WS() {
 
   myFile.close();
 
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -630,10 +632,10 @@ void verifySRAM_WS() {
       println_Msg(F("passed"));
     } else {
       println_Msg(F("failed"));
-      print_Msg(F("Error: "));
+      print_STR(error_STR, 0);
       print_Msg(write_errors);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
   } else {
     print_Error(F("File doesn't exist"), false);
@@ -706,7 +708,7 @@ void readEEPROM_WS() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   uint32_t eepromSize = (sramSize << 7);
   uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
@@ -738,7 +740,7 @@ void readEEPROM_WS() {
 
   myFile.close();
 
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
 }
 
 void verifyEEPROM_WS() {
@@ -784,10 +786,10 @@ void verifyEEPROM_WS() {
       println_Msg(F("passed"));
     } else {
       println_Msg(F("failed"));
-      print_Msg(F("Error: "));
+      print_STR(error_STR, 0);
       print_Msg(write_errors);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
   } else {
     print_Error(F("File doesn't exist"), false);
@@ -839,7 +841,7 @@ void writeEEPROM_WS() {
 
     myFile.close();
 
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
   } else {
     print_Error(F("File doesn't exist"), false);
   }
@@ -928,7 +930,7 @@ void writeWitchOS_WS() {
 
       myFile.close();
 
-      println_Msg(F("Done"));
+      print_STR(done_STR, 1);
     } else {
       print_Error(F("File doesn't exist"), false);
     }
@@ -979,7 +981,7 @@ boolean compareChecksum_WS(const char *wsFilePath) {
   }
 
   uint32_t calLength = myFile.fileSize() - 512;
-  uint32_t checksum = 0;
+  uint16_t checksum = 0;
 
   if (wsWitch) {
     // only calcuate last 128Kbytes for wonderwitch (OS and BIOS region)
@@ -1001,18 +1003,12 @@ boolean compareChecksum_WS(const char *wsFilePath) {
 
   myFile.close();
 
-  checksum &= 0x0000ffff;
-  calLength = wsGameChecksum;
-
-  // don't know why formating string "%04X(%04X)" always output "xxxx(0000)"
-  // so split into two snprintf
   char result[11];
-  snprintf(result, 5, "%04X", calLength);
-  snprintf(result + 4, 11 - 4, "(%04X)", checksum);
+  snprintf(result, 11, "%04X(%04X)", wsGameChecksum, checksum);
   print_Msg(F("Result: "));
   println_Msg(result);
 
-  if (checksum == calLength) {
+  if (checksum == wsGameChecksum) {
     println_Msg(F("Checksum matches"));
     display_Update();
     return 1;

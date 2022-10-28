@@ -56,7 +56,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "10.3";
+char ver[5] = "10.4";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -176,7 +176,6 @@ char ver[5] = "10.3";
 // SD Card
 #include "SdFat.h"
 SdFs sd;
-FsFile myDir;
 FsFile myFile;
 #ifdef global_log
 FsFile myLog;
@@ -262,6 +261,57 @@ bool i2c_found;
 #ifdef clockgen_calibration
 #include "FreqCount.h"
 #endif
+
+/******************************************
+  Common Strings
+ *****************************************/
+#define press_button_STR 0
+#define sd_error_STR 1
+#define reset_STR 2
+#define did_not_verify_STR 3
+#define _bytes_STR 4
+#define error_STR 5
+#define create_file_STR 6
+#define open_file_STR 7
+#define file_too_big_STR 8
+#define done_STR 9
+#define saving_to_STR 10
+#define verifying_STR 11
+#define flashing_file_STR 12
+#define press_to_change_STR 13
+#define right_to_select_STR 14
+#define rotate_to_change_STR 15
+#define press_to_select_STR 16
+
+// This arrays holds the most often uses strings
+static const char string_press_button0[] PROGMEM = "Press Button...";
+static const char string_sd_error1[] PROGMEM = "SD Error";
+static const char string_reset2[] PROGMEM = "Reset";
+static const char string_did_not_verify3[] PROGMEM = "did not verify";
+static const char string_bytes4[] PROGMEM = " bytes ";
+static const char string_error5[] PROGMEM = "Error: ";
+static const char string_create_file6[] PROGMEM = "Can't create file";
+static const char string_open_file7[] PROGMEM = "Can't open file";
+static const char string_file_too_big8[] PROGMEM = "File too big";
+static const char string_done9[] PROGMEM = "Done";
+static const char string_saving_to10[] PROGMEM = "Saving to ";
+static const char string_verifying11[] PROGMEM = "Verifying...";
+static const char string_flashing_file12[] PROGMEM = "Flashing file ";
+static const char string_press_to_change13[] PROGMEM = "Press left to Change";
+static const char string_right_to_select14[] PROGMEM = "and right to Select";
+static const char string_rotate_to_change15[] PROGMEM = "Rotate to Change";
+static const char string_press_to_select16[] PROGMEM = "Press to Select";
+
+static const char* const string_table[] PROGMEM = { string_press_button0, string_sd_error1, string_reset2, string_did_not_verify3, string_bytes4, string_error5, string_create_file6, string_open_file7, string_file_too_big8, string_done9, string_saving_to10, string_verifying11, string_flashing_file12, string_press_to_change13, string_right_to_select14, string_rotate_to_change15, string_press_to_select16 };
+
+void print_STR(byte string_number, boolean newline) {
+  char string_buffer[22];
+  strcpy_P(string_buffer, (char*)pgm_read_word(&(string_table[string_number])));
+  if (newline)
+    println_Msg(string_buffer);
+  else
+    print_Msg(string_buffer);
+}
 
 /******************************************
   Defines
@@ -380,7 +430,8 @@ bool errorLvl = 0;
 byte romVersion = 0;
 char cartID[5];
 unsigned long cartSize;
-char flashid[5];
+unsigned int flashid;
+char flashid_str[5];
 char vendorID[5];
 unsigned long fileSize;
 unsigned long sramBase;
@@ -480,32 +531,48 @@ static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
                                                0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
-  uint32_t idx = ((crc) ^ (ch)) & 0xff;
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
-  return tab_value ^ ((crc) >> 8);
+// Defined as a macros, as compiler disregards inlining requests and these are
+// performance-critical functions.
+#define UPDATE_CRC(crc, ch) do { \
+  uint8_t idx = ((crc) ^ (ch)) & 0xff; \
+  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx); \
+  (crc) = tab_value ^ ((crc) >> 8); \
+} while (0)
+
+uint32_t updateCRC(const byte *buffer, size_t length, uint32_t crc) {
+  for (size_t c = 0; c < length; c++) {
+    UPDATE_CRC(crc, buffer[c]);
+  }
+  return crc;
+}
+
+uint32_t calculateCRC(const byte *buffer, size_t length) {
+  uint32_t crc = 0xFFFFFFFF;
+  updateCRC(buffer, length, crc);
+  return ~crc;
+}
+
+uint32_t calculateCRC(FsFile &infile) {
+  uint32_t byte_count;
+  uint32_t crc = 0xFFFFFFFF;
+
+  while((byte_count = infile.read(sdBuffer, sizeof(sdBuffer))) != 0) {
+    updateCRC(sdBuffer, byte_count, crc);
+  }
+  return ~crc;
 }
 
 // Calculate rom's CRC32 from SD
 uint32_t calculateCRC(char* fileName, char* folder, int offset) {
-  // Open folder
+  FsFile infile;
+  uint32_t result;
+
   sd.chdir(folder);
-  // Open file
-  if (myFile.open(fileName, O_READ)) {
-    uint32_t oldcrc32 = 0xFFFFFFFF;
-
-    // Skip iNES header
-    myFile.seek(offset);
-
-    for (unsigned long currByte = 0; currByte < ((myFile.fileSize() - offset) / 512); currByte++) {
-      myFile.read(sdBuffer, 512);
-      for (int c = 0; c < 512; c++) {
-        oldcrc32 = updateCRC(sdBuffer[c], oldcrc32);
-      }
-    }
-    // Close the file:
-    myFile.close();
-    return ~oldcrc32;
+  if (infile.open(fileName, O_READ)) {
+    infile.seek(offset);
+    result = calculateCRC(infile);
+    infile.close();
+    return result;
   } else {
     display_Clear();
     print_Msg(F("File "));
@@ -513,6 +580,7 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
     //print_Msg(F("/"));
     //print_Msg(fileName);
     print_Error(F(" not found"), true);
+    return 0;
   }
 }
 
@@ -539,32 +607,47 @@ void skip_line(FsFile* readfile) {
 
 //Get line from file
 void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
+  int read_len;
+
   // Status LED on
   statusLED(true);
 
-  int i = 0;
+  read_len = readfile->read(str_buf, maxi - 1);
 
-  while (readfile->available()) {
-    //If line size is more than maximum array, limit it.
-    if (i >= maxi) {
-      i = maxi - 1;
-    }
-
-    //Read 1 byte from file
-    str_buf[i] = readfile->read();
-
+  for (int i = 0; i < read_len; i++) {
     //if end of file or newline found, execute command
     if (str_buf[i] == '\r') {
-      str_buf[i] = '\0';
-      readfile->read();  //dispose \n because \r\n
+      str_buf[i] = 0;
+      readfile->seekCur(i - read_len + 2); // +2 to skip over \n because \r\n
+      return;
+    }
+  }
+  str_buf[maxi - 1] = 0;
+  // EOL was not found, keep looking (slower)
+  while (readfile->available()) {
+    if (readfile->read() == '\r') {
+      readfile->read(); // read \n because \r\n
       break;
     }
-    i++;
-  }  //End while
+  }
+}
+
+void rewind_line(FsFile &readfile, byte count=1) {
+  uint32_t position = readfile.curPosition();
+  count++;
+  for (byte count_newline = 0; count_newline < count; count_newline++) {
+    while (position--) {
+      readfile.seekCur(-1);
+      if (readfile.peek() == '\n')
+        break;
+    }
+  }
+  if (position)
+    readfile.seekCur(1);
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
-boolean compareCRC(char* database, char* crcString, boolean renamerom, int offset) {
+boolean compareCRC(const char* database, char* crcString, boolean renamerom, int offset) {
 #ifdef nointro
   char crcStr[9];
   if (crcString == 0) {
@@ -577,7 +660,6 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
   } else {
     // Use precalculated crc
     print_Msg(F("CRC32... "));
-    display_Update();
     strcpy(crcStr, crcString);
   }
   // Print checksum
@@ -585,7 +667,7 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
   display_Update();
 
   //Search for CRC32 in file
-  char gamename[100];
+  char gamename[96];
   char crc_search[9];
 
   //go to root
@@ -594,8 +676,8 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
     //Search for same CRC in list
     while (myFile.available()) {
       //Read 2 lines (game name and CRC)
-      get_line(gamename, &myFile, 96);
-      get_line(crc_search, &myFile, 9);
+      get_line(gamename, &myFile, sizeof(gamename));
+      get_line(crc_search, &myFile, sizeof(crc_search));
       skip_line(&myFile);  //Skip every 3rd line
 
       //if checksum search successful, rename the file and end search
@@ -603,22 +685,22 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
 #ifdef enable_NES
         if ((mode == mode_NES) && (offset != 0)) {
           // Rewind to iNES Header
-          myFile.seekSet(myFile.curPosition() - 36);
+          myFile.seekCur(-36);
 
           char iNES_STR[33];
           // Read iNES header
           get_line(iNES_STR, &myFile, 33);
 
           // Convert "4E4553" to (0x4E, 0x45, 0x53)
-          byte iNES_BUF[2];
+          unsigned int iNES_BUF;
           for (byte j = 0; j < 16; j++) {
-            sscanf(iNES_STR + j * 2, "%2X", iNES_BUF);
-            iNES_HEADER[j] = iNES_BUF[0];
+            sscanf(iNES_STR + j * 2, "%2X", &iNES_BUF);
+            iNES_HEADER[j] = iNES_BUF;
           }
           //Skip CRLF
-          myFile.seekSet(myFile.curPosition() + 4);
+          myFile.seekCur(4);
         }
-#endif
+#endif // enable_NES
 
         // Close the file:
         myFile.close();
@@ -629,14 +711,14 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
           // Write iNES header
           sd.chdir(folder);
           if (!myFile.open(fileName, O_RDWR)) {
-            print_Error(F("SD Error"), true);
+            print_Error(sd_error_STR, true);
           }
           for (byte z = 0; z < 16; z++) {
             myFile.write(iNES_HEADER[z]);
           }
           myFile.close();
         }
-#endif
+#endif // enable_NES
         print_Msg(F(" -> "));
         display_Update();
 
@@ -667,9 +749,10 @@ boolean compareCRC(char* database, char* crcString, boolean renamerom, int offse
     println_Msg(F("Database missing"));
     return 0;
   }
-#else
+#else // nointro
   println_Msg("");
-#endif
+#endif // !nointro
+  return 0;
 }
 
 byte starting_letter() {
@@ -802,17 +885,17 @@ void mainMenu() {
   while (1) {
     if (currPage == 1) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 0, 7);
+      convertPgm(modeOptions + 0, 7);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
     }
     if (currPage == 2) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 7, 7);
+      convertPgm(modeOptions + 7, 7);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
     }
     if (currPage == 3) {
       // Copy menuOptions out of progmem
-      convertPgm(modeOptions, 14, 2);
+      convertPgm(modeOptions + 14, 2);
       modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 2, 0);
     }
     if (numPages == 0) {
@@ -839,11 +922,6 @@ void mainMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
-      if (getMapping() == 0) {
-        selectMapping();
-      }
-#endif
       checkStatus_NES();
       nesMenu();
       break;
@@ -973,15 +1051,15 @@ static const char modeItem4[] PROGMEM = "Nintendo 64(3V EEP)";
 #endif
 static const char modeItem5[] PROGMEM = "Game Boy";
 static const char modeItem6[] PROGMEM = "About";
-static const char modeItem7[] PROGMEM = "Reset";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7 };
+// static const char modeItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, string_reset2 };
 
 // Add-ons submenu
 static const char addonsItem1[] PROGMEM = "Consoles";
 static const char addonsItem2[] PROGMEM = "Handhelds";
 static const char addonsItem3[] PROGMEM = "Flashrom Programmer";
-static const char addonsItem4[] PROGMEM = "Reset";
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4 };
+//static const char addonsItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, string_reset2 };
 
 // Consoles submenu
 static const char consolesItem1[] PROGMEM = "NES/Famicom";
@@ -989,8 +1067,8 @@ static const char consolesItem2[] PROGMEM = "PC Engine/TG16";
 static const char consolesItem3[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char consolesItem4[] PROGMEM = "Intellivision";
 static const char consolesItem5[] PROGMEM = "Colecovision";
-static const char consolesItem6[] PROGMEM = "Reset";
-static const char* const consolesOptions[] PROGMEM = { consolesItem1, consolesItem2, consolesItem3, consolesItem4, consolesItem5, consolesItem6 };
+//static const char consolesItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const consolesOptions[] PROGMEM = { consolesItem1, consolesItem2, consolesItem3, consolesItem4, consolesItem5, string_reset2 };
 
 // Handhelds submenu
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
@@ -998,8 +1076,8 @@ static const char handheldsItem2[] PROGMEM = "WonderSwan";
 static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket";
 static const char handheldsItem4[] PROGMEM = "Watara Supervision";
 static const char handheldsItem5[] PROGMEM = "Pocket Challenge W";
-static const char handheldsItem6[] PROGMEM = "Reset";
-static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, handheldsItem6 };
+//static const char handheldsItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -1103,11 +1181,6 @@ void consoleMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
-      if (getMapping() == 0) {
-        selectMapping();
-      }
-#endif
       checkStatus_NES();
       nesMenu();
       break;
@@ -1227,7 +1300,8 @@ void aboutScreen() {
   println_Msg(F(""));
   println_Msg(F(""));
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
 
   while (1) {
@@ -1539,14 +1613,14 @@ void savetofile() {
   delay(2000);
 
   if (!myFile.open("/snes_clk.txt", O_WRITE | O_CREAT | O_TRUNC)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   // Write calibration factor to file
   myFile.print(cal_factor);
 
   // Close the file:
   myFile.close();
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
   delay(1000);
   resetArduino();
@@ -1726,12 +1800,12 @@ void setup() {
   // Init SD card
   if (!sd.begin(SS)) {
     display_Clear();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
 #ifdef global_log
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   println_Msg(F(""));
 #if defined(HW1)
@@ -1810,11 +1884,30 @@ void setColor_RGB(byte r, byte g, byte b) {
 #endif
 }
 
-// Converts a progmem array into a ram array
-void convertPgm(const char* const pgmOptions[], byte startArray, byte numArrays) {
-  for (int i = 0; i < numArrays; i++) {
-    strlcpy_P(menuOptions[i], (char*)pgm_read_word(&(pgmOptions[i + startArray])), 20);
+// Extract ASCII printable characters from input, collapsing underscores and spaces.
+// Use when extracting titles from cartridges, to build a rom title.
+byte buildRomName(char *output, const byte *input, byte length) {
+  byte input_char;
+  byte output_len = 0;
+  for (unsigned int i = 0; i < length; i++) {
+    input_char = input[i];
+    if (isprint(input_char) && input_char != '<' && input_char != '>' && input_char != ':' && input_char != '"' && input_char != '/' && input_char != '\\' && input_char != '|' && input_char != '?' && input_char != '*') {
+      output[output_len++] = input_char;
+    } else {
+      if (output_len == 0 || output[output_len - 1] != '_') {
+        output[output_len++] = '_';
+      }
+    }
   }
+  while (
+    output_len && (
+      output[output_len - 1] == '_' || output[output_len - 1] == ' '
+    )
+  ) {
+    output_len--;
+  }
+  output[output_len] = 0;
+  return output_len;
 }
 
 // Converts a progmem array into a ram array
@@ -1832,7 +1925,33 @@ void print_Error(const __FlashStringHelper* errorMessage, boolean forceReset) {
 
   if (forceReset) {
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+    if (ignoreError == 0) {
+      resetArduino();
+    } else {
+      ignoreError = 0;
+      display_Clear();
+      println_Msg(F(""));
+      println_Msg(F("Error Overwrite"));
+      println_Msg(F(""));
+      display_Update();
+      delay(2000);
+    }
+  }
+}
+
+void print_Error(byte errorMessage, boolean forceReset) {
+  errorLvl = 1;
+  setColor_RGB(255, 0, 0);
+  print_STR(errorMessage, 1);
+  display_Update();
+
+  if (forceReset) {
+    println_Msg(F(""));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
     if (ignoreError == 0) {
@@ -1916,7 +2035,7 @@ void save_log() {
   strcpy(fileName, romName);
   strcat(fileName, ".txt");
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   while (myLog.available()) {
@@ -1926,8 +2045,8 @@ void save_log() {
       }
       myFile.write(sdBuffer, 512);
     } else {
-      word i = 0;
-      for (i = 0; i < myLog.available(); i++) {
+      int i = 0;
+      for (; i < myLog.available(); i++) {
         sdBuffer[i] = myLog.read();
       }
       myFile.write(sdBuffer, i);
@@ -1960,7 +2079,7 @@ void print_Msg(const char myString[]) {
 #if (defined(enable_LCD) || defined(enable_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
-    int strPos = 0;
+    unsigned int strPos = 0;
     // Print until end of display
     while (display.tx < 122) {
       display.print(myString[strPos]);
@@ -2103,7 +2222,7 @@ void println_Msg(const char myString[]) {
 #if (defined(enable_LCD) || defined(enable_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
-    int strPos = 0;
+    unsigned int strPos = 0;
     // Print until end of display
     while ((display.tx < 122) && (myString[strPos] != '\0')) {
       display.print(myString[strPos]);
@@ -2234,8 +2353,8 @@ void blinkLED() {
 #endif
 }
 
-void statusLED(boolean on) {
 #if defined(HW5)
+void statusLED(boolean on) {
   if (!on)
     PORTD |= (1 << 7);
   else
@@ -2263,8 +2382,11 @@ void statusLED(boolean on) {
       PORTB &= ~(1 << 7);
     }
   */
-#endif
 }
+#else
+void statusLED(boolean on __attribute__ ((unused))) {
+}
+#endif
 
 /******************************************
   Menu system
@@ -2310,7 +2432,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
       EEPROM_readAnything(0, foldern);
       sprintf(fileName, "IMPORT/%d.bin", foldern);
       if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-        print_Error(F("Can't create file on SD"), true);
+        print_Error(create_file_STR, true);
       }
 
       // Read file from serial
@@ -2577,7 +2699,7 @@ void wait_serial() {
         myFile.close();
       }
       else {
-        print_Error(F("Can't open file"), true);
+        print_Error(open_file_STR, true);
       }
     }*/
 }
@@ -2893,6 +3015,9 @@ void wait_encoder() {
 void fileBrowser(const __FlashStringHelper* browserTitle) {
   char fileNames[7][FILENAME_LENGTH];
   int currFile;
+  FsFile myDir;
+  div_t page_layout;
+
   filebrowse = 1;
 
   // Root
@@ -2915,37 +3040,20 @@ browserstart:
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Count files in directory
   while (myFile.openNext(&myDir, O_READ)) {
-    // Ignore if hidden
-    if (myFile.isHidden()) {
-    }
-    // Indicate a directory.
-    else if (myFile.isDir()) {
-      currFile++;
-    }
-    // It's just a file
-    else if (myFile.isFile()) {
+    if (!myFile.isHidden() && (myFile.isDir() || myFile.isFile())) {
       currFile++;
     }
     myFile.close();
   }
   myDir.close();
 
-  // "Calculate number of needed pages"
-  if (currFile < 8)
-    numPages = 1;
-  else if (currFile < 15)
-    numPages = 2;
-  else if (currFile < 22)
-    numPages = 3;
-  else if (currFile < 29)
-    numPages = 4;
-  else if (currFile < 36)
-    numPages = 5;
+  page_layout = div(currFile, 7);
+  numPages = page_layout.quot + 1;
 
   // Fill the array "answers" with 7 options to choose from in the file browser
   char answers[7][20];
@@ -2953,35 +3061,12 @@ browserstart:
 page:
 
   // If there are less than 7 entries, set count to that number so no empty options appear
-  byte count;
-  if (currFile < 8)
-    count = currFile;
-  else if (currPage == 1)
-    count = 7;
-  else if (currFile < 15)
-    count = currFile - 7;
-  else if (currPage == 2)
-    count = 7;
-  else if (currFile < 22)
-    count = currFile - 14;
-  else if (currPage == 3)
-    count = 7;
-  else if (currFile < 29)
-    count = currFile - 21;
-  else {
-    display_Clear();
-    println_Msg(F("Too many files"));
-    display_Update();
-    println_Msg(F(""));
-    println_Msg(F("Press Button..."));
-    display_Update();
-    wait();
-  }
+  byte count = currPage == numPages ? page_layout.rem : 7;
 
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   int countFile = 0;
@@ -3231,7 +3316,8 @@ void loop() {
     print_Msg(F("Mode = "));
     print_Msg(mode);
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
     resetArduino();

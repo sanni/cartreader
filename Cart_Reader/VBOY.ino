@@ -97,8 +97,8 @@ void setup_VBOY() {
 static const char vboyMenuItem1[] PROGMEM = "Read ROM";
 static const char vboyMenuItem2[] PROGMEM = "Read SRAM";
 static const char vboyMenuItem3[] PROGMEM = "Write SRAM";
-static const char vboyMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsVBOY[] PROGMEM = { vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, vboyMenuItem4 };
+//static const char vboyMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsVBOY[] PROGMEM = { vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, string_reset2 };
 
 void vboyMenu() {
   convertPgm(menuOptionsVBOY, 4);
@@ -126,7 +126,8 @@ void vboyMenu() {
       }
 #if (defined(enable_OLED) || defined(enable_LCD))
       // Wait for user input
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
 #endif
@@ -145,17 +146,18 @@ void vboyMenu() {
           println_Msg(F("SRAM verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         print_Error(F("Cart has no SRAM"), false);
       }
 #if (defined(enable_OLED) || defined(enable_LCD))
       // Wait for user input
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
 #endif
@@ -395,7 +397,8 @@ void getCartInfo_VB() {
 
 #if (defined(enable_OLED) || defined(enable_LCD))
   // Wait for user input
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
@@ -417,7 +420,7 @@ void readROM_VB() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -426,7 +429,7 @@ void readROM_VB() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   word d = 0;
@@ -469,7 +472,8 @@ void readROM_VB() {
 #if (defined(enable_OLED) || defined(enable_LCD))
   // Wait for user input
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
@@ -493,10 +497,10 @@ void writeSRAM_VB() {
       writeByte_VB(currByte, (myFile.read()));
     }
     myFile.close();
-    println_Msg(F("Done"));
+    print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   dataIn_VB();
 }
@@ -516,7 +520,7 @@ void readSRAM_VB() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
     for (int currByte = 0; currByte < 512; currByte++) {
@@ -550,7 +554,7 @@ unsigned long verifySRAM_VB() {
     }
     myFile.close();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   return writeErrors;

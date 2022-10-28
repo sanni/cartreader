@@ -35,11 +35,11 @@ static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "Flash repro";
 #ifdef clockgen_calibration
 static const char snsMenuItem5[] PROGMEM = "Calibrate Clock";
-static const char snsMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6 };
+//static const char snsMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, string_reset2 };
 #else
-static const char snsMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5 };
+//static const char snsMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, string_reset2 };
 #endif
 
 // SNES menu items
@@ -49,24 +49,24 @@ static const char SnesMenuItem3[] PROGMEM = "Write Save";
 static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
 static const char SnesMenuItem5[] PROGMEM = "Cycle cart";
 static const char SnesMenuItem6[] PROGMEM = "Force cart type";
-static const char SnesMenuItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsSNES[] PROGMEM = { SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, SnesMenuItem7 };
+//static const char SnesMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNES[] PROGMEM = { SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, string_reset2 };
 
 // Manual config menu items
 static const char confMenuItem1[] PROGMEM = "Use header info";
 static const char confMenuItem2[] PROGMEM = "4MB LoROM 256K SRAM";
 static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
 static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
-static const char confMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, confMenuItem5 };
+//static const char confMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, string_reset2 };
 
 // Repro menu items
 static const char reproMenuItem1[] PROGMEM = "LoROM (P0)";
 static const char reproMenuItem2[] PROGMEM = "HiROM (P0)";
 static const char reproMenuItem3[] PROGMEM = "ExLoROM (P1)";
 static const char reproMenuItem4[] PROGMEM = "ExHiROM (P1)";
-static const char reproMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5 };
+//static const char reproMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, string_reset2 };
 
 // SNES repro menu
 void reproMenu() {
@@ -204,8 +204,6 @@ void snesMenu() {
           display_Clear();
           // Change working dir to root
           sd.chdir("/");
-          // get current time
-          unsigned long startTime = millis();
           // start reading from cart
           readROM_SNES();
           // Internal Checksum
@@ -247,10 +245,10 @@ void snesMenu() {
           println_Msg(F("Verified OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         display_Clear();
@@ -282,10 +280,10 @@ void snesMenu() {
           println_Msg(F("Restored OK"));
           display_Update();
         } else {
-          print_Msg(F("Error: "));
+          print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          println_Msg(F(" bytes "));
-          print_Error(F("did not verify."), false);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR, false);
         }
       } else {
         display_Clear();
@@ -323,7 +321,8 @@ void snesMenu() {
       break;
   }
   //println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -603,7 +602,7 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
   draw_progressbar(0, totalProgressBar);
 
-  for (int currBank = start; currBank < total; currBank++) {
+  for (byte currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
 
     // Blink led
@@ -654,7 +653,7 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
   draw_progressbar(0, totalProgressBar);
 
-  for (int currBank = start; currBank < total; currBank++) {
+  for (byte currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
 
     // Blink led
@@ -699,31 +698,6 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
 ******************************************/
 void getCartInfo_SNES() {
   boolean manualConfig = 0;
-
-  //Prime SA1 cartridge
-  uint16_t c = 0;
-  uint16_t currByte = 0;
-  byte buffer[1024] = { 0 };
-  PORTL = 192;
-  while (c < 1024) {
-    PORTF = (currByte & 0xFF);
-    PORTK = ((currByte >> 8) & 0xFF);
-
-    // Wait for the Byte to appear on the data bus
-    // Arduino running at 16Mhz -> one nop = 62.5ns
-    // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
-    // let's be conservative and use 6 x 62.5 = 375ns
-    NOP;
-    NOP;
-    NOP;
-    NOP;
-    NOP;
-    NOP;
-
-    buffer[c] = PINC;
-    c++;
-    currByte++;
-  }
 
   // Print start page
   if (checkcart_SNES() == 0) {
@@ -840,7 +814,8 @@ void getCartInfo_SNES() {
 
   // Wait for user input
 #if (defined(enable_LCD) || defined(enable_OLED))
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
@@ -872,7 +847,7 @@ void checkAltConf(char crcStr[9]) {
       skip_line(&myFile);
 
       // Skip over the CRC checksum
-      myFile.seekSet(myFile.curPosition() + 9);
+      myFile.seekCur(9);
 
       // Get internal ROM checksum as string
       for (byte j = 0; j < 4; j++) {
@@ -887,7 +862,7 @@ void checkAltConf(char crcStr[9]) {
         display_Update();
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read the CRC32 of the SNES header out of database
         for (byte k = 0; k < 8; k++) {
@@ -896,13 +871,13 @@ void checkAltConf(char crcStr[9]) {
         tempStr3[8] = '\0';
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read file size
         byte romSize2 = (myFile.read() - 48) * 10 + (myFile.read() - 48);
 
         // Skip the , in the file
-        myFile.seekSet(myFile.curPosition() + 1);
+        myFile.seekCur(1);
 
         // Read number of banks
         byte numBanks2 = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
@@ -936,7 +911,7 @@ void checkAltConf(char crcStr[9]) {
       // If no match go to next entry
       else {
         // skip rest of line
-        myFile.seekSet(myFile.curPosition() + 18);
+        myFile.seekCur(18);
         // skip third empty line
         skip_line(&myFile);
       }
@@ -951,12 +926,10 @@ boolean checkcart_SNES() {
   // set control to read
   dataIn();
 
-  uint16_t c = 0;
   uint16_t headerStart = 0xFFB0;
-  uint16_t currByte = headerStart;
-  byte snesHeader[80] = { 0 };
+  byte snesHeader[80];
   PORTL = 0;
-  while (c < 80) {
+  for (uint16_t c = 0, currByte = headerStart; c < 80; c++, currByte++) {
     PORTF = (currByte & 0xFF);
     PORTK = ((currByte >> 8) & 0xFF);
 
@@ -974,17 +947,11 @@ boolean checkcart_SNES() {
     NOP;
 
     snesHeader[c] = PINC;
-    c++;
-    currByte++;
   }
 
   // Calculate CRC32 of header
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  for (int c = 0; c < 80; c++) {
-    oldcrc32 = updateCRC(snesHeader[c], oldcrc32);
-  }
   char crcStr[9];
-  sprintf(crcStr, "%08lX", ~oldcrc32);
+  sprintf(crcStr, "%08lX", calculateCRC(snesHeader, 80));
 
   // Get Checksum as string
   sprintf(checksumStr, "%02X%02X", snesHeader[0xFFDF - headerStart], snesHeader[0xFFDE - headerStart]);
@@ -1049,25 +1016,7 @@ boolean checkcart_SNES() {
   }
 
   // Get name
-  byte myByte = 0;
-  byte myLength = 0;
-  for (unsigned int i = 0xFFC0; i < 0xFFD5; i++) {
-    myByte = snesHeader[i - headerStart];
-    if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
-      romName[myLength] = char(myByte);
-    } else {
-      if (romName[myLength - 1] == 0x5F) myLength--;
-      romName[myLength] = 0x5F;
-    }
-    myLength++;
-  }
-
-  // Strip trailing white space
-  for (unsigned int i = myLength - 1; i > 0; i--) {
-    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
-    romName[i] = 0x00;
-    myLength--;
-  }
+  byte myLength = buildRomName(romName, &snesHeader[headerStart], 21);
 
   // If name consists out of all japanese characters use game code
   if (myLength == 0) {
@@ -1078,9 +1027,10 @@ boolean checkcart_SNES() {
     romName[3] = 'C';
     romName[4] = '-';
     for (unsigned int i = 0; i < 4; i++) {
+      byte myByte;
       myByte = snesHeader[0xFFB2 + i - headerStart];
-      if (((char(myByte) >= 48 && char(myByte) <= 57) || (char(myByte) >= 65 && char(myByte) <= 122)) && myLength < 4) {
-        romName[myLength + 5] = char(myByte);
+      if (((myByte >= '0' && myByte <= '9') || (myByte >= 'A' && myByte <= 'z')) && myLength < 4) {
+        romName[myLength + 5] = myByte;
         myLength++;
       }
     }
@@ -1314,7 +1264,7 @@ void readROM_SNES() {
 
   //clear the screen
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1325,7 +1275,7 @@ void readROM_SNES() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   //Dump Derby Stallion '96 (Japan) Actual Size is 24Mb
@@ -1394,7 +1344,7 @@ void readROM_SNES() {
     controlIn_SNES();
     byte initialSOMap = readBank_SNES(0, 18439);
 
-    for (int currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
+    for (byte currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
 
       dataOut();
       controlOut_SNES();
@@ -1678,7 +1628,7 @@ void readSRAM() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   int sramBanks = 0;
   if (romType == LO) {
@@ -1951,10 +1901,10 @@ unsigned long verifySRAM() {
       if (writeErrors == 0) {
         println_Msg(F("Verified OK"));
       } else {
-        print_Msg(F("Error: "));
+        print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_STR(_bytes_STR, 1);
+        print_Error(did_not_verify_STR, false);
       }
       display_Update();
       wait();
@@ -1972,6 +1922,7 @@ unsigned long verifySRAM() {
     return writeErrors;
   } else {
     print_Error(F("Can't open file"), false);
+    return 1;
   }
 }
 

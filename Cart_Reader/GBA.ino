@@ -18,8 +18,8 @@ static const char GBAMenuItem2[] PROGMEM = "Read Save";
 static const char GBAMenuItem3[] PROGMEM = "Write Save";
 static const char GBAMenuItem4[] PROGMEM = "Force Savetype";
 static const char GBAMenuItem5[] PROGMEM = "Flash Repro";
-static const char GBAMenuItem6[] PROGMEM = "Reset";
-static const char* const menuOptionsGBA[] PROGMEM = { GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4, GBAMenuItem5, GBAMenuItem6 };
+//static const char GBAMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBA[] PROGMEM = { GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4, GBAMenuItem5, string_reset2 };
 
 // Rom menu
 static const char GBARomItem1[] PROGMEM = "1 MB";
@@ -50,73 +50,18 @@ void gbaMenu() {
   switch (mainMenu) {
     case 0:
       // Read rom
-      switch (cartSize) {
-        case 0:
-          // create submenu with title and 4 options to choose from
-          unsigned char GBARomMenu;
-          // Copy menuOptions out of progmem
-          convertPgm(romOptionsGBA, 6);
-          GBARomMenu = question_box(F("Select ROM size"), menuOptions, 6, 0);
+      if (cartSize == 0) {
+        const byte romOptionsGBASize[] = {1, 2, 4, 8, 16, 32};
+        // create submenu with title and 4 options to choose from
+        unsigned char GBARomMenu;
+        // Copy menuOptions out of progmem
+        convertPgm(romOptionsGBA, 6);
+        GBARomMenu = question_box(F("Select ROM size"), menuOptions, 6, 0);
 
-          // wait for user choice to come back from the question box menu
-          switch (GBARomMenu) {
-            case 0:
-              // 1MB
-              cartSize = 0x100000;
-              break;
-
-            case 1:
-              // 2MB
-              cartSize = 0x200000;
-              break;
-
-            case 2:
-              // 4MB
-              cartSize = 0x400000;
-              break;
-
-            case 3:
-              // 8MB
-              cartSize = 0x800000;
-              break;
-
-            case 4:
-              // 16MB
-              cartSize = 0x1000000;
-              break;
-
-            case 5:
-              // 32MB
-              cartSize = 0x2000000;
-              break;
-          }
-          break;
-
-        case 1:
-          // 1MB
-          cartSize = 0x100000;
-          break;
-
-        case 4:
-          // 4MB
-          cartSize = 0x400000;
-          break;
-
-        case 8:
-          // 8MB
-          cartSize = 0x800000;
-          break;
-
-        case 16:
-          // 16MB
-          cartSize = 0x1000000;
-          break;
-
-        case 32:
-          // 32MB
-          cartSize = 0x2000000;
-          break;
+        // wait for user choice to come back from the question box menu
+        cartSize = romOptionsGBASize[GBARomMenu];
       }
+      cartSize *= 0x100000;
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
@@ -129,89 +74,38 @@ void gbaMenu() {
 #ifdef global_log
       save_log();
 #endif
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
 
     case 1:
       // Read save
-      if (saveType == 0) {
-        // create submenu with title and 6 options to choose from
-        unsigned char GBASaveMenu;
-        // Copy menuOptions out of progmem
-        convertPgm(saveOptionsGBA, 6);
-        GBASaveMenu = question_box(F("Select save type"), menuOptions, 6, 0);
-
-        // wait for user choice to come back from the question box menu
-        switch (GBASaveMenu) {
-          case 0:
-            // 4K EEPROM
-            saveType = 1;
-            break;
-
-          case 1:
-            // 64K EEPROM
-            saveType = 2;
-            break;
-
-          case 2:
-            // 256K SRAM/FRAM
-            saveType = 3;
-            break;
-
-          case 3:
-            // 512K SRAM/FRAM
-            saveType = 6;
-            break;
-
-          case 4:
-            // 512K FLASH
-            saveType = 4;
-            break;
-
-          case 5:
-            // 1M FLASH
-            saveType = 5;
-            break;
-        }
-      }
-      switch (saveType) {
+      display_Clear();
+      sd.chdir("/");
+      switch (getSaveType()) {
         case 1:
-          display_Clear();
-          sd.chdir("/");
           // 4K EEPROM
           readEeprom_GBA(4);
-          setROM_GBA();
           break;
 
         case 2:
-          display_Clear();
-          sd.chdir("/");
           // 64K EEPROM
           readEeprom_GBA(64);
-          setROM_GBA();
           break;
 
         case 3:
-          display_Clear();
-          sd.chdir("/");
           // 256K SRAM/FRAM
           readSRAM_GBA(1, 32768, 0);
-          setROM_GBA();
           break;
 
         case 4:
-          display_Clear();
-          sd.chdir("/");
           // 512K FLASH
           readFLASH_GBA(1, 65536, 0);
-          setROM_GBA();
           break;
 
         case 5:
-          display_Clear();
-          sd.chdir("/");
           // 1M FLASH (divided into two banks)
           switchBank_GBA(0x0);
           setROM_GBA();
@@ -219,152 +113,64 @@ void gbaMenu() {
           switchBank_GBA(0x1);
           setROM_GBA();
           readFLASH_GBA(0, 65536, 65536);
-          setROM_GBA();
           break;
 
         case 6:
-          display_Clear();
-          sd.chdir("/");
           // 512K SRAM/FRAM
           readSRAM_GBA(1, 65536, 0);
-          setROM_GBA();
           break;
       }
+      setROM_GBA();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
 
     case 2:
       // Write save
-      if (saveType == 0) {
-        // create submenu with title and 6 options to choose from
-        unsigned char GBASavesMenu;
-        // Copy menuOptions out of progmem
-        convertPgm(saveOptionsGBA, 6);
-        GBASavesMenu = question_box(F("Select save type"), menuOptions, 6, 0);
-        // wait for user choice to come back from the question box menu
-        switch (GBASavesMenu) {
-          case 0:
-            // 4K EEPROM
-            saveType = 1;
-            break;
-
-          case 1:
-            // 64K EEPROM
-            saveType = 2;
-            break;
-
-          case 2:
-            // 256K SRAM/FRAM
-            saveType = 3;
-            break;
-
-          case 3:
-            // 512K SRAM/FRAM
-            saveType = 6;
-            break;
-
-          case 4:
-            // 512K FLASH
-            saveType = 4;
-            break;
-
-          case 5:
-            // 1M FLASH
-            saveType = 5;
-            break;
-        }
-      }
-
-      switch (saveType) {
+      display_Clear();
+      sd.chdir("/");
+      switch (getSaveType()) {
         case 1:
-          display_Clear();
-          sd.chdir("/");
           // 4K EEPROM
           writeEeprom_GBA(4);
-          writeErrors = verifyEEP_GBA(4);
-          if (writeErrors == 0) {
-            println_Msg(F("Verified OK"));
-            display_Update();
-          } else {
-            print_Msg(F("Error: "));
-            print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
-          }
+          verifyEEP_GBA(4);
           setROM_GBA();
           break;
 
         case 2:
-          display_Clear();
-          sd.chdir("/");
           // 64K EEPROM
           writeEeprom_GBA(64);
-          writeErrors = verifyEEP_GBA(64);
-          if (writeErrors == 0) {
-            println_Msg(F("Verified OK"));
-            display_Update();
-          } else {
-            print_Msg(F("Error: "));
-            print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
-          }
-          setROM_GBA();
+          verifyEEP_GBA(64);
           break;
 
         case 3:
-          display_Clear();
-          // Change working dir to root
-          sd.chdir("/");
           // 256K SRAM/FRAM
           writeSRAM_GBA(1, 32768, 0);
-          writeErrors = verifySRAM_GBA(32768, 0);
-          if (writeErrors == 0) {
-            println_Msg(F("Verified OK"));
-            display_Update();
-          } else {
-            print_Msg(F("Error: "));
-            print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
-          }
-          setROM_GBA();
+          verifySRAM_GBA(32768, 0);
           break;
 
         case 4:
-          display_Clear();
-          sd.chdir("/");
           // 512K FLASH
           idFlash_GBA();
           resetFLASH_GBA();
 
-          print_Msg(F("FLASH ID: "));
-          println_Msg(flashid);
-          println_Msg(F(""));
-          println_Msg(F("FLASH Type: "));
-          if (strcmp(flashid, "1F3D") == 0) {
-            println_Msg(F("Atmel AT29LV512"));
-          } else if (strcmp(flashid, "BFD4") == 0) {
-            println_Msg(F("SST 39VF512"));
-          } else if (strcmp(flashid, "C21C") == 0) {
-            println_Msg(F("Macronix MX29L512"));
-          } else if (strcmp(flashid, "321B") == 0) {
-            println_Msg(F("Panasonic MN63F805MNP"));
+          if (flashid == 0x1F3D) {
+            printFlashTypeAndWait(F("Atmel AT29LV512"));
+          } else if (flashid == 0xBFD4) {
+            printFlashTypeAndWait(F("SST 39VF512"));
+          } else if (flashid == 0xC21C) {
+            printFlashTypeAndWait(F("Macronix MX29L512"));
+          } else if (flashid == 0x321B) {
+            printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
           } else {
-            println_Msg(F("Unknown"));
+            printFlashTypeAndWait(F("Unknown"));
             //print_Error(F(""), true);
           }
-          println_Msg(F(""));
-          println_Msg(F("Press Button..."));
-          display_Update();
-          wait();
-          display_Clear();
-          display_Update();
 
-          if (strcmp(flashid, "1F3D") == 0) {  // Atmel
+          if (flashid == 0x1F3D) {  // Atmel
             writeFLASH_GBA(1, 65536, 0, 1);
             verifyFLASH_GBA(65536, 0);
           } else {
@@ -372,125 +178,55 @@ void gbaMenu() {
             if (blankcheckFLASH_GBA(65536)) {
               writeFLASH_GBA(1, 65536, 0, 0);
               verifyFLASH_GBA(65536, 0);
-            } else {
-              print_Error(F("Erase failed"), false);
             }
           }
-          setROM_GBA();
           break;
 
         case 5:
-          display_Clear();
-          sd.chdir("/");
           // 1M FLASH
           idFlash_GBA();
           resetFLASH_GBA();
 
-          print_Msg(F("Flashrom ID: "));
-          println_Msg(flashid);
-          println_Msg(F(""));
-          println_Msg(F("Flashrom Type: "));
-          if (strcmp(flashid, "C209") == 0) {
-            println_Msg(F("Macronix MX29L010"));
-          } else if (strcmp(flashid, "6213") == 0) {
-            println_Msg(F("SANYO LE26FV10N1TS"));
+          if (flashid == 0xC209) {
+            printFlashTypeAndWait(F("Macronix MX29L010"));
+          } else if (flashid == 0x6213) {
+            printFlashTypeAndWait(F("SANYO LE26FV10N1TS"));
           } else {
-            println_Msg(F("Unknown"));
+            printFlashTypeAndWait(F("Unknown"));
             //print_Error(F(""), true);
           }
-          println_Msg(F(""));
-          println_Msg(F("Press Button..."));
-          display_Update();
-          wait();
-          display_Clear();
-          display_Update();
 
           eraseFLASH_GBA();
           // 131072 bytes are divided into two 65536 byte banks
-          switchBank_GBA(0x0);
-          setROM_GBA();
-          if (blankcheckFLASH_GBA(65536)) {
-            writeFLASH_GBA(1, 65536, 0, 0);
-            verifyFLASH_GBA(65536, 0);
-          } else {
-            print_Error(F("Erase failed"), false);
+          for (byte bank = 0; bank < 2; bank++) {
+            switchBank_GBA(bank);
+            setROM_GBA();
+            if (!blankcheckFLASH_GBA(65536))
+              break;
+            writeFLASH_GBA(!bank, 65536, bank ? 65536 : 0, 0);
+            if (verifyFLASH_GBA(65536, bank ? 65536 : 0))
+              break;
           }
-          switchBank_GBA(0x1);
-          setROM_GBA();
-          if (blankcheckFLASH_GBA(65536)) {
-            writeFLASH_GBA(0, 65536, 65536, 0);
-            verifyFLASH_GBA(65536, 65536);
-          } else {
-            print_Error(F("Erase failed"), false);
-          }
-          setROM_GBA();
           break;
 
         case 6:
-          display_Clear();
-          // Change working dir to root
-          sd.chdir("/");
           // 512K SRAM/FRAM
           writeSRAM_GBA(1, 65536, 0);
-          writeErrors = verifySRAM_GBA(65536, 0);
-          if (writeErrors == 0) {
-            println_Msg(F("Verified OK"));
-            display_Update();
-          } else {
-            print_Msg(F("Error: "));
-            print_Msg(writeErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
-          }
-          setROM_GBA();
+          verifySRAM_GBA(65536, 0);
           break;
       }
+      setROM_GBA();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
 
     case 3:
       display_Clear();
-      // create submenu with title and 7 options to choose from
-      unsigned char GBASaveMenu;
-      // Copy menuOptions out of progmem
-      convertPgm(saveOptionsGBA, 6);
-      GBASaveMenu = question_box(F("Select save type"), menuOptions, 6, 0);
-
-      // wait for user choice to come back from the question box menu
-      switch (GBASaveMenu) {
-        case 0:
-          // 4K EEPROM
-          saveType = 1;
-          break;
-
-        case 1:
-          // 64K EEPROM
-          saveType = 2;
-          break;
-
-        case 2:
-          // 256K SRAM/FRAM
-          saveType = 3;
-          break;
-
-        case 3:
-          // 512K SRAM/FRAM
-          saveType = 6;
-          break;
-
-        case 4:
-          // 512K FLASH
-          saveType = 4;
-          break;
-
-        case 5:
-          // 1M FLASH
-          saveType = 5;
-          break;
-      }
+      saveType = 0;
+      saveType = getSaveType();
       display_Clear();
       break;
 
@@ -498,7 +234,8 @@ void gbaMenu() {
       display_Clear();
       flashRepro_GBA();
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       resetArduino();
@@ -565,7 +302,8 @@ void setup_GBA() {
 
   // Wait for user input
   println_Msg("");
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -573,6 +311,35 @@ void setup_GBA() {
 /******************************************
    Low level functions
 *****************************************/
+static byte getSaveType() {
+  if (saveType == 0) {
+    const byte saveOptionsGBAType[] = {1, 2, 3, 6, 4, 5};
+    // create submenu with title and 6 options to choose from
+    unsigned char GBASaveMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(saveOptionsGBA, 6);
+    GBASaveMenu = question_box(F("Select save type"), menuOptions, 6, 0);
+    // wait for user choice to come back from the question box menu
+    saveType = saveOptionsGBAType[GBASaveMenu];
+  }
+  return saveType;
+}
+
+static void printFlashTypeAndWait(const __FlashStringHelper* caption) {
+  print_Msg(F("FLASH ID: "));
+  println_Msg(flashid_str);
+  println_Msg(F(""));
+  println_Msg(F("FLASH Type: "));
+  println_Msg(caption);
+  println_Msg(F(""));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+  display_Clear();
+  display_Update();
+}
+
 void setROM_GBA() {
   // CS_SRAM(PH0)
   DDRH |= (1 << 0);
@@ -866,7 +633,7 @@ void getCartInfo_GBA() {
         skip_line(&myFile);
 
         // Skip over the CRC checksum
-        myFile.seekSet(myFile.curPosition() + 9);
+        myFile.seekCur(9);
 
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
         sprintf(tempStr, "%c", myFile.read());
@@ -878,20 +645,7 @@ void getCartInfo_GBA() {
         // Check if string is a match
         if (strcmp(tempStr, cartID) == 0) {
           // Rewind to start of entry
-          for (byte count_newline = 0; count_newline < 2; count_newline++) {
-            while (1) {
-              if (myFile.curPosition() == 0) {
-                break;
-              } else if (myFile.peek() == '\n') {
-                myFile.seekSet(myFile.curPosition() - 1);
-                break;
-              } else {
-                myFile.seekSet(myFile.curPosition() - 1);
-              }
-            }
-          }
-          if (myFile.curPosition() != 0)
-            myFile.seekSet(myFile.curPosition() + 2);
+          rewind_line(myFile);
 
           // Display database
           while (myFile.available()) {
@@ -901,7 +655,7 @@ void getCartInfo_GBA() {
             get_line(gamename, &myFile, 96);
 
             // Skip over the CRC checksum
-            myFile.seekSet(myFile.curPosition() + 9);
+            myFile.seekCur(9);
 
             // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
             sprintf(tempStr, "%c", myFile.read());
@@ -911,7 +665,7 @@ void getCartInfo_GBA() {
             }
 
             // Skip the , in the file
-            myFile.seekSet(myFile.curPosition() + 1);
+            myFile.seekCur(1);
 
             // Read the next ascii character and subtract 48 to convert to decimal
             cartSize = myFile.read() - 48;
@@ -923,7 +677,7 @@ void getCartInfo_GBA() {
             }
 
             // Skip the , in the file
-            myFile.seekSet(myFile.curPosition() + 1);
+            myFile.seekCur(1);
 
             // Read save type into string
             get_line(saveTypeStr, &myFile, 14);
@@ -942,12 +696,12 @@ void getCartInfo_GBA() {
             println_Msg(saveTypeStr);
 
 #if defined(enable_OLED)
-            println_Msg(F("Press left to Change"));
-            println_Msg(F("and right to Select"));
+            print_STR(press_to_change_STR, 1);
+            print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
             println_Msg(F(""));
-            println_Msg(F("Rotate to Change"));
-            println_Msg(F("Press to Select"));
+            print_STR(rotate_to_change_STR, 1);
+            print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
             println_Msg(F(""));
             println_Msg(F("U/D to Change"));
@@ -968,20 +722,7 @@ void getCartInfo_GBA() {
 
               // Previous
               else if (b == 2) {
-                for (byte count_newline = 0; count_newline < 7; count_newline++) {
-                  while (1) {
-                    if (myFile.curPosition() == 0) {
-                      break;
-                    } else if (myFile.peek() == '\n') {
-                      myFile.seekSet(myFile.curPosition() - 1);
-                      break;
-                    } else {
-                      myFile.seekSet(myFile.curPosition() - 1);
-                    }
-                  }
-                }
-                if (myFile.curPosition() != 0)
-                  myFile.seekSet(myFile.curPosition() + 2);
+                rewind_line(myFile, 6);
                 break;
               }
 
@@ -1014,25 +755,7 @@ void getCartInfo_GBA() {
     }
 
     // Get name
-    byte myByte = 0;
-    byte myLength = 0;
-    for (int addr = 0xA0; addr <= 0xAB; addr++) {
-      myByte = sdBuffer[addr];
-      if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
-        romName[myLength] = char(myByte);
-      } else {
-        if (romName[myLength - 1] == 0x5F) myLength--;
-        romName[myLength] = 0x5F;
-      }
-      myLength++;
-    }
-
-    // Strip trailing white space
-    for (unsigned int i = myLength - 1; i > 0; i--) {
-      if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
-      romName[i] = 0x00;
-      myLength--;
-    }
+    buildRomName(romName, &sdBuffer[0xA0], 11);
 
     // Get ROM version
     romVersion = sdBuffer[0xBC];
@@ -1056,7 +779,8 @@ void getCartInfo_GBA() {
       println_Msg(calcChecksumStr);
       print_Error(F("Checksum Error"), false);
       println_Msg(F(""));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
     }
@@ -1127,7 +851,7 @@ void readROM_GBA() {
 
   //clear the screen
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1138,7 +862,7 @@ void readROM_GBA() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   //Initialize progress bar
@@ -1234,7 +958,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
     sd.chdir(folder);
 
     // Save location
-    print_Msg(F("Saving to "));
+    print_STR(saving_to_STR, 0);
     print_Msg(folder);
     println_Msg(F("/..."));
     display_Update();
@@ -1245,7 +969,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Seek to a new position in the file
@@ -1265,7 +989,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
   myFile.close();
 
   // Signal end of process
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -1328,9 +1052,21 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     }
     // Close the file:
     myFile.close();
+
+    if (writeErrors == 0) {
+      println_Msg(F("Verified OK"));
+      display_Update();
+    } else {
+      print_STR(error_STR, 0);
+      print_Msg(writeErrors);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
+    }
+
     return writeErrors;
   } else {
     print_Error(F("Can't open file"), false);
+    return 1;
   }
 }
 
@@ -1363,7 +1099,7 @@ void readFRAM_GBA(unsigned long framSize) {
   sd.chdir(folder);
 
   // Save location
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1373,7 +1109,7 @@ void readFRAM_GBA(unsigned long framSize) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1407,7 +1143,7 @@ void readFRAM_GBA(unsigned long framSize) {
   myFile.close();
 
   // Signal end of process
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -1538,6 +1274,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
     return writeErrors;
   } else {
     print_Error(F("Can't open file"), false);
+    return 1;
   }
 }
 
@@ -1576,7 +1313,9 @@ void idFlash_GBA() {
           "nop\n\t");
 
   // Read the two id bytes into a string
-  sprintf(flashid, "%02X%02X", readByteFlash_GBA(0), readByteFlash_GBA(1));
+  flashid = readByteFlash_GBA(0) << 8;
+  flashid |= readByteFlash_GBA(1);
+  sprintf(flashid_str, "%04X", flashid);
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
@@ -1725,6 +1464,7 @@ boolean blankcheckFLASH_GBA(unsigned long flashSize) {
     // Check buffer
     for (unsigned long currByte = 0; currByte < 512; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
+        print_Error(F("Erase failed"), false);
         currByte = 512;
         currAddress = flashSize;
         blank = 0;
@@ -1790,7 +1530,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
     sd.chdir(folder);
 
     // Save location
-    print_Msg(F("Saving to "));
+    print_STR(saving_to_STR, 0);
     print_Msg(folder);
     println_Msg(F("/..."));
     display_Update();
@@ -1802,7 +1542,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Seek to a new position in the file
@@ -1829,7 +1569,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
   PORTH |= (1 << 0);
 
   // Signal end of process
-  println_Msg(F("Done"));
+  print_STR(done_STR, 1);
   display_Update();
 }
 
@@ -1915,7 +1655,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
 
     // Close the file:
     myFile.close();
-    println_Msg(F("done"));
+    print_STR(done_STR, 1);
     display_Update();
 
   } else {
@@ -1925,7 +1665,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
 }
 
 // Check if the Flashrom was written without any error
-void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
+unsigned long verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1947,7 +1687,7 @@ void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Seek to a new position in the file
@@ -1975,6 +1715,8 @@ void verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
     print_Msg(wrError);
     print_Error(F(" Errors"), false);
   }
+
+  return wrError;
 }
 
 /******************************************
@@ -2010,7 +1752,7 @@ void writeEeprom_GBA(word eepSize) {
 
     // Close the file:
     myFile.close();
-    println_Msg(F("done"));
+    print_STR(done_STR, 1);
     display_Update();
   } else {
     println_Msg(F("Error"));
@@ -2032,7 +1774,7 @@ void readEeprom_GBA(word eepSize) {
   sd.chdir(folder);
 
   // Save location
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -2043,7 +1785,7 @@ void readEeprom_GBA(word eepSize) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
@@ -2285,7 +2027,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // Fill sd Buffer
@@ -2303,6 +2045,17 @@ unsigned long verifyEEP_GBA(word eepSize) {
     }
   }
   myFile.close();
+
+  if (wrError == 0) {
+    println_Msg(F("Verified OK"));
+    display_Update();
+  } else {
+    print_STR(error_STR, 0);
+    print_Msg(wrError);
+    print_STR(_bytes_STR, 1);
+    print_Error(did_not_verify_STR, false);
+  }
+
   return wrError;
 }
 
@@ -2346,10 +2099,12 @@ void idFlashrom_GBA() {
           "nop\n\t");
 
   // Read flashrom ID
-  sprintf(flashid, "%02X%02X", ((readWord_GBA(0x2) >> 8) & 0xFF), (readWord_GBA(0x4) & 0xFF));
+  flashid = readWord_GBA(0x2) & 0xFF00;
+  flashid |= readWord_GBA(0x4) & 0xFF;
+  sprintf(flashid_str, "%04X", flashid);
 
   // Intel Strataflash
-  if (strcmp(flashid, "8802") == 0 || (strcmp(flashid, "8816") == 0)) {
+  if (flashid == 0x8802 || (flashid == 0x8816)) {
     cartSize = 0x2000000;
   } else {
     // Send swapped MX29GL128E/MSP55LV128 ID command to flashrom
@@ -2366,10 +2121,11 @@ void idFlashrom_GBA() {
             "nop\n\t");
 
     // Read flashrom ID
-    sprintf(flashid, "%02X%02X", ((readWord_GAB(0x2) >> 8) & 0xFF), (readWord_GAB(0x2) & 0xFF));
+    flashid = readWord_GAB(0x2);
+    sprintf(flashid_str, "%04X", flashid);
 
     // MX29GL128E or MSP55LV128
-    if (strcmp(flashid, "227E") == 0) {
+    if (flashid == 0x227E) {
       // MX is 0xC2 and MSP is 0x4 or 0x1
       romType = (readWord_GAB(0x0) & 0xFF);
       cartSize = 0x1000000;
@@ -2379,7 +2135,7 @@ void idFlashrom_GBA() {
       println_Msg(F(""));
       println_Msg(F("Unknown Flash"));
       print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
+      println_Msg(flashid_str);
       println_Msg(F(""));
       print_Error(F("Check voltage"), true);
     }
@@ -2779,7 +2535,7 @@ boolean verifyFlashrom_GBA() {
       return 0;
     }
   } else {
-    print_Error(F("Can't open file"), true);
+    print_Error(open_file_STR, true);
     return 9999;
   }
 }
@@ -2788,14 +2544,14 @@ void flashRepro_GBA() {
   // Check flashrom ID's
   idFlashrom_GBA();
 
-  if ((strcmp(flashid, "8802") == 0) || (strcmp(flashid, "8816") == 0) || (strcmp(flashid, "227E") == 0)) {
+  if ((flashid == 0x8802) || (flashid == 0x8816) || (flashid == 0x227E)) {
     print_Msg(F("ID: "));
-    print_Msg(flashid);
+    print_Msg(flashid_str);
     print_Msg(F(" Size: "));
     print_Msg(cartSize / 0x100000);
     println_Msg(F("MB"));
     // MX29GL128E or MSP55LV128(N)
-    if (strcmp(flashid, "227E") == 0) {
+    if (flashid == 0x227E) {
       // MX is 0xC2 and MSP55LV128 is 0x4 and MSP55LV128N 0x1
       if (romType == 0xC2) {
         println_Msg(F("Macronix MX29GL128E"));
@@ -2812,11 +2568,11 @@ void flashRepro_GBA() {
       }
     }
     // Intel 4000L0YBQ0
-    else if (strcmp(flashid, "8802") == 0) {
+    else if (flashid == 0x8802) {
       println_Msg(F("Intel 4000L0YBQ0"));
     }
     // Intel 4400L0ZDQ0
-    else if (strcmp(flashid, "8816") == 0) {
+    else if (flashid == 0x8816) {
       println_Msg(F("Intel 4400L0ZDQ0"));
     }
     println_Msg("");
@@ -2824,7 +2580,8 @@ void flashRepro_GBA() {
     println_Msg(F("Repro Cartridge."));
     println_Msg(F(""));
     println_Msg("");
-    println_Msg(F("Press Button"));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
 
@@ -2848,17 +2605,17 @@ void flashRepro_GBA() {
       display_Update();
 
       // Erase needed sectors
-      if (strcmp(flashid, "8802") == 0) {
+      if (flashid == 0x8802) {
         println_Msg(F("Erasing..."));
         display_Update();
         eraseIntel4000_GBA();
         resetIntel_GBA(0x200000);
-      } else if (strcmp(flashid, "8816") == 0) {
+      } else if (flashid == 0x8816) {
         println_Msg(F("Erasing..."));
         display_Update();
         eraseIntel4400_GBA();
         resetIntel_GBA(0x200000);
-      } else if (strcmp(flashid, "227E") == 0) {
+      } else if (flashid == 0x227E) {
         //if (sectorCheckMX29GL128E_GBA()) {
         //print_Error(F("Sector Protected"), true);
         //}
@@ -2886,9 +2643,9 @@ void flashRepro_GBA() {
       print_Msg(F("Writing "));
       println_Msg(filePath);
       display_Update();
-      if ((strcmp(flashid, "8802") == 0) || (strcmp(flashid, "8816") == 0)) {
+      if ((flashid == 0x8802) || (flashid == 0x8816)) {
         writeIntel4000_GBA();
-      } else if (strcmp(flashid, "227E") == 0) {
+      } else if (flashid == 0x227E) {
         if ((romType == 0xC2) || (romType == 0x89) || (romType == 0x20)) {
           //MX29GL128E (0xC2)
           //PC28F256M29 (0x89)
@@ -2903,9 +2660,9 @@ void flashRepro_GBA() {
       myFile.close();
 
       // Verify
-      print_Msg(F("Verifying..."));
+      print_STR(verifying_STR, 0);
       display_Update();
-      if (strcmp(flashid, "8802") == 0) {
+      if (flashid == 0x8802) {
         // Don't know the correct size so just take some guesses
         resetIntel_GBA(0x8000);
         delay(1000);
@@ -2913,12 +2670,12 @@ void flashRepro_GBA() {
         delay(1000);
         resetIntel_GBA(0x200000);
         delay(1000);
-      } else if (strcmp(flashid, "8816") == 0) {
+      } else if (flashid == 0x8816) {
         resetIntel_GBA(0x200000);
         delay(1000);
       }
 
-      else if (strcmp(flashid, "227E") == 0) {
+      else if (flashid == 0x227E) {
         resetMX29GL128E_GBA();
         delay(1000);
       }
@@ -2935,14 +2692,14 @@ void flashRepro_GBA() {
         }
       */
     } else {
-      print_Error(F("Can't open file"), true);
+      print_Error(open_file_STR, true);
     }
   } else {
     println_Msg(F("Error"));
     println_Msg(F(""));
     println_Msg(F("Unknown Flash"));
     print_Msg(F("Flash ID: "));
-    println_Msg(flashid);
+    println_Msg(flashid_str);
     println_Msg(F(""));
     print_Error(F("Check voltage"), true);
   }

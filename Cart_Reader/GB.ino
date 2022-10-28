@@ -7,8 +7,8 @@
    Variables
  *****************************************/
 // Game Boy
-int sramBanks;
-int romBanks;
+word sramBanks;
+word romBanks;
 word lastByte = 0;
 
 /******************************************
@@ -19,15 +19,15 @@ static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "GB Advance (3V)";
 static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
-static const char gbxMenuItem5[] PROGMEM = "Reset";
-static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5 };
+//static const char gbxMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, string_reset2 };
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read ROM";
 static const char GBMenuItem2[] PROGMEM = "Read Save";
 static const char GBMenuItem3[] PROGMEM = "Write Save";
-static const char GBMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsGB[] PROGMEM = { GBMenuItem1, GBMenuItem2, GBMenuItem3, GBMenuItem4 };
+//static const char GBMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGB[] PROGMEM = { GBMenuItem1, GBMenuItem2, GBMenuItem3, string_reset2 };
 
 // GB Flash items
 static const char GBFlashItem1[] PROGMEM = "29F Cart (MBC3)";
@@ -36,8 +36,8 @@ static const char GBFlashItem3[] PROGMEM = "29F Cart (CAM)";
 static const char GBFlashItem4[] PROGMEM = "CFI Cart";
 static const char GBFlashItem5[] PROGMEM = "CFI Cart and Save";
 static const char GBFlashItem6[] PROGMEM = "GB Smart";
-static const char GBFlashItem7[] PROGMEM = "Reset";
-static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, GBFlashItem7 };
+//static const char GBFlashItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, string_reset2 };
 
 // Start menu for both GB and GBA
 void gbxMenu() {
@@ -84,7 +84,8 @@ void gbxMenu() {
           //MBC3
           writeFlash29F_GB(3, 1);
           // Reset
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           resetArduino();
@@ -102,7 +103,8 @@ void gbxMenu() {
           //MBC5
           writeFlash29F_GB(5, 1);
           // Reset
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           resetArduino();
@@ -120,7 +122,8 @@ void gbxMenu() {
           sd.chdir("/");
           //MBC3
           writeFlash29F_GB(3, 1);
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
 
@@ -131,7 +134,8 @@ void gbxMenu() {
           println_Msg(F("if you want to flash"));
           println_Msg(F("a second game"));
           println_Msg(F(""));
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
 
@@ -143,7 +147,8 @@ void gbxMenu() {
 
           // Reset
           println_Msg(F(""));
-          println_Msg(F("Press Button..."));
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
           display_Update();
           wait();
           resetArduino();
@@ -167,7 +172,8 @@ void gbxMenu() {
           if (!writeCFI_GB()) {
             display_Clear();
             println_Msg(F("Flashing failed, time out!"));
-            println_Msg(F("Press Button..."));
+            // Prints string out of the common strings array either with or without newline
+            print_STR(press_button_STR, 1);
             display_Update();
             wait();
           }
@@ -194,7 +200,8 @@ void gbxMenu() {
           if (!writeCFI_GB()) {
             display_Clear();
             println_Msg(F("Flashing failed, time out!"));
-            println_Msg(F("Press Button..."));
+            // Prints string out of the common strings array either with or without newline
+            print_STR(press_button_STR, 1);
             display_Update();
             wait();
             resetArduino();
@@ -230,10 +237,10 @@ void gbxMenu() {
                     println_Msg(F("Verified OK"));
                     display_Update();
                   } else {
-                    print_Msg(F("Error: "));
+                    print_STR(error_STR, 0);
                     print_Msg(wrErrors);
-                    println_Msg(F(" bytes "));
-                    print_Error(F("did not verify."), false);
+                    print_STR(_bytes_STR, 1);
+                    print_Error(did_not_verify_STR, false);
                   }
                   break;
                 }
@@ -333,10 +340,10 @@ void gbMenu() {
             println_Msg(F("Verified OK"));
             display_Update();
           } else {
-            print_Msg(F("Error: "));
+            print_STR(error_STR, 0);
             print_Msg(wrErrors);
-            println_Msg(F(" bytes "));
-            print_Error(F("did not verify."), false);
+            print_STR(_bytes_STR, 1);
+            print_Error(did_not_verify_STR, false);
           }
         }
       } else {
@@ -349,7 +356,8 @@ void gbMenu() {
       resetArduino();
       break;
   }
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -534,7 +542,8 @@ void showCartInfo_GB() {
 
     // Wait for user input
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
     display_Update();
     wait();
   } else {
@@ -873,12 +882,10 @@ void getCartInfo_GB() {
   for (int addr = 0x0134; addr <= 0x0143 - x; addr++) {
     myByte = sdBuffer[addr];
     if (isprint(myByte) && myByte != '<' && myByte != '>' && myByte != ':' && myByte != '"' && myByte != '/' && myByte != '\\' && myByte != '|' && myByte != '?' && myByte != '*') {
-      romName[myLength] = char(myByte);
-    } else {
-      if (romName[myLength - 1] == 0x5F) myLength--;
-      romName[myLength] = 0x5F;
+      romName[myLength++] = char(myByte);
+    } else if (myLength == 0 || romName[myLength - 1] != '_') {
+      romName[myLength++] = '_';
     }
-    myLength++;
   }
 
   // Find Game Serial
@@ -895,26 +902,50 @@ void getCartInfo_GB() {
   }
 
   // Strip trailing white space
-  for (unsigned int i = myLength - 1; i > 0; i--) {
-    if ((romName[i] != 0x5F) && (romName[i] != 0x20)) break;
-    romName[i] = 0x00;
+  while (
+    myLength &&
+    (romName[myLength - 1] == '_' || romName[myLength - 1] == ' ')
+  ) {
     myLength--;
   }
+  romName[myLength] = 0;
 
   // M161 (Mani 4 in 1)
-  if ((strncmp(romName, "TETRIS SET", 10) == 0) && (sdBuffer[0x14D] == 0x3F)) {
+  if (strncmp(romName, "TETRIS SET", 10) == 0 && sdBuffer[0x14D] == 0x3F) {
     romType = 0x104;
   }
 
   // MMM01 (Mani 4 in 1)
   if (
-    (strncmp(romName, "BOUKENJIMA2 SET", 15) == 0) && (sdBuffer[0x14D] == 0) || (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0) && (sdBuffer[0x14D] == 0xC6) || (strncmp(romName, "GANBARUGA SET", 13) == 0) && (sdBuffer[0x14D] == 0x90) || (strncmp(romName, "RTYPE 2 SET", 11) == 0) && (sdBuffer[0x14D] == 0x32)) {
+    (
+      strncmp(romName, "BOUKENJIMA2 SET", 15) == 0 && sdBuffer[0x14D] == 0
+    ) || (
+      strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0 && sdBuffer[0x14D] == 0xC6
+    ) || (
+      strncmp(romName, "GANBARUGA SET", 13) == 0 && sdBuffer[0x14D] == 0x90
+    ) || (
+      strncmp(romName, "RTYPE 2 SET", 11) == 0 && sdBuffer[0x14D] == 0x32
+    )
+  ) {
     romType = 0x0B;
   }
 
   // MBC1M
   if (
-    (strncmp(romName, "MOMOCOL", 7) == 0) && (sdBuffer[0x14D] == 0x28) || (strncmp(romName, "BOMCOL", 6) == 0) && (sdBuffer[0x14D] == 0x86) || (strncmp(romName, "GENCOL", 6) == 0) && (sdBuffer[0x14D] == 0x8A) || (strncmp(romName, "SUPERCHINESE 123", 16) == 0) && (sdBuffer[0x14D] == 0xE4) || (strncmp(romName, "MORTALKOMBATI&II", 16) == 0) && (sdBuffer[0x14D] == 0xB9) || (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0) && (sdBuffer[0x14D] == 0xA7)) {
+    (
+      strncmp(romName, "MOMOCOL", 7) == 0 && sdBuffer[0x14D] == 0x28
+    ) || (
+      strncmp(romName, "BOMCOL", 6) == 0 && sdBuffer[0x14D] == 0x86
+    ) || (
+      strncmp(romName, "GENCOL", 6) == 0 && sdBuffer[0x14D] == 0x8A
+    ) || (
+      strncmp(romName, "SUPERCHINESE 123", 16) == 0 && sdBuffer[0x14D] == 0xE4
+    ) || (
+      strncmp(romName, "MORTALKOMBATI&II", 16) == 0 && sdBuffer[0x14D] == 0xB9
+    ) || (
+      strncmp(romName, "MORTALKOMBAT DUO", 16) == 0 && sdBuffer[0x14D] == 0xA7
+    )
+  ) {
     romType += 0x100;
   }
 
@@ -938,7 +969,7 @@ void readROM_GB() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -949,10 +980,10 @@ void readROM_GB() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
-  int endAddress = 0x7FFF;
+  word endAddress = 0x7FFF;
   word romAddress = 0;
   word startBank = 1;
 
@@ -1073,7 +1104,7 @@ void readROM_GB() {
 }
 
 // Calculate checksum
-unsigned int calc_checksum_GB(char* fileName, char* folder) {
+unsigned int calc_checksum_GB(char* fileName) {
   unsigned int calcChecksum = 0;
   //  int calcFilesize = 0; // unused
   unsigned long i = 0;
@@ -1117,7 +1148,7 @@ void compare_checksums_GB() {
 
   // Internal ROM checksum
   char calcsumStr[5];
-  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName, folder));
+  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName));
 
   print_Msg(F("Checksum: "));
   print_Msg(calcsumStr);
@@ -1158,7 +1189,7 @@ void readSRAM_GB() {
 
     //open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
 
     // MBC2 Fix
@@ -1289,7 +1320,8 @@ unsigned long verifySRAM_GB() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"), true);
+    print_Error(open_file_STR, true);
+    return 1;
   }
 }
 
@@ -1306,7 +1338,7 @@ void readSRAMFLASH_MBC6_GB() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1317,7 +1349,7 @@ void readSRAMFLASH_MBC6_GB() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   //Initialize progress bar
@@ -1599,33 +1631,34 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     writeByte_GB(0x555, 0x90);
 
     // Read the two id bytes into a string
-    sprintf(flashid, "%02X%02X", readByte_GB(0), readByte_GB(1));
+    flashid = readByte_GB(0) << 8;
+    flashid |= readByte_GB(1);
 
-    if (strcmp(flashid, "04D4") == 0) {
+    if (flashid == 0x04D4) {
       println_Msg(F("MBM29F033C"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
-    } else if (strcmp(flashid, "0141") == 0) {
+    } else if (flashid == 0x0141) {
       println_Msg(F("AM29F032B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
-    } else if (strcmp(flashid, "01AD") == 0) {
+    } else if (flashid == 0x01AD) {
       println_Msg(F("AM29F016B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
-    } else if (strcmp(flashid, "04AD") == 0) {
+    } else if (flashid == 0x04AD) {
       println_Msg(F("AM29F016D"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
-    } else if (strcmp(flashid, "01D5") == 0) {
+    } else if (flashid == 0x01D5) {
       println_Msg(F("AM29F080B"));
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
@@ -1633,7 +1666,8 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       display_Update();
     } else {
       print_Msg(F("Flash ID: "));
-      println_Msg(flashid);
+      sprintf(flashid_str, "%04X", flashid);
+      println_Msg(flashid_str);
       display_Update();
       print_Error(F("Unknown flashrom"), true);
     }
@@ -1668,7 +1702,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       display_Update();
 
       // Read x number of banks
-      for (int currBank = 0; currBank < romBanks; currBank++) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
 
@@ -1702,7 +1736,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
 
@@ -1752,7 +1786,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
-      for (int currBank = 0; currBank < romBanks; currBank++) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
 
@@ -1788,7 +1822,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       }
     }
 
-    print_Msg(F("Verifying..."));
+    print_STR(verifying_STR, 0);
     display_Update();
 
     // Go back to file beginning
@@ -1837,11 +1871,11 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     } else {
       println_Msg(F("Error"));
       print_Msg(writeErrors);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), true);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, true);
     }
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
 }
@@ -1874,7 +1908,7 @@ byte readByteCompensated(int address) {
    .
    address needs to be the x8 mode address of the flash register that should be read.
 */
-byte writeByteCompensated(int address, byte data) {
+void writeByteCompensated(int address, byte data) {
   if (flashSwitchLastBits) {
     data = (data & 0b11111100) | ((data << 1) & 0b10) | ((data >> 1) & 0b01);
   }
@@ -2018,7 +2052,8 @@ bool writeCFI_GB() {
       print_Msg(F("but needs "));
       print_Msg(romBanks);
       println_Msg(F("."));
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       resetArduino();
@@ -2066,7 +2101,7 @@ bool writeCFI_GB() {
     display_Update();
 
     // Read x number of banks
-    for (int currBank = 0; currBank < romBanks; currBank++) {
+    for (word currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
       blinkLED();
 
@@ -2093,7 +2128,7 @@ bool writeCFI_GB() {
     word currAddr = 0;
     word endAddr = 0x3FFF;
 
-    for (int currBank = 0; currBank < romBanks; currBank++) {
+    for (word currBank = 0; currBank < romBanks; currBank++) {
       // Blink led
       blinkLED();
 
@@ -2194,13 +2229,13 @@ bool writeCFI_GB() {
       println_Msg(F("OK"));
       display_Update();
     } else {
-      print_Msg(F("Error: "));
+      print_STR(error_STR, 0);
       print_Msg(writeErrors);
-      println_Msg(F(" bytes "));
-      print_Error(F("did not verify."), false);
+      print_STR(_bytes_STR, 1);
+      print_Error(did_not_verify_STR, false);
     }
   } else {
-    println_Msg(F("Can't open file"));
+    print_STR(open_file_STR, 1);
     display_Update();
   }
   return true;

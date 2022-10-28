@@ -137,8 +137,8 @@ void setup_PCW() {
 static const char pcwmenuItem1[] PROGMEM = "Read ROM";
 static const char pcwmenuItem2[] PROGMEM = "Read SRAM";
 static const char pcwmenuItem3[] PROGMEM = "Write SRAM";
-static const char pcwmenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, pcwmenuItem4 };
+//static const char pcwmenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, string_reset2 };
 
 void pcwMenu() {
   convertPgm(menuOptionsPCW, 4);
@@ -164,7 +164,8 @@ void pcwMenu() {
       readSRAM_PCW();
       sd.chdir("/");
       // Wait for user input
-      println_Msg(F("Press Button..."));
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 1);
       display_Update();
       wait();
       break;
@@ -181,10 +182,10 @@ void pcwMenu() {
         println_Msg(F("SRAM verified OK"));
         display_Update();
       } else {
-        print_Msg(F("Error: "));
+        print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_STR(_bytes_STR, 1);
+        print_Error(did_not_verify_STR, false);
       }
       break;
 
@@ -468,7 +469,7 @@ void readROM_PCW() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -477,7 +478,7 @@ void readROM_PCW() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   read_setup_PCW();
   for (unsigned long address = 0; address < 0x400000; address += 512) {  // 4MB
@@ -495,7 +496,8 @@ void readROM_PCW() {
 
   // Wait for user input
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -510,7 +512,7 @@ void readMultiROM_PCW() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -519,7 +521,7 @@ void readMultiROM_PCW() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   display_Clear();
   println_Msg(F("READING MULTI-PACK"));
@@ -554,7 +556,8 @@ void readMultiROM_PCW() {
 
   // Wait for user input
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -576,7 +579,7 @@ void readSRAM_PCW() {  // readSRAM_1A()
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   display_Clear();
   read_setup_PCW();
@@ -620,13 +623,13 @@ void writeSRAM_PCW() {
         }
       }
       myFile.close();
-      println_Msg(F("Done"));
+      print_STR(done_STR, 1);
       display_Update();
     } else {
-      print_Error(F("SD Error"), true);
+      print_Error(sd_error_STR, true);
     }
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   display_Clear();
 }
@@ -649,11 +652,16 @@ unsigned long verifySRAM_PCW() {
     }
     myFile.close();
   } else {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   return writeErrors;
 }
+
+// avoid warnings
+#undef MODE_READ
+#undef MODE_WRITE
+
 #endif
 //******************************************
 // End of File

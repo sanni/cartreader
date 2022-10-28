@@ -18,9 +18,9 @@ static const char* const menuAdapterSMS[] PROGMEM = { SMSAdapterItem1, SMSAdapte
 static const char SMSMenuItem1[] PROGMEM = "Read Rom";
 static const char SMSMenuItem2[] PROGMEM = "Read from SRAM";
 static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
-static const char SMSMenuItem4[] PROGMEM = "Reset";
+//static const char SMSMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char SMSMenuItem5[] PROGMEM = "Change Retrode Mode";
-static const char* const menuOptionsSMS[] PROGMEM = { SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, SMSMenuItem4, SMSMenuItem5 };
+static const char* const menuOptionsSMS[] PROGMEM = { SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, string_reset2, SMSMenuItem5 };
 
 // Rom Size menu
 static const char SMSRomItem1[] PROGMEM = "8KB";
@@ -114,10 +114,12 @@ void _smsMenu() {
   }
   if (retrode_mode) {
     println_Msg(retrode_mode ? (retrode_mode_sms ? F("Retrode Mode SMS") : F("Retrode Mode GG")) : F("Retrode Mode Off"));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
   } else {
     println_Msg(F(""));
-    println_Msg(F("Press Button..."));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
   }
   display_Update();
   wait();
@@ -550,7 +552,8 @@ void getCartInfo_SMS() {
 
   // Wait for user input
 #if (defined(enable_LCD) || defined(enable_OLED))
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
@@ -579,7 +582,7 @@ void readROM_SMS() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -590,7 +593,7 @@ void readROM_SMS() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
 
   // set default bank size to 16KB
@@ -664,7 +667,7 @@ void readSRAM_SMS() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -675,7 +678,7 @@ void readSRAM_SMS() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
   // Write the whole 32KB
   // When there is only 8KB of SRAM, the contents should be duplicated
@@ -742,10 +745,10 @@ void writeSRAM_SMS() {
       blinkLED();
 
       println_Msg(F(""));
-      println_Msg(F("DONE"));
+      print_STR(done_STR, 1);
       display_Update();
     } else {
-      print_Error(F("SD ERROR"), true);
+      print_Error(sd_error_STR, true);
     }
   }
 

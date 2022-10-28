@@ -95,8 +95,8 @@ byte newintvsize;
 static const char intvMenuItem1[] PROGMEM = "Select Cart";
 static const char intvMenuItem2[] PROGMEM = "Read ROM";
 static const char intvMenuItem3[] PROGMEM = "Set Mapper + Size";
-static const char intvMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsINTV[] PROGMEM = { intvMenuItem1, intvMenuItem2, intvMenuItem3, intvMenuItem4 };
+//static const char intvMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsINTV[] PROGMEM = { intvMenuItem1, intvMenuItem2, intvMenuItem3, string_reset2 };
 
 void setup_INTV() {
   // Set Address Pins to Output (UNUSED)
@@ -316,14 +316,14 @@ void readROM_INTV() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -423,7 +423,8 @@ void readROM_INTV() {
   compareCRC("intv.txt", 0, 1, 0);
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -528,11 +529,11 @@ void setMapper_INTV() {
   println_Msg(intvmapselect);
   println_Msg(F(""));
 #if defined(enable_OLED)
-  println_Msg(F("Press left to Change"));
-  println_Msg(F("and right to Select"));
+  print_STR(press_to_change_STR, 1);
+  print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-  println_Msg(F("Rotate to Change"));
-  println_Msg(F("Press to Select"));
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
 #endif
   display_Update();
 
@@ -553,11 +554,11 @@ void setMapper_INTV() {
       println_Msg(intvmapselect);
       println_Msg(F(""));
 #if defined(enable_OLED)
-      println_Msg(F("Press left to Change"));
-      println_Msg(F("and right to Select"));
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-      println_Msg(F("Rotate to Change"));
-      println_Msg(F("Press to Select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
 #endif
       display_Update();
     }
@@ -575,11 +576,11 @@ void setMapper_INTV() {
       println_Msg(intvmapselect);
       println_Msg(F(""));
 #if defined(enable_OLED)
-      println_Msg(F("Press left to Change"));
-      println_Msg(F("and right to Select"));
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-      println_Msg(F("Rotate to Change"));
-      println_Msg(F("Press to Select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
 #endif
       display_Update();
     }
@@ -647,11 +648,11 @@ void setROMSize_INTV() {
     println_Msg(INTV[i]);
     println_Msg(F(""));
 #if defined(enable_OLED)
-    println_Msg(F("Press left to Change"));
-    println_Msg(F("and right to Select"));
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-    println_Msg(F("Rotate to Change"));
-    println_Msg(F("Press to Select"));
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
     display_Update();
 
@@ -669,11 +670,11 @@ void setROMSize_INTV() {
         println_Msg(INTV[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to Change"));
-        println_Msg(F("and right to Select"));
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to Change"));
-        println_Msg(F("Press to Select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -688,11 +689,11 @@ void setROMSize_INTV() {
         println_Msg(INTV[i]);
         println_Msg(F(""));
 #if defined(enable_OLED)
-        println_Msg(F("Press left to Change"));
-        println_Msg(F("and right to Select"));
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-        println_Msg(F("Rotate to Change"));
-        println_Msg(F("Press to Select"));
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
 #endif
         display_Update();
       }
@@ -806,20 +807,7 @@ void setCart_INTV() {
       }
 
       // Rewind one line
-      for (byte count_newline = 0; count_newline < 2; count_newline++) {
-        while (1) {
-          if (myFile.curPosition() == 0) {
-            break;
-          } else if (myFile.peek() == '\n') {
-            myFile.seekSet(myFile.curPosition() - 1);
-            break;
-          } else {
-            myFile.seekSet(myFile.curPosition() - 1);
-          }
-        }
-      }
-      if (myFile.curPosition() != 0)
-        myFile.seekSet(myFile.curPosition() + 2);
+      rewind_line(myFile);
     }
 
     // Display database
@@ -837,7 +825,7 @@ void setCart_INTV() {
       }
 
       // Skip over semicolon
-      myFile.seekSet(myFile.curPosition() + 1);
+      myFile.seekCur(1);
 
       // Read CRC32 of first 512 bytes
       sprintf(crc_search, "%c", myFile.read());
@@ -847,13 +835,13 @@ void setCart_INTV() {
       }
 
       // Skip over semicolon
-      myFile.seekSet(myFile.curPosition() + 1);
+      myFile.seekCur(1);
 
       // Read mapper
       intvmapper = myFile.read() - 48;
 
       // Skip over semicolon
-      myFile.seekSet(myFile.curPosition() + 1);
+      myFile.seekCur(1);
 
       // Read rom size
       // Read the next ascii character and subtract 48 to convert to decimal
@@ -867,13 +855,13 @@ void setCart_INTV() {
       }
 
       // Skip over semicolon
-      myFile.seekSet(myFile.curPosition() + 1);
+      myFile.seekCur(1);
 
       // Read SRAM size
-      byte sramSize = myFile.read() - 48;
+      byte sramSize __attribute__ ((unused)) = myFile.read() - 48;
 
       // Skip rest of line
-      myFile.seekSet(myFile.curPosition() + 2);
+      myFile.seekCur(2);
 
       // Skip every 3rd line
       skip_line(&myFile);
@@ -887,11 +875,11 @@ void setCart_INTV() {
       print_Msg(F("Mapper: "));
       println_Msg(intvmapper);
 #if defined(enable_OLED)
-      println_Msg(F("Press left to Change"));
-      println_Msg(F("and right to Select"));
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
-      println_Msg(F("Rotate to Change"));
-      println_Msg(F("Press to Select"));
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
       println_Msg(F("U/D to Change"));
       println_Msg(F("Space to Select"));
@@ -910,20 +898,7 @@ void setCart_INTV() {
 
         // Previous
         else if (b == 2) {
-          for (byte count_newline = 0; count_newline < 7; count_newline++) {
-            while (1) {
-              if (myFile.curPosition() == 0) {
-                break;
-              } else if (myFile.peek() == '\n') {
-                myFile.seekSet(myFile.curPosition() - 1);
-                break;
-              } else {
-                myFile.seekSet(myFile.curPosition() - 1);
-              }
-            }
-          }
-          if (myFile.curPosition() != 0)
-            myFile.seekSet(myFile.curPosition() + 2);
+          rewind_line(myFile, 6);
           break;
         }
 

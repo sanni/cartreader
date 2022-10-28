@@ -82,10 +82,10 @@ void svMenu() {
         println_Msg(F("Verified OK"));
         display_Update();
       } else {
-        print_Msg(F("Error: "));
+        print_STR(error_STR, 0);
         print_Msg(wrErrors);
-        println_Msg(F(" bytes "));
-        print_Error(F("did not verify."), false);
+        print_STR(_bytes_STR, 1);
+        print_Error(did_not_verify_STR, false);
       }
       wait();
       break;
@@ -300,13 +300,10 @@ void readSRAM_SV() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("SD Error"), true);
+    print_Error(sd_error_STR, true);
   }
-  int sramBanks = 0;
 
   readBank_SV(0x10, 0);  // Preconfigure to fix corrupt 1st byte
-  // Sram size
-  long lastByte = (long(sramSize) * 0x80);
 
   //startBank = 0x10; endBank = 0x17; CS low
   for (byte BSBank = 0x10; BSBank < 0x18; BSBank++) {
@@ -346,8 +343,6 @@ void writeSRAM_SV() {
 
     // Set RST RD WR to High and CS to Low
     controlOut_SNES();
-
-    long lastByte = (long(sramSize) * 0x80);
 
     println_Msg(F("Writing sram..."));
     display_Update();
@@ -390,10 +385,6 @@ unsigned long verifySRAM_SV() {
     // Set control
     controlIn_SNES();
 
-    int sramBanks = 0;
-    // Sram size
-    long lastByte = (long(sramSize) * 0x80);
-
     //startBank = 0x10; endBank = 0x17; CS low
     for (byte BSBank = 0x10; BSBank < 0x18; BSBank++) {
       //startAddr = 0x5000
@@ -412,6 +403,7 @@ unsigned long verifySRAM_SV() {
     return writeErrors;
   } else {
     print_Error(F("Can't open file"), false);
+    return 1;
   }
 }
 
@@ -435,7 +427,7 @@ void readROM_SV() {
 
   //clear the screen
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -446,7 +438,7 @@ void readROM_SV() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(F("Can't create file on SD"), true);
+    print_Error(create_file_STR, true);
   }
 
   // Read Banks
@@ -559,7 +551,7 @@ void writeROM_SV(void) {
     dataIn();  //Set pins to input
     controlIn_SNES();
     myFile.seekSet(0);  // Go back to file beginning
-    println_Msg(F("Verifying..."));
+    print_STR(verifying_STR, 1);
     display_Update();
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
