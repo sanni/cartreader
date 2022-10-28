@@ -165,15 +165,15 @@ static const byte PROGMEM mapsize[] = {
 byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
 byte mapselect;
 
-int PRG[] = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+const int PRG[] PROGMEM = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 byte prglo = 0;  // Lowest Entry
 byte prghi = 8;  // Highest Entry
 
-int CHR[] = { 0, 8, 16, 32, 64, 128, 256, 512, 1024 };
+const int CHR[] PROGMEM = { 0, 8, 16, 32, 64, 128, 256, 512, 1024 };
 byte chrlo = 0;  // Lowest Entry
 byte chrhi = 8;  // Highest Entry
 
-byte RAM[] = { 0, 8, 16, 32 };
+const byte RAM[] PROGMEM = { 0, 8, 16, 32 };
 byte ramlo = 0;  // Lowest Entry
 byte ramhi = 3;  // Highest Entry
 
@@ -1885,7 +1885,7 @@ void setPRGSize() {
 
     display_Clear();
     print_Msg(F("PRG Size: "));
-    println_Msg(PRG[i]);
+    println_Msg(pgm_read_word(&(PRG[i])));
     println_Msg(F(""));
 #if defined(enable_OLED)
     print_STR(press_to_change_STR, 1);
@@ -1907,7 +1907,7 @@ void setPRGSize() {
 
         display_Clear();
         print_Msg(F("PRG Size: "));
-        println_Msg(PRG[i]);
+        println_Msg(pgm_read_word(&(PRG[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -1926,7 +1926,7 @@ void setPRGSize() {
 
         display_Clear();
         print_Msg(F("PRG Size: "));
-        println_Msg(PRG[i]);
+        println_Msg(pgm_read_word(&(PRG[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -1946,7 +1946,7 @@ void setPRGSize() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("PRG SIZE "));
-  print_Msg(PRG[newprgsize]);
+  print_Msg(pgm_read_word(&(PRG[newprgsize])));
   println_Msg(F("K"));
   display_Update();
   delay(1000);
@@ -1961,7 +1961,7 @@ setprg:
       Serial.print(F("Select PRG Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
-      Serial.print(PRG[i + prglo]);
+      Serial.print(pgm_read_word(&(PRG[i + prglo])));
       Serial.println(F("K"));
     }
     Serial.print(F("Enter PRG Size: "));
@@ -1976,7 +1976,7 @@ setprg:
     }
   }
   Serial.print(F("PRG Size = "));
-  Serial.print(PRG[newprgsize]);
+  Serial.print(pgm_read_word(&(PRG[newprgsize])));
   Serial.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newprgsize);
@@ -2004,7 +2004,7 @@ void setCHRSize() {
 
     display_Clear();
     print_Msg(F("CHR Size: "));
-    println_Msg(CHR[i]);
+    println_Msg(pgm_read_word(&(CHR[i])));
     println_Msg(F(""));
 #if defined(enable_OLED)
     print_STR(press_to_change_STR, 1);
@@ -2026,7 +2026,7 @@ void setCHRSize() {
 
         display_Clear();
         print_Msg(F("CHR Size: "));
-        println_Msg(CHR[i]);
+        println_Msg(pgm_read_word(&(CHR[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -2046,7 +2046,7 @@ void setCHRSize() {
 
         display_Clear();
         print_Msg(F("CHR Size: "));
-        println_Msg(CHR[i]);
+        println_Msg(pgm_read_word(&(CHR[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -2066,7 +2066,7 @@ void setCHRSize() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("CHR SIZE "));
-  print_Msg(CHR[newchrsize]);
+  print_Msg(pgm_read_word(&(CHR[newchrsize])));
   println_Msg(F("K"));
   display_Update();
   delay(1000);
@@ -2081,7 +2081,7 @@ setchr:
       Serial.print(F("Select CHR Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
-      Serial.print(CHR[i + chrlo]);
+      Serial.print(pgm_read_word(&(CHR[i + chrlo])));
       Serial.println(F("K"));
     }
     Serial.print(F("Enter CHR Size: "));
@@ -2096,7 +2096,7 @@ setchr:
     }
   }
   Serial.print(F("CHR Size = "));
-  Serial.print(CHR[newchrsize]);
+  Serial.print(pgm_read_word(&(CHR[newchrsize])));
   Serial.println(F("K"));
 #endif
   EEPROM_writeAnything(9, newchrsize);
@@ -2125,20 +2125,20 @@ void setRAMSize() {
     display_Clear();
     print_Msg(F("RAM Size: "));
     if (mapper == 0)
-      println_Msg(RAM[i] / 4);
+      println_Msg(pgm_read_byte(&(RAM[i])) / 4);
     else if (mapper == 16)
-      println_Msg(RAM[i] * 32);
+      println_Msg(pgm_read_byte(&(RAM[i])) * 32);
     else if (mapper == 19) {
       if (i == 2)
         println_Msg(F("128"));
       else
-        println_Msg(RAM[i]);
+        println_Msg(pgm_read_byte(&(RAM[i])));
     } else if ((mapper == 159) || (mapper == 80))
-      println_Msg(RAM[i] * 16);
+      println_Msg(pgm_read_byte(&(RAM[i])) * 16);
     else if (mapper == 82)
       println_Msg(i * 5);
     else
-      println_Msg(RAM[i]);
+      println_Msg(pgm_read_byte(&(RAM[i])));
     println_Msg(F(""));
 #if defined(enable_OLED)
     print_STR(press_to_change_STR, 1);
@@ -2161,20 +2161,20 @@ void setRAMSize() {
         display_Clear();
         print_Msg(F("RAM Size: "));
         if (mapper == 0)
-          println_Msg(RAM[i] / 4);
+          println_Msg(pgm_read_byte(&(RAM[i])) / 4);
         else if (mapper == 16)
-          println_Msg(RAM[i] * 32);
+          println_Msg(pgm_read_byte(&(RAM[i])) * 32);
         else if (mapper == 19) {
           if (i == 2)
             println_Msg(F("128"));
           else
-            println_Msg(RAM[i]);
+            println_Msg(pgm_read_byte(&(RAM[i])));
         } else if ((mapper == 159) || (mapper == 80))
-          println_Msg(RAM[i] * 16);
+          println_Msg(pgm_read_byte(&(RAM[i])) * 16);
         else if (mapper == 82)
           println_Msg(i * 5);
         else
-          println_Msg(RAM[i]);
+          println_Msg(pgm_read_byte(&(RAM[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -2195,20 +2195,20 @@ void setRAMSize() {
         display_Clear();
         print_Msg(F("RAM Size: "));
         if (mapper == 0)
-          println_Msg(RAM[i] / 4);
+          println_Msg(pgm_read_byte(&(RAM[i])) / 4);
         else if (mapper == 16)
-          println_Msg(RAM[i] * 32);
+          println_Msg(pgm_read_byte(&(RAM[i])) * 32);
         else if (mapper == 19) {
           if (i == 2)
             println_Msg(F("128"));
           else
-            println_Msg(RAM[i]);
+            println_Msg(pgm_read_byte(&(RAM[i])));
         } else if ((mapper == 159) || (mapper == 80))
-          println_Msg(RAM[i] * 16);
+          println_Msg(pgm_read_byte(&(RAM[i])) * 16);
         else if (mapper == 82)
           println_Msg(i * 5);
         else
-          println_Msg(RAM[i]);
+          println_Msg(pgm_read_byte(&(RAM[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -2232,9 +2232,9 @@ void setRAMSize() {
     int sizeEEP = 0;
     print_Msg(F("EEPROM SIZE "));
     if (mapper == 16)
-      sizeEEP = RAM[newramsize] * 32;
+      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 32;
     else
-      sizeEEP = RAM[newramsize] * 16;
+      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
     print_Msg(sizeEEP);
     println_Msg(F("B"));
   } else if (mapper == 19) {
@@ -2242,12 +2242,12 @@ void setRAMSize() {
     if (newramsize == 2)
       println_Msg(F("128B"));
     else {
-      print_Msg(RAM[newramsize]);
+      print_Msg(pgm_read_byte(&(RAM[newramsize])));
       println_Msg(F("K"));
     }
   } else if (mapper == 80) {
     print_Msg(F("RAM SIZE "));
-    print_Msg(RAM[newramsize] * 16);
+    print_Msg(pgm_read_byte(&(RAM[newramsize])) * 16);
     println_Msg(F("B"));
   } else {
     print_Msg(F("RAM SIZE "));
@@ -2256,7 +2256,7 @@ void setRAMSize() {
     else if (mapper == 82)
       print_Msg(newramsize * 5);
     else
-      print_Msg(RAM[newramsize]);
+      print_Msg(pgm_read_byte(&(RAM[newramsize])));
     println_Msg(F("K"));
   }
   display_Update();
@@ -2273,23 +2273,23 @@ setram:
       Serial.print(i);
       Serial.print(F(" = "));
       if (mapper == 0) {
-        Serial.print(RAM[i] / 4);
+        Serial.print(pgm_read_byte(&(RAM[i])) / 4);
         Serial.println(F("K"));
       } else if ((mapper == 16) || (mapper == 159)) {
         if (mapper == 16)
-          Serial.print(RAM[i + ramlo] * 32);
+          Serial.print(pgm_read_byte(&(RAM[i + ramlo])) * 32);
         else
-          Serial.print(RAM[i + ramlo] * 16);
+          Serial.print(pgm_read_byte(&(RAM[i + ramlo])) * 16);
         Serial.println(F("B"));
       } else if (mapper == 19) {
         if (i == 2)
           Serial.println(F("128B"));
         else {
-          Serial.print(RAM[i + ramlo]);
+          Serial.print(pgm_read_byte(&(RAM[i + ramlo])));
           Serial.println(F("K"));
         }
       } else {
-        Serial.print(RAM[i + ramlo]);
+        Serial.print(pgm_read_byte(&(RAM[i + ramlo])));
         Serial.println(F("K"));
       }
     }
@@ -2308,9 +2308,9 @@ setram:
     int sizeEEP = 0;
     Serial.print(F("EEPROM Size = "));
     if (mapper == 16)
-      sizeEEP = RAM[newramsize] * 32;
+      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 32;
     else
-      sizeEEP = RAM[newramsize] * 16;
+      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
     Serial.print(sizeEEP);
     Serial.println(F("B"));
     Serial.println(F(""));
@@ -2319,13 +2319,13 @@ setram:
     if (newramsize == 2)
       Serial.println(F("128B"));
     else {
-      Serial.print(RAM[newramsize]);
+      Serial.print(pgm_read_byte(&(RAM[newramsize])));
       Serial.println(F("K"));
     }
     Serial.println(F(""));
   } else if (mapper == 80) {
     Serial.print(F("RAM Size = "));
-    Serial.print(RAM[newramsize] * 16);
+    Serial.print(pgm_read_byte(&(RAM[newramsize])) * 16);
     Serial.println(F("B"));
     Serial.println(F(""));
   } else {
@@ -2335,7 +2335,7 @@ setram:
     else if (mapper == 82)
       Serial.print(newramsize * 5);
     else
-      Serial.print(RAM[newramsize]);
+      Serial.print(pgm_read_byte(&(RAM[newramsize])));
     Serial.println(F("K"));
     Serial.println(F(""));
   }
