@@ -1649,7 +1649,7 @@ void readMPK() {
     }
     // This will take 1300us
     blinkLED();
-    myFile.write(sdBuffer, 512);
+    myFile.write(sdBuffer, sizeof(sdBuffer));
     // Blink led
     blinkLED();
     // Update progress bar
@@ -1870,12 +1870,12 @@ void verifyMPK() {
   draw_progressbar(0, totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
-  for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
+  for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += sizeof(sdBuffer)) {
     // Read 512 bytes into SD buffer
-    myFile.read(sdBuffer, 512);
+    myFile.read(sdBuffer, sizeof(sdBuffer));
 
     // Compare 32 byte block
-    for (word currBlock = 0; currBlock < 512; currBlock += 32) {
+    for (word currBlock = 0; currBlock < sizeof(sdBuffer); currBlock += 32) {
       // Read one block of the Controller Pak into array myBlock
       readBlock(currSdBuffer + currBlock);
 
@@ -2078,8 +2078,8 @@ void printCartInfo_N64() {
 
 // look-up cart id in file n64.txt on sd card
 void getCartInfo_N64() {
-  char tempStr2[2];
   char tempStr[9];
+  int read_bytes;
 
   // cart not in list
   cartSize = 0;
@@ -2101,26 +2101,18 @@ void getCartInfo_N64() {
       // Skip over the CRC32 checksum
       myFile.seekCur(9);
 
-      // Read 8 bytes into String, do it one at a time so byte order doesn't get mixed up
-      sprintf(tempStr, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(tempStr, tempStr2);
-      }
+      // Read 8 bytes into String
+      read_bytes = myFile.read(tempStr, 8);
+      tempStr[read_bytes == -1 ? 0 : read_bytes] = 0;
 
       // Check if string is a match
       if (strcmp(tempStr, checksumStr) == 0) {
         // Skip the , in the file
         myFile.seekCur(1);
 
-        // Read the next ascii character and subtract 48 to convert to decimal
-        cartSize = myFile.read() - 48;
-        // Remove leading 0 for single digit cart sizes
-        if (cartSize != 0) {
-          cartSize = cartSize * 10 + myFile.read() - 48;
-        } else {
-          cartSize = myFile.read() - 48;
-        }
+        read_bytes = myFile.read(tempStr, 2);
+        tempStr[read_bytes == -1 ? 0 : read_bytes] = 0;
+        cartSize = atoi(tempStr);
 
         // Skip the , in the file
         myFile.seekCur(1);
@@ -2738,7 +2730,7 @@ void readEeprom() {
       interrupts();
 
       // Write 64 pages at once to the SD card
-      myFile.write(sdBuffer, 512);
+      myFile.write(sdBuffer, sizeof(sdBuffer));
     }
     // Close the file:
     myFile.close();
@@ -2797,7 +2789,7 @@ unsigned long verifyEeprom() {
         interrupts();
 
         // Check sdBuffer content against file on sd card
-        for (int c = 0; c < 512; c++) {
+        for (size_t c = 0; c < sizeof(sdBuffer); c++) {
           if (myFile.read() != sdBuffer[c]) {
             writeErrors++;
           }
@@ -3304,30 +3296,25 @@ redumpsamefolder:
     print_Error(sd_error_STR, true);
   }
 
-  // dumping rom slow
-#ifndef fastcrc
   // get current time
   unsigned long startTime = millis();
+#ifndef fastcrc
+  // dumping rom slow
 
   for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
     // Blink led
-    if (currByte % 16384 == 0)
+    if ((currByte & 0x3FFF) == 0)
       blinkLED();
 
     // Set the address for the next 512 bytes
     setAddress_N64(currByte);
 
-    for (int c = 0; c < 512; c += 2) {
-      // split word
+    for (word c = 0; c < sizeof(sdBuffer); c += 2) {
       word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
+      sdBuffer[c] = myWord >> 8;
+      sdBuffer[c + 1] = myWord & 0xFF;
     }
-    myFile.write(sdBuffer, 512);
+    myFile.write(sdBuffer, sizeof(sdBuffer));
   }
   // Close the file:
   myFile.close();
@@ -3335,10 +3322,7 @@ redumpsamefolder:
   if (compareCRC("n64.txt", 0, 1, 0)) {
 #else
   // dumping rom fast
-  byte buffer[1024] = { 0 };
-
-  // get current time
-  unsigned long startTime = millis();
+  byte buffer[1024];
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
