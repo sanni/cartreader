@@ -85,6 +85,7 @@ static const byte PROGMEM mapsize[] = {
   87, 0, 1, 2, 3, 0, 0,   // Jaleco/Konami CNROM (DIS_74X139X74)
   88, 3, 3, 5, 5, 0, 0,   // namco (dxrom variant)
   89, 3, 3, 5, 5, 0, 0,   // sunsoft 2 variant (tenka no goikenban: mito koumon)
+  91, 3, 5, 7, 8, 0, 0,   // JY830623C/YY840238C boards [UNLICENSED]
   92, 4, 4, 5, 5, 0, 0,   // jaleco jf-19/jf-21
   93, 3, 3, 0, 0, 0, 0,   // sunsoft 2
   94, 3, 3, 0, 0, 0, 0,   // hvc-un1rom (senjou no ookami)
@@ -3013,6 +3014,20 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 91:
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < (banks-2); i += 2) {
+          write_prg_byte(0x7000, (i | 0));
+          write_prg_byte(0x7001, (i | 1));
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        for (word address = 0x4000; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        break;
 
       case 92:  // 256K
         banks = int_pow(2, prgsize);
@@ -3554,7 +3569,7 @@ void readCHR(boolean readrom) {
           
         case 36:
           banks = int_pow(2, chrsize) * 4;
-          for (int i = 0; i < banks; i += 8) {
+          for (int i = 0; i < banks; i++) {
             write_prg_byte(0x4200, i);
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
@@ -3830,6 +3845,19 @@ void readCHR(boolean readrom) {
               write_prg_byte(0x8000, i & 0x7);
             else
               write_prg_byte(0x8000, (i | 0x80) & 0x87);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 91:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i += 8) {
+            write_prg_byte(0x6000, (i/2) | 0);
+            write_prg_byte(0x6001, (i/2) | 1);
+            write_prg_byte(0x6002, (i/2) | 2);
+            write_prg_byte(0x6003, (i/2) | 3);
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
