@@ -34,7 +34,7 @@
 // /C000(PH5) - CHIP 2 - SNES /WR
 // /E000(PH6) - CHIP 3 - SNES /RD
 
-byte COL[] = { 8, 12, 16, 20, 24, 32 };
+const byte COL[] PROGMEM = { 8, 12, 16, 20, 24, 32 };
 byte collo = 0;  // Lowest Entry
 byte colhi = 5;  // Highest Entry
 
@@ -237,7 +237,7 @@ void setROMSize_COL() {
 
     display_Clear();
     print_Msg(F("ROM Size: "));
-    println_Msg(COL[i]);
+    println_Msg(pgm_read_byte(&(COL[i])));
     println_Msg(F(""));
 #if defined(enable_OLED)
     print_STR(press_to_change_STR, 1);
@@ -259,7 +259,7 @@ void setROMSize_COL() {
         // Only update display after input because of slow LCD library
         display_Clear();
         print_Msg(F("ROM Size: "));
-        println_Msg(COL[i]);
+        println_Msg(pgm_read_byte(&(COL[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -279,7 +279,7 @@ void setROMSize_COL() {
         // Only update display after input because of slow LCD library
         display_Clear();
         print_Msg(F("ROM Size: "));
-        println_Msg(COL[i]);
+        println_Msg(pgm_read_byte(&(COL[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -298,7 +298,7 @@ void setROMSize_COL() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));
-  print_Msg(COL[newcolsize]);
+  print_Msg(pgm_read_byte(&(COL[newcolsize])));
   println_Msg(F("K"));
   display_Update();
   delay(1000);
@@ -312,7 +312,7 @@ setrom:
       Serial.print(F("Select ROM Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
-      Serial.print(COL[i + collo]);
+      Serial.print(pgm_read_byte(&(COL[i + collo])));
       Serial.println(F("K"));
     }
     Serial.print(F("Enter ROM Size: "));
@@ -327,7 +327,7 @@ setrom:
     }
   }
   Serial.print(F("ROM Size = "));
-  Serial.print(COL[newcolsize]);
+  Serial.print(pgm_read_byte(&(COL[newcolsize])));
   Serial.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newcolsize);
@@ -347,7 +347,7 @@ void checkStatus_COL() {
   println_Msg(F("CURRENT SETTINGS"));
   println_Msg(F(""));
   print_Msg(F("ROM SIZE: "));
-  print_Msg(COL[colsize]);
+  print_Msg(pgm_read_byte(&(COL[colsize])));
   println_Msg(F("K"));
   println_Msg(F(""));
   // Prints string out of the common strings array either with or without newline
@@ -356,7 +356,7 @@ void checkStatus_COL() {
   wait();
 #else
   Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(COL[colsize]);
+  Serial.print(pgm_read_byte(&(COL[colsize])));
   Serial.println(F("K"));
   Serial.println(F(""));
 #endif
