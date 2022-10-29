@@ -195,16 +195,6 @@ boolean flashfound = false;  // NESmaker 39SF040 Flash Cart
 // Files
 char fileCount[3];
 
-#ifndef nointro
-FsFile nesFile;
-uint32_t prg_crc32;
-uint32_t chr_crc32;
-char filePRG[] = "PRG.bin";
-char fileCHR[] = "CHR.bin";
-char fileNES[] = "CART.nes";
-char fileBIN[] = "CART.bin";
-#endif
-
 // Cartridge Config
 byte mapper;
 byte prgsize;
@@ -1226,12 +1216,16 @@ uint32_t atoi32_unsigned(const char* input_string) {
 }
 
 void outputNES() {
-  display_Clear();
+  FsFile nesFile;
+  const char fileNES[] = "CART.nes";
+  const char fileBIN[] = "CART.bin";
   char* outputFile;
   unsigned long crcOffset = 0;
   uint32_t prg_size_bytes = 1024 * (uint32_t)prg;
   uint32_t chr_size_bytes = 1024 * (uint32_t)chr;
   int has_header = 0;
+
+  display_Clear();
 
   unsigned char* nes_header_bytes = getNESHeaderForFileInfo(prg_size_bytes, chr_size_bytes, prg_crc32, chr_crc32);
 
@@ -1242,7 +1236,7 @@ void outputNES() {
   LED_RED_ON;
   LED_GREEN_ON;
   LED_BLUE_ON;
-  if (!myFile.open(filePRG, FILE_READ)) {
+  if (!myFile.open("PRG.bin", FILE_READ)) {
     LED_GREEN_OFF;
     LED_BLUE_OFF;
 
@@ -1285,16 +1279,7 @@ void outputNES() {
     nesFile.write(sdBuffer, n);
   }
   myFile.close();
-  if (sd.exists(fileCHR)) {
-    if (!myFile.open(fileCHR, FILE_READ)) {
-      LED_GREEN_OFF;
-      LED_BLUE_OFF;
-
-      display_Clear();
-      println_Msg(F("CHR FILE FAILED!"));
-      display_Update();
-      print_Error(sd_error_STR, true);
-    }
+  if (myFile.open("CHR.bin", FILE_READ)) {
     while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
       nesFile.write(sdBuffer, n);
     }
