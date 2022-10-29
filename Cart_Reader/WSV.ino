@@ -38,7 +38,7 @@
 // /WR - (PH5)
 // /RD - (PH6)
 
-word WSV[] = { 32, 64, 512 };
+const word WSV[] PROGMEM = { 32, 64, 512 };
 byte wsvlo = 0;  // Lowest Entry
 byte wsvhi = 2;  // Highest Entry
 
@@ -215,7 +215,7 @@ void readROM_WSV() {
   dataIn_WSV();
   controlIn_WSV();
 
-  romSize = WSV[wsvsize];
+  romSize = pgm_read_word(&(WSV[wsvsize]));
 
   uint32_t romStart = 0;
   if (romSize < 64)
@@ -254,7 +254,7 @@ void setROMSize_WSV() {
 
     display_Clear();
     print_Msg(F("ROM Size: "));
-    println_Msg(WSV[i]);
+    println_Msg(pgm_read_word(&(WSV[i])));
     println_Msg(F(""));
 #if defined(enable_OLED)
     print_STR(press_to_change_STR, 1);
@@ -276,7 +276,7 @@ void setROMSize_WSV() {
         // Only update display after input because of slow LCD library
         display_Clear();
         print_Msg(F("ROM Size: "));
-        println_Msg(WSV[i]);
+        println_Msg(pgm_read_word(&(WSV[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -296,7 +296,7 @@ void setROMSize_WSV() {
         // Only update display after input because of slow LCD library
         display_Clear();
         print_Msg(F("ROM Size: "));
-        println_Msg(WSV[i]);
+        println_Msg(pgm_read_word(&(WSV[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -315,7 +315,7 @@ void setROMSize_WSV() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));
-  print_Msg(WSV[newwsvsize]);
+  print_Msg(pgm_read_word(&(WSV[newwsvsize])));
   println_Msg(F("K"));
   display_Update();
   delay(1000);
@@ -329,7 +329,7 @@ setrom:
       Serial.print(F("Select ROM Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
-      Serial.print(WSV[i + wsvlo]);
+      Serial.print(pgm_read_word(&(WSV[i + wsvlo])));
       Serial.println(F("K"));
     }
     Serial.print(F("Enter ROM Size: "));
@@ -344,7 +344,7 @@ setrom:
     }
   }
   Serial.print(F("ROM Size = "));
-  Serial.print(WSV[newwsvsize]);
+  Serial.print(pgm_read_word(&(WSV[newwsvsize])));
   Serial.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newwsvsize);
@@ -364,13 +364,13 @@ void checkStatus_WSV() {
   println_Msg(F("CURRENT SETTINGS"));
   println_Msg(F(""));
   print_Msg(F("ROM SIZE: "));
-  print_Msg(WSV[wsvsize]);
+  print_Msg(pgm_read_word(&(WSV[wsvsize])));
   println_Msg(F("K"));
   display_Update();
   wait();
 #else
   Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(WSV[wsvsize]);
+  Serial.print(pgm_read_word(&(WSV[wsvsize])));
   Serial.println(F("K"));
   Serial.println(F(""));
 #endif

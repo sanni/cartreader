@@ -4,12 +4,6 @@
 #ifdef enable_GBX
 
 /******************************************
-   Variables
- *****************************************/
-char calcChecksumStr[5];
-boolean readType;
-
-/******************************************
    Menu
  *****************************************/
 // GBA menu items
@@ -569,6 +563,16 @@ void writeByte_GBA(unsigned long myAddress, byte myData) {
 /******************************************
   GBA ROM Functions
 *****************************************/
+// Compute the checksum of rom header
+// "header" must contain at least the rom's first 188 bytes
+byte checksumHeader_GBA(const byte *header) {
+    byte result = 0x00;
+    for (byte n = 0xA0; n < 0xBD; n++) {
+      result -= header[n];
+    }
+    return result - 0x19;
+}
+
 // Read info out of rom header
 void getCartInfo_GBA() {
   char saveTypeStr[14];
@@ -760,22 +764,21 @@ void getCartInfo_GBA() {
     // Get ROM version
     romVersion = sdBuffer[0xBC];
 
-    // Get Checksum as string
+    // Calculate Checksum
+    byte calcChecksum = checksumHeader_GBA(sdBuffer);
+
+    // Convert checksum from header into string
+    // (used in compare_checksum_GBA... it should just exchange an integer
+    // instead)
     sprintf(checksumStr, "%02X", sdBuffer[0xBD]);
 
-    // Calculate Checksum
-    int calcChecksum = 0x00;
-    for (int n = 0xA0; n < 0xBD; n++) {
-      calcChecksum -= sdBuffer[n];
-    }
-    calcChecksum = (calcChecksum - 0x19) & 0xFF;
-    // Turn into string
-    sprintf(calcChecksumStr, "%02X", calcChecksum);
-
     // Compare checksum
-    if (strcmp(calcChecksumStr, checksumStr) != 0) {
+    if (sdBuffer[0xBD] != calcChecksum) {
+      char calcChecksumStr[3];
       display_Clear();
       print_Msg(F("Result: "));
+      // Turn into string
+      sprintf(calcChecksumStr, "%02X", calcChecksum);
       println_Msg(calcChecksumStr);
       print_Error(F("Checksum Error"), false);
       println_Msg(F(""));
@@ -912,15 +915,9 @@ boolean compare_checksum_GBA() {
     myFile.read(sdBuffer, 512);
     myFile.close();
 
-    // Calculate Checksum
-    int calcChecksum = 0x00;
-    for (int n = 0xA0; n < 0xBD; n++) {
-      calcChecksum -= sdBuffer[n];
-    }
-    calcChecksum = (calcChecksum - 0x19) & 0xFF;
-
-    // Turn into string
-    sprintf(calcChecksumStr, "%02X", calcChecksum);
+    // Calculate Checksum and turn into string
+    char calcChecksumStr[3];
+    sprintf(calcChecksumStr, "%02X", checksumHeader_GBA(sdBuffer));
     print_Msg(calcChecksumStr);
 
     if (strcmp(calcChecksumStr, checksumStr) == 0) {
