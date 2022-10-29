@@ -17,11 +17,11 @@
 byte sfmReady = 0;
 
 // Arrays that hold game info
-int gameSize[8];
-int saveSize[8];
+// int gameSize[8];
+// int saveSize[8];
 byte gameAddress[8];
-byte gameVersion[8];
-boolean hirom[8];
+// byte gameVersion[8];
+// boolean hirom[8];
 
 /******************************************
   Menu
@@ -460,23 +460,23 @@ void getGames(char gameCode[8][20], boolean* hasMenu, byte* numGames) {
     for (int i = 0; i < *numGames; i++) {
       // Read starting address and size
       gameAddress[i] = 0xC0 + readBank_SFM(0xC6, i * 0x2000 + 0x01) * 0x8;
-      gameSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x03) * 128;
-      saveSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x05) / 8;
+      // gameSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x03) * 128;
+      // saveSize[i] = readBank_SFM(0xC6, i * 0x2000 + 0x05) / 8;
 
       //check if hirom
-      if (readBank_SFM(gameAddress[i], 0xFFD5) == 0x31) {
-        hirom[i] = true;
-      } else if (readBank_SFM(gameAddress[i], 0xFFD5) == 0x21) {
-        hirom[i] = true;
-      } else {
-        hirom[i] = false;
-      }
+      // if (readBank_SFM(gameAddress[i], 0xFFD5) == 0x31) {
+      //   hirom[i] = true;
+      // } else if (readBank_SFM(gameAddress[i], 0xFFD5) == 0x21) {
+      //   hirom[i] = true;
+      // } else {
+      //   hirom[i] = false;
+      // }
 
-      if (hirom[i]) {
-        gameVersion[i] = readBank_SFM(gameAddress[i], 0xFFDB);
-      } else {
-        gameVersion[i] = readBank_SFM(gameAddress[i], 0x7FDB);
-      }
+      // if (hirom[i]) {
+      //   gameVersion[i] = readBank_SFM(gameAddress[i], 0xFFDB);
+      // } else {
+      //   gameVersion[i] = readBank_SFM(gameAddress[i], 0x7FDB);
+      // }
 
       // Read game code
       byte myByte = 0;
@@ -497,14 +497,14 @@ void getGames(char gameCode[8][20], boolean* hasMenu, byte* numGames) {
     *numGames = 1;
     //check if hirom
     if (readBank_SFM(0xC0, 0xFFD5) == 0x31) {
-      hirom[0] = true;
+      // hirom[0] = true;
       base = 0xFF00;
     } else {
-      hirom[0] = false;
+      // hirom[0] = false;
       base = 0x7F00;
     }
 
-    gameVersion[0] = readBank_SFM(0xC0, base + 0xDB);
+    // gameVersion[0] = readBank_SFM(0xC0, base + 0xDB);
     gameCode[0][0] = 'G';
     gameCode[0][1] = 'A';
     gameCode[0][2] = 'M';
@@ -515,7 +515,7 @@ void getGames(char gameCode[8][20], boolean* hasMenu, byte* numGames) {
     gameCode[0][7] = readBank_SFM(0xC0, base + 0xB4);
     gameCode[0][8] = readBank_SFM(0xC0, base + 0xB5);
     gameCode[0][9] = '\0';
-    gameSize[0] = 1 << (readBank_SFM(0xC0, base + 0xD7) - 7);
+    // gameSize[0] = 1 << (readBank_SFM(0xC0, base + 0xD7) - 7);
   }
 }
 
