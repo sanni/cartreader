@@ -124,6 +124,9 @@ static const byte PROGMEM mapsize[] = {
   255, 7, 7, 8, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
 };
 
+const char _file_name_no_number_fmt[] PROGMEM = "%s.%s";
+const char _file_name_with_number_fmt[] PROGMEM = "%s.%02d.%s";
+
 /******************************************
   Defines
  *****************************************/
@@ -191,9 +194,6 @@ word eepsize;
 byte bytecheck;
 byte firstbyte;
 boolean flashfound = false;  // NESmaker 39SF040 Flash Cart
-
-// Files
-char fileCount[3];
 
 // Cartridge Config
 byte mapper;
@@ -1068,79 +1068,39 @@ void CreateROMFolderInSD() {
   sd.chdir(folder);
 }
 
-void CreatePRGFileInSD() {
-  strcpy(fileName, "PRG");
-  strcat(fileName, ".bin");
+FsFile createNewFile(const char *prefix, const char *extension) {
+  char filename[FILENAME_LENGTH];
+  snprintf_P(filename, sizeof(filename), _file_name_no_number_fmt, prefix, extension);
   for (byte i = 0; i < 100; i++) {
-    if (!sd.exists(fileName)) {
-      myFile = sd.open(fileName, O_RDWR | O_CREAT);
-      break;
+    if (!sd.exists(filename)) {
+      return sd.open(fileName, O_RDWR | O_CREAT);
     }
-    sprintf(fileCount, "%02d", i);
-    strcpy(fileName, "PRG.");
-    strcat(fileName, fileCount);
-    strcat(fileName, ".bin");
+    snprintf_P(filename, sizeof(filename), _file_name_with_number_fmt, prefix, i, extension);
   }
-  if (!myFile) {
-    LED_RED_ON;
+  // Could not find an available name, recompose the original name and error out.
+  snprintf_P(filename, sizeof(filename), _file_name_no_number_fmt, prefix, extension);
 
-    display_Clear();
-    println_Msg(F("PRG FILE FAILED!"));
-    display_Update();
-    print_Error(sd_error_STR, true);
+  LED_RED_ON;
 
-    LED_RED_OFF;
-  }
+  display_Clear();
+  print_Msg(filename);
+  println_Msg(F(": no available name"));
+  display_Update();
+  print_FatalError(sd_error_STR);
+
+  LED_RED_OFF;
+}
+
+void CreatePRGFileInSD() {
+  myFile = createNewFile("PRG", "bin");
 }
 
 void CreateCHRFileInSD() {
-  strcpy(fileName, "CHR");
-  strcat(fileName, ".bin");
-  for (byte i = 0; i < 100; i++) {
-    if (!sd.exists(fileName)) {
-      myFile = sd.open(fileName, O_RDWR | O_CREAT);
-      break;
-    }
-    sprintf(fileCount, "%02d", i);
-    strcpy(fileName, "CHR.");
-    strcat(fileName, fileCount);
-    strcat(fileName, ".bin");
-  }
-  if (!myFile) {
-    LED_RED_ON;
-
-    display_Clear();
-    println_Msg(F("CHR FILE FAILED!"));
-    display_Update();
-    print_Error(sd_error_STR, true);
-
-    LED_RED_OFF;
-  }
+  myFile = createNewFile("CHR", "bin");
 }
 
 void CreateRAMFileInSD() {
-  strcpy(fileName, "RAM");
-  strcat(fileName, ".bin");
-  for (byte i = 0; i < 100; i++) {
-    if (!sd.exists(fileName)) {
-      myFile = sd.open(fileName, O_RDWR | O_CREAT);
-      break;
-    }
-    sprintf(fileCount, "%02d", i);
-    strcpy(fileName, "RAM.");
-    strcat(fileName, fileCount);
-    strcat(fileName, ".bin");
-  }
-  if (!myFile) {
-    LED_RED_ON;
-
-    display_Clear();
-    println_Msg(F("RAM FILE FAILED!"));
-    display_Update();
-    print_Error(sd_error_STR, true);
-
-    LED_RED_OFF;
-  }
+  myFile = createNewFile("RAM", "bin");
 }
 
 #ifndef nointro
