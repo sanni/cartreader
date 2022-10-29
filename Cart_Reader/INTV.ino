@@ -75,7 +75,7 @@ boolean intvmapfound = false;
 byte intvmapselect;
 int intvindex;
 
-byte INTV[] = { 8, 16, 24, 32, 48 };
+const byte INTV[] PROGMEM = { 8, 16, 24, 32, 48 };
 byte intvlo = 0;  // Lowest Entry
 byte intvhi = 4;  // Highest Entry
 
@@ -645,7 +645,7 @@ void setROMSize_INTV() {
     // Only update display after input because of slow LCD library
     display_Clear();
     print_Msg(F("ROM Size: "));
-    println_Msg(INTV[i]);
+    println_Msg(pgm_read_byte(&(INTV[i])));
     println_Msg(F(""));
 #if defined(enable_OLED)
     print_STR(press_to_change_STR, 1);
@@ -667,7 +667,7 @@ void setROMSize_INTV() {
         // Only update display after input because of slow LCD library
         display_Clear();
         print_Msg(F("ROM Size: "));
-        println_Msg(INTV[i]);
+        println_Msg(pgm_read_byte(&(INTV[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -686,7 +686,7 @@ void setROMSize_INTV() {
 
         display_Clear();
         print_Msg(F("ROM Size: "));
-        println_Msg(INTV[i]);
+        println_Msg(pgm_read_byte(&(INTV[i])));
         println_Msg(F(""));
 #if defined(enable_OLED)
         print_STR(press_to_change_STR, 1);
@@ -705,7 +705,7 @@ void setROMSize_INTV() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));
-  print_Msg(INTV[newintvsize]);
+  print_Msg(pgm_read_byte(&(INTV[newintvsize])));
   println_Msg(F("K"));
   display_Update();
   delay(1000);
@@ -719,7 +719,7 @@ setrom:
       Serial.print(F("Select ROM Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
-      Serial.print(INTV[i + intvlo]);
+      Serial.print(pgm_read_byte(&(INTV[i + intvlo])));
       Serial.println(F("K"));
     }
     Serial.print(F("Enter ROM Size: "));
@@ -734,7 +734,7 @@ setrom:
     }
   }
   Serial.print(F("ROM Size = "));
-  Serial.print(INTV[newintvsize]);
+  Serial.print(pgm_read_byte(&(INTV[newintvsize])));
   Serial.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newintvsize);
@@ -761,7 +761,7 @@ void checkStatus_INTV() {
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
   print_Msg(F("ROM SIZE: "));
-  print_Msg(INTV[intvsize]);
+  print_Msg(pgm_read_byte(&(INTV[intvsize])));
   println_Msg(F("K"));
   display_Update();
   wait();
@@ -769,7 +769,7 @@ void checkStatus_INTV() {
   Serial.print(F("CURRENT MAPPER:   "));
   Serial.println(intvmapper);
   Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(INTV[intvsize]);
+  Serial.print(pgm_read_byte(&(INTV[intvsize])));
   Serial.println(F("K"));
   Serial.println(F(""));
 #endif
