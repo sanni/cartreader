@@ -889,6 +889,12 @@ byte starting_letter() {
 #endif
 }
 
+void print_MissingModule(void) {
+  display_Clear();
+  println_Msg(F("Please enable module"));
+  print_FatalError(F("in Cart_Reader.ino."));
+}
+
 /******************************************
   Main menu optimized for rotary encoder
 *****************************************/
@@ -1067,10 +1073,7 @@ void mainMenu() {
       break;
 
     default:
-      display_Clear();
-      println_Msg(F("Please enable module"));
-      print_Error(F("in Cart_Reader.ino."), true);
-      break;
+      print_MissingModule(); // does not return
   }
 }
 
@@ -1162,6 +1165,9 @@ void mainMenu() {
     case 6:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule(); // does not return
   }
 }
 
@@ -1200,10 +1206,7 @@ void addonMenu() {
       break;
 
     default:
-      display_Clear();
-      println_Msg(F("Please enable module"));
-      print_Error(F("in Cart_Reader.ino."), true);
-      break;
+      print_MissingModule(); // does not return
   }
 }
 
@@ -1259,10 +1262,7 @@ void consoleMenu() {
       break;
 
     default:
-      display_Clear();
-      println_Msg(F("Please enable module"));
-      print_Error(F("in Cart_Reader.ino."), true);
-      break;
+      print_MissingModule(); // does not return
   }
 }
 
@@ -1320,10 +1320,7 @@ void handheldMenu() {
       break;
 
     default:
-      display_Clear();
-      println_Msg(F("Please enable module"));
-      print_Error(F("in Cart_Reader.ino."), true);
-      break;
+      print_MissingModule(); // does not return
   }
 }
 #endif
