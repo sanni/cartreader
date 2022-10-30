@@ -205,7 +205,7 @@ void readROM_WSV() {
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -516,7 +516,7 @@ void setCart_WSV() {
       }
     }
   } else {
-    print_Error(F("Database file not found"), true);
+    print_FatalError(F("Database file not found"));
   }
 }
 #endif

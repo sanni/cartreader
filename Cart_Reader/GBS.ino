@@ -72,7 +72,7 @@ boolean compare_checksum_GBS() {
   } else {
     print_Msg(F("Result: "));
     println_Msg(calcsumStr);
-    print_Error(F("Checksum Error"), false);
+    print_Error(F("Checksum Error"));
     return 0;
   }
 }
@@ -206,7 +206,7 @@ void gbSmartGameOptions() {
           print_STR(error_STR, 0);
           print_Msg(wrErrors);
           println_Msg(F(" bytes"));
-          print_Error(did_not_verify_STR, false);
+          print_Error(did_not_verify_STR);
         }
         break;
       }
@@ -400,7 +400,7 @@ void gbSmartReadFlash() {
   display_Update();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   // reset flash to read array state
   for (uint16_t i = 0x00; i < gbSmartBanks; i += gbSmartBanksPerFlashChip)
@@ -456,7 +456,7 @@ void gbSmartWriteFlash() {
     display_Update();
 
     if (!gbSmartBlankCheckingFlash(bank))
-      print_Error(F("Could not erase flash"), true);
+      print_FatalError(F("Could not erase flash"));
 
     println_Msg(F("Passed"));
     display_Update();
@@ -479,13 +479,13 @@ void gbSmartWriteFlash() {
     print_STR(error_STR, 0);
     print_Msg(writeErrors);
     print_STR(_bytes_STR, 1);
-    print_Error(did_not_verify_STR, true);
+    print_FatalError(did_not_verify_STR);
   }
 }
 
 void gbSmartWriteFlash(uint32_t start_bank) {
   if (!myFile.open(filePath, O_READ))
-    print_Error(open_file_STR, true);
+    print_FatalError(open_file_STR);
 
   // switch to flash base bank
   gbSmartRemapStartBank(start_bank, gbSmartFlashSizeGB, gbSmartSramSizeGB);
@@ -546,7 +546,7 @@ uint32_t gbSmartVerifyFlash() {
 
   if (!myFile.open(filePath, O_READ)) {
     verified = 0xffffffff;
-    print_Error(F("Can't open file on SD"), false);
+    print_Error(F("Can't open file on SD"));
   } else {
     // remaps mmc to full access
     gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);

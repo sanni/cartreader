@@ -77,10 +77,10 @@ void setup_WS() {
 
   // unlock MMC
   //  if (!unlockMMC2003_WS())
-  //    print_Error(F("Can't initial MMC"), true);
+  //    print_FatalError(F("Can't initial MMC"));
 
   //  if (getCartInfo_WS() != 0xea)
-  //    print_Error(F("Rom header read error"), true);
+  //    print_FatalError(F("Rom header read error"));
 
   println_Msg(F("Initializing..."));
   display_Update();
@@ -496,7 +496,7 @@ void readROM_WS(char *outPathBuf, size_t bufferSize) {
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -563,7 +563,7 @@ void readSRAM_WS() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   uint32_t bank_size = (sramSize << 7);
   uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
@@ -635,10 +635,10 @@ void verifySRAM_WS() {
       print_STR(error_STR, 0);
       print_Msg(write_errors);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, false);
+      print_Error(did_not_verify_STR);
     }
   } else {
-    print_Error(F("File doesn't exist"), false);
+    print_Error(F("File doesn't exist"));
   }
 }
 
@@ -684,7 +684,7 @@ void writeSRAM_WS() {
     println_Msg(F("Writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesn't exist"), false);
+    print_Error(F("File doesn't exist"));
   }
 }
 
@@ -708,7 +708,7 @@ void readEEPROM_WS() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   uint32_t eepromSize = (sramSize << 7);
   uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
@@ -789,10 +789,10 @@ void verifyEEPROM_WS() {
       print_STR(error_STR, 0);
       print_Msg(write_errors);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, false);
+      print_Error(did_not_verify_STR);
     }
   } else {
-    print_Error(F("File doesn't exist"), false);
+    print_Error(F("File doesn't exist"));
   }
 }
 
@@ -843,7 +843,7 @@ void writeEEPROM_WS() {
 
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("File doesn't exist"), false);
+    print_Error(F("File doesn't exist"));
   }
 }
 
@@ -857,7 +857,7 @@ void writeWitchOS_WS() {
   dataIn_WS();
   if (readWord_WS(0xe0004) || readWord_WS(0xe4004) || readWord_WS(0xec004) || readWord_WS(0xee004)) {
     display_Clear();
-    print_Error(F("OS sectors are protected!"), false);
+    print_Error(F("OS sectors are protected!"));
   } else {
     filePath[0] = 0;
     sd.chdir("/");
@@ -932,7 +932,7 @@ void writeWitchOS_WS() {
 
       print_STR(done_STR, 1);
     } else {
-      print_Error(F("File doesn't exist"), false);
+      print_Error(F("File doesn't exist"));
     }
   }
 
@@ -976,7 +976,7 @@ boolean compareChecksum_WS(const char *wsFilePath) {
   display_Update();
 
   if (!myFile.open(wsFilePath, O_READ)) {
-    print_Error(F("Failed to open file"), false);
+    print_Error(F("Failed to open file"));
     return 0;
   }
 
@@ -1013,7 +1013,7 @@ boolean compareChecksum_WS(const char *wsFilePath) {
     display_Update();
     return 1;
   } else {
-    print_Error(F("Checksum Error"), false);
+    print_Error(F("Checksum Error"));
     return 0;
   }
 }

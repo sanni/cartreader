@@ -185,7 +185,7 @@ void pcwMenu() {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
         print_STR(_bytes_STR, 1);
-        print_Error(did_not_verify_STR, false);
+        print_Error(did_not_verify_STR);
       }
       break;
 
@@ -478,7 +478,7 @@ void readROM_PCW() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   read_setup_PCW();
   for (unsigned long address = 0; address < 0x400000; address += 512) {  // 4MB
@@ -521,7 +521,7 @@ void readMultiROM_PCW() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   display_Clear();
   println_Msg(F("READING MULTI-PACK"));
@@ -579,7 +579,7 @@ void readSRAM_PCW() {  // readSRAM_1A()
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   display_Clear();
   read_setup_PCW();
@@ -626,10 +626,10 @@ void writeSRAM_PCW() {
       print_STR(done_STR, 1);
       display_Update();
     } else {
-      print_Error(sd_error_STR, true);
+      print_FatalError(sd_error_STR);
     }
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   display_Clear();
 }
@@ -652,7 +652,7 @@ unsigned long verifySRAM_PCW() {
     }
     myFile.close();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   return writeErrors;

@@ -85,7 +85,7 @@ void svMenu() {
         print_STR(error_STR, 0);
         print_Msg(wrErrors);
         print_STR(_bytes_STR, 1);
-        print_Error(did_not_verify_STR, false);
+        print_Error(did_not_verify_STR);
       }
       wait();
       break;
@@ -122,7 +122,7 @@ void setup_SV() {
 #ifdef clockgen_installed
   else {
     display_Clear();
-    print_Error(F("Clock Generator not found"), true);
+    print_FatalError(F("Clock Generator not found"));
   }
 #endif
 
@@ -300,7 +300,7 @@ void readSRAM_SV() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   readBank_SV(0x10, 0);  // Preconfigure to fix corrupt 1st byte
@@ -371,7 +371,7 @@ void writeSRAM_SV() {
     println_Msg(F("SRAM writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("File doesnt exist"));
   }
 }
 
@@ -402,7 +402,7 @@ unsigned long verifySRAM_SV() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"), false);
+    print_Error(F("Can't open file"));
     return 1;
   }
 }
@@ -438,7 +438,7 @@ void readROM_SV() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
   }
 
   // Read Banks
@@ -470,7 +470,7 @@ void writeROM_SV(void) {
   //if CRC is not 8B86, BS-X cart is not inserted. Display error and reset
   if (strcmp("8B86", checksumStr) != 0) {
     display_Clear();
-    print_Error(F("Error: Must use BS-X cart"), true);
+    print_FatalError(F("Error: Must use BS-X cart"));
   }
 
   //Display file Browser and wait user to select a file. Size must be 1MB.
@@ -575,7 +575,7 @@ void writeROM_SV(void) {
     wait();
 
   } else {
-    print_Error(F("File doesn't exist"), false);
+    print_Error(F("File doesn't exist"));
   }
 }
 
