@@ -913,6 +913,8 @@ static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeIte
 void mainMenu() {
   // create menu with title and 15 options to choose from
   unsigned char modeMenu;
+  byte num_answers;
+  byte option_offset;
 
   // Main menu spans across two pages
   currPage = 1;
@@ -921,23 +923,23 @@ void mainMenu() {
 
   while (1) {
     if (currPage == 1) {
-      // Copy menuOptions out of progmem
-      convertPgm(modeOptions + 0, 7);
-      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
+      option_offset = 0;
+      num_answers = 7;
     }
     if (currPage == 2) {
-      // Copy menuOptions out of progmem
-      convertPgm(modeOptions + 7, 7);
-      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 7, 0);
+      option_offset = 7;
+      num_answers = 7;
     }
     if (currPage == 3) {
-      // Copy menuOptions out of progmem
-      convertPgm(modeOptions + 14, 2);
-      modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, 2, 0);
+      option_offset = 14;
+      num_answers = 2;
     }
+    // Copy menuOptions out of progmem
+    convertPgm(modeOptions + option_offset, num_answers);
+    modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, num_answers, 0);
     if (numPages == 0) {
       // Execute choice
-      modeMenu = (currPage - 1) * 7 + modeMenu;
+      modeMenu += option_offset;
       break;
     }
   }
