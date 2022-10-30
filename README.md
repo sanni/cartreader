@@ -25,7 +25,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads and writes SNES Satellaview 8M Memory packs (BS-X cartridge and Adafruit Clock Generator needed)   
 - Reads and writes Nintendo Power Super Famicom Memory Flash Cartridges (needs Adafruit Clock Generator for best result)  
 - Reflashes some Chinese or custom-made SNES repros with AM29F032, MBM29F033, MX29LV320 or MX29LV640 flashroms     
-- Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Eeprom needs Adafruit Clockgen by default, Proto carts are not supported yet    
+- Reads N64 roms and reads/writes save games(4K/16K Eeprom + Sram + all 3 types of Flashram), Eeprom needs Adafruit Clockgen, Proto carts are not supported yet    
 - Reads and writes N64 controller paks and also can test a N64 controller's buttons and thumbstick   
 - Reflashes some Chinese N64 repros with S29GL type flashroms   
 - Reflashes N64 Gamesharks with SST 29LE010(and similar) eeproms     
@@ -36,6 +36,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Programs Gameboy Camera Flashcart      
 - Reads Game Boy Advance roms and reads/writes the save games(4K Eeprom, 64K Eeprom, Sram/Fram, 512K flash, 1M flash)  
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128, PC28F256M29 or M29W128GH flashroms    
+- Reads Virtual Boy cartridges (using custom adapter)    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
 - Reads Sega Master System roms and saves           
 - Reads Sega Game Gear roms and saves (using Retrode adapter)    
@@ -44,10 +45,13 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads some Sega Cards (using Card Catcher and Raphnet Mark III Adapter)   
 - Reads PC engine/TG16 cartridges (using Retrode or custom adapter)   
 - Reads WonderSwan cartridges (using custom adapter)   
-- Reads NeoGeo Pocket cartridges (using custom adapter)
+- Reads NeoGeo Pocket cartridges (using custom adapter)    
+- Reads Intellivision cartridges (using custom adapter)    
+- Reads ColecoVision cartridges (using custom adapter)    
+- Reads Benesse Pocket Challenge W cartridges (using custom adapter)    
+- Reads Watara Supervision cartridges (using custom adapter)    
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MX26L6420, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
-- Programs M27C322 eproms (using custom adapter)      
-
+ 
 ![image](https://dl.dropboxusercontent.com/s/l6eujajz60x3ho9/IMG_079999.jpg?dl=1)  
 
 #### Open Source Licenses:    
