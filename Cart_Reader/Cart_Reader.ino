@@ -298,6 +298,9 @@ bool i2c_found;
 #include "FreqCount.h"
 #endif
 
+void print_FatalError(const __FlashStringHelper* errorMessage) __attribute__ ((noreturn));
+void print_FatalError(byte errorMessage) __attribute__ ((noreturn));
+
 /******************************************
   Common Strings
  *****************************************/
@@ -2004,7 +2007,6 @@ void print_Error(byte errorMessage, boolean forceReset) {
   }
 }
 
-void print_FatalError(const __FlashStringHelper* errorMessage) __attribute__ ((noreturn));
 void print_FatalError(const __FlashStringHelper* errorMessage) {
   print_Error(errorMessage, true);
   // Redundant as print_Error already calls it, but makes gcc understand that
@@ -2012,7 +2014,6 @@ void print_FatalError(const __FlashStringHelper* errorMessage) {
   resetArduino();
 }
 
-void print_FatalError(byte errorMessage) __attribute__ ((noreturn));
 void print_FatalError(byte errorMessage){
   print_Error(errorMessage, true);
   // Redundant as print_Error already calls it, but makes gcc understand that
