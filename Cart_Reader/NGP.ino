@@ -47,7 +47,7 @@ void setup_NGP() {
   if (getCartInfo_NGP())
     printCartInfo_NGP();
   else
-    print_Error(F("Cartridge read error"), true);
+    print_FatalError(F("Cartridge read error"));
 }
 
 void ngpMenu() {
@@ -215,7 +215,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   // write new folder number back to EEPROM
   foldern++;
@@ -265,7 +265,7 @@ void scanChip_NGP() {
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
 
   // write new folder number back to EEPROM
   foldern++;

@@ -514,7 +514,7 @@ void getMapping() {
 
   sd.chdir();
   if (!database.open("nes.txt", O_READ)) {
-    print_Error(F("Database file not found"), true);
+    print_FatalError(F("Database file not found"));
     // never reached
   }
 
@@ -766,7 +766,7 @@ void readRom_NES() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   //Initialize progress bar
@@ -825,7 +825,7 @@ void readRaw_NES() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   //Initialize progress bar
@@ -1203,7 +1203,7 @@ void outputNES() {
     display_Clear();
     println_Msg(F("PRG FILE FAILED!"));
     display_Update();
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   if (has_header) {
@@ -1223,7 +1223,7 @@ void outputNES() {
     display_Clear();
     println_Msg(F("NES FILE FAILED!"));
     display_Update();
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   if (has_header) {
@@ -4163,7 +4163,7 @@ void writeRAM() {
   display_Clear();
 
   if (ramsize == 0) {
-    print_Error(F("RAM SIZE 0K"), false);
+    print_Error(F("RAM SIZE 0K"));
   } else {
     fileBrowser(F("Select RAM File"));
     word base = 0x6000;
@@ -4379,7 +4379,7 @@ void writeRAM() {
       display_Update();
 
     } else {
-      print_Error(sd_error_STR, true);
+      print_FatalError(sd_error_STR);
     }
   }
 

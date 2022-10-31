@@ -122,7 +122,7 @@ void vboyMenu() {
         readSRAM_VB();
         sd.chdir("/");
       } else {
-        print_Error(F("Cart has no SRAM"), false);
+        print_Error(F("Cart has no SRAM"));
       }
 #if (defined(enable_OLED) || defined(enable_LCD))
       // Wait for user input
@@ -149,10 +149,10 @@ void vboyMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           print_STR(_bytes_STR, 1);
-          print_Error(did_not_verify_STR, false);
+          print_Error(did_not_verify_STR);
         }
       } else {
-        print_Error(F("Cart has no SRAM"), false);
+        print_Error(F("Cart has no SRAM"));
       }
 #if (defined(enable_OLED) || defined(enable_LCD))
       // Wait for user input
@@ -429,7 +429,7 @@ void readROM_VB() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   word d = 0;
@@ -500,7 +500,7 @@ void writeSRAM_VB() {
     print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   dataIn_VB();
 }
@@ -520,7 +520,7 @@ void readSRAM_VB() {
   EEPROM_writeAnything(0, foldern);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
     for (int currByte = 0; currByte < 512; currByte++) {
@@ -554,7 +554,7 @@ unsigned long verifySRAM_VB() {
     }
     myFile.close();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   return writeErrors;

@@ -593,7 +593,7 @@ void readROM_SMS() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // set default bank size to 16KB
@@ -678,7 +678,7 @@ void readSRAM_SMS() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   // Write the whole 32KB
   // When there is only 8KB of SRAM, the contents should be duplicated
@@ -705,7 +705,7 @@ void writeSRAM_SMS() {
   display_Clear();
 
   if (false) {
-    print_Error(F("DISABLED"), false);
+    print_Error(F("DISABLED"));
   } else {
     fileBrowser(F("Select file"));
 
@@ -748,7 +748,7 @@ void writeSRAM_SMS() {
       print_STR(done_STR, 1);
       display_Update();
     } else {
-      print_Error(sd_error_STR, true);
+      print_FatalError(sd_error_STR);
     }
   }
 

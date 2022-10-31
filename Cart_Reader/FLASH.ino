@@ -569,7 +569,7 @@ idtheflash:
     println_Msg(F(""));
     display_Update();
     resetFlash8();
-    print_Error(F("Press Button to reset"), true);
+    print_FatalError(F("Press Button to reset"));
   }
   println_Msg("");
   // Prints string out of the common strings array either with or without newline
@@ -624,7 +624,7 @@ void id_Flash16() {
     flashSize = 8388608;
     flashromType = 2;
   } else {
-    print_Error(F("Unknown flashrom"), true);
+    print_FatalError(F("Unknown flashrom"));
     println_Msg("");
   }
   println_Msg("");
@@ -1054,7 +1054,7 @@ void writeFlash29F032() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut();
@@ -1194,7 +1194,7 @@ void writeFlash29F1610() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut();
@@ -1248,7 +1248,7 @@ void writeFlash29F1601() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut();
@@ -1393,7 +1393,7 @@ void writeFlash29LV640() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut();
@@ -1440,7 +1440,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut();
@@ -1507,7 +1507,7 @@ void writeFlash29F800() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut();
@@ -1612,7 +1612,7 @@ void writeFlash28FXXX() {
 void writeFlashE28FXXXJ3A() {
   fileSize = myFile.fileSize();
   if (fileSize > flashSize) {
-    print_Error(file_too_big_STR, false);
+    print_Error(file_too_big_STR);
     return;
   }
 
@@ -1663,7 +1663,7 @@ void writeFlashE28FXXXJ3A() {
 void writeFlashLH28F0XX() {
   fileSize = myFile.fileSize();
   if (fileSize > flashSize) {
-    print_Error(file_too_big_STR, false);
+    print_Error(file_too_big_STR);
     return;
   }
 
@@ -1718,7 +1718,7 @@ void blankcheck_Flash() {
     println_Msg(F("Flashrom is empty"));
     display_Update();
   } else {
-    print_Error(F("Error: Not blank"), false);
+    print_Error(F("Error: Not blank"));
   }
 }
 
@@ -1731,7 +1731,7 @@ void verifyFlash() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     blank = 0;
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
@@ -1750,7 +1750,7 @@ void verifyFlash() {
       print_STR(error_STR, 0);
       print_Msg(blank);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, false);
+      print_Error(did_not_verify_STR);
     }
     // Close the file:
     myFile.close();
@@ -1782,7 +1782,7 @@ void readFlash() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
   }
   for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1853,7 +1853,7 @@ void writeFlash16() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut16();
@@ -1911,7 +1911,7 @@ void writeFlash16_29F1601() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut16();
@@ -2031,7 +2031,7 @@ void blankcheck16() {
     println_Msg(F("Flashrom is empty."));
     display_Update();
   } else {
-    print_Error(F("Error: Not blank"), false);
+    print_Error(F("Error: Not blank"));
   }
 }
 
@@ -2044,7 +2044,7 @@ void verifyFlash16() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
     }
 
     blank = 0;
@@ -2068,7 +2068,7 @@ void verifyFlash16() {
     } else {
       println_Msg(F("Verification ERROR!"));
       print_Msg(blank);
-      print_Error(F("B did not verify."), false);
+      print_Error(F("B did not verify."));
       display_Update();
     }
     // Close the file:
@@ -2211,7 +2211,7 @@ void writeFlash16_29LV640() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Set data pins to output
     dataOut16();
@@ -2374,7 +2374,7 @@ void blankcheck_Eprom() {
     println_Msg(F("Flashrom is empty."));
     display_Update();
   } else {
-    print_Error(F("Error: Not blank"), false);
+    print_Error(F("Error: Not blank"));
   }
 }
 
@@ -2438,7 +2438,7 @@ void write_Eprom() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize)
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
 
     // Switch VPP/OE(PH5) to HIGH
     PORTH |= (1 << 5);
@@ -2473,7 +2473,7 @@ void write_Eprom() {
             print_Msg(readWord_Eprom(currWord + c), HEX);
             print_Msg(F(" != 0x"));
             println_Msg(myWord, HEX);
-            print_Error(F("Press button to reset"), true);
+            print_FatalError(F("Press button to reset"));
           }
           n++;
         } while (checkWord != myWord);
@@ -2497,7 +2497,7 @@ void verify_Eprom() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
     }
 
     blank = 0;
@@ -2521,7 +2521,7 @@ void verify_Eprom() {
     } else {
       println_Msg(F("Verification ERROR!"));
       print_Msg(blank);
-      print_Error(F(" words did not verify."), false);
+      print_Error(F(" words did not verify."));
       display_Update();
     }
     // Close the file:

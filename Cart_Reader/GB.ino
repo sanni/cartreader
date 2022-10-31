@@ -240,7 +240,7 @@ void gbxMenu() {
                     print_STR(error_STR, 0);
                     print_Msg(wrErrors);
                     print_STR(_bytes_STR, 1);
-                    print_Error(did_not_verify_STR, false);
+                    print_Error(did_not_verify_STR);
                   }
                   break;
                 }
@@ -250,7 +250,7 @@ void gbxMenu() {
               println_Msg(F("Error: No save found."));
             }
           } else {
-            print_Error(F("Cart has no Sram"), false);
+            print_Error(F("Cart has no Sram"));
           }
           // Reset
           wait();
@@ -316,7 +316,7 @@ void gbMenu() {
         else
           readSRAM_GB();
       } else {
-        print_Error(F("No save or unsupported type"), false);
+        print_Error(F("No save or unsupported type"));
       }
       println_Msg(F(""));
       break;
@@ -343,11 +343,11 @@ void gbMenu() {
             print_STR(error_STR, 0);
             print_Msg(wrErrors);
             print_STR(_bytes_STR, 1);
-            print_Error(did_not_verify_STR, false);
+            print_Error(did_not_verify_STR);
           }
         }
       } else {
-        print_Error(F("No save or unsupported type"), false);
+        print_Error(F("No save or unsupported type"));
       }
       println_Msg(F(""));
       break;
@@ -547,7 +547,7 @@ void showCartInfo_GB() {
     display_Update();
     wait();
   } else {
-    print_Error(F("GAMEPAK ERROR"), true);
+    print_FatalError(F("GAMEPAK ERROR"));
   }
 }
 
@@ -750,7 +750,7 @@ void getCartInfo_GB() {
     }
 
     if (logoChecksum != 0x1546) {
-    print_Error(F("STARTUP LOGO ERROR"), false);
+    print_Error(F("STARTUP LOGO ERROR"));
     println_Msg(F(""));
     println_Msg(F(""));
     println_Msg(F(""));
@@ -781,7 +781,7 @@ void getCartInfo_GB() {
   }
 
   if (headerChecksum != sdBuffer[0x14D]) {
-    print_Error(F("HEADER CHECKSUM ERROR"), false);
+    print_Error(F("HEADER CHECKSUM ERROR"));
     println_Msg(F(""));
     println_Msg(F(""));
     println_Msg(F(""));
@@ -960,7 +960,7 @@ void readROM_GB() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
   }
 
   word endAddress = 0x7FFF;
@@ -1109,7 +1109,7 @@ unsigned int calc_checksum_GB(char* fileName) {
   }
   // Else show error
   else {
-    print_Error(F("DUMP ROM 1ST"), false);
+    print_Error(F("DUMP ROM 1ST"));
     return 0;
   }
 }
@@ -1137,7 +1137,7 @@ void compare_checksums_GB() {
   } else {
     print_Msg(F(" != "));
     println_Msg(checksumStr);
-    print_Error(F("Invalid Checksum"), false);
+    print_Error(F("Invalid Checksum"));
   }
   compareCRC("gb.txt", 0, 1, 0);
   display_Update();
@@ -1169,7 +1169,7 @@ void readSRAM_GB() {
 
     //open file on sd card
     if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_Error(sd_error_STR, true);
+      print_FatalError(sd_error_STR);
     }
 
     // MBC2 Fix
@@ -1207,7 +1207,7 @@ void readSRAM_GB() {
     println_Msg(F("/"));
     display_Update();
   } else {
-    print_Error(F("Cart has no SRAM"), false);
+    print_Error(F("Cart has no SRAM"));
   }
 }
 
@@ -1250,10 +1250,10 @@ void writeSRAM_GB() {
       display_Update();
 
     } else {
-      print_Error(F("File doesnt exist"), false);
+      print_Error(F("File doesnt exist"));
     }
   } else {
-    print_Error(F("Cart has no SRAM"), false);
+    print_Error(F("Cart has no SRAM"));
   }
 }
 
@@ -1300,7 +1300,7 @@ unsigned long verifySRAM_GB() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(open_file_STR, true);
+    print_FatalError(open_file_STR);
     return 1;
   }
 }
@@ -1329,7 +1329,7 @@ void readSRAMFLASH_MBC6_GB() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   //Initialize progress bar
@@ -1476,7 +1476,7 @@ void writeSRAMFLASH_MBC6_GB() {
             writeByte_GB(0x3800, 0x00);
             myFile.close();
             display_Clear();
-            print_Error(F("Error erasing FLASH sector."), true);
+            print_FatalError(F("Error erasing FLASH sector."));
           }
         }
       } else {
@@ -1515,7 +1515,7 @@ void writeSRAMFLASH_MBC6_GB() {
             writeByte_GB(0x3800, 0x00);
             myFile.close();
             display_Clear();
-            print_Error(F("Error writing to FLASH."), true);
+            print_FatalError(F("Error writing to FLASH."));
           }
         }
         writeByte_GB(romAddress - 1, 0xF0);
@@ -1536,7 +1536,7 @@ void writeSRAMFLASH_MBC6_GB() {
     println_Msg(F("Save writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("File doesnt exist"));
   }
 }
 
@@ -1649,7 +1649,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       sprintf(flashid_str, "%04X", flashid);
       println_Msg(flashid_str);
       display_Update();
-      print_Error(F("Unknown flashrom"), true);
+      print_FatalError(F("Unknown flashrom"));
     }
 
     // Reset flash
@@ -1696,7 +1696,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
           for (int j = 0; j < 512; j++) {
             if (sdBuffer[j] != 0xFF) {
               println_Msg(F("Not empty"));
-              print_Error(F("Erase failed"), true);
+              print_FatalError(F("Erase failed"));
             }
           }
         }
@@ -1852,7 +1852,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       println_Msg(F("Error"));
       print_Msg(writeErrors);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, true);
+      print_FatalError(did_not_verify_STR);
     }
   } else {
     print_STR(open_file_STR, 1);
@@ -2095,7 +2095,7 @@ bool writeCFI_GB() {
         for (int j = 0; j < 512; j++) {
           if (sdBuffer[j] != 0xFF) {
             println_Msg(F("Not empty"));
-            print_Error(F("Erase failed"), true);
+            print_FatalError(F("Erase failed"));
           }
         }
       }
@@ -2212,7 +2212,7 @@ bool writeCFI_GB() {
       print_STR(error_STR, 0);
       print_Msg(writeErrors);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, false);
+      print_Error(did_not_verify_STR);
     }
   } else {
     print_STR(open_file_STR, 1);

@@ -165,7 +165,7 @@ void gbmMenu() {
         println_Msg(F("OK"));
         display_Update();
       } else {
-        print_Error(F("Erasing failed"), false);
+        print_Error(F("Erasing failed"));
         break;
       }
 
@@ -235,7 +235,7 @@ void setup_GBM() {
     timeout++;
     if (timeout > 10) {
       println_Msg(F("Error: Time Out"));
-      print_Error(F("Please power cycle"), true);
+      print_FatalError(F("Please power cycle"));
     }
   }
 }
@@ -337,7 +337,7 @@ void readROM_GBM(word numBanks) {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
   } else {
     // Read rom
     word currAddress = 0;
@@ -439,7 +439,7 @@ void send_GBM(byte myCommand) {
       break;
 
     default:
-      print_Error(F("Unknown Command"), true);
+      print_FatalError(F("Unknown Command"));
       break;
   }
 }
@@ -459,7 +459,7 @@ void send_GBM(byte myCommand, word myAddress, byte myData) {
       break;
 
     default:
-      print_Error(F("Unknown Command"), true);
+      print_FatalError(F("Unknown Command"));
       break;
   }
 }
@@ -508,7 +508,7 @@ boolean readFlashID_GBM() {
   } else {
     print_Msg(F("Flash ID: "));
     println_Msg(flashid_str);
-    print_Error(F("Unknown Flash ID"), true);
+    print_FatalError(F("Unknown Flash ID"));
     resetFlash_GBM();
     return 0;
   }
@@ -592,7 +592,7 @@ void writeFlash_GBM() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if ((fileSize / 0x4000) > 64) {
-      print_Error(F("File is too big."), true);
+      print_FatalError(F("File is too big."));
     }
 
     // Enable access to ports 0120h
@@ -685,7 +685,7 @@ void writeFlash_GBM() {
     myFile.close();
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("Can't open file"), false);
+    print_Error(F("Can't open file"));
   }
 }
 
@@ -722,7 +722,7 @@ void readMapping_GBM() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
   } else {
     for (byte currByte = 0; currByte < 128; currByte++) {
       sdBuffer[currByte] = readByte_GBM(currByte);
@@ -821,7 +821,7 @@ void writeMapping_GBM() {
   if (myFile.open(filePath, O_READ)) {
     // Get map file size and check if it exceeds 128KByte
     if (myFile.fileSize() > 0x80) {
-      print_Error(F("File is too big."), true);
+      print_FatalError(F("File is too big."));
     }
 
     // Enable access to ports 0120h
@@ -899,7 +899,7 @@ void writeMapping_GBM() {
     myFile.close();
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("Can't open file"), false);
+    print_Error(F("Can't open file"));
   }
 }
 

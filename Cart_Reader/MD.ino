@@ -255,7 +255,7 @@ void mdMenu() {
         println_Msg(F("MX29F1610 detected"));
         flashSize = 2097152;
       } else {
-        print_Error(F("Error: Unknown flashrom"), true);
+        print_FatalError(F("Error: Unknown flashrom"));
       }
       display_Update();
 
@@ -307,7 +307,7 @@ void mdCartMenu() {
           readROM_MD();
         }
       } else {
-        print_Error(F("Cart has no ROM"), false);
+        print_Error(F("Cart has no ROM"));
       }
 #ifdef global_log
       save_log();
@@ -326,7 +326,7 @@ void mdCartMenu() {
         readSram_MD();
         enableSram_MD(0);
       } else {
-        print_Error(F("Cart has no Sram"), false);
+        print_Error(F("Cart has no Sram"));
       }
       break;
 
@@ -350,10 +350,10 @@ void mdCartMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           print_STR(_bytes_STR, 1);
-          print_Error(did_not_verify_STR, false);
+          print_Error(did_not_verify_STR);
         }
       } else {
-        print_Error(F("Cart has no Sram"), false);
+        print_Error(F("Cart has no Sram"));
       }
       break;
 
@@ -362,7 +362,7 @@ void mdCartMenu() {
       if (saveType == 4)
         readEEP_MD();
       else {
-        print_Error(F("Cart has no EEPROM"), false);
+        print_Error(F("Cart has no EEPROM"));
       }
       break;
 
@@ -374,7 +374,7 @@ void mdCartMenu() {
         display_Clear();
         writeEEP_MD();
       } else {
-        print_Error(F("Cart has no EEPROM"), false);
+        print_Error(F("Cart has no EEPROM"));
       }
       break;
 
@@ -417,7 +417,7 @@ void segaCDMenu() {
       if (bramSize > 0)
         readBram_MD();
       else {
-        print_Error(F("Not CD Backup RAM Cart"), false);
+        print_Error(F("Not CD Backup RAM Cart"));
       }
       break;
 
@@ -429,7 +429,7 @@ void segaCDMenu() {
         display_Clear();
         writeBram_MD();
       } else {
-        print_Error(F("Not CD Backup RAM Cart"), false);
+        print_Error(F("Not CD Backup RAM Cart"));
       }
       break;
 
@@ -882,7 +882,7 @@ void getCartInfo_MD() {
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
           println_Msg(F(""));
-          print_Error(F("Unknown Sram Base"), true);
+          print_FatalError(F("Unknown Sram Base"));
         }
       } else if (sramType == 0xE020) {  // SRAM BOTH BYTES
         // Get sram start and end
@@ -907,7 +907,7 @@ void getCartInfo_MD() {
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
           println_Msg(F(""));
-          print_Error(F("Unknown Sram Base"), true);
+          print_FatalError(F("Unknown Sram Base"));
         }
       }
     } else {
@@ -1164,7 +1164,7 @@ void readROM_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   byte buffer[1024] = { 0 };
@@ -1371,7 +1371,7 @@ void readROM_MD() {
     char calcsumStr[5];
     sprintf(calcsumStr, "%04X", calcCKS);
     println_Msg(calcsumStr);
-    print_Error(F(""), false);
+    print_Error(F(""));
     display_Update();
   }
 
@@ -1392,7 +1392,7 @@ void readROM_MD() {
       char calcsumStr[5];
       sprintf(calcsumStr, "%04X", calcCKSLockon);
       println_Msg(calcsumStr);
-      print_Error(F(""), false);
+      print_Error(F(""));
       display_Update();
     }
   }
@@ -1405,7 +1405,7 @@ void readROM_MD() {
       char calcsumStr[5];
       sprintf(calcsumStr, "%04X", calcCKSSonic2);
       println_Msg(calcsumStr);
-      print_Error(F(""), false);
+      print_Error(F(""));
       display_Update();
     }
   }
@@ -1483,14 +1483,14 @@ void writeSram_MD() {
         writeWord_MD(currByte, data);
       }
     } else
-      print_Error(F("Unknown save type"), false);
+      print_Error(F("Unknown save type"));
 
     // Close the file:
     myFile.close();
     print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   dataIn_MD();
 }
@@ -1515,7 +1515,7 @@ void readSram_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
@@ -1609,7 +1609,7 @@ unsigned long verifySram_MD() {
     // Close the file:
     myFile.close();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   // Return 0 if verified ok, or number of errors
   return writeErrors;
@@ -1645,7 +1645,7 @@ void write29F1610_MD() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
     }
     // Set data pins to output
     dataOut_MD();
@@ -1754,7 +1754,7 @@ void blankcheck_MD() {
     }
   }
   if (!blank) {
-    print_Error(F("Error: Not blank"), false);
+    print_Error(F("Error: Not blank"));
   }
 }
 
@@ -1764,7 +1764,7 @@ void verifyFlash_MD() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
-      print_Error(file_too_big_STR, true);
+      print_FatalError(file_too_big_STR);
     }
 
     blank = 0;
@@ -1792,7 +1792,7 @@ void verifyFlash_MD() {
       print_STR(error_STR, 0);
       print_Msg(blank);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, false);
+      print_Error(did_not_verify_STR);
     }
     // Close the file:
     myFile.close();
@@ -2382,7 +2382,7 @@ void readEEP_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   if (eepSize > 0x100) {  // 24C04+
     for (word currByte = 0; currByte < eepSize; currByte += 256) {
@@ -2451,7 +2451,7 @@ void writeEEP_MD() {
     print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   dataIn_MD();
 }
@@ -2481,7 +2481,7 @@ void readBram_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
@@ -2530,7 +2530,7 @@ void writeBram_MD() {
     print_STR(done_STR, 1);
     display_Update();
   } else {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   dataIn_MD();
 }
@@ -2579,7 +2579,7 @@ void readRealtec_MD() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // Realtec Registers

@@ -161,7 +161,7 @@ void gbaMenu() {
             printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
           } else {
             printFlashTypeAndWait(F("Unknown"));
-            //print_Error(F(""), true);
+            //print_FatalError(F(""));
           }
 
           if (flashid == 0x1F3D) {  // Atmel
@@ -187,7 +187,7 @@ void gbaMenu() {
             printFlashTypeAndWait(F("SANYO LE26FV10N1TS"));
           } else {
             printFlashTypeAndWait(F("Unknown"));
-            //print_Error(F(""), true);
+            //print_FatalError(F(""));
           }
 
           eraseFLASH_GBA();
@@ -593,7 +593,7 @@ void getCartInfo_GBA() {
 
   if (logoChecksum != 0x4B1B) {
     display_Clear();
-    print_Error(F("CARTRIDGE ERROR"), false);
+    print_Error(F("CARTRIDGE ERROR"));
     strcpy(romName, "ERROR");
     println_Msg(F(""));
     println_Msg(F(""));
@@ -755,7 +755,7 @@ void getCartInfo_GBA() {
       dont_log = false;
 #endif
     } else {
-      print_Error(F("GBA.txt missing"), true);
+      print_FatalError(F("GBA.txt missing"));
     }
 
     // Get name
@@ -780,7 +780,7 @@ void getCartInfo_GBA() {
       // Turn into string
       sprintf(calcChecksumStr, "%02X", calcChecksum);
       println_Msg(calcChecksumStr);
-      print_Error(F("Checksum Error"), false);
+      print_Error(F("Checksum Error"));
       println_Msg(F(""));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -865,7 +865,7 @@ void readROM_GBA() {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(create_file_STR, true);
+    print_FatalError(create_file_STR);
   }
 
   //Initialize progress bar
@@ -927,13 +927,13 @@ boolean compare_checksum_GBA() {
     } else {
       print_Msg(F(" != "));
       println_Msg(checksumStr);
-      print_Error(F("Invalid Checksum"), false);
+      print_Error(F("Invalid Checksum"));
       return 0;
     }
   }
   // Else show error
   else {
-    print_Error(F("Failed to open rom"), false);
+    print_Error(F("Failed to open rom"));
     return 0;
   }
 }
@@ -966,7 +966,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // Seek to a new position in the file
@@ -1022,7 +1022,7 @@ void writeSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
     display_Update();
 
   } else {
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("File doesnt exist"));
   }
 }
 
@@ -1057,12 +1057,12 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
       print_STR(error_STR, 0);
       print_Msg(writeErrors);
       print_STR(_bytes_STR, 1);
-      print_Error(did_not_verify_STR, false);
+      print_Error(did_not_verify_STR);
     }
 
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"), false);
+    print_Error(F("Can't open file"));
     return 1;
   }
 }
@@ -1106,7 +1106,7 @@ void readFRAM_GBA(unsigned long framSize) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1209,7 +1209,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
     display_Update();
 
   } else {
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("File doesnt exist"));
   }
 }
 
@@ -1270,7 +1270,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"), false);
+    print_Error(F("Can't open file"));
     return 1;
   }
 }
@@ -1461,7 +1461,7 @@ boolean blankcheckFLASH_GBA(unsigned long flashSize) {
     // Check buffer
     for (unsigned long currByte = 0; currByte < 512; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
-        print_Error(F("Erase failed"), false);
+        print_Error(F("Erase failed"));
         currByte = 512;
         currAddress = flashSize;
         blank = 0;
@@ -1539,7 +1539,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // Seek to a new position in the file
@@ -1657,7 +1657,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
 
   } else {
     println_Msg(F("Error"));
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("File doesnt exist"));
   }
 }
 
@@ -1684,7 +1684,7 @@ unsigned long verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // Seek to a new position in the file
@@ -1710,7 +1710,7 @@ unsigned long verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
     println_Msg(F("OK"));
   } else {
     print_Msg(wrError);
-    print_Error(F(" Errors"), false);
+    print_Error(F(" Errors"));
   }
 
   return wrError;
@@ -1753,7 +1753,7 @@ void writeEeprom_GBA(word eepSize) {
     display_Update();
   } else {
     println_Msg(F("Error"));
-    print_Error(F("File doesnt exist"), false);
+    print_Error(F("File doesnt exist"));
   }
 }
 
@@ -1782,7 +1782,7 @@ void readEeprom_GBA(word eepSize) {
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
@@ -2024,7 +2024,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
 
   //open file on sd card
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(sd_error_STR, true);
+    print_FatalError(sd_error_STR);
   }
 
   // Fill sd Buffer
@@ -2050,7 +2050,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
     print_STR(error_STR, 0);
     print_Msg(wrError);
     print_STR(_bytes_STR, 1);
-    print_Error(did_not_verify_STR, false);
+    print_Error(did_not_verify_STR);
   }
 
   return wrError;
@@ -2134,7 +2134,7 @@ void idFlashrom_GBA() {
       print_Msg(F("Flash ID: "));
       println_Msg(flashid_str);
       println_Msg(F(""));
-      print_Error(F("Check voltage"), true);
+      print_FatalError(F("Check voltage"));
     }
   }
 }
@@ -2532,7 +2532,7 @@ boolean verifyFlashrom_GBA() {
       return 0;
     }
   } else {
-    print_Error(open_file_STR, true);
+    print_FatalError(open_file_STR);
     return 9999;
   }
 }
@@ -2561,7 +2561,7 @@ void flashRepro_GBA() {
       } else {
         print_Msg(F("romType: 0x"));
         println_Msg(romType, HEX);
-        print_Error(F("Unknown manufacturer"), true);
+        print_FatalError(F("Unknown manufacturer"));
       }
     }
     // Intel 4000L0YBQ0
@@ -2614,7 +2614,7 @@ void flashRepro_GBA() {
         resetIntel_GBA(0x200000);
       } else if (flashid == 0x227E) {
         //if (sectorCheckMX29GL128E_GBA()) {
-        //print_Error(F("Sector Protected"), true);
+        //print_FatalError(F("Sector Protected"));
         //}
         //else {
         println_Msg(F("Erasing..."));
@@ -2680,16 +2680,16 @@ void flashRepro_GBA() {
         println_Msg(F("OK"));
         display_Update();
       } else {
-        print_Error(F("ERROR"), true);
+        print_FatalError(F("ERROR"));
       }
       /* Skipped blankcheck
         }
         else {
-        print_Error(F("failed"), true);
+        print_FatalError(F("failed"));
         }
       */
     } else {
-      print_Error(open_file_STR, true);
+      print_FatalError(open_file_STR);
     }
   } else {
     println_Msg(F("Error"));
@@ -2698,7 +2698,7 @@ void flashRepro_GBA() {
     print_Msg(F("Flash ID: "));
     println_Msg(flashid_str);
     println_Msg(F(""));
-    print_Error(F("Check voltage"), true);
+    print_FatalError(F("Check voltage"));
   }
 }
 
