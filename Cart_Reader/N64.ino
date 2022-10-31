@@ -586,7 +586,7 @@ void writeWord_N64(word myWord) {
  *****************************************/
 static word addrCRC(word address) {
   const char n64_address_crc_table[] = { 0x15, 0x1F, 0x0B, 0x16, 0x19, 0x07, 0x0E, 0x1C, 0x0D, 0x1A, 0x01 };
-  const char *cur_xor = n64_address_crc_table;
+  const char* cur_xor = n64_address_crc_table;
   byte crc = 0;
   for (word mask = 0x0020; mask; mask <<= 1, cur_xor++) {
     if (address & mask) {
@@ -618,23 +618,23 @@ static uint8_t dataCRC(uint8_t* data) {
 // (3 instructions) making it the same size as the equivalent 3-cycles NOP
 // delay. For shorter delays or non-multiple-of-3-cycle delays, add your own
 // NOPs.
-#define N64_DELAY_LOOP(cycle_count) do { \
-  byte i; \
-  __asm__ __volatile__ ("\n" \
-    "\tldi %[i], %[loop_count]\n" \
-    ".delay_loop_%=:\n" \
-    "\tdec %[i]\n" \
-    "\tbrne .delay_loop_%=\n" \
-    : [i] "=r" (i) \
-    : [loop_count] "i" (cycle_count / 3) \
-    : "cc" \
-  ); \
-} while(0)
+#define N64_DELAY_LOOP(cycle_count) \
+  do { \
+    byte i; \
+    __asm__ __volatile__("\n" \
+                         "\tldi %[i], %[loop_count]\n" \
+                         ".delay_loop_%=:\n" \
+                         "\tdec %[i]\n" \
+                         "\tbrne .delay_loop_%=\n" \
+                         : [i] "=r"(i) \
+                         : [loop_count] "i"(cycle_count / 3) \
+                         : "cc"); \
+  } while (0)
 
 /******************************************
    N64 Controller Protocol Functions
  *****************************************/
-void sendJoyBus(const byte *buffer, char length) {
+void sendJoyBus(const byte* buffer, char length) {
   // Implemented in assembly as there is very little wiggle room, timing-wise.
   // Overall structure:
   //   outer_loop:
@@ -678,130 +678,129 @@ void sendJoyBus(const byte *buffer, char length) {
   const byte line_low = DDRH | 0x10;
   const byte line_high = line_low & 0xef;
   __asm__ __volatile__("\n"
-    ".outer_loop_%=:\n"
-    // mask = 0x80
-    "\tldi  %[mask], 0x80\n"             // 1
-    // load byte to send from memory
-    "\tld   %[cur_byte], Z+\n"           // 2
-    ".inner_loop_%=:\n"
-    // Falling edge
-    "\tsts  %[out_byte], %[line_low]\n"  // 2
-    // Test cur_byte & mask, without clobbering either
-    "\tmov  %[scratch], %[cur_byte]\n"   // 1
-    "\tand  %[scratch], %[mask]\n"       // 1
-    "\tbreq .bit_is_0_%=\n"              // bit is 1: 1, bit is 0: 2
+                       ".outer_loop_%=:\n"
+                       // mask = 0x80
+                       "\tldi  %[mask], 0x80\n"  // 1
+                       // load byte to send from memory
+                       "\tld   %[cur_byte], Z+\n"  // 2
+                       ".inner_loop_%=:\n"
+                       // Falling edge
+                       "\tsts  %[out_byte], %[line_low]\n"  // 2
+                       // Test cur_byte & mask, without clobbering either
+                       "\tmov  %[scratch], %[cur_byte]\n"  // 1
+                       "\tand  %[scratch], %[mask]\n"      // 1
+                       "\tbreq .bit_is_0_%=\n"             // bit is 1: 1, bit is 0: 2
 
-    // bit is a 1
-    // Stay low for 1us (16 cycles).
-    // Time before: 3 cycles (mov, and, breq-false).
-    // Time after: sts (2 cycles).
-    // So 11 to go, so 3 3-cycles iterations and 2 nop.
-    "\tldi  %[scratch], 3\n"             // 1
-    ".delay_1_low_%=:\n"
-    "\tdec  %[scratch]\n"                // 1
-    "\tbrne .delay_1_low_%=\n"           // exit: 1, loop: 2
-    "\tnop\n"                            // 1
-    "\tnop\n"                            // 1
-    // Rising edge
-    "\tsts  %[out_byte], %[line_high]\n" // 2
-    // Wait for 2us (32 cycles) to sync with the bot_is_0 codepath.
-    // Time before: 0 cycles.
-    // Time after: 2 cycles (rjmp).
-    // So 30 to go, so 10 3-cycles iterations and 0 nop.
-    "\tldi  %[scratch], 10\n"            // 1
-    ".delay_1_high_%=:\n"
-    "\tdec  %[scratch]\n"                // 1
-    "\tbrne .delay_1_high_%=\n"          // exit: 1, loop: 2
-    "\trjmp .inner_common_path_%=\n"     // 2
+                       // bit is a 1
+                       // Stay low for 1us (16 cycles).
+                       // Time before: 3 cycles (mov, and, breq-false).
+                       // Time after: sts (2 cycles).
+                       // So 11 to go, so 3 3-cycles iterations and 2 nop.
+                       "\tldi  %[scratch], 3\n"  // 1
+                       ".delay_1_low_%=:\n"
+                       "\tdec  %[scratch]\n"       // 1
+                       "\tbrne .delay_1_low_%=\n"  // exit: 1, loop: 2
+                       "\tnop\n"                   // 1
+                       "\tnop\n"                   // 1
+                       // Rising edge
+                       "\tsts  %[out_byte], %[line_high]\n"  // 2
+                       // Wait for 2us (32 cycles) to sync with the bot_is_0 codepath.
+                       // Time before: 0 cycles.
+                       // Time after: 2 cycles (rjmp).
+                       // So 30 to go, so 10 3-cycles iterations and 0 nop.
+                       "\tldi  %[scratch], 10\n"  // 1
+                       ".delay_1_high_%=:\n"
+                       "\tdec  %[scratch]\n"             // 1
+                       "\tbrne .delay_1_high_%=\n"       // exit: 1, loop: 2
+                       "\trjmp .inner_common_path_%=\n"  // 2
 
-    ".bit_is_0_%=:\n"
-    // bit is a 0
-    // Stay high for 3us (48 cycles).
-    // Time before: 4 cycles (mov, and, breq-true).
-    // Time after: 2 cycles (sts).
-    // So 42 to go, so 14 3-cycles iterations, and 0 nop.
-    "\tldi  %[scratch], 14\n"            // 1
-    ".delay_0_low_%=:\n"
-    "\tdec  %[scratch]\n"                // 1
-    "\tbrne .delay_0_low_%=\n"           // exit: 1, loop: 2
-    // Rising edge
-    "\tsts  %[out_byte], %[line_high]\n" // 2
+                       ".bit_is_0_%=:\n"
+                       // bit is a 0
+                       // Stay high for 3us (48 cycles).
+                       // Time before: 4 cycles (mov, and, breq-true).
+                       // Time after: 2 cycles (sts).
+                       // So 42 to go, so 14 3-cycles iterations, and 0 nop.
+                       "\tldi  %[scratch], 14\n"  // 1
+                       ".delay_0_low_%=:\n"
+                       "\tdec  %[scratch]\n"       // 1
+                       "\tbrne .delay_0_low_%=\n"  // exit: 1, loop: 2
+                       // Rising edge
+                       "\tsts  %[out_byte], %[line_high]\n"  // 2
 
-    // codepath common to both possible values
-    ".inner_common_path_%=:\n"
-    "\tnop\n"                            // 1
-    "\tlsr  %[mask]\n"                   // 1
-    "\tbreq .outer_loop_trailer_%=\n"    // mask!=0: 1, mask==0: 2
-    // Stay high for 1us (16 cycles).
-    // Time before: 3 cycles (nop, lsr, breq-false).
-    // Time after: 4 cycles (rjmp, sts)
-    // So 9 to go, so 3 3-cycles iterations and 0 nop.
-    "\tldi  %[scratch], 3\n"             // 1
-    ".delay_common_high_%=:\n"
-    "\tdec  %[scratch]\n"                // 1
-    "\tbrne .delay_common_high_%=\n"     // exit: 1, loop: 2
-    "\trjmp .inner_loop_%=\n"            // 2
+                       // codepath common to both possible values
+                       ".inner_common_path_%=:\n"
+                       "\tnop\n"                          // 1
+                       "\tlsr  %[mask]\n"                 // 1
+                       "\tbreq .outer_loop_trailer_%=\n"  // mask!=0: 1, mask==0: 2
+                       // Stay high for 1us (16 cycles).
+                       // Time before: 3 cycles (nop, lsr, breq-false).
+                       // Time after: 4 cycles (rjmp, sts)
+                       // So 9 to go, so 3 3-cycles iterations and 0 nop.
+                       "\tldi  %[scratch], 3\n"  // 1
+                       ".delay_common_high_%=:\n"
+                       "\tdec  %[scratch]\n"             // 1
+                       "\tbrne .delay_common_high_%=\n"  // exit: 1, loop: 2
+                       "\trjmp .inner_loop_%=\n"         // 2
 
-    ".outer_loop_trailer_%=:\n"
-    "\tdec %[length]\n"                  // 1
-    "\tbreq .stop_bit_%=\n"              // length!=0: 1, length==0: 2
-    // Stay high for 1us (16 cycles).
-    // Time before: 6 cycles (lsr, nop, breq-true, dec, breq-false).
-    // Time after: 7 cycles (rjmp, ldi, ld, sts).
-    // So 3 to go, so 3 nop (for simplicity).
-    "\tnop\n"                            // 1
-    "\tnop\n"                            // 1
-    "\tnop\n"                            // 1
-    "\trjmp .outer_loop_%=\n"            // 2
-    // Done sending data, send a stop bit.
-    ".stop_bit_%=:\n"
-    // Stay high for 1us (16 cycles).
-    // Time before: 7 cycles (lsr, nop, breq-true, dec, breq-true).
-    // Time after: 2 cycles (sts).
-    // So 7 to go, so 2 3-cycles iterations and 1 nop.
-    "\tldi  %[scratch], 2\n"             // 1
-    ".delay_stop_high_%=:\n"
-    "\tdec  %[scratch]\n"                // 1
-    "\tbrne .delay_stop_high_%=\n"       // exit: 1, loop: 2
-    "\tnop\n"
-    "\tsts  %[out_byte], %[line_low]\n"  // 2
-    // Stay low for 1us (16 cycles).
-    // Time before: 0 cycles.
-    // Time after: 2 cycles (sts).
-    // So 14 to go, so 4 3-cycles iterations and 2 nop.
-    "\tldi  %[scratch], 5\n"             // 1
-    ".delay_stop_low_%=:\n"
-    "\tdec  %[scratch]\n"                // 1
-    "\tbrne .delay_stop_low_%=\n"        // exit: 1, loop: 2
-    "\tnop\n"
-    "\tnop\n"
-    "\tsts  %[out_byte], %[line_high]\n" // 2
-    // Notes on arguments:
-    // - mask and scratch are used wth "ldi", which can only work on registers
-    //   16 to 31, so tag these with "a" rather than the generic "r"
-    // - mark all output-only arguments as early-clobber ("&"), as input
-    //   registers are used throughout all iterations and both sets must be
-    //   strictly distinct
-    // - tag buffer with "z", to use the "ld r?, Z+" instruction (load from
-    //   16bits RAM address and postincrement, in 2 cycles).
-    //   XXX: any pointer register pair would do, but mapping to Z explicitly
-    //   because I cannot find a way to get one of "X", "Y" or "Z" to appear
-    //   when expanding "%[buffer]", causing the assembler to reject the
-    //   instruction. Pick Z as it is the only call-used such register,
-    //   avoiding the need to preserve any value a caller may have set it to.
-    : [buffer]    "+z" (buffer),
-      [length]    "+r" (length),
-      [cur_byte]  "=&r" (cur_byte),
-      [mask]      "=&a" (mask),
-      [scratch]   "=&a" (scratch)
-    : [line_low]  "r"  (line_low),
-      [line_high] "r"  (line_high),
-      [out_byte]  "i"  (&DDRH)
-    : "cc", "memory"
-  );
+                       ".outer_loop_trailer_%=:\n"
+                       "\tdec %[length]\n"      // 1
+                       "\tbreq .stop_bit_%=\n"  // length!=0: 1, length==0: 2
+                       // Stay high for 1us (16 cycles).
+                       // Time before: 6 cycles (lsr, nop, breq-true, dec, breq-false).
+                       // Time after: 7 cycles (rjmp, ldi, ld, sts).
+                       // So 3 to go, so 3 nop (for simplicity).
+                       "\tnop\n"                  // 1
+                       "\tnop\n"                  // 1
+                       "\tnop\n"                  // 1
+                       "\trjmp .outer_loop_%=\n"  // 2
+                       // Done sending data, send a stop bit.
+                       ".stop_bit_%=:\n"
+                       // Stay high for 1us (16 cycles).
+                       // Time before: 7 cycles (lsr, nop, breq-true, dec, breq-true).
+                       // Time after: 2 cycles (sts).
+                       // So 7 to go, so 2 3-cycles iterations and 1 nop.
+                       "\tldi  %[scratch], 2\n"  // 1
+                       ".delay_stop_high_%=:\n"
+                       "\tdec  %[scratch]\n"           // 1
+                       "\tbrne .delay_stop_high_%=\n"  // exit: 1, loop: 2
+                       "\tnop\n"
+                       "\tsts  %[out_byte], %[line_low]\n"  // 2
+                       // Stay low for 1us (16 cycles).
+                       // Time before: 0 cycles.
+                       // Time after: 2 cycles (sts).
+                       // So 14 to go, so 4 3-cycles iterations and 2 nop.
+                       "\tldi  %[scratch], 5\n"  // 1
+                       ".delay_stop_low_%=:\n"
+                       "\tdec  %[scratch]\n"          // 1
+                       "\tbrne .delay_stop_low_%=\n"  // exit: 1, loop: 2
+                       "\tnop\n"
+                       "\tnop\n"
+                       "\tsts  %[out_byte], %[line_high]\n"  // 2
+                       // Notes on arguments:
+                       // - mask and scratch are used wth "ldi", which can only work on registers
+                       //   16 to 31, so tag these with "a" rather than the generic "r"
+                       // - mark all output-only arguments as early-clobber ("&"), as input
+                       //   registers are used throughout all iterations and both sets must be
+                       //   strictly distinct
+                       // - tag buffer with "z", to use the "ld r?, Z+" instruction (load from
+                       //   16bits RAM address and postincrement, in 2 cycles).
+                       //   XXX: any pointer register pair would do, but mapping to Z explicitly
+                       //   because I cannot find a way to get one of "X", "Y" or "Z" to appear
+                       //   when expanding "%[buffer]", causing the assembler to reject the
+                       //   instruction. Pick Z as it is the only call-used such register,
+                       //   avoiding the need to preserve any value a caller may have set it to.
+                       : [buffer] "+z"(buffer),
+                         [length] "+r"(length),
+                         [cur_byte] "=&r"(cur_byte),
+                         [mask] "=&a"(mask),
+                         [scratch] "=&a"(scratch)
+                       : [line_low] "r"(line_low),
+                         [line_high] "r"(line_high),
+                         [out_byte] "i"(&DDRH)
+                       : "cc", "memory");
 }
 
-word recvJoyBus(byte *output, byte byte_count) {
+word recvJoyBus(byte* output, byte byte_count) {
   // listen for expected byte_count bytes of data back from the controller
   // return the number of bytes not (fully) received if the delay for a signal
   // edge takes too long.
@@ -829,84 +828,83 @@ word recvJoyBus(byte *output, byte byte_count) {
 
   byte mask, cur_byte, timeout, scratch;
   __asm__ __volatile__("\n"
-    "\tldi  %[mask], 0x80\n"
-    "\tclr  %[cur_byte]\n"
-    ".read_loop_%=:\n"
-    // Wait for input to be low. Time out if it takes more than ~27us (~7 bits
-    // worth of time) for it to go low.
-    // Takes 5 cycles to exit on input-low iteration (lds, sbrs-false, rjmp).
-    // Takes 7 cycles to loop on input-high iteration (lds, sbrs-true, dec,
-    //  brne-true).
-    "\tldi  %[timeout], 0x3f\n"               // 1
-    ".read_wait_falling_edge_%=:\n"
-    "\tlds  %[scratch], %[in_byte]\n"         // 2
-    "\tsbrs %[scratch], %[in_bit]\n"          // low: 1, high: 2
-    "\trjmp .read_input_low_%=\n"             // 2
-    "\tdec  %[timeout]\n"                     // 1
-    "\tbrne .read_wait_falling_edge_%=\n"     // timeout==0: 1, timeout!=0: 2
-    "\trjmp .read_end_%=\n"                   // 2
+                       "\tldi  %[mask], 0x80\n"
+                       "\tclr  %[cur_byte]\n"
+                       ".read_loop_%=:\n"
+                       // Wait for input to be low. Time out if it takes more than ~27us (~7 bits
+                       // worth of time) for it to go low.
+                       // Takes 5 cycles to exit on input-low iteration (lds, sbrs-false, rjmp).
+                       // Takes 7 cycles to loop on input-high iteration (lds, sbrs-true, dec,
+                       //  brne-true).
+                       "\tldi  %[timeout], 0x3f\n"  // 1
+                       ".read_wait_falling_edge_%=:\n"
+                       "\tlds  %[scratch], %[in_byte]\n"      // 2
+                       "\tsbrs %[scratch], %[in_bit]\n"       // low: 1, high: 2
+                       "\trjmp .read_input_low_%=\n"          // 2
+                       "\tdec  %[timeout]\n"                  // 1
+                       "\tbrne .read_wait_falling_edge_%=\n"  // timeout==0: 1, timeout!=0: 2
+                       "\trjmp .read_end_%=\n"                // 2
 
-    ".read_input_low_%=:\n"
-    // Wait for 1500 us (24 cycles) before reading input.
-    // As it takes from 5 to 7 cycles for the prevous loop to exit,
-    // this means this loop exits from 1812.5us to 1937.5us after the falling
-    // edge, so at least 812.5us after a 1-bit rising edge, and at least
-    // 1062.5us before a 0-bit rising edge.
-    // This also leaves us with up to 2062.5us (33 cycles) to update cur_byte,
-    // possibly moving on to the next byte, waiting for a high input, and
-    // waiting for the next falling edge.
-    // Time taken until waiting for input high for non-last byte:
-    // - shift to current byte:
-    //   - 1: 4 cycles (lds, sbrc-false, or)
-    //   - 0: 4 cycles (lds, sbrc-true)
-    // - byte done: 8 cycles (lsr, brne-false, st, dec, brne-false, ldi, clr)
-    // - byte not done: 3 cycles (lsr, brne-true)
-    // Total: 7 to 12 cycles, so there are at least 21 cycles left until the
-    // next bit.
-    "\tldi  %[timeout], 8\n"                  // 1
-    ".read_wait_low_%=:\n"
-    "\tdec  %[timeout]\n"                     // 1
-    "\tbrne .read_wait_low_%=\n"              // timeout=0: 1, timeout!=0: 2
+                       ".read_input_low_%=:\n"
+                       // Wait for 1500 us (24 cycles) before reading input.
+                       // As it takes from 5 to 7 cycles for the prevous loop to exit,
+                       // this means this loop exits from 1812.5us to 1937.5us after the falling
+                       // edge, so at least 812.5us after a 1-bit rising edge, and at least
+                       // 1062.5us before a 0-bit rising edge.
+                       // This also leaves us with up to 2062.5us (33 cycles) to update cur_byte,
+                       // possibly moving on to the next byte, waiting for a high input, and
+                       // waiting for the next falling edge.
+                       // Time taken until waiting for input high for non-last byte:
+                       // - shift to current byte:
+                       //   - 1: 4 cycles (lds, sbrc-false, or)
+                       //   - 0: 4 cycles (lds, sbrc-true)
+                       // - byte done: 8 cycles (lsr, brne-false, st, dec, brne-false, ldi, clr)
+                       // - byte not done: 3 cycles (lsr, brne-true)
+                       // Total: 7 to 12 cycles, so there are at least 21 cycles left until the
+                       // next bit.
+                       "\tldi  %[timeout], 8\n"  // 1
+                       ".read_wait_low_%=:\n"
+                       "\tdec  %[timeout]\n"         // 1
+                       "\tbrne .read_wait_low_%=\n"  // timeout=0: 1, timeout!=0: 2
 
-    // Sample input
-    "\tlds  %[scratch], %[in_byte]\n"         // 2
-    // Add to cur_byte
-    "\tsbrc %[scratch], %[in_bit]\n"          // high: 1, low: 2
-    "\tor   %[cur_byte], %[mask]\n"           // 1
-    // Shift mask
-    "\tlsr  %[mask]\n"
-    "\tbrne .read_wait_input_high_init_%=\n"  // mask==0: 1, mask!=0: 2
-    // A wole byte was read, store in output
-    "\tst   Z+, %[cur_byte]\n"                // 2
-    // Decrement byte count
-    "\tdec  %[byte_count]\n"                  // 1
-    // Are we done reading ?
-    "\tbreq .read_end_%=\n"                   // byte_count!=0: 1, byte_count==0: 2
-    // No, prepare for reading another
-    "\tldi  %[mask], 0x80\n"
-    "\tclr  %[cur_byte]\n"
+                       // Sample input
+                       "\tlds  %[scratch], %[in_byte]\n"  // 2
+                       // Add to cur_byte
+                       "\tsbrc %[scratch], %[in_bit]\n"  // high: 1, low: 2
+                       "\tor   %[cur_byte], %[mask]\n"   // 1
+                       // Shift mask
+                       "\tlsr  %[mask]\n"
+                       "\tbrne .read_wait_input_high_init_%=\n"  // mask==0: 1, mask!=0: 2
+                       // A wole byte was read, store in output
+                       "\tst   Z+, %[cur_byte]\n"  // 2
+                       // Decrement byte count
+                       "\tdec  %[byte_count]\n"  // 1
+                       // Are we done reading ?
+                       "\tbreq .read_end_%=\n"  // byte_count!=0: 1, byte_count==0: 2
+                       // No, prepare for reading another
+                       "\tldi  %[mask], 0x80\n"
+                       "\tclr  %[cur_byte]\n"
 
-    // Wait for rising edge
-    ".read_wait_input_high_init_%=:"
-    "\tldi  %[timeout], 0x3f\n"               // 1
-    ".read_wait_input_high_%=:\n"
-    "\tlds  %[scratch], %[in_byte]\n"         // 2
-    "\tsbrc %[scratch], %[in_bit]\n"          // high: 1, low: 2
-    "\trjmp .read_loop_%=\n"                   // 2
-    "\tdec  %[timeout]\n"                     // 1
-    "\tbrne .read_wait_input_high_%=\n"       // timeout==0: 1, timeout!=0: 2
-    "\trjmp .read_end_%=\n"                   // 2
-    ".read_end_%=:\n"
-    : [output]     "+z"  (output),
-      [byte_count] "+r"  (byte_count),
-      [mask]       "=&a" (mask),
-      [cur_byte]   "=&r" (cur_byte),
-      [timeout]    "=&a" (timeout),
-      [scratch]    "=&a" (scratch)
-    : [in_byte]    "i"   (&PINH),
-      [in_bit]     "i"   (4)
-    : "cc", "memory"
-  );
+                       // Wait for rising edge
+                       ".read_wait_input_high_init_%=:"
+                       "\tldi  %[timeout], 0x3f\n"  // 1
+                       ".read_wait_input_high_%=:\n"
+                       "\tlds  %[scratch], %[in_byte]\n"    // 2
+                       "\tsbrc %[scratch], %[in_bit]\n"     // high: 1, low: 2
+                       "\trjmp .read_loop_%=\n"             // 2
+                       "\tdec  %[timeout]\n"                // 1
+                       "\tbrne .read_wait_input_high_%=\n"  // timeout==0: 1, timeout!=0: 2
+                       "\trjmp .read_end_%=\n"              // 2
+                       ".read_end_%=:\n"
+                       : [output] "+z"(output),
+                         [byte_count] "+r"(byte_count),
+                         [mask] "=&a"(mask),
+                         [cur_byte] "=&r"(cur_byte),
+                         [timeout] "=&a"(timeout),
+                         [scratch] "=&a"(scratch)
+                       : [in_byte] "i"(&PINH),
+                         [in_bit] "i"(4)
+                       : "cc", "memory");
   return byte_count;
 }
 
@@ -1528,11 +1526,11 @@ void checkController() {
 }
 
 // read 32bytes from controller pak and calculate CRC
-byte readBlock(byte *output, word myAddress) {
+byte readBlock(byte* output, word myAddress) {
   byte response_crc;
   // Calculate the address CRC
   word myAddressCRC = addrCRC(myAddress);
-  const byte command[] = { 0x02, (byte) (myAddressCRC >> 8), (byte) (myAddressCRC & 0xff) };
+  const byte command[] = { 0x02, (byte)(myAddressCRC >> 8), (byte)(myAddressCRC & 0xff) };
   word error;
 
   // don't want interrupts getting in the way
@@ -1798,8 +1796,8 @@ void writeMPK() {
       myFile.read(command + 3, sizeof(command) - 3);
 
       word address_with_crc = addrCRC(address);
-      command[1] = (byte) (address_with_crc >> 8);
-      command[2] = (byte) (address_with_crc & 0xff);
+      command[1] = (byte)(address_with_crc >> 8);
+      command[2] = (byte)(address_with_crc & 0xff);
 
       // don't want interrupts getting in the way
       noInterrupts();
@@ -2191,7 +2189,7 @@ void writeEeprom() {
         // Blink led
         blinkLED();
         if (page)
-          delay(50); // Wait 50ms between pages when writing
+          delay(50);  // Wait 50ms between pages when writing
 
         noInterrupts();
         sendJoyBus(command, sizeof(command));
@@ -2211,7 +2209,7 @@ void writeEeprom() {
   }
 }
 
-void readEepromPageList(byte *output, byte page_number, byte page_count) {
+void readEepromPageList(byte* output, byte page_number, byte page_count) {
   byte command[] = { 0x04, page_number };
 
   // Disable interrupts for more uniform clock pulses
@@ -2226,7 +2224,7 @@ void readEepromPageList(byte *output, byte page_number, byte page_count) {
     interrupts();
 
     if (page_count)
-      delayMicroseconds(600); // wait 600us between pages when reading
+      delayMicroseconds(600);  // wait 600us between pages when reading
 
     command[1]++;
     output += 8;

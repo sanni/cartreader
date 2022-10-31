@@ -1068,7 +1068,7 @@ void CreateROMFolderInSD() {
   sd.chdir(folder);
 }
 
-FsFile createNewFile(const char *prefix, const char *extension) {
+FsFile createNewFile(const char* prefix, const char* extension) {
   char filename[FILENAME_LENGTH];
   snprintf_P(filename, sizeof(filename), _file_name_no_number_fmt, prefix, extension);
   for (byte i = 0; i < 100; i++) {

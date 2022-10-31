@@ -565,12 +565,12 @@ void writeByte_GBA(unsigned long myAddress, byte myData) {
 *****************************************/
 // Compute the checksum of rom header
 // "header" must contain at least the rom's first 188 bytes
-byte checksumHeader_GBA(const byte *header) {
-    byte result = 0x00;
-    for (byte n = 0xA0; n < 0xBD; n++) {
-      result -= header[n];
-    }
-    return result - 0x19;
+byte checksumHeader_GBA(const byte* header) {
+  byte result = 0x00;
+  for (byte n = 0xA0; n < 0xBD; n++) {
+    result -= header[n];
+  }
+  return result - 0x19;
 }
 
 // Read info out of rom header

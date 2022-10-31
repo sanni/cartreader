@@ -893,7 +893,7 @@ void readROM_SFM() {
 
   //clear the screen
   display_Clear();
-  println_Msg(F("Creating folder: "));
+  print_Msg(F("Creating folder "));
   println_Msg(folder);
   display_Update();
 
@@ -927,7 +927,7 @@ void readROM_SFM() {
     println_Msg(F("Dumping HiRom..."));
     display_Update();
 
-    for (byte currBank = 192; currBank < (numBanks + 192); currBank++) {
+    for (word currBank = 192; currBank < (numBanks + 192); currBank++) {
       for (long currByte = 0; currByte < 65536; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
@@ -1009,8 +1009,7 @@ void idFlash_SFM(int startBank) {
 void writeFlash_SFM(int startBank, uint32_t pos) {
   display_Clear();
   print_Msg(F("Writing Bank 0x"));
-  print_Msg(startBank, HEX);
-  print_Msg(F("..."));
+  println_Msg(startBank, HEX);
   display_Update();
 
   // Open file on sd card
@@ -1026,8 +1025,13 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
     dataOut();
 
     if (romType) {
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = numBanks * 0x10000;
+      draw_progressbar(0, totalProgressBar);
+
       // Write hirom
-      for (byte currBank = startBank; currBank < startBank + numBanks; currBank++) {
+      for (word currBank = startBank; currBank < startBank + numBanks; currBank++) {
         // Fill SDBuffer with 1 page at a time then write it repeat until all bytes are written
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 128) {
           myFile.read(sdBuffer, 128);
@@ -1049,8 +1053,16 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
           // Wait until write is finished
           busyCheck_SFM(startBank);
         }
+        // update progress bar
+        processedProgressBar += 0x10000;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     } else {
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = numBanks * 0x8000;
+      draw_progressbar(0, totalProgressBar);
+
       // Write lorom
       for (byte currBank = 0; currBank < numBanks; currBank++) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 128) {
@@ -1072,6 +1084,9 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
           // Wait until write is finished
           busyCheck_SFM(startBank);
         }
+        // update progress bar
+        processedProgressBar += 0x8000;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
     // Close the file:
@@ -1155,7 +1170,7 @@ byte blankcheck_SFM(int startBank) {
 
   byte blank = 1;
   if (romType) {
-    for (byte currBank = startBank; currBank < startBank + numBanks; currBank++) {
+    for (word currBank = startBank; currBank < startBank + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte++) {
         if (readBank_SFM(currBank, currByte) != 0xFF) {
           currBank = startBank + numBanks;
@@ -1192,7 +1207,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
     controlIn_SFM();
 
     if (romType) {
-      for (byte currBank = startBank; currBank < startBank + numBanks; currBank++) {
+      for (word currBank = startBank; currBank < startBank + numBanks; currBank++) {
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
           // Fill SDBuffer
           myFile.read(sdBuffer, 512);
@@ -1244,7 +1259,7 @@ void readFlash_SFM() {
     print_FatalError(create_file_STR);
   }
   if (romType) {
-    for (byte currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
+    for (word currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);

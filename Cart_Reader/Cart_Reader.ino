@@ -109,7 +109,7 @@ char ver[5] = "11.1";
 #define enable_PCE
 
 // Benesse Pocket Challenge W
-//#define enable_PCW
+#define enable_PCW
 
 // Sega Master System
 #define enable_SMS
@@ -127,10 +127,10 @@ char ver[5] = "11.1";
 #define enable_VBOY
 
 // WonderSwan
-//#define enable_WS
+#define enable_WS
 
 // Watara Supervision
-//#define enable_WSV
+#define enable_WSV
 
 //******************************************
 // HW CONFIGS
@@ -298,9 +298,9 @@ bool i2c_found;
 #include "FreqCount.h"
 #endif
 
-void _print_FatalError(void) __attribute__ ((noreturn));
-void print_FatalError(const __FlashStringHelper* errorMessage) __attribute__ ((noreturn));
-void print_FatalError(byte errorMessage) __attribute__ ((noreturn));
+void _print_FatalError(void) __attribute__((noreturn));
+void print_FatalError(const __FlashStringHelper* errorMessage) __attribute__((noreturn));
+void print_FatalError(byte errorMessage) __attribute__((noreturn));
 
 /******************************************
   Common Strings
@@ -495,7 +495,7 @@ byte sdBuffer[512];
 
 // soft reset Arduino: jumps to 0
 // using the watchdog timer would be more elegant but some Mega2560 bootloaders are buggy with it
-void (*resetArduino)(void) __attribute__ ((noreturn)) = 0;
+void (*resetArduino)(void) __attribute__((noreturn)) = 0;
 
 // Progressbar
 void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
@@ -1074,7 +1074,7 @@ void mainMenu() {
       break;
 
     default:
-      print_MissingModule(); // does not return
+      print_MissingModule();  // does not return
   }
 }
 
@@ -1168,7 +1168,7 @@ void mainMenu() {
       break;
 
     default:
-      print_MissingModule(); // does not return
+      print_MissingModule();  // does not return
   }
 }
 
@@ -1207,7 +1207,7 @@ void addonMenu() {
       break;
 
     default:
-      print_MissingModule(); // does not return
+      print_MissingModule();  // does not return
   }
 }
 
@@ -1263,7 +1263,7 @@ void consoleMenu() {
       break;
 
     default:
-      print_MissingModule(); // does not return
+      print_MissingModule();  // does not return
   }
 }
 
@@ -1321,7 +1321,7 @@ void handheldMenu() {
       break;
 
     default:
-      print_MissingModule(); // does not return
+      print_MissingModule();  // does not return
   }
 }
 #endif
@@ -1983,7 +1983,7 @@ void print_FatalError(const __FlashStringHelper* errorMessage) {
   _print_FatalError();
 }
 
-void print_FatalError(byte errorMessage){
+void print_FatalError(byte errorMessage) {
   print_Error(errorMessage);
   _print_FatalError();
 }

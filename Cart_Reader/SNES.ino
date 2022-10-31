@@ -602,7 +602,7 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
   draw_progressbar(0, totalProgressBar);
 
-  for (byte currBank = start; currBank < total; currBank++) {
+  for (word currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
 
     // Blink led
@@ -653,7 +653,7 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
   draw_progressbar(0, totalProgressBar);
 
-  for (byte currBank = start; currBank < total; currBank++) {
+  for (word currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
 
     // Blink led
