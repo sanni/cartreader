@@ -224,22 +224,6 @@ boolean dont_log = false;
 template<class T> int EEPROM_writeAnything(int ee, const T& value);
 template<class T> int EEPROM_readAnything(int ee, T& value);
 
-template<class T> int EEPROM_writeAnything(int ee, const T& value) {
-  const byte* p = (const byte*)(const void*)&value;
-  unsigned int i;
-  for (i = 0; i < sizeof(value); i++)
-    EEPROM.write(ee++, *p++);
-  return i;
-}
-
-template<class T> int EEPROM_readAnything(int ee, T& value) {
-  byte* p = (byte*)(void*)&value;
-  unsigned int i;
-  for (i = 0; i < sizeof(value); i++)
-    *p++ = EEPROM.read(ee++);
-  return i;
-}
-
 // Graphic SPI LCD
 #ifdef enable_LCD
 #include <U8g2lib.h>
@@ -301,6 +285,26 @@ bool i2c_found;
 void _print_FatalError(void) __attribute__((noreturn));
 void print_FatalError(const __FlashStringHelper* errorMessage) __attribute__((noreturn));
 void print_FatalError(byte errorMessage) __attribute__((noreturn));
+
+/******************************************
+ End of inclusions and forward declarations
+ *****************************************/
+
+template<class T> int EEPROM_writeAnything(int ee, const T& value) {
+  const byte* p = (const byte*)(const void*)&value;
+  unsigned int i;
+  for (i = 0; i < sizeof(value); i++)
+    EEPROM.write(ee++, *p++);
+  return i;
+}
+
+template<class T> int EEPROM_readAnything(int ee, T& value) {
+  byte* p = (byte*)(void*)&value;
+  unsigned int i;
+  for (i = 0; i < sizeof(value); i++)
+    *p++ = EEPROM.read(ee++);
+  return i;
+}
 
 /******************************************
   Common Strings
