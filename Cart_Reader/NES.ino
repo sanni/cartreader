@@ -658,14 +658,14 @@ void getMapping() {
       println_Msg(F(" (fast)"));
     else
       println_Msg("");
-    println_Msg(F("Hold to select"));
+    print_STR(right_to_select_STR, 1);
 #elif defined(enable_LCD)
     print_STR(rotate_to_change_STR, 0);
     if (fastScrolling > 1)
       println_Msg(F(" (fast)"));
     else
       println_Msg("");
-    println_Msg(F("Hold to Select"));
+    print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
     println_Msg(F("U/D to Change"));
     println_Msg(F("Space to Select"));
@@ -698,8 +698,8 @@ void getMapping() {
         rewind_line(database, 6);
       continue;
     }
-    if (b == 3) {
-      // 3: Toggle Fast Scrolling
+    if (b == 4) {
+      // 4: Toggle Fast Scrolling
       if (fastScrolling == 1)
         fastScrolling = 30;
       else
