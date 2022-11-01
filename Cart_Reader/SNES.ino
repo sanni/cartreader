@@ -1344,7 +1344,7 @@ void readROM_SNES() {
     controlIn_SNES();
     byte initialSOMap = readBank_SNES(0, 18439);
 
-    for (byte currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
+    for (word currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
 
       dataOut();
       controlOut_SNES();
