@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             31.10.2022
-   Version:          11.1
+   Date:             01.11.2022
+   Version:          11.2
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "11.1";
+char ver[5] = "11.2";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -677,14 +677,14 @@ void rewind_line(FsFile& readfile, byte count = 1) {
   uint32_t position = readfile.curPosition();
   count++;
   for (byte count_newline = 0; count_newline < count; count_newline++) {
-    while (position--) {
+    while (1) {
+      if (readfile.curPosition() == 0)
+        break;
       readfile.seekCur(-1);
       if (readfile.peek() == '\n')
         break;
     }
   }
-  if (position)
-    readfile.seekCur(1);
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
@@ -2730,8 +2730,11 @@ void wait_serial() {
 // Read button state
 int checkButton() {
 #ifdef enable_Button2
-  if (checkButton2() != 0)
+  byte eventButton2 = checkButton2();
+  if ((eventButton2 > 0) && (eventButton2 < 2))
     return 3;
+  else if (eventButton2 > 2)
+    return 4;
   else
     return (checkButton1());
 #else
@@ -2803,7 +2806,7 @@ int checkButton1() {
 int checkButton2() {
   int event = 0;
 
-  // Read the state of the button (PD7)
+  // Read the state of the button (PG2)
   buttonVal2 = (PING & (1 << 2));
   // Button pressed down
   if (buttonVal2 == LOW && buttonLast2 == HIGH && (millis() - upTime2) > debounce) {
@@ -2928,15 +2931,18 @@ int checkButton() {
         if (buttonState == 0) {
           unsigned long pushTime = millis();
           // Wait until button was let go again
-          while ((PING & (1 << PING2)) >> PING2 == 0)
-            ;
+          while ((PING & (1 << PING2)) >> PING2 == 0) {
+            // Signal long press delay reached
+            if ((millis() - pushTime) > 2000)
+              rgbLed(green_color);
+          }
           lastButtonState = reading;
 
-          // If the hold time was over 10 seconds, super long press for resetting eeprom in about screen
-          if (millis() - pushTime > 10000) {
+          // 2 second long press
+          if ((millis() - pushTime) > 2000) {
             return 4;
           }
-          // long press
+          // normal press
           else {
             return 3;
           }

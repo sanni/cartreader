@@ -529,7 +529,6 @@ void getMapping() {
 
   // Filter out all 0xFF checksums at 0x8000 and 0xE000
   if (oldcrc32 == 0xBD7BC39F && oldcrc32MMC3 == 0xBD7BC39F) {
-    println_Msg(F(""));
     println_Msg(F("No data found."));
     println_Msg(F("Using manual selection"));
     display_Update();
@@ -577,6 +576,7 @@ void getMapping() {
       selectMapping(database);
     }
   }
+  byte fastScrolling = 1;
 
   // Display database
   while (database.available()) {
@@ -647,17 +647,25 @@ void getMapping() {
 
 #ifdef global_log
     // Disable log to prevent unnecessary logging
-    println_Log(F("Get Mapping from List"));
+    //println_Log(F("Get Mapping from List"));
     dont_log = true;
 #endif
     println_Msg(entry.filename);
     printNESSettings();
 #if defined(enable_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
+    print_STR(press_to_change_STR, 0);
+    if (fastScrolling > 1)
+      println_Msg(F(" (fast)"));
+    else
+      println_Msg("");
+    println_Msg(F("Hold to select"));
 #elif defined(enable_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
+    print_STR(rotate_to_change_STR, 0);
+    if (fastScrolling > 1)
+      println_Msg(F(" (fast)"));
+    else
+      println_Msg("");
+    println_Msg(F("Hold to Select"));
 #elif defined(SERIAL_MONITOR)
     println_Msg(F("U/D to Change"));
     println_Msg(F("Space to Select"));
@@ -673,12 +681,29 @@ void getMapping() {
       b = checkButton();
     } while (b == 0);
 
-    if (b == 1)
+    if (b == 1) {
       // 1: Next record
+      if (fastScrolling > 1) {
+        for (byte skipped = 0; skipped < fastScrolling * 3; skipped++) {
+          skip_line(&database);
+        }
+      }
       continue;
+    }
     if (b == 2) {
       // 2: Previous record
-      rewind_line(database, 6);
+      if (fastScrolling > 1)
+        rewind_line(database, fastScrolling * 3 + 3);
+      else
+        rewind_line(database, 6);
+      continue;
+    }
+    if (b == 3) {
+      // 3: Toggle Fast Scrolling
+      if (fastScrolling == 1)
+        fastScrolling = 30;
+      else
+        fastScrolling = 1;
       continue;
     }
     // anything else: select current record
