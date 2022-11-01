@@ -2929,6 +2929,7 @@ int checkButton() {
         buttonState = reading;
         // Button was pressed down
         if (buttonState == 0) {
+          setColor_RGB(0, 0, 0);
           unsigned long pushTime = millis();
           // Wait until button was let go again
           while ((PING & (1 << PING2)) >> PING2 == 0) {
