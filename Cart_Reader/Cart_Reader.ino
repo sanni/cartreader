@@ -684,6 +684,8 @@ void rewind_line(FsFile& readfile, byte count = 1) {
         break;
     }
   }
+  if (position)
+    readfile.seekCur(1);
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
