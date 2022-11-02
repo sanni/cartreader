@@ -93,6 +93,7 @@ static const byte PROGMEM mapsize[] = {
   96, 3, 3, 0, 0, 0, 0,   // (oeka kids)
   97, 4, 4, 0, 0, 0, 0,   // irem tam-s1 (kaiketsu yanchamaru)
   105, 4, 4, 0, 0, 0, 0,  // (nintendo world Championships 1990) [UNTESTED]
+  111, 5, 5, 0, 0, 0, 0,  // GTROM [UNLICENSED]
   118, 3, 4, 5, 5, 0, 1,  // txsrom/mmc3                                       [sram r/w]
   119, 3, 3, 4, 4, 0, 0,  // tqrom/mmc3
   140, 3, 3, 3, 5, 0, 0,  // jaleco jf-11/jf-14
@@ -3056,6 +3057,16 @@ void readPRG(boolean readrom) {
         for (int j = 0; j < 8; j++) {   // PRG CHIP 2 128K
           write_mmc1_byte(0xE000, j);
           for (word address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
+      case 111:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x5000, i);
+          for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
         }
