@@ -2913,7 +2913,6 @@ void readPRG(boolean readrom) {
       case 88:
       case 95:
       case 154:  // 128K
-      case 206:  // 32K/64K/128K
         banks = int_pow(2, prgsize) * 2;
         for (int i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, 6);                                    // PRG ROM Command ($8000-$9FFF)
@@ -3110,6 +3109,22 @@ void readPRG(boolean readrom) {
             dumpPRG(base, address);
           }
         }
+        break;
+        
+      case 206:
+        banks = int_pow(2, prgsize) * 2;
+        for (int i = 0; i < banks-2; i += 2) {
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, i);
+          write_prg_byte(0x8000, 7);
+          write_prg_byte(0x8001, i | 1);
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        for (word address = 0x4000; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
         break;
 
       case 210:  // 128K/256K
