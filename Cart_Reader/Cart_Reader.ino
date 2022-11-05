@@ -2742,11 +2742,8 @@ int checkButton() {
     return 3;
   else if (eventButton2 > 2)
     return 4;
-  else
-    return (checkButton1());
-#else
-  return (checkButton1());
 #endif
+  return (checkButton1());
 }
 
 // Read button 1
@@ -2913,57 +2910,42 @@ int checkButton() {
   // Check if rotary encoder has changed
   if (rotaryPos != newPos) {
     int rotaryDir = (int)encoder.getDirection();
+    rotaryPos = newPos;
     if (rotaryDir == 1) {
-      rotaryPos = newPos;
       return 1;
     } else if (rotaryDir == -1) {
-      rotaryPos = newPos;
       return 2;
-    } else {
-      return 0;
     }
-  } else if (reading == buttonState) {
-    return 0;
-  }
-  // Check if button has changed
-  else {
+  } else if (reading != buttonState) {
     if (reading != lastButtonState) {
       lastDebounceTime = millis();
-    }
-    // Debounce button
-    if ((millis() - lastDebounceTime) > debounceDelay) {
-      if (reading != buttonState) {
-        buttonState = reading;
-        // Button was pressed down
-        if (buttonState == 0) {
-          setColor_RGB(0, 0, 0);
-          unsigned long pushTime = millis();
-          // Wait until button was let go again
-          while ((PING & (1 << PING2)) >> PING2 == 0) {
-            // Signal long press delay reached
-            if ((millis() - pushTime) > 2000)
-              rgbLed(green_color);
-          }
-          lastButtonState = reading;
-
-          // 2 second long press
+      lastButtonState = reading;
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+      buttonState = reading;
+      // Button was pressed down
+      if (buttonState == 0) {
+        setColor_RGB(0, 0, 0);
+        unsigned long pushTime = millis();
+        // Wait until button was let go again
+        while ((PING & (1 << PING2)) >> PING2 == 0) {
+          // Signal long press delay reached
           if ((millis() - pushTime) > 2000) {
-            return 4;
-          }
-          // normal press
-          else {
-            return 3;
+            rgbLed(green_color);
           }
         }
-      } else {
-        lastButtonState = reading;
-        return 0;
+
+        // 2 second long press
+        if ((millis() - pushTime) > 2000) {
+          return 4;
+        }
+        // normal press
+        else {
+          return 3;
+        }
       }
-    } else {
-      lastButtonState = reading;
-      return 0;
     }
   }
+  return 0;
 }
 
 // Wait for user to push button
