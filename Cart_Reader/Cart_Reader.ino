@@ -936,12 +936,10 @@ void mainMenu() {
     if (currPage == 1) {
       option_offset = 0;
       num_answers = 7;
-    }
-    if (currPage == 2) {
+    } else if (currPage == 2) {
       option_offset = 7;
       num_answers = 7;
-    }
-    if (currPage == 3) {
+    } else { // currPage == 3
       option_offset = 14;
       num_answers = 2;
     }
