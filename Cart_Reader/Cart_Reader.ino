@@ -675,15 +675,26 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
 
 void rewind_line(FsFile& readfile, byte count = 1) {
   uint32_t position = readfile.curPosition();
+  // To seek one line back, this code must step over the first newline it finds
+  // in order to exit the current line and enter the end of the previous one.
+  // Convert <count> from how-many-lines-back into how-many-newlines-to-look-for
+  // by incrementing it by 1.
   count++;
   for (byte count_newline = 0; count_newline < count; count_newline++) {
+    // Go to the strictly previous '\n', or file start.
     while (position) {
+      // Seek back first (keeping position updated)...
       position--;
       readfile.seekCur(-1);
+      // ...and check current byte second.
+      // Note: this code assumed all files use ASCII with DOS-style newlines
+      // so \n is encountered first when seeking backwards.
       if (readfile.peek() == '\n')
         break;
     }
   }
+  // If not at file start, the current character is the '\n' just before the
+  // desired line, so advance by one.
   if (position)
     readfile.seekCur(1);
 }
