@@ -2684,6 +2684,8 @@ int checkButton() {
   else if (incomingByte == 240) {
     return 3;
   }
+
+  return 0;
 }
 
 void wait_serial() {
