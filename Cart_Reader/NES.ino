@@ -562,7 +562,9 @@ void getMapping() {
         break;
       }
     }
-    if (!database.available()) {
+    if (database.available()) {
+      browseDatabase = false;
+    } else {
       // File searched until end but nothing found
       println_Msg(F(""));
       println_Msg(F("CRC not found in database"));

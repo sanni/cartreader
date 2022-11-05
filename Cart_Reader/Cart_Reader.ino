@@ -224,22 +224,6 @@ boolean dont_log = false;
 template<class T> int EEPROM_writeAnything(int ee, const T& value);
 template<class T> int EEPROM_readAnything(int ee, T& value);
 
-template<class T> int EEPROM_writeAnything(int ee, const T& value) {
-  const byte* p = (const byte*)(const void*)&value;
-  unsigned int i;
-  for (i = 0; i < sizeof(value); i++)
-    EEPROM.write(ee++, *p++);
-  return i;
-}
-
-template<class T> int EEPROM_readAnything(int ee, T& value) {
-  byte* p = (byte*)(void*)&value;
-  unsigned int i;
-  for (i = 0; i < sizeof(value); i++)
-    *p++ = EEPROM.read(ee++);
-  return i;
-}
-
 // Graphic SPI LCD
 #ifdef enable_LCD
 #include <U8g2lib.h>
@@ -301,6 +285,26 @@ bool i2c_found;
 void _print_FatalError(void) __attribute__((noreturn));
 void print_FatalError(const __FlashStringHelper* errorMessage) __attribute__((noreturn));
 void print_FatalError(byte errorMessage) __attribute__((noreturn));
+
+/******************************************
+ End of inclusions and forward declarations
+ *****************************************/
+
+template<class T> int EEPROM_writeAnything(int ee, const T& value) {
+  const byte* p = (const byte*)(const void*)&value;
+  unsigned int i;
+  for (i = 0; i < sizeof(value); i++)
+    EEPROM.write(ee++, *p++);
+  return i;
+}
+
+template<class T> int EEPROM_readAnything(int ee, T& value) {
+  byte* p = (byte*)(void*)&value;
+  unsigned int i;
+  for (i = 0; i < sizeof(value); i++)
+    *p++ = EEPROM.read(ee++);
+  return i;
+}
 
 /******************************************
   Common Strings
@@ -675,15 +679,26 @@ void get_line(char* str_buf, FsFile* readfile, uint8_t maxi) {
 
 void rewind_line(FsFile& readfile, byte count = 1) {
   uint32_t position = readfile.curPosition();
+  // To seek one line back, this code must step over the first newline it finds
+  // in order to exit the current line and enter the end of the previous one.
+  // Convert <count> from how-many-lines-back into how-many-newlines-to-look-for
+  // by incrementing it by 1.
   count++;
   for (byte count_newline = 0; count_newline < count; count_newline++) {
+    // Go to the strictly previous '\n', or file start.
     while (position) {
+      // Seek back first (keeping position updated)...
       position--;
       readfile.seekCur(-1);
+      // ...and check current byte second.
+      // Note: this code assumed all files use ASCII with DOS-style newlines
+      // so \n is encountered first when seeking backwards.
       if (readfile.peek() == '\n')
         break;
     }
   }
+  // If not at file start, the current character is the '\n' just before the
+  // desired line, so advance by one.
   if (position)
     readfile.seekCur(1);
 }
@@ -936,12 +951,10 @@ void mainMenu() {
     if (currPage == 1) {
       option_offset = 0;
       num_answers = 7;
-    }
-    if (currPage == 2) {
+    } else if (currPage == 2) {
       option_offset = 7;
       num_answers = 7;
-    }
-    if (currPage == 3) {
+    } else { // currPage == 3
       option_offset = 14;
       num_answers = 2;
     }
@@ -2686,6 +2699,8 @@ int checkButton() {
   else if (incomingByte == 240) {
     return 3;
   }
+
+  return 0;
 }
 
 void wait_serial() {
@@ -2742,11 +2757,8 @@ int checkButton() {
     return 3;
   else if (eventButton2 > 2)
     return 4;
-  else
-    return (checkButton1());
-#else
-  return (checkButton1());
 #endif
+  return (checkButton1());
 }
 
 // Read button 1
@@ -2913,57 +2925,42 @@ int checkButton() {
   // Check if rotary encoder has changed
   if (rotaryPos != newPos) {
     int rotaryDir = (int)encoder.getDirection();
+    rotaryPos = newPos;
     if (rotaryDir == 1) {
-      rotaryPos = newPos;
       return 1;
     } else if (rotaryDir == -1) {
-      rotaryPos = newPos;
       return 2;
-    } else {
-      return 0;
     }
-  } else if (reading == buttonState) {
-    return 0;
-  }
-  // Check if button has changed
-  else {
+  } else if (reading != buttonState) {
     if (reading != lastButtonState) {
       lastDebounceTime = millis();
-    }
-    // Debounce button
-    if ((millis() - lastDebounceTime) > debounceDelay) {
-      if (reading != buttonState) {
-        buttonState = reading;
-        // Button was pressed down
-        if (buttonState == 0) {
-          setColor_RGB(0, 0, 0);
-          unsigned long pushTime = millis();
-          // Wait until button was let go again
-          while ((PING & (1 << PING2)) >> PING2 == 0) {
-            // Signal long press delay reached
-            if ((millis() - pushTime) > 2000)
-              rgbLed(green_color);
-          }
-          lastButtonState = reading;
-
-          // 2 second long press
+      lastButtonState = reading;
+    } else if ((millis() - lastDebounceTime) > debounceDelay) {
+      buttonState = reading;
+      // Button was pressed down
+      if (buttonState == 0) {
+        setColor_RGB(0, 0, 0);
+        unsigned long pushTime = millis();
+        // Wait until button was let go again
+        while ((PING & (1 << PING2)) >> PING2 == 0) {
+          // Signal long press delay reached
           if ((millis() - pushTime) > 2000) {
-            return 4;
-          }
-          // normal press
-          else {
-            return 3;
+            rgbLed(green_color);
           }
         }
-      } else {
-        lastButtonState = reading;
-        return 0;
+
+        // 2 second long press
+        if ((millis() - pushTime) > 2000) {
+          return 4;
+        }
+        // normal press
+        else {
+          return 3;
+        }
       }
-    } else {
-      lastButtonState = reading;
-      return 0;
     }
   }
+  return 0;
 }
 
 // Wait for user to push button
