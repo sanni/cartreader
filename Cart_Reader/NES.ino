@@ -116,6 +116,7 @@ static const byte PROGMEM mapsize[] = {
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
   213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
   225, 7, 7, 8, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
+  228, 4, 7, 5, 7, 0, 0,  // Action 52 + Cheetahmen II [UNLICENSED]
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
   232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
   235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
@@ -3149,6 +3150,24 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 228:
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < banks; i += 2) {
+          write_prg_byte(0x8000 + ((i & 0x3F) << 6), 0);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        if (prgsize > 6) {
+          for (int i = 0; i < banks; i += 2) {
+            write_prg_byte(0x9800 + ((i & 0x1F) << 6), 0);
+            for (word address = 0x0; address < 0x8000; address += 512) {
+              dumpPRG(base, address);
+            }
+          }
+        }
+        break;
 
       case 229:
         write_prg_byte(0x8000, 0);
@@ -3960,8 +3979,18 @@ void readCHR(boolean readrom) {
             }
           }
           break;
+          
+        case 228:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x8000 + (i & 0x3C) >> 2, (i & 0x03));
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
 
-        case 229:  // BMC 31-IN-1
+        case 229:
           for (int i = 0; i < 32; i++) {
             write_prg_byte(0x8000 + i, i);
             for (word address = 0; address < 0x2000; address += 512) {
