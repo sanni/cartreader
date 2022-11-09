@@ -3153,14 +3153,14 @@ void readPRG(boolean readrom) {
         
       case 228:
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i += 2) {
+        for (int i = 0; i < banks; i += 2) { // up to 1024k PRG
           write_prg_byte(0x8000 + ((i & 0x3F) << 6), 0);
           for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
         }
-        if (prgsize > 6) {
-          for (int i = 0; i < banks; i += 2) {
+        if (prgsize > 6) { // reading the 3rd 512k PRG chip (Action 52)
+          for (int i = 0; i < 32; i += 2) {
             write_prg_byte(0x9800 + ((i & 0x1F) << 6), 0);
             for (word address = 0x0; address < 0x8000; address += 512) {
               dumpPRG(base, address);
