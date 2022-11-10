@@ -116,6 +116,7 @@ static const byte PROGMEM mapsize[] = {
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
   213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
   225, 7, 7, 8, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
+  226, 6, 7, 0, 0, 0, 0,  // BMC-76IN1, BMC-SUPER42IN1, BMC-GHOSTBUSTERS63IN1 [UNLICENSED]
   228, 4, 7, 5, 7, 0, 0,  // Action 52 + Cheetahmen II [UNLICENSED]
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
   232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
@@ -3145,6 +3146,16 @@ void readPRG(boolean readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i << 6), i << 6);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
+      case 226:
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < banks; i += 2) {
+          write_prg_byte(0x8000, ((i & 0x20) << 2) | (i & 0x1F));
           for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
