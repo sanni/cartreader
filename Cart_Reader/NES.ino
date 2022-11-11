@@ -3155,6 +3155,7 @@ void readPRG(boolean readrom) {
       case 226:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i += 2) {
+          write_prg_byte(0x8001, (i & 0x40) >> 6);
           write_prg_byte(0x8000, ((i & 0x20) << 2) | (i & 0x1F));
           for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
