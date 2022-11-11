@@ -115,7 +115,7 @@ static const byte PROGMEM mapsize[] = {
   207, 4, 4, 5, 5, 0, 0,  // taito x1-005 variant (fudou myouou den)
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
   213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
-  225, 7, 7, 8, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
+  225, 4, 7, 5, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
   226, 6, 7, 0, 0, 0, 0,  // BMC-76IN1, BMC-SUPER42IN1, BMC-GHOSTBUSTERS63IN1 [UNLICENSED]
   228, 4, 7, 5, 7, 0, 0,  // Action 52 + Cheetahmen II [UNLICENSED]
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
@@ -124,7 +124,7 @@ static const byte PROGMEM mapsize[] = {
   240, 1, 5, 1, 5, 0, 3,  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
   242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
   246, 5, 5, 7, 7, 0, 0,  // C&E Feng Shen Bang [UNLICENSED]
-  255, 7, 7, 8, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
+  255, 4, 7, 5, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
 };
 
 const char _file_name_no_number_fmt[] PROGMEM = "%s.%s";
@@ -3143,9 +3143,9 @@ void readPRG(boolean readrom) {
 
       case 225:
       case 255:
-        banks = int_pow(2, prgsize) / 2;
-        for (int i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 + (i << 6), i << 6);
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < banks; i += 2) {
+          write_prg_byte(0x8000 + (((i & 0x40) << 8) | ((i & 0x3F) << 6)), 0);
           for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
@@ -3985,7 +3985,7 @@ void readCHR(boolean readrom) {
         case 255:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + i, i);
+            write_prg_byte(0x8000 + (((i & 0x40) << 8) | (i & 0x3F)), 0);
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
