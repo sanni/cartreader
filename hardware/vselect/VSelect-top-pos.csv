@@ -1,0 +1,6 @@
+Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
+"C1","0.1 uF","C_0402_1005Metric_Pad0.74x0.62mm_HandSolder",37.750000,-19.490000,180.000000,top
+"C2","0.1 uF","C_0402_1005Metric_Pad0.74x0.62mm_HandSolder",37.717500,-21.490000,0.000000,top
+"C3","10 uF","C_0402_1005Metric_Pad0.74x0.62mm_HandSolder",37.750000,-20.490000,0.000000,top
+"R1","550","R_0402_1005Metric_Pad0.72x0.64mm_HandSolder",37.720000,-23.800000,180.000000,top
+"U1","TPS2113PW","Texas_Instruments-TPS2113PW-Level_A",31.550000,-20.790000,0.000000,top

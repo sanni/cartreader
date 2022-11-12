@@ -106,6 +106,7 @@ static const char wsvMenuItem3[] PROGMEM = "Set Size";
 static const char* const menuOptionsSV[] PROGMEM = { wsvMenuItem1, wsvMenuItem2, wsvMenuItem3, string_reset2 };
 
 void wsvMenu() {
+  vselect(false);
   convertPgm(menuOptionsSV, 4);
   uint8_t mainMenu = question_box(F("SUPERVISION MENU"), menuOptions, 4, 0);
 

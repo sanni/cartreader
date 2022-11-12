@@ -40,6 +40,7 @@ static bool retron_mode = false;
 
 
 void _smsMenu() {
+  vselect(false);
   // create menu with title and n options to choose from
   unsigned char mainMenu;
 

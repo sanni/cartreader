@@ -42,6 +42,7 @@ static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFl
 
 
 void svMenu() {
+  vselect(false);
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem

@@ -209,6 +209,7 @@ static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2
 
 // Sega start menu
 void mdMenu() {
+  vselect(false);
   // create menu with title and 4 options to choose from
   unsigned char mdDev;
   // Copy menuOptions out of progmem

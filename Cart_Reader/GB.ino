@@ -41,6 +41,7 @@ static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashI
 
 // Start menu for both GB and GBA
 void gbxMenu() {
+  vselect(true);
   // create menu with title and 4 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
@@ -50,6 +51,7 @@ void gbxMenu() {
   // wait for user choice to come back from the question box menu
   switch (gbType) {
     case 0:
+      vselect(false);
       display_Clear();
       display_Update();
       setup_GB();
@@ -66,6 +68,7 @@ void gbxMenu() {
     case 2:
       // create submenu with title and 7 options to choose from
       unsigned char gbFlash;
+      vselect(false);
       // Copy menuOptions out of progmem
       convertPgm(menuOptionsGBFlash, 7);
       gbFlash = question_box(F("Select type"), menuOptions, 7, 0);
@@ -93,6 +96,7 @@ void gbxMenu() {
 
         case 1:
           //Flash MBC5
+          vselect(false);
           display_Clear();
           display_Update();
           setup_GB();
