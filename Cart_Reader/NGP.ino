@@ -51,6 +51,7 @@ void setup_NGP() {
 }
 
 void ngpMenu() {
+  vselect(false);
   uint8_t mainMenu;
 
   convertPgm(menuOptionsNGP, 3);

@@ -101,6 +101,7 @@ static const char vboyMenuItem3[] PROGMEM = "Write SRAM";
 static const char* const menuOptionsVBOY[] PROGMEM = { vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, string_reset2 };
 
 void vboyMenu() {
+  vselect(false);
   convertPgm(menuOptionsVBOY, 4);
   uint8_t mainMenu = question_box(F("VIRTUALBOY MENU"), menuOptions, 4, 0);
 

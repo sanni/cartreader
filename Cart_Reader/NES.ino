@@ -233,6 +233,7 @@ static const char* const menuOptionsNESChips[] PROGMEM = { nesChipsMenuItem1, ne
 
 // NES start menu
 void nesMenu() {
+  vselect(false);
   unsigned char answer;
 
   // create menu with title "NES CART READER" and 7 options to choose from

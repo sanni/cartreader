@@ -141,6 +141,7 @@ static const char pcwmenuItem3[] PROGMEM = "Write SRAM";
 static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, string_reset2 };
 
 void pcwMenu() {
+  vselect(false);
   convertPgm(menuOptionsPCW, 4);
   uint8_t mainMenu = question_box(F(" POCKET CHALLENGE W"), menuOptions, 4, 0);
 

@@ -70,6 +70,7 @@ static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMen
 
 // SNES repro menu
 void reproMenu() {
+  vselect(false);
   // create menu with title and 6 options to choose from
   unsigned char snsRepro;
   // Copy menuOptions out of progmem
@@ -132,6 +133,7 @@ void reproMenu() {
 
 // SNES start menu
 void snsMenu() {
+  vselect(false);
   // create menu with title and 6 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
@@ -190,6 +192,7 @@ void snsMenu() {
 
 // SNES Menu
 void snesMenu() {
+  vselect(false);
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
