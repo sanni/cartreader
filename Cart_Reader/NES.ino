@@ -32,7 +32,7 @@
 static const byte PROGMEM mapsize[] = {
   0, 0, 1, 0, 1, 0, 2,    // nrom                                                [sram r/w]
   1, 1, 5, 0, 5, 0, 3,    // mmc1                                                [sram r/w]
-  2, 3, 4, 0, 0, 0, 0,    // uxrom
+  2, 2, 4, 0, 0, 0, 0,    // uxrom
   3, 0, 1, 0, 3, 0, 0,    // cnrom
   4, 1, 5, 0, 6, 0, 1,    // mmc3/mmc6                                           [sram/prgram r/w]
   5, 3, 5, 5, 7, 0, 3,    // mmc5                                                [sram r/w]
@@ -54,7 +54,7 @@ static const byte PROGMEM mapsize[] = {
   30, 4, 5, 0, 0, 0, 0,   // unrom 512 (NESmaker) [UNLICENSED]
   32, 3, 4, 5, 5, 0, 0,   // irem g-101
   33, 3, 4, 5, 6, 0, 0,   // taito tc0190
-  34, 3, 3, 0, 0, 0, 0,   // bnrom [nina-1 NOT SUPPORTED]
+  34, 3, 5, 0, 0, 0, 0,   // bnrom [nina-1 NOT SUPPORTED]
   36, 0, 3, 1, 5, 0, 0,   // TXC 01-22000-400 Board [UNLICENSED]
   37, 4, 4, 6, 6, 0, 0,   // (super mario bros + tetris + world cup)
   45, 3, 6, 0, 8, 0, 0,   // ga23c asic multicart [UNLICENSED]
