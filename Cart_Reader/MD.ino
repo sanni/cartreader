@@ -1415,7 +1415,6 @@ void readROM_MD() {
     compareCRC("32x.txt", 0, 1, 0);
   else
     compareCRC("md.txt", 0, 1, 0);
-
 }
 
 /******************************************
