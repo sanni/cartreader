@@ -51,6 +51,7 @@ static const byte PROGMEM mapsize[] = {
   24, 4, 4, 5, 5, 0, 0,   // vrc6a (akumajou densetsu)
   25, 3, 4, 5, 6, 0, 1,   // vrc2c/vrc4b/vrc4d                                  [sram r/w]
   26, 4, 4, 5, 6, 1, 1,   // vrc6b                                              [sram r/w]
+  28, 5, 7, 0, 0, 0, 0,   // Action 53 [UNLICENSED]
   30, 4, 5, 0, 0, 0, 0,   // unrom 512 (NESmaker) [UNLICENSED]
   32, 3, 4, 5, 5, 0, 0,   // irem g-101
   33, 3, 4, 5, 6, 0, 0,   // taito tc0190
@@ -2692,6 +2693,25 @@ void readPRG(boolean readrom) {
         for (int i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0x8000, i);
           for (word address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
+      case 28:  // using 32k mode for inner and outer banks, switching only with outer
+        banks = int_pow(2, prgsize) / 2;
+        write_prg_byte(0x5000, 0x81);
+        write_prg_byte(0x8000, 0);
+        write_prg_byte(0x5000, 0x80);
+        write_prg_byte(0x8000, 0);
+        write_prg_byte(0x5000, 0x01);
+        write_prg_byte(0x8000, 0);
+        write_prg_byte(0x5000, 0x00);
+        write_prg_byte(0x8000, 0);
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x5000, 0x81);
+          write_prg_byte(0x8000, i);
+          for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
         }
