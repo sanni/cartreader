@@ -1625,7 +1625,7 @@ Daikaijuu Monogatari (Japan).sfc
 39CA5291,1C07,C721B252,24,048
 
 Daikaijuu Monogatari II (Japan).sfc
-A6C98FFE,E620,6E120C5C,40,160
+A6C98FFE,8528,E3982D11,40,080
 
 Daikoukai Jidai II (Japan).sfc
 EEBC4170,6145,96A59072,16,032
