@@ -793,7 +793,10 @@ void getCartInfo_SNES() {
     println_Msg(F("SDD1"));
   } else if (romChips == 69) {
     println_Msg(F("SDD1 BATT"));
-  } else if (romChips == 227)
+  }
+  else if (romChips == 85)
+    println_Msg(F("SRTC RAM BATT"));
+  else if (romChips == 227)
     println_Msg(F("RAM GBoy"));
   else if (romChips == 243)
     println_Msg(F("CX4"));
@@ -908,7 +911,7 @@ void checkAltConf(char crcStr[9]) {
           println_Msg(F("Found"));
           display_Update();
           // Game found, check if ROM sizes differ but only change ROM size if non- standard size found in database, else trust the header to be right and the database to be wrong
-          if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24) || (romSize2 == 48))) {
+          if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24) || (romSize2 == 40) || (romSize2 == 48))) {
             // Correct size
             println_Msg(F("Correcting size"));
             print_Msg(F("Size: "));
@@ -1452,7 +1455,14 @@ void readROM_SNES() {
     println_Msg(F("Dumping HiRom..."));
     display_Update();
 
-    readHiRomBanks(192, numBanks + 192, &myFile);
+    if (romChips == 85) {
+      // Daikaijuu Monogatari 2, keeps out S-RTC register area
+      readHiRomBanks(192, 192 + 64, &myFile);
+      readHiRomBanks(64, numBanks, &myFile); // (64 + (numBanks - 64))
+    }
+    else {
+      readHiRomBanks(192, numBanks + 192, &myFile);
+    }
   }
 
   // Close the file:
