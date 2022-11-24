@@ -105,6 +105,7 @@ static const byte PROGMEM mapsize[] = {
   155, 3, 3, 3, 5, 0, 1,  // mmc1 variant                                      [sram r/w]
   158, 3, 3, 5, 5, 0, 0,  // tengen rambo-1 variant (alien syndrome (u)) [UNLICENSED]
   159, 3, 4, 5, 6, 1, 1,  // bandai x24c01                                     [eep r/w]
+  176, 4, 4, 5, 5, 0, 0,  // 8025 enhanced MMC3 [UNLICENSED]
   180, 3, 3, 0, 0, 0, 0,  // unrom variant (crazy climber)
   184, 1, 1, 2, 3, 0, 0,  // sunsoft 1
   185, 0, 1, 1, 1, 0, 0,  // cnrom lockout
@@ -3110,6 +3111,25 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 176:
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
+        write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
+        for (int i = 0; i < banks-3; i += 2) {
+          write_prg_byte(0x5FF1, (i & 0xE0) >> 1);  // outer bank select
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, i);
+          write_prg_byte(0x8000, 7);
+          write_prg_byte(0x8001, i + 1);
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        for (word address = 0x4000; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+        }
+        break;
 
       case 200:
         banks = int_pow(2, prgsize);
@@ -3914,6 +3934,34 @@ void readCHR(boolean readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x6000, i);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 176:
+          banks = int_pow(2, chrsize) * 4;
+          write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
+          write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
+          for (int i = 0; i < banks; i += 8) {
+            write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
+            write_prg_byte(0x8000, 0);
+            write_prg_byte(0x8001, i);
+            write_prg_byte(0x8000, 0x0A);
+            write_prg_byte(0x8001, i + 1);
+            write_prg_byte(0x8000, 1);
+            write_prg_byte(0x8001, i + 2);
+            write_prg_byte(0x8000, 0x0B);
+            write_prg_byte(0x8001, i + 3);
+            write_prg_byte(0x8000, 2);
+            write_prg_byte(0x8001, i + 4);
+            write_prg_byte(0x8000, 3);
+            write_prg_byte(0x8001, i + 5);
+            write_prg_byte(0x8000, 4);
+            write_prg_byte(0x8001, i + 6);
+            write_prg_byte(0x8000, 5);
+            write_prg_byte(0x8001, i + 7);
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
