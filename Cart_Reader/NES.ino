@@ -106,6 +106,7 @@ static const byte PROGMEM mapsize[] = {
   158, 3, 3, 5, 5, 0, 0,  // tengen rambo-1 variant (alien syndrome (u)) [UNLICENSED]
   159, 3, 4, 5, 6, 1, 1,  // bandai x24c01                                     [eep r/w]
   176, 4, 4, 5, 5, 0, 0,  // 8025 enhanced MMC3 [UNLICENSED]
+  178, 5, 5, 0, 0, 0, 0,  // some Waixing PCBs [UNLICENSED]
   180, 3, 3, 0, 0, 0, 0,  // unrom variant (crazy climber)
   184, 1, 1, 2, 3, 0, 0,  // sunsoft 1
   185, 0, 1, 1, 1, 0, 0,  // cnrom lockout
@@ -119,11 +120,13 @@ static const byte PROGMEM mapsize[] = {
   213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
   225, 4, 7, 5, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
   226, 6, 7, 0, 0, 0, 0,  // BMC-76IN1, BMC-SUPER42IN1, BMC-GHOSTBUSTERS63IN1 [UNLICENSED]
+  227, 1, 5, 0, 0, 0, 0,  // 810449-C-A1 / FW-01 [UNLICENSED]
   228, 4, 7, 5, 7, 0, 0,  // Action 52 + Cheetahmen II [UNLICENSED]
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
   232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
   235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
   240, 1, 5, 1, 5, 0, 3,  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
+  241, 3, 5, 0, 0, 0, 0,  // BxROM with WRAM [UNLICENSED]
   242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
   246, 5, 5, 7, 7, 0, 0,  // C&E Feng Shen Bang [UNLICENSED]
   255, 4, 7, 5, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
@@ -2571,6 +2574,7 @@ void readPRG(boolean readrom) {
       case 34:
       case 77:
       case 96:  // 128K
+      case 241:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {  // 32K Banks
           write_prg_byte(0x8000, i);
@@ -3130,6 +3134,19 @@ void readPRG(boolean readrom) {
             dumpPRG(base, address);
         }
         break;
+        
+      case 178:
+        banks = int_pow(2, prgsize);
+        write_prg_byte(0x4800, 0); // NROM-256 mode
+		    write_prg_byte(0x4803, 0); // set PRG-RAM
+        for (int i = 0; i < banks; i += 2) {
+          write_prg_byte(0x4802, i >> 3);  // high PRG (up to 8 bits?!)
+		      write_prg_byte(0x4801, i & 0x07);  // low PRG (3 bits)
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
 
       case 200:
         banks = int_pow(2, prgsize);
@@ -3198,6 +3215,16 @@ void readPRG(boolean readrom) {
         for (int i = 0; i < banks; i += 2) {
           write_prg_byte(0x8001, (i & 0x40) >> 6);
           write_prg_byte(0x8000, ((i & 0x20) << 2) | (i & 0x1F));
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
+      case 227:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x8083 + ((i & 0xF) << 3), 0);
           for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
