@@ -58,6 +58,7 @@ static const byte PROGMEM mapsize[] = {
   34, 3, 5, 0, 0, 0, 0,   // bnrom [nina-1 NOT SUPPORTED]
   36, 0, 3, 1, 5, 0, 0,   // TXC 01-22000-400 Board [UNLICENSED]
   37, 4, 4, 6, 6, 0, 0,   // (super mario bros + tetris + world cup)
+  42, 0, 3, 0, 5, 0, 0,   // hacked FDS games converted to cartridge [UNLICENSED]
   45, 3, 6, 0, 8, 0, 0,   // ga23c asic multicart [UNLICENSED]
   47, 4, 4, 6, 6, 0, 0,   // (super spike vball + world cup)
   48, 3, 4, 6, 6, 0, 0,   // taito tc0690
@@ -98,14 +99,19 @@ static const byte PROGMEM mapsize[] = {
   118, 3, 4, 5, 5, 0, 1,  // txsrom/mmc3                                       [sram r/w]
   119, 3, 3, 4, 4, 0, 0,  // tqrom/mmc3
   140, 3, 3, 3, 5, 0, 0,  // jaleco jf-11/jf-14
+  142, 1, 3, 0, 0, 0, 0,  // UNL-KS7032 [UNLICENSED]
   146, 1, 2, 2, 3, 0, 0,  // Sachen 3015 [UNLICENSED]
   152, 2, 3, 5, 5, 0, 0,  // BANDAI-74*161/161/32
   153, 5, 5, 0, 0, 1, 1,  // (famicom jump ii)                                 [sram r/w]
   154, 3, 3, 5, 5, 0, 0,  // namcot-3453 (devil man)
   155, 3, 3, 3, 5, 0, 1,  // mmc1 variant                                      [sram r/w]
+  157, 4, 4, 0, 0, 0, 0,  // Datach
   158, 3, 3, 5, 5, 0, 0,  // tengen rambo-1 variant (alien syndrome (u)) [UNLICENSED]
   159, 3, 4, 5, 6, 1, 1,  // bandai x24c01                                     [eep r/w]
+  162, 6, 7, 0, 0, 0, 0,  // Waixing FS304 [UNLICENSED]
+  163, 6, 7, 0, 0, 0, 0,  // Nanjing FC-001 [UNLICENSED]
   176, 4, 4, 5, 5, 0, 0,  // 8025 enhanced MMC3 [UNLICENSED]
+  177, 1, 7, 0, 0, 0, 0,  // Henggedianzi Super Rich PCB [UNLICENSED]
   178, 5, 5, 0, 0, 0, 0,  // some Waixing PCBs [UNLICENSED]
   180, 3, 3, 0, 0, 0, 0,  // unrom variant (crazy climber)
   184, 1, 1, 2, 3, 0, 0,  // sunsoft 1
@@ -2574,6 +2580,7 @@ void readPRG(boolean readrom) {
       case 34:
       case 77:
       case 96:  // 128K
+      case 177:  // up to 1024K
       case 241:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {  // 32K Banks
@@ -2794,6 +2801,21 @@ void readPRG(boolean readrom) {
         }
         for (word address = 0x4000; address < 0x8000; address += 512) {  // Final 2 Banks ($C000-$FFFF)
           dumpPRG(base, address);
+        }
+        break;
+		   
+      case 42:
+        banks = int_pow(2, prgsize) * 2;
+        base = 0x6000;  // 8k switchable PRG ROM bank at $6000-$7FFF
+        for (int i = 0; i < banks-4; i++) {
+          write_prg_byte(0xE000, i & 0x0F);
+          for (word address = 0x0; address < 0x2000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        base = 0x8000;  // last 32k fixed to $8000-$FFFF
+        for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
         }
         break;
 
@@ -3101,6 +3123,24 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+		    
+      case 142:
+        banks = int_pow(2, prgsize) * 2;
+        base = 0x6000;  // 4x 8k switchable PRG ROM banks at $6000-$DFFF
+        for (int i = 0; i < banks; i += 4) {
+          write_prg_byte(0xE000, 4);  // Select 8 KB PRG bank at CPU $6000-$7FFF
+          write_prg_byte(0xF000, i);
+          write_prg_byte(0xE000, 1);  // Select 8 KB PRG bank at CPU $8000-$9FFF
+          write_prg_byte(0xF000, i + 1);
+          write_prg_byte(0xE000, 2);  // Select 8 KB PRG bank at CPU $A000-$BFFF
+          write_prg_byte(0xF000, i + 2);
+          write_prg_byte(0xE000, 3);  // Select 8 KB PRG bank at CPU $C000-$DFFF
+          write_prg_byte(0xF000, i + 3);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
 
       case 153:  // 512K
         banks = int_pow(2, prgsize);
@@ -3111,6 +3151,42 @@ void readPRG(boolean readrom) {
           write_prg_byte(0x8003, i >> 4);                                  // PRG Outer Bank
           write_prg_byte(0x8008, i & 0xF);                                 // PRG Inner Bank
           for (word address = 0x0000; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
+            dumpPRG(base, address);
+          }
+        }
+        break;
+		    
+      case 157:
+        for (int i = 0; i < 15; i++) {
+          write_prg_byte(0x8008, i);  // select 16k bank at $8000-$BFFF
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+		    for (word address = 0x4000; address < 0x8000; address += 512) {  // last 16k bank fixed at $C000-$FFFF
+           dumpPRG(base, address);
+        }
+        break;
+
+      case 162:
+        banks = int_pow(2, prgsize) / 2;
+        write_prg_byte(0x5300, 0x07);  // A16-A15 controlled by $5000
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
+          write_prg_byte(0x5000, i & 0x0F);  // A18-A15
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
+      case 163:
+        banks = int_pow(2, prgsize) / 2;
+        write_prg_byte(0x5300, 0x04);  // disable bit swap on writes to $5000-$5200
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
+          write_prg_byte(0x5000, i & 0x0F);  // A18-A15
+          for (word address = 0x0; address < 0x8000; address += 512) {
             dumpPRG(base, address);
           }
         }
@@ -3670,6 +3746,16 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8001, i);
             write_prg_byte(0x8000, 1);  // CHR Bank 1 ($0800-$0FFF)
             write_prg_byte(0x8001, i + 2);
+            for (word address = 0x0; address < 0x1000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+		     
+	case 42:
+          banks = int_pow(2, chrsize);
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x8000, i & 0x0F);
             for (word address = 0x0; address < 0x1000; address += 512) {
               dumpCHR(address);
             }
