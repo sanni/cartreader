@@ -2544,7 +2544,7 @@ void readPRG(boolean readrom) {
             }
           }
           if (busConflict) {
-            write_prg_byte(0x8000 + i, i);
+            write_prg_byte(0xC000 + i, i);
           }
           for (word address = 0x0; address < 0x4000; address += 512) {
             dumpPRG(base, address);
