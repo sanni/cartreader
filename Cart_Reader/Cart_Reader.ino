@@ -146,6 +146,9 @@ char ver[5] = "12.3";
 // WonderSwan
 //#define enable_WS
 
+// Super A'can
+#define enable_SUPRACAN
+
 //******************************************
 // HW CONFIGS
 //******************************************
@@ -408,6 +411,8 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_ODY2 29
 #define mode_ARC 30
 #define mode_FAIRCHILD 31
+
+#define mode_SUPRACAN 99
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -1002,8 +1007,9 @@ static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
 static const char modeItem17[] PROGMEM = "Arcadia 2001";
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
 static const char modeItem19[] PROGMEM = "Flashrom Programmer";
+static const char modeItem99[] PROGMEM = "Super A'can";
 static const char modeItem20[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20 };
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem99, modeItem19, modeItem20 };
 
 // All included slots
 void mainMenu() {
@@ -1171,6 +1177,11 @@ void mainMenu() {
     case 17:
       setup_FAIRCHILD();
       fairchildMenu();
+
+#ifdef enable_SUPRACAN
+    case 99:
+      setup_SuprAcan();
+      mode = mode_SUPRACAN;
       break;
 #endif
 
@@ -1235,6 +1246,10 @@ static const char consoles80Item2[] PROGMEM = "PC Engine/TG16";
 static const char consoles80Item3[] PROGMEM = "SMS/GG/MIII/SG-1000";
 //static const char consoles80Item4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const consoles80Options[] PROGMEM = { consoles80Item1, consoles80Item2, consoles80Item3, string_reset2 };
+
+// 90s Consoles submenu
+static const char consoles90Item1[] PROGMEM = "Super A'can";
+static const char* const consoles90Options[] PROGMEM = { consoles90Item1, string_reset2 };
 
 // Handhelds submenu
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
@@ -1347,7 +1362,6 @@ void consoles70Menu() {
   // Copy menuOptions out of progmem
   convertPgm(consoles70Options, 7);
   consoles70Menu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
-
   // wait for user choice to come back from the question box menu
   switch (consoles70Menu) {
 #ifdef enable_ATARI
