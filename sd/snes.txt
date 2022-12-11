@@ -4214,7 +4214,7 @@ Kaizou Choujin Shubibinman Zero (Japan).sfc
 E59E1096,84AF,3D44B149,01,004
 
 Kakinoki Shougi (Japan).sfc
-BC1A265F,F70B,3BA48939,12,024
+9E2C5CE4,F70B,08BF4E75,16,032
 
 Kamaitachi no Yoru (Japan).sfc
 71C631AA,815C,7D1A59F8,24,096
