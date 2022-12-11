@@ -1246,13 +1246,6 @@ boolean compare_checksum() {
   print_Msg(F("Checksum... "));
   display_Update();
 
-  strcpy(fileName, romName);
-  strcat(fileName, ".sfc");
-
-  // last used rom folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/ROM/%s/%d", romName, foldern - 1);
-
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
   print_Msg(calcsumStr);
