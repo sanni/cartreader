@@ -45,6 +45,7 @@ static const byte PROGMEM mapsize[] = {
   16, 3, 4, 5, 6, 0, 1,   // bandai x24c02                                      [eep r/w]
   18, 3, 4, 5, 6, 0, 1,   // jaleco ss8806                                      [sram r/w]
   19, 3, 4, 5, 6, 0, 1,   // namco 106/163                                      [sram/prgram r/w]
+  // 20 - bad mapper, not used
   21, 4, 4, 5, 6, 0, 1,   // vrc4a/vrc4c                                        [sram r/w]
   22, 3, 3, 5, 5, 0, 0,   // vrc2a
   23, 3, 3, 5, 6, 0, 0,   // vrc2b/vrc4e
@@ -56,6 +57,7 @@ static const byte PROGMEM mapsize[] = {
   32, 3, 4, 5, 5, 0, 0,   // irem g-101
   33, 3, 4, 5, 6, 0, 0,   // taito tc0190
   34, 3, 5, 0, 0, 0, 0,   // bnrom [nina-1 NOT SUPPORTED]
+  35, 0, 7, 1, 8, 0, 0,   // J.Y. Company ASIC [UNLICENSED]
   36, 0, 3, 1, 5, 0, 0,   // TXC 01-22000-400 Board [UNLICENSED]
   37, 4, 4, 6, 6, 0, 0,   // (super mario bros + tetris + world cup)
   42, 0, 3, 0, 5, 0, 0,   // hacked FDS games converted to cartridge [UNLICENSED]
@@ -86,11 +88,13 @@ static const byte PROGMEM mapsize[] = {
   79, 1, 2, 2, 3, 0, 0,   // NINA-03/06 by AVE [UNLICENSED]
   80, 3, 3, 5, 6, 0, 1,   // taito x1-005                                       [prgram r/w]
   82, 3, 3, 5, 6, 0, 1,   // taito x1-017                                       [prgram r/w]
+  // 84 - bad mapper, not used
   85, 3, 5, 0, 5, 0, 1,   // vrc7                                               [sram r/w]
   86, 3, 3, 4, 4, 0, 0,   // jaleco jf-13 (moero pro yakyuu)
   87, 0, 1, 2, 3, 0, 0,   // Jaleco/Konami CNROM (DIS_74X139X74)
   88, 3, 3, 5, 5, 0, 0,   // namco (dxrom variant)
   89, 3, 3, 5, 5, 0, 0,   // sunsoft 2 variant (tenka no goikenban: mito koumon)
+  90, 0, 7, 1, 8, 0, 0,   // J.Y. Company ASIC [UNLICENSED]
   91, 3, 5, 7, 8, 0, 0,   // JY830623C/YY840238C boards [UNLICENSED]
   92, 4, 4, 5, 5, 0, 0,   // jaleco jf-19/jf-21
   93, 3, 3, 0, 0, 0, 0,   // sunsoft 2
@@ -98,6 +102,8 @@ static const byte PROGMEM mapsize[] = {
   95, 3, 3, 3, 3, 0, 0,   // namcot-3425 (dragon buster)
   96, 3, 3, 0, 0, 0, 0,   // (oeka kids)
   97, 4, 4, 0, 0, 0, 0,   // irem tam-s1 (kaiketsu yanchamaru)
+  // 100 - bad mapper, not used
+  // 101 - bad mapper, not used
   105, 4, 4, 0, 0, 0, 0,  // (nintendo world Championships 1990) [UNTESTED]
   113, 1, 4, 0, 5, 0, 0,  // NINA-03/06 [UNLICENSED]
   111, 5, 5, 0, 0, 0, 0,  // GTROM [UNLICENSED]
@@ -108,6 +114,7 @@ static const byte PROGMEM mapsize[] = {
   140, 3, 3, 3, 5, 0, 0,  // jaleco jf-11/jf-14
   142, 1, 3, 0, 0, 0, 0,  // UNL-KS7032 [UNLICENSED]
   146, 1, 2, 2, 3, 0, 0,  // Sachen 3015 [UNLICENSED]
+  // 151 - bad mapper, not used
   152, 2, 3, 5, 5, 0, 0,  // BANDAI-74*161/161/32
   153, 5, 5, 0, 0, 1, 1,  // (famicom jump ii)                                 [sram r/w]
   154, 3, 3, 5, 5, 0, 0,  // namcot-3453 (devil man)
@@ -124,6 +131,7 @@ static const byte PROGMEM mapsize[] = {
   180, 3, 3, 0, 0, 0, 0,  // unrom variant (crazy climber)
   184, 1, 1, 2, 3, 0, 0,  // sunsoft 1
   185, 0, 1, 1, 1, 0, 0,  // cnrom lockout
+  // 186 - bad mapper, not used
   200, 1, 4, 1, 4, 0, 0,  // HN-02 multicarts [UNLICENSED]
   201, 1, 8, 1, 9, 0, 0,  // NROM-256 multicarts [UNLICENSED]
   202, 0, 3, 1, 4, 0, 0,  // BMC-150IN1 multicarts [UNLICENSED]
@@ -132,6 +140,7 @@ static const byte PROGMEM mapsize[] = {
   207, 4, 4, 5, 5, 0, 0,  // taito x1-005 variant (fudou myouou den)
   209, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
+  211, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
   212, 0, 3, 0, 4, 0, 0,  // BMC Super HiK 300-in-1 [UNLICENSED]
   213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
   225, 4, 7, 5, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
@@ -145,6 +154,7 @@ static const byte PROGMEM mapsize[] = {
   241, 3, 5, 0, 0, 0, 0,  // BxROM with WRAM [UNLICENSED]
   242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
   246, 5, 5, 7, 7, 0, 0,  // C&E Feng Shen Bang [UNLICENSED]
+  // 248 - bad mapper, not used
   255, 4, 7, 5, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
 };
 
@@ -2789,6 +2799,22 @@ void readPRG(boolean readrom) {
           }
         }
         break;
+        
+      case 35:
+      case 90:
+      case 209:
+      case 211:
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0xD000, 0x02);
+
+        for (byte i = 0; i < banks; i++) {
+          write_prg_byte(0xD003, (((i >> 5) & 0x06) | 0x20));
+          write_prg_byte(0x8000, (i & 0x3f));
+          for (word address = 0x0; address < 0x2000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
 
       case 36:
         banks = int_pow(2, prgsize) / 2;
@@ -3381,19 +3407,6 @@ void readPRG(boolean readrom) {
         }
         break;
 
-      case 209:
-        banks = int_pow(2, prgsize) * 2;
-        write_prg_byte(0xD000, 0x02);
-
-        for (byte i = 0; i < banks; i++) {
-          write_prg_byte(0xD003, (((i >> 5) & 0x06) | 0x20));
-          write_prg_byte(0x8000, (i & 0x3f));
-          for (word address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
-        }
-        break;
-
       case 210:  // 128K/256K
         banks = int_pow(2, prgsize) * 2;
         for (int i = 0; i < banks; i += 2) {
@@ -3859,6 +3872,22 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8002, i);          // CHR Bank 0
             write_prg_byte(0x8003, i + 1);      // CHR Bank 1
             for (word address = 0x0; address < 0x1000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 35:
+        case 90:
+        case 209:
+        case 211:
+          banks = int_pow(2, chrsize) / 2;
+          write_prg_byte(0xD000, 0x02);
+
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0xD003, (((i >> 3) & 0x18) | 0x20));
+            write_prg_byte(0x9000, (i & 0x3f));
+            for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
           }
@@ -4361,19 +4390,6 @@ void readCHR(boolean readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x8000, (i & 0x03));
-            for (word address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
-          }
-          break;
-
-        case 209:
-          banks = int_pow(2, chrsize) / 2;
-          write_prg_byte(0xD000, 0x02);
-
-          for (int i = 0; i < banks; i++) {
-            write_prg_byte(0xD003, (((i >> 3) & 0x18) | 0x20));
-            write_prg_byte(0x9000, (i & 0x3f));
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
