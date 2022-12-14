@@ -68,7 +68,7 @@ static const byte PROGMEM mapsize[] = {
   59, 0, 3, 0, 4, 0, 0,   // BMC-T3H53 & BMC-D1038 [UNLICENSED]
   60, 2, 2, 3, 3, 0, 0,   // Reset-based NROM-128 4-in-1 multicarts [UNLICENSED]
   62, 7, 7, 8, 8, 0, 0,   // K-1017P [UNLICENSED]
-  63, 0, 8, 0, 0, 0, 0,   // NTDEC "Powerful" multicart [UNLICENSED]
+  63, 8, 8, 0, 0, 0, 0,   // NTDEC "Powerful" multicart, 3072K [UNLICENSED]
   64, 2, 3, 4, 5, 0, 0,   // tengen rambo-1 [UNLICENSED]
   65, 3, 4, 5, 6, 0, 0,   // irem h-3001
   66, 2, 3, 2, 3, 0, 0,   // gxrom/mhrom
@@ -2950,10 +2950,10 @@ void readPRG(boolean readrom) {
         }
         break;
 
-      case 63:
+      case 63:  // 3072K total
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i++) {
-        write_prg_byte(0x8000 + (i & 0xFF) << 2, 0);
+        for (int i = 0; i < 192; i++) {
+        write_prg_byte(0x8000 + (i << 2), 0);
           for (word address = 0x0; address < 0x4000; address += 512) {
             dumpPRG(base, address);
           }
