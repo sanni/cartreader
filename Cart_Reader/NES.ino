@@ -130,6 +130,7 @@ static const byte PROGMEM mapsize[] = {
   203, 1, 4, 1, 4, 0, 0,  // various NROM-128 multicarts [UNLICENSED]
   206, 1, 3, 2, 4, 0, 0,  // dxrom
   207, 4, 4, 5, 5, 0, 0,  // taito x1-005 variant (fudou myouou den)
+  209, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
   210, 3, 5, 5, 6, 0, 0,  // namco 175/340
   212, 0, 3, 0, 4, 0, 0,  // BMC Super HiK 300-in-1 [UNLICENSED]
   213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
@@ -3380,6 +3381,19 @@ void readPRG(boolean readrom) {
         }
         break;
 
+      case 209:
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0xD000, 0x02);
+
+        for (byte i = 0; i < banks; i++) {
+          write_prg_byte(0xD003, (((i >> 5) & 0x06) | 0x20));
+          write_prg_byte(0x8000, (i & 0x3f));
+          for (word address = 0x0; address < 0x2000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+
       case 210:  // 128K/256K
         banks = int_pow(2, prgsize) * 2;
         for (int i = 0; i < banks; i += 2) {
@@ -4347,6 +4361,19 @@ void readCHR(boolean readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x8000, (i & 0x03));
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+
+        case 209:
+          banks = int_pow(2, chrsize) / 2;
+          write_prg_byte(0xD000, 0x02);
+
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0xD003, (((i >> 3) & 0x18) | 0x20));
+            write_prg_byte(0x9000, (i & 0x3f));
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
