@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             18.11.2022
-   Version:          11.4
+   Date:             20.12.2022
+   Version:          11.5
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -15,7 +15,7 @@
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
-   Compiled with Arduino IDE 2.0.2
+   Compiled with Arduino IDE 2.0.3
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "11.4";
+char ver[5] = "11.5";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!

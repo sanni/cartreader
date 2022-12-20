@@ -793,8 +793,7 @@ void getCartInfo_SNES() {
     println_Msg(F("SDD1"));
   } else if (romChips == 69) {
     println_Msg(F("SDD1 BATT"));
-  }
-  else if (romChips == 85)
+  } else if (romChips == 85)
     println_Msg(F("SRTC RAM BATT"));
   else if (romChips == 227)
     println_Msg(F("RAM GBoy"));
@@ -1451,9 +1450,8 @@ void readROM_SNES() {
     if (romChips == 85) {
       // Daikaijuu Monogatari 2, keeps out S-RTC register area
       readHiRomBanks(192, 192 + 64, &myFile);
-      readHiRomBanks(64, numBanks, &myFile); // (64 + (numBanks - 64))
-    }
-    else {
+      readHiRomBanks(64, numBanks, &myFile);  // (64 + (numBanks - 64))
+    } else {
       readHiRomBanks(192, numBanks + 192, &myFile);
     }
   }

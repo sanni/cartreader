@@ -704,6 +704,9 @@ void getCartInfo_MD() {
         cartSize = 0x100000;  //1MB instead of 512KB
         chksum = 0xF204;
         break;
+      case 0x95C9:            //Zero Wing (E) 8Mbit
+        cartSize = 0x100000;  //1MB instead of 512KB
+        break;
     }
   }
 
