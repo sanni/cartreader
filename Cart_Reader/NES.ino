@@ -2726,6 +2726,11 @@ void readPRG(boolean readrom) {
       case 65:
       case 75:  // 128K/256K
         banks = int_pow(2, prgsize) * 2;
+
+        // set vrc4 swap setting for TMNT2
+        if (mapper == 25)
+          write_prg_byte(0x9005, 0x00);
+
         for (int i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i);
           write_prg_byte(0xA000, i + 1);
@@ -3892,10 +3897,7 @@ void readCHR(boolean readrom) {
           banks = int_pow(2, chrsize) * 4;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0xF);           // CHR Bank Lower 4 bits
-            if ((ramsize > 0) || (banks == 128))       // VRC2c (Ganbare Goemon Gaiden)/VRC4b (Bio Miracle/Gradius 2/Racer Mini)
-              write_prg_byte(0xB002, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC2c/VRC4b
-            else
-              write_prg_byte(0xB008, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4d (Teenage Mutant Ninja Turtles)
+            write_prg_byte(0xB00A, (i >> 4) & 0xF);    // Combine VRC2c and VRC4b, VRC4d reg
             for (word address = 0x0; address < 0x400; address += 512) {
               dumpCHR(address);
             }
