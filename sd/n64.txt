@@ -730,11 +730,11 @@ F-Zero X (Europe).z64
 F-Zero X (Japan).z64
 6B1CEF83,4D3E622E,16,1
 
-F-Zero X (USA) (Beta) (The Legend of Zelda Ocarina of Time Overdump).z64
-68FE1CEC,B30ED978,32,1
-
 F-Zero X (USA).z64
 0B561FBA,B30ED978,16,1
+
+F-Zero X (USA) (Beta) (The Legend of Zelda Ocarina of Time Overdump).z64
+68FE1CEC,B30ED978,32,1
 
 F1 Pole Position 64 (Europe) (En,Fr,De).z64
 ED750623,FDD248B2,08,0
