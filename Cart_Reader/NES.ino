@@ -67,6 +67,7 @@ static const byte PROGMEM mapsize[] = {
   47, 4, 4, 6, 6, 0, 0,  // (super spike vball + world cup)
   48, 3, 4, 6, 6, 0, 0,  // taito tc0690
   52, 0, 3, 0, 3, 0, 0,  // Realtec 8213 [UNLICENSED]
+  56, 0, 7, 0, 6, 0, 0,  // KS202 [UNLICENSED]
   57, 0, 3, 0, 5, 0, 0,  // BMC-GKA [UNLICENSED]
   58, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 213 [UNLICENSED]
   59, 0, 3, 0, 4, 0, 0,  // BMC-T3H53 & BMC-D1038 [UNLICENSED]
@@ -153,6 +154,7 @@ static const byte PROGMEM mapsize[] = {
   229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
   232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
   235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
+  236, 0, 6, 0, 5, 0, 0,  // Realtec 8031, 8099, 8106, 8155 [UNLICENSED]
   240, 1, 5, 1, 5, 0, 3,  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
   241, 3, 5, 0, 0, 0, 0,  // BxROM with WRAM [UNLICENSED]
   242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
@@ -2959,6 +2961,17 @@ void readPRG(boolean readrom) {
         }
         break;
         
+      case 56:
+        banks = int_pow(2, prgsize) * 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0xE000, 1);
+          write_prg_byte(0xF000, i);
+          for (word address = 0x0; address < 0x2000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
       case 57:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) {
@@ -3237,7 +3250,7 @@ void readPRG(boolean readrom) {
         }
         break;
 
-      case 97:  // fixed fist bank
+      case 97:  // fixed first bank
       case 180:  // bus conflicts - fixed fist bank
         banks = int_pow(2, prgsize);
         busConflict = true;
@@ -3605,6 +3618,17 @@ void readPRG(boolean readrom) {
                 dumpPRG(base, address);
               }
             }
+          }
+        }
+        break;
+        
+      case 236:
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x8000 | ((i & 0x38) >> 3), 0);  // A19-A17
+          write_prg_byte(0xC030 | (i & 0x0F), 0);  // A17-A14
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            dumpPRG(base, address);
           }
         }
         break;
@@ -4048,6 +4072,16 @@ void readCHR(boolean readrom) {
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x6000, (i & 0x04) << 2 | (i & 0x03) << 4 | 0x40);
             for (word address = 0x0; address < 0x1000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 56:
+          banks = int_pow(2, chrsize) * 4;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0xFC00, i);
+            for (word address = 0x0; address < 0x400; address += 512) {
               dumpCHR(address);
             }
           }
@@ -4532,6 +4566,16 @@ void readCHR(boolean readrom) {
           for (int i = 0; i < 32; i++) {
             write_prg_byte(0x8000 + i, i);
             for (word address = 0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 236:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x8000 | (i & 0x0F), 0);  // A16-A13
+            for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
           }
