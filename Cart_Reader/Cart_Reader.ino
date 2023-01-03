@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             20.12.2022
-   Version:          11.5
+   Date:             03.01.2023
+   Version:          12.0
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -21,7 +21,7 @@
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
-   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW modules
+   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW, ARC, Atari, ODY2, Fairchild modules
    Tamanegi_taro - PCE and Satellaview modules
    splash5 - GBSmart, Wonderswan and NGP modules
    hkz & themanbehindthecurtain - N64 flashram commands
@@ -38,7 +38,7 @@
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
    Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
    philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage,
-   vpelletier, Ancyker
+   vpelletier, Ancyker, mattiacci, RWeick
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "11.5";
+char ver[5] = "12.0";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -79,9 +79,23 @@ char ver[5] = "11.5";
 //******************************************
 // add/remove // before #define to disable/enable modules you
 // don't need/need to save programm storage space and dynamic memory
+// If you only get an empty or "Press Button" screen after flashing
+// you have enabled too many modules
+
+// Atari 2600
+//#define enable_ATARI
+
+// Benesse Pocket Challenge W
+//#define enable_PCW
 
 // ColecoVision
 #define enable_COLV
+
+// Emerson Arcadia 2001
+//#define enable_ARC
+
+// Fairchild Channel F
+//#define enable_FAIRCHILD
 
 // Flashrom Programmer for SNES repros
 #define enable_FLASH
@@ -93,8 +107,8 @@ char ver[5] = "11.5";
 // Intellivision
 #define enable_INTV
 
-// Sega Mega Drive/Genesis
-#define enable_MD
+// Neo Geo Pocket
+#define enable_NGP
 
 // Nintendo 64
 #define enable_N64
@@ -102,20 +116,17 @@ char ver[5] = "11.5";
 // Nintendo Entertainment System/Family Computer
 #define enable_NES
 
-// Neo Geo Pocket
-#define enable_NGP
+// Magnavox Odyssey 2
+//#define enable_ODY2
 
 // PC Engine/TurboGrafx 16
 #define enable_PCE
 
-// Benesse Pocket Challenge W
-#define enable_PCW
-
 // Sega Master System
 #define enable_SMS
 
-// Super Nintendo
-#define enable_SNES
+// Sega Mega Drive/Genesis
+#define enable_MD
 
 // Super Famicom SF Memory Cassette
 #define enable_SFM
@@ -123,14 +134,17 @@ char ver[5] = "11.5";
 // Super Famicom Satellaview
 #define enable_SV
 
+// Super Nintendo
+#define enable_SNES
+
 // Virtual Boy
 #define enable_VBOY
 
+// Watara Supervision
+//#define enable_WSV
+
 // WonderSwan
 #define enable_WS
-
-// Watara Supervision
-#define enable_WSV
 
 //******************************************
 // HW CONFIGS
@@ -390,6 +404,10 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_VBOY 25
 #define mode_WSV 26
 #define mode_PCW 27
+#define mode_ATARI 28
+#define mode_ODY2 29
+#define mode_ARC 30
+#define mode_FAIRCHILD 31
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -629,6 +647,52 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
     return 0;
   }
 }
+
+/******************************************
+   CRC Functions for Atari, Fairchild, Ody2, Arc modules
+ *****************************************/
+#if (defined(enable_ATARI) || defined(enable_ODY2) || defined(enable_ARC) || defined(enable_FAIRCHILD))
+
+inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
+  uint32_t idx = ((crc) ^ (ch)) & 0xff;
+  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
+  return tab_value ^ ((crc) >> 8);
+}
+
+FsFile crcFile;
+char tempCRC[9];
+
+uint32_t crc32(FsFile& file, uint32_t& charcnt) {
+  uint32_t oldcrc32 = 0xFFFFFFFF;
+  charcnt = 0;
+  while (file.available()) {
+    crcFile.read(sdBuffer, 512);
+    for (int x = 0; x < 512; x++) {
+      uint8_t c = sdBuffer[x];
+      charcnt++;
+      oldcrc32 = updateCRC(c, oldcrc32);
+    }
+  }
+  return ~oldcrc32;
+}
+
+void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy, unsigned long offset) {
+  uint32_t crc;
+  crcFile = sd.open(checkFile);
+  crcFile.seek(offset);
+  crc = crc32(crcFile, filesize);
+  crcFile.close();
+  sprintf(tempCRC, "%08lX", crc);
+
+  if (crcCopy != NULL) {
+    *crcCopy = crc;
+  }
+
+  print_Msg(F("CRC: "));
+  println_Msg(tempCRC);
+  display_Update();
+}
+#endif
 
 //******************************************
 // Functions for CRC32 database
@@ -932,18 +996,22 @@ static const char modeItem11[] PROGMEM = "Colecovision";
 static const char modeItem12[] PROGMEM = "Virtual Boy";
 static const char modeItem13[] PROGMEM = "Watara Supervision";
 static const char modeItem14[] PROGMEM = "Pocket Challenge W";
-static const char modeItem15[] PROGMEM = "Flashrom Programmer";
-static const char modeItem16[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16 };
+static const char modeItem15[] PROGMEM = "Atari 2600";
+static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
+static const char modeItem17[] PROGMEM = "Arcadia 2001";
+static const char modeItem18[] PROGMEM = "Fairchild Channel F";
+static const char modeItem19[] PROGMEM = "Flashrom Programmer";
+static const char modeItem20[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20 };
 
 // All included slots
 void mainMenu() {
-  // create menu with title and 15 options to choose from
+  // create menu with title and 20 options to choose from
   unsigned char modeMenu;
   byte num_answers;
   byte option_offset;
 
-  // Main menu spans across two pages
+  // Main menu spans across three pages
   currPage = 1;
   lastPage = 1;
   numPages = 3;
@@ -957,7 +1025,7 @@ void mainMenu() {
       num_answers = 7;
     } else {  // currPage == 3
       option_offset = 14;
-      num_answers = 2;
+      num_answers = 6;
     }
     // Copy menuOptions out of progmem
     convertPgm(modeOptions + option_offset, num_answers);
@@ -1077,8 +1145,36 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_ATARI
     case 14:
+      setup_ATARI();
+      atariMenu();
+      break;
+#endif
+
+#ifdef enable_ODY2
+    case 15:
+      setup_ODY2();
+      ody2Menu();
+      break;
+#endif
+
+#ifdef enable_ARC
+    case 16:
+      setup_ARC();
+      arcMenu();
+      break;
+#endif
+
+#ifdef enable_FAIRCHILD
+    case 17:
+      setup_FAIRCHILD();
+      fairchildMenu();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 18:
 #ifdef enable_FLASH16
       flashMenu();
 #else
@@ -1087,7 +1183,7 @@ void mainMenu() {
       break;
 #endif
 
-    case 15:
+    case 19:
       aboutScreen();
       break;
 
@@ -1115,20 +1211,29 @@ static const char modeItem6[] PROGMEM = "About";
 static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, string_reset2 };
 
 // Add-ons submenu
-static const char addonsItem1[] PROGMEM = "Consoles";
-static const char addonsItem2[] PROGMEM = "Handhelds";
-static const char addonsItem3[] PROGMEM = "Flashrom Programmer";
-//static const char addonsItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, string_reset2 };
+static const char addonsItem1[] PROGMEM = "70s Consoles";
+static const char addonsItem2[] PROGMEM = "80s Consoles";
+static const char addonsItem3[] PROGMEM = "Handhelds";
+static const char addonsItem4[] PROGMEM = "Flashrom Programmer";
+//static const char addonsItem5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, string_reset2 };
 
-// Consoles submenu
-static const char consolesItem1[] PROGMEM = "NES/Famicom";
-static const char consolesItem2[] PROGMEM = "PC Engine/TG16";
-static const char consolesItem3[] PROGMEM = "SMS/GG/MIII/SG-1000";
-static const char consolesItem4[] PROGMEM = "Intellivision";
-static const char consolesItem5[] PROGMEM = "Colecovision";
-//static const char consolesItem6[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const consolesOptions[] PROGMEM = { consolesItem1, consolesItem2, consolesItem3, consolesItem4, consolesItem5, string_reset2 };
+// 70s Consoles submenu
+static const char consoles70Item1[] PROGMEM = "Atari 2600";
+static const char consoles70Item2[] PROGMEM = "Magnavox Odyssey 2";
+static const char consoles70Item3[] PROGMEM = "Arcadia 2001";
+static const char consoles70Item4[] PROGMEM = "Fairchild Channel F";
+static const char consoles70Item5[] PROGMEM = "Intellivision";
+static const char consoles70Item6[] PROGMEM = "Colecovision";
+//static const char consoles70Item7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const consoles70Options[] PROGMEM = { consoles70Item1, consoles70Item2, consoles70Item3, consoles70Item4, consoles70Item5, consoles70Item6, string_reset2 };
+
+// 80s Consoles submenu
+static const char consoles80Item1[] PROGMEM = "NES/Famicom";
+static const char consoles80Item2[] PROGMEM = "PC Engine/TG16";
+static const char consoles80Item3[] PROGMEM = "SMS/GG/MIII/SG-1000";
+//static const char consoles80Item4[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const consoles80Options[] PROGMEM = { consoles80Item1, consoles80Item2, consoles80Item3, string_reset2 };
 
 // Handhelds submenu
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
@@ -1192,26 +1297,31 @@ void mainMenu() {
 
 // Everything that needs an adapter
 void addonMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 4);
-  addonsMenu = question_box(F("Type"), menuOptions, 4, 0);
+  convertPgm(addonsOptions, 5);
+  addonsMenu = question_box(F("Type"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu) {
-    // Consoles
+    // 70s Consoles
     case 0:
-      consoleMenu();
+      consoles70Menu();
+      break;
+
+      // 80s Consoles
+    case 1:
+      consoles80Menu();
       break;
 
     // Handhelds
-    case 1:
+    case 2:
       handheldMenu();
       break;
 
 #ifdef enable_FLASH
-    case 2:
+    case 3:
 #ifdef enable_FLASH16
       flashMenu();
 #else
@@ -1220,7 +1330,7 @@ void addonMenu() {
       break;
 #endif
 
-    case 3:
+    case 4:
       resetArduino();
       break;
 
@@ -1230,15 +1340,76 @@ void addonMenu() {
 }
 
 // Everything that needs an adapter
-void consoleMenu() {
-  // create menu with title and 6 options to choose from
-  unsigned char consolesMenu;
+void consoles70Menu() {
+  // create menu with title and 7 options to choose from
+  unsigned char consoles70Menu;
   // Copy menuOptions out of progmem
-  convertPgm(consolesOptions, 6);
-  consolesMenu = question_box(F("Choose Adapter"), menuOptions, 6, 0);
+  convertPgm(consoles70Options, 7);
+  consoles70Menu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
-  switch (consolesMenu) {
+  switch (consoles70Menu) {
+#ifdef enable_ATARI
+    case 0:
+      setup_ATARI();
+      atariMenu();
+      break;
+#endif
+
+#ifdef enable_ODY2
+    case 1:
+      setup_ODY2();
+      ody2Menu();
+      break;
+#endif
+
+#ifdef enable_ARC
+    case 2:
+      setup_ARC();
+      arcMenu();
+      break;
+#endif
+
+#ifdef enable_FAIRCHILD
+    case 3:
+      setup_FAIRCHILD();
+      fairchildMenu();
+      break;
+#endif
+
+#ifdef enable_INTV
+    case 4:
+      setup_INTV();
+      intvMenu();
+      break;
+#endif
+
+#ifdef enable_COLV
+    case 5:
+      setup_COL();
+      colMenu();
+      break;
+#endif
+
+    case 6:
+      resetArduino();
+      break;
+
+    default:
+      print_MissingModule();  // does not return
+  }
+}
+
+// Everything that needs an adapter
+void consoles80Menu() {
+  // create menu with title and 6 options to choose from
+  unsigned char consoles80Menu;
+  // Copy menuOptions out of progmem
+  convertPgm(consoles80Options, 4);
+  consoles80Menu = question_box(F("Choose Adapter"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (consoles80Menu) {
 #ifdef enable_NES
     case 0:
       mode = mode_NES;
@@ -1265,21 +1436,7 @@ void consoleMenu() {
       break;
 #endif
 
-#ifdef enable_INTV
     case 3:
-      setup_INTV();
-      intvMenu();
-      break;
-#endif
-
-#ifdef enable_COLV
-    case 4:
-      setup_COL();
-      colMenu();
-      break;
-#endif
-
-    case 5:
       resetArduino();
       break;
 
@@ -3331,6 +3488,26 @@ void loop() {
 #ifdef enable_PCW
   else if (mode == mode_PCW) {
     pcwMenu();
+  }
+#endif
+#ifdef enable_ATARI
+  else if (mode == mode_ATARI) {
+    atariMenu();
+  }
+#endif
+#ifdef enable_ODY2
+  else if (mode == mode_ODY2) {
+    ody2Menu();
+  }
+#endif
+#ifdef enable_ARC
+  else if (mode == mode_ARC) {
+    arcMenu();
+  }
+#endif
+#ifdef enable_FAIRCHILD
+  else if (mode == mode_FAIRCHILD) {
+    fairchildMenu();
   }
 #endif
   else {

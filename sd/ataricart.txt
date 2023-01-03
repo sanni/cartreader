@@ -1,0 +1,494 @@
+32 in 1,240,0
+3-D Tic-Tac-Toe,32,15
+Acid Drop,246,23
+Action Force,64,18
+Adventure,64,20
+Adventures of TRON,64,17
+Air Raid,64,26
+Air Raiders,64,16
+Airlock,64,19
+Air-Sea Battle,32,15
+AKA Space Adventure,64,22
+Alien,64,27
+Alpha Beam with Ernie,248,13
+Amidar,64,30
+Armor Ambush,64,14
+Artillery Duel,248,20
+Assault,64,23
+Asterix,248,15
+Asteroids,248,16
+Astroblast,64,18
+Atari Video Cube,64,18
+Atlantis,64,24
+Atlantis II,64,16
+Bachelor Party,64,19
+Bachelorette Party,64,22
+Backgammon,64,26
+Bank Heist,64,18
+Barnstorming,64,18
+Base Attack,64,20
+Basic Math,32,19
+BASIC Programming,64,18
+Basketball,32,25
+Battlezone,248,18
+Beamrider,248,19
+Beany Bopper,64,18
+Beat 'Em & Eat 'Em,64,20
+Berenstain Bears,248,26
+Bermuda,64,25
+Bermuda Triangle,64,15
+Berzerk,64,24
+Big Bird's Egg Catch,248,15
+Blackjack,32,29
+Blueprint,248,17
+BMX Air Master,246,18
+Bobby Is Going Home,64,23
+Boing!,64,27
+Bowling,32,14
+Boxing,32,15
+Brain Games,32,14
+Breakout,32,19
+Bridge,64,16
+Buck Rogers - Planet of Zoom,248,14
+Bugs,64,37
+Bump 'n' Jump,231,12
+Bumper Bash,64,22
+BurgerTime,231,19
+Burning Desire,64,19
+Cakewalk,64,22
+California Games,246,16
+Canyon Bomber,32,25
+Carnival,64,21
+Casino,64,16
+Cat Trax,64,14
+Cathouse Blues,64,16
+Centipede,248,22
+Challenge,248,18
+Challenge of.... Nexar,64,18
+Chase the Chuckwagon,64,30
+Checkers,32,28
+China Syndrome,64,16
+Chopper Command,64,22
+Chuck Norris Superkicks,248,23
+Circus Atari,64,32
+Coco Nuts,64,20
+Codebreaker,32,17
+Combat,32,19
+Commando,246,14
+Commando Raid,64,17
+Condor Attack,64,21
+Confrontation,64,21
+Congo Bongo,248,21
+Cookie Monster Munch,248,20
+Cosmic Ark,64,29
+Cosmic Commuter,64,18
+Cosmic Corridor,64,23
+Cosmic Creeps,64,23
+Cosmic Swarm,32,21
+Crackpots,64,20
+Crash Dive,64,17
+Crazy Climber,248,18
+Cross Force,64,22
+Crossbow,246,19
+Crypts of Chaos,64,17
+Crystal Castles,246,23
+Cubicolor,64,24
+Cubo Magico,64,17
+Custer's Revenge,64,19
+Dancing Plate,64,24
+Dark Cavern,64,21
+Dark Chambers,246,19
+Dark Mage,248,22
+Deadly Duck,64,18
+Death Trap,64,19
+Decathlon,254,18
+Defender,64,18
+Defender II,248,16
+Demolition Herby,64,20
+Demon Attack,64,24
+Demons to Diamonds,64,20
+Desert Falcon,246,26
+Dice Puzzle,64,22
+Dig Dug,246,19
+Dishaster,64,16
+Dodge 'Em,64,17
+Dolphin,64,17
+Donald Duck's Speedboat,248,15
+Donkey Kong,64,32
+Donkey Kong Jr,248,19
+Double Dragon,246,23
+Double Dunk,246,22
+Dragon Defender,64,20
+Dragonfire,64,23
+Dragster,32,18
+Dukes of Hazzard,246,16
+E.T.,248,25
+Earth Dies Screaming,64,13
+Eggomania,64,28
+Elevator Action,248,17
+Eli's Ladder,64,24
+Encounter at L-5,64,20
+Enduro,64,24
+Entombed,64,14
+Espial,63,16
+Exocet,64,14
+Extra Terrestrials,64,14
+Fantastic Voyage,64,26
+Farmyard Fun,64,24
+Fast Eddie,64,20
+Fast Food,64,18
+Fatal Run,244,17
+Fathom,248,18
+Fighter Pilot,246,15
+Final Approach,64,22
+Fire Fighter,64,22
+Fire Fly,64,20
+Fishing Derby,32,16
+Flag Capture,32,21
+Flash Gordon,64,20
+Football,32,20
+Forest,64,16
+Frankenstein's Monster,64,14
+Freeway,32,30
+Frisco,64,15
+Frog Pond,248,14
+Frogger,64,18
+Frogger II,224,15
+Frogs and Flies,64,19
+Front Line,248,23
+Frostbite,64,19
+G.I. Joe,64,17
+Galaxian,248,16
+Gamma Attack,32,17
+Gangster Alley,64,20
+Gas Hog,64,22
+Gauntlet,64,15
+Ghost Manor,248,16
+Ghostbusters,248,20
+Ghostbusters II,246,21
+Gigolo,64,24
+Glacier Patrol,64,14
+Glib,64,22
+Golf,32,12
+Gopher,64,12
+Gorf,64,14
+Grand Prix,246,12
+Gravitar,248,19
+Great Escape,64,17
+Gremlins,248,20
+Guardian,64,17
+Gyruss,224,16
+H.E.R.O.,248,15
+Halloween,64,17
+Hangman,64,17
+Harbor Escape,64,15
+Haunted House,64,21
+Hole Hunter,64,21
+Home Run,32,19
+Human Cannonball,32,16
+Hunt & Score,32,24
+I Want My Mommy,64,20
+Ice Hockey,64,23
+Ikari Warriors,246,18
+Indy 500,32,23
+Infiltrate,64,16
+International Soccer,64,18
+IQ 180,64,28
+James Bond 007,224,14
+Jaw Breaker,64,23
+Journey Escape,64,19
+Joust,248,22
+JoustPong,64,14
+Jr. Pac-Man,246,17
+Jungle Fever,64,20
+Jungle Hunt,248,20
+Kaboom!,32,20
+Kangaroo,248,15
+Karate,64,17
+Keystone Kapers,64,14
+King Kong,64,23
+Klax,246,17
+Knight on the Town,64,13
+Kool-Aid Man,64,26
+Krull,248,20
+Kung Fu Superkicks,248,14
+Kung-Fu Master,248,27
+Lady in Wading,64,23
+Laser Blast,32,22
+Laser Gates,64,19
+Lilly Advenure,64,19
+Lochjaw,64,22
+Lock 'n' Chase,64,15
+London Blitz,64,22
+Lost Luggage,64,20
+M.A.D.,64,20
+M.A.S.H,64,14
+MagiCard,192,15
+Malagai,64,17
+Mangia',64,15
+Marauder,64,15
+Marine Wars,64,16
+Mario Bros.,248,19
+Master Builder,64,20
+Masters of the Universe,231,22
+Math Gran Prix,64,32
+Maze Craze,64,22
+Mega Force,64,18
+MegaBoy,240,18
+MegaMania,64,16
+Midnight Magic,246,17
+Millipede,246,23
+Mind Maze,248,18
+Miner 2049er,63,18
+Miner 2049er Volume II,63,20
+Mines of Minos,64,30
+Miniature Golf,32,22
+Miss Piggy's Wedding,248,22
+Missile Command,64,29
+Missile Control,64,23
+Mission 3000 A.D.,64,23
+Mission Survive,64,25
+Mogul Maniac,64,23
+Montezuma's Revenge,224,20
+Moon Patrol,248,28
+Moonsweeper,248,20
+Motocross,64,20
+Motocross Racer,248,17
+MotoRodeo,246,24
+Mountain King,250,18
+Mouse Trap,64,22
+Mr. Do!,248,18
+Mr. Do!'s Castle,224,16
+Mr. Postman,64,25
+Ms. Pac-Man,248,19
+Music Machine,64,20
+My Golf,248,21
+Name This Game,64,16
+Night Driver,32,22
+Night Stalker,64,20
+Nightmare,64,21
+No Escape!,64,17
+Nuts,64,18
+Obelix,248,12
+Off the Wall,246,15
+Oink!,64,21
+Omega Race,250,13
+Open Sesame,64,19
+Oscar's Trash Race,248,19
+Othello,32,27
+Out of Control,64,15
+Outlaw,32,22
+Pac-Kong,64,14
+Pac-Man,64,16
+Panda Chase,64,15
+Parachute,64,19
+Pele's Soccer,64,17
+Pengo,248,21
+Pepsi Invaders,64,14
+Pete Rose Baseball,246,22
+Phantom Tank,64,27
+Pharaoh's Curse,64,20
+Philly Flasher,64,23
+Phoenix,248,22
+Pick 'n' Pile,246,16
+Picnic,64,22
+Piece o' Cake,64,14
+Pigs in Space,248,21
+Pitfall II,208,22
+Pitfall!,64,19
+Planet Patrol,64,16
+Plaque Attack,64,21
+Polaris,63,21
+Pole Position,248,15
+Polo,32,22
+Pompeii,64,12
+Pooyan,64,15
+Popeye,224,14
+Porky's,248,15
+Pressure Cooker,248,16
+Private Eye,248,24
+Pyramid War,64,20
+Q-bert,64,19
+Q-bert's Qubes,224,14
+Quadrun,248,23
+Quest for Quintana Roo,248,16
+Quick Step!,64,31
+Rabbit Transit,248,19
+Racing Car,64,23
+Racquetball,64,18
+Radar Lock,246,19
+Raft Rider,64,19
+Raiders of the Lost Ark,248,18
+Ram It,64,32
+Rampage!,246,14
+Raumpatrouille,64,17
+Reactor,64,22
+RealSports Baseball,248,15
+RealSports Boxing,246,28
+RealSports Football,248,26
+RealSports Soccer,248,28
+RealSports Tennis,248,26
+RealSports Volleyball,64,26
+Rescue Terra I,64,29
+Resgate Espacial,248,22
+Revenge of the Beefsteak Tomatoes,64,25
+Riddle of the Sphinx,64,41
+River Patrol,63,28
+River Raid,64,20
+River Raid II,246,18
+Road Runner,246,22
+Robin Hood,248,20
+Robot Tank,254,19
+Roc 'n Rope,248,19
+Room of Doom,64,20
+Rubik's Cube,64,20
+Save Our Ship,64,20
+Scuba Diver,64,21
+Sea Hawk,64,19
+Sea Hunt,64,16
+Sea Monster,64,16
+Seaquest,64,19
+Secret Quest,246,16
+Sentinel,246,21
+Shark Attack,64,17
+Shootin' Gallery,64,20
+Shuttle Orbiter,64,24
+Sir Lancelot,248,23
+Skate Boardin',248,21
+Skeet Shoot,32,23
+Ski Hunt,64,19
+Ski Run,64,16
+Skiing,32,15
+Sky Diver,32,14
+Sky Jinks,32,17
+Sky Skipper,64,17
+Slot Machine,32,19
+Slot Racers,32,20
+Smurf - Rescue in Gargamel's Castle,248,19
+Smurfs Save the Day,248,44
+Sneak 'n Peek,64,28
+Snoopy and the Red Baron,248,21
+Solar Fox,248,33
+Solar Storm,64,18
+Solaris,246,19
+Sorcerer,64,16
+Sorcerer's Apprentice,248,16
+Space Attack,64,30
+Space Canyon,64,20
+Space Cavern,64,20
+Space Invaders,64,20
+Space Jockey,32,22
+Space Shuttle,248,20
+Space Tunnel,64,22
+Space War,32,20
+Spacechase,64,17
+SpaceMaster X-7,64,18
+Spider Fighter,64,23
+Spider Maze,64,22
+Spider-Man,64,19
+Spike's Peak,248,18
+Spitfire Attack,64,21
+Springer,63,23
+Sprint Master,246,16
+Spy Hunter,248,22
+Squeeze Box,64,19
+Squirrel,64,19
+Sssnake,64,16
+Stampede,32,15
+Star Fox,64,16
+Star Raiders,248,16
+Star Ship,32,21
+Star Strike,64,17
+Star Trek,248,19
+Star Voyager,64,18
+Star Wars - Arcade Game,224,20
+Star Wars - Death Star Battle,224,32
+Star Wars - Empire Strikes Back,64,38
+Star Wars - Jedi Arena,64,39
+Stargate,246,30
+Stargunner,64,17
+StarMaster,64,18
+Steeplechase,32,18
+Stellar Track,64,20
+Strategy X,64,21
+Strawberry Shortcake,64,18
+Street Racer,32,28
+Stronghold,64,20
+Stunt Man,64,18
+Submarine Commander,64,17
+Sub-Scan,64,27
+Subterranea,248,16
+Summer Games,246,20
+Super Baseball,246,21
+Super Breakout,64,23
+Super Challenge Baseball,64,22
+Super Challenge Football,64,32
+Super Cobra,224,32
+Super Football,248,20
+Superman,64,23
+Surfer's Paradise,64,16
+Surround,32,25
+Survival Run,64,16
+SwordQuest - EarthWorld,248,20
+SwordQuest - FireWorld,248,32
+SwordQuest - WaterWorld,248,31
+Tac-Scan,64,32
+Tanks But No Tanks,64,16
+Tapeworm,64,26
+Tapper,248,16
+Tax Avoiders,248,15
+Taz,248,21
+Tempest,248,12
+Tennis,32,16
+Texas Chainsaw Massacre,64,14
+Threshold,64,31
+Thunderground,64,17
+Time Pilot,248,21
+Time Warp,64,19
+Title Match Pro Wrestling,248,17
+Tomarc the Barbarian,248,34
+Tomcat,246,29
+Tooth Protectors,224,15
+Towering Inferno,64,25
+Track and Field,246,24
+Treasure Below,64,24
+Treasure Island,64,22
+Trick Shot,64,23
+TRON - Deadly Discs,64,18
+Tunnel Runner,250,27
+Turmoil,64,22
+Tutankham,224,15
+Universal Chaos,64,18
+Up 'n Down,248,23
+Vanguard,248,19
+Venture,64,17
+Video Checkers,64,15
+Video Chess,64,22
+Video Jogger,64,19
+Video Life,32,20
+Video Olympics,32,18
+Video Pinball,64,22
+Video Reflex,64,21
+Vogel Flieh,64,20
+Vulture Attack,64,19
+Wabbit,64,22
+Walker,64,14
+Wall Ball,64,14
+Wall Break,64,17
+Wall-Defender,64,18
+Warlords,64,21
+Warplock,64,16
+Wing War,248,16
+Wings,250,17
+Winter Games,246,14
+Wizard of Wor,64,21
+Word Zapper,64,21
+World End,64,19
+Worm War I,64,17
+Xenophobe,246,18
+X-Man,64,18
+Yars' Revenge,64,13
+Zaxxon,248,21
+Zoo Fun,64,15
+Z-Tack,64,15
+EOF,0,0
