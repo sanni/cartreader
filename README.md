@@ -50,6 +50,10 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads ColecoVision cartridges (using custom adapter)    
 - Reads Benesse Pocket Challenge W cartridges (using custom adapter)    
 - Reads Watara Supervision cartridges (using custom adapter)    
+- Reads Atari 2600 cartridges (using custom adapter)    
+- Reads Emerson Arcadia 2001 cartridges (using custom adapter)    
+- Reads Fairchild Channel F cartridges (using custom adapter)    
+- Reads Magnavox Odyssey 2 cartridges (using custom adapter)    
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
  
 ![image](https://dl.dropboxusercontent.com/s/l6eujajz60x3ho9/IMG_079999.jpg?dl=1)  
