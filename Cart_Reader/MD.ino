@@ -710,13 +710,24 @@ void getCartInfo_MD() {
     }
   }
 
-  // Super Street Fighter 2 Check
+  // Super Street Fighter 2 + Demons of Asteborg Check
   if (cartSize == 0x400000) {
     switch (chksum) {
-      case 0xCE25:  // Super Street Fighter 2 (J) 40Mbit
-      case 0xE41D:  // Super Street Fighter 2 (E) 40Mbit
-      case 0xE017:  // Super Street Fighter 2 (U) 40Mbit
+      // Super Street Fighter 2
+      case 0xCE25: // Super Street Fighter 2 (J) 40Mbit
+      case 0xE41D: // Super Street Fighter 2 (E) 40Mbit
+      case 0xE017: // Super Street Fighter 2 (U) 40Mbit
         cartSize = 0x500000;
+        break;
+
+      // Demons of Asteborg
+      case 0x0000: // Demons of Asteborg v1.0 (W) 120Mbit
+        cartSize = 0xEAF2F4;
+        break;
+
+      case 0xBCBF: // Demons of Asteborg v1.1 (W) 120Mbit
+      case 0x6E1E: // Demons of Asteborg v1.11 (W) 120Mbit
+        cartSize = 0xEA0000;
         break;
     }
   }
@@ -1204,12 +1215,62 @@ void readROM_MD() {
     if (currBuffer % 16384 == 0)
       blinkLED();
 
-    if ((currBuffer == 0x200000) && (cartSize > 0x400000)) {
+    if (currBuffer == 0x200000) {
       writeSSF2Map(0x50987E, 8);  // 0xA130FD
-      offsetSSF2Bank = 1;
-    } else if ((currBuffer == 0x240000) && (cartSize > 0x400000)) {
       writeSSF2Map(0x50987F, 9);  // 0xA130FF
       offsetSSF2Bank = 1;
+    }
+  
+    // Demons of Asteborg Additional Banks
+    else if (currBuffer == 0x280000) {
+      writeSSF2Map(0x50987E, 10); // 0xA130FD
+      writeSSF2Map(0x50987F, 11); // 0xA130FF
+      offsetSSF2Bank = 2;
+    }
+    else if (currBuffer == 0x300000) {
+      writeSSF2Map(0x50987E, 12); // 0xA130FD
+      writeSSF2Map(0x50987F, 13); // 0xA130FF
+      offsetSSF2Bank = 3;
+    }
+    else if (currBuffer == 0x380000) {
+      writeSSF2Map(0x50987E, 14); // 0xA130FD
+      writeSSF2Map(0x50987F, 15); // 0xA130FF
+      offsetSSF2Bank = 4;
+    }
+    else if (currBuffer == 0x400000) {
+      writeSSF2Map(0x50987E, 16); // 0xA130FD
+      writeSSF2Map(0x50987F, 17); // 0xA130FF
+      offsetSSF2Bank = 5;
+    }
+    else if (currBuffer == 0x480000) {
+      writeSSF2Map(0x50987E, 18); // 0xA130FD
+      writeSSF2Map(0x50987F, 19); // 0xA130FF
+      offsetSSF2Bank = 6;
+    }
+    else if (currBuffer == 0x500000) {
+      writeSSF2Map(0x50987E, 20); // 0xA130FD
+      writeSSF2Map(0x50987F, 21); // 0xA130FF
+      offsetSSF2Bank = 7;
+    }
+      else if (currBuffer == 0x580000) {
+      writeSSF2Map(0x50987E, 22); // 0xA130FD
+      writeSSF2Map(0x50987F, 23); // 0xA130FF
+      offsetSSF2Bank = 8;
+    }
+    else if (currBuffer == 0x600000) {
+      writeSSF2Map(0x50987E, 24); // 0xA130FD
+      writeSSF2Map(0x50987F, 25); // 0xA130FF
+      offsetSSF2Bank = 9;
+    }
+    else if (currBuffer == 0x680000) {
+      writeSSF2Map(0x50987E, 26); // 0xA130FD
+      writeSSF2Map(0x50987F, 27); // 0xA130FF
+      offsetSSF2Bank = 10;
+    }
+    else if (currBuffer == 0x700000) {
+      writeSSF2Map(0x50987E, 28); // 0xA130FD
+      writeSSF2Map(0x50987F, 29); // 0xA130FF
+      offsetSSF2Bank = 11;
     }
 
     d = 0;
