@@ -18,7 +18,6 @@
 #define HUCARD 0
 #define TURBOCHIP 1
 #define HUCARD_NOSWAP 2
-
 #define DETECTION_SIZE 64
 #define CHKSUM_SKIP 0
 #define CHKSUM_OK 1
@@ -43,7 +42,6 @@ void read_rom_PCE(void);
    Variables
  *****************************************/
 uint8_t pce_internal_mode;  //0 - HuCARD, 1 - TurboChip
-
 uint16_t pce_force_rom_size = 0;
 uint8_t tennokoe_bank_index = 0;
 
@@ -311,14 +309,15 @@ void write_byte_PCE(uint32_t address, uint8_t data) {
   PORTH |= (1 << 5);
 }
 
-//Confirm the size of ROM - 128Kb, 256Kb, 384Kb, 512Kb, 768Kb or 1024Kb
+//Confirm the size of ROM
 uint32_t detect_rom_size_PCE(void) {
   uint32_t rom_size;
   uint8_t read_byte;
   uint8_t current_byte;
-  uint8_t detect_128, detect_256, detect_512, detect_768;
+  uint8_t detect_32, detect_128, detect_256, detect_512, detect_768;
 
   //Initialize variables
+  detect_32 = 0;
   detect_128 = 0;
   detect_256 = 0;
   detect_512 = 0;
@@ -327,16 +326,23 @@ uint32_t detect_rom_size_PCE(void) {
   //Set pins to read PC Engine cart
   pin_read_write_PCE();
 
-  //Confirm where mirror address start from(128KB, 256KB, 512KB, 768, or 1024KB)
+  //Confirm where mirror address start from (32KB, 128KB, 256KB, 512KB, 768KB, or 1024KB)
   for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
-    if ((current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768)) {
+    if ((current_byte != detect_32) && (current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768)) {
       //If none matched, it is 1024KB
       break;
     }
 
-    //read byte for 128KB, 256KB, 512KB detection
+    //read byte for 32KB, 128KB, 256KB, 512KB detection
     read_byte = read_byte_PCE(current_byte);
 
+    //32KB detection
+    if (current_byte == detect_32) {
+      if (read_byte_PCE(current_byte + 32UL * 1024UL) == read_byte) {
+        detect_32++;
+      }
+    }
+  
     //128KB detection
     if (current_byte == detect_128) {
       if (read_byte_PCE(current_byte + 128UL * 1024UL) == read_byte) {
@@ -368,25 +374,33 @@ uint32_t detect_rom_size_PCE(void) {
   }
 
   //debug
-  //sprintf(fileName, "%d %d %d %d", detect_128, detect_256, detect_512, detect_768); //using filename global variable as string. Initialzed in below anyways.
+  //sprintf(fileName, "%d %d %d %d %d", detect_32, detect_128, detect_256, detect_512, detect_768); //using filename global variable as string. Initialzed in below anyways.
   //println_Msg(fileName);
 
   //ROM size detection by result
-  if (detect_128 == DETECTION_SIZE) {
+  if (detect_32 == DETECTION_SIZE) {
+    rom_size = 32;
+  } 
+  else if (detect_128 == DETECTION_SIZE) {
     rom_size = 128;
-  } else if (detect_256 == DETECTION_SIZE) {
+  } 
+  else if (detect_256 == DETECTION_SIZE) {
     if (detect_512 == DETECTION_SIZE) {
       rom_size = 256;
-    } else {
+    }
+    else {
       //rom_size = 1024;
       //Another confirmation for 384KB because 384KB hucard has data in 0x0--0x40000 and 0x80000--0xA0000(0x40000 is mirror of 0x00000)
       rom_size = 384;
     }
-  } else if (detect_512 == DETECTION_SIZE) {
+  } 
+  else if (detect_512 == DETECTION_SIZE) {
     rom_size = 512;
-  } else if (detect_768 == DETECTION_SIZE) {
+  } 
+  else if (detect_768 == DETECTION_SIZE) {
     rom_size = 768;
-  } else {
+  } 
+  else {
     rom_size = 1024;
   }
 
@@ -473,9 +487,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
           print_Msg(folder_p);
           print_Msg(F("/"));
           print_Msg(gamename);
-          //print_Msg(F(".pce"));
           flag = CHKSUM_OK;
-          //strcat(gamename, ".pce");
           rom.rename(gamename);
           break;
         }
