@@ -404,12 +404,15 @@ uint32_t detect_rom_size_PCE(void) {
     rom_size = 1024;
   }
 
-  //If rom size is more than or equal to 512KB, detect Street fighter II'
+  //If rom size is more than or equal to 512KB, detect special cards
   if (rom_size >= 512) {
-    //Look for "NEC HE "
-    if (read_byte_PCE(0x7FFF9) == 'N' && read_byte_PCE(0x7FFFA) == 'E' && read_byte_PCE(0x7FFFB) == 'C'
-        && read_byte_PCE(0x7FFFC) == ' ' && read_byte_PCE(0x7FFFD) == 'H' && read_byte_PCE(0x7FFFE) == 'E') {
+    //Street Fighter II' - Champion Edition (Japan)
+    if (read_byte_PCE(0x7FFF9) == 'N' && read_byte_PCE(0x7FFFA) == 'E' && read_byte_PCE(0x7FFFB) == 'C' && read_byte_PCE(0x7FFFC) == ' ' && read_byte_PCE(0x7FFFD) == 'H' && read_byte_PCE(0x7FFFE) == 'E') {
       rom_size = 2560;
+    }
+    //Populous (Japan)
+    if  (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
+      rom_size = 512;
     }
   }
 
@@ -495,7 +498,6 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
       rom.close();
     }
   }
-
 
   if (flag == CHKSUM_SKIP) {
     print_Msg(F("Saved to "));
