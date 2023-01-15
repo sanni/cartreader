@@ -467,7 +467,7 @@ void readROM_FAIRCHILD() {
   calcCRC(fileName, cartsize, NULL, 0);
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -523,7 +523,7 @@ void read16K_FAIRCHILD()  // Read 16K Bytes
   calcCRC(fileName, 0x4000, NULL, 0);
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -540,26 +540,58 @@ void setROMSize_FAIRCHILD() {
   else {
     int b = 0;
     int i = fairchildlo;
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(FAIRCHILD[i]);
+    println_Msg(F(""));
+#if defined(enable_OLED)
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
+#endif
+    display_Update();
     while (1) {
-      display_Clear();
-      print_Msg(F("ROM Size: "));
-      println_Msg(FAIRCHILD[i]);
-      println_Msg(F(""));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
       b = checkButton();
       if (b == 2) {  // Previous (doubleclick)
         if (i == fairchildlo)
           i = fairchildhi;
         else
           i--;
+
+        // Only update display after input because of slow LCD library
+        display_Clear();
+        print_Msg(F("ROM Size: "));
+        println_Msg(FAIRCHILD[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
+#endif
+        display_Update();
       }
       if (b == 1) {  // Next (press)
         if (i == fairchildhi)
           i = fairchildlo;
         else
           i++;
+        // Only update display after input because of slow LCD library
+        display_Clear();
+        print_Msg(F("ROM Size: "));
+        println_Msg(FAIRCHILD[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
+#endif
+        display_Update();
       }
       if (b == 3) {  // Long Press - Execute (hold)
         newfairchildsize = i;
@@ -754,8 +786,13 @@ bool getCartListInfo_FAIRCHILD() {
       println_Msg(F(""));
       println_Msg(fairchildgame);
       display.setCursor(0, 48);
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+#if defined(enable_OLED)
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
+#endif
       display_Update();
 #else
       Serial.print(F("CART TITLE:"));

@@ -272,7 +272,7 @@ void readROM_ODY2() {
   calcCRC(fileName, crcsize, NULL, 0);
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -289,26 +289,61 @@ void setROMSize_ODY2() {
   else {
     int b = 0;
     int i = ody2lo;
+
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(ODY2[i]);
+    println_Msg(F(""));
+#if defined(enable_OLED)
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
+#endif
+    display_Update();
+
     while (1) {
-      display_Clear();
-      print_Msg(F("ROM Size: "));
-      println_Msg(ODY2[i]);
-      println_Msg(F(""));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
       b = checkButton();
       if (b == 2) {  // Previous (doubleclick)
         if (i == ody2lo)
           i = ody2hi;
         else
           i--;
+
+        // Only update display after input because of slow LCD library
+        display_Clear();
+        print_Msg(F("ROM Size: "));
+        println_Msg(ODY2[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
+#endif
+        display_Update();
       }
       if (b == 1) {  // Next (press)
         if (i == ody2hi)
           i = ody2lo;
         else
           i++;
+
+        // Only update display after input because of slow LCD library
+        display_Clear();
+        print_Msg(F("ROM Size: "));
+        println_Msg(ODY2[i]);
+        println_Msg(F(""));
+#if defined(enable_OLED)
+        print_STR(press_to_change_STR, 1);
+        print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+        print_STR(rotate_to_change_STR, 1);
+        print_STR(press_to_select_STR, 1);
+#endif
+        display_Update();
       }
       if (b == 3) {  // Long Press - Execute (hold)
         newody2size = i;
@@ -515,8 +550,13 @@ bool getCartListInfo_ODY2() {
       println_Msg(F(""));
       println_Msg(ody2game);
       display.setCursor(0, 48);
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+#if defined(enable_OLED)
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
+#endif
       display_Update();
 #else
       Serial.print(F("CART TITLE:"));

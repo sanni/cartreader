@@ -456,7 +456,7 @@ void readROM_ATARI() {
   calcCRC(fileName, crcsize, NULL, 0);
 
   println_Msg(F(""));
-  println_Msg(F("Press Button..."));
+  print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
@@ -537,6 +537,7 @@ void setMapper_ATARI() {
 #elif defined(enable_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
+
   if (buttonVal1 == LOW) {  // Button Pressed
     while (1) {             // Scroll Mapper List
 #if defined(enable_OLED)
@@ -576,39 +577,100 @@ void setMapper_ATARI() {
       delay(250);
     }
   }
+
+  display_Clear();
+  print_Msg(F("Mapper: "));
+  atariindex = i * 2;
+  atarimapselect = pgm_read_byte(atarimapsize + atariindex);
+  if (atarimapselect == 0x20)
+    println_Msg(F("2K"));
+  else if (atarimapselect == 0x40)
+    println_Msg(F("4K"));
+  else if (atarimapselect == 0x0A)
+    println_Msg(F("UA"));
+  else if (atarimapselect == 0xC0)
+    println_Msg(F("CV"));
+  else if (atarimapselect == 0xD0)
+    println_Msg(F("DPC"));
+  else
+    println_Msg(atarimapselect, HEX);
+  println_Msg(F(""));
+#if defined(enable_OLED)
+  print_STR(press_to_change_STR, 1);
+  print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
+#endif
+  display_Update();
+
   while (1) {
-    display_Clear();
-    print_Msg(F("Mapper: "));
-    atariindex = i * 2;
-    atarimapselect = pgm_read_byte(atarimapsize + atariindex);
-    if (atarimapselect == 0x20)
-      println_Msg(F("2K"));
-    else if (atarimapselect == 0x40)
-      println_Msg(F("4K"));
-    else if (atarimapselect == 0x0A)
-      println_Msg(F("UA"));
-    else if (atarimapselect == 0xC0)
-      println_Msg(F("CV"));
-    else if (atarimapselect == 0xD0)
-      println_Msg(F("DPC"));
-    else
-      println_Msg(atarimapselect, HEX);
-    println_Msg(F(""));
-    println_Msg(F("Press to Change"));
-    println_Msg(F("Hold to Select"));
-    display_Update();
     b = checkButton();
     if (b == 2) {  // Previous Mapper (doubleclick)
       if (i == 0)
         i = atarimapcount - 1;
       else
         i--;
+
+      // Only update display after input because of slow LCD library
+      display_Clear();
+      print_Msg(F("Mapper: "));
+      atariindex = i * 2;
+      atarimapselect = pgm_read_byte(atarimapsize + atariindex);
+      if (atarimapselect == 0x20)
+        println_Msg(F("2K"));
+      else if (atarimapselect == 0x40)
+        println_Msg(F("4K"));
+      else if (atarimapselect == 0x0A)
+        println_Msg(F("UA"));
+      else if (atarimapselect == 0xC0)
+        println_Msg(F("CV"));
+      else if (atarimapselect == 0xD0)
+        println_Msg(F("DPC"));
+      else
+        println_Msg(atarimapselect, HEX);
+      println_Msg(F(""));
+#if defined(enable_OLED)
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
+#endif
+      display_Update();
     }
     if (b == 1) {  // Next Mapper (press)
       if (i == (atarimapcount - 1))
         i = 0;
       else
         i++;
+
+      // Only update display after input because of slow LCD library
+      display_Clear();
+      print_Msg(F("Mapper: "));
+      atariindex = i * 2;
+      atarimapselect = pgm_read_byte(atarimapsize + atariindex);
+      if (atarimapselect == 0x20)
+        println_Msg(F("2K"));
+      else if (atarimapselect == 0x40)
+        println_Msg(F("4K"));
+      else if (atarimapselect == 0x0A)
+        println_Msg(F("UA"));
+      else if (atarimapselect == 0xC0)
+        println_Msg(F("CV"));
+      else if (atarimapselect == 0xD0)
+        println_Msg(F("DPC"));
+      else
+        println_Msg(atarimapselect, HEX);
+      println_Msg(F(""));
+#if defined(enable_OLED)
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
+#endif
+      display_Update();
     }
     if (b == 3) {  // Long Press - Execute (hold)
       newatarimapper = atarimapselect;
@@ -788,8 +850,13 @@ bool getCartListInfo_ATARI() {
       println_Msg(F(""));
       println_Msg(atarigame);
       display.setCursor(0, 48);
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+#if defined(enable_OLED)
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
+#endif
       display_Update();
 #else
       Serial.print(F("CART TITLE:"));
