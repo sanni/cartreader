@@ -434,6 +434,8 @@ void readROM_VB() {
   }
 
   word d = 0;
+  uint32_t progress = 0;
+  draw_progressbar(0, cartSize);
   // HYPER FIGHTING FIX
   // VIRTUAL BOY ADDRESSING IS TOP DOWN
   // ONLY FOR HYPER FIGHTING PLUGIN WITH ALL ADDRESS LINES CONNECTED
@@ -450,6 +452,8 @@ void readROM_VB() {
       }
       myFile.write(sdBuffer, 512);
       d = 0;
+      progress += 512;
+      draw_progressbar(progress, cartSize);
     }
   } else {
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
@@ -462,6 +466,8 @@ void readROM_VB() {
       }
       myFile.write(sdBuffer, 512);
       d = 0;
+      progress += 512;
+      draw_progressbar(progress, cartSize);
     }
   }
   myFile.close();
