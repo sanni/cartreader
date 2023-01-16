@@ -342,7 +342,7 @@ uint32_t detect_rom_size_PCE(void) {
         detect_32++;
       }
     }
-  
+
     //128KB detection
     if (current_byte == detect_128) {
       if (read_byte_PCE(current_byte + 128UL * 1024UL) == read_byte) {
@@ -380,27 +380,21 @@ uint32_t detect_rom_size_PCE(void) {
   //ROM size detection by result
   if (detect_32 == DETECTION_SIZE) {
     rom_size = 32;
-  } 
-  else if (detect_128 == DETECTION_SIZE) {
+  } else if (detect_128 == DETECTION_SIZE) {
     rom_size = 128;
-  } 
-  else if (detect_256 == DETECTION_SIZE) {
+  } else if (detect_256 == DETECTION_SIZE) {
     if (detect_512 == DETECTION_SIZE) {
       rom_size = 256;
-    }
-    else {
+    } else {
       //rom_size = 1024;
       //Another confirmation for 384KB because 384KB hucard has data in 0x0--0x40000 and 0x80000--0xA0000(0x40000 is mirror of 0x00000)
       rom_size = 384;
     }
-  } 
-  else if (detect_512 == DETECTION_SIZE) {
+  } else if (detect_512 == DETECTION_SIZE) {
     rom_size = 512;
-  } 
-  else if (detect_768 == DETECTION_SIZE) {
+  } else if (detect_768 == DETECTION_SIZE) {
     rom_size = 768;
-  } 
-  else {
+  } else {
     rom_size = 1024;
   }
 
@@ -411,7 +405,7 @@ uint32_t detect_rom_size_PCE(void) {
       rom_size = 2560;
     }
     //Populous (Japan)
-    if  (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
+    if (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
       rom_size = 512;
     }
   }

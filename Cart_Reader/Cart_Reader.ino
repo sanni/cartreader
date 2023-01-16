@@ -1512,7 +1512,7 @@ void aboutScreen() {
   display_Clear();
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2022 Version "));
+  print_Msg(F("2023 Version "));
   println_Msg(ver);
   println_Msg(F(""));
   println_Msg(F(""));
@@ -2012,7 +2012,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("");
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2022 github.com/sanni"));
+  Serial.println(F("2023 github.com/sanni"));
   // LED Error
   setColor_RGB(0, 0, 255);
 #endif
