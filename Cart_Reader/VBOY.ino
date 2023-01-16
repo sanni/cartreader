@@ -326,7 +326,6 @@ void getCartInfo_VB() {
       case 0x5245:            // RE = Red Alarm
       case 0x4833:            // H3 = Vertical Force
       case 0x5642:            // VB = Virtual Bowling
-      case 0x5646:            // VF = Virtual Fishing
       case 0x4A56:            // JV = Virtual Lab
       case 0x5650:            // VP = Virtual League Baseball/Virtual Pro Yakyuu '95
         cartSize = 0x100000;  // 1MB
@@ -336,6 +335,7 @@ void getCartInfo_VB() {
       case 0x4750:            // GP = Galactic Pinball
       case 0x5344:            // SD = SD Gundam Dimension War
       case 0x5442:            // TB = Teleroboxer
+      case 0x5646:            // VF = Virtual Fishing
         cartSize = 0x100000;  // 1MB
         sramSize = 0x2000;    // 8KB
         break;
