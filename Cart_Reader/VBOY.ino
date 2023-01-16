@@ -326,7 +326,6 @@ void getCartInfo_VB() {
       case 0x5245:            // RE = Red Alarm
       case 0x4833:            // H3 = Vertical Force
       case 0x5642:            // VB = Virtual Bowling
-      case 0x5646:            // VF = Virtual Fishing
       case 0x4A56:            // JV = Virtual Lab
       case 0x5650:            // VP = Virtual League Baseball/Virtual Pro Yakyuu '95
         cartSize = 0x100000;  // 1MB
@@ -336,6 +335,7 @@ void getCartInfo_VB() {
       case 0x4750:            // GP = Galactic Pinball
       case 0x5344:            // SD = SD Gundam Dimension War
       case 0x5442:            // TB = Teleroboxer
+      case 0x5646:            // VF = Virtual Fishing
         cartSize = 0x100000;  // 1MB
         sramSize = 0x2000;    // 8KB
         break;
@@ -434,6 +434,8 @@ void readROM_VB() {
   }
 
   word d = 0;
+  uint32_t progress = 0;
+  draw_progressbar(0, cartSize);
   // HYPER FIGHTING FIX
   // VIRTUAL BOY ADDRESSING IS TOP DOWN
   // ONLY FOR HYPER FIGHTING PLUGIN WITH ALL ADDRESS LINES CONNECTED
@@ -450,6 +452,8 @@ void readROM_VB() {
       }
       myFile.write(sdBuffer, 512);
       d = 0;
+      progress += 512;
+      draw_progressbar(progress, cartSize);
     }
   } else {
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
@@ -462,6 +466,8 @@ void readROM_VB() {
       }
       myFile.write(sdBuffer, 512);
       d = 0;
+      progress += 512;
+      draw_progressbar(progress, cartSize);
     }
   }
   myFile.close();
