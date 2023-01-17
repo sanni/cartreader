@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             03.01.2023
-   Version:          12.0
+   Date:             17.01.2023
+   Version:          12.1
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "12.0";
+char ver[5] = "12.1";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -78,7 +78,7 @@ char ver[5] = "12.0";
 // ENABLE MODULES
 //******************************************
 // add/remove // before #define to disable/enable modules you
-// don't need/need to save programm storage space and dynamic memory
+// don't need/need to save program storage space and dynamic memory
 // If you only get an empty or "Press Button" screen after flashing
 // you have enabled too many modules
 
@@ -89,7 +89,7 @@ char ver[5] = "12.0";
 //#define enable_PCW
 
 // ColecoVision
-#define enable_COLV
+//#define enable_COLV
 
 // Emerson Arcadia 2001
 //#define enable_ARC
@@ -105,10 +105,10 @@ char ver[5] = "12.0";
 #define enable_GBX
 
 // Intellivision
-#define enable_INTV
+//#define enable_INTV
 
 // Neo Geo Pocket
-#define enable_NGP
+//#define enable_NGP
 
 // Nintendo 64
 #define enable_N64
@@ -120,7 +120,7 @@ char ver[5] = "12.0";
 //#define enable_ODY2
 
 // PC Engine/TurboGrafx 16
-#define enable_PCE
+//#define enable_PCE
 
 // Sega Master System
 #define enable_SMS
@@ -138,13 +138,13 @@ char ver[5] = "12.0";
 #define enable_SNES
 
 // Virtual Boy
-#define enable_VBOY
+//#define enable_VBOY
 
 // Watara Supervision
 //#define enable_WSV
 
 // WonderSwan
-#define enable_WS
+//#define enable_WS
 
 //******************************************
 // HW CONFIGS
