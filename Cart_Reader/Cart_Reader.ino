@@ -147,7 +147,7 @@ char ver[5] = "12.3";
 //#define enable_WS
 
 // Super A'can
-#define enable_SUPRACAN
+// #define enable_SUPRACAN
 
 //******************************************
 // HW CONFIGS
@@ -1007,9 +1007,9 @@ static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
 static const char modeItem17[] PROGMEM = "Arcadia 2001";
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
 static const char modeItem19[] PROGMEM = "Flashrom Programmer";
-static const char modeItem99[] PROGMEM = "Super A'can";
 static const char modeItem20[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem99, modeItem19, modeItem20 };
+static const char modeItem99[] PROGMEM = "Super A'can";
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem99 };
 
 // All included slots
 void mainMenu() {
@@ -1032,7 +1032,7 @@ void mainMenu() {
       num_answers = 7;
     } else {  // currPage == 3
       option_offset = 14;
-      num_answers = 6;
+      num_answers = 7;
     }
     // Copy menuOptions out of progmem
     convertPgm(modeOptions + option_offset, num_answers);
@@ -1177,11 +1177,6 @@ void mainMenu() {
     case 17:
       setup_FAIRCHILD();
       fairchildMenu();
-
-#ifdef enable_SUPRACAN
-    case 99:
-      setup_SuprAcan();
-      mode = mode_SUPRACAN;
       break;
 #endif
 
@@ -1198,6 +1193,12 @@ void mainMenu() {
     case 19:
       aboutScreen();
       break;
+
+#ifdef enable_SUPRACAN
+    case 20:
+      setup_SuprAcan();
+      break;
+#endif
 
     default:
       print_MissingModule();  // does not return
@@ -1227,8 +1228,9 @@ static const char addonsItem1[] PROGMEM = "70s Consoles";
 static const char addonsItem2[] PROGMEM = "80s Consoles";
 static const char addonsItem3[] PROGMEM = "Handhelds";
 static const char addonsItem4[] PROGMEM = "Flashrom Programmer";
+static const char addonsItem5[] PROGMEM = "90s Consoles";
 //static const char addonsItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, string_reset2 };
+static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, string_reset2, addonsItem5 };
 
 // 70s Consoles submenu
 static const char consoles70Item1[] PROGMEM = "Atari 2600";
@@ -1316,8 +1318,8 @@ void addonMenu() {
   // create menu with title and 5 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 5);
-  addonsMenu = question_box(F("Type"), menuOptions, 5, 0);
+  convertPgm(addonsOptions, 6);
+  addonsMenu = question_box(F("Type"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu) {
@@ -1348,6 +1350,10 @@ void addonMenu() {
 
     case 4:
       resetArduino();
+      break;
+
+    case 5:
+      consoles90Menu();
       break;
 
     default:
@@ -1457,6 +1463,31 @@ void consoles80Menu() {
 
     default:
       print_MissingModule();  // does not return
+  }
+}
+
+// Everything that needs an adapter
+void consoles90Menu() {
+  unsigned char consoles90Menu;
+  // Copy menuOptions out of progmem
+  convertPgm(consoles90Options, 2);
+  consoles90Menu = question_box(F("Choose Adapter"), menuOptions, 2, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (consoles90Menu) {
+#ifdef enable_SUPRACAN
+    case 0:
+      setup_SuprAcan();
+      break;
+#endif
+
+    case 1:
+      resetArduino();
+      break;
+
+    default:
+      print_MissingModule();  // does not return
+      break;
   }
 }
 
@@ -3523,6 +3554,11 @@ void loop() {
 #ifdef enable_FAIRCHILD
   else if (mode == mode_FAIRCHILD) {
     fairchildMenu();
+  }
+#endif
+#ifdef enable_SUPRACAN
+  else if (mode == mode_SUPRACAN) {
+    suprAcanMenu();
   }
 #endif
   else {

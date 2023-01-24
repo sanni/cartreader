@@ -11,8 +11,9 @@ static const char acanMenuItem2[] PROGMEM = "Read Save";
 static const char acanMenuItem3[] PROGMEM = "Write Save";
 static const char acanMenuItem4[] PROGMEM = "Read UM6650";
 static const char acanMenuItem5[] PROGMEM = "Write UM6650";
+static const char acanMenuItem6[] PROGMEM = "Flash...";
 
-static const char* const menuOptionsAcan[] PROGMEM = {acanMenuItem1, acanMenuItem2, acanMenuItem3, acanMenuItem4, acanMenuItem5, string_reset2};
+static const char* const menuOptionsAcan[] PROGMEM = {acanMenuItem1, acanMenuItem2, acanMenuItem3, acanMenuItem4, acanMenuItem5, string_reset2, acanMenuItem6};
 
 void setup_SuprAcan()
 {
@@ -34,10 +35,32 @@ void setup_SuprAcan()
   PORTH |= ((1 << 3) | (1 << 5) | (1 << 6));
   PORTH &= ~((1 << 0) | (1 << 4));
 
-  // set /CARTIN(PG5) input
-  DDRG &= ~(1 << 5);
   // set 6619_124(PE4) input
   DDRE &= ~(1 << 4);
+
+  // detect if flash chip exists
+  PORTG |= (1 << 5);
+  DDRG |= (1 << 5);
+  PORTG |= (1 << 5);
+  
+  dataOut_MD();
+  writeWord_Acan(0xaaaa, 0xaaaa);
+  writeWord_Acan(0x5555, 0x5555);
+  writeWord_Acan(0xaaaa, 0x9090);
+
+  dataIn_MD();
+  eepbit[0] = readWord_Acan(0x2);
+  eepbit[1] = readWord_Acan(0x0);
+
+  dataOut_MD();
+  writeWord_Acan(0x0, 0xf0f0);
+
+  dataIn_MD();
+  // set /CARTIN(PG5) input
+  PORTG &= ~(1 << 5);
+  DDRG &= ~(1 << 5);
+
+  *((uint32_t*)(eepbit + 4)) = getFlashChipSize_Acan(*((uint16_t*)eepbit));
 
   display_Clear();
   initializeClockOffset();
@@ -86,10 +109,13 @@ void setup_SuprAcan()
 
 void suprAcanMenu()
 {
-  uint8_t mainMenu;
+  uint8_t mainMenu = 6;
 
-  convertPgm(menuOptionsAcan, 6);
-  mainMenu = question_box(F("Super A'can Menu"), menuOptions, 6, 0);
+  if (*((uint32_t*)(eepbit + 4)) > 0)
+    mainMenu = 7;
+
+  convertPgm(menuOptionsAcan, mainMenu);
+  mainMenu = question_box(F("Super A'can Menu"), menuOptions, mainMenu, 0);
 
   switch (mainMenu)
   {
@@ -120,6 +146,11 @@ void suprAcanMenu()
       verifyUM6650();
       break;
     }
+    case 6:
+    {
+      flashCart_Acan();
+      break;
+    }
     default:
     {
       resetCart_Acan();
@@ -139,7 +170,7 @@ static void readROM_Acan()
   uint32_t crc32 = 0xffffffff;
 
   EEPROM_readAnything(0, foldern);
-  snprintf(folder, FILEPATH_LENGTH, "ACAN/ROM/%d", foldern);
+  snprintf(folder, FILEPATH_LENGTH, "/ACAN/ROM/%d", foldern);
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -187,7 +218,7 @@ static void readSRAM_Acan()
 {
   // create a new folder for storing rom file
   EEPROM_readAnything(0, foldern);
-  snprintf(folder, FILEPATH_LENGTH, "ACAN/SAVE/%d", foldern);
+  snprintf(folder, FILEPATH_LENGTH, "/ACAN/SAVE/%d", foldern);
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -220,7 +251,7 @@ static void readSRAM_Acan()
 static void writeSRAM_Acan()
 {
   filePath[0] = 0;
-  sd.chdir("/");
+  sd.chdir();
   fileBrowser(F("Select a file"));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
@@ -297,7 +328,7 @@ static void readUM6650()
 {
   // create a new folder for storing rom file
   EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "ACAN/UM6650/%d", foldern);
+  snprintf(folder, sizeof(folder), "/ACAN/UM6650/%d", foldern);
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -402,6 +433,84 @@ static void writeUM6650()
 
   dataIn_MD();
   print_STR(done_STR, 1);
+}
+
+static void flashCart_Acan()
+{
+  uint32_t *flash_size = (uint32_t*)(eepbit + 4);
+
+  filePath[0] = 0;
+  sd.chdir();
+  fileBrowser(F("Select a file"));
+  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
+
+  display_Clear();
+
+  if (!myFile.open(filePath, O_READ))
+  {
+    print_Error(F("File doesn't exist"));
+    return;
+  }
+
+  print_Msg(F("Writing "));
+  print_Msg(filePath + 1);
+  println_Msg(F("..."));
+  display_Update();
+
+  uint32_t i, j, k, file_length = myFile.fileSize();
+  uint16_t data;
+
+  DDRG |= (1 << 5);
+  PORTG |= (1 << 5);
+
+  draw_progressbar(0, file_length);
+
+  for (i = 0; i < file_length; i += *flash_size)
+  {
+    // erase chip
+    dataOut_MD();
+    writeWord_Acan(i + 0xaaaa, 0xaaaa);
+    writeWord_Acan(i + 0x5555, 0x5555);
+    writeWord_Acan(i + 0xaaaa, 0x8080);
+    writeWord_Acan(i + 0xaaaa, 0xaaaa);
+    writeWord_Acan(i + 0x5555, 0x5555);
+    writeWord_Acan(i + 0xaaaa, 0x1010);
+
+    dataIn_MD();
+    while (readWord_Acan(i) != 0xffff);
+
+    for (j = 0; j < *flash_size; j += 512)
+    {
+      myFile.read(sdBuffer, 512);
+      
+      for (k = 0; k < 512; k += 2)
+      {
+        data = *((uint16_t*)(sdBuffer + k));
+
+        dataOut_MD();
+        writeWord_Acan(i + 0xaaaa, 0xaaaa);
+        writeWord_Acan(i + 0x5555, 0x5555);
+        writeWord_Acan(i + 0xaaaa, 0xa0a0);
+        writeWord_Acan(i + j + k, data);
+
+        dataIn_MD();
+        while (readWord_Acan(i + j + k) != data);
+      }
+
+      draw_progressbar(i + j + k, file_length);
+
+      if ((j & 0xfff) == 0)
+        blinkLED();
+    }
+  }
+
+  PORTG &= ~(1 << 5);
+  DDRG &= ~(1 << 5);
+
+  myFile.close();
+
+  print_STR(done_STR, 1);
+  display_Update();
 }
 
 static uint32_t checkRomSize_Acan()
@@ -557,6 +666,19 @@ static uint16_t readWord_Acan(uint32_t addr)
   PORTH |= ((1 << 3) | (1 << 5) | (1 << 6));
 
   return data;
+}
+
+static uint32_t getFlashChipSize_Acan(uint16_t chip_id)
+{
+  // 0x0458 (8M), 0x01ab (4M), 0x01d8 (16M)
+  switch (chip_id)
+  {
+    case 0x01ab: return 524288;
+    case 0x0458: return 1048576;
+    case 0x01d8: return 2097152;
+  }
+
+  return 0;
 }
 
 #endif
