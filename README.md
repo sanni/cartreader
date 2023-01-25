@@ -7,7 +7,7 @@ Happy making. 🔧🔨😊
 For any questions you can use the [Discussions](https://github.com/sanni/cartreader/discussions) and/or [Issues](https://github.com/sanni/cartreader/issues) section here on Github or visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
 And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.    
 
-![image](https://dl.dropboxusercontent.com/s/70zaxs9lyyuxvqe/IMG_0799.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/3lrn7xh3f7h6jre/HW5_front.png?dl=1)   
 
 #### Features:  
 - Completely stand-alone, does not need a PC to operate (unless for updating firmware)    
@@ -15,7 +15,7 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Portable thanks to a battery/power bank  
 - Modular design using mostly off-the-shelf components    
 
-![image](https://dl.dropboxusercontent.com/s/mhlx620tmbnglx1/hw5wframe.jpg?dl=1)   
+![image](https://dl.dropboxusercontent.com/s/w99hewh6ors3awb/HW5_side.png?dl=1)   
 
 #### Supported Systems:    
 - Reads official NES, Famicom and Family Basic cartridges including save    
@@ -55,8 +55,8 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads Fairchild Channel F cartridges (using custom adapter)    
 - Reads Magnavox Odyssey 2 cartridges (using custom adapter)    
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
- 
-![image](https://dl.dropboxusercontent.com/s/l6eujajz60x3ho9/IMG_079999.jpg?dl=1)  
+
+![image](https://dl.dropboxusercontent.com/s/oi7c2radgblylyz/HW5_slots.png?dl=1)  
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   
