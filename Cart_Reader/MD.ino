@@ -732,6 +732,11 @@ void getCartInfo_MD() {
     }
   }
 
+  // Beggar Prince rev.1 Check
+  if ((cartSize == 0x4ED02021) && (chksum == 0x3E08)) {
+    cartSize = 0x400000;
+  }
+
   // Sonic & Knuckles Check
   SnKmode = 0;
   if (chksum == 0xDFB3) {
@@ -853,8 +858,7 @@ void getCartInfo_MD() {
   // 4 = 128KB (2045 Blocks) Sega CD Backup RAM Cart
   // 6 = 512KB (8189 Blocks) Ultra CD Backup RAM Cart (Aftermarket)
   word bramCheck = readWord_MD(0x00);
-  if ((((bramCheck & 0xFF) == 0x04) && ((chksum & 0xFF) == 0x04))
-      || (((bramCheck & 0xFF) == 0x06) && ((chksum & 0xFF) == 0x06))) {
+  if ((((bramCheck & 0xFF) == 0x04) && ((chksum & 0xFF) == 0x04)) || (((bramCheck & 0xFF) == 0x06) && ((chksum & 0xFF) == 0x06))) {
     unsigned long p = 1 << (bramCheck & 0xFF);
     bramSize = p * 0x2000L;
   }
