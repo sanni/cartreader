@@ -36,9 +36,13 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Programs Gameboy Camera Flashcart      
 - Reads Game Boy Advance roms and reads/writes the save games(4K Eeprom, 64K Eeprom, Sram/Fram, 512K flash, 1M flash)  
 - Reflashes some Chinese GBA repros with i4000L0YBQ0, i4400L0ZDQ0, MX29GL128E, MSP55LV128, PC28F256M29 or M29W128GH flashroms    
-- Reads Virtual Boy cartridges (using custom adapter)    
 - Reads Sega Mega Drive roms and reads/writes save games(Sram/Fram, Eeprom)    
-- Reads Sega Master System roms and saves           
+- Reads Sega Master System roms and saves   
+
+![image](https://dl.dropboxusercontent.com/s/oi7c2radgblylyz/HW5_slots.png?dl=1)  
+
+#### Supported with adapters:    
+- Reads Virtual Boy cartridges (using custom adapter)   
 - Reads Sega Game Gear roms and saves (using Retrode adapter)    
 - Reads some Sega Mark III cartridges (using Raphnet adapter)  
 - Reads some Sega SG-1000 cartridges (using Raphnet adapter)      
@@ -55,8 +59,6 @@ And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreade
 - Reads Fairchild Channel F cartridges (using custom adapter)    
 - Reads Magnavox Odyssey 2 cartridges (using custom adapter)    
 - Programs flashrom chips like AM29F016B/D, AM29F032B, MBM29F033C, MX29F1601, MX29F1610, MX29L3211, MX29LV160, MX29LV320, S29GL032M, MBM29F800BA, AM29F800BB, LH28F016SUT, AM29F400AB, E28FXXXJ3A and AM29LV033C (using custom adapter)       
-
-![image](https://dl.dropboxusercontent.com/s/oi7c2radgblylyz/HW5_slots.png?dl=1)  
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   
