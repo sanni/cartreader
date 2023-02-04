@@ -34,7 +34,7 @@ static const char* const menuOptionsFLASH8[] PROGMEM = { flash8MenuItem1, flash8
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
 static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
-static const char flashMenuItem3[] PROGMEM = "MX26L6420 adapter";
+static const char flashMenuItem3[] PROGMEM = "16bit Flash adapter";
 // static const char flashMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, string_reset2 };
 
