@@ -687,15 +687,31 @@ void getCartInfo_MD() {
   // Set control
   dataIn_MD();
 
+  // Get cart size
   cartSize = ((long(readWord_MD(0xD2)) << 16) | readWord_MD(0xD3)) + 1;
 
+  // Check for 32x compatibility
   if ((readWord_MD(0x104 / 2) == 0x2033) && (readWord_MD(0x106 / 2) == 0x3258))
     is32x = 1;
   else
     is32x = 0;
 
-  // Cart Checksum
+  // Get cart checksum
   chksum = readWord_MD(0xC7);
+
+  // Get cart ID
+  char id[15];
+  memset(id, 0, 15);
+  for (byte c = 0; c < 14; c += 2) {
+    // split word
+    word myWord = readWord_MD((0x180 + c) / 2);
+    byte loByte = myWord & 0xFF;
+    byte hiByte = myWord >> 8;
+
+    // write to buffer
+    id[c] = hiByte;
+    id[c + 1] = loByte;
+  }
 
   // Zero Wing Check
   if (cartSize == 0x80000) {
@@ -733,27 +749,18 @@ void getCartInfo_MD() {
   }
 
   // Beggar Prince rev.1 Check
-  if ((cartSize == 0x4ED02021) && (chksum == 0x3E08)) {
+  if (!strncmp("SF-001", id, 6) && (chksum == 0x3E08)) {
     cartSize = 0x400000;
+  }
+
+  // Legend of Wukong Check
+  if (!strncmp("SF-002", id, 6) && (chksum == 0x12B0)) {
+    chksum = 0x45C6;
   }
 
   // Sonic & Knuckles Check
   SnKmode = 0;
   if (chksum == 0xDFB3) {
-    char id[15];
-    memset(id, 0, 15);
-
-    // Get ID
-    for (byte c = 0; c < 14; c += 2) {
-      // split word
-      word myWord = readWord_MD((0x180 + c) / 2);
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      id[c] = hiByte;
-      id[c + 1] = loByte;
-    }
 
     //Sonic & Knuckles ID:GM MK-1563 -00
     if (!strcmp("GM MK-1563 -00", id)) {
@@ -882,7 +889,9 @@ void getCartInfo_MD() {
           sramEnd = 0x203fff;
         }
         // Check alignment of sram
-        if ((sramBase == 0x200001) || (sramBase == 0x300001)) {  // ADDED 0x300001 FOR HARDBALL '95 (U)
+        // 0x300001 for HARDBALL '95 (U)
+        // 0x3C0001 for Legend of Wukong (Aftermarket)
+        if ((sramBase == 0x200001) || (sramBase == 0x300001) || (sramBase == 0x3C0001)) {
           // low byte
           saveType = 1;  // ODD
           sramSize = (sramEnd - sramBase + 2) / 2;
