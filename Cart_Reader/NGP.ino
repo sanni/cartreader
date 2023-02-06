@@ -3,10 +3,11 @@
 //******************************************
 #ifdef enable_NGP
 
-static const char ngpMenuItem1[] PROGMEM = "Read Rom";
+static const char ngpMenuItem1[] PROGMEM = "Read ROM";
 static const char ngpMenuItem2[] PROGMEM = "Read chip info";
+static const char ngpMenuItem3[] PROGMEM = "Change ROM size";
 //static const char ngpMenuItemReset[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, string_reset2 };
+static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, ngpMenuItem3, string_reset2 };
 
 static const char ngpRomItem1[] PROGMEM = "4 Mbits / 512 KB";
 static const char ngpRomItem2[] PROGMEM = "8 Mbits / 1 MB";
@@ -54,8 +55,8 @@ void ngpMenu() {
   vselect(false);
   uint8_t mainMenu;
 
-  convertPgm(menuOptionsNGP, 3);
-  mainMenu = question_box(F("NGP Menu"), menuOptions, 3, 0);
+  convertPgm(menuOptionsNGP, 4);
+  mainMenu = question_box(F("NGP Menu"), menuOptions, 4, 0);
 
   switch (mainMenu) {
     case 0:
@@ -69,6 +70,10 @@ void ngpMenu() {
       break;
 
     case 2:
+      changeSize_NGP();
+      break;
+
+    case 3:
       resetArduino();
       break;
   }
@@ -101,13 +106,29 @@ bool getCartInfo_NGP() {
 
 
   switch (romSize) {
-    case 0xffff: return false; break;        // detection error (no cart inserted or hw problem)
-    case 0x98ab: cartSize = 524288; break;   // 4 Mbits - Toshiba
-    case 0x204c: cartSize = 524288; break;   // 4 Mbits - STMicroelectronics ?
-    case 0x982c: cartSize = 1048576; break;  // 8 Mbits - Toshiba
-    case 0xec2c: cartSize = 1048576; break;  // 8 Mbits - Samsung
-    case 0x982f: cartSize = 2097152; break;  // 16 Mbits - Toshiba
-    case 0xec2f: cartSize = 2097152; break;  // 16 Mbits - Samsung
+    // 4 Mbits
+    case 0x98ab:  // Toshiba
+    case 0x204c:  // STMicroelectronics ?
+        cartSize = 524288;
+        break;
+
+    // 8 Mbits
+    case 0x982c:  // Toshiba
+    case 0xec2c:  // Samsung
+        cartSize = 1048576;
+        break;
+
+    // 16 Mbits
+    case 0x982f:  // Toshiba
+    case 0xec2f:  // Samsung
+    case 0x4c7:   // Fujitsu (FlashMasta USB)
+        cartSize = 2097152;
+        break;
+
+    // detection error (no cart inserted or hw problem)
+    case 0xffff:
+        return false;
+        break;
   }
 
   // reset to read mode
@@ -178,22 +199,9 @@ void printCartInfo_NGP() {
 }
 
 void readROM_NGP(char* outPathBuf, size_t bufferSize) {
-  // Set cartsize manually if chip ID is unknown
-  if (cartSize == 0) {
-    unsigned char ngpRomMenu;
-
-    // Copy menuOptions out of progmem
-    convertPgm(ngpRomOptions, 4);
-    ngpRomMenu = question_box(F("Select ROM size"), menuOptions, 4, 0);
-
-    // wait for user choice to come back from the question box menu
-    switch (ngpRomMenu) {
-      case 0: cartSize = 524288; break;
-      case 1: cartSize = 1048576; break;
-      case 2: cartSize = 2097152; break;
-      case 3: cartSize = 4194304; break;
-    }
-  }
+  // Set rom size manually if chip ID is unknown
+  if (cartSize == 0)
+    changeSize_NGP();
 
   // generate fullname of rom file
   snprintf(fileName, FILENAME_LENGTH, "%s.ngp", romName);
@@ -324,6 +332,22 @@ void scanChip_NGP() {
     }
     myFile.close();
     writeByte_NGP(0x00, 0xf0);
+  }
+}
+
+void changeSize_NGP() {
+  unsigned char ngpRomMenu;
+
+  // Copy menuOptions out of progmem
+  convertPgm(ngpRomOptions, 4);
+  ngpRomMenu = question_box(F("Select ROM size"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (ngpRomMenu) {
+    case 0: cartSize = 524288; break;
+    case 1: cartSize = 1048576; break;
+    case 2: cartSize = 2097152; break;
+    case 3: cartSize = 4194304; break;
   }
 }
 
