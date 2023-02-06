@@ -3989,7 +3989,7 @@ void readCHR(boolean readrom) {
           break;
 
         case 36:
-          banks = int_pow(2, chrsize) * 4;
+          banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x4200, i);
             for (word address = 0x0; address < 0x2000; address += 512) {
