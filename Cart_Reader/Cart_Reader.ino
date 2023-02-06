@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             17.01.2023
-   Version:          12.1
+   Date:             06.02.2023
+   Version:          12.2
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "12.1";
+char ver[5] = "12.2";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!

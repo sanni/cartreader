@@ -501,8 +501,8 @@ void read16K_FAIRCHILD()  // Read 16K Bytes
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   for (int y = 0; y < 0x20; y++) {
     // Skip BIOS/Blocks Code for 4K Cart
-    // 3K/6K CARTS MAY NEED THE SKIP BIOS/BLOCKS ROUTINE USED FOR THE 4K CART
-    // TEST 3K/6K CARTS BY SETTING ROM SIZE TO 2K/4K AND COMPARE 16K DUMPS
+    // 3K CARTS MAY NEED THE SKIP BIOS/BLOCKS ROUTINE USED FOR THE 4K CART
+    // TEST 3K CARTS BY SETTING ROM SIZE TO 2K/4K AND COMPARE 16K DUMPS
     if (cartsize == 0x1000) {  // Pro Football 4K
       setROMC_FAIRCHILD(0x8);  // Clear PC0
       setREAD_FAIRCHILD();
