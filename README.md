@@ -2,10 +2,13 @@
 
 # Open Source Cartridge Reader
 This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper.     
-Happy making. 🔧🔨😊     
+Its main purpose is to dump a video game's ROM and save file to an SD card without the need of a PC.    
 
-For any questions you can use the [Discussions](https://github.com/sanni/cartreader/discussions) and/or [Issues](https://github.com/sanni/cartreader/issues) section here on Github or visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001).    
-And be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.    
+For any questions you can use the [Discussions](https://github.com/sanni/cartreader/discussions) and/or [Issues](https://github.com/sanni/cartreader/issues) section here on Github or visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001), where you can reach most of the devs directly.    
+
+Also be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.    
+
+Happy making. 🔧🔨😊    
 
 ![image](https://dl.dropboxusercontent.com/s/3lrn7xh3f7h6jre/HW5_front.png?dl=1)   
 
