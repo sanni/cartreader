@@ -5,7 +5,7 @@
    an easy to build and easy to modify cartridge dumper.
 
    Date:             10.02.2023
-   Version:          12.2
+   Version:          12.3
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "12.2";
+char ver[5] = "12.3";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -157,7 +157,7 @@ char ver[5] = "12.2";
 #define enable_rotary
 // #define rotate_counter_clockwise
 #define clockgen_installed
-// #define fastcrc
+#define fastcrc
 #define ws_adapter_v2
 #endif
 
@@ -769,20 +769,20 @@ void rewind_line(FsFile& readfile, byte count = 1) {
 }
 
 // Calculate CRC32 if needed and compare it to CRC read from database
-boolean compareCRC(const char* database, char* crcString, boolean renamerom, int offset) {
+boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, int offset) {
 #ifdef nointro
   char crcStr[9];
-  if (crcString == 0) {
+  print_Msg(F("CRC32... "));
+  display_Update();
+
+  if (crc32sum == 0) {
     //go to root
     sd.chdir();
     // Calculate CRC32
-    print_Msg(F("CRC32... "));
-    display_Update();
     sprintf(crcStr, "%08lX", calculateCRC(fileName, folder, offset));
   } else {
-    // Use precalculated crc
-    print_Msg(F("CRC32... "));
-    strcpy(crcStr, crcString);
+    // Convert precalculated crc to string
+    sprintf(crcStr, "%08lX", ~crc32sum);
   }
   // Print checksum
   print_Msg(crcStr);
@@ -804,6 +804,7 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
 
       //if checksum search successful, rename the file and end search
       if (strcmp(crc_search, crcStr) == 0) {
+
 #ifdef enable_NES
         if ((mode == mode_NES) && (offset != 0)) {
           // Rewind to iNES Header

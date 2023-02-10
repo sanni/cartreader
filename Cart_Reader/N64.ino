@@ -239,15 +239,20 @@ void n64CartMenu() {
     case 0:
       display_Clear();
       sd.chdir("/");
-      readRom_N64();
 #ifndef fastcrc
+      // Dumping ROM slow
+      readRom_N64();
       sd.chdir("/");
-      // CRC32
       compareCRC("n64.txt", 0, 1, 0);
+#else
+      // Dumping ROM fast
+      compareCRC("n64.txt", readRom_N64(), 1, 0);
 #endif
+
 #ifdef global_log
       save_log();
 #endif
+
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -2780,6 +2785,8 @@ void getFramType() {
   Rom functions
 *****************************************/
 // Read rom and save to the SD card
+#ifndef fastcrc
+// dumping rom slow
 void readRom_N64() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
@@ -2807,9 +2814,6 @@ void readRom_N64() {
     print_FatalError(create_file_STR);
   }
 
-#ifndef fastcrc
-  // dumping rom slow
-
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize)*1024 * 1024;
@@ -2835,8 +2839,36 @@ void readRom_N64() {
   }
   // Close the file:
   myFile.close();
+}
 #else
-  // dumping rom fast
+// dumping rom fast
+uint32_t readRom_N64() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".Z64");
+
+  // create a new folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // clear the screen
+  // display_Clear();
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(create_file_STR);
+  }
+
   byte buffer[1024];
 
   //Initialize progress bar
@@ -2917,14 +2949,10 @@ void readRom_N64() {
   // Close the file:
   myFile.close();
 
-  // convert checksum to string
-  char crcStr[9];
-  sprintf(crcStr, "%08lX", ~oldcrc32);
-
-  // Search n64.txt for crc
-  compareCRC("n64.txt", crcStr, 1, 0);
-#endif
+  // Return checksum
+  return oldcrc32;
 }
+#endif
 
 #ifdef savesummarytotxt
 // Save an info.txt with information on the dumped rom to the SD card
