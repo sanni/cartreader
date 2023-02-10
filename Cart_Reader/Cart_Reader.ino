@@ -166,7 +166,7 @@ char ver[5] = "12.3";
 #define enable_Button2
 #define clockgen_installed
 #define CA_LED
-//#define fastcrc
+#define fastcrc
 #endif
 
 #if defined(HW1)
