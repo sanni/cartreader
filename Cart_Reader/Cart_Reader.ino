@@ -157,7 +157,7 @@ char ver[5] = "12.2";
 #define enable_rotary
 // #define rotate_counter_clockwise
 #define clockgen_installed
-#define fastcrc
+// #define fastcrc
 #define ws_adapter_v2
 #endif
 
