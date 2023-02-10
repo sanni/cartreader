@@ -306,6 +306,12 @@ void mdCartMenu() {
           readRealtec_MD();
         } else {
           readROM_MD();
+          // Calculate and compare CRC32 with nointro
+          if (is32x)
+            //database, crcString, renamerom, offset
+            compareCRC("32x.txt", 0, 1, 0);
+          else
+            compareCRC("md.txt", 0, 1, 0);
         }
       } else {
         print_Error(F("Cart has no ROM"));
@@ -1476,13 +1482,6 @@ void readROM_MD() {
       display_Update();
     }
   }
-
-  // Calculate and compare CRC32 with nointro
-  if (is32x)
-    //database, crcString, renamerom, offset
-    compareCRC("32x.txt", 0, 1, 0);
-  else
-    compareCRC("md.txt", 0, 1, 0);
 }
 
 /******************************************

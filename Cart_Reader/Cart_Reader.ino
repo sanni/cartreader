@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             06.02.2023
+   Date:             10.02.2023
    Version:          12.2
 
    SD lib: https://github.com/greiman/SdFat
@@ -863,12 +863,12 @@ boolean compareCRC(const char* database, char* crcString, boolean renamerom, int
       }
     }
     if (strcmp(crc_search, crcStr) != 0) {
-      println_Msg(F(" -> Not found"));
+      print_Error(F(" -> Not found"));
       return 0;
     }
   } else {
     println_Msg(F(" -> Error"));
-    println_Msg(F("Database missing"));
+    print_Error(F("Database missing"));
     return 0;
   }
 #else   // nointro
