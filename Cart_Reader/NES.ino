@@ -624,12 +624,16 @@ void getMapping() {
 
     // Display database
     while (database.available()) {
+#ifdef global_log
+      // Disable log to prevent unnecessary logging
+      dont_log = true;
+#endif
+
       byte iNES[16];
       byte* output;
       char* input;
 
       struct database_entry entry;
-
       display_Clear();
       readDatabaseEntry(database, &entry);
 
@@ -689,11 +693,6 @@ void getMapping() {
           ram = 1;  // 1K
       }
 
-#ifdef global_log
-      // Disable log to prevent unnecessary logging
-      //println_Log(F("Get Mapping from List"));
-      dont_log = true;
-#endif
       println_Msg(entry.filename);
       printNESSettings();
 #if defined(enable_OLED)
