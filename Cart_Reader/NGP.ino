@@ -156,8 +156,13 @@ bool getCartInfo_NGP() {
   ngpSystemType = readByte_NGP(0x23);
 
   // get app name
-  for (uint32_t i = 0; i < 17; i++)
+  for (uint32_t i = 0; i < 17; i++) {
     romName[i] = readByte_NGP(0x24 + i);
+
+    // replace '/' chars in game name to avoid path errors 
+    if (romName[i] == '/')
+      romName[i] = '_';
+  }
 
   return true;
 }
