@@ -56,7 +56,8 @@ void gbaMenu() {
         // wait for user choice to come back from the question box menu
         cartSize = romOptionsGBASize[GBARomMenu];
       }
-      cartSize *= 0x100000;
+      if (cartSize < 128)  // Don't multiply cartSize on second dump
+        cartSize *= 0x100000;
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
