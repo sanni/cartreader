@@ -719,15 +719,59 @@ void getCartInfo_MD() {
     id[c + 1] = loByte;
   }
 
-  // Zero Wing Check
+  // Fix cartridge sizes according to no-intro database
+  if (cartSize == 0x300000) {
+    switch (chksum) {
+      case 0xBC5F:  //Batman Forever (World).md
+      case 0x3CDD:  //Donald in Maui Mallard (Brazil) (En).md
+      case 0x44AD:  //Donald in Maui Mallard (Europe) (Rev A).md
+      case 0x2D9A:  //Foreman for Real (World).md
+      case 0x5648:  //Justice League Task Force (World).md
+      case 0x0A29:  //Mega 6 Vol. 3 (Europe).md
+      case 0x7651:  //NFL Quarterback Club (World).md
+      case 0x74CA:  //WWF RAW (World).md
+        cartSize = 0x400000;
+        break;
+    }
+  }
+  if (cartSize == 0x180000) {
+    switch (chksum) {
+      case 0xFFE2:  //Cannon Fodder (Europe).md
+      case 0xF418:  //Chaos Engine, The (Europe).md
+      case 0xF71D:  //Fatal Fury (Europe, Korea) (En).md
+      case 0xA884:  //Flashback (Europe) (En,Fr).md
+      case 0x7D68:  //Flashback - The Quest for Identity (USA) (En,Fr).md
+      case 0x030D:  //Shining Force (Europe).md
+      case 0xE975:  //Shining Force (USA).md
+        cartSize = 0x200000;
+        break;
+    }
+  }
+  if (cartSize == 0xC0000) {
+    switch (chksum) {
+      case 0x9D79:  //Wonder Boy in Monster World (USA, Europe).md
+        cartSize = 0x100000;
+        break;
+    }
+  }
+  if (cartSize == 0x40000) {
+    switch (chksum) {
+      case 0x8BC6:  //Pac-Attack (USA).md
+      case 0xB344:  //Pac-Panic (Europe).md
+        cartSize = 0x100000;
+        break;
+    }
+  }
   if (cartSize == 0x80000) {
     switch (chksum) {
-      case 0xD07D:            //Zero Wing (J) 8Mbit
-        cartSize = 0x100000;  //1MB instead of 512KB
+      case 0xD07D:  //Zero Wing (Japan).md
+        cartSize = 0x100000;
         chksum = 0xF204;
         break;
-      case 0x95C9:            //Zero Wing (E) 8Mbit
-        cartSize = 0x100000;  //1MB instead of 512KB
+      case 0x95C9:  //Zero Wing (Europe).md
+      case 0x9144:  //Zoop (Europe).md
+      case 0xB8D4:  //Zoop (USA).md
+        cartSize = 0x100000;
         break;
     }
   }
@@ -746,7 +790,6 @@ void getCartInfo_MD() {
       case 0x0000:  // Demons of Asteborg v1.0 (W) 120Mbit
         cartSize = 0xEAF2F4;
         break;
-
       case 0xBCBF:  // Demons of Asteborg v1.1 (W) 120Mbit
       case 0x6E1E:  // Demons of Asteborg v1.11 (W) 120Mbit
         cartSize = 0xEA0000;
