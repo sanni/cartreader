@@ -1091,6 +1091,17 @@ void getCartInfo_MD() {
     cartSize = 0x80000;
   }
 
+  // Some games are missing the ROM size in the header, in this case calculate ROM size by looking for mirror of the first line of the ROM
+  // This does not work for cartridges that have SRAM mapped directly after the maskrom like Striker (Europe)
+  if ((cartSize < 0x8000) || (cartSize > 0xEAF400)) {
+    for (cartSize = 0x20000 / 2; cartSize < 0x400000 / 2; cartSize += 0x20000 / 2) {
+      if ((readWord_MD(0x0) == readWord_MD(cartSize)) && (readWord_MD(0x1) == readWord_MD(0x1 + cartSize)) && (readWord_MD(0x2) == readWord_MD(0x2 + cartSize)) && (readWord_MD(0x3) == readWord_MD(0x3 + cartSize)) && (readWord_MD(0x4) == readWord_MD(0x4 + cartSize)) && (readWord_MD(0x5) == readWord_MD(0x5 + cartSize)) && (readWord_MD(0x6) == readWord_MD(0x6 + cartSize)) && (readWord_MD(0x7) == readWord_MD(0x7 + cartSize)) && (readWord_MD(0x8) == readWord_MD(0x8 + cartSize))) {
+        break;
+      }
+    }
+    cartSize = cartSize * 2;
+  }
+
   display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(F(" "));
@@ -1248,9 +1259,6 @@ void readROM_MD() {
   }
 
   byte buffer[1024] = { 0 };
-
-  // get current time
-  // unsigned long startTime = millis();
 
   // Phantasy Star/Beyond Oasis with 74HC74 and 74HC139 switch ROM/SRAM at address 0x200000
   if (0x200000 < cartSize && cartSize < 0x400000) {
@@ -1474,12 +1482,6 @@ void readROM_MD() {
     writeSSF2Map(0x50987E, 6);  // 0xA130FD
     writeSSF2Map(0x50987F, 7);  // 0xA130FF
   }
-
-  // print elapsed time
-  //print_Msg(F("Time elapsed: "));
-  //print_Msg((millis() - startTime) / 1000);
-  //println_Msg(F("s"));
-  //display_Update();
 
   // Calculate internal checksum
   print_Msg(F("Internal checksum..."));
