@@ -147,7 +147,7 @@ char ver[5] = "12.3";
 //#define enable_WS
 
 // Super A'can
-// #define enable_SUPRACAN
+//#define enable_SUPRACAN
 
 //******************************************
 // HW CONFIGS
@@ -411,8 +411,7 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_ODY2 29
 #define mode_ARC 30
 #define mode_FAIRCHILD 31
-
-#define mode_SUPRACAN 99
+#define mode_SUPRACAN 32
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -1007,9 +1006,9 @@ static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
 static const char modeItem17[] PROGMEM = "Arcadia 2001";
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
 static const char modeItem19[] PROGMEM = "Flashrom Programmer";
-static const char modeItem20[] PROGMEM = "About";
-static const char modeItem99[] PROGMEM = "Super A'can";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem99 };
+static const char modeItem20[] PROGMEM = "Super A'can";
+static const char modeItem21[] PROGMEM = "About";
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21 };
 
 // All included slots
 void mainMenu() {
@@ -1190,15 +1189,15 @@ void mainMenu() {
       break;
 #endif
 
-    case 19:
-      aboutScreen();
-      break;
-
 #ifdef enable_SUPRACAN
-    case 20:
+    case 19:
       setup_SuprAcan();
       break;
 #endif
+
+    case 20:
+      aboutScreen();
+      break;
 
     default:
       print_MissingModule();  // does not return
@@ -1226,11 +1225,11 @@ static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeIte
 // Add-ons submenu
 static const char addonsItem1[] PROGMEM = "70s Consoles";
 static const char addonsItem2[] PROGMEM = "80s Consoles";
-static const char addonsItem3[] PROGMEM = "Handhelds";
-static const char addonsItem4[] PROGMEM = "Flashrom Programmer";
-static const char addonsItem5[] PROGMEM = "90s Consoles";
+static const char addonsItem3[] PROGMEM = "90s Consoles";
+static const char addonsItem4[] PROGMEM = "Handhelds";
+static const char addonsItem5[] PROGMEM = "Flashrom Programmer";
 //static const char addonsItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, string_reset2, addonsItem5 };
+static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, string_reset2 };
 
 // 70s Consoles submenu
 static const char consoles70Item1[] PROGMEM = "Atari 2600";
@@ -1333,13 +1332,17 @@ void addonMenu() {
       consoles80Menu();
       break;
 
-    // Handhelds
     case 2:
+      consoles90Menu();
+      break;
+
+    // Handhelds
+    case 3:
       handheldMenu();
       break;
 
 #ifdef enable_FLASH
-    case 3:
+    case 4:
 #ifdef enable_FLASH16
       flashMenu();
 #else
@@ -1348,12 +1351,8 @@ void addonMenu() {
       break;
 #endif
 
-    case 4:
-      resetArduino();
-      break;
-
     case 5:
-      consoles90Menu();
+      resetArduino();
       break;
 
     default:

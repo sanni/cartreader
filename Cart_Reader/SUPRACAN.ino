@@ -1,5 +1,6 @@
 //******************************************
 // Super A'can MODULE
+// Only tested with HW3 and HW5
 //******************************************
 #ifdef enable_SUPRACAN
 
@@ -11,12 +12,13 @@ static const char acanMenuItem2[] PROGMEM = "Read Save";
 static const char acanMenuItem3[] PROGMEM = "Write Save";
 static const char acanMenuItem4[] PROGMEM = "Read UM6650";
 static const char acanMenuItem5[] PROGMEM = "Write UM6650";
-static const char acanMenuItem6[] PROGMEM = "Flash...";
+static const char acanMenuItem6[] PROGMEM = "Flash repro";
 
-static const char* const menuOptionsAcan[] PROGMEM = {acanMenuItem1, acanMenuItem2, acanMenuItem3, acanMenuItem4, acanMenuItem5, string_reset2, acanMenuItem6};
+static const char *const menuOptionsAcan[] PROGMEM = { acanMenuItem1, acanMenuItem2, acanMenuItem3, acanMenuItem4, acanMenuItem5, string_reset2, acanMenuItem6 };
 
-void setup_SuprAcan()
-{
+void setup_SuprAcan() {
+  vselect(false);
+
   // addr as output
   DDRF = 0xff;  // A0 - A7
   DDRK = 0xff;  // A8 - A15
@@ -25,7 +27,7 @@ void setup_SuprAcan()
   // data as input
   DDRC = 0xff;
   DDRA = 0xff;
-  PORTC = 0x00; // disable internal pull-up
+  PORTC = 0x00;  // disable internal pull-up
   PORTA = 0x00;
   DDRC = 0x00;  // D0 - D7
   DDRA = 0x00;  // D8 - D15
@@ -42,7 +44,7 @@ void setup_SuprAcan()
   PORTG |= (1 << 5);
   DDRG |= (1 << 5);
   PORTG |= (1 << 5);
-  
+
   dataOut_MD();
   writeWord_Acan(0xaaaa, 0xaaaa);
   writeWord_Acan(0x5555, 0x5555);
@@ -60,17 +62,16 @@ void setup_SuprAcan()
   PORTG &= ~(1 << 5);
   DDRG &= ~(1 << 5);
 
-  *((uint32_t*)(eepbit + 4)) = getFlashChipSize_Acan(*((uint16_t*)eepbit));
+  *((uint32_t *)(eepbit + 4)) = getFlashChipSize_Acan(*((uint16_t *)eepbit));
 
   display_Clear();
   initializeClockOffset();
 
   // clockgen
-  if (i2c_found)
-  {
-    clockgen.set_freq(1073863500ULL, SI5351_CLK1); // cpu
-    clockgen.set_freq(357954500ULL, SI5351_CLK2);  // subcarrier
-    clockgen.set_freq(5369317500ULL, SI5351_CLK0); // master clock
+  if (i2c_found) {
+    clockgen.set_freq(1073863500ULL, SI5351_CLK1);  // cpu
+    clockgen.set_freq(357954500ULL, SI5351_CLK2);   // subcarrier
+    clockgen.set_freq(5369317500ULL, SI5351_CLK0);  // master clock
 
     clockgen.output_enable(SI5351_CLK1, 1);
     clockgen.output_enable(SI5351_CLK2, 1);
@@ -81,82 +82,63 @@ void setup_SuprAcan()
     delay(500);
   }
 #ifdef clockgen_installed
-  else
-  {
+  else {
     print_FatalError(F("Clock Generator not found"));
   }
 #endif
 
-  // /RST to 1
-  PORTH |= (1 << 0);
-
-  cartSize = checkRomSize_Acan();
-  romSize = cartSize >> 17;
-  mode = mode_SUPRACAN;
-
-  if (cartSize == 0)
-    print_Error(F("Unable to find rom signature..."));
-  else
-  {
-    print_Msg(F("ROM Size: "));
-    print_Msg(romSize);
-    println_Msg(F(" Mb"));
-  }
-
-  display_Update();
+  checkRomExist_Acan();
   wait();
 }
 
-void suprAcanMenu()
-{
+void suprAcanMenu() {
   uint8_t mainMenu = 6;
 
-  if (*((uint32_t*)(eepbit + 4)) > 0)
+  if (*((uint32_t *)(eepbit + 4)) > 0)
     mainMenu = 7;
 
   convertPgm(menuOptionsAcan, mainMenu);
   mainMenu = question_box(F("Super A'can Menu"), menuOptions, mainMenu, 0);
 
-  switch (mainMenu)
-  {
+  switch (mainMenu) {
     case 0:
-    {
-      readROM_Acan();
-      break;
-    }
+      {
+        readROM_Acan();
+        break;
+      }
     case 1:
-    {
-      readSRAM_Acan();
-      break;
-    }
+      {
+        readSRAM_Acan();
+        break;
+      }
     case 2:
-    {
-      writeSRAM_Acan();
-      verifySRAM_Acan();
-      break;
-    }
+      {
+        writeSRAM_Acan();
+        verifySRAM_Acan();
+        break;
+      }
     case 3:
-    {
-      readUM6650();
-      break;
-    }
+      {
+        readUM6650();
+        break;
+      }
     case 4:
-    {
-      writeUM6650();
-      verifyUM6650();
-      break;
-    }
+      {
+        writeUM6650();
+        verifyUM6650();
+        break;
+      }
     case 6:
-    {
-      flashCart_Acan();
-      break;
-    }
+      {
+        flashCart_Acan();
+        break;
+      }
     default:
-    {
-      resetCart_Acan();
-      resetArduino();
-      break;
-    }
+      {
+        resetCart_Acan();
+        resetArduino();
+        break;
+      }
   }
 
   println_Msg(F(""));
@@ -165,8 +147,7 @@ void suprAcanMenu()
   wait();
 }
 
-static void readROM_Acan()
-{
+static void readROM_Acan() {
   uint32_t crc32 = 0xffffffff;
 
   EEPROM_readAnything(0, foldern);
@@ -190,11 +171,9 @@ static void readROM_Acan()
   draw_progressbar(0, cartSize);
 
   dataIn_MD();
-  for (uint32_t addr = 0; addr < cartSize; addr += 512, draw_progressbar(addr, cartSize))
-  {
-    for (uint32_t i = 0; i < 512; i += 2)
-    {
-      *((uint16_t*)(sdBuffer + i)) = readWord_Acan(addr + i);
+  for (uint32_t addr = 0; addr < cartSize; addr += 512, draw_progressbar(addr, cartSize)) {
+    for (uint32_t i = 0; i < 512; i += 2) {
+      *((uint16_t *)(sdBuffer + i)) = readWord_Acan(addr + i);
       UPDATE_CRC(crc32, sdBuffer[i]);
       UPDATE_CRC(crc32, sdBuffer[i + 1]);
     }
@@ -214,8 +193,7 @@ static void readROM_Acan()
   print_STR(done_STR, 1);
 }
 
-static void readSRAM_Acan()
-{
+static void readSRAM_Acan() {
   // create a new folder for storing rom file
   EEPROM_readAnything(0, foldern);
   snprintf(folder, FILEPATH_LENGTH, "/ACAN/SAVE/%d", foldern);
@@ -236,8 +214,7 @@ static void readSRAM_Acan()
   EEPROM_writeAnything(0, foldern);
 
   dataIn_MD();
-  for (uint32_t i = 0; i < 0x10000; i += 1024)
-  {
+  for (uint32_t i = 0; i < 0x10000; i += 1024) {
     for (uint32_t j = 0; j < 1024; j += 2)
       sdBuffer[(j >> 1)] = readWord_Acan(0xec0000 + i + j);
 
@@ -248,8 +225,7 @@ static void readSRAM_Acan()
   print_STR(done_STR, 1);
 }
 
-static void writeSRAM_Acan()
-{
+static void writeSRAM_Acan() {
   filePath[0] = 0;
   sd.chdir();
   fileBrowser(F("Select a file"));
@@ -257,8 +233,7 @@ static void writeSRAM_Acan()
 
   display_Clear();
 
-  if (!myFile.open(filePath, O_READ))
-  {
+  if (!myFile.open(filePath, O_READ)) {
     print_Error(F("File doesn't exist"));
     return;
   }
@@ -269,8 +244,7 @@ static void writeSRAM_Acan()
   display_Update();
 
   dataOut_MD();
-  for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024)
-  {
+  for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024) {
     myFile.read(sdBuffer, 512);
 
     for (uint32_t j = 0; j < 1024; j += 2)
@@ -283,13 +257,11 @@ static void writeSRAM_Acan()
   print_STR(done_STR, 1);
 }
 
-static void verifySRAM_Acan()
-{
+static void verifySRAM_Acan() {
   print_STR(verifying_STR, 0);
   display_Update();
 
-  if (!myFile.open(filePath, O_READ))
-  {
+  if (!myFile.open(filePath, O_READ)) {
     print_Error(F("File doesn't exist"));
     return;
   }
@@ -297,12 +269,10 @@ static void verifySRAM_Acan()
   uint16_t write_errors = 0;
 
   dataIn_MD();
-  for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024)
-  {
+  for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024) {
     myFile.read(sdBuffer, 512);
 
-    for (uint32_t j = 0; j < 1024; j += 2)
-    {
+    for (uint32_t j = 0; j < 1024; j += 2) {
       if (readWord_Acan(0xec0000 + i + j) != sdBuffer[(j >> 1)])
         write_errors++;
     }
@@ -310,12 +280,9 @@ static void verifySRAM_Acan()
 
   myFile.close();
 
-  if (write_errors == 0)
-  {
+  if (write_errors == 0) {
     println_Msg(F("passed"));
-  }
-  else
-  {
+  } else {
     println_Msg(F("failed"));
     print_Msg(F("Error: "));
     print_Msg(write_errors);
@@ -324,8 +291,7 @@ static void verifySRAM_Acan()
   }
 }
 
-static void readUM6650()
-{
+static void readUM6650() {
   // create a new folder for storing rom file
   EEPROM_readAnything(0, foldern);
   snprintf(folder, sizeof(folder), "/ACAN/UM6650/%d", foldern);
@@ -345,8 +311,7 @@ static void readUM6650()
   foldern++;
   EEPROM_writeAnything(0, foldern);
 
-  for (uint16_t i = 0; i < 256; i++)
-  {
+  for (uint16_t i = 0; i < 256; i++) {
     dataOut_MD();
     writeWord_Acan(0xeb0d03, i);
 
@@ -360,13 +325,11 @@ static void readUM6650()
   print_STR(done_STR, 1);
 }
 
-static void verifyUM6650()
-{
+static void verifyUM6650() {
   print_STR(verifying_STR, 0);
   display_Update();
 
-  if (!myFile.open(filePath, O_READ))
-  {
+  if (!myFile.open(filePath, O_READ)) {
     print_Error(F("File doesn't exist"));
     return;
   }
@@ -375,8 +338,7 @@ static void verifyUM6650()
   uint16_t len = myFile.read(sdBuffer, 256);
   myFile.close();
 
-  for (uint16_t i = 0; i < len; i++)
-  {
+  for (uint16_t i = 0; i < len; i++) {
     dataOut_MD();
     writeWord_Acan(0xeb0d03, i);
 
@@ -385,22 +347,18 @@ static void verifyUM6650()
       write_errors++;
   }
 
-  if (write_errors)
-  {
+  if (write_errors) {
     println_Msg(F("failed"));
     print_Msg(F("Error: "));
     print_Msg(write_errors);
     println_Msg(F(" bytes "));
     print_Error(did_not_verify_STR);
-  }
-  else
-  {
+  } else {
     println_Msg(F("passed"));
   }
 }
 
-static void writeUM6650()
-{
+static void writeUM6650() {
   filePath[0] = 0;
   sd.chdir("/");
   fileBrowser(F("Select a file"));
@@ -408,8 +366,7 @@ static void writeUM6650()
 
   display_Clear();
 
-  if (!myFile.open(filePath, O_READ))
-  {
+  if (!myFile.open(filePath, O_READ)) {
     print_Error(F("File doesn't exist"));
     return;
   }
@@ -423,8 +380,7 @@ static void writeUM6650()
   display_Update();
 
   dataOut_MD();
-  for (uint16_t i = 0; i < len; i++)
-  {
+  for (uint16_t i = 0; i < len; i++) {
     writeWord_Acan(0xeb0d03, i);
     writeWord_Acan(0xeb0d01, sdBuffer[i]);
 
@@ -435,9 +391,8 @@ static void writeUM6650()
   print_STR(done_STR, 1);
 }
 
-static void flashCart_Acan()
-{
-  uint32_t *flash_size = (uint32_t*)(eepbit + 4);
+static void flashCart_Acan() {
+  uint32_t *flash_size = (uint32_t *)(eepbit + 4);
 
   filePath[0] = 0;
   sd.chdir();
@@ -446,8 +401,7 @@ static void flashCart_Acan()
 
   display_Clear();
 
-  if (!myFile.open(filePath, O_READ))
-  {
+  if (!myFile.open(filePath, O_READ)) {
     print_Error(F("File doesn't exist"));
     return;
   }
@@ -465,8 +419,7 @@ static void flashCart_Acan()
 
   draw_progressbar(0, file_length);
 
-  for (i = 0; i < file_length; i += *flash_size)
-  {
+  for (i = 0; i < file_length; i += *flash_size) {
     // erase chip
     dataOut_MD();
     writeWord_Acan(i + 0xaaaa, 0xaaaa);
@@ -477,15 +430,14 @@ static void flashCart_Acan()
     writeWord_Acan(i + 0xaaaa, 0x1010);
 
     dataIn_MD();
-    while (readWord_Acan(i) != 0xffff);
+    while (readWord_Acan(i) != 0xffff)
+      ;
 
-    for (j = 0; j < *flash_size; j += 512)
-    {
+    for (j = 0; j < *flash_size; j += 512) {
       myFile.read(sdBuffer, 512);
-      
-      for (k = 0; k < 512; k += 2)
-      {
-        data = *((uint16_t*)(sdBuffer + k));
+
+      for (k = 0; k < 512; k += 2) {
+        data = *((uint16_t *)(sdBuffer + k));
 
         dataOut_MD();
         writeWord_Acan(i + 0xaaaa, 0xaaaa);
@@ -494,7 +446,8 @@ static void flashCart_Acan()
         writeWord_Acan(i + j + k, data);
 
         dataIn_MD();
-        while (readWord_Acan(i + j + k) != data);
+        while (readWord_Acan(i + j + k) != data)
+          ;
       }
 
       draw_progressbar(i + j + k, file_length);
@@ -508,18 +461,44 @@ static void flashCart_Acan()
   DDRG &= ~(1 << 5);
 
   myFile.close();
-
   print_STR(done_STR, 1);
+
+  checkRomExist_Acan();
+}
+
+static void checkRomExist_Acan() {
+  // RST to 0
+  PORTH &= ~(1 << 0);
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+
+  // /RST to 1
+  PORTH |= (1 << 0);
+
+  cartSize = getRomSize_Acan();
+  romSize = cartSize >> 17;
+  mode = mode_SUPRACAN;
+
+  if (cartSize == 0)
+    print_Error(F("Unable to find rom signature..."));
+  else {
+    print_Msg(F("ROM Size: "));
+    print_Msg(romSize);
+    println_Msg(F(" Mb"));
+  }
+
   display_Update();
 }
 
-static uint32_t checkRomSize_Acan()
-{
+static uint32_t getRomSize_Acan() {
   uint32_t addr = 0;
   uint32_t crc32;
 
-  do
-  {
+  do {
     // check if there is rom chip exists
     // pull-up enable
     DDRC = 0xff;
@@ -528,7 +507,7 @@ static uint32_t checkRomSize_Acan()
     PORTA = 0xff;
     DDRC = 0x00;
     DDRA = 0x00;
-    *((uint16_t*)sdBuffer) = readWord_Acan(addr);
+    *((uint16_t *)sdBuffer) = readWord_Acan(addr);
 
     // pull-up disable
     DDRC = 0xff;
@@ -537,7 +516,7 @@ static uint32_t checkRomSize_Acan()
     PORTA = 0x00;
     DDRC = 0x00;
     DDRA = 0x00;
-    *((uint16_t*)(sdBuffer + 2)) = readWord_Acan(addr);
+    *((uint16_t *)(sdBuffer + 2)) = readWord_Acan(addr);
 
     // should be them same if chip exists
     if (sdBuffer[0] != sdBuffer[2] || sdBuffer[1] != sdBuffer[3])
@@ -545,22 +524,18 @@ static uint32_t checkRomSize_Acan()
 
     crc32 = 0xffffffff;
 
-    for (uint32_t i = 0x2000; i < 0x2080; i += 2)
-    {
-      *((uint16_t*)sdBuffer) = readWord_Acan(addr + i);
+    for (uint32_t i = 0x2000; i < 0x2080; i += 2) {
+      *((uint16_t *)sdBuffer) = readWord_Acan(addr + i);
       UPDATE_CRC(crc32, sdBuffer[0]);
       UPDATE_CRC(crc32, sdBuffer[1]);
     }
 
     crc32 = ~crc32;
 
-    if (crc32 == 0xa2bc9d7a)
-    {
+    if (crc32 == 0xa2bc9d7a) {
       if (addr > 0)
         break;
-    }
-    else
-    {
+    } else {
       if (addr == 0)
         break;
     }
@@ -572,92 +547,82 @@ static uint32_t checkRomSize_Acan()
   return addr;
 }
 
-static void resetCart_Acan()
-{
+static void resetCart_Acan() {
   // set /CS(PH3), R/W(PH5), /AS(PH6) high
   // /RST(PH0) and C27(PH4) low
   PORTH |= ((1 << 3) | (1 << 5) | (1 << 6));
   PORTH &= ~((1 << 0) | (1 << 4));
 
-  if (i2c_found)
-  {
-    clockgen.output_enable(SI5351_CLK1, 0); // CPU clock
-    clockgen.output_enable(SI5351_CLK2, 0); // CIC clock
-    clockgen.output_enable(SI5351_CLK0, 0); // master clock
+  if (i2c_found) {
+    clockgen.output_enable(SI5351_CLK1, 0);  // CPU clock
+    clockgen.output_enable(SI5351_CLK2, 0);  // CIC clock
+    clockgen.output_enable(SI5351_CLK0, 0);  // master clock
   }
 }
 
-static void writeWord_Acan(uint32_t addr, uint16_t data)
-{
-  uint8_t *ptr = (uint8_t*)&addr;
+static void writeWord_Acan(uint32_t addr, uint16_t data) {
+  uint8_t *ptr = (uint8_t *)&addr;
 
   PORTF = *ptr++;
   PORTK = *ptr++;
   PORTL = *ptr;
 
-  if (*ptr < 0xe0)
-  {
+  if (*ptr < 0xe0) {
     // ROM area
     // /CS(PH3), C27(PH4), R/W(PH5), /AS(PH6) to L
     PORTH &= ~((1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
-  }
-  else if (*ptr == 0xec)
-  {
+  } else if (*ptr == 0xec) {
     // save area
     // /CS(PH3) to H, C27(PH4), R/W(PH5), /AS(PH6) to L
     PORTH |= (1 << 3);
     PORTH &= ~((1 << 4) | (1 << 5) | (1 << 6));
-  }
-  else if (addr == 0x00eb0d03 || addr == 0x00eb0d01)
-  {
+  } else if (addr == 0x00eb0d03 || addr == 0x00eb0d01) {
     // UM6650 area
     // /CS(PH3), C27(PH4) to H, R/W(PH5), /AS(PH6) to L
     PORTH |= ((1 << 3) | (1 << 4));
     PORTH &= ~((1 << 5) | (1 << 6));
   }
 
-  ptr = (uint8_t*)&data;
+  ptr = (uint8_t *)&data;
   PORTC = *ptr++;
   PORTA = *ptr;
 
-  NOP; NOP; NOP;
+  NOP;
+  NOP;
+  NOP;
 
   PORTH &= ~(1 << 4);
   PORTH |= ((1 << 3) | (1 << 5) | (1 << 6));
 }
 
-static uint16_t readWord_Acan(uint32_t addr)
-{
-  uint8_t *ptr = (uint8_t*)&addr;
+static uint16_t readWord_Acan(uint32_t addr) {
+  uint8_t *ptr = (uint8_t *)&addr;
   uint16_t data;
 
   PORTF = *ptr++;
   PORTK = *ptr++;
   PORTL = *ptr;
 
-  if (*ptr < 0xe0)
-  {
+  if (*ptr < 0xe0) {
     // ROM area
     // /CS(PH3), C27(PH4), /AS(PH6) to L
     PORTH &= ~((1 << 3) | (1 << 4) | (1 << 6));
-  }
-  else if (*ptr == 0xec)
-  {
+  } else if (*ptr == 0xec) {
     // save area
     // /CS(PH3) to H, C27(PH4), /AS(PH6) to L
     PORTH |= (1 << 3);
     PORTH &= ~((1 << 4) | (1 << 6));
-  }
-  else if (addr == 0x00eb0d03 || addr == 0x00eb0d01)
-  {
+  } else if (addr == 0x00eb0d03 || addr == 0x00eb0d01) {
     // UM6650 area
     // /CS(PH3), C27(PH4) to H, /AS(PH6) to L
     PORTH |= ((1 << 3) | (1 << 4));
     PORTH &= ~(1 << 6);
   }
 
-  ptr = (uint8_t*)&data;
-  NOP; NOP; NOP;
+  ptr = (uint8_t *)&data;
+  NOP;
+  NOP;
+  NOP;
 
   *ptr++ = PINC;
   *ptr = PINA;
@@ -668,11 +633,9 @@ static uint16_t readWord_Acan(uint32_t addr)
   return data;
 }
 
-static uint32_t getFlashChipSize_Acan(uint16_t chip_id)
-{
+static uint32_t getFlashChipSize_Acan(uint16_t chip_id) {
   // 0x0458 (8M), 0x01ab (4M), 0x01d8 (16M)
-  switch (chip_id)
-  {
+  switch (chip_id) {
     case 0x01ab: return 524288;
     case 0x0458: return 1048576;
     case 0x01d8: return 2097152;
