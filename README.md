@@ -47,7 +47,8 @@ Happy making. 🔧🔨😊
 - Atari 2600    
 - Emerson Arcadia 2001   
 - Fairchild Channel F     
-- Magnavox Odyssey 2     
+- Magnavox Odyssey 2  
+- Super A'Can    
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   
