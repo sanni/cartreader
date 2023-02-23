@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             13.02.2023
-   Version:          12.3
+   Date:             23.02.2023
+   Version:          12.4
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -23,7 +23,7 @@
    Wayne and Layne - Video Game Shield menu
    skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW, ARC, Atari, ODY2, Fairchild modules
    Tamanegi_taro - PCE and Satellaview modules
-   splash5 - GBSmart, Wonderswan and NGP modules
+   splash5 - GBSmart, Wonderswan, NGP and Super A'can modules
    hkz & themanbehindthecurtain - N64 flashram commands
    Andrew Brown & Peter Den Hartog - N64 controller protocol
    libdragon - N64 controller checksum functions
@@ -57,7 +57,7 @@
 
 **********************************************************************************/
 
-char ver[5] = "12.3";
+char ver[5] = "12.4";
 
 //******************************************
 // !!! CHOOSE HARDWARE VERSION !!!
@@ -1005,10 +1005,11 @@ static const char modeItem15[] PROGMEM = "Atari 2600";
 static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
 static const char modeItem17[] PROGMEM = "Arcadia 2001";
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
-static const char modeItem19[] PROGMEM = "Flashrom Programmer";
-static const char modeItem20[] PROGMEM = "Super A'can";
+static const char modeItem19[] PROGMEM = "Super A'can";
+static const char modeItem20[] PROGMEM = "Flashrom Programmer";
 static const char modeItem21[] PROGMEM = "About";
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21 };
+//static const char modeItem22[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -1020,7 +1021,7 @@ void mainMenu() {
   // Main menu spans across three pages
   currPage = 1;
   lastPage = 1;
-  numPages = 3;
+  numPages = 4;
 
   while (1) {
     if (currPage == 1) {
@@ -1029,9 +1030,12 @@ void mainMenu() {
     } else if (currPage == 2) {
       option_offset = 7;
       num_answers = 7;
-    } else {  // currPage == 3
+    } else if (currPage == 3) {
       option_offset = 14;
       num_answers = 7;
+    } else {  // currPage == 4
+      option_offset = 21;
+      num_answers = 1;
     }
     // Copy menuOptions out of progmem
     convertPgm(modeOptions + option_offset, num_answers);
@@ -1179,8 +1183,14 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_SUPRACAN
     case 18:
+      setup_SuprAcan();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 19:
 #ifdef enable_FLASH16
       flashMenu();
 #else
@@ -1189,14 +1199,12 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_SUPRACAN
-    case 19:
-      setup_SuprAcan();
-      break;
-#endif
-
     case 20:
       aboutScreen();
+      break;
+
+    case 21:
+      resetArduino();
       break;
 
     default:

@@ -109,26 +109,26 @@ bool getCartInfo_NGP() {
     // 4 Mbits
     case 0x98ab:  // Toshiba
     case 0x204c:  // STMicroelectronics ?
-        cartSize = 524288;
-        break;
+      cartSize = 524288;
+      break;
 
     // 8 Mbits
     case 0x982c:  // Toshiba
     case 0xec2c:  // Samsung
-        cartSize = 1048576;
-        break;
+      cartSize = 1048576;
+      break;
 
     // 16 Mbits
     case 0x982f:  // Toshiba
     case 0xec2f:  // Samsung
     case 0x4c7:   // Fujitsu (FlashMasta USB)
-        cartSize = 2097152;
-        break;
+      cartSize = 2097152;
+      break;
 
     // detection error (no cart inserted or hw problem)
     case 0xffff:
-        return false;
-        break;
+      return false;
+      break;
   }
 
   // reset to read mode
@@ -159,7 +159,7 @@ bool getCartInfo_NGP() {
   for (uint32_t i = 0; i < 17; i++) {
     romName[i] = readByte_NGP(0x24 + i);
 
-    // replace '/' chars in game name to avoid path errors 
+    // replace '/' chars in game name to avoid path errors
     if (romName[i] == '/')
       romName[i] = '_';
   }
