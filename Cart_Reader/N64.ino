@@ -1784,7 +1784,7 @@ void validateMPK() {
     print_Msg(F("failed"));
   } else {
     errorLvl = 0;
-    print_Msg(F("pased"));
+    print_Msg(F("passed"));
   }
   display_Update();
 
