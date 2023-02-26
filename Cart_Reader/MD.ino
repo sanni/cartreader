@@ -1091,6 +1091,12 @@ void getCartInfo_MD() {
     cartSize = 0x80000;
   }
 
+  // Fatman (Japan)
+  if (!strncmp(romName, "LACEGMT4401300J", 15) && (chksum == 0xffff)) {
+    chksum = 0xC560;
+    cartSize = 0xA0000;
+  }
+
   // Some games are missing the ROM size in the header, in this case calculate ROM size by looking for mirror of the first line of the ROM
   // This does not work for cartridges that have SRAM mapped directly after the maskrom like Striker (Europe)
   if ((cartSize < 0x8000) || (cartSize > 0xEAF400)) {
