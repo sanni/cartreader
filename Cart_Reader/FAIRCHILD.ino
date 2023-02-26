@@ -442,8 +442,19 @@ void readROM_FAIRCHILD() {
         myFile.write(sdBuffer, 512);
         delay(1);  // Added delay
         for (int z = 1; z < blocks; z++) {
-          // Skip BIOS/Blocks Code for 4K Cart
-          if (cartsize == 0x1000) {  // Pro Football 4K
+          if (cartsize == 0x0C00) {  // 3K
+            // Skip SRAM Code for 3K Carts - Tested with Hangman 3K
+            // Hangman uses an F21022PC 1K SRAM Chip at 0x0400
+            // SRAM is NOT Battery Backed so contents change
+            // Chips are organized: 1K ROM + 1K SRAM + 1K ROM + 1K ROM
+            if (z == 2) {
+              for (int x = 0; x < 0x0A00; x++) {  // Skip 1K SRAM at 0x0400
+                readData_FAIRCHILD();
+              }
+            }
+          } else if (cartsize == 0x1000) {  // 4K
+            // Skip BIOS/Blocks Code for 4K Carts - Tested with Pro Football 4K
+            // Pro Football uses a DM74LS02N (Quad 2-Input NOR Gate) with two 2K ROM Chips
             setROMC_FAIRCHILD(0x8);  // Clear PC0
             setREAD_FAIRCHILD();
             uint16_t offset = z * 0x200;
@@ -500,10 +511,11 @@ void read16K_FAIRCHILD()  // Read 16K Bytes
 
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   for (int y = 0; y < 0x20; y++) {
-    // Skip BIOS/Blocks Code for 4K Cart
-    // 3K CARTS MAY NEED THE SKIP BIOS/BLOCKS ROUTINE USED FOR THE 4K CART
-    // TEST 3K CARTS BY SETTING ROM SIZE TO 2K/4K AND COMPARE 16K DUMPS
-    if (cartsize == 0x1000) {  // Pro Football 4K
+    if (cartsize == 0x1000) {  // 4K
+      // Skip BIOS/Blocks Code for 4K Carts - Tested with Pro Football 4K
+      // Pro Football uses a DM74LS02N (Quad 2-Input NOR Gate) with two 2K ROM Chips
+      // IF OTHER 4K CARTS DO NOT DUMP PROPERLY USING READROM
+      // TEST BY SETTING ROM SIZE TO 2K AND 4K THEN COMPARE 16K DUMPS
       setROMC_FAIRCHILD(0x8);  // Clear PC0
       setREAD_FAIRCHILD();
       uint16_t offset = y * 0x200;
