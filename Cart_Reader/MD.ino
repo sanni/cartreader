@@ -720,6 +720,22 @@ void getCartInfo_MD() {
   }
 
   // Fix cartridge sizes according to no-intro database
+  if (cartSize == 0x400000) {
+    switch (chksum) {
+      case 0xCE25:  // Super Street Fighter 2 (J) 40Mbit
+      case 0xE41D:  // Super Street Fighter 2 (E) 40Mbit
+      case 0xE017:  // Super Street Fighter 2 (U) 40Mbit
+        cartSize = 0x500000;
+        break;
+      case 0x0000:  // Demons of Asteborg v1.0 (W) 120Mbit
+        cartSize = 0xEAF2F4;
+        break;
+      case 0xBCBF:  // Demons of Asteborg v1.1 (W) 120Mbit
+      case 0x6E1E:  // Demons of Asteborg v1.11 (W) 120Mbit
+        cartSize = 0xEA0000;
+        break;
+    }
+  }
   if (cartSize == 0x300000) {
     switch (chksum) {
       case 0xBC5F:  //Batman Forever (World).md
@@ -754,14 +770,6 @@ void getCartInfo_MD() {
         break;
     }
   }
-  if (cartSize == 0x40000) {
-    switch (chksum) {
-      case 0x8BC6:  //Pac-Attack (USA).md
-      case 0xB344:  //Pac-Panic (Europe).md
-        cartSize = 0x100000;
-        break;
-    }
-  }
   if (cartSize == 0x80000) {
     switch (chksum) {
       case 0xD07D:  //Zero Wing (Japan).md
@@ -775,24 +783,23 @@ void getCartInfo_MD() {
         break;
     }
   }
-
-  // Super Street Fighter 2 + Demons of Asteborg Check
-  if (cartSize == 0x400000) {
+  if (cartSize == 0x40000) {
     switch (chksum) {
-      // Super Street Fighter 2
-      case 0xCE25:  // Super Street Fighter 2 (J) 40Mbit
-      case 0xE41D:  // Super Street Fighter 2 (E) 40Mbit
-      case 0xE017:  // Super Street Fighter 2 (U) 40Mbit
-        cartSize = 0x500000;
+      case 0x8BC6:  //Pac-Attack (USA).md
+      case 0xB344:  //Pac-Panic (Europe).md
+        cartSize = 0x100000;
         break;
-
-      // Demons of Asteborg
-      case 0x0000:  // Demons of Asteborg v1.0 (W) 120Mbit
-        cartSize = 0xEAF2F4;
+    }
+  }
+  if (cartSize == 0x20000) {
+    switch (chksum) {
+      case 0x7E50:  //Micro Machines 2 - Turbo Tournament (Europe).md
+        cartSize = 0x100000;
+        chksum = 0xD074;
         break;
-      case 0xBCBF:  // Demons of Asteborg v1.1 (W) 120Mbit
-      case 0x6E1E:  // Demons of Asteborg v1.11 (W) 120Mbit
-        cartSize = 0xEA0000;
+      case 0x168B:  //Micro Machines - Military (Europe).md
+        cartSize = 0x100000;
+        chksum = 0xCEE0;
         break;
     }
   }
