@@ -19,6 +19,7 @@
 #define TURBOCHIP 1
 #define HUCARD_NOSWAP 2
 #define DETECTION_SIZE 64
+#define FORCED_SIZE 1024
 #define CHKSUM_SKIP 0
 #define CHKSUM_OK 1
 #define CHKSUM_ERROR 2
@@ -52,21 +53,19 @@ uint8_t tennokoe_bank_index = 0;
 static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
 static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
 static const char pceMenuItem3[] PROGMEM = "Turbochip";
-//static const char pceMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, string_reset2 };
 
 // PCE card menu items
 static const char menuOptionspceCart_0[] PROGMEM = "Read ROM";
-static const char menuOptionspceCart_1_fmt[] PROGMEM = "Read RAM Bank %d";
-static const char menuOptionspceCart_2_fmt[] PROGMEM = "Write RAM Bank %d";
-static const char menuOptionspceCart_4[] PROGMEM = "Inc Bank Number";
-static const char menuOptionspceCart_5[] PROGMEM = "Dec Bank Number";
-static const char menuOptionspceCart_6_fmt[] PROGMEM = "ROM size now %dK";
-static const char menuOptionspceCart_6[] PROGMEM = "Force ROM size";
+static const char menuOptionspceCart_1[] PROGMEM = "Read RAM Bank %d";
+static const char menuOptionspceCart_2[] PROGMEM = "Write RAM Bank %d";
+static const char menuOptionspceCart_3[] PROGMEM = "Inc Bank Number";
+static const char menuOptionspceCart_4[] PROGMEM = "Dec Bank Number";
+static const char menuOptionspceCart_5[] PROGMEM = "Force 1MB ROM size";
+static const char menuOptionspceCart_5_fmt[] PROGMEM = "ROM size now %dK";
 
 // Turbochip menu items
 static const char pceTCMenuItem1[] PROGMEM = "Read ROM";
-//static const char pceTCMenuItem2[] PROGMEM = "Reset"; (stored in common strings array)
 static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_reset2 };
 
 // PCE start menu
@@ -150,7 +149,6 @@ void pin_read_write_PCE(void) {
 }
 
 void pin_init_PCE(void) {
-
   //Set Address Pins to input and pull up
   DDRF = 0x00;
   PORTF = 0xFF;
@@ -536,7 +534,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   // create a new folder for the save file
   EEPROM_readAnything(0, foldern);
   sd.chdir("/");
-  sprintf(folder, "PCE/ROM/%d", foldern);
+  sprintf(folder, "PCE/RAM/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
@@ -799,49 +797,53 @@ void pceMenu() {
 
   if (pce_internal_mode == HUCARD || pce_internal_mode == HUCARD_NOSWAP) {
     strcpy_P(menuOptions[0], menuOptionspceCart_0);
-    sprintf_P(menuOptions[1], menuOptionspceCart_1_fmt, tennokoe_bank_index + 1);
-    sprintf_P(menuOptions[2], menuOptionspceCart_2_fmt, tennokoe_bank_index + 1);
-    strcpy_P(menuOptions[3], string_reset2);
+    sprintf_P(menuOptions[1], menuOptionspceCart_1, tennokoe_bank_index + 1);
+    sprintf_P(menuOptions[2], menuOptionspceCart_2, tennokoe_bank_index + 1);
+    strcpy_P(menuOptions[3], menuOptionspceCart_3);
     strcpy_P(menuOptions[4], menuOptionspceCart_4);
-    strcpy_P(menuOptions[5], menuOptionspceCart_5);
     if (pce_force_rom_size > 0) {
-      sprintf_P(menuOptions[6], menuOptionspceCart_6_fmt, pce_force_rom_size);
+      sprintf_P(menuOptions[5], menuOptionspceCart_5_fmt, pce_force_rom_size);
     } else {
-      strcpy_P(menuOptions[6], menuOptionspceCart_6);
+      sprintf_P(menuOptions[5], menuOptionspceCart_5, FORCED_SIZE);
     }
+    strcpy_P(menuOptions[6], string_reset2);
     mainMenu = question_box(F("PCE HuCARD menu"), menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu
     switch (mainMenu) {
       case 0:
-        display_Clear();
-        // Change working dir to root
-        sd.chdir("/");
         read_rom_PCE();
         break;
+
       case 1:
-        display_Clear();
         read_tennokoe_bank_PCE(tennokoe_bank_index);
         break;
+
       case 2:
-        display_Clear();
         write_tennokoe_bank_PCE(tennokoe_bank_index);
         break;
+
       case 3:
-        resetArduino();
-        break;
-      case 4:
         if (tennokoe_bank_index < 3) {
           tennokoe_bank_index++;
         }
+        pceMenu();
         break;
-      case 5:
+
+      case 4:
         if (tennokoe_bank_index > 0) {
           tennokoe_bank_index--;
         }
+        pceMenu();
         break;
+
+      case 5:
+        pce_force_rom_size = FORCED_SIZE;
+        pceMenu();
+        break;
+
       case 6:
-        pce_force_rom_size = 1024;
+        resetArduino();
         break;
     }
   } else {
@@ -852,9 +854,6 @@ void pceMenu() {
     // wait for user choice to come back from the question box menu
     switch (mainMenu) {
       case 0:
-        display_Clear();
-        // Change working dir to root
-        sd.chdir("/");
         read_rom_PCE();
         break;
 
