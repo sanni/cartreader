@@ -61,7 +61,7 @@ static const char menuOptionspceCart_1[] PROGMEM = "Read RAM Bank %d";
 static const char menuOptionspceCart_2[] PROGMEM = "Write RAM Bank %d";
 static const char menuOptionspceCart_3[] PROGMEM = "Inc Bank Number";
 static const char menuOptionspceCart_4[] PROGMEM = "Dec Bank Number";
-static const char menuOptionspceCart_5[] PROGMEM = "Force 1MB ROM size";
+static const char menuOptionspceCart_5[] PROGMEM = "Set %dK ROM size";
 static const char menuOptionspceCart_5_fmt[] PROGMEM = "ROM size now %dK";
 
 // Turbochip menu items
@@ -607,6 +607,11 @@ void read_tennokoe_bank_PCE(int bank_index) {
 
   //Close the file:
   myFile.close();
+
+  println_Msg(F(""));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
 }
 
 void write_tennokoe_bank_PCE(int bank_index) {
@@ -698,11 +703,15 @@ void write_tennokoe_bank_PCE(int bank_index) {
     // Close the file:
     myFile.close();
     println_Msg(F("Finished"));
-    display_Update();
-    wait();
+
   } else {
     print_Error(F("File doesn't exist"));
   }
+
+  println_Msg(F(""));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
 }
 
 void read_rom_PCE(void) {
@@ -788,6 +797,11 @@ void read_rom_PCE(void) {
 
   //CRC search and rename ROM
   crc_search(fileName, folder, rom_size, crc);
+
+  println_Msg(F(""));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
 }
 
 // PC Engine Menu
@@ -827,19 +841,16 @@ void pceMenu() {
         if (tennokoe_bank_index < 3) {
           tennokoe_bank_index++;
         }
-        pceMenu();
         break;
 
       case 4:
         if (tennokoe_bank_index > 0) {
           tennokoe_bank_index--;
         }
-        pceMenu();
         break;
 
       case 5:
         pce_force_rom_size = FORCED_SIZE;
-        pceMenu();
         break;
 
       case 6:
@@ -862,12 +873,6 @@ void pceMenu() {
         break;
     }
   }
-
-  println_Msg(F(""));
-  // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
 }
 
 #endif
