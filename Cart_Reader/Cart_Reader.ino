@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             23.02.2023
+   Date:             08.03.2023
    Version:          12.4
 
    SD lib: https://github.com/greiman/SdFat
@@ -81,6 +81,9 @@ char ver[5] = "12.4";
 // don't need/need to save program storage space and dynamic memory
 // If you only get an empty or "Press Button" screen after flashing
 // you have enabled too many modules
+
+// Self test
+#define enable_selftest
 
 // Atari 2600
 //#define enable_ATARI
@@ -1007,9 +1010,10 @@ static const char modeItem17[] PROGMEM = "Arcadia 2001";
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
 static const char modeItem19[] PROGMEM = "Super A'can";
 static const char modeItem20[] PROGMEM = "Flashrom Programmer";
-static const char modeItem21[] PROGMEM = "About";
+static const char modeItem21[] PROGMEM = "Self Test";
+static const char modeItem22[] PROGMEM = "About";
 //static const char modeItem22[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, string_reset2 };
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -1035,7 +1039,7 @@ void mainMenu() {
       num_answers = 7;
     } else {  // currPage == 4
       option_offset = 21;
-      num_answers = 1;
+      num_answers = 2;
     }
     // Copy menuOptions out of progmem
     convertPgm(modeOptions + option_offset, num_answers);
@@ -1199,11 +1203,17 @@ void mainMenu() {
       break;
 #endif
 
+#ifdef enable_selftest
     case 20:
+      selfTest();
+      break;
+#endif
+
+    case 21:
       aboutScreen();
       break;
 
-    case 21:
+    case 22:
       resetArduino();
       break;
 
@@ -1236,8 +1246,9 @@ static const char addonsItem2[] PROGMEM = "80s Consoles";
 static const char addonsItem3[] PROGMEM = "90s Consoles";
 static const char addonsItem4[] PROGMEM = "Handhelds";
 static const char addonsItem5[] PROGMEM = "Flashrom Programmer";
-//static const char addonsItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, string_reset2 };
+static const char addonsItem6[] PROGMEM = "Self Test (EEP)";
+//static const char addonsItem7[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, addonsItem6, string_reset2 };
 
 // 70s Consoles submenu
 static const char consoles70Item1[] PROGMEM = "Atari 2600";
@@ -1325,8 +1336,8 @@ void addonMenu() {
   // create menu with title and 5 options to choose from
   unsigned char addonsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 6);
-  addonsMenu = question_box(F("Type"), menuOptions, 6, 0);
+  convertPgm(addonsOptions, 7);
+  addonsMenu = question_box(F("Type"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (addonsMenu) {
@@ -1359,7 +1370,13 @@ void addonMenu() {
       break;
 #endif
 
+#ifdef enable_selftest
     case 5:
+      selfTest();
+      break;
+#endif
+
+    case 6:
       resetArduino();
       break;
 
@@ -1554,6 +1571,136 @@ void handheldMenu() {
     default:
       print_MissingModule();  // does not return
   }
+}
+#endif
+
+/******************************************
+  Self Test
+*****************************************/
+#ifdef enable_selftest
+
+void selfTest() {
+  display_Clear();
+  println_Msg(F("Self Test"));
+  println_Msg(F(""));
+  println_Msg(F("Remove all Cartridges"));
+  println_Msg(F("before continuing!!!"));
+  println_Msg(F(""));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+  display_Clear();
+
+  // Test if pin 7 is held high by 1K resistor
+  pinMode(7, INPUT);
+  println_Msg(F("Testing 1K resistor "));
+  display_Update();
+
+  if (!digitalRead(7)) {
+    setColor_RGB(255, 0, 0);
+    errorLvl = 1;
+    println_Msg(F("Error"));
+    println_Msg(F(""));
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+    resetArduino();
+  }
+
+  println_Msg(F("Testing short to GND"));
+  display_Update();
+
+  // Set pins 2-9, 14-17, 22-37, 42-49, 54-69 to input and activate internal pull-up resistors
+  for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
+    if (((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69))) {
+      pinMode(pinNumber, INPUT_PULLUP);
+    }
+  }
+
+  // Tests pins 2-9, 14-17, 22-37, 42-49, 54-69 for short to GND
+  for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
+    if (((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69))) {
+      if (!digitalRead(pinNumber)) {
+        setColor_RGB(255, 0, 0);
+        errorLvl = 1;
+        print_Msg(F("Error: Pin "));
+        if ((54 <= pinNumber) && (pinNumber <= 69)) {
+          print_Msg(F("A"));
+          println_Msg(pinNumber - 54);
+        } else {
+          print_Msg(F("D"));
+          println_Msg(pinNumber);
+        }
+        println_Msg(F(""));
+        print_STR(press_button_STR, 1);
+        display_Update();
+        wait();
+        resetArduino();
+      }
+    }
+  }
+
+  println_Msg(F("Testing short between pins"));
+  display_Update();
+
+  // Test for short between pins 2-9, 14-17, 22-37, 42-49, 54-69
+  for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
+    if (((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69))) {
+      pinMode(pinNumber, OUTPUT);
+      digitalWrite(pinNumber, LOW);
+      for (byte pinNumber2 = 2; pinNumber2 <= 69; pinNumber2++) {
+        if (((2 <= pinNumber2) && (pinNumber2 <= 9)) || ((14 <= pinNumber2) && (pinNumber2 <= 17)) || ((22 <= pinNumber2) && (pinNumber2 <= 37)) || ((42 <= pinNumber2) && (pinNumber2 <= 49)) || ((54 <= pinNumber2) && (pinNumber2 <= 69)) && (pinNumber != pinNumber2)) {
+          pinMode(pinNumber2, INPUT_PULLUP);
+          if (!digitalRead(pinNumber2)) {
+            setColor_RGB(255, 0, 0);
+            errorLvl = 1;
+            print_Msg(F("Error: Pin "));
+            if ((54 <= pinNumber) && (pinNumber <= 69)) {
+              print_Msg(F("A"));
+              print_Msg(pinNumber - 54);
+            } else {
+              print_Msg(F("D"));
+              print_Msg(pinNumber);
+            }
+            print_Msg(F(" + "));
+            if ((54 <= pinNumber2) && (pinNumber2 <= 69)) {
+              print_Msg(F("A"));
+              println_Msg(pinNumber2 - 54);
+            } else {
+              print_Msg(F("D"));
+              println_Msg(pinNumber2);
+            }
+            println_Msg(F(""));
+            print_STR(press_button_STR, 1);
+            display_Update();
+            wait();
+            resetArduino();
+          }
+        }
+      }
+      pinMode(pinNumber, INPUT_PULLUP);
+    }
+  }
+
+  println_Msg(F("Testing Clock Generator"));
+  initializeClockOffset();
+  if (!i2c_found) {
+    setColor_RGB(255, 0, 0);
+    errorLvl = 1;
+    println_Msg(F("Error: Clock Generator"));
+    println_Msg(F("not found"));
+    println_Msg(F(""));
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+    resetArduino();
+  }
+
+  println_Msg(F(""));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+  resetArduino();
 }
 #endif
 
