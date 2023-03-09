@@ -85,8 +85,8 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_over_copper": "warning",
-        "silk_overlap": "warning",
+        "silk_over_copper": "ignore",
+        "silk_overlap": "ignore",
         "skew_out_of_range": "error",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
@@ -119,7 +119,9 @@
         "use_height_for_length_calcs": true
       },
       "track_widths": [
-        0.0
+        0.0,
+        0.45,
+        1.0
       ],
       "via_dimensions": [
         {
@@ -455,6 +457,10 @@
     [
       "9d18f126-25a0-4767-9cfe-60845c6d7acd",
       ""
+    ],
+    [
+      "4688c134-9ce3-46e1-b4dc-a534603502d3",
+      "Voltage Select"
     ]
   ],
   "text_variables": {}
