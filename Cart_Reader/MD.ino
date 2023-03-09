@@ -763,6 +763,18 @@ void getCartInfo_MD() {
         break;
     }
   }
+  if (cartSize == 0x100000) {
+    switch (chksum) {
+      case 0xCDF5:  //Life on Mars (Aftermarket).md
+        cartSize = 0x400000;
+        chksum = 0x603A;
+        break;
+      case 0xF85F:  //Metal Dragon (Aftermarket).md
+        cartSize = 0x200000;
+        chksum = 0x6965;
+        break;
+    }
+  }
   if (cartSize == 0xC0000) {
     switch (chksum) {
       case 0x9D79:  //Wonder Boy in Monster World (USA, Europe).md
@@ -804,12 +816,12 @@ void getCartInfo_MD() {
     }
   }
 
-  // Beggar Prince rev.1 Check
+  // Beggar Prince (Rev 1)(Aftermarket).md
   if (!strncmp("SF-001", id, 6) && (chksum == 0x3E08)) {
     cartSize = 0x400000;
   }
 
-  // Legend of Wukong Check
+  // Legend of Wukong (Aftermarket).md
   if (!strncmp("SF-002", id, 6) && (chksum == 0x12B0)) {
     chksum = 0x45C6;
   }
