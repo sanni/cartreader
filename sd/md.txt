@@ -1549,6 +1549,9 @@ Curse of Illmoore Bay, The (World) (Demo 1) (Aftermarket) (Unl).md
 Curse of Illmoore Bay, The (World) (Aftermarket) (Unl).md
 7AD106C0
 
+Cursed Knight, The (Europe) (En,Fr) (Aftermarket) (Unl).md
+573F195B
+
 Cursed Knight, The (World) (v2.1) (Demo) (Aftermarket) (Unl).md
 6F31E5B4
 
@@ -3451,6 +3454,9 @@ LHX Attack Chopper (USA, Europe).md
 Liberty or Death (USA).md
 2ADB0364
 
+Life on Mars (World) (Aftermarket) (Unl).md
+FD214116
+
 Light Crusader (Europe) (En,Fr,De,Es).md
 52C7252B
 
@@ -3828,6 +3834,9 @@ DFD4FE49
 
 Metal Blast 2277 (World) (Beta) (Aftermarket) (Unl).md
 0DE1117F
+
+Metal Dragon (World) (Aftermarket) (Unl).md
+9536280F
 
 Metal Fangs (Japan).md
 A8DF1C4C
