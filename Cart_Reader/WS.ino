@@ -119,7 +119,7 @@ boolean headerCheck() {
 }
 
 void wsMenu() {
-  vselect(false);
+  vselect(true);
   uint8_t mainMenu = (wsWitch ? 5 : 4);
 
   convertPgm(menuOptionsWS, mainMenu);
