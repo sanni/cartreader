@@ -998,7 +998,7 @@ static const char modeItem5[] PROGMEM = "Mega Drive/Genesis";
 static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
 static const char modeItem7[] PROGMEM = "PC Engine/TG16";
 static const char modeItem8[] PROGMEM = "WonderSwan (3V)";
-static const char modeItem9[] PROGMEM = "NeoGeo Pocket";
+static const char modeItem9[] PROGMEM = "NeoGeo Pocket (3V)";
 static const char modeItem10[] PROGMEM = "Intellivision";
 static const char modeItem11[] PROGMEM = "Colecovision";
 static const char modeItem12[] PROGMEM = "Virtual Boy";
@@ -1274,7 +1274,7 @@ static const char* const consoles90Options[] PROGMEM = { consoles90Item1, string
 // Handhelds submenu
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
 static const char handheldsItem2[] PROGMEM = "WonderSwan (3V)";
-static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket";
+static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket (3V)";
 static const char handheldsItem4[] PROGMEM = "Watara Supervision";
 static const char handheldsItem5[] PROGMEM = "Pocket Challenge W";
 //static const char handheldsItem6[] PROGMEM = "Reset"; (stored in common strings array)
