@@ -7,7 +7,7 @@
   (title_block
     (title "OSCR HW5")
     (date "2022-06-19")
-    (rev "V3")
+    (rev "V4")
   )
 
   (lib_symbols
@@ -3475,6 +3475,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid d865b722-7998-427a-be04-1d18cedfa5c1)
   )
+  (wire (pts (xy 142.24 182.88) (xy 148.59 182.88))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid d98e23c5-15f2-4485-807a-70971ca335c3)
+  )
   (wire (pts (xy 43.18 92.71) (xy 43.18 96.52))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid d9f4ad26-b8e1-4f06-aefc-cf7f6395e6f6)
@@ -3728,6 +3732,13 @@
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid 0848f9a5-4b46-4651-8e8b-24a8d4e05163)
     (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 55.8006 163.4007 90)
+      (effects (font (size 1.27 1.27)) (justify right) hide)
+    )
+  )
+  (global_label "D38" (shape input) (at 142.24 182.88 180) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify right))
+    (uuid 09a54172-5af8-4a04-96d8-1d5716ac2b69)
+    (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 136.1379 182.8006 0)
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
@@ -5226,7 +5237,7 @@
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 370f34de-8b3d-462d-a13b-4bf97a89f644)
     (property "Reference" "JP3" (id 0) (at 66.04 182.88 0))
-    (property "Value" "" (id 1) (at 66.04 185.42 0))
+    (property "Value" "Testpoints 3 4" (id 1) (at 66.04 185.42 0))
     (property "Footprint" "" (id 2) (at 66.04 189.23 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -5370,7 +5381,7 @@
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 5b67058f-fbd0-4ef7-ae7b-c94a6074918c)
     (property "Reference" "JP2" (id 0) (at 31.75 182.88 0))
-    (property "Value" "" (id 1) (at 31.75 185.42 0))
+    (property "Value" "Testpoints 1 2" (id 1) (at 31.75 185.42 0))
     (property "Footprint" "" (id 2) (at 31.75 189.23 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -5667,7 +5678,7 @@
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 9b821643-0a09-4ed0-af40-76467a90d5d5)
     (property "Reference" "JP1" (id 0) (at 31.75 171.45 0))
-    (property "Value" "" (id 1) (at 31.75 173.99 0))
+    (property "Value" "J1" (id 1) (at 31.75 173.99 0))
     (property "Footprint" "" (id 2) (at 31.75 177.8 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -6291,8 +6302,25 @@
     (pin "1" (uuid a330dca9-cef3-4cf0-b063-1760ac32c8fc))
   )
 
+  (sheet (at 148.59 180.34) (size 22.86 5.08) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
+    (fill (color 0 0 0 0.0000))
+    (uuid 4688c134-9ce3-46e1-b4dc-a534603502d3)
+    (property "Sheet name" "Voltage Select" (id 0) (at 148.59 179.6284 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheet file" "vselect.kicad_sch" (id 1) (at 148.59 186.0046 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (pin "VSELECT" input (at 148.59 182.88 180)
+      (effects (font (size 1.27 1.27)) (justify left))
+      (uuid fc5d40bb-1f52-415d-80a9-5c556b62f9cc)
+    )
+  )
+
   (sheet_instances
     (path "/" (page "1"))
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3" (page "2"))
   )
 
   (symbol_instances
@@ -6335,6 +6363,12 @@
     (path "/ee11cad2-1209-482b-aef9-afe5eeef9131"
       (reference "#PWR06") (unit 1) (value "GND") (footprint "")
     )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/5c397657-1146-4b70-bb5d-229224395044"
+      (reference "#PWR07") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/945f52f0-4060-41a7-9172-d7319cb2423e"
+      (reference "#PWR08") (unit 1) (value "+5V") (footprint "")
+    )
     (path "/ba6a2da9-e81c-4153-8ffb-600cd4b388a1"
       (reference "#PWR09") (unit 1) (value "VBUS") (footprint "")
     )
@@ -6356,6 +6390,9 @@
     (path "/4046a07c-347f-488c-a075-2843dbe1bfc8"
       (reference "#PWR015") (unit 1) (value "+3.3V") (footprint "")
     )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/cb3714fe-1058-4a1c-8847-50cfc7804385"
+      (reference "#PWR016") (unit 1) (value "GND") (footprint "")
+    )
     (path "/3260f30c-1ad1-4e0b-ad50-51792b0195b1"
       (reference "#PWR017") (unit 1) (value "VCC") (footprint "")
     )
@@ -6370,6 +6407,9 @@
     )
     (path "/8f5cfab3-6d97-4d3e-8fb9-7f2b3b884a79"
       (reference "#PWR021") (unit 1) (value "+5V") (footprint "")
+    )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/dfe5754d-9985-4214-a749-5e6b6ce0b04a"
+      (reference "#PWR022") (unit 1) (value "VCC") (footprint "")
     )
     (path "/018152fb-a659-4d33-bed2-870e6138ecbc"
       (reference "#PWR024") (unit 1) (value "VCC") (footprint "")
@@ -6418,6 +6458,15 @@
     )
     (path "/d376c477-b400-4c8d-be11-f1eefcd4ff95"
       (reference "C1") (unit 1) (value "C_Polarized") (footprint "")
+    )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/a87f794b-d2c9-48ec-9dfa-57253999f610"
+      (reference "C2") (unit 1) (value "0.1 uF") (footprint "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder")
+    )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/a4d66296-f69c-4e34-ae3d-ecf61737aa5b"
+      (reference "C3") (unit 1) (value "0.1 uF") (footprint "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder")
+    )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/19b1de5c-7eb5-4e2b-ba2c-4a931aab2613"
+      (reference "C4") (unit 1) (value "10 uF") (footprint "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder")
     )
     (path "/e45b3f20-40e6-4c90-8100-685db63993ad"
       (reference "D1") (unit 1) (value "LED") (footprint "")
@@ -6491,11 +6540,17 @@
     (path "/b95bdf08-0b54-4e5f-91bf-f1e1d1df7ca1"
       (reference "R1") (unit 1) (value "220R") (footprint "")
     )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/df77b9b1-4924-4151-8eac-93b44113b4e8"
+      (reference "R2") (unit 1) (value "550") (footprint "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder")
+    )
     (path "/dd184fc1-799a-4fa0-88eb-e4a59cd75459"
       (reference "SW1") (unit 1) (value "VOLTAGE") (footprint "")
     )
     (path "/aa931b80-5b3b-40a2-8c6a-8b127aa11d80"
       (reference "SW2") (unit 1) (value "POWER") (footprint "")
+    )
+    (path "/4688c134-9ce3-46e1-b4dc-a534603502d3/8d4abe18-0a15-4edc-8fa8-449f59f0f043"
+      (reference "U1") (unit 1) (value "TPS2113PW") (footprint "Personal:Texas_Instruments-TPS2113PW-Level_A")
     )
   )
 )
