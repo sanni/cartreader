@@ -1,0 +1,920 @@
+Alchemist Marie & Elie - Futari no Atelier (Japan).wsc
+B18CDC0D
+
+Anchorz Field (Japan).ws
+425EB893
+
+Another Heaven - Memory of those Days (Japan).wsc
+D7A0AB74
+
+Arc the Lad - Kishin Fukkatsu (Japan).wsc
+E2317345
+
+Armored Unit (Japan).ws
+04366D92
+
+Bakusou Dekotora Densetsu for WonderSwan (Japan).ws
+392DD813
+
+BANDAI Default Splash Screen (Japan) (Program).ws
+9DA44185
+
+Battle Spirit - Digimon Frontier (Japan) (Rev 1).wsc
+8BA49DAB
+
+beatmania for WonderSwan (Japan).ws
+324622C9
+
+Blue Wing Blitz (Japan).wsc
+99027238
+
+Buffers Evolution (Japan).ws
+B25A0635
+
+Cardcaptor Sakura - Sakura to Fushigi na Clow Card (Japan).ws
+7F3A14C0
+
+Challenge Eiwa Jiten (Japan).pc2
+D5338AAD
+
+Chaos Gear - Michibikareshi Mono (Japan).ws
+27B3CC18
+
+Chocobo no Fushigi na Dungeon for WonderSwan (Japan) (Rev 1).ws
+A607A350
+
+Chocobo no Fushigi na Dungeon for WonderSwan (Japan) (Rev 2).ws
+CCAA4853
+
+Chocobo no Fushigi na Dungeon for WonderSwan (Japan) (Rev 3).ws
+AA53971D
+
+Chou Aniki - Otoko no Tamafuda (Japan) (Rev 4).ws
+7FFF2520
+
+Chou Denki Card Battle - Youfu Makai (Japan) (Rev 3).ws
+56E2C069
+
+Chuu 1 Ei Suu Koku Pack (Japan).pc2
+51B5822D
+
+Chuu 1 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan).pc2
+A863F998
+
+Chuu 1 Ei Suu Koku Pack (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+2980A25B
+
+Chuu 1 Ei Suu Koku Pack (Sunshine, One World Taiou Ban) (Japan).pc2
+A4BBD00E
+
+Chuu 1 English (New Crown, Total English Taiou Ban) (Japan) (2BB113).pc2
+4E0B65B4
+
+Chuu 1 English (New Crown, Total English Taiou Ban) (Japan) (3BB113).pc2
+A4719115
+
+Chuu 1 English (New Crown, Total English Taiou Ban) (Japan) (4BB113).pc2
+DDF6D418
+
+Chuu 1 English (New Horizon, Columbus21 Taiou Ban) (Japan) (3BB111).pc2
+8F8F75C4
+
+Chuu 1 English (New Horizon, Columbus21 Taiou Ban) (Japan) (4BB111).pc2
+62A7256C
+
+Chuu 1 English (Sunshine, One World Taiou Ban) (Japan).pc2
+9DE13DB9
+
+Chuu 1 Kokugo - Hyakunin Isshu (Japan).pc2
+7622D70A
+
+Chuu 1 Suugaku (Japan).pc2
+723A239D
+
+Chuu 2 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan) (4BP203).pc2
+FDB39F68
+
+Chuu 2 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan) (6FP203).pc2
+1BBB32A0
+
+Chuu 2 Ei Suu Koku Pack (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+2FD8B59E
+
+Chuu 2 Ei Suu Koku Pack (Sunshine, One World Taiou Ban) (Japan).pc2
+D2DBDF31
+
+Chuu 2 English (New Crown, Total English Taiou Ban) (Japan).pc2
+5C679BD3
+
+Chuu 2 Kokugo (Japan).pc2
+B17F0BD0
+
+Chuu 2 Suugaku (Japan).pc2
+8C671FC9
+
+Chuu 3 Ei - Suu - Koumin Pack (New Crown, Total English Taiou Ban) (Japan) (5FP303) [b].pc2
+9797DB5E
+
+Chuu 3 Ei - Suu - Koumin Pack (New Crown, Total English Taiou Ban) (Japan) (6FP313).pc2
+C14378C8
+
+Chuu 3 Ei - Suu - Koumin Pack (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+AC84B3D2
+
+Chuu 3 English (New Crown, Total English Taiou Ban) (Japan).pc2
+89AF7DB1
+
+Chuu 3 English (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+240734C4
+
+Chuu 3 Suugaku (Japan).pc2
+389D36A4
+
+Chuugaku Chiri (Japan) (3BD410).pc2
+AC0CB7D5
+
+Chuugaku Chiri (Japan) (4BD410).pc2
+3C820F61
+
+Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japan) (2BD400).pc2
+93454B4A
+
+Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japan) (4BD400).pc2
+4CFD118D
+
+Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japan) (6FD400).pc2
+0AC0E39D
+
+Chuugaku Chiri - Rekishi Pack (Rekishi Juuyou Yougo Jiten Shuuroku) (Japan).pc2
+6C644DFE
+
+Chuugaku Koumin (Japan).pc2
+3859FEE1
+
+Chuugaku Rekishi (Japan).pc2
+4059E1B7
+
+Chuugaku Rika (1-bunya) (Japan) (5FF411).pc2
+C0653C7E
+
+Chuugaku Rika (1-bunya) (Japan) (6FF421).pc2
+BF3B02B3
+
+Chuugaku Rika (2-bunya) (Japan) (5FF412).pc2
+3686DC22
+
+Chuugaku Rika (2-bunya) (Japan) (6FF422).pc2
+659A0B6D
+
+Chuugaku Rika Pack (1-bunya Soft - 2-bunya Soft Kanzen Taiou Ban) (Japan) (2BF400).pc2
+75379357
+
+Chuugaku Rika Pack (1-bunya Soft - 2-bunya Soft Kanzen Taiou Ban) (Japan) (6FF400).pc2
+FC46A921
+
+Chuugaku Rika Pack (1-bunya Soft - 2-bunya Soft Kanzen Taiou Ban) (Japan) (6FF401).pc2
+E16FE370
+
+Chuugaku Rika Pack (1-bunya Soft - 2-bunya Soft Kanzen Taiou Ban) (Japan) (6FF420).pc2
+DCC7470F
+
+Chuugaku Rika Pack (Japan) (5FF400).pc2
+B9850F35
+
+Clock Tower for WonderSwan (Japan) (Rev 1).ws
+4E8909D1
+
+Crazy Climber (Japan).ws
+0CB57376
+
+D's Garage 21 Koubo Game - Tane o Maku Tori (Japan).ws
+B1CAEC06
+
+Dark Eyes - Battle Gate (Japan).wsc
+12AE932C
+
+Densha de Go! (Japan) (Rev 1).ws
+B62E5DD0
+
+Densha de Go! 2 (Japan).ws
+AF9D8F42
+
+Dicing Knight. (Japan).wsc
+1887389C
+
+Digimon - Anode Tamer & Cathode Tamer - Veedramon Version (Hong Kong) (En).wsc
+77689273
+
+Digimon - Anode Tamer & Cathode Tamer - Veedramon Version (Korea) (En).wsc
+7B2A02E3
+
+Digimon - Ver. WonderSwan (Hong Kong) (En).ws
+94EA6FFC
+
+Digimon Adventure - Anode Tamer (Japan) (Rev 1).ws
+6E9DD148
+
+Digimon Adventure - Anode Tamer (Japan).ws
+FC6946F0
+
+Digimon Adventure - Cathode Tamer (Japan).ws
+42AD238B
+
+Digimon Adventure 02 - D1 Tamers (Japan) (Rev 1).wsc
+62F4E4B4
+
+Digimon Adventure 02 - D1 Tamers (Japan).wsc
+4D28637E
+
+Digimon Adventure 02 - Tag Tamers (Japan) (Rev 1).ws
+6EDEDAF8
+
+Digimon Adventure 02 - Tag Tamers (Japan).ws
+56CE1BC5
+
+Digimon Tamers - Battle Spirit (Japan, Korea) (En,Ja).wsc
+C927BFCB
+
+Digimon Tamers - Battle Spirit Ver. 1.5 (Japan).wsc
+6CAAD4A2
+
+Digimon Tamers - Brave Tamer (Japan) (Rev 1).wsc
+F1F4D41F
+
+Digimon Tamers - Digimon Medley (Japan) (Rev 1).wsc
+84A46949
+
+Digimon Tamers - Digimon Medley (Japan).wsc
+FA92418D
+
+Digital Monster - D-Project (Japan) (Rev 1).wsc
+BD83B82D
+
+Digital Monster - D-Project (Japan) (Rev 2).wsc
+0E40829C
+
+Digital Monster - D-Project (Japan).wsc
+FAAEFBCB
+
+Digital Monster - Ver. WonderSwan (Japan) (Rev 1).ws
+AB59DE2E
+
+Digital Monster Card Game - Ver. WonderSwan Color (Japan) (Rev 2).wsc
+1E760C41
+
+Digital Monster Card Game - Ver. WonderSwan Color (Japan).wsc
+603CB5E6
+
+Digital Partner (Japan).ws
+B5E675AE
+
+Dokodemo Hamster (Japan).ws
+89E7D950
+
+Dokodemo Hamster 3 - Odekake Saffron (Japan) (Rev 2).wsc
+93E19F13
+
+Dragon Ball (Japan).wsc
+067238D1
+
+Eiken 3-kyuu - 4-kyuu (Japan).pc2
+9BE7A2AC
+
+Engacho! for WonderSwan (Japan).ws
+4E467626
+
+Fever - Sankyo Koushiki Pachinko Simulation for WonderSwan (Japan).ws
+8922DD0B
+
+Final Fantasy (Japan).wsc
+B7243E88
+
+Final Fantasy II (Japan).wsc
+F09E752F
+
+Final Fantasy IV (Japan).wsc
+F699D6D1
+
+Final Lap 2000 (Japan).ws
+CE2F1A1D
+
+Final Lap Special - GT & Formula Machine (Japan).wsc
+B07E6A56
+
+Fire Lancer (USA) (Demo) (2018-12-25) (Aftermarket) (Unl).wsc
+02882FFE
+
+Fire Lancer (USA) (Demo) (2019-01-03) (Aftermarket) (Unl).wsc
+2399F778
+
+Fire Pro Wrestling for WonderSwan (Japan) (Rev 5).ws
+F246A68E
+
+Fishing Freaks - Bass Rise for WonderSwan (Japan).ws
+A1FB16FC
+
+Flash Koibito-kun (Japan).wsc
+69D8D433
+
+Flash Masta Firmware (USA) (2016-05-13).wsc
+AABCE377
+
+Flash Masta Firmware (USA) (2016-08-29) (Unl).wsc
+C071D240
+
+From TV Animation One Piece - Chopper no Daibouken (Japan).wsc
+8E120B5A
+
+From TV Animation One Piece - Grand Battle Swan Colosseum (Japan).wsc
+F8A1DD2B
+
+From TV Animation One Piece - Mezase Kaizoku Ou! (Japan).ws
+F2E362B8
+
+From TV Animation One Piece - Niji no Shima Densetsu (Japan).wsc
+427056C4
+
+From TV Animation One Piece - Treasure Wars (Japan) (Rev 1).wsc
+3DF3E34C
+
+From TV Animation One Piece - Treasure Wars (Japan).wsc
+205503C3
+
+From TV Animation One Piece - Treasure Wars 2 - Buggy Land e Youkoso (Japan).wsc
+0D1048F0
+
+Front Mission (Japan).wsc
+2F9E2560
+
+Ganso Jajamaru-kun (Japan).ws
+A193458C
+
+Gekitou! Crash Gear Turbo - Gear Champion League (Japan).wsc
+8A8B827C
+
+Gensou Maden Saiyuuki Retribution - Hi no Ataru Basho de (Japan) (Rev 2).wsc
+446E2581
+
+Glocal Hexcite (Japan).ws
+4AED3911
+
+Golden Axe (Japan).wsc
+BC944A98
+
+Gomoku Narabe & Reversi - Touryuumon (Japan).ws
+A9F11523
+
+Goraku Ou Tango! (Japan) (Rev 2).ws
+00137E86
+
+Gransta Chronicle (Japan).wsc
+AF24F95C
+
+Guilty Gear Petit (Japan).wsc
+9750BC2A
+
+Guilty Gear Petit 2 (Japan).wsc
+D7A12BD5
+
+GunPey (Japan).ws
+A1656BBB
+
+GunPey EX (Japan).wsc
+0C9CB12C
+
+Hanafuda Shiyouyo (Japan).ws
+4B22270D
+
+Hanjuku Hero - Ah, Sekai yo Hanjuku Nare...!! (Japan) (Rev 1).wsc
+31E09BED
+
+Harobots (Japan) (Rev 1).ws
+F75CE82C
+
+Harobots (Japan).ws
+AA525C04
+
+Hataraku Chocobo (Japan).wsc
+7A29E9A6
+
+Hunter X Hunter - Greed Island (Japan) (Rev 1).wsc
+130AF567
+
+Hunter X Hunter - Greed Island (Japan).wsc
+A487B7A8
+
+Hunter X Hunter - Ishi o Tsugu Mono (Japan) (Rev 1).ws
+BD6FC68A
+
+Hunter X Hunter - Ishi o Tsugu Mono (Japan) (Rev 2).ws
+70AA800E
+
+Hunter X Hunter - Michibikareshi Mono (Japan).wsc
+9402BCA9
+
+Hunter X Hunter - Sorezore no Ketsui (Japan).wsc
+D0B20C5A
+
+Inuyasha - Fuuun Emaki (Japan).wsc
+3FF5791F
+
+Inuyasha - Kagome no Sengoku Nikki (Japan).wsc
+0C23D551
+
+Inuyasha - Kagome no Yume Nikki (Japan).wsc
+44453234
+
+Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan) (2BG410).pc2
+84B430E9
+
+Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan) (3BG410).pc2
+2FF15E1A
+
+Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan) (5FG410).pc2
+EDD42B96
+
+Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan) (6FG402).pc2
+05CEE4BD
+
+Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan) (6FG410).pc2
+FCEB4728
+
+Judgement Silversword - Rebirth Edition (Japan) (Rev 4321).wsc
+AA13E9DE
+
+Judgement Silversword - Rebirth Edition (Japan) (Rev 5C21).wsc
+85C4C9A1
+
+Kakutou Ryouri Densetsu Bistro Recipe - Wonder Battle Hen (Japan).ws
+4D103236
+
+Kanken 3-kyuu - 4-kyuu - 5-kyuu (Japan).pc2
+BB88A5FC
+
+Kaze no Klonoa - Moonlight Museum (Japan).ws
+80C6EF12
+
+Keiba Yosou Shien Soft - Yosou Shinkaron (Japan).ws
+517F962E
+
+Kidou Senshi Gundam - Giren no Yabou - Tokubetsu Hen - Aoki Hoshi no Hasha (Japan).wsc
+D4061551
+
+Kidou Senshi Gundam Seed (Japan).wsc
+BCE15137
+
+Kidou Senshi Gundam Vol. 1 - Side 7 (Japan).wsc
+08C0247B
+
+Kidou Senshi Gundam Vol. 2 - Jaburo (Japan).wsc
+39A1391A
+
+Kidou Senshi Gundam Vol. 3 - A Baoa Qu (Japan).wsc
+A9F5BF54
+
+Kinnikuman II-Sei - Choujin Seisenshi (Japan).wsc
+6142FD9D
+
+Kinnikuman II-Sei - Dream Tag Match (Japan).wsc
+462F9275
+
+Kiss Yori... - Seaside Serenade (Japan) (Rev 2).ws
+3B4C60C6
+
+Kosodate Quiz - Dokodemo My Angel (Japan).ws
+4C48624C
+
+Koukou Juken (5-kyouka) (Japan) (4BI710).pc2
+7952D631
+
+Koukou Juken (5-kyouka) (Japan) (4BI716).pc2
+7CFFFE14
+
+Koukou Juken (5-kyouka) (Japan) (5FI710).pc2
+AD82DD22
+
+Koukou Juken 5-kyouka Pack + Nyuushi Theme-Betsu Tokkou (Japan).pc2
+C27FAEEB
+
+Koukou Juken EX (Goukaku Tokkou 700) (Japan).pc2
+EC11D3AE
+
+Koukou Juken V Pack - Koukou Juken (5-kamoku), Koukou Juken EX (Goukaku Tokkou 700) Kanzen Taiou Ban
+3D4F25B5
+
+Kurupara! (Japan) (Rev 1).wsc
+274719F5
+
+Kyousouba Ikusei Simulation - Keiba (Japan) (Rev 1).ws
+ECFBCB1D
+
+Langrisser Millennium WS - The Last Century (Japan) (Rev 1).ws
+9E0854E2
+
+Last Alive (Japan).wsc
+DA4479BF
+
+Last Stand (Japan).ws
+CCCAF8A1
+
+Lode Runner for WonderSwan (Japan).ws
+21279E82
+
+Macross - True Love Song (Japan).ws
+62D419CD
+
+Magical Drop for WonderSwan (Japan).ws
+637ADA93
+
+Mahjong Touryuumon (Japan) (Rev 1).ws
+C2ED122E
+
+Mahjong Touryuumon (Japan) (Rev 3).ws
+E7E7FD4C
+
+Makai Toushi Sa-Ga (Japan).wsc
+1B6F5F30
+
+Makaimura for WonderSwan (Japan).ws
+00B31FBB
+
+mama Mitte (Japan) (Program).wsc
+F366172E
+
+mama Mitte (Japan) (Rev D) (Program).wsc
+867A8A3F
+
+Medarot Perfect Edition - Kabuto Version (Japan).ws
+12FB8B28
+
+Medarot Perfect Edition - Kuwagata Version (Japan).ws
+2B40745D
+
+Meitantei Conan - Majutsushi no Chousenjou! (Japan).ws
+92FBF7FB
+
+Meitantei Conan - Nishi no Meitantei Saidai no Kiki! (Japan).ws
+E226863B
+
+Meitantei Conan - Yuugure no Oujo (Japan).wsc
+9F6E3F8D
+
+Memories Off - Festa (Japan).wsc
+8E123373
+
+Metakomi Theraphy - Nee Kiite! (Japan).ws
+A3EAD689
+
+Mikeneko Holmes - Ghost Panic (Japan).wsc
+D75EFFC2
+
+Mingle Magnet (Japan) (En,Ja) (Rev 1).ws
+9BAAC7BB
+
+Mobile Suit Gundam MSVS (Japan).ws
+53B9FEF8
+
+MobileWonderGate (Japan) (Rev 1).ws
+80DE367D
+
+Moero!! Pro Yakyuu Rookies (Japan).ws
+EB995E86
+
+Morita Shougi for WonderSwan (Japan).ws
+D675C265
+
+Mr. Driller (Japan).wsc
+5555D95C
+
+Namco Super Wars (Japan).wsc
+8CE4652F
+
+Naruto - Konoha Ninpouchou (Japan).wsc
+71556E6A
+
+NAVI GET 400 Million (Japan) (Version 1.0) (Program).wsc
+F79BE3B5
+
+NAVI GET 400 Million (Japan) (Version 2.1) (Program).wsc
+0A072698
+
+NAVI GET 400 Million (Japan) (Version 3.0) (Program).wsc
+4C6CBDB2
+
+NAVI GET 400 Million (Japan) (Version 9) (Program).wsc
+83512340
+
+Nazo Ou Pocket (Japan).ws
+4ED8820C
+
+Neon Genesis Evangelion - Shito Ikusei (Japan).ws
+BF8D9212
+
+Nice On (Japan) (Rev 1).ws
+B5DBCF12
+
+Nihon Pro Mahjong Renmei Kounin - Tetsuman (Japan) (Rev 2).ws
+44B3E67C
+
+Nobunaga no Yabou for WonderSwan (Japan).ws
+04531734
+
+Ou-chan no Oekaki Logic (Japan).ws
+631BD97A
+
+Pocket Fighter (Japan).ws
+35361250
+
+Pocket no Naka no Doraemon (Japan).wsc
+2B61BB2B
+
+Pro Mahjong Kiwame for WonderSwan (Japan) (Rev 1).ws
+90F7E6D6
+
+Puyo Puyo Tsuu (Japan).ws
+5A41A7BA
+
+Puzzle Bobble (Japan).ws
+F504CD84
+
+Rainbow Islands - Putty's Party (Japan).ws
+8F8608AD
+
+Raku Jongg (Japan).wsc
+FE4FF701
+
+Rhyme Rider Kerorican (Japan).wsc
+60706555
+
+Ring Infinity (Japan).ws
+14ADBD4B
+
+Riviera - Yakusoku no Chi Riviera (Japan).wsc
+2460B45A
+
+Robot Works (Hong Kong) (En,Ja) (Rev 1).ws
+BE6BE690
+
+Robot Works (Japan).ws
+6ADF0E32
+
+Rockman & Forte - Mirai Kara no Chousensha (Japan).ws
+CD206A9E
+
+Rockman EXE - N1 Battle (Japan) (Rev 1).wsc
+1F10CA75
+
+Rockman EXE WS (Japan).wsc
+658C4B98
+
+Romancing Sa-Ga (Japan).wsc
+9C98D97D
+
+RUN=DIM - Return to Earth (Japan).wsc
+15C4552E
+
+Saint Seiya - Ougon Densetsu Hen - Perfect Edition (Japan).wsc
+6E8A792D
+
+Sangokushi for WonderSwan (Japan).ws
+E385EE88
+
+Sangokushi II for WonderSwan (Japan).ws
+440B2630
+
+SD Gundam - Emotional Jam (Japan) (Rev 2).ws
+ADFC3048
+
+SD Gundam - Emotional Jam (Japan) (Rev 3).ws
+AE83F873
+
+SD Gundam - Operation U.C. (Japan).wsc
+F0ACDA5C
+
+SD Gundam Eiyuu Den - Kishi Densetsu (Japan).wsc
+C60E5162
+
+SD Gundam Eiyuu Den - Musha Densetsu (Japan).wsc
+18ECFFB8
+
+SD Gundam G Generation - Gather Beat (Japan).ws
+E4EB3AB1
+
+SD Gundam G Generation - Gather Beat 2 (Japan).wsc
+4D21A347
+
+SD Gundam G Generation - Mono-Eye Gundams (Japan) (Rev 2).wsc
+A3ECC9AC
+
+SD Gundam G Generation - Mono-Eye Gundams (Japan).wsc
+6ACA1F04
+
+SD Gundam Gashapon Senki - Episode 1 (Japan) (Alt).ws
+2EC1E9C8
+
+SD Gundam Gashapon Senki - Episode 1 (Japan).ws
+21EB4C59
+
+Senkaiden - TV Animation Senkaiden Houshin Engi Yori (Japan).ws
+07A3DD46
+
+Senkaiden Ni - TV Animation Senkaiden Houshin Engi Yori (Japan).wsc
+9F35D00F
+
+Sennou Millennium (Japan).ws
+301436AC
+
+Shaman King - Asu e no Ishi (Japan) (Rev 1).wsc
+34908CB4
+
+Shaman King - Asu e no Ishi (Japan).wsc
+6C029674
+
+Shanghai Pocket (Japan).ws
+1C489351
+
+Shin Nihon Pro Wrestling - Toukon Retsuden (Japan) (Rev 1).ws
+5B76F901
+
+Shougakkou Soumatome (Koku - San - Ri - Sha) + Chuu 1 Ei Suu Koku Pack (Japan).pc2
+4E432B54
+
+Shougi Touryuumon (Japan).ws
+3AD194EB
+
+Side Pocket for WonderSwan (Japan).ws
+8655269E
+
+Slither Link (Japan).ws
+352A570D
+
+Soccer Yarou! - Challenge the World (Japan).ws
+1263DA65
+
+Sorobang (Japan) (Rev 1).wsc
+0E467D97
+
+Sotsugyou for WonderSwan (Japan) (Rev 1).ws
+F016DFE1
+
+Space Invaders (Japan).ws
+8D83014F
+
+Star Hearts - Hoshi to Daichi no Shisha (Japan).wsc
+138D1018
+
+Star Hearts - Hoshi to Daichi no Shisha - Taikenban (Japan) (Not For Sale).wsc
+9874E9A2
+
+Super Robot Taisen Compact (Japan) (Rev 1).ws
+7572E478
+
+Super Robot Taisen Compact (Japan) (Rev 2).ws
+7021D54F
+
+Super Robot Taisen Compact (Japan).ws
+8A8C5AA8
+
+Super Robot Taisen Compact 2 - Dai-1-bu - Chijou Gekidou Hen (Japan).ws
+782877BC
+
+Super Robot Taisen Compact 2 - Dai-2-bu - Uchuu Gekishin Hen (Japan) (Rev 4).ws
+ECBB46DE
+
+Super Robot Taisen Compact 2 - Dai-3-bu - Ginga Kessen Hen (Japan) (Rev 2).ws
+0B0F8981
+
+Super Robot Taisen Compact 3 (Japan) (Rev 5).wsc
+6918C824
+
+Super Robot Taisen Compact 3 (Japan) (Rev 6).wsc
+188CA644
+
+Super Robot Taisen Compact for WonderSwan Color (Japan).wsc
+16E0D929
+
+Taikyoku Igo - Heisei Kiin (Japan).ws
+5023DB90
+
+Tanjou Debut for WonderSwan (Japan) (Rev 1).ws
+8B74F59A
+
+Tare Panda no GunPey (Japan).ws
+A5643AA3
+
+Tekken Card Challenge (Japan).ws
+E7C608E5
+
+Tenori-on (Japan) (En).ws
+6FE79BB1
+
+Terrors (Japan).ws
+EF5B6B82
+
+Terrors 2 (Japan).wsc
+9BD8F08C
+
+Tetris (Japan).wsc
+7B0CAEA9
+
+Tetsujin 28 Gou (Japan).ws
+6F304DCA
+
+Time Bokan Series - Bokan Densetsu - Buta mo Odaterya Doronboo (Japan).ws
+7DA6ACB9
+
+Tokyo Majin Gakuen - Fuju Houroku (Japan).ws
+91117D1B
+
+Tonpuusou (Japan).wsc
+47659B2C
+
+Trump Collection - Bottom-Up Teki Trump Seikatsu (Japan) (Rev 1).ws
+C283EC5F
+
+Trump Collection 2 - Bottom-Up Teki Sekaiisshuu no Tabi (Japan) (Rev 1).ws
+64AAF392
+
+Turntablist - DJ Battle (Japan).ws
+0D5171F0
+
+Uchuu Senkan Yamato (Japan).wsc
+5793BDDA
+
+Ultraman - Hikari no Kuni no Shisha (Japan).wsc
+DE2208AB
+
+Umizuri ni Ikou! (Japan).ws
+86B56511
+
+Uzumaki - Denshi Kaiki Hen (Japan) (Rev 4).ws
+812020EF
+
+Uzumaki - Noroi Simulation (Japan).ws
+CA3F0B00
+
+Vaitz Blade (Japan) (Rev 1).ws
+8FC9E145
+
+Wasabi Produce - Street Dancer (Japan).ws
+1860B655
+
+Wild Card (Japan).wsc
+D9401F0A
+
+With You - Mitsumete Itai (Japan).wsc
+E14E9D36
+
+Wizardry Scenario 1 - Proving Grounds of the Mad Overlord (Japan).wsc
+15E55706
+
+Wonder Classic (Japan).wsc
+12F10B27
+
+Wonder Stadium '99 (Japan).ws
+E252919D
+
+Wonder Stadium (Japan).ws
+23BC0309
+
+WonderSwan Handy Sonar (Japan) (Rev 1).ws
+2AB9852D
+
+WonderSwan Handy Sonar (Japan) (Rev 2).ws
+D4188811
+
+WonderWitch (Japan) (FreyaOS 1.0.0) (Program).ws
+DC60F640
+
+WonderWitch (Japan) (FreyaOS 1.0.2) (Program).ws
+71AA2E39
+
+WonderWitch (Japan) (FreyaOS 1.0.3) (Program).ws
+F71EF60C
+
+WonderWitch (Japan) (FreyaOS 1.1.1) (Program).ws
+F8BDF7AB
+
+WonderWitch (Japan) (FreyaOS 1.1.2) (Program).ws
+05C0166E
+
+WonderWitch (Japan) (FreyaOS 1.1.3) (Program).ws
+9303FA7E
+
+WonderWitch (Japan) (FreyaOS 1.1.4) (Program).ws
+E8D001B8
+
+WonderWitch (Japan) (FreyaOS 1.1.5) (Program).ws
+45BA7287
+
+WonderWitch (Japan) (FreyaOS 1.1.6b1) (Program).ws
+6480BF70
+
+WonderWitch (Japan) (FreyaOS 1.2.0) (Program).ws
+8E5E9633
+
+X - Card of Fate (Japan).wsc
+66B617D5
+
+XI Little (Japan).wsc
+25E2BA75

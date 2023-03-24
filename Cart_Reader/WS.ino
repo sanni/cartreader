@@ -1,6 +1,6 @@
-//******************************************
-// WS MODULE
-//******************************************
+//*********************************************************
+// BANDAI WONDERSWAN & BENESSE POCKET CHALLENGE V2 MODULE
+//*********************************************************
 #ifdef enable_WS
 // Cartridge pinout
 // 48P 1.25mm pitch connector
@@ -38,9 +38,7 @@ static const char wsMenuItem3[] PROGMEM = "Write Save";
 //static const char wsMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char wsMenuItem5[] PROGMEM = "Write WitchOS";
 static const char *const menuOptionsWS[] PROGMEM = { wsMenuItem1, wsMenuItem2, wsMenuItem3, string_reset2, wsMenuItem5 };
-
 static const uint8_t wwLaunchCode[] PROGMEM = { 0xea, 0x00, 0x00, 0x00, 0xe0, 0x00, 0xff, 0xff };
-
 static uint8_t wsGameOrientation = 0;
 static uint8_t wsGameHasRTC = 0;
 static uint16_t wsGameChecksum = 0;
@@ -358,7 +356,9 @@ uint8_t getCartInfo_WS() {
       saveType = 2;
       sramSize = 8;
       break;
-    default: saveType = 0xff; break;
+    default:
+      saveType = 0xff;
+      break;
   }
 
   if (saveType == 2)
@@ -371,7 +371,7 @@ uint8_t getCartInfo_WS() {
 void showCartInfo_WS() {
   display_Clear();
 
-  println_Msg(F("WS Cart Info"));
+  println_Msg(F("Cart Info"));
 
   print_Msg(F("Game: "));
   println_Msg(romName);
@@ -464,9 +464,7 @@ void getDeveloperName(uint8_t id, char *buf, size_t length) {
 
     // custom developerId
     case 0x7a: devName = PSTR("7AC"); break;  // witch
-    case 0xff:
-      devName = PSTR("WWGP");
-      break;  // WWGP series (jss2, dknight)
+    case 0xff: devName = PSTR("WWGP"); break;  // WWGP series (jss2, dknight)
 
     // if not found, use id
     default: snprintf(buf, length, "%02X", id); return;
@@ -973,6 +971,7 @@ boolean compareChecksum_WS(const char *wsFilePath) {
   if (wsFilePath == NULL)
     return 0;
 
+  display_Clear();
   println_Msg(F("Calculating Checksum"));
   display_Update();
 
@@ -1011,7 +1010,11 @@ boolean compareChecksum_WS(const char *wsFilePath) {
 
   if (checksum == wsGameChecksum) {
     println_Msg(F("Checksum matches"));
-    display_Update();
+
+    // Compare CRC32 to database and rename ROM if found
+    // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
+    compareCRC("ws.txt", 0, 1, 0);
+
     return 1;
   } else {
     print_Error(F("Checksum Error"));
