@@ -38,11 +38,12 @@ Happy making. 🔧🔨😊
 - Sega SG-1000    
 - Sega Cards    
 - PC engine/TG16    
-- WonderSwan    
-- NeoGeo Pocket    
+- WonderSwan (Color)    
+- NeoGeo Pocket (Color)    
 - Intellivision   
 - ColecoVision    
 - Benesse Pocket Challenge W    
+- Benesse Pocket Challenge V2    
 - Watara Supervision    
 - Atari 2600    
 - Emerson Arcadia 2001   
