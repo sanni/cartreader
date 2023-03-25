@@ -406,6 +406,10 @@ uint32_t detect_rom_size_PCE(void) {
     if (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
       rom_size = 512;
     }
+    //Dinoforce (World)
+    if (read_byte_PCE(0x15A) == 'D' && read_byte_PCE(0x15B) == 'I' && read_byte_PCE(0x15C) == 'N' && read_byte_PCE(0x15D) == 'O' && read_byte_PCE(0x15E) == '-' && read_byte_PCE(0x15F) == 'F' && read_byte_PCE(0x160) == 'O' && read_byte_PCE(0x161) == 'R' && read_byte_PCE(0x162) == 'C' && read_byte_PCE(0x163) == 'E') {
+      rom_size = 512;
+    }
   }
 
   return rom_size;
