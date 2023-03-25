@@ -464,7 +464,9 @@ void getDeveloperName(uint8_t id, char *buf, size_t length) {
 
     // custom developerId
     case 0x7a: devName = PSTR("7AC"); break;  // witch
-    case 0xff: devName = PSTR("WWGP"); break;  // WWGP series (jss2, dknight)
+    case 0xff:
+      devName = PSTR("WWGP");
+      break;  // WWGP series (jss2, dknight)
 
     // if not found, use id
     default: snprintf(buf, length, "%02X", id); return;

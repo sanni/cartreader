@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             08.03.2023
+   Date:             25.03.2023
    Version:          12.4
 
    SD lib: https://github.com/greiman/SdFat
@@ -15,7 +15,7 @@
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
-   Compiled with Arduino IDE 2.0.3
+   Compiled with Arduino IDE 2.0.4
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
@@ -199,9 +199,6 @@ char ver[5] = "12.4";
 
 // Renames ROM if found in database
 #define nointro
-
-// Ignores errors that normally force a reset if button 2 is pressed
-// #define debug_mode
 
 // Setup RTC if installed.
 // #define RTC_installed
@@ -513,7 +510,7 @@ bool flashSwitchLastBits;
 unsigned long writeErrors;
 
 // Operation mode
-byte mode;
+byte mode = 0xFF;
 
 //remember folder number to create a new folder for every game
 int foldern;
@@ -1603,8 +1600,8 @@ void selfTest() {
     println_Msg(F(""));
     print_STR(press_button_STR, 1);
     display_Update();
-    wait();
-    resetArduino();
+    //wait();
+    //resetArduino();
   }
 
   println_Msg(F("Testing short to GND"));
@@ -1649,7 +1646,7 @@ void selfTest() {
       pinMode(pinNumber, OUTPUT);
       digitalWrite(pinNumber, LOW);
       for (byte pinNumber2 = 2; pinNumber2 <= 69; pinNumber2++) {
-        if (((2 <= pinNumber2) && (pinNumber2 <= 9)) || ((14 <= pinNumber2) && (pinNumber2 <= 17)) || ((22 <= pinNumber2) && (pinNumber2 <= 37)) || ((42 <= pinNumber2) && (pinNumber2 <= 49)) || ((54 <= pinNumber2) && (pinNumber2 <= 69)) && (pinNumber != pinNumber2)) {
+        if ((((2 <= pinNumber2) && (pinNumber2 <= 9)) || ((14 <= pinNumber2) && (pinNumber2 <= 17)) || ((22 <= pinNumber2) && (pinNumber2 <= 37)) || ((42 <= pinNumber2) && (pinNumber2 <= 49)) || ((54 <= pinNumber2) && (pinNumber2 <= 69))) && (pinNumber != pinNumber2)) {
           pinMode(pinNumber2, INPUT_PULLUP);
           if (!digitalRead(pinNumber2)) {
             setColor_RGB(255, 0, 0);
@@ -3083,10 +3080,6 @@ int checkButton() {
 
 void wait_serial() {
   if (errorLvl) {
-    // Debug
-#ifdef debug_mode
-    ignoreError = 1;
-#endif
     errorLvl = 0;
   }
   while (Serial.available() == 0) {
@@ -3278,10 +3271,6 @@ void wait_btn() {
     // if the cart readers input button is pressed long
     if (b == 3) {
       if (errorLvl) {
-        // Debug
-#ifdef debug_mode
-        ignoreError = 1;
-#endif
         errorLvl = 0;
       }
       break;
@@ -3360,10 +3349,6 @@ void wait_btn() {
     // if the cart readers input button is pressed long
     if (b == 3) {
       if (errorLvl) {
-        // Debug
-#ifdef debug_mode
-        ignoreError = 1;
-#endif
         errorLvl = 0;
       }
       break;
