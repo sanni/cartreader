@@ -46,5 +46,5 @@ jobs:
         run: |
           cd Cart_Reader/
           # Select hardware version by uncommenting it (using regular expression)
-          sed -i 's/^\/\/[\t ]*#define ${{ matrix.hwVersion }}/#define ${{ matrix.hwVersion }}/g' Cart_Reader.ino
+          sed -i 's/^\/\/[\t ]*#define ${{ matrix.hwVersion }}/#define ${{ matrix.hwVersion }}/g' Config.h
           arduino-cli compile --fqbn arduino:avr:mega --warnings all

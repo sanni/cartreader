@@ -135,7 +135,7 @@ void setup_INTV() {
 }
 
 void intvMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsINTV, 4);
   uint8_t mainMenu = question_box(F("INTELLIVISION MENU"), menuOptions, 4, 0);
 

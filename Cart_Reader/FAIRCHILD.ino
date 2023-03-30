@@ -126,6 +126,7 @@ void setup_FAIRCHILD() {
 }
 
 void fairchildMenu() {
+  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsFAIRCHILD, 5);
   uint8_t mainMenu = question_box(F("CHANNEL F MENU"), menuOptions, 5, 0);
 

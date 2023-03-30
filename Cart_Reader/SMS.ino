@@ -40,7 +40,7 @@ static bool retron_mode = false;
 
 
 void _smsMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   // create menu with title and n options to choose from
   unsigned char mainMenu;
 

@@ -50,7 +50,7 @@ static const char sfmGameMenuItem4[] PROGMEM = "Switch Game";
 static const char* const menuOptionsSFMGame[] PROGMEM = { sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, string_reset2 };
 
 void sfmMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem

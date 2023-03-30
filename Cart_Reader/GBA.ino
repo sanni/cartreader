@@ -34,7 +34,7 @@ static const char GBASaveItem6[] PROGMEM = "1M FLASH";
 static const char* const saveOptionsGBA[] PROGMEM = { GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6 };
 
 void gbaMenu() {
-  vselect(true);
+  setVoltage(VOLTS_SET_3V3);
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem

@@ -17,7 +17,7 @@ static const char acanMenuItem6[] PROGMEM = "Flash repro";
 static const char *const menuOptionsAcan[] PROGMEM = { acanMenuItem1, acanMenuItem2, acanMenuItem3, acanMenuItem4, acanMenuItem5, string_reset2, acanMenuItem6 };
 
 void setup_SuprAcan() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
 
   // addr as output
   DDRF = 0xff;  // A0 - A7

@@ -117,7 +117,7 @@ boolean headerCheck() {
 }
 
 void wsMenu() {
-  vselect(true);
+  setVoltage(VOLTS_SET_3V3);
   uint8_t mainMenu = (wsWitch ? 5 : 4);
 
   convertPgm(menuOptionsWS, mainMenu);

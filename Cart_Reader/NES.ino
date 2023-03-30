@@ -269,7 +269,7 @@ static const char* const menuOptionsNESChips[] PROGMEM = { nesChipsMenuItem1, ne
 
 // NES start menu
 void nesMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   unsigned char answer;
 
   // create menu with title "NES CART READER" and 7 options to choose from
@@ -2996,7 +2996,7 @@ void readPRG(boolean readrom) {
       case 59:
         banks = int_pow(2, prgsize);
         for (int i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 + (i & 0x07) << 4 | 0x80, 0);
+          write_prg_byte((0x8000 + (i & 0x07)) << 4 | 0x80, 0);
           for (word address = 0x0; address < 0x4000; address += 512) {
             dumpPRG(base, address);
           }
@@ -4554,7 +4554,7 @@ void readCHR(boolean readrom) {
         case 228:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + (i & 0x3C) >> 2, (i & 0x03));
+            write_prg_byte((0x8000 + (i & 0x3C)) >> 2, (i & 0x03));
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }

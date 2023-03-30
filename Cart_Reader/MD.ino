@@ -85,7 +85,9 @@ unsigned long bramSize = 0;
 // REALTEC MAPPER
 boolean realtec = 0;
 
-#define DEFAULT_VALUE_segaSram16bit 0
+#ifndef DEFAULT_VALUE_segaSram16bit
+  #define DEFAULT_VALUE_segaSram16bit 0
+#endif
 int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
 
 //*****************************************
@@ -209,7 +211,7 @@ static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2
 
 // Sega start menu
 void mdMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   // create menu with title and 4 options to choose from
   unsigned char mdDev;
   // Copy menuOptions out of progmem

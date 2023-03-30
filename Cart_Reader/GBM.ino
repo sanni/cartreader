@@ -17,7 +17,7 @@ static const char gbmMenuItem7[] PROGMEM = "Write Mapping";
 static const char* const menuOptionsGBM[] PROGMEM = { gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4, gbmMenuItem5, gbmMenuItem6, gbmMenuItem7 };
 
 void gbmMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
