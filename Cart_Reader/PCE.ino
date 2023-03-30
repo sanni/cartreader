@@ -70,7 +70,7 @@ static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_r
 
 // PCE start menu
 void pcsMenu(void) {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   // create menu with title and 3 options to choose from
   unsigned char pceDev;
   // Copy menuOptions out of progmem

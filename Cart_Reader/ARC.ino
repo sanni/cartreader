@@ -94,6 +94,7 @@ void setup_ARC() {
 }
 
 void arcMenu() {
+  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsARC, 4);
   uint8_t mainMenu = question_box(F("ARCADIA 2001 MENU"), menuOptions, 4, 0);
 

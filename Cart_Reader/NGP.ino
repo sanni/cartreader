@@ -52,7 +52,7 @@ void setup_NGP() {
 }
 
 void ngpMenu() {
-  vselect(true);
+  setVoltage(VOLTS_SET_3V3);
   uint8_t mainMenu;
 
   convertPgm(menuOptionsNGP, 4);

@@ -145,7 +145,7 @@ void setup_GBSmart() {
 }
 
 void gbSmartMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   uint8_t mainMenu;
 
   // Copy menuOptions out of progmem

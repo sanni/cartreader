@@ -110,6 +110,7 @@ void setup_ODY2() {
 }
 
 void ody2Menu() {
+  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsODY2, 4);
   uint8_t mainMenu = question_box(F("ODYSSEY 2 MENU"), menuOptions, 4, 0);
 

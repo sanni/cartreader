@@ -93,7 +93,7 @@ void setup_COL() {
 }
 
 void colMenu() {
-  vselect(false);
+  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsCOL, 4);
   uint8_t mainMenu = question_box(F("COLECOVISION MENU"), menuOptions, 4, 0);
 

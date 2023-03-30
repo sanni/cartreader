@@ -101,6 +101,7 @@ void setup_ATARI() {
 }
 
 void atariMenu() {
+  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsATARI, 4);
   uint8_t mainMenu = question_box(F("ATARI 2600 MENU"), menuOptions, 4, 0);
 

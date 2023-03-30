@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             25.03.2023
-   Version:          12.4
+   Date:             2023-03-29
+   Version:          12.5
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -57,175 +57,11 @@
 
 **********************************************************************************/
 
-char ver[5] = "12.4";
-
-//******************************************
-// !!! CHOOSE HARDWARE VERSION !!!
-//******************************************
-// Remove // in front of the line with your hardware version
-// #define HW5
-// #define HW4
-// #define HW3
-// #define HW2
-// #define HW1
-// #define SERIAL_MONITOR
-
-#if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
-#error !!! PLEASE CHOOSE HARDWARE VERSION !!!
-#endif
-
-//******************************************
-// ENABLE MODULES
-//******************************************
-// add/remove // before #define to disable/enable modules you
-// don't need/need to save program storage space and dynamic memory
-// If you only get an empty or "Press Button" screen after flashing
-// you have enabled too many modules
-
-// Self test
-#define enable_selftest
-
-// Atari 2600
-//#define enable_ATARI
-
-// Benesse Pocket Challenge W
-//#define enable_PCW
-
-// ColecoVision
-//#define enable_COLV
-
-// Emerson Arcadia 2001
-//#define enable_ARC
-
-// Fairchild Channel F
-//#define enable_FAIRCHILD
-
-// Flashrom Programmer for SNES repros
-#define enable_FLASH
-//#define enable_FLASH16
-
-// Game Boy (Color) and Advance
-#define enable_GBX
-
-// Intellivision
-//#define enable_INTV
-
-// Neo Geo Pocket
-//#define enable_NGP
-
-// Nintendo 64
-#define enable_N64
-
-// Nintendo Entertainment System/Family Computer
-#define enable_NES
-
-// Magnavox Odyssey 2
-//#define enable_ODY2
-
-// PC Engine/TurboGrafx 16
-//#define enable_PCE
-
-// Sega Master System/Mark III/Game Gear/SG-1000
-#define enable_SMS
-
-// Sega Mega Drive/Genesis
-#define enable_MD
-
-// Super Famicom SF Memory Cassette
-#define enable_SFM
-
-// Super Famicom Satellaview
-#define enable_SV
-
-// Super Nintendo
-#define enable_SNES
-
-// Virtual Boy
-//#define enable_VBOY
-
-// Watara Supervision
-//#define enable_WSV
-
-// WonderSwan and Benesse Pocket Challenge v2
-//#define enable_WS
-
-// Super A'can
-//#define enable_SUPRACAN
-
-//******************************************
-// HW CONFIGS
-//******************************************
-#if (defined(HW4) || defined(HW5))
-// #define enable_vselect
-#define enable_LCD
-#define enable_neopixel
-#define background_color 100, 0, 0  //Green, Red, Blue
-#define enable_rotary
-// #define rotate_counter_clockwise
-#define clockgen_installed
-#define fastcrc
-#define ws_adapter_v2
-#endif
-
-#if (defined(HW2) || defined(HW3))
-#define enable_OLED
-#define enable_Button2
-#define clockgen_installed
-#define CA_LED
-#define fastcrc
-#endif
-
-#if defined(HW1)
-#define enable_OLED
-// #define clockgen_installed
-// #define fastcrc
-#endif
-
-#if defined(SERIAL_MONITOR)
-#define enable_serial
-//#define clockgen_installed
-//#define fastcrc
-#endif
-
-//******************************************
-// OPTIONS
-//******************************************
-// Change mainMenu to snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu,
-// flashMenu, nesMenu or smsMenu for single slot Cart Readers
-#define startMenu mainMenu
-
-// Write all info to OSCR_LOG.txt in root dir
-#define global_log
-
-// Renames ROM if found in database
-#define nointro
-
-// Setup RTC if installed.
-// #define RTC_installed
-
-// Use calibration data from snes_clk.txt
-// #define clockgen_calibration
-
-// Use Adafruit Clock Generator
-// #define clockgen_installed
-
-// I don't know
-//#define use_md_conf
-
-// The CRC for N64 Roms will be calculated during dumping from memory instead of after dumping from SD card, not compatible to all Cart Readers
-// #define fastcrc
-
-// saves a n64log.txt file with rom info in /N64/ROM
-// #define savesummarytotxt
+#include "OSCR.h"
 
 /******************************************
    Libraries
  *****************************************/
-// Basic Libs
-#include <SPI.h>
-#include <Wire.h>
-#include <avr/pgmspace.h>
-#include <avr/wdt.h>
 
 // SD Card
 #include "SdFat.h"
@@ -2143,14 +1979,18 @@ int32_t initializeClockOffset() {
    Setup
  *****************************************/
 void setup() {
+#if !defined(enable_serial) && defined(ENABLE_UPDATER)
+  ClockedSerial.begin(UPD_BAUD);
+#endif
+
   // Set Button Pin PG2 to Input
   DDRG &= ~(1 << 2);
-#if defined(HW5) && !defined(enable_vselect)
+#if defined(HW5) && !defined(ENABLE_VSELECT)
   // HW5 has status LED connected to PD7
   // Set LED Pin PD7 to Output
   DDRD |= (1 << 7);
   PORTD |= (1 << 7);
-#elif defined(enable_vselect)
+#elif defined(ENABLE_VSELECT)
   DDRD |= (1 << 7);
 #else
   // HW1/2/3 have button connected to PD7
@@ -2164,6 +2004,7 @@ void setup() {
 
   // Read current folder number out of eeprom
   EEPROM_readAnything(0, foldern);
+  if (foldern < 0) foldern = 0;
 
 #ifdef enable_LCD
   display.begin();
@@ -2172,6 +2013,11 @@ void setup() {
 #endif
 
 #ifdef enable_neopixel
+  #if defined(ENABLE_3V3FIX)
+    // Set power high for neopixel
+    setVoltage(VOLTS_SET_5V);
+    delay(10);
+  #endif
   pixels.begin();
   pixels.clear();
   pixels.setPixelColor(0, pixels.Color(background_color));
@@ -2180,23 +2026,26 @@ void setup() {
   pixels.show();
 
   // Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
-#if !(defined(enable_serial) || defined(HW5))
-  DDRE |= (1 << 1);
-#endif
+  #if !(defined(enable_serial) || defined(HW5))
+    DDRE |= (1 << 1);
+  #endif
 #else
-#ifndef enable_LCD
-#ifdef CA_LED
-  // Turn LED off
-  digitalWrite(12, 1);
-  digitalWrite(11, 1);
-  digitalWrite(10, 1);
+  #ifndef enable_LCD
+    #ifdef CA_LED
+      // Turn LED off
+      digitalWrite(12, 1);
+      digitalWrite(11, 1);
+      digitalWrite(10, 1);
+    #endif
+    // Configure 4 Pin RGB LED pins as output
+    DDRB |= (1 << DDB6);  // Red LED (pin 12)
+    DDRB |= (1 << DDB5);  // Green LED (pin 11)
+    DDRB |= (1 << DDB4);  // Blue LED (pin 10)
+  #endif
 #endif
-  // Configure 4 Pin RGB LED pins as output
-  DDRB |= (1 << DDB6);  // Red LED (pin 12)
-  DDRB |= (1 << DDB5);  // Green LED (pin 11)
-  DDRB |= (1 << DDB4);  // Blue LED (pin 10)
-#endif
-#endif
+
+// Set power to low to protect carts
+setVoltage(VOLTS_SET_3V3);
 
 #ifdef enable_OLED
   display.begin();
@@ -2219,6 +2068,11 @@ void setup() {
     display_Clear();
     print_FatalError(sd_error_STR);
   }
+
+#if !defined(enable_serial) && defined(ENABLE_UPDATER)
+  printVersionToSerial();
+  ClockedSerial.flush();
+#endif
 
 #ifdef global_log
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
@@ -2253,9 +2107,6 @@ void setup() {
   // status LED ON
   statusLED(true);
 
-  // Set power to low to protect carts
-  vselect(true);
-
   // Start menu system
   startMenu();
 }
@@ -2282,6 +2133,9 @@ void dataIn() {
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
 #if defined(enable_neopixel)
+  #if defined(ENABLE_3V3FIX)
+    if (clock == CS_8MHZ) return;
+  #endif
   // Dim Neopixel LEDs
   if (r >= 100) r = 100;
   if (g >= 100) g = 100;
@@ -2741,7 +2595,7 @@ void rgbLed(byte Color) {
 }
 
 void blinkLED() {
-#if defined(enable_vselect)
+#if defined(ENABLE_VSELECT)
   // Nothing
 #elif defined(HW5)
   PORTD ^= (1 << 7);
@@ -2755,51 +2609,15 @@ void blinkLED() {
 #endif
 }
 
-#if defined(HW5) && !defined(enable_vselect)
+#if defined(HW5) && !defined(ENABLE_VSELECT)
 void statusLED(boolean on) {
   if (!on)
-    PORTD |= (1 << 7);
-  else
-    PORTD &= ~(1 << 7);
-  /*
-    #elif defined(enable_OLED)
-    if (!on)
-      PORTB |= (1 << 4);
-    else
-      PORTB &= ~(1 << 4);
-
-    #elif defined(enable_LCD)
-    if (!on)
-      PORTE |= (1 << 1);
-    else
-      PORTE &= ~(1 << 1);
-
-    #elif defined(enable_serial)
-    if (!on) {
-      PORTB |= (1 << 4);
-      PORTB |= (1 << 7);
-    }
-    else {
-      PORTB &= ~(1 << 4);
-      PORTB &= ~(1 << 7);
-    }
-  */
-}
-void vselect(boolean vlow __attribute__((unused))) {
-}
-#elif defined(enable_vselect)
-void statusLED(boolean on __attribute__((unused))) {
-}
-void vselect(boolean vlow) {
-  if (vlow)
     PORTD |= (1 << 7);
   else
     PORTD &= ~(1 << 7);
 }
 #else
 void statusLED(boolean on __attribute__((unused))) {
-}
-void vselect(boolean vlow __attribute__((unused))) {
 }
 #endif
 
@@ -3035,6 +2853,8 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       numPages = 0;
       break;
     }
+
+    checkUpdater();
   }
 
   // pass on user choice
@@ -3048,6 +2868,39 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
 
   return choice;
 }
+#endif
+
+#if !defined(enable_serial) && defined(ENABLE_UPDATER)
+void checkUpdater() {
+  if (ClockedSerial.available() > 0) {
+    String cmd = ClockedSerial.readStringUntil('\n');
+    cmd.trim();
+    if (cmd == "VERCHK") {
+      delay(500);
+      printVersionToSerial();
+    } else if (cmd == "GETCLOCK") {
+#if defined(ENABLE_3V3FIX)
+      ClockedSerial.print(F("Clock is running at "));
+      ClockedSerial.print((clock == CS_16MHZ) ? 16UL : 8UL);
+      ClockedSerial.println(F("MHz"));
+#else
+      ClockedSerial.println(F("Dynamic clock speed (3V3FIX) is not enabled."));
+#endif      
+    } else if (cmd == "GETVOLTS") {
+#if defined(ENABLE_VSELECT)
+      ClockedSerial.print(F("Voltage is set to "));
+      ClockedSerial.print((voltage == VOLTS_SET_5V) ? 5 : 3.3);
+      ClockedSerial.println(F("V"));
+#else
+      ClockedSerial.println(F("Automatic voltage selection (VSELECT) is not enabled."));
+#endif
+    } else {
+      ClockedSerial.println(F("OSCR: Unknown Command"));
+    }
+  }
+}
+#else
+void checkUpdater() {}
 #endif
 
 /******************************************
@@ -3275,6 +3128,8 @@ void wait_btn() {
       }
       break;
     }
+
+    checkUpdater();
   }
 }
 #endif
@@ -3353,6 +3208,8 @@ void wait_btn() {
       }
       break;
     }
+
+    checkUpdater();
   }
 }
 

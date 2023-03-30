@@ -113,7 +113,7 @@ static const char* const sectorOptionsN64[] PROGMEM = { N64SectorItem1, N64Secto
 
 // N64 start menu
 void n64Menu() {
-  vselect(true);
+  setVoltage(VOLTS_SET_3V3);
   // create menu with title and 5 options to choose from
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
