@@ -1,100 +1,144 @@
-//********************************************************
-// SEGA MASTER SYSTEM/Mark III/SG-1000/GAME GEAR MODULE
-//********************************************************
+//***********************************************************
+// SEGA MASTER SYSTEM / MARK III / GAME GEAR / SG-1000 MODULE
+//***********************************************************
 #ifdef enable_SMS
 
-/******************************************
-   Menu
- *****************************************/
-// Adapter menu
-static const char SMSAdapterItem1[] PROGMEM = "SMS/Mark 3 raphnet";
-static const char SMSAdapterItem2[] PROGMEM = "SG-1000 raphnet";
-static const char SMSAdapterItem3[] PROGMEM = "SMS Retrode";
-static const char SMSAdapterItem4[] PROGMEM = "GG Retrode";
-static const char SMSAdapterItem5[] PROGMEM = "GG Retron 3in1";
-static const char* const menuAdapterSMS[] PROGMEM = { SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5 };
+//******************************************
+//   Menus
+//******************************************
+// Adapters menu
+static const char SMSAdapterItem1[] PROGMEM = "SMS/MarkIII raphnet";
+static const char SMSAdapterItem2[] PROGMEM = "SMS Retrode";
+static const char SMSAdapterItem3[] PROGMEM = "SMS Retron3in1";
+static const char SMSAdapterItem4[] PROGMEM = "GameGear Retrode";
+static const char SMSAdapterItem5[] PROGMEM = "GameGear Retron3in1";
+static const char SMSAdapterItem6[] PROGMEM = "SG-1000 raphnet";
+static const char* const SMSAdapterMenu[] PROGMEM = { SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5, SMSAdapterItem6 };
 
-// MD menu items
-static const char SMSMenuItem1[] PROGMEM = "Read Rom";
-static const char SMSMenuItem2[] PROGMEM = "Read from SRAM";
-static const char SMSMenuItem3[] PROGMEM = "Write to SRAM";
-//static const char SMSMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char SMSMenuItem5[] PROGMEM = "Change Retrode Mode";
-static const char* const menuOptionsSMS[] PROGMEM = { SMSMenuItem1, SMSMenuItem2, SMSMenuItem3, string_reset2, SMSMenuItem5 };
+// Operations menu
+static const char SMSOperationItem1[] PROGMEM = "Read Rom";
+static const char SMSOperationItem2[] PROGMEM = "Read from SRAM";
+static const char SMSOperationItem3[] PROGMEM = "Write to SRAM";
+static const char* const SMSOperationMenu[] PROGMEM = { SMSOperationItem1, SMSOperationItem2, SMSOperationItem3, string_reset2 };
 
-// Rom Size menu
-static const char SMSRomItem1[] PROGMEM = "8KB";
-static const char SMSRomItem2[] PROGMEM = "16KB";
-static const char SMSRomItem3[] PROGMEM = "24KB";
-static const char SMSRomItem4[] PROGMEM = "32KB";
-static const char SMSRomItem5[] PROGMEM = "40KB";
-static const char SMSRomItem6[] PROGMEM = "48KB";
-static const char SMSRomItem7[] PROGMEM = "512KB";
-static const char* const romOptionsSMS[] PROGMEM = { SMSRomItem1, SMSRomItem2, SMSRomItem3, SMSRomItem4, SMSRomItem5, SMSRomItem6, SMSRomItem7 };
+// Rom sizes menu
+static const char SMSRomSizeItem1[] PROGMEM = "8 KB";
+static const char SMSRomSizeItem2[] PROGMEM = "16 KB";
+static const char SMSRomSizeItem3[] PROGMEM = "24 KB";
+static const char SMSRomSizeItem4[] PROGMEM = "32 KB";
+static const char SMSRomSizeItem5[] PROGMEM = "40 KB"; //SG-1000 40k mapping not yet supported
+static const char SMSRomSizeItem6[] PROGMEM = "48 KB"; //SG-1000 40k mapping not yet supported
+static const char SMSRomSizeItem7[] PROGMEM = "64 KB";
+static const char SMSRomSizeItem8[] PROGMEM = "128 KB";
+static const char SMSRomSizeItem9[] PROGMEM = "256 KB";
+static const char SMSRomSizeItem10[] PROGMEM = "512 KB";
+static const char SMSRomSizeItem11[] PROGMEM = "1024 KB";
+static const char* const SG1RomSizeMenu[] PROGMEM = { SMSRomSizeItem1, SMSRomSizeItem2, SMSRomSizeItem3, SMSRomSizeItem4};                                     // Rom sizes for SG-1000
+static const char* const SMSRomSizeMenu[] PROGMEM = { SMSRomSizeItem4, SMSRomSizeItem7, SMSRomSizeItem8, SMSRomSizeItem9, SMSRomSizeItem10, SMSRomSizeItem11}; // Rom sizes for SMS and GG
 
-// Set retrode_mode to true when using a retrode SMS/GG adapter
-static bool retrode_mode = false;
-static bool retrode_mode_sms = false;     // true: SMS/Mark3 false: GG
-static bool raphnet_mode_sg1000 = false;  //  true: SG-1000 false: SMS/Mark3
-static bool retron_mode = false;
+// Init systems
+static bool system_sms = false;      // SMS or MarkIII
+static bool system_gg = false;       // GameGear
+static bool system_sg1000 = false;   // SG-1000
 
+// Init adapters
+static bool adapter_raphnet = false; // raphet adapater (SMS-to-MD or MIII-to-MD)
+static bool adapter_retrode = false; // Retrode adapter (SMS-to-MD or GG-to-MD)
+static bool adapter_retron = false;  // Retron 3in1 adapter (SMS-to-MD or GG-to-MD)
 
-void _smsMenu() {
+//*********************************************************
+//  Main menu with systems/adapters setups to choose from
+//*********************************************************
+void smsMenu() {
   setVoltage(VOLTS_SET_5V);
-  // create menu with title and n options to choose from
-  unsigned char mainMenu;
+  unsigned char SMSSetup;
+  convertPgm(SMSAdapterMenu, 6);
+  SMSSetup = question_box(F("Select your setup"), menuOptions, 6, 0);
 
-  if (retrode_mode) {
-    // Copy menuOptions out of progmem
-    int noptions = sizeof(menuOptionsSMS) / sizeof(menuOptionsSMS[0]);
-    convertPgm(menuOptionsSMS, noptions);
-    mainMenu = question_box(retrode_mode ? (retrode_mode_sms ? F("Retrode:SMS") : F("Retrode:GG")) : F("SMS/GG Retrode:NO"), menuOptions, noptions, 0);
-  } else if (retron_mode) {
-    // Copy menuOptions out of progmem
-    convertPgm(menuOptionsSMS, 4);
-    mainMenu = question_box(F("Game Gear"), menuOptions, 4, 0);
-  } else {
-    // Copy menuOptions out of progmem
-    convertPgm(menuOptionsSMS, (raphnet_mode_sg1000 ? 1 : 4));
-    mainMenu = question_box((raphnet_mode_sg1000 ? F("SG-1000") : F("SMS/Mark III")), menuOptions, (raphnet_mode_sg1000 ? 1 : 4), 0);
+  switch (SMSSetup) {
+    case 0:
+      // SMS or MarkIII with raphnet adapter
+      system_sms = true;
+      adapter_raphnet = true;
+      break;
+
+   case 1:
+      // SMS with Retrode adapter
+      system_sms = true;
+      adapter_retrode = true;
+      break;
+
+    case 2:
+      // SMS with Retron 3in1 adapter
+      system_sms = true;
+      adapter_retron = true;
+      break;
+
+    case 3:
+      // GameGear with Retrode adapter
+      system_gg = true;
+      adapter_retrode = true;
+      break;
+
+    case 4:
+      // GameGear with Retron 3in1 adapter
+      system_gg = true;
+      adapter_retron = true;
+      break;
+
+    case 5:
+      // SG-1000 with raphnet adapter
+      system_sg1000 = true;
+      adapter_raphnet = true;
+      break;
+  }
+  for (;;) smsOperations();
+}
+
+//****************************************************
+//  Create custom menu depending on selected setup
+//****************************************************
+void smsOperations() {
+  unsigned char SMSOperation = '3';
+  convertPgm(SMSOperationMenu, 4);
+
+  if (system_sms) {
+    if (adapter_raphnet) {
+      SMSOperation = question_box(F("SMS/MarkIII raphnet"), menuOptions, 4, 0);
+    } else if (adapter_retrode) {
+      SMSOperation = question_box(F("SMS Retrode"), menuOptions, 4, 0);
+    } else if (adapter_retron) {
+      SMSOperation = question_box(F("SMS Retron 3in1"), menuOptions, 4, 0);
+    }
+  } else if (system_gg) {
+    if (adapter_retrode) {
+      SMSOperation = question_box(F("GameGear Retrode"), menuOptions, 4, 0);
+    } else if (adapter_retron) {
+      SMSOperation = question_box(F("GameGear Retron 3in1"), menuOptions, 4, 0);
+    }
+  } else if (system_sg1000) {
+    SMSOperation = question_box(F("SG-1000 raphnet"), menuOptions, 1, 0);
   }
 
-  // wait for user choice to come back from the question box menu
-  switch (mainMenu) {
+  switch (SMSOperation) {
     case 0:
-      display_Clear();
+      // Read ROM
       mode = mode_SMS;
       setup_SMS();
-      // Change working dir to root
-      sd.chdir("/");
       readROM_SMS();
-      if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
-        compareCRC("gg.txt", 0, 1, 0);
-      } else if (raphnet_mode_sg1000) {
-        compareCRC("sg1000.txt", 0, 1, 0);
-      } else {
-        compareCRC("sms.txt", 0, 1, 0);
-      }
-#ifdef global_log
-      save_log();
-#endif
       break;
 
     case 1:
-      display_Clear();
+      // Read SRAM
       mode = mode_SMS;
       setup_SMS();
-      // Change working dir to root
-      sd.chdir("/");
       readSRAM_SMS();
       break;
 
     case 2:
-      display_Clear();
+      // Write SRAM
       mode = mode_SMS;
       setup_SMS();
-      // Change working dir to root
-      sd.chdir("/");
       writeSRAM_SMS();
       break;
 
@@ -102,84 +146,15 @@ void _smsMenu() {
       // Reset
       resetArduino();
       break;
+  }
 
-    case 4:
-      if (retrode_mode && !retrode_mode_sms) {
-        // Change to SMS
-        retrode_mode_sms = true;
-      } else if (retrode_mode && retrode_mode_sms) {
-        // Change to GG
-        retrode_mode_sms = false;
-      }
-      break;
-  }
-  if (retrode_mode) {
-    println_Msg(retrode_mode ? (retrode_mode_sms ? F("Retrode Mode SMS") : F("Retrode Mode GG")) : F("Retrode Mode Off"));
-    // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
-  } else {
-    println_Msg(F(""));
-    // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
-  }
   display_Update();
   wait();
 }
 
-void smsMenu() {
-  // create main menu with title and 4 options to choose from
-  unsigned char SMSAdapterMenu;
-  // Copy menuOptions out of progmem
-  convertPgm(menuAdapterSMS, 5);
-  SMSAdapterMenu = question_box(F("Select System/Adapter"), menuOptions, 5, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (SMSAdapterMenu) {
-    case 0:
-      //  raphnet SMS/Mark3
-      retrode_mode = false;
-      retrode_mode_sms = false;
-      raphnet_mode_sg1000 = false;
-      retron_mode = false;
-      break;
-
-    case 1:
-      //  raphnet SG-1000
-      retrode_mode = false;
-      retrode_mode_sms = false;
-      raphnet_mode_sg1000 = true;
-      retron_mode = false;
-      break;
-
-    case 2:
-      // retrode SMS/Mark3
-      retrode_mode = true;
-      retrode_mode_sms = true;
-      raphnet_mode_sg1000 = false;
-      retron_mode = false;
-      break;
-
-    case 3:
-      // retrode GG
-      retrode_mode = true;
-      retrode_mode_sms = false;
-      raphnet_mode_sg1000 = false;
-      retron_mode = false;
-      break;
-
-    case 4:
-      // retron 3in1 GG
-      retrode_mode = false;
-      retrode_mode_sms = false;
-      raphnet_mode_sg1000 = false;
-      retron_mode = true;
-  }
-  for (;;) _smsMenu();
-}
-
-/******************************************
-   Setup
- *****************************************/
+//********************************
+//   Setup I/O
+//********************************
 void setup_SMS() {
   // Set Address Pins to Output
   //A0-A7
@@ -189,8 +164,8 @@ void setup_SMS() {
   //A15
   DDRH |= (1 << 3);
 
-  if (retrode_mode) {
-    // Revert changes from the other mode
+  //For Retrode adapter
+  if (adapter_retrode) {
     PORTH &= ~((1 << 0) | (1 << 3) | (1 << 5));
     PORTL &= ~(1 << 1);
     DDRH &= ~((1 << 0) | (1 << 5));
@@ -199,49 +174,51 @@ void setup_SMS() {
     DDRH |= (1 << 6);
     // WR(PL5) and RD(PL6)
     DDRL |= (1 << 5) | (1 << 6);
-
     // Setting OE(PH6) HIGH
     PORTH |= (1 << 6);
     // Setting WR(PL5) and RD(PL6) HIGH
     PORTL |= (1 << 5) | (1 << 6);
-  } else {
-    // Revert changes from the other mode
-    PORTL &= ~((1 << 5) | (1 << 6));
-    DDRL &= ~((1 << 5) | (1 << 6));
+  } 
+
+  // For Raphnet and Retron adapters
+  else {
     // Set Control Pins to Output RST(PH0) WR(PH5) OE(PH6)
     DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
     // CE(PL1)
     DDRL |= (1 << 1);
-
     // Setting RST(PH0) WR(PH5) OE(PH6) HIGH
     PORTH |= (1 << 0) | (1 << 5) | (1 << 6);
     // CE(PL1)
     PORTL |= (1 << 1);
   }
 
-  // ROM has 16KB banks which can be mapped to one of three slots via register writes
-  // Register Slot Address space
-  // $fffd    0    $0000-$3fff
-  // $fffe    1    $4000-$7fff
-  // $ffff    2    $8000-$bfff
-  // Disable sram
-  writeByte_SMS(0xFFFC, 0);
-  // Map first 3 banks so we can read-out the header info
-  writeByte_SMS(0xFFFD, 0);
-  writeByte_SMS(0xFFFE, 1);
-  writeByte_SMS(0xFFFF, 2);
+  if (!system_sg1000) {
+    // SMS/GG ROM has 16KB banks which can be mapped to one of three slots via register writes
+    // Register Slot Address space
+    // $fffd    0    $0000-$3fff
+    // $fffe    1    $4000-$7fff
+    // $ffff    2    $8000-$bfff
+
+    // Disable sram
+    writeByte_SMS(0xFFFC, 0);
+
+    // Map first 3 banks so we can read-out the header info
+    writeByte_SMS(0xFFFD, 0);
+    writeByte_SMS(0xFFFE, 1);
+    writeByte_SMS(0xFFFF, 2);
+  }
 
   delay(400);
 
-  // Print all the info
+  // Read and print cart info
   getCartInfo_SMS();
 }
 
-/******************************************
-  Low level functions
-*****************************************/
+//*****************************************
+//  Low level functions 
+//*****************************************
 void writeByte_SMS(word myAddress, byte myData) {
-  if (retrode_mode && !retrode_mode_sms) {
+  if (adapter_retrode && system_gg) {
     // Set Data Pins (D8-D15) to Output
     DDRA = 0xFF;
   } else {
@@ -252,13 +229,13 @@ void writeByte_SMS(word myAddress, byte myData) {
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
-  if (!retrode_mode) {
+  if (!adapter_retrode) {
     // CE(PH3) and OE(PH6) are connected
     PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
   }
 
   // Output data
-  if (retrode_mode && !retrode_mode_sms) {
+  if (adapter_retrode && system_gg) {
     PORTA = myData;
   } else {
     PORTC = myData;
@@ -271,7 +248,7 @@ void writeByte_SMS(word myAddress, byte myData) {
           "nop\n\t"
           "nop\n\t");
 
-  if (retrode_mode) {
+  if (adapter_retrode) {
     // Switch WR(PL5) and OE/CE(PH6) to LOW
     PORTL &= ~(1 << 5);
     PORTH &= ~(1 << 6);
@@ -287,7 +264,7 @@ void writeByte_SMS(word myAddress, byte myData) {
           "nop\n\t"
           "nop\n\t");
 
-  if (retrode_mode) {
+  if (adapter_retrode) {
     // Switch WR(PL5) and OE/CE(PH6) to HIGH
     PORTH |= (1 << 6);
     PORTL |= (1 << 5);
@@ -303,7 +280,7 @@ void writeByte_SMS(word myAddress, byte myData) {
           "nop\n\t"
           "nop\n\t");
 
-  if (retrode_mode && !retrode_mode_sms) {
+  if (adapter_retrode && system_gg) {
     // Set Data Pins (D8-D15) to Input
     DDRA = 0x00;
   } else {
@@ -313,7 +290,7 @@ void writeByte_SMS(word myAddress, byte myData) {
 }
 
 byte readByte_SMS(word myAddress) {
-  if (retrode_mode && !retrode_mode_sms) {
+  if (adapter_retrode && system_gg) {
     // Set Data Pins (D8-D15) to Input
     DDRA = 0x00;
   } else {
@@ -324,7 +301,7 @@ byte readByte_SMS(word myAddress) {
   // Set Address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
-  if (!retrode_mode) {
+  if (!adapter_retrode) {
     // CE(PH3) and OE(PH6) are connected
     PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
   }
@@ -334,7 +311,7 @@ byte readByte_SMS(word myAddress) {
           "nop\n\t"
           "nop\n\t");
 
-  if (retrode_mode) {
+  if (adapter_retrode) {
     // Switch RD(PL6) and OE(PH6) to LOW
     PORTL &= ~(1 << 6);
     PORTH &= ~(1 << 6);
@@ -350,9 +327,9 @@ byte readByte_SMS(word myAddress) {
           "nop\n\t");
 
   // Read
-  byte tempByte = (retrode_mode && !retrode_mode_sms) ? PINA : PINC;
+  byte tempByte = (adapter_retrode && system_gg) ? PINA : PINC;
 
-  if (retrode_mode) {
+  if (adapter_retrode) {
     // Switch RD(PL6) and OE(PH6) to HIGH
     PORTH |= (1 << 6);
     PORTL |= (1 << 6);
@@ -370,25 +347,18 @@ byte readByte_SMS(word myAddress) {
   return tempByte;
 }
 
-//unsigned char hex2bcd (unsigned char x) {
-//  unsigned char y;
-//  y = (x / 10) << 4;
-//  y = y | (x % 10);
-//return (y);
-//}
-
 byte readNibble(byte data, byte number) {
-  return ((data >> (number * 4)) & 0xf);
+  return ((data >> (number * 4)) & 0xF);
 }
 
-/******************************************
-  Cartridges functions
-*****************************************/
-void getCartInfo_SMS() {
-  // Rom size
-  switch (readNibble(readByte_SMS(0x7fff), 0)) {
+//*****************************************
+//  Cartridges functions
+//*****************************************
+void getCartInfo_SMS() {  
+  // Get rom size
+  switch (readNibble(readByte_SMS(0x7FFF), 0)) {
+    // Adding UL gets rid of integer overflow compiler warning
     case 0xa:
-      // Adding UL gets rid of integer overflow compiler warning
       cartSize = 8 * 1024UL;
       break;
     case 0xb:
@@ -421,38 +391,40 @@ void getCartInfo_SMS() {
       break;
     default:
       cartSize = 48 * 1024UL;
-
       // LED Error
       setColor_RGB(0, 0, 255);
       break;
   }
 
-  // Read TMR SEGA string
+  // Get rom name (expecting "TMR SEGA" string)
   for (byte i = 0; i < 8; i++) {
-    romName[i] = char(readByte_SMS(0x7ff0 + i));
+    romName[i] = char(readByte_SMS(0x7FF0 + i));
   }
   romName[8] = '\0';
 
-  // Attempt to detect cart size by checking if TMR SEGA is mirrored
+  // Attempt to detect cart size by checking if "TMR SEGA" is mirrored
   unsigned long mirror_offset = cartSize;
   char romName2[9];
   while (mirror_offset < 1024 * 1024UL) {
     byte bank = 1 + (mirror_offset / (16 * 1024UL));
-    writeByte_SMS(0xFFFE, bank);
+    writeByte_SMS(0xfffe, bank);
     for (byte i = 0; i < 8; i++) {
-      romName2[i] = char(readByte_SMS(0x7ff0 + i));
+      romName2[i] = char(readByte_SMS(0x7FF0 + i));
     }
     romName2[8] = '\0';
+
     // print_Msg(F("Name2: "));
     // println_Msg(romName2);
     // print_Msg(F("from bank "));
     // print_Msg(bank);
     // print_Msg(F(" offset "));
-    // print_Msg_PaddedHex32(mirror_offset + 0x7ff0);
+    // print_Msg_PaddedHex32(mirror_offset + 0x7FF0);
     // println_Msg(F(""));
+
     if (strcmp(romName2, romName) == 0) {
       break;
     }
+
     if (cartSize == 48 * 1024UL) {
       cartSize = 64 * 1024UL;
     } else {
@@ -460,13 +432,14 @@ void getCartInfo_SMS() {
     }
     mirror_offset = cartSize;
   }
+
   writeByte_SMS(0xFFFE, 1);
 
   // Fix for "Fantasy Zone (J) (V1.0)" that has not the normal header, but "COPYRIGHT SEGAPRG. BY T.ASAI".
   char headerFZ[29];
   if (strcmp(romName, "G. BY T.A") != 0) {
     for (byte i = 0; i < 28; i++) {
-      headerFZ[i] = char(readByte_SMS(0x7fe0 + i));
+      headerFZ[i] = char(readByte_SMS(0x7FE0 + i));
     }
     headerFZ[28] = '\0';
 
@@ -476,54 +449,64 @@ void getCartInfo_SMS() {
     }
   }
 
-  // SMS header not found
-  if (strcmp(romName, "TMR SEGA") != 0) {
-    // Set cartsize manually
-    unsigned char SMSRomMenu;
-    // Copy menuOptions out of progmem
-    convertPgm(romOptionsSMS, (raphnet_mode_sg1000 ? 4 : 7));
-    SMSRomMenu = question_box(F("Select ROM size"), menuOptions, (raphnet_mode_sg1000 ? 4 : 7), 0);
+  // If "TMR SEGA" header is not found
+  if (strcmp(romName, "TMR SEGA") != 0) { 
+    // Set rom size manually
+    unsigned char SMSRomSize;
 
-    // wait for user choice to come back from the question box menu
-    switch (SMSRomMenu) {
-      case 0:
-        // 8KB
-        cartSize = 8 * 1024UL;
-        break;
-
-      case 1:
-        // 16KB
-        cartSize = 16 * 1024UL;
-        break;
-
-      case 2:
-        // 24KB
-        cartSize = 24 * 1024UL;
-        break;
-
-      case 3:
-        // 32KB
-        cartSize = 32 * 1024UL;
-        break;
-
-      case 4:
-        // 40KB
-        cartSize = 40 * 1024UL;
-        break;
-
-      case 5:
-        // 48KB
-        cartSize = 48 * 1024UL;
-        break;
-
-      case 6:
-        // 512KB
-        cartSize = 512 * 1024UL;
-        break;
+    if (system_sg1000) {
+      // Rom sizes for SG-1000
+      convertPgm(SG1RomSizeMenu, 4);
+      SMSRomSize = question_box(F("Select ROM size"), menuOptions, 4, 0);
+      switch (SMSRomSize) {
+        case 0:
+          cartSize = 8 * 1024UL; // 8KB
+          break;
+        case 1:
+          cartSize = 16 * 1024UL; // 16KB
+          break;
+        case 2:
+          cartSize = 24 * 1024UL; // 24KB
+          break;
+        case 3:
+          cartSize = 32 * 1024UL; // 32KB
+          break;
+        //case 4:
+        //  cartSize = 40 * 1024UL; // 40KB
+        //  break;
+        //case 5:
+        //  cartSize = 48 * 1024UL; // 48KB
+        //  break;
+      }
+    } else {
+      // Rom sizes for SMS and GG
+      convertPgm(SMSRomSizeMenu, 6);
+      SMSRomSize = question_box(F("Select ROM size"), menuOptions, 6, 0);
+      switch (SMSRomSize) {
+        case 0:
+          cartSize = 32 * 1024UL; // 32KB
+          break;
+        case 1:
+          cartSize = 64 * 1024UL; // 64KB
+          break;
+        case 2:
+          cartSize = 128 * 1024UL; // 128KB
+          break;
+        case 3:
+          cartSize = 256 * 1024UL; // 256KB
+          break;
+        case 4:
+          cartSize = 512 * 1024UL; // 512KB
+          break;
+        case 5:
+          cartSize = 1024 * 1024UL; // 1MB
+          break;
+      }
     }
 
+    // Display cart info
     display_Clear();
-    println_Msg(F("SMS/GG Header not found"));
+    println_Msg(F("SMS/GG header not found"));
     println_Msg(F(" "));
     print_Msg(F("Name: "));
     println_Msg(romName);
@@ -534,13 +517,13 @@ void getCartInfo_SMS() {
     sprintf(romName, "UNKNOWN");
   }
 
-  // Header found
+  // If "TMR SEGA" header is found
   else {
     display_Clear();
-    if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
-      println_Msg(F("GG Header Info"));
+    if (system_sms) {
+      println_Msg(F("SMS header info"));
     } else {
-      println_Msg(F("SMS Header Info"));
+      println_Msg(F("GG header info"));
     }
     println_Msg(F(" "));
     print_Msg(F("Name: "));
@@ -552,33 +535,37 @@ void getCartInfo_SMS() {
   }
 
   // Wait for user input
-#if (defined(enable_LCD) || defined(enable_OLED))
-  // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
-#endif
+  #if (defined(enable_LCD) || defined(enable_OLED))
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+  #endif
+
   // Turn off LED
   setColor_RGB(0, 0, 0);
 }
 
-// Read rom and save to the SD card
+//******************************************
+//  Read ROM and save it to the SD card
+//******************************************
 void readROM_SMS() {
   // Get name, add extension depending on the system and convert to char array for sd lib
   EEPROM_readAnything(0, foldern);
   strcpy(fileName, romName);
-  if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
-    strcat(fileName, ".gg");
-    sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
-  } else if (raphnet_mode_sg1000) {
-    strcat(fileName, ".sg");
-    sprintf(folder, "SG1000/ROM/%s/%d", romName, foldern);
-  } else {
+  if (system_sms) {
     strcat(fileName, ".sms");
     sprintf(folder, "SMS/ROM/%s/%d", romName, foldern);
+  } else if (system_gg) {
+    strcat(fileName, ".gg");
+    sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
+  } else {
+    strcat(fileName, ".sg");
+    sprintf(folder, "SG1000/ROM/%s/%d", romName, foldern);
   }
 
   // Create a new folder
+  sd.chdir("/");
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
@@ -588,7 +575,7 @@ void readROM_SMS() {
   println_Msg(F("/..."));
   display_Update();
 
-  // write new folder number back to eeprom
+  // Write new folder number back to eeprom
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
@@ -597,22 +584,22 @@ void readROM_SMS() {
     print_FatalError(sd_error_STR);
   }
 
-  // set default bank size to 16KB
+  // Set default bank size to 16KB
   word bankSize = 16 * 1024UL;
 
-  // for carts not using mappers (SG1000 or SMS/GG 32KB)
-  if (raphnet_mode_sg1000 || (cartSize == 32 * 1024UL)) {
+  // For carts not using mappers (SG1000 or SMS/GG 32KB)
+  if ((system_sg1000) || (cartSize == 32 * 1024UL)) {
     bankSize = cartSize;
   }
 
-  //Initialize progress bar
+  // Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize);
   draw_progressbar(0, totalProgressBar);
 
   for (byte currBank = 0x0; currBank < (cartSize / bankSize); currBank++) {
     // Write current 16KB bank to slot 2 register 0xFFFF
-    if (!raphnet_mode_sg1000) {
+    if (!system_sg1000) {
       writeByte_SMS(0xFFFF, currBank);
     }
 
@@ -623,7 +610,7 @@ void readROM_SMS() {
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS((raphnet_mode_sg1000 || (cartSize == 32 * 1024UL) ? 0 : 0x8000) + currBuffer + currByte);
+        sdBuffer[currByte] = readByte_SMS(((system_sg1000) || (cartSize == 32 * 1024UL) ? 0 : 0x8000) + currBuffer + currByte);
       }
       // hexdump for debugging:
       // if (currBank == 0 && currBuffer == 0) {
@@ -643,27 +630,47 @@ void readROM_SMS() {
       myFile.write(sdBuffer, 512);
     }
 
-    // update progress bar
+    // Update progress bar
     processedProgressBar += bankSize;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
-  // Close the file:
+
+  // Close file
   myFile.close();
+
+  // Compare dump checksum with database values
+  if (system_sms) {
+    compareCRC("sms.txt", 0, 1, 0);
+  } else if (system_gg) {
+    compareCRC("gg.txt", 0, 1, 0);
+  } else {
+    compareCRC("sg1000.txt", 0, 1, 0);
+  }
+
+  #ifdef global_log
+    save_log();
+  #endif
+
+  print_STR(press_button_STR, 1);
 }
 
-// Read SRAM and save to the SD card
+//******************************************
+//  Read SRAM and save to the SD card
+///*****************************************
 void readSRAM_SMS() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
   strcat(fileName, ".sav");
 
-  // create a new folder
   EEPROM_readAnything(0, foldern);
-  if ((retrode_mode && !retrode_mode_sms) || retron_mode) {
+  if (system_gg) {
     sprintf(folder, "GG/SAVE/%s/%d", romName, foldern);
   } else {
     sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
   }
+
+  // Create a new folder
+  sd.chdir("/");
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
@@ -677,34 +684,39 @@ void readSRAM_SMS() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
-  // Write the whole 32KB
-  // When there is only 8KB of SRAM, the contents should be duplicated
-  word bankSize = 16 * 1024UL;
-  for (byte currBank = 0x0; currBank < 2; currBank++) {
-    writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
+  // Create file on sd card
+  if (myFile.open(fileName, O_RDWR | O_CREAT)) {
+    // Write the whole 32KB
+    // When there is only 8KB of SRAM, the contents should be duplicated
+    word bankSize = 16 * 1024UL;
+    for (byte currBank = 0x0; currBank < 2; currBank++) {
+      writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
 
-    // Blink led
-    blinkLED();
-    // Read 16KB from slot 2 which starts at 0x8000
-    for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
-      // Fill SD buffer
-      for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
+      // Blink led
+      blinkLED();
+
+      // Read 16KB from slot 2 which starts at 0x8000
+      for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
+        // Fill SD buffer
+        for (int currByte = 0; currByte < 512; currByte++) {
+          sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
+        }
+        myFile.write(sdBuffer, 512);
       }
-      myFile.write(sdBuffer, 512);
     }
+    // Close file
+    myFile.close();
+    print_STR(press_button_STR, 1);
+    display_Update();
+  } else {
+      print_FatalError(sd_error_STR);
   }
-  // Close the file:
-  myFile.close();
 }
 
+//**********************************************
+//  Read file from SD card and write it to SRAM
+//**********************************************
 void writeSRAM_SMS() {
-  display_Clear();
-
   if (false) {
     print_Error(F("DISABLED"));
   } else {
@@ -716,7 +728,6 @@ void writeSRAM_SMS() {
     display_Clear();
     println_Msg(F("Restoring from "));
     println_Msg(filePath);
-    println_Msg(fileName);
     display_Update();
 
     if (myFile.open(filePath, O_READ)) {
@@ -740,21 +751,15 @@ void writeSRAM_SMS() {
           writeByte_SMS(0x8000 + page_address + x, sdBuffer[x]);
         }
       }
+
+      // Close file
       myFile.close();
-
-      // Blink led
-      blinkLED();
-
-      println_Msg(F(""));
-      print_STR(done_STR, 1);
+      print_STR(press_button_STR, 1);
       display_Update();
     } else {
       print_FatalError(sd_error_STR);
     }
   }
-
-  display_Clear();
-
   sd.chdir();          // root
   filePath[0] = '\0';  // Reset filePath
 }
