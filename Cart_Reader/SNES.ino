@@ -1295,7 +1295,7 @@ void readROM_SNES() {
   }
 
   //Dump Derby Stallion '96 (Japan) Actual Size is 24Mb
-  if ((romType == LO) && (numBanks == 128) && (strcmp("CC86", checksumStr) == 0)) {
+  if ((romType == LO) && (numBanks == 96) && (strcmp("CC86", checksumStr) == 0)) {
     // Read Banks 0x00-0x3F for the 1st/2nd MB
     for (int currBank = 0; currBank < 64; currBank++) {
       // Dump the bytes to SD 512B at a time
