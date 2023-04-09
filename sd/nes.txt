@@ -6787,6 +6787,9 @@ Rockman 2 - Dr. Wily no Nazo (Japan).nes
 Rockman 3 - Dr. Wily no Saigo! (Japan).nes
 D9F1E47C,214004F4,4E45531A101040080000000000000001
 
+Rockman 4 - Aratanaru Yabou!! (Japan) (Rev 1).nes
+E0FFECCD,5306C5B3,4E45531A200040080000000700000001
+
 Rockman 4 - Aratanaru Yabou!! (Japan).nes
 F161A5D8,31FF1125,4E45531A200040080000000700000001
 
