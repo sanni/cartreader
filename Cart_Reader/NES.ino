@@ -57,7 +57,7 @@ static const byte PROGMEM mapsize[] = {
   31, 6, 6, 0, 0, 0, 0,  // NSF music compilations [UNLICENSED]
   32, 3, 4, 5, 5, 0, 0,  // irem g-101
   33, 3, 4, 5, 6, 0, 0,  // taito tc0190
-  34, 3, 5, 0, 0, 0, 0,  // bnrom [nina-1 NOT SUPPORTED]
+  34, 1, 8, 0, 4, 0, 0,  // BxROM & NINA
   35, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
   36, 0, 3, 1, 5, 0, 0,  // TXC 01-22000-400 Board [UNLICENSED]
   37, 4, 4, 6, 6, 0, 0,  // (super mario bros + tetris + world cup)
@@ -2616,7 +2616,6 @@ void readPRG(boolean readrom) {
         break;
 
       case 7:  // 128K/256K
-      case 34:
       case 77:
       case 96:   // 128K
       case 177:  // up to 1024K
@@ -2832,6 +2831,17 @@ void readPRG(boolean readrom) {
           write_prg_byte(0x8000, i);                                    // PRG Bank 0 ($8000-$9FFF)
           write_prg_byte(0x8001, i + 1);                                // PRG Bank 1 ($A000-$BFFF)
           for (word address = 0x0; address < 0x4000; address += 512) {  // 8K Banks ($8000-$BFFF)
+            dumpPRG(base, address);
+          }
+        }
+        break;
+        
+      case 34:  // BxROM/NINA
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x7FFD, i);                                    // NINA Bank select
+          write_prg_byte(0x8000, i);                                    // BxROM bank select
+          for (word address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
             dumpPRG(base, address);
           }
         }
@@ -3966,6 +3976,17 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8002, i);          // CHR Bank 0
             write_prg_byte(0x8003, i + 1);      // CHR Bank 1
             for (word address = 0x0; address < 0x1000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 34:  // NINA
+          banks = int_pow(2, chrsize);
+          for (int i = 0; i < banks; i += 2) {
+            write_prg_byte(0x7FFE, i);          // Select 4 KB CHR bank at $0000
+            write_prg_byte(0x7FFF, i + 1);      // Select 4 KB CHR bank at $1000
+            for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
           }
