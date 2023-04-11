@@ -2841,6 +2841,7 @@ void readPRG(boolean readrom) {
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x7FFD, i);                                    // NINA Bank select
           write_prg_byte(0x8000, i);                                    // BxROM bank select
+          delay(200);                                                   // NINA seems slow to switch banks
           for (word address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
             dumpPRG(base, address);
           }
