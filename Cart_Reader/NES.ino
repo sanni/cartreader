@@ -610,9 +610,9 @@ void getMapping() {
       println_Msg(F("Using manual selection"));
       display_Update();
       delay(500);
-      // Print debug
-      printPRG(0x8000);
-      printPRG(0xE000);
+      // Print content of PRG for debugging
+      //printPRG(0x8000);
+      //printPRG(0xE000);
 
       // Change ROM name to CART
       setDefaultRomName();
