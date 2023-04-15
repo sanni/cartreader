@@ -61,6 +61,7 @@ static const byte PROGMEM mapsize[] = {
   35, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
   36, 0, 3, 1, 5, 0, 0,  // TXC 01-22000-400 Board [UNLICENSED]
   37, 4, 4, 6, 6, 0, 0,  // (super mario bros + tetris + world cup)
+  38, 1, 3, 0, 3, 0, 0,  // Crime Busters [UNLICENSED]
   42, 0, 3, 0, 5, 0, 0,  // hacked FDS games converted to cartridge [UNLICENSED]
   45, 3, 6, 0, 8, 0, 0,  // ga23c asic multicart [UNLICENSED]
   46, 1, 6, 0, 8, 0, 0,  // Rumble Station [UNLICENSED]
@@ -2902,6 +2903,16 @@ void readPRG(boolean readrom) {
           dumpPRG(base, address);
         }
         break;
+        
+      case 38:
+        banks = int_pow(2, prgsize) / 2;
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0x7000, i);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            dumpPRG(base, address);
+          }
+        }
+        break;
 
       case 42:
         banks = int_pow(2, prgsize) * 2;
@@ -4034,6 +4045,16 @@ void readCHR(boolean readrom) {
             write_prg_byte(0x8000, 1);  // CHR Bank 1 ($0800-$0FFF)
             write_prg_byte(0x8001, i + 2);
             for (word address = 0x0; address < 0x1000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 38:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x7000, i << 2);
+            for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
           }
