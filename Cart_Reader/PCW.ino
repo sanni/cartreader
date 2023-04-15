@@ -90,6 +90,7 @@
     PORTC = 0xFF; \
   }                             // [INPUT PULLUP]
 #define ADDR_WRITE DDRC = 0xFF  // [OUTPUT]
+#define DETECTION_SIZE 64
 
 boolean multipack = 0;  // Multi-Pack Cart
 byte bank0;
@@ -137,7 +138,6 @@ void setup_PCW() {
 static const char pcwmenuItem1[] PROGMEM = "Read ROM";
 static const char pcwmenuItem2[] PROGMEM = "Read SRAM";
 static const char pcwmenuItem3[] PROGMEM = "Write SRAM";
-//static const char pcwmenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, string_reset2 };
 
 void pcwMenu() {
@@ -457,19 +457,30 @@ void switchBank_PCW(int bank) {
 }
 
 //******************************************
-// READ CODE
+// READ ROM FUNCTIONS
 //******************************************
 
 void readROM_PCW() {
+  // Setup read mode
+  read_setup_PCW();
+
+  // Detect rom size
+  uint32_t rom_size = detect_rom_size_PCW();
+  display_Clear();
+  print_Msg(F("READING "));
+  print_Msg(rom_size / 1024 / 1024);
+  print_Msg("MB SINGLE-PACK");
+  println_Msg(F(""));
+  display_Update();
+
+  // Create file
   strcpy(fileName, romName);
   strcat(fileName, ".pcw");
-
   EEPROM_readAnything(0, foldern);
   sprintf(folder, "PCW/ROM/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  display_Clear();
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
@@ -481,12 +492,18 @@ void readROM_PCW() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);
   }
-  read_setup_PCW();
-  for (unsigned long address = 0; address < 0x400000; address += 512) {  // 4MB
+
+  // Init progress bar
+  uint32_t progress = 0;
+  draw_progressbar(0, rom_size);
+
+  for (unsigned long address = 0; address < rom_size; address += 512) {  // 4MB
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
     myFile.write(sdBuffer, 512);
+    progress += 512;
+    draw_progressbar(progress, rom_size);
   }
   myFile.flush();
   myFile.close();
@@ -524,10 +541,16 @@ void readMultiROM_PCW() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);
   }
+
   display_Clear();
   println_Msg(F("READING MULTI-PACK"));
   println_Msg(F(""));
   display_Update();
+
+  // Init progress bar
+  uint32_t progress = 0;
+  draw_progressbar(0, 0x400000);
+
   read_setup_PCW();
   // Lower Half
   switchBank_PCW(0);
@@ -536,7 +559,10 @@ void readMultiROM_PCW() {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
     myFile.write(sdBuffer, 512);
+    progress += 512;
+    draw_progressbar(progress, 0x400000);
   }
+
   read_setup_PCW();
   // Upper Half
   switchBank_PCW(1);
@@ -545,7 +571,10 @@ void readMultiROM_PCW() {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
     myFile.write(sdBuffer, 512);
+    progress += 512;
+    draw_progressbar(progress, 0x400000);
   }
+
   myFile.flush();
   myFile.close();
   // Reset Bank
@@ -563,8 +592,51 @@ void readMultiROM_PCW() {
   wait();
 }
 
+uint32_t detect_rom_size_PCW(void) {
+  uint32_t rom_size;
+  uint8_t read_byte;
+  uint8_t current_byte;
+  uint8_t detect_1m, detect_2m;
+
+  //Initialize variables
+  detect_1m = 0;
+  detect_2m = 0;
+
+  //Confirm where mirror address starts from (1MB, 2MB or 4MB)
+  for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
+    if ((current_byte != detect_1m) && (current_byte != detect_2m)) {
+      //If none matched, size is 4MB
+      break;
+    }
+
+    read_byte = read_rom_byte_PCW(current_byte);
+
+    if (current_byte == detect_1m) {
+      if (read_rom_byte_PCW(0x100000 + current_byte) == read_byte) {
+        detect_1m++;
+      }
+    }
+    if (current_byte == detect_2m) {
+      if (read_rom_byte_PCW(0x200000 + current_byte) == read_byte) {
+        detect_2m++;
+      }
+    }
+  }
+
+  //ROM size detection
+  if (detect_1m == DETECTION_SIZE) {
+    rom_size = 0x100000;
+  } else if (detect_2m == DETECTION_SIZE) {
+    rom_size = 0x200000;
+  } else {
+      rom_size = 0x400000;
+  }
+
+  return rom_size;
+}
+
 //******************************************
-// SRAM
+// SRAM FUNCTIONS
 //******************************************
 
 void readSRAM_PCW() {  // readSRAM_1A()
