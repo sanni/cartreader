@@ -3735,13 +3735,15 @@ void readCHR(boolean readrom) {
           }
           break;
 
-        case 3:   // 8K/16K/32K
-        case 66:  // 16K/32K
-        case 70:
-        case 152:  // 128K
+        case 3:   // 8K/16K/32K - bus conflicts
           banks = int_pow(2, chrsize) / 2;
-          for (int i = 0; i < banks; i++) {  // 8K Banks
-            write_prg_byte(0x8000, i);       // CHR Bank 0
+          for (int i = 0; i < banks; i++) {
+            for (int x = 0; x < 0x2000; x++) {
+              if (read_prg_byte(0x8000 + x) == i) {
+                write_prg_byte(0x8000 + x, i);
+                break;
+              }
+            }
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
@@ -4154,6 +4156,18 @@ void readCHR(boolean readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i / 4), i & 3);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              dumpCHR(address);
+            }
+          }
+          break;
+          
+        case 66:  // 16K/32K
+        case 70:
+        case 152:  // 128K
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {  // 8K Banks
+            write_prg_byte(0x8000, i);       // CHR Bank 0
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
