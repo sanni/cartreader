@@ -30,7 +30,6 @@ static const char flash8MenuItem6[] PROGMEM = "Print";
 //static const char flash8MenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const menuOptionsFLASH8[] PROGMEM = { flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, string_reset2 };
 
-#ifdef enable_FLASH16
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
 static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
@@ -76,6 +75,7 @@ void flashMenu() {
       mode = mode_FLASH8;
       break;
 
+#ifdef enable_FLASH16
     case 1:
       display_Clear();
       display_Update();
@@ -91,13 +91,16 @@ void flashMenu() {
       wait();
       mode = mode_FLASH16;
       break;
+#endif
 
     case 3:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
-#endif
 
 void flashromMenu8() {
   // create menu with title and 7 options to choose from

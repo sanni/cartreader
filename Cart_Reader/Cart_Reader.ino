@@ -1028,11 +1028,7 @@ void mainMenu() {
 
 #ifdef enable_FLASH
     case 19:
-#ifdef enable_FLASH16
       flashMenu();
-#else
-      flashromMenu8();
-#endif
       break;
 #endif
 
@@ -1195,11 +1191,7 @@ void addonMenu() {
 
 #ifdef enable_FLASH
     case 4:
-#ifdef enable_FLASH16
       flashMenu();
-#else
-      flashromMenu8();
-#endif
       break;
 #endif
 
@@ -2013,11 +2005,11 @@ void setup() {
 #endif
 
 #ifdef enable_neopixel
-  #if defined(ENABLE_3V3FIX)
-    // Set power high for neopixel
-    setVoltage(VOLTS_SET_5V);
-    delay(10);
-  #endif
+#if defined(ENABLE_3V3FIX)
+  // Set power high for neopixel
+  setVoltage(VOLTS_SET_5V);
+  delay(10);
+#endif
   pixels.begin();
   pixels.clear();
   pixels.setPixelColor(0, pixels.Color(background_color));
@@ -2025,27 +2017,27 @@ void setup() {
   pixels.setPixelColor(2, pixels.Color(0, 0, 100));
   pixels.show();
 
-  // Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
-  #if !(defined(enable_serial) || defined(HW5))
-    DDRE |= (1 << 1);
-  #endif
+// Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
+#if !(defined(enable_serial) || defined(HW5))
+  DDRE |= (1 << 1);
+#endif
 #else
-  #ifndef enable_LCD
-    #ifdef CA_LED
-      // Turn LED off
-      digitalWrite(12, 1);
-      digitalWrite(11, 1);
-      digitalWrite(10, 1);
-    #endif
-    // Configure 4 Pin RGB LED pins as output
-    DDRB |= (1 << DDB6);  // Red LED (pin 12)
-    DDRB |= (1 << DDB5);  // Green LED (pin 11)
-    DDRB |= (1 << DDB4);  // Blue LED (pin 10)
-  #endif
+#ifndef enable_LCD
+#ifdef CA_LED
+  // Turn LED off
+  digitalWrite(12, 1);
+  digitalWrite(11, 1);
+  digitalWrite(10, 1);
+#endif
+  // Configure 4 Pin RGB LED pins as output
+  DDRB |= (1 << DDB6);  // Red LED (pin 12)
+  DDRB |= (1 << DDB5);  // Green LED (pin 11)
+  DDRB |= (1 << DDB4);  // Blue LED (pin 10)
+#endif
 #endif
 
-// Set power to low to protect carts
-setVoltage(VOLTS_SET_3V3);
+  // Set power to low to protect carts
+  setVoltage(VOLTS_SET_3V3);
 
 #ifdef enable_OLED
   display.begin();
@@ -2133,9 +2125,9 @@ void dataIn() {
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
 #if defined(enable_neopixel)
-  #if defined(ENABLE_3V3FIX)
-    if (clock == CS_8MHZ) return;
-  #endif
+#if defined(ENABLE_3V3FIX)
+  if (clock == CS_8MHZ) return;
+#endif
   // Dim Neopixel LEDs
   if (r >= 100) r = 100;
   if (g >= 100) g = 100;
@@ -2885,7 +2877,7 @@ void checkUpdater() {
       ClockedSerial.println(F("MHz"));
 #else
       ClockedSerial.println(F("Dynamic clock speed (3V3FIX) is not enabled."));
-#endif      
+#endif
     } else if (cmd == "GETVOLTS") {
 #if defined(ENABLE_VSELECT)
       ClockedSerial.print(F("Voltage is set to "));
