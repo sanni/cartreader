@@ -55,7 +55,7 @@ Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (7BD410).pcw
 Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (9BD410).pcw
 A1B3C2C9
 
-Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou B
+Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japan) (8BD400).pcw
 77D1D534
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Japan) (0BD400).pcw
@@ -85,7 +85,7 @@ Shinkenzemi Chuugaku Kouza - Chuugaku Rika (1-bunya) (Japan) (Rev 1) (7BF411).pc
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (Rev 1) (7BF412).pcw
 336289BC
 
-Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (1-bunya - Soft 2-bunya Soft Kanzen Taiou Ban) (Japa
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (1-bunya - Soft 2-bunya Soft Kanzen Taiou Ban) (Japan) (8BF400).pcw
 E1D5C9E0
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (Japan) (0BF400).pcw
@@ -97,7 +97,7 @@ Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (Japan) (1BF400).pcw
 Shinkenzemi Chuugaku Kouza - Hinshutsu Sekaishi Kouryaku (Japan) (8BCD01).pcw
 38384AD4
 
-Shinkenzemi Chuugaku Kouza - Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan)
+Shinkenzemi Chuugaku Kouza - Jitsugi 4-kyouka (Gijutsu Katei, Hoken Taiiku, Ongaku, Bijutsu) (Japan) (9BG410).pcw
 E34787BB
 
 Shinkenzemi Chuugaku Kouza - Koukou Juken (Ei - Sha - Ri) (Japan) (0BI711).pcw
@@ -106,7 +106,7 @@ Shinkenzemi Chuugaku Kouza - Koukou Juken (Ei - Sha - Ri) (Japan) (0BI711).pcw
 Shinkenzemi Chuugaku Kouza - Koukou Juken (Ei - Sha - Ri) (Japan) (9BI711).pcw
 61F2A31B
 
-Shinkenzemi Chuugaku Kouza - Koukou Juken (Japan) (7BI711).pcw
+Shinkenzemi Chuugaku Kouza - Koukou Juken (Ei - Sha - Ri) (Japan) (7BI711).pcw
 53C2FF43
 
 Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Japan) (9BI712).pcw
