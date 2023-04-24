@@ -1720,6 +1720,9 @@ FDA0A099
 DEcapAttack (USA, Europe, Korea) (En).md
 73DC0DD8
 
+Decoder (World) (Aftermarket) (Unl).md
+7B310789
+
 Demolition Man (USA, Europe) (Beta).md
 57FFAD7A
 
@@ -2416,6 +2419,9 @@ Fire Shark (Europe).md
 Fire Shark (USA).md
 9C175146
 
+Fire Shark (USA) (Aftermarket) (Unl).md
+54B072A1
+
 Flash Point (Japan) (En) (Proto).md
 0655074D
 
@@ -2774,7 +2780,7 @@ Gynoug (Japan).md
 1B69241F
 
 Handy Harvy (World) (Aftermarket) (Unl).md
-AFDC24EE
+EDA45D8F
 
 Hard Drivin' (World).md
 3225BAAF
@@ -2817,6 +2823,9 @@ Hellfire (Japan).md
 
 Hellfire (USA).md
 184018F9
+
+Hellfire (USA) (Aftermarket) (Unl).md
+FF095325
 
 Hercules 2 (Taiwan) (En) (Unl).md
 292623DB
@@ -7117,6 +7126,9 @@ CDDBECFC
 True Lies (World).md
 18C09468
 
+Truxton (World) (Aftermarket) (Unl).md
+A6B7DE3C
+
 Tun Shi Tian Di 3 - San Guo Wai Chuan (Taiwan) (Unl).md
 6F98247D
 
@@ -7941,6 +7953,9 @@ A104E033
 
 Yi Men Ying Lie - Yang Jia Jiang (Taiwan) (Unl).md
 6604A79E
+
+YM2612 Instrument Editor (World) (Aftermarket) (Unl).md
+D8949C3E
 
 Yogi Bear - Cartoon Capers (Europe).md
 204F97D8
