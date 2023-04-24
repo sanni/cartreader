@@ -680,10 +680,7 @@ byte copyToRomName_MD(char* output, const byte* input, byte length) {
   byte myLength = 0;
 
   for (byte i = 0; i < 48; i++) {
-    if (
-      (
-        (input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'z'))
-      && myLength < length) {
+    if (((input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'z')) && myLength < length) {
       output[myLength++] = input[i];
     }
   }
@@ -751,6 +748,12 @@ void getCartInfo_MD() {
         cartSize = 0x400000;
         break;
     }
+  if (cartSize == 0x200000) {
+    switch (chksum) {
+      case 0xAE95:  //Winter Olympic Games (USA).md
+        chksum = 0x56A0;
+        break;
+    }
   }
   if (cartSize == 0x180000) {
     switch (chksum) {
@@ -767,11 +770,11 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0x100000) {
     switch (chksum) {
-      case 0xCDF5:  //Life on Mars (Aftermarket).md
+      case 0xCDF5:  //Life on Mars (Aftermarket)
         cartSize = 0x400000;
         chksum = 0x603A;
         break;
-      case 0xF85F:  //Metal Dragon (Aftermarket).md
+      case 0xF85F:  //Metal Dragon (Aftermarket)
         cartSize = 0x200000;
         chksum = 0x6965;
         break;
@@ -794,6 +797,12 @@ void getCartInfo_MD() {
       case 0x9144:  //Zoop (Europe).md
       case 0xB8D4:  //Zoop (USA).md
         cartSize = 0x100000;
+        break;
+      case 0xC422:  //Jeopardy! (USA).md
+        chksum = 0xC751;
+        break;
+      case 0x0C6A:  //Monopoly (USA).md
+        chksum = 0xE1AA;
         break;
     }
   }
@@ -818,14 +827,43 @@ void getCartInfo_MD() {
     }
   }
 
-  // Beggar Prince (Rev 1)(Aftermarket).md
+  // Fatman (Japan).md
+  if (!strncmp("GM T-44013 ", id, 11) && (chksum == 0xFFFF)) {
+    chksum = 0xC560;
+    cartSize = 0xA0000;
+  }
+
+  // Beggar Prince (Rev 1)(Aftermarket)
   if (!strncmp("SF-001", id, 6) && (chksum == 0x3E08)) {
     cartSize = 0x400000;
   }
 
-  // Legend of Wukong (Aftermarket).md
+  // Legend of Wukong (Aftermarket)
   if (!strncmp("SF-002", id, 6) && (chksum == 0x12B0)) {
     chksum = 0x45C6;
+  }
+
+  //YM2612 Instrument Editor (Aftermarket)
+  if (!strncmp("GM 10101010", id, 11) && (chksum == 0xC439)) {
+    chksum = 0x21B0;
+    cartSize = 0x100000;
+  }
+
+  //Decoder (Aftermarket)
+  if (!strncmp("GM REMUTE02", id, 11) && (chksum == 0x0000)) {
+    chksum = 0x5426;
+    cartSize = 0x400000;
+  }
+
+  //Handy Harvy (Aftermarket)
+  if (!strncmp("GM HHARVYSG", id, 11) && (chksum == 0x0000)) {
+    chksum = 0xD9D2;
+    cartSize = 0x100000;
+  }
+
+  //Jim Power - The Lost Dimension in 3D (Aftermarket)
+  if (!strncmp("GM T-107036", id, 11) && (chksum == 0x0000)) {
+    chksum = 0xAA28;
   }
 
   // Sonic & Knuckles Check
@@ -1110,12 +1148,6 @@ void getCartInfo_MD() {
     realtec = 1;
     strcpy(romName, "Realtec");
     cartSize = 0x80000;
-  }
-
-  // Fatman (Japan)
-  if (!strncmp(romName, "LACEGMT4401300J", 15) && (chksum == 0xffff)) {
-    chksum = 0xC560;
-    cartSize = 0xA0000;
   }
 
   // Some games are missing the ROM size in the header, in this case calculate ROM size by looking for mirror of the first line of the ROM
