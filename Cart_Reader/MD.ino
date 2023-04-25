@@ -737,33 +737,34 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0x300000) {
     switch (chksum) {
-      case 0xBC5F:  //Batman Forever (World).md
-      case 0x3CDD:  //Donald in Maui Mallard (Brazil) (En).md
-      case 0x44AD:  //Donald in Maui Mallard (Europe) (Rev A).md
-      case 0x2D9A:  //Foreman for Real (World).md
-      case 0x5648:  //Justice League Task Force (World).md
-      case 0x0A29:  //Mega 6 Vol. 3 (Europe).md
-      case 0x7651:  //NFL Quarterback Club (World).md
-      case 0x74CA:  //WWF RAW (World).md
+      case 0xBC5F:  //Batman Forever (World)
+      case 0x3CDD:  //Donald in Maui Mallard (Brazil) (En)
+      case 0x44AD:  //Donald in Maui Mallard (Europe) (Rev A)
+      case 0x2D9A:  //Foreman for Real (World)
+      case 0x5648:  //Justice League Task Force (World)
+      case 0x0A29:  //Mega 6 Vol. 3 (Europe)
+      case 0x7651:  //NFL Quarterback Club (World)
+      case 0x74CA:  //WWF RAW (World)
         cartSize = 0x400000;
         break;
     }
+  }
   if (cartSize == 0x200000) {
     switch (chksum) {
-      case 0xAE95:  //Winter Olympic Games (USA).md
+      case 0xAE95:  //Winter Olympic Games (USA)
         chksum = 0x56A0;
         break;
     }
   }
   if (cartSize == 0x180000) {
     switch (chksum) {
-      case 0xFFE2:  //Cannon Fodder (Europe).md
-      case 0xF418:  //Chaos Engine, The (Europe).md
-      case 0xF71D:  //Fatal Fury (Europe, Korea) (En).md
-      case 0xA884:  //Flashback (Europe) (En,Fr).md
-      case 0x7D68:  //Flashback - The Quest for Identity (USA) (En,Fr).md
-      case 0x030D:  //Shining Force (Europe).md
-      case 0xE975:  //Shining Force (USA).md
+      case 0xFFE2:  //Cannon Fodder (Europe)
+      case 0xF418:  //Chaos Engine, The (Europe)
+      case 0xF71D:  //Fatal Fury (Europe, Korea) (En)
+      case 0xA884:  //Flashback (Europe) (En,Fr)
+      case 0x7D68:  //Flashback - The Quest for Identity (USA) (En,Fr)
+      case 0x030D:  //Shining Force (Europe)
+      case 0xE975:  //Shining Force (USA)
         cartSize = 0x200000;
         break;
     }
@@ -782,45 +783,45 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0xC0000) {
     switch (chksum) {
-      case 0x9D79:  //Wonder Boy in Monster World (USA, Europe).md
+      case 0x9D79:  //Wonder Boy in Monster World (USA, Europe)
         cartSize = 0x100000;
         break;
     }
   }
   if (cartSize == 0x80000) {
     switch (chksum) {
-      case 0xD07D:  //Zero Wing (Japan).md
+      case 0xD07D:  //Zero Wing (Japan)
         cartSize = 0x100000;
         chksum = 0xF204;
         break;
-      case 0x95C9:  //Zero Wing (Europe).md
-      case 0x9144:  //Zoop (Europe).md
-      case 0xB8D4:  //Zoop (USA).md
+      case 0x95C9:  //Zero Wing (Europe)
+      case 0x9144:  //Zoop (Europe)
+      case 0xB8D4:  //Zoop (USA)
         cartSize = 0x100000;
         break;
-      case 0xC422:  //Jeopardy! (USA).md
+      case 0xC422:  //Jeopardy! (USA)
         chksum = 0xC751;
         break;
-      case 0x0C6A:  //Monopoly (USA).md
+      case 0x0C6A:  //Monopoly (USA)
         chksum = 0xE1AA;
         break;
     }
   }
   if (cartSize == 0x40000) {
     switch (chksum) {
-      case 0x8BC6:  //Pac-Attack (USA).md
-      case 0xB344:  //Pac-Panic (Europe).md
+      case 0x8BC6:  //Pac-Attack (USA)
+      case 0xB344:  //Pac-Panic (Europe)
         cartSize = 0x100000;
         break;
     }
   }
   if (cartSize == 0x20000) {
     switch (chksum) {
-      case 0x7E50:  //Micro Machines 2 - Turbo Tournament (Europe).md
+      case 0x7E50:  //Micro Machines 2 - Turbo Tournament (Europe)
         cartSize = 0x100000;
         chksum = 0xD074;
         break;
-      case 0x168B:  //Micro Machines - Military (Europe).md
+      case 0x168B:  //Micro Machines - Military (Europe)
         cartSize = 0x100000;
         chksum = 0xCEE0;
         break;
