@@ -3959,7 +3959,7 @@ Jim Power - The Lost Dimension in 3D (World) (Aftermarket) (Unl).sfc
 929D8D10,88AF,5B85C338,08,032
 
 Jim Power - The Lost Dimension in 3D (World) (Enhanced) (Aftermarket) (Unl).sfc
-D2A2AEA0,BB0F,C1E523DD,16,064
+48164725,935B,5BC70E7C,16,064
 
 Jimmy Connors Pro Tennis Tour (Europe).sfc
 BBA55BEC,81AF,E7F94BCC,04,016
