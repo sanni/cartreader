@@ -53,4 +53,5 @@ Happy making. 🔧🔨😊
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   
-- Hardware(everything in hardware folder) = CC-BY-4.0   
+- Hardware(everything in hardware folder) = CC BY 4.0   
+- Documentation(everything in the Wiki) = CC0 1.0    
