@@ -209,13 +209,13 @@ const char _file_name_with_number_fmt[] PROGMEM = "%s.%02d.%s";
 byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
 byte mapselect;
 
-const int PRG[] PROGMEM = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+const int PRG[] PROGMEM = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 };
 byte prglo = 0;  // Lowest Entry
-byte prghi = 8;  // Highest Entry
+byte prghi = 11;  // Highest Entry
 
-const int CHR[] PROGMEM = { 0, 8, 16, 32, 64, 128, 256, 512, 1024 };
+const int CHR[] PROGMEM = { 0, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 byte chrlo = 0;  // Lowest Entry
-byte chrhi = 8;  // Highest Entry
+byte chrhi = 10;  // Highest Entry
 
 const byte RAM[] PROGMEM = { 0, 8, 16, 32 };
 byte ramlo = 0;  // Lowest Entry
@@ -576,7 +576,7 @@ void getMapping() {
     println_Msg(F("No data found."));
     println_Msg(F("Using manual selection"));
     display_Update();
-    delay(1000);
+    delay(500);
     setDefaultRomName();
     browseDatabase = selectMapping(database);
   } else {
@@ -1822,7 +1822,7 @@ chooseMapper:
   print_Msg(newmapper);
   println_Msg(F(" SELECTED"));
   display_Update();
-  delay(1000);
+  delay(500);
 
   // Serial Monitor
 #elif defined(enable_serial)
@@ -1968,7 +1968,7 @@ void setPRGSize() {
   print_Msg(pgm_read_word(&(PRG[newprgsize])));
   println_Msg(F("K"));
   display_Update();
-  delay(1000);
+  delay(500);
 
 #elif defined(enable_serial)
   if (prglo == prghi)
@@ -2088,7 +2088,7 @@ void setCHRSize() {
   print_Msg(pgm_read_word(&(CHR[newchrsize])));
   println_Msg(F("K"));
   display_Update();
-  delay(1000);
+  delay(500);
 
 #elif defined(enable_serial)
   if (chrlo == chrhi)
@@ -2279,7 +2279,7 @@ void setRAMSize() {
     println_Msg(F("K"));
   }
   display_Update();
-  delay(1000);
+  delay(500);
 
 #elif defined(enable_serial)
   if (ramlo == ramhi)
@@ -2551,6 +2551,7 @@ void readPRG(bool readrom) {
         break;
 
       case 2:  // bus conflicts - fixed last bank
+      case 30: // bus conflicts in non-flashable configuration
         banks = int_pow(2, prgsize);
         busConflict = true;
         for (int i = 0; i < banks - 1; i++) {
@@ -2781,19 +2782,6 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5000, 0x81);
           write_prg_byte(0x8000, i);
           for (word address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
-        }
-        break;
-
-      case 30:  // 256K/512K
-        banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i++) {  // 256K/512K
-          if (flashfound)
-            write_prg_byte(0xC000 + i, i);  // Flashable
-          else
-            write_prg_byte(0x8000 + i, i);                              // Non-Flashable
-          for (word address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
             dumpPRG(base, address);
           }
         }
