@@ -867,6 +867,12 @@ void getCartInfo_MD() {
     chksum = 0xAA28;
   }
 
+  //mikeyeldey95 (Aftermarket)
+  if (!strncmp("GM 00000000-43", id, 14) && (chksum == 0x0000)) {
+    chksum = 0x921B;
+    cartSize = 0x400000;
+  }
+
   // Sonic & Knuckles Check
   SnKmode = 0;
   if (chksum == 0xDFB3) {
