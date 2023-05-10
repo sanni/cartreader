@@ -87,7 +87,8 @@ static const char N64RomItem3[] PROGMEM = "12 MB";
 static const char N64RomItem4[] PROGMEM = "16 MB";
 static const char N64RomItem5[] PROGMEM = "32 MB";
 static const char N64RomItem6[] PROGMEM = "64 MB";
-static const char* const romOptionsN64[] PROGMEM = { N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6 };
+static const char N64RomItem7[] PROGMEM = "128 MB";
+static const char* const romOptionsN64[] PROGMEM = { N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6, N64RomItem7 };
 
 // Save menu
 static const char N64SaveItem1[] PROGMEM = "None";
@@ -1973,8 +1974,8 @@ void printCartInfo_N64() {
     // Set cartsize manually
     unsigned char N64RomMenu;
     // Copy menuOptions out of progmem
-    convertPgm(romOptionsN64, 6);
-    N64RomMenu = question_box(F("Select ROM size"), menuOptions, 6, 0);
+    convertPgm(romOptionsN64, 7);
+    N64RomMenu = question_box(F("Select ROM size"), menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu
     switch (N64RomMenu) {
@@ -2006,6 +2007,11 @@ void printCartInfo_N64() {
       case 5:
         // 64MB
         cartSize = 64;
+        break;
+
+      case 6:
+        // 128MB
+        cartSize = 128;
         break;
     }
   }
@@ -3107,13 +3113,11 @@ void flashRepro_N64() {
     sprintf(flashid_str, "%s", "CONF");
     sprintf(cartID, "%s", "CONF");
 
-
-
     // Set cartsize manually
     unsigned char N64RomMenu;
     // Copy menuOptions out of progmem
-    convertPgm(romOptionsN64, 6);
-    N64RomMenu = question_box(F("Select flash size"), menuOptions, 6, 0);
+    convertPgm(romOptionsN64, 7);
+    N64RomMenu = question_box(F("Select flash size"), menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu
     switch (N64RomMenu) {
@@ -3145,6 +3149,11 @@ void flashRepro_N64() {
       case 5:
         // 64MB
         cartSize = 64;
+        break;
+
+      case 6:
+        // 128MB
+        cartSize = 128;
         break;
     }
 
