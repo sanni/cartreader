@@ -3028,6 +3028,9 @@ D3932F88,0A1667C7,12,0
 Xena - Warrior Princess - The Talisman of Fate (USA).z64
 7DA93999,0553AE9D,12,0
 
+Xeno Crisis (World) (En,Ja,Fr,Es,It,Nl,Pt) (Aftermarket) (Unl).z64
+4CCBE510,470112E9,64,0
+
 Yakouchuu II - Satsujin Kouro (Japan).z64
 4538C41A,9F8B96C3,32,5
 
