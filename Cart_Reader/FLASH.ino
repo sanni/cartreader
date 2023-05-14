@@ -170,7 +170,7 @@ void flashromMenu8() {
             writeFlash29F1601();
           else if ((flashid == 0xC2F1) || (flashid == 0xC2F9))
             writeFlash29F1610();
-          else if ((flashid == 0xC2C4) || (flashid == 0xC249) || (flashid == 0xC2A7) || (flashid == 0xC2A8) || (flashid == 0xC2C9) || (flashid == 0xC2CB))
+          else if ((flashid == 0xC2C4) || (flashid == 0xC249) || (flashid == 0xC2A7) || (flashid == 0xC2A8) || (flashid == 0xC2C9) || (flashid == 0xC2CB) || (flashid == 0x0149) || (flashid == 0x01C4) || (flashid == 0x01F9) || (flashid == 0x01F6) || (flashid == 0x01D7))
             writeFlash29LV640();
           else if (flashid == 0x017E) {
             // sector size, write buffer size
@@ -286,7 +286,7 @@ void flashromMenu16() {
       time = millis();
       if (flashid == 0xC2F3) {
         writeFlash16_29F1601();
-      } else if ((flashid == 0xC2C4) || (flashid == 0xC249) || (flashid == 0xC2A7) || (flashid == 0xC2A8) || (flashid == 0xC2C9) || (flashid == 0xC2CB) || (flashid == 0xC2FC)) {
+      } else if ((flashid == 0xC2C4) || (flashid == 0xC249) || (flashid == 0xC2A7) || (flashid == 0xC2A8) || (flashid == 0xC2C9) || (flashid == 0xC2CB) || (flashid == 0x0149) || (flashid == 0x01C4) || (flashid == 0x01F9) || (flashid == 0x01F6) || (flashid == 0x01D7) || (flashid == 0xC2FC)) {
         writeFlash16_29LV640();
       } else {
         writeFlash16();
@@ -444,6 +444,21 @@ idtheflash:
     flashromType = 2;
   } else if ((flashid == 0xC2C9) || (flashid == 0xC2CB)) {
     println_Msg(F("MX29LV640 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 8388608;
+    flashromType = 2;
+  } else if ((flashid == 0x0149) || (flashid == 0x01C4)) {
+    println_Msg(F("AM29LV160 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 2097152;
+    flashromType = 2;
+  } else if ((flashid == 0x01F9) || (flashid == 0x01F6)) {
+    println_Msg(F("AM29LV320 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 4194304;
+    flashromType = 2;
+  } else if (flashid == 0x01D7) {
+    println_Msg(F("AM29LV640 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
@@ -628,6 +643,21 @@ void id_Flash16() {
     flashromType = 2;
   } else if ((flashid == 0xC2C9) || (flashid == 0xC2CB)) {
     println_Msg(F("MX29LV640 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 8388608;
+    flashromType = 2;
+  } else if ((flashid == 0x0149) || (flashid == 0x01C4)) {
+    println_Msg(F("AM29LV160 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 2097152;
+    flashromType = 2;
+  } else if ((flashid == 0x01F9) || (flashid == 0x01F6)) {
+    println_Msg(F("AM29LV320 detected"));
+    println_Msg(F("ATTENTION 3.3V"));
+    flashSize = 4194304;
+    flashromType = 2;
+  } else if (flashid == 0x01D7) {
+    println_Msg(F("AM29LV640 detected"));
     println_Msg(F("ATTENTION 3.3V"));
     flashSize = 8388608;
     flashromType = 2;
