@@ -318,6 +318,8 @@ void gbMenu() {
         sd.chdir("/");
         if (romType == 32)
           readSRAMFLASH_MBC6_GB();
+        else if (romType == 34)
+          readEEPROM_MBC7_GB();
         else
           readSRAM_GB();
       } else {
@@ -335,9 +337,11 @@ void gbMenu() {
         filePath[0] = '\0';
         fileBrowser(F("Select sav file"));
 
-        if (romType == 32) {
+        if (romType == 32)
           writeSRAMFLASH_MBC6_GB();
-        } else {
+        else if (romType == 34)
+          writeEEPROM_MBC7_GB();
+        else {
           writeSRAM_GB();
           unsigned long wrErrors;
           wrErrors = verifySRAM_GB();
@@ -503,11 +507,8 @@ void showCartInfo_GB() {
         if (romType == 6) {
           print_Msg(F("512 Byte"));
         } else if (romType == 0x22) {
-          if (strncmp(cartID, "KCEJ", 4) == 0) {
-            print_Msg(F("512 Byte"));
-          } else {
-            print_Msg(F("256 Byte"));
-          }
+          print_Msg(lastByte);
+          print_Msg(F(" Byte"));
         } else if (romType == 0xFD) {
           print_Msg(F("32 Byte"));
         } else {
@@ -801,6 +802,11 @@ void getCartInfo_GB() {
   romSize = sdBuffer[0x148];
   sramSize = sdBuffer[0x149];
 
+  // Get Checksum as string
+  eepbit[6] = sdBuffer[0x14E];
+  eepbit[7] = sdBuffer[0x14F];
+  sprintf(checksumStr, "%02X%02X", eepbit[6], eepbit[7]);
+
   // ROM banks
   switch (romSize) {
     case 0x00:
@@ -870,12 +876,9 @@ void getCartInfo_GB() {
   if (romType == 32) {
     sramBanks = 8;
     lastByte = 0xAFFF;
+  } else if (romType == 34) { // MBC7
+    lastByte = (*((uint16_t*)(eepbit + 6)) == 0xa5be ? 512 : 256);  // Only "Command Master" use LC66 EEPROM
   }
-
-  // Get Checksum as string
-  eepbit[6] = sdBuffer[0x14E];
-  eepbit[7] = sdBuffer[0x14F];
-  sprintf(checksumStr, "%02X%02X", eepbit[6], eepbit[7]);
 
   // Get name
   byte myByte = 0;
@@ -1542,6 +1545,203 @@ void writeSRAMFLASH_MBC6_GB() {
     display_Update();
   } else {
     print_Error(F("File doesnt exist"));
+  }
+}
+
+void readEEPROM_MBC7_GB() {
+
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, romName);
+  strcat(fileName, ".sav");
+
+  // create a new folder for the save file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(sd_error_STR);
+  }
+
+  display_Clear();
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  uint16_t* data = (uint16_t*)sdBuffer;
+
+  // enable 0xa000 - 0xbfff access
+  writeByte_GB(0x0000, 0x0a);
+  writeByte_GB(0x4000, 0x40);
+
+  // set CS high
+  writeByte_GB(0xa080, 0x00);
+  writeByte_GB(0xa080, 0x80);
+
+  sendMBC7EEPROM_Inst_GB(2, 0, 0);
+
+  // read data from EEPROM
+  for (uint16_t i = 0; i < lastByte; i += 2, data++) {
+    *data = 0;
+
+    for (uint8_t j = 0; j < 16; j++) {
+      writeByte_GB(0xa080, 0x80);
+      writeByte_GB(0xa080, 0xc0);
+
+      *data <<= 1;
+      *data |= (readByte_GB(0xa080) & 0x01);
+    }
+  }
+
+  // deselect chip and ram access
+  writeByte_GB(0xa080, 0x00);
+  writeByte_GB(0x0000, 0x00);
+  writeByte_GB(0x4000, 0x00);
+
+  myFile.write(sdBuffer, lastByte);
+  myFile.close();
+
+  print_STR(done_STR, true);
+  display_Update();
+}
+
+void writeEEPROM_MBC7_GB() {
+
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  // open file on sd card
+  if (!myFile.open(filePath, O_READ))
+    print_Error(F("File doesnt exist"));
+
+  myFile.read(sdBuffer, lastByte);
+  myFile.close();
+
+  display_Clear();
+
+  uint16_t* data = (uint16_t*)sdBuffer;
+
+  // enable 0xa000 - 0xbfff access
+  writeByte_GB(0x0000, 0x0a);
+  writeByte_GB(0x4000, 0x40);
+
+  // set CS high
+  writeByte_GB(0xa080, 0x00);
+  writeByte_GB(0xa080, 0x80);
+
+  println_Msg(F("Unlocking EEPROM..."));
+  display_Update();
+
+  // unlock EEPROM by sending EWEN instruction
+  sendMBC7EEPROM_Inst_GB(0, 0xc0, 0);
+  // set CS low
+  writeByte_GB(0xa080, 0x00);
+
+  println_Msg(F("Erasing EEPROM..."));
+  display_Update();
+
+  // erase entire EEPROM by sending ERAL instruction
+  sendMBC7EEPROM_Inst_GB(0, 0x80, 0);
+
+  // set CS low
+  writeByte_GB(0xa080, 0x00);
+  // set CS high
+  writeByte_GB(0xa080, 0x80);
+
+  // wait for erase complete
+  do {
+    writeByte_GB(0xa080, 0x80);
+    writeByte_GB(0xa080, 0xc0);
+  } while ((readByte_GB(0xa080) & 0x01) == 0);
+
+  println_Msg(F("Writing EEPROM..."));
+  display_Update();
+
+  // write data to EEPROM by sending WRITE instruction word by word
+  for (uint16_t i = 0; i < lastByte; i += 2, data++) {
+    sendMBC7EEPROM_Inst_GB(1, (i >> 1), *data);
+
+    // set CS low
+    writeByte_GB(0xa080, 0x00);
+    // set CS high
+    writeByte_GB(0xa080, 0x80);
+
+    // wait for writing complete
+    do {
+      writeByte_GB(0xa080, 0x80);
+      writeByte_GB(0xa080, 0xc0);
+    } while ((readByte_GB(0xa080) & 0x01) == 0);
+  }
+
+  println_Msg(F("Locking EEPROM..."));
+  display_Update();
+
+  // re-lock EEPROM
+  sendMBC7EEPROM_Inst_GB(0, 0, 0);
+  writeByte_GB(0xa080, 0x00);
+
+  // disable ram access
+  writeByte_GB(0x0000, 0x00);
+  writeByte_GB(0x4000, 0x00);
+
+  // done
+  print_STR(done_STR, true);
+  display_Update();
+}
+
+void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
+  boolean send_data = false;
+  uint8_t i;
+
+  op = op & 0x03;
+
+  if (op == 0) {
+    addr &= 0xc0;
+    if (addr == 0x40)
+      send_data = true;
+  } else if (op == 1) {
+    send_data = true;
+  }
+
+  // send start bit
+  writeByte_GB(0xa080, 0x82);
+  writeByte_GB(0xa080, 0xc2);
+
+  // send op
+  for (i = 0; i < 2; i++, op <<= 1) {
+    eepbit[1] = (op & 0x02);
+    eepbit[0] = (eepbit[1] | 0x80);
+    eepbit[1] |= 0xc0;
+
+    writeByte_GB(0xa080, eepbit[0]);
+    writeByte_GB(0xa080, eepbit[1]);
+  }
+
+  // send addr
+  for (i = 0; i < 8; i++, addr <<= 1) {
+    eepbit[1] = ((addr & 0x80) >> 6);
+    eepbit[0] = (eepbit[1] | 0x80);
+    eepbit[1] |= 0xc0;
+
+    writeByte_GB(0xa080, eepbit[0]);
+    writeByte_GB(0xa080, eepbit[1]);
+  }
+
+  if (send_data) {
+    for (i = 0; i < 16; i++, data <<= 1) {
+      eepbit[1] = ((data & 0x8000) >> 14);
+      eepbit[0] = (eepbit[1] | 0x80);
+      eepbit[1] |= 0xc0;
+
+      writeByte_GB(0xa080, eepbit[0]);
+      writeByte_GB(0xa080, eepbit[1]);
+    }
   }
 }
 
