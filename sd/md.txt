@@ -5908,8 +5908,23 @@ Sonic & Knuckles (World) (Beta) (1994-06-19).md
 Sonic & Knuckles (World) (Sonic Classic Collection).md
 C7249CDF
 
+Sonic & Knuckles + Sonic The Hedgehog (Japan, Korea).md
+B6C67EAC
+
+Sonic & Knuckles + Sonic The Hedgehog (USA, Europe).md
+E01F6ED5
+
 Sonic & Knuckles + Sonic The Hedgehog 2 (World) (Beta) (1994-05-24).md
 8878C1A8
+
+Sonic & Knuckles + Sonic The Hedgehog 2 (World) (Rev A).md
+2AC1E7C6
+
+Sonic & Knuckles + Sonic The Hedgehog 3 (Europe).md
+92F0929E
+
+Sonic & Knuckles + Sonic The Hedgehog 3 (USA).md
+63522553
 
 Sonic 3 (Europe).md
 6A632503
