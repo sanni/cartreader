@@ -893,6 +893,18 @@ void readROM_GBA() {
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
+  
+  // Fix unmapped ROM area of cartridges with 32 MB ROM + EEPROM save type
+  if ((cartSize == 0x2000000) && ((saveType == 1) || (saveType == 2))) {
+    byte padding_byte[256];
+	char tempStr[32];
+	myFile.seek(0x1FFFEFF);
+	myFile.read(padding_byte, 1);
+	sprintf(tempStr, "Fixing ROM padding (0x%02X)", padding_byte[0]);
+	println_Msg(tempStr);
+	memset(padding_byte+1, padding_byte[0], 255);
+	myFile.write(padding_byte, 256);
+  }
 
   // Close the file:
   myFile.close();
