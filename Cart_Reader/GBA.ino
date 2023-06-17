@@ -761,7 +761,7 @@ void getCartInfo_GBA() {
     }
 
     // Get name
-    buildRomName(romName, &sdBuffer[0xA0], 11);
+    buildRomName(romName, &sdBuffer[0xA0], 12);
 
     // Get ROM version
     romVersion = sdBuffer[0xBC];
