@@ -411,6 +411,12 @@ uint32_t detect_rom_size_PCE(void) {
       rom_size = 512;
     }
   }
+  if (rom_size == 384) {
+    //"CD-ROM² Super System Card (v3.0)(Japan)" or "Arcade Card Pro CD-ROM²"
+    if (read_byte_PCE(0x29D1) == 'V' && read_byte_PCE(0x29D2) == 'E' && read_byte_PCE(0x29D3) == 'R' && read_byte_PCE(0x29D4) == '.' && read_byte_PCE(0x29D5) == ' ' && read_byte_PCE(0x29D6) == '3' && read_byte_PCE(0x29D7) == '.' && read_byte_PCE(0x29D8) == '0' && read_byte_PCE(0x29D9) == '0') {
+      rom_size = 256;
+    }
+  }
 
   return rom_size;
 }
