@@ -1,0 +1,727 @@
+1942,1,5,0,0
+10-Yard Fight,0,3,0,15
+3-D Golf Simulation,0,2,0,24
+3D Tennis,0,2,0,30
+3D Water Driver,0,2,0,20
+A Life Planet M36,1,5,0,26
+A Ressha de Ikou,2,5,2,28
+A.E.,0,2,0,27
+A1 Spirit,9,5,0,15
+AcroJet,2,5,0,20
+Actman,0,2,0,18
+Adven' Chuta!,0,2,0,17
+Adventure Island,0,3,0,24
+Afternoon Angels,0,3,0,27
+Albatross,0,3,0,27
+Alcazar,0,2,0,20
+Aleste,2,6,0,18
+Algeese no Tsubasa,1,6,0,17
+Alibaba and 40 Thieves,0,2,0,29
+Alien 8,0,3,0,33
+Aliens,2,5,0,18
+Alpha Roid,0,3,0,17
+Alpha Squadron,0,2,0,21
+American Soccer,1,4,0,25
+American Truck,0,3,0,26
+Anaza,0,3,0,25
+Androgynus,2,6,0,16
+Angelo,0,2,0,21
+Animal Land,1,5,0,17
+Antarctic Adventure,0,2,0,22
+Anty,0,2,0,30
+Aoki Ookami - Genchou Hishi,7,8,4,15
+Aoki Ookami - Genghis Khan,7,7,2,38
+Aquapolis SOS,0,2,0,37
+Aquattack,0,2,0,24
+Aramo,0,3,0,20
+Arctic,2,5,0,16
+Arkanoid,0,3,0,17
+Arkanoid II,1,5,0,19
+AshGuine,1,5,0,22
+AshGuine Story II,1,6,0,19
+AshGuine Story III,1,6,0,28
+Athletic Ball,0,2,0,29
+Athletic Land,0,2,0,24
+Attack Four,0,3,0,24
+B.C.'s Quest,0,3,0,22
+B.C. II - Grog's Revenge,0,3,0,23
+Back to the Future,0,3,0,35
+Backgammon,0,3,0,29
+Balance,0,2,0,21
+Banana,0,2,0,18
+Bank Panic,0,3,0,17
+Baseball Craze,0,3,0,21
+BASIC Lessons 1,0,3,0,25
+BASIC Lessons 2,0,3,0,26
+Batman,1,4,0,26
+Batten Tanuki no Daibouken,0,3,0,17
+Battle Cross,0,2,0,37
+Battle Ship Clapton II,0,2,0,23
+Beamrider,0,3,0,33
+Becky,0,2,0,20
+Bee & Flower,0,2,0,16
+Black Onyx,0,3,0,23
+Black Onyx II,2,5,0,21
+Blockade Runner,0,2,0,24
+Boggy '84,0,1,0,26
+Boing Boing,0,1,0,20
+Bokosuka Wars,0,2,0,22
+Bomber King,1,5,0,24
+Bomber Man,0,1,0,22
+Boogie Woogi Jungle,0,2,0,21
+Boomerang,0,2,0,30
+Borfesu,2,5,0,20
+Bosconian (Star Destroyer),0,3,0,18
+Bouken Roman,0,3,0,37
+Boulder Dash,0,3,0,23
+Brain,0,2,0,23
+Break In,0,4,0,16
+Break Out,0,2,0,19
+Bruce Lee,0,3,0,20
+Bubble Bobble,1,5,0,20
+Bug Bomb,0,2,0,24
+Bull and Mighty's Slim Chance,0,3,0,19
+Burger Time,0,3,0,40
+Butamaru Pants,0,2,0,22
+Cabbage Patch Kids,0,2,0,25
+Candoo Ninja,0,2,0,29
+Cannon Ball,0,2,0,23
+Captain Chef,0,1,0,22
+Captain Cosmo,0,2,0,23
+Car Fighter,0,2,0,24
+Car Jamboree,0,3,0,22
+Car Race,0,2,0,23
+Carry's Great Escape,0,3,0,19
+Casio Daishogai Keiba,0,2,0,31
+Casio World Open,0,3,0,32
+Castle,0,3,0,27
+Castle Excellent,0,3,0,17
+Chack'n Pop,0,2,0,27
+Challenge Derby,0,3,0,22
+Champion Boxing,0,3,0,26
+Champion Ice Hockey,0,3,0,26
+Champion Kendo,0,3,0,30
+Champion Pro Wrestling,0,3,0,25
+Champion Soccer,0,2,0,33
+Championship Lode Runner,0,3,0,26
+Checkers in Tan Tan Tanuki,0,2,0,35
+Cheese,0,2,0,37
+Cheese 2,0,3,0,17
+Chess,0,2,0,19
+Chima Chima,0,3,0,16
+Choplifter,0,3,0,22
+ChoroQ,0,2,0,21
+Circus Charlie,0,2,0,17
+City Connection,0,3,0,25
+Coaster Race,0,3,0,26
+Cockpit,2,5,0,23
+Color Ball,0,2,0,18
+Color Midway,0,2,0,21
+Come On! Picot,0,3,0,23
+Comet Tail,0,2,0,25
+Comic Bakery,0,2,0,21
+Computer Billiards,0,1,0,23
+Computer Master,0,3,0,29
+Computer Othello,0,2,0,26
+Computer Pachinko,0,2,0,27
+Computer Painting,0,2,0,28
+Con-dori,0,2,0,28
+Contra,9,5,0,19
+Cosmo Explorer,0,3,0,17
+Courageous Perseus,0,3,0,25
+Craze,2,5,0,29
+Crazy Bullet,0,2,0,16
+Crazy Cars,0,3,0,23
+Crazy Train,0,1,0,21
+Creamy Lemon - Star Trap,0,3,0,22
+Crest of the Dragon King,0,3,0,35
+Crimson,1,6,0,35
+Cross Blaim,3,4,0,18
+Crusader,0,3,0,22
+C-So!,0,2,0,19
+Dai Dassou,0,3,0,16
+Daikoukai Jidai,7,7,4,21
+Daisenryaku,2,5,1,26
+Daiva Story 4,1,6,0,22
+Dam Busters,0,3,0,24
+DangerX4,0,2,0,22
+Darwin 4078,1,5,0,19
+David II,0,2,0,22
+Dawn Patrol,0,4,0,19
+D-Day,0,2,0,22
+Decathlon,0,3,0,16
+Deep Dungeon,1,5,2,20
+Deep Dungeon II,1,5,2,23
+Deep Forest,1,5,0,26
+Demon Crystal,0,3,0,22
+Designer's Pencil,0,2,0,24
+Devil's Heaven,0,2,0,28
+Dig Dug,0,3,0,25
+Digital Devil Monogatari,1,5,0,18
+Dip Dip,0,2,0,35
+Dires,1,5,1,18
+Doki Doki Penguin Land,0,3,0,16
+Door Door mkII,0,2,0,33
+Dorodon,0,2,0,25
+Double Vision,1,6,0,18
+Dr. Copy,0,2,0,24
+Dragon Attack,0,2,0,19
+Dragon Buster,1,5,0,24
+Dragon Quest,1,5,0,24
+Dragon Quest II,1,6,0,23
+Dragon Slayer,0,3,0,26
+Dragon Slayer II,1,6,2,24
+Dragon Slayer IV,1,6,0,27
+Dragon Slayer Jr.,2,5,0,27
+Drainer,0,3,0,28
+Druaga no Tou,0,3,0,18
+Druid,1,5,0,24
+Dungeon Hunter,2,5,0,16
+Dungeon Master,0,3,0,25
+Dunk Shot,0,3,0,25
+DX7 Voicing Program,0,2,0,20
+Dynamite Bowl,2,5,0,30
+E.I.,0,2,0,24
+Eagle Fighter,0,3,0,15
+Eddy II,0,2,0,24
+Eggerland Mystery,0,3,0,18
+Eidolon,1,5,0,28
+Eiwa Jiten,1,5,0,18
+Elevator Action,0,3,0,21
+Elthlead,1,5,2,26
+Erika,0,3,0,19
+Europe Sensen,7,8,4,16
+Exchanger,0,2,0,24
+Exciting Baseball,0,2,0,20
+Exciting Jockey,0,2,0,28
+Exerion,0,2,0,26
+Exerion II,0,2,0,18
+Exoide-Z,0,2,0,21
+Exoide-Z Area 5,0,3,0,19
+F-1 Spirit,9,5,0,26
+F-15 Strike Eagle,1,5,0,21
+F16 Fighting Falcon,0,2,0,28
+Fairy,0,2,0,30
+Fairy Land Story,1,5,0,16
+Famicle Parodic,1,6,0,27
+Family Automation Language,0,3,0,26
+Family Billiards,1,4,0,37
+Family Boxing,1,6,0,27
+Family Stadium Pro Baseball,2,6,0,24
+Fandom Library #1,1,6,0,38
+Fandom Library #2,1,6,0,28
+Fandom Library #3,1,6,0,28
+Fantasy Zone,1,5,0,28
+Fantasy Zone II,2,6,0,23
+Farm Kit,0,3,0,26
+Fathom,0,3,0,19
+FB-01 Voicing Program,0,3,0,17
+Final Justice,0,2,0,32
+Final Mahjong,0,2,0,24
+Final Mystery Murder Club,1,7,0,24
+Final Zone Wolf,1,5,0,36
+Fire Ball,1,5,0,26
+Fire Rescue,0,2,0,20
+Firebird,8,5,0,22
+Flappy Limited '85,0,2,0,19
+Flash Splash,0,1,0,29
+Fleet Commander II,1,6,0,23
+Flicky,0,3,0,29
+Flight Deck II,0,4,0,17
+Flight Simulator,1,5,0,25
+Flipper Slipper,0,2,0,27
+Flower Card a Carp,0,2,0,26
+FM Music Composer,0,2,0,29
+FM Music Composer II,0,3,0,28
+FM Music Macro,0,3,0,31
+FM Musiwriter,0,2,0,25
+FM PAC,11,4,2,24
+FM Voicing Program,0,2,0,18
+Formation Z,0,3,0,29
+Four Battle Mahjong,0,2,0,22
+Frogger,0,2,0,30
+Front Line,0,2,0,18
+Fruit Search,0,2,0,21
+Funky Mouse,0,2,0,23
+G.P. World,0,3,0,22
+Gakuen Monogatari,2,6,0,21
+Galactic Drifter Vifam,0,2,0,28
+Galaga,0,3,0,33
+Galaxian,0,1,0,17
+Gall Force,2,5,0,19
+Gambler Jiko Chuushinha,1,6,0,21
+Gambler Jiko Chuushinha 2,1,6,0,34
+Game Land,0,3,0,36
+Game Master,0,2,0,20
+Game Master II,4,5,2,22
+Ganbare Goemon!,8,5,0,25
+Gang Master,0,2,0,26
+Garakuta,2,4,0,22
+Garyuu Ou,1,6,0,19
+Gate of Labyrinth,2,5,0,20
+Gekitotsu Pennant Race,9,5,0,28
+Gekitotsu Pennant Race 2,9,5,0,33
+Ghost House,0,3,0,35
+Ghostbusters,0,3,0,22
+Girly Block,2,5,0,23
+Glider,0,2,0,22
+Goblin,0,4,0,17
+Gojira vs 3 Daikaijuu,0,2,0,17
+Gojira-kun,0,3,0,32
+Gokiburi Daisakusen,0,2,0,21
+Golf Game,0,2,0,30
+Golgo 13 - Wolf's Nest,0,3,0,20
+Golvellius,2,5,0,33
+Gomoku Narabe,0,2,0,21
+Goonies,0,3,0,24
+Green Beret,0,3,0,18
+Grog's Revenge,0,3,0,22
+Guardic,0,3,0,25
+Gulkave,0,3,0,18
+Gun Fright,0,3,0,18
+Gyrodine,0,3,0,21
+H.E.R.O.,0,3,0,19
+Hacker,2,5,0,19
+Hades no Monshou,0,3,0,17
+Hai no Majutsushi,8,5,0,27
+Haja No Fuin,1,5,0,28
+Hal Note,5,8,3,23
+Han Seimei Senki Androgynus,2,6,0,19
+Hanafuda,0,3,0,38
+Hanafuda Koi Koi,0,2,0,19
+Hang On,0,3,0,27
+Harapeko Pakkun,0,1,0,18
+Hard Ball,1,5,0,26
+Harry Fox MSX Special,2,5,1,20
+Harry Fox - Yuki no Maou Hen,6,4,0,32
+Heavy Boxing,0,2,0,39
+Heist,0,3,0,23
+Heli-tank,0,2,0,16
+Heroes of the Lance,1,7,2,20
+Hi no Tori,8,5,0,30
+Higemaru Makai Shima,2,5,0,21
+High School! Kimengumi,1,5,0,31
+High Way Star,0,2,0,33
+Hisha,0,2,0,24
+Hitsuji Yai,0,1,0,16
+Hole in One,0,2,0,22
+Hole in One Professional,0,3,0,22
+Hole in One Special,2,5,0,35
+Home Calc,0,2,0,30
+Home Writer,0,2,0,20
+Hudson 3D Golf,0,3,0,22
+Hustle! Chumy,0,2,0,25
+Hydlide,0,3,0,24
+Hydlide II,2,5,1,18
+Hydlide 3,1,7,0,21
+Hyper Olympic 1,0,2,0,20
+Hyper Olympic 2,0,2,0,26
+Hyper Rally,0,2,0,26
+Hyper Sports 1,0,2,0,22
+Hyper Sports 2,0,2,0,25
+Hyper Sports 3,0,3,0,25
+Ice World,0,2,0,25
+Ide Yousuke Meijin Mahjong,1,5,0,20
+Iga Ninpou Chou,0,2,0,37
+Iga Ninpou Chou 2,0,3,0,26
+Ikari,2,6,0,28
+Indian no Bouken,0,2,0,16
+Inemuri-ryuu Asada Mahjong,2,5,0,27
+Inindou,7,8,4,37
+Iriegas - Theseus,0,2,0,18
+Iriegas Episode IV,0,2,0,28
+Inspecteur Z,0,3,0,29
+Ishin no Arashi,7,7,4,23
+Issunboushi no Donnamondai,0,3,0,26
+J.P. Winkle,0,3,0,37
+Jagur,2,5,0,22
+Janka,0,2,0,16
+Jansei,2,5,1,16
+Janyu Mahjong,0,3,0,17
+Japanese MSX-Write,1,7,0,24
+Japanese MSX-Write II,1,7,2,29
+Jet Set Willy,0,2,0,32
+Jigsaw Set,0,2,0,24
+Jissen - 4-nin Mahjong,0,2,0,21
+Jong Kyo,0,2,0,33
+Joytelop,0,3,0,19
+Jump,0,2,0,19
+Jump Coaster,0,1,0,15
+Junior High English Words 1,0,3,0,23
+Juno First,0,3,0,38
+Kage no Densetsu,0,3,0,21
+Kakikukekon,0,2,0,27
+Karamaru's Strange Trip,0,2,0,22
+Karuizawa,1,5,0,34
+Kazuo Morita's Othello,0,3,0,20
+Kempelen Chess,2,5,0,33
+Keystone Kapers,0,3,0,25
+Kick It!,0,3,0,26
+Kiki Kaikai,1,5,0,19
+King & Balloon,0,3,0,22
+King Knight,2,5,0,25
+King Kong 2,8,5,0,22
+King's Valley,0,2,0,22
+King's Valley II,9,5,0,24
+Kin-nikuman,0,3,0,27
+Kisei,1,5,2,22
+Kitahei,1,5,0,16
+Knight Lore,0,3,0,18
+Knightmare,0,3,0,22
+Knightmare II,8,5,0,21
+Knightmare III,8,6,0,24
+Knither Special,2,5,0,25
+Koji Tanigawa's Shougi,0,3,0,26
+Koji Tanigawa's Shougi 2,1,5,2,33
+Konami's Baseball,0,2,0,35
+Konami's Billiards,0,1,0,28
+Konami's Boxing,0,3,0,29
+Konami's Football,0,3,0,26
+Konami's Golf,0,2,0,28
+Konami's Mahjong,0,3,0,24
+Konami's Ping Pong,0,2,0,27
+Konami's Soccer,0,3,0,29
+Konami's Tennis,0,2,0,26
+Koneko no Daibouken,0,3,0,26
+Koronis Rift,2,6,0,30
+Kung Fu Master,0,2,0,23
+Kung Fu Taigun,0,2,0,25
+L' Empereur,7,7,4,25
+Labyrinth,1,6,0,22
+Ladder Building,0,2,0,20
+Laptick'2,0,3,0,26
+Legend of Kage,0,3,0,20
+Legend of Takeru,0,3,0,25
+Let's Take the A-Train,2,5,2,27
+Light Corridor,2,4,0,33
+Lode Runner,0,3,0,25
+Lode Runner II,0,3,0,22
+Lord Over,0,2,0,25
+Lot Lot,0,3,0,20
+Lunar Ball,0,3,0,18
+Lupin Sansei - Babylon,1,5,0,21
+Lupin Sansei - Cagliostro,1,5,0,33
+M36,1,5,0,36
+Macross Countdown,0,3,0,14
+Mad Rider,1,5,0,28
+Mado Fuki Kaisha no Swing-kun,0,2,0,20
+Magical Kid Wiz,0,3,0,40
+Magical Tree,0,2,0,26
+Magnum Prohibition 1931,2,5,0,23
+Mahjong Friend,0,2,0,34
+Maison Ikkoku - Kanketsu Hen,1,7,0,25
+Maison Ikkoku - Omoide,1,6,0,39
+Make-a-Face,0,1,0,33
+Malaya no Hihou,2,5,0,22
+Manes,0,2,0,26
+Mappy,0,3,0,16
+Marchen Veil I,1,5,0,16
+Marine Battle,0,2,0,25
+Mashou no Yakata Goblin,0,4,0,24
+Megalopolis SOS,0,2,0,34
+Meikyuu Shinwa,2,5,0,26
+Metal Gear,8,5,0,25
+Metal Gear 2,9,7,0,21
+MIDI Macro,0,3,0,23
+Midnight Brothers,0,3,0,21
+Midnight Building,0,2,0,28
+Mini Golf,0,3,0,28
+Mirai,1,5,0,20
+Mississippi Satsujinjiken,1,5,0,16
+Mitsumega Toohru,1,5,0,36
+Moai no Hihou,0,3,0,27
+Mobile Planet Styllus,0,3,0,24
+Mobile-Suit Gundam,0,3,0,32
+Moero!! Nettou Yakyuu '88,1,6,0,29
+Mo-Karimakka,0,3,0,36
+Mole,0,2,0,23
+Mole Mole 2,0,3,0,15
+Monkey Academy,0,2,0,22
+Monmon Kaibutsu,1,5,0,25
+Monster's Fair,0,3,0,26
+Moon Landing,0,2,0,25
+Moon Patrol,0,2,0,23
+Moonsweeper,0,3,0,22
+Mopiranger,0,2,0,22
+Morita Kazuo no Othello,0,3,0,21
+Mouser,0,2,0,34
+Mr. Chin,0,1,0,17
+Mr. Do!,0,1,0,19
+Mr. Do! vs Unicorns,0,2,0,18
+Mr. Do's Wild Ride,0,2,0,30
+MSX Baseball,0,2,0,29
+MSX Baseball II,0,2,0,23
+MSX Derby,0,2,0,26
+MSX Rugby,0,2,0,20
+MSX Shougi Game,0,3,0,20
+MSX Soccer,0,2,0,26
+MSX-21,0,2,0,21
+MSX-AID,0,2,0,17
+MSX-BASIC-kun,0,2,0,18
+MSX-BASIC-kun Plus,0,2,0,24
+MSX-Logo,0,3,0,29
+Mugen Senshi Valis,1,5,0,19
+Music Editor,0,2,0,29
+Music Harmonizer 3,0,2,0,23
+Music Studio G7,0,3,0,29
+Nausicaa,0,2,0,26
+Nekketsu Juudou,1,6,0,19
+Nemesis,8,5,0,26
+Nemesis 2,9,5,0,18
+Nemesis 3,9,6,0,20
+Nessen Koushien,0,2,0,20
+New Horizon,1,5,0,26
+Night Shade,0,3,0,22
+Nihon-Shi Nenpyou,0,3,0,22
+Ninja Jajamaru-kun,0,3,0,28
+Ninja Princess,0,3,0,29
+Ninja-kun,0,2,0,25
+Ninja-kun - Asura no Shou,1,5,0,20
+Ninja-kun - Majou no Bouken,0,3,0,36
+Ninjya Kage,0,2,0,38
+Nobunaga no Yabou - Bushou,7,8,4,22
+Nobunaga no Yabou - Sengoku,7,7,4,37
+Nobunaga no Yabou Zenkoku MSX,7,6,2,38
+Nobunaga no Yabou Zenkoku MSX2,7,7,2,40
+Nyan Nyan Pro Wrestling,0,3,0,41
+Nyorols,0,2,0,34
+Ogre,2,6,0,18
+Oil's Well,0,3,0,15
+O'Mac Farmer,0,2,0,21
+Othello,0,3,0,23
+Ouke no Tani,9,5,0,18
+Out Run,1,6,0,23
+Oyoide Tango,0,1,0,18
+PAC,11,0,2,23
+Pachi Pro Densetsu,1,5,0,15
+Pachicom,0,3,0,29
+Pachinko-U.F.O.,0,2,0,19
+Pac-Man,0,3,0,26
+Pac-Mania,1,6,0,18
+Pai Panic,0,2,0,20
+Pairs,0,2,0,20
+Parodius,9,5,0,16
+Pass Ball,0,2,0,19
+Pastfinder,0,2,0,20
+Payload,0,3,0,21
+Peetan,0,1,0,18
+Pegasus,0,3,0,17
+Penguin Adventure,8,5,0,18
+Penguin-kun Wars,0,3,0,28
+Penguin-kun Wars 2,2,6,0,27
+Picture Puzzle,0,1,0,29
+Pillbox,0,2,0,25
+Pinball Blaster,2,4,0,18
+Pinball Maker,0,2,0,26
+Pine Applin,0,2,0,24
+Pinky Chase,0,2,0,22
+Pipi,0,3,0,22
+Pippols,0,2,0,15
+Pitfall II,0,2,0,18
+Pitfall!,0,2,0,21
+Playball,0,3,0,19
+Point X Senryou Sakusen,0,3,0,19
+Police Story,0,3,0,34
+Poppaq the Fish,0,2,0,23
+Predator,1,5,0,26
+Pretty Sheep,0,1,0,19
+Price of Magik,2,4,0,23
+Pro Yakyuu Family Stadium,2,6,0,25
+Pro Yakyuu Fan,1,6,0,36
+Professional Baseball,0,3,0,25
+Professional Mahjong,0,3,0,32
+Professional Mahjong Gokuu,2,5,1,31
+Project A2,1,5,0,37
+Protector,0,2,0,21
+PSG Musiwriter,0,2,0,20
+Psychic War,1,6,2,25
+Puzzle Panic,0,3,0,22
+Pyramid Warp,0,1,0,23
+Q-bert,0,3,0,23
+Quarth,9,5,0,17
+Queen's Golf,0,2,0,17
+Quinpl,1,6,0,23
+Raccoon Dog,0,3,0,17
+Raid on Bungeling Bay,0,3,0,22
+Rally-X,0,3,0,32
+Rambo,0,3,0,18
+Rastan Saga,1,6,0,16
+Real Tennis,0,1,0,22
+Red Zone,0,2,0,22
+Relics MSX,1,5,0,19
+Relics MSX2,1,6,0,21
+Renju & Ojama Dogs,0,2,0,22
+Replicart,1,5,0,29
+Return of Ishtar,2,6,0,20
+Return of Jelda,1,5,0,27
+Rick to Mick no Daibouken,1,5,0,26
+Rise Out,0,2,0,36
+River Raid,0,3,0,19
+Road Fighter,0,2,0,21
+Robo Wres 2001,2,5,0,23
+Robofrog,0,2,0,25
+Rockn' Bolt,0,2,0,19
+Roger Rubbish,0,2,0,22
+Roller Ball,0,2,0,24
+Romancia,2,5,0,22
+Rotors,0,2,0,19
+Royal Blood,7,8,4,17
+R-Type,12,7,0,22
+Salamander,9,5,0,18
+Sangokushi MSX,7,6,0,21
+Sangokushi MSX2,7,7,4,25
+Sangokushi II,7,8,4,26
+Sasa,0,2,0,24
+Scarlet 7,0,3,0,15
+Scion,0,2,0,20
+Scope On,0,2,0,16
+Scramble Eggs,0,1,0,19
+Scramble Formation,1,6,0,24
+Sea Hunter,0,2,0,29
+Secret Treasure of Moai,0,3,0,21
+Seiken Acho,0,3,0,34
+Seikima II Special,1,5,0,22
+Senjo no Ookami,1,5,0,29
+Senjyo,0,2,0,26
+Sewer Sam,0,3,0,17
+Shanghai,2,5,0,20
+Shiryou Sensen,1,6,2,19
+Shougi (Micro Cabin),0,2,0,25
+Shougi (Pony),0,3,0,31
+Shougi Expert,0,3,0,24
+Shougi Meijin,0,3,0,24
+Shougun,1,5,2,24
+Shout Match,0,3,0,18
+Simple ASM 1.0,0,2,0,22
+Sinbad,0,2,0,25
+Ski Command,0,2,0,17
+Skooter,0,3,0,22
+Sky Jaguar,0,2,0,18
+Skygaldo,0,3,0,21
+Slapshot,0,2,0,19
+Small Boy's Quiz,0,3,0,19
+Snake It,0,3,0,27
+Sofia,1,4,0,19
+Soukoban,0,3,0,16
+Space Camp,0,3,0,19
+Space Invaders,0,2,0,21
+Space Manbow,9,6,0,25
+Space Maze Attack,0,2,0,23
+Space Trouble,0,1,0,28
+Sparkie,0,3,0,24
+Spelunker,0,3,0,18
+Square Dancer,0,2,0,20
+Squish'em,0,2,0,24
+Star Blazer,0,2,0,20
+Star Command,0,2,0,22
+Star Trap,0,3,0,23
+Star Virgin,1,5,0,20
+Starship Simulator,0,2,0,22
+Step Up,0,1,0,29
+Stepper,0,2,0,18
+Stone of Wisdom,0,3,0,18
+Strange Loop,0,3,0,26
+Strategic Mars,2,5,0,23
+Suikoden,7,7,4,25
+Super Billiards,0,1,0,19
+Super Cobra,0,1,0,26
+Super Cross Force,0,2,0,22
+Super Daisenryaku,2,6,1,28
+Super Drinker,0,2,0,28
+Super Golf,0,3,0,24
+Super Laydock,1,6,0,21
+Super Lode Runner,13,5,0,24
+Super Pachinko,0,2,0,29
+Super Pierrot,2,5,0,25
+Super Rambo Special,2,5,0,24
+Super Runner,1,5,0,30
+Super Snake,0,2,0,23
+Super Soccer,0,3,0,22
+Super Synth,0,2,0,23
+Super Tennis,0,2,0,22
+Super Tritorn,1,5,0,23
+Supertripper,0,3,0,24
+Sweet Acorn,0,2,0,23
+Swimming Tango,0,1,0,22
+Synth Saurus,1,4,0,25
+Taiyou no Shinden,1,6,2,23
+Takahashi Meijin no Boukenjima,0,3,0,28
+Takeru Densetsu,0,3,0,41
+Tanigawa Koji no Shougi,0,3,0,26
+Tanigawa Koji no Shougi 2,1,5,2,34
+Tank Battalion,0,1,0,36
+Tatica,0,2,0,25
+Tawara-kun,0,2,0,17
+Tear of Nile,0,3,0,21
+Teitoku no Ketsudan,7,8,4,23
+Telebunnie,0,2,0,30
+Tengoku Yoitoko,1,5,0,21
+Tensai Rabbian Daifunsen,0,3,0,26
+Tenshi-tachi no Gogo,0,3,0,35
+Tetra Horror,0,2,0,31
+Tetris,1,5,0,23
+Tetsuman,0,2,0,17
+Thexder,0,3,0,19
+Thunder Ball,0,3,0,18
+Thunderbolt,0,3,0,23
+Time Pilot,0,2,0,22
+Top Roller,0,2,0,21
+Topple Zip MSX,0,3,0,21
+Topple Zip MSX2,1,5,0,25
+Tower of Druaga,0,3,0,26
+Track & Field 1,0,2,0,26
+Track & Field 2,0,2,0,26
+Traffic,0,3,0,26
+Treasure of Usas,8,5,0,18
+Trial Ski,0,2,0,27
+Tritorn,0,3,0,20
+Trump Aid,0,3,0,18
+Tsumego 120,2,5,0,20
+Tsurikichi Sanpei - Blue,1,5,0,22
+Tsurikichi Sanpei - Tsuri,1,6,0,35
+Turboat,0,2,0,36
+Turmoil,0,2,0,18
+Twinbee,0,3,0,18
+TZR Grandprix Rider,0,3,0,18
+Ultima Exodus,1,6,2,30
+Ultraman,0,2,0,24
+Urusei Yatsura,1,7,0,19
+Vampire Killer,8,5,0,25
+Vaxol,2,5,0,25
+Venus Fire,0,3,0,16
+Victorious Nine II,2,5,0,21
+Video Hustler,0,1,0,29
+Vifam,0,2,0,24
+Volguard,0,3,0,16
+Warp & Warp,0,1,0,19
+Warroid,0,3,0,22
+Wing Man 2,1,5,0,18
+Wizardry,1,7,2,21
+Wonderboy,0,3,0,19
+Woody Poco,2,5,0,20
+Wrangler,0,2,0,21
+Wreck,0,3,0,19
+Xanadu,1,6,2,16
+Xevious,2,6,0,17
+Xyzolog,0,2,0,18
+Yaksa,1,6,0,18
+Yakyuu-kyou,0,3,0,16
+Yamaha Play Card System,0,2,0,22
+Yamamura Misa Suspense,1,6,0,34
+Yellow Submarine,0,2,0,33
+Yie Ar Kung-Fu,0,2,0,27
+Yie Ar Kung-Fu II,0,3,0,25
+Youkai Yashiki,0,3,0,28
+Young Sherlock,1,5,0,25
+Yuurei-kun,1,6,0,25
+Zaider,0,3,0,21
+Zanac A.I.,0,3,0,17
+Zanac Ex,2,5,0,21
+Zaxxon,0,3,0,19
+Zenji,0,3,0,17
+Zexas Limited,0,3,0,16
+Zoids,2,5,0,24
+Zombie Hunter,1,5,0,16
+Zoom 909,0,3,0,24
+Zukkoke Yajikita,1,5,0,19
+EOF,0,0,0,0
