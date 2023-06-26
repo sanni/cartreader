@@ -748,8 +748,14 @@ static void readDatabaseEntry(FsFile& database, struct database_entry* entry) {
   entry->crc512_str = &entry->crc_str[8 + 1];
   entry->crc512_str[8] = 0;
   entry->iNES_str = &entry->crc_str[8 + 1 + 8 + 1];
-  memcpy(iNES_HEADER, entry->iNES_str, sizeof(iNES_HEADER));
-
+  
+  // Convert "4E4553" to (0x4E, 0x45, 0x53)
+  unsigned int iNES_BUF;
+  for (byte j = 0; j < 16; j++) {
+    sscanf(entry->iNES_str + j * 2, "%2X", &iNES_BUF);
+    iNES_HEADER[j] = iNES_BUF;
+  }
+  
   entry->crc = strtoul(entry->crc_str, NULL, 16);
   entry->crc512 = strtoul(entry->crc512_str, NULL, 16);
 }
