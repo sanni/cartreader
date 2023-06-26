@@ -287,14 +287,6 @@
 
 /****/
 
-/* [ Use No Intro Database ---------------------------------------- ]
-*   Renames ROM if found in database
-*/
-
-#define nointro
-
-/****/
-
 /* [ SNES Core/CLOCKGEN: Read Clock Generator Calibration Data ---- ]
 *   Toggle to use calibration data from snes_clk.txt
 */

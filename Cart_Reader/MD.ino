@@ -313,7 +313,7 @@ void mdCartMenu() {
           readRealtec_MD();
         } else {
           readROM_MD();
-          // Calculate and compare CRC32 with nointro
+          // Calculate and compare CRC32 with database
           if (is32x)
             //database, crcString, renamerom, offset
             compareCRC("32x.txt", 0, 1, 0);

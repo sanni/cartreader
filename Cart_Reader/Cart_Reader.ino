@@ -369,7 +369,6 @@ void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 byte eepbit[8];
 byte eeptemp;
 
-#ifdef nointro
 // Array to hold iNES header
 byte iNES_HEADER[16];
 //ID 0-3
@@ -384,7 +383,6 @@ byte iNES_HEADER[16];
 //TV_system 12
 //VS_hardware 13
 //reserved 14, 15
-#endif
 
 //******************************************
 // CRC32
@@ -612,7 +610,6 @@ void rewind_line(FsFile& readfile, byte count = 1) {
 
 // Calculate CRC32 if needed and compare it to CRC read from database
 boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, int offset) {
-#ifdef nointro
   char crcStr[9];
   print_Msg(F("CRC32... "));
   display_Update();
@@ -690,7 +687,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
         if (renamerom) {
           println_Msg(gamename);
 
-          // Rename file to nointro
+          // Rename file to database name
           sd.chdir(folder);
           delay(100);
           if (myFile.open(fileName, O_READ)) {
@@ -714,9 +711,6 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
     print_Error(F("Database missing"));
     return 0;
   }
-#else   // nointro
-  println_Msg("");
-#endif  // !nointro
   return 0;
 }
 
@@ -905,9 +899,7 @@ void mainMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
       getMapping();
-#endif
       checkStatus_NES();
       nesMenu();
       break;
@@ -1312,9 +1304,7 @@ void consoles80Menu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
       getMapping();
-#endif
       checkStatus_NES();
       nesMenu();
       break;

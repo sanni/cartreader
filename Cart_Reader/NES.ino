@@ -261,11 +261,7 @@ static const char nesMenuItem6[] PROGMEM = "Flash NESMaker";
 static const char* const menuOptionsNES[] PROGMEM = { nesMenuItem1, nesMenuItem2, nesMenuItem3, nesMenuItem4, nesMenuItem5, nesMenuItem6, string_reset2 };
 
 // NES chips menu
-#ifndef nointro
-static const char nesChipsMenuItem1[] PROGMEM = "Read PRG & CHR";
-#else
 static const char nesChipsMenuItem1[] PROGMEM = "Combined PRG+CHR";
-#endif
 static const char nesChipsMenuItem2[] PROGMEM = "Read only PRG";
 static const char nesChipsMenuItem3[] PROGMEM = "Read only CHR";
 static const char nesChipsMenuItem4[] PROGMEM = "Back";
@@ -283,19 +279,6 @@ void nesMenu() {
   switch (answer) {
     // Read Rom
     case 0:
-#ifndef nointro
-      CartStart();
-      readPRG(false);
-      delay(2000);
-      readCHR(false);
-      delay(2000);
-      outputNES();
-      delay(2000);
-      readRAM();
-      delay(2000);
-      resetROM();
-      CartFinish();
-#else
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
@@ -308,7 +291,6 @@ void nesMenu() {
 #endif
       display_Update();
       wait();
-#endif
       break;
 
     // Read single chip
@@ -318,7 +300,10 @@ void nesMenu() {
 
     // Read RAM
     case 2:
-      CreateROMFolderInSD();
+      sd.chdir();
+      sprintf(folder, "NES/SAVE");
+      sd.mkdir(folder, true);
+      sd.chdir(folder);
       readRAM();
       resetROM();
       println_Msg(F(""));
@@ -383,19 +368,6 @@ void nesChipMenu() {
   switch (answer) {
     // Read combined PRG/CHR
     case 0:
-#ifndef nointro
-      CreateROMFolderInSD();
-      readPRG(false);
-      resetROM();
-
-      CreateROMFolderInSD();
-      readCHR(false);
-      resetROM();
-
-      println_Msg(F(""));
-      // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
-#else
       display_Clear();
       // Change working dir to root
       sd.chdir("/");
@@ -405,7 +377,6 @@ void nesChipMenu() {
       print_STR(press_button_STR, 1);
 #ifdef global_log
       save_log();
-#endif
 #endif
       display_Update();
       wait();
@@ -478,10 +449,8 @@ void setup_NES() {
 }
 
 /******************************************
-   Get Mapping from nointro SD database
+   Get Mapping from SD database
  *****************************************/
-#ifdef nointro
-// no clue (taken from fceux)
 uint32_t uppow2(uint32_t n) {
   int x;
 
@@ -932,7 +901,6 @@ void readRaw_NES() {
   // Compare CRC32 with database
   compareCRC("nes.txt", 0, 0, 0);
 }
-#endif
 
 /******************************************
    Low Level Functions
@@ -1208,444 +1176,6 @@ void CreateRAMFileInSD() {
     LED_RED_OFF;
   }
 }
-
-#ifndef nointro
-void CartStart() {
-  sd.chdir();
-  EEPROM_readAnything(0, foldern);  // FOLDER #
-  sprintf(folder, "NES/CART/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-}
-
-void CartFinish() {
-  foldern += 1;
-  EEPROM_writeAnything(0, foldern);  // FOLDER #
-  sd.chdir();
-}
-#endif
-
-/******************************************
-   NES 2.0 Header Functions
- *****************************************/
-#ifndef nointro
-int32_t atoi32_signed(const char* input_string) {
-  if (input_string == NULL) {
-    return 0;
-  }
-
-  int int_sign = 1;
-  int i = 0;
-
-  if (input_string[0] == '-') {
-    int_sign = -1;
-    i = 1;
-  }
-
-  int32_t return_val = 0;
-
-  while (input_string[i] != '\0') {
-    if (input_string[i] >= '0' && input_string[i] <= '9') {
-      return_val = (return_val * 10) + (input_string[i] - '0');
-    } else if (input_string[i] != '\0') {
-      return 0;
-    }
-
-    i++;
-  }
-
-  return_val = return_val * int_sign;
-
-  return return_val;
-}
-
-uint32_t atoi32_unsigned(const char* input_string) {
-  if (input_string == NULL) {
-    return 0;
-  }
-
-  int i = 0;
-
-  uint32_t return_val = 0;
-
-  while (input_string[i] != '\0') {
-    if (input_string[i] >= '0' && input_string[i] <= '9') {
-      return_val = (return_val * 10) + (input_string[i] - '0');
-    } else if (input_string[i] != '\0') {
-      return 0;
-    }
-
-    i++;
-  }
-
-  return return_val;
-}
-
-void outputNES() {
-  FsFile nesFile;
-  const char fileNES[] = "CART.nes";
-  const char fileBIN[] = "CART.bin";
-  char* outputFile;
-  unsigned long crcOffset = 0;
-  uint32_t prg_size_bytes = 1024 * (uint32_t)prg;
-  uint32_t chr_size_bytes = 1024 * (uint32_t)chr;
-  int has_header = 0;
-
-  display_Clear();
-
-  unsigned char* nes_header_bytes = getNESHeaderForFileInfo(prg_size_bytes, chr_size_bytes, prg_crc32, chr_crc32);
-
-  if (nes_header_bytes != NULL) {
-    has_header = 1;
-  }
-
-  LED_RED_ON;
-  LED_GREEN_ON;
-  LED_BLUE_ON;
-  if (!myFile.open("PRG.bin", FILE_READ)) {
-    LED_GREEN_OFF;
-    LED_BLUE_OFF;
-
-    display_Clear();
-    println_Msg(F("PRG FILE FAILED!"));
-    display_Update();
-    print_FatalError(sd_error_STR);
-  }
-
-  if (has_header) {
-    outputFile = fileNES;
-    crcOffset = 16;
-  } else {
-    outputFile = fileBIN;
-  }
-
-  if (!sd.exists(outputFile)) {
-    nesFile = sd.open(outputFile, O_RDWR | O_CREAT);
-  }
-  if (!nesFile) {
-    LED_GREEN_OFF;
-    LED_BLUE_OFF;
-
-    display_Clear();
-    println_Msg(F("NES FILE FAILED!"));
-    display_Update();
-    print_FatalError(sd_error_STR);
-  }
-
-  if (has_header) {
-    nesFile.write(nes_header_bytes, 16);
-    free(nes_header_bytes);
-    display_Clear();
-    println_Msg(F("SET HEADER"));
-    display_Update();
-  }
-
-  size_t n;
-  while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
-    nesFile.write(sdBuffer, n);
-  }
-  myFile.close();
-  if (myFile.open("CHR.bin", FILE_READ)) {
-    while ((n = myFile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
-      nesFile.write(sdBuffer, n);
-    }
-    myFile.close();
-  }
-  nesFile.flush();
-  nesFile.close();
-
-  display_Clear();
-  if (has_header) {
-    println_Msg(F("NES FILE OUTPUT!"));
-  } else {
-    println_Msg(F("BIN FILE OUTPUT!"));
-  }
-  println_Msg(F(""));
-  display_Update();
-
-  printCRC(outputFile, NULL, crcOffset);
-  LED_RED_OFF;
-  LED_GREEN_OFF;
-  LED_BLUE_OFF;
-}
-
-unsigned char* getNESHeaderForFileInfo(uint32_t prg_size, uint32_t chr_size, uint32_t prg_crc32, uint32_t chr_crc32) {
-  if (prg_size == 0) {
-    return NULL;
-  }
-
-  char* temp_line;
-  unsigned char* nes20_header;
-  int i;
-
-  if (!myFile.open("/nes20db.txt", FILE_READ)) {
-    return NULL;
-  } else {
-    display_Clear();
-    println_Msg(F("SEARCHING DB"));
-    display_Update();
-  }
-
-  temp_line = (char*)malloc(256 * sizeof(char));
-  while (myFile.available()) {
-    // We're reading fixed-length lines
-    // padded with null characters
-    myFile.read(temp_line, 256);
-
-    uint32_t prg_size_db;
-    uint32_t chr_size_db;
-    uint32_t prg_crc32_db;
-    uint32_t chr_crc32_db;
-
-    // Match PRG and CHR sizes first, then
-    // match PRG CRC32 and, if the CHR size
-    // is greater than zero, the CHR CRC32
-    // as well.
-    prg_size_db = getPRGSizeFromDatabaseRow(temp_line);
-    if (prg_size == prg_size_db) {
-      chr_size_db = getCHRSizeFromDatabaseRow(temp_line);
-      if (chr_size == chr_size_db) {
-        prg_crc32_db = getPRGCRC32FromDatabaseRow(temp_line);
-        if (prg_crc32 == prg_crc32_db) {
-          if (chr_size == 0) {
-            nes20_header = getNES20HeaderBytesFromDatabaseRow(temp_line);
-            free(temp_line);
-            myFile.close();
-            return nes20_header;
-          } else {
-            chr_crc32_db = getCHRCRC32FromDatabaseRow(temp_line);
-            if (chr_crc32 == chr_crc32_db) {
-              nes20_header = getNES20HeaderBytesFromDatabaseRow(temp_line);
-              free(temp_line);
-              myFile.close();
-              return nes20_header;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  free(temp_line);
-  myFile.close();
-  return NULL;
-}
-
-// IMPORTANT: The string returned from this function MUST
-// be passed to free() when ready to be disposed of, in
-// order to avoid a memory leak.
-char* getDatabaseFieldFromRow(const char* dbstr, uint8_t fieldnum) {
-  uint8_t field_start_pos = 0;
-  uint8_t field_end_pos = 1;
-  uint8_t current_field = 0;
-  char* return_field;
-
-  // Field order, beginning with field 0:
-  // PRG Size, CHR Size, PRG CRC32, CHR CRC32, Game Title, NES 2.0 Header (as ASCII)
-  //
-  // Each entry is on its own line, with a field delimeter of ^^
-  // I'm assuming that nothing will ever use ^^ in a game title, but it's possible
-  // that could be wrong, in which case a different field delimeter would need
-  // to be used, and the logic here updated.
-  if (dbstr == NULL || fieldnum > 5) {
-    return NULL;
-  }
-
-  if (dbstr[0] == 0 || dbstr[0] == '\n') {
-    return NULL;
-  }
-
-  for (; field_end_pos < 255 && current_field < fieldnum; field_end_pos++) {
-    if (field_start_pos < 254 && dbstr[field_start_pos] == '^' && dbstr[field_start_pos + 1] == '^') {
-      current_field++;
-      field_start_pos = field_end_pos;
-      field_end_pos = field_start_pos + 1;
-    }
-
-    if (current_field < fieldnum && dbstr[field_end_pos - 1] == '^' && dbstr[field_end_pos] == '^' || dbstr[field_end_pos] == 0 || dbstr[field_end_pos] == '\n') {
-      current_field++;
-      field_start_pos = field_end_pos + 1;
-      field_end_pos = field_start_pos + 1;
-    }
-  }
-
-  field_end_pos = field_start_pos;
-
-  while ((dbstr[field_end_pos - 1] != '^' || dbstr[field_end_pos] != '^') && dbstr[field_end_pos] != 0 && dbstr[field_end_pos] != '\n') {
-    field_end_pos++;
-  }
-
-  if (dbstr[field_end_pos] == '^') {
-    field_end_pos = field_end_pos - 2;
-  } else {
-    field_end_pos = field_end_pos - 1;
-  }
-
-  if ((field_end_pos - field_start_pos + 2) == 0) {
-    return NULL;
-  }
-
-  return_field = (char*)malloc((field_end_pos - field_start_pos + 2) * sizeof(char));
-
-  memcpy(return_field, &dbstr[field_start_pos], field_end_pos - field_start_pos + 1);
-
-  return_field[(field_end_pos - field_start_pos) + 1] = 0;
-
-  return return_field;
-}
-
-unsigned char getNibbleFromChar(char num) {
-  char ret_char = num & 0x0F;
-  if (num > '9') {
-    ret_char += 9;
-  }
-
-  return ret_char;
-}
-
-unsigned char getByteFromChars(char msn, char lsn) {
-  unsigned char return_char;
-  return_char = (getNibbleFromChar(msn) << 4);
-  return_char |= getNibbleFromChar(lsn);
-
-  return return_char;
-}
-
-// IMPORTANT: The byte array returned from this function MUST
-// be passed to free() when ready to be disposed of, in
-// order to avoid a memory leak.
-unsigned char* strToBytes(const char* bytestr) {
-  uint8_t str_length;
-  uint8_t byte_length;
-  uint8_t str_idx;
-  uint8_t byte_idx = 0;
-  unsigned char* byte_arr;
-
-  if (bytestr == NULL) {
-    return NULL;
-  }
-
-  str_length = (uint8_t)strlen(bytestr);
-
-  if (str_length % 2 != 0) {
-    return NULL;
-  }
-
-  byte_length = str_length / 2;
-
-  byte_arr = (unsigned char*)malloc(byte_length * sizeof(unsigned char));
-
-  for (str_idx = 0; str_idx < str_length && bytestr[str_idx] != 0; str_idx = str_idx + 2) {
-    if (!isxdigit(bytestr[str_idx]) || !isxdigit(bytestr[str_idx + 1])) {
-      free(byte_arr);
-      return NULL;
-    }
-
-    byte_arr[byte_idx] = getByteFromChars(bytestr[str_idx], bytestr[str_idx + 1]);
-    byte_idx++;
-  }
-
-  return byte_arr;
-}
-
-uint32_t crc32FromBytes(const unsigned char* bytearr) {
-  if (bytearr == NULL) {
-    return 0;
-  }
-
-  return (uint32_t)(((uint32_t)bytearr[0] << 24) | ((uint32_t)bytearr[1] << 16) | ((uint32_t)bytearr[2] << 8) | (uint32_t)bytearr[3]);
-}
-
-uint32_t getPRGSizeFromDatabaseRow(const char* crctest) {
-  char* prg_size_str = getDatabaseFieldFromRow(crctest, 0);
-  if (prg_size_str == NULL) {
-    return 0;
-  }
-
-  uint32_t return_size = atoi32_unsigned(prg_size_str);
-  free(prg_size_str);
-
-  return return_size;
-}
-
-uint32_t getCHRSizeFromDatabaseRow(const char* crctest) {
-  char* chr_size_str = getDatabaseFieldFromRow(crctest, 1);
-  if (chr_size_str == NULL) {
-    return 0;
-  }
-
-  uint32_t return_size = atoi32_unsigned(chr_size_str);
-  free(chr_size_str);
-
-  return return_size;
-}
-
-uint32_t getPRGCRC32FromDatabaseRow(const char* crctest) {
-  char* prg_crc32_str = getDatabaseFieldFromRow(crctest, 2);
-  if (prg_crc32_str == NULL) {
-    return 0;
-  }
-
-  unsigned char* prg_crc32_bytes = strToBytes(prg_crc32_str);
-  free(prg_crc32_str);
-
-  if (prg_crc32_bytes == NULL) {
-    return 0;
-  }
-
-  uint32_t prg_crc32 = crc32FromBytes(prg_crc32_bytes);
-  free(prg_crc32_bytes);
-
-  return prg_crc32;
-}
-
-uint64_t getCHRCRC32FromDatabaseRow(const char* crctest) {
-  char* chr_crc32_str = getDatabaseFieldFromRow(crctest, 3);
-  if (chr_crc32_str == NULL) {
-    return 0;
-  }
-
-  unsigned char* chr_crc32_bytes = strToBytes(chr_crc32_str);
-  free(chr_crc32_str);
-
-  if (chr_crc32_bytes == NULL) {
-    return 0;
-  }
-
-  uint32_t chr_crc32 = crc32FromBytes(chr_crc32_bytes);
-  free(chr_crc32_bytes);
-
-  return chr_crc32;
-}
-
-// IMPORTANT: As with getDatabaseFieldFromRow(), the string
-// returned from this function must be passed to free() after
-// it's no longer needed in order to avoid a memory leak.
-char* getGameTitleFromDatabaseRow(const char* crctest) {
-  char* game_title_str = getDatabaseFieldFromRow(crctest, 4);
-
-  return game_title_str;
-}
-
-// IMPORTANT: The byte array returned from this function MUST
-// be passed to free() when ready to be disposed of, in
-// order to avoid a memory leak.
-unsigned char* getNES20HeaderBytesFromDatabaseRow(const char* crctest) {
-  char* nes_header_str = getDatabaseFieldFromRow(crctest, 5);
-  if (nes_header_str == NULL) {
-    return NULL;
-  }
-
-  unsigned char* nes_header_bytes = strToBytes(nes_header_str);
-  free(nes_header_str);
-
-  if (nes_header_bytes == NULL) {
-    return NULL;
-  }
-
-  return nes_header_bytes;
-}
-#endif
 
 /******************************************
    Config Functions
@@ -3754,9 +3284,6 @@ void readPRG(bool readrom) {
       println_Msg(F("PRG FILE DUMPED!"));
       println_Msg(F(""));
       display_Update();
-#ifndef nointro
-      printCRC(fileName, &prg_crc32, 0);
-#endif
     }
   }
   set_address(0);
@@ -4755,9 +4282,6 @@ void readCHR(bool readrom) {
         println_Msg(F("CHR FILE DUMPED!"));
         println_Msg(F(""));
         display_Update();
-#ifndef nointro
-        printCRC(fileName, &chr_crc32, 0);
-#endif
       }
     }
   }
