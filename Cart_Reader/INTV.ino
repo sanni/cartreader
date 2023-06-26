@@ -99,10 +99,8 @@ static const char intvMenuItem3[] PROGMEM = "Set Mapper + Size";
 static const char* const menuOptionsINTV[] PROGMEM = { intvMenuItem1, intvMenuItem2, intvMenuItem3, string_reset2 };
 
 void setup_INTV() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set Address Pins to Output (UNUSED)
   //A0-A7

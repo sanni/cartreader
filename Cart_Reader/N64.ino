@@ -399,10 +399,8 @@ void n64CartMenu() {
    Setup
  *****************************************/
 void setup_N64_Controller() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 3V
+  // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
-#endif
 
   // Output a low signal
   PORTH &= ~(1 << 4);
@@ -411,10 +409,8 @@ void setup_N64_Controller() {
 }
 
 void setup_N64_Cart() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 3V
+  // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
-#endif
 
   // Set Address Pins to Output and set them low
   //A0-A7

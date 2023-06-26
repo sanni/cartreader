@@ -246,10 +246,8 @@ void gbaMenu() {
    Setup
  *****************************************/
 void setup_GBA() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 3V
+  // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
-#endif
 
   setROM_GBA();
 

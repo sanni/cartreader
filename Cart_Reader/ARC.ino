@@ -56,10 +56,8 @@ static const char arcMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsARC[] PROGMEM = { arcMenuItem1, arcMenuItem2, arcMenuItem3, arcMenuItem4 };
 
 void setup_ARC() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set Address Pins to Output
   // Arcadia 2001 uses A0-A13 [A14-A23 UNUSED]

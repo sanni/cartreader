@@ -155,10 +155,8 @@ void smsOperations() {
 //   Setup I/O
 //********************************
 void setup_SMS() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set Address Pins to Output
   //A0-A7

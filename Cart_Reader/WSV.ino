@@ -53,10 +53,8 @@ byte newwsvsize;
 //******************************************
 
 void setup_WSV() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 3V
+  // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
-#endif
 
   // Set Address Pins to Output
   //A0-A7

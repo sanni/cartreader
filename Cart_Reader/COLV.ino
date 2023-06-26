@@ -55,10 +55,8 @@ static const char colMenuItem3[] PROGMEM = "Set Size";
 static const char* const menuOptionsCOL[] PROGMEM = { colMenuItem1, colMenuItem2, colMenuItem3, string_reset2 };
 
 void setup_COL() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set Address Pins to Output
   // Colecovision uses A0-A14 [A15-A23 UNUSED]

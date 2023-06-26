@@ -680,7 +680,7 @@ void id_Flash16() {
 /******************************************
    Setup
  *****************************************/
-#ifdef ENABLE_VSELECT
+#if defined(ENABLE_VSELECT) || defined(ENABLE_3V3FIX)
 static const char flashvoltItem1[] PROGMEM = "3.3V";
 static const char flashvoltItem2[] PROGMEM = "5V";
 //static const char flashvoltItem3[] PROGMEM = "Reset"; (stored in common strings array)
@@ -696,12 +696,12 @@ void setup_FlashVoltage() {
   // wait for user choice to come back from the question box menu
   switch (flashvolt) {
     case 0:
-      // Set Automatic Voltage Selection to 3V
+      // Request 3.3V
       setVoltage(VOLTS_SET_3V3);
       break;
 
     case 1:
-      // Set Automatic Voltage Selection to 5V
+      // Request 5V
       setVoltage(VOLTS_SET_5V);
       break;
 
@@ -710,6 +710,9 @@ void setup_FlashVoltage() {
       break;
   }
 }
+#else
+// The compiler will optimize this out when this condition is met.
+void setup_FlashVoltage() {}
 #endif
 
 void setup_Flash8() {

@@ -181,10 +181,8 @@ void msxMenu() {
 //  SETUP
 //******************************************
 void setup_MSX() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set Address Pins to Output
   // MSX uses A0-A15

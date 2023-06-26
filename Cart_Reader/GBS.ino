@@ -109,10 +109,8 @@ byte readByte_GBS(word myAddress) {
 }
 
 void setup_GBSmart() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // take from setup_GB
   // Set RST(PH0) to Input

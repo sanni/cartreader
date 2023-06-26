@@ -101,10 +101,8 @@ void svMenu() {
    Setup
  *****************************************/
 void setup_SV() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);

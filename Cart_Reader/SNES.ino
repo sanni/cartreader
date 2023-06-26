@@ -172,9 +172,7 @@ void snsMenu() {
 
 #ifdef enable_FLASH
     case 3:
-#ifdef ENABLE_VSELECT
       setup_FlashVoltage();
-#endif
       reproMenu();
       break;
 #endif
@@ -388,10 +386,8 @@ void stopSnesClocks_resetCic_resetCart() {
    Setup
  *****************************************/
 void setup_Snes() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);

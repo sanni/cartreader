@@ -46,10 +46,8 @@ static uint8_t wsEepromShiftReg[2];
 static boolean wsWitch = false;
 
 void setup_WS() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 3V
+  // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
-#endif
 
   // A-1 - A6
   DDRF = 0xff;

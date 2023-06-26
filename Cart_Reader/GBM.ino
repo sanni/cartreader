@@ -184,10 +184,8 @@ void gbmMenu() {
   Setup
 *****************************************/
 void setup_GBM() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set RST(PH0) to Input
   DDRH &= ~(1 << 0);

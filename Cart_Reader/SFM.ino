@@ -524,10 +524,8 @@ void getGames(char gameCode[8][20], boolean* hasMenu, byte* numGames) {
    Setup
  *****************************************/
 void setup_SFM() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);

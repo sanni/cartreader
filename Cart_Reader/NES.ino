@@ -418,10 +418,8 @@ void nesChipMenu() {
    Setup
  *****************************************/
 void setup_NES() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // CPU R/W, IRQ, PPU /RD, PPU /A13, CIRAM /CE, PPU /WR, /ROMSEL, PHI2
   DDRF = 0b10110111;

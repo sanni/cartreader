@@ -105,10 +105,8 @@ void pokeMenu() {
 //  SETUP
 //******************************************
 void setup_POKE() {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 3V
+  // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
-#endif
 
   // Set Address Pins to Output
   // Pokemon Mini uses A0-A9 (DUAL A10-A19) + A20 (CONNECT TO SNES A10) [A11-A23 UNUSED]

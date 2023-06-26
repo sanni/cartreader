@@ -170,10 +170,8 @@ void pin_init_PCE(void) {
 }
 
 void setup_cart_PCE(void) {
-#ifdef ENABLE_VSELECT
-  // Set Automatic Voltage Selection to 5V
+  // Request 5V
   setVoltage(VOLTS_SET_5V);
-#endif
 
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
