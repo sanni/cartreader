@@ -42,7 +42,6 @@ static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFl
 
 
 void svMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -102,6 +101,11 @@ void svMenu() {
    Setup
  *****************************************/
 void setup_SV() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
   // Output a high signal until we're ready to start

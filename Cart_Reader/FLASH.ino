@@ -680,6 +680,38 @@ void id_Flash16() {
 /******************************************
    Setup
  *****************************************/
+#ifdef ENABLE_VSELECT
+static const char flashvoltItem1[] PROGMEM = "3.3V";
+static const char flashvoltItem2[] PROGMEM = "5V";
+//static const char flashvoltItem3[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const flashvoltOptions[] PROGMEM = { flashvoltItem1, flashvoltItem2, string_reset2 };
+
+void setup_FlashVoltage() {
+  // create menu with title and 3 options to choose from
+  unsigned char flashvolt;
+  // Copy menuOptions out of progmem
+  convertPgm(flashvoltOptions, 3);
+  flashvolt = question_box(F("Select Flash Voltage"), menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (flashvolt) {
+    case 0:
+      // Set Automatic Voltage Selection to 3V
+      setVoltage(VOLTS_SET_3V3);
+      break;
+
+    case 1:
+      // Set Automatic Voltage Selection to 5V
+      setVoltage(VOLTS_SET_5V);
+      break;
+
+    case 2:
+      resetArduino();
+      break;
+  }
+}
+#endif
+
 void setup_Flash8() {
   // Set Address Pins to Output
   //A0-A7

@@ -279,19 +279,6 @@
 
 /****/
 
-/* [ Start Menu --------------------------------------------------- ]
-*   Change this when using a single slot cart reader to always start
-*   in that menu.
-*
-*   OPTIONS :
-*     mainMenu, snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu, 
-*     flashMenu, nesMenu, smsMenu
-*/
-
-#define startMenu mainMenu
-
-/****/
-
 /* [ Logging ------------------------------------------------------ ]
 *   Write all info to OSCR_LOG.txt in root dir
 */

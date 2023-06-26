@@ -211,11 +211,11 @@ byte mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
 byte mapselect;
 
 const int PRG[] PROGMEM = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 };
-byte prglo = 0;  // Lowest Entry
+byte prglo = 0;   // Lowest Entry
 byte prghi = 11;  // Highest Entry
 
 const int CHR[] PROGMEM = { 0, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
-byte chrlo = 0;  // Lowest Entry
+byte chrlo = 0;   // Lowest Entry
 byte chrhi = 10;  // Highest Entry
 
 const byte RAM[] PROGMEM = { 0, 8, 16, 32 };
@@ -273,7 +273,6 @@ static const char* const menuOptionsNESChips[] PROGMEM = { nesChipsMenuItem1, ne
 
 // NES start menu
 void nesMenu() {
-  setVoltage(VOLTS_SET_5V);
   unsigned char answer;
 
   // create menu with title "NES CART READER" and 7 options to choose from
@@ -448,6 +447,11 @@ void nesChipMenu() {
    Setup
  *****************************************/
 void setup_NES() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // CPU R/W, IRQ, PPU /RD, PPU /A13, CIRAM /CE, PPU /WR, /ROMSEL, PHI2
   DDRF = 0b10110111;
   // CPU R/W, IRQ, PPU /RD, PPU /A13, CIRAM /CE, PPU /WR, /ROMSEL, PHI2
@@ -2551,8 +2555,8 @@ void readPRG(bool readrom) {
         }
         break;
 
-      case 2:  // bus conflicts - fixed last bank
-      case 30: // bus conflicts in non-flashable configuration
+      case 2:   // bus conflicts - fixed last bank
+      case 30:  // bus conflicts in non-flashable configuration
         banks = int_pow(2, prgsize);
         busConflict = true;
         for (int i = 0; i < banks - 1; i++) {
@@ -2827,7 +2831,7 @@ void readPRG(bool readrom) {
           }
         }
         break;
-        
+
       case 34:  // BxROM/NINA
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
@@ -2894,7 +2898,7 @@ void readPRG(bool readrom) {
           dumpPRG(base, address);
         }
         break;
-        
+
       case 38:
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
@@ -3324,7 +3328,7 @@ void readPRG(bool readrom) {
           }
         }
         break;
-        
+
       case 114:  // Submapper 0
         banks = int_pow(2, prgsize) * 2;
         write_prg_byte(0x6000, 0);
@@ -3385,7 +3389,7 @@ void readPRG(bool readrom) {
           }
         }
         break;
-        
+
       case 148:  // Sachen SA-008-A and Tengen 800008 -- Bus conflicts
         banks = int_pow(2, prgsize) / 2;
         busConflict = true;
@@ -3770,7 +3774,7 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 3:   // 8K/16K/32K - bus conflicts
+        case 3:  // 8K/16K/32K - bus conflicts
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
             for (int x = 0; x < 0x2000; x++) {
@@ -4018,12 +4022,12 @@ void readCHR(bool readrom) {
             }
           }
           break;
-          
+
         case 34:  // NINA
           banks = int_pow(2, chrsize);
           for (int i = 0; i < banks; i += 2) {
-            write_prg_byte(0x7FFE, i);          // Select 4 KB CHR bank at $0000
-            write_prg_byte(0x7FFF, i + 1);      // Select 4 KB CHR bank at $1000
+            write_prg_byte(0x7FFE, i);      // Select 4 KB CHR bank at $0000
+            write_prg_byte(0x7FFF, i + 1);  // Select 4 KB CHR bank at $1000
             for (word address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
@@ -4073,7 +4077,7 @@ void readCHR(bool readrom) {
             }
           }
           break;
-          
+
         case 38:
           banks = int_pow(2, chrsize) / 2;
           for (int i = 0; i < banks; i++) {
@@ -4206,7 +4210,7 @@ void readCHR(bool readrom) {
             }
           }
           break;
-          
+
         case 66:  // 16K/32K
         case 70:
         case 152:  // 128K
@@ -4449,7 +4453,7 @@ void readCHR(bool readrom) {
             }
           }
           break;
-          
+
         case 114:  // Submapper 0
           banks = int_pow(2, chrsize) * 4;
           for (int i = 0; i < banks; i++) {
@@ -4502,7 +4506,7 @@ void readCHR(bool readrom) {
             }
           }
           break;
-          
+
         case 148:  // Sachen SA-008-A and Tengen 800008 -- Bus conflicts
           banks = int_pow(2, chrsize);
           busConflict = true;

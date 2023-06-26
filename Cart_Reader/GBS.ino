@@ -109,6 +109,11 @@ byte readByte_GBS(word myAddress) {
 }
 
 void setup_GBSmart() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // take from setup_GB
   // Set RST(PH0) to Input
   DDRH &= ~(1 << 0);
@@ -145,7 +150,6 @@ void setup_GBSmart() {
 }
 
 void gbSmartMenu() {
-  setVoltage(VOLTS_SET_5V);
   uint8_t mainMenu;
 
   // Copy menuOptions out of progmem

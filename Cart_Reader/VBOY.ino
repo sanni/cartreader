@@ -56,6 +56,11 @@
 //******************************************
 
 void setup_VBOY() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
@@ -101,7 +106,6 @@ static const char vboyMenuItem3[] PROGMEM = "Write SRAM";
 static const char* const menuOptionsVBOY[] PROGMEM = { vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, string_reset2 };
 
 void vboyMenu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsVBOY, 4);
   uint8_t mainMenu = question_box(F("VIRTUALBOY MENU"), menuOptions, 4, 0);
 

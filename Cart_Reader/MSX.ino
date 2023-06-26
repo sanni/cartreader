@@ -133,7 +133,6 @@ static const char msxMenuItem4[] PROGMEM = "Write SRAM";
 static const char* const menuOptionsMSX[] PROGMEM = { msxMenuItem1, msxMenuItem2, msxMenuItem3, msxMenuItem4, string_reset2 };
 
 void msxMenu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsMSX, 5);
   uint8_t mainMenu = question_box(F("MSX MENU"), menuOptions, 5, 0);
 
@@ -182,6 +181,11 @@ void msxMenu() {
 //  SETUP
 //******************************************
 void setup_MSX() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set Address Pins to Output
   // MSX uses A0-A15
   //A0-A7

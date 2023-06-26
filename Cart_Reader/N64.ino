@@ -114,7 +114,6 @@ static const char* const sectorOptionsN64[] PROGMEM = { N64SectorItem1, N64Secto
 
 // N64 start menu
 void n64Menu() {
-  setVoltage(VOLTS_SET_3V3);
   // create menu with title and 5 options to choose from
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
@@ -400,6 +399,11 @@ void n64CartMenu() {
    Setup
  *****************************************/
 void setup_N64_Controller() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 3V
+  setVoltage(VOLTS_SET_3V3);
+#endif
+
   // Output a low signal
   PORTH &= ~(1 << 4);
   // Set Controller Data Pin(PH4) to Input
@@ -407,6 +411,11 @@ void setup_N64_Controller() {
 }
 
 void setup_N64_Cart() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 3V
+  setVoltage(VOLTS_SET_3V3);
+#endif
+
   // Set Address Pins to Output and set them low
   //A0-A7
   DDRF = 0xFF;

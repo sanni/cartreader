@@ -17,7 +17,6 @@ static const char gbmMenuItem7[] PROGMEM = "Write Mapping";
 static const char* const menuOptionsGBM[] PROGMEM = { gbmMenuItem1, gbmMenuItem2, gbmMenuItem3, gbmMenuItem4, gbmMenuItem5, gbmMenuItem6, gbmMenuItem7 };
 
 void gbmMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -185,6 +184,11 @@ void gbmMenu() {
   Setup
 *****************************************/
 void setup_GBM() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set RST(PH0) to Input
   DDRH &= ~(1 << 0);
   // Activate Internal Pullup Resistors

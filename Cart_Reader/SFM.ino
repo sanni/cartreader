@@ -50,7 +50,6 @@ static const char sfmGameMenuItem4[] PROGMEM = "Switch Game";
 static const char* const menuOptionsSFMGame[] PROGMEM = { sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, string_reset2 };
 
 void sfmMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -525,6 +524,11 @@ void getGames(char gameCode[8][20], boolean* hasMenu, byte* numGames) {
    Setup
  *****************************************/
 void setup_SFM() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
   // Output a high signal to disable snesCIC

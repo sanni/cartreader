@@ -46,6 +46,11 @@ static uint8_t wsEepromShiftReg[2];
 static boolean wsWitch = false;
 
 void setup_WS() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 3V
+  setVoltage(VOLTS_SET_3V3);
+#endif
+
   // A-1 - A6
   DDRF = 0xff;
   // A7 - A14
@@ -117,7 +122,6 @@ static boolean headerCheck() {
 }
 
 void wsMenu() {
-  setVoltage(VOLTS_SET_3V3);
   uint8_t mainMenu = (wsWitch ? 5 : 4);
 
   convertPgm(menuOptionsWS, mainMenu);

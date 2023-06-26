@@ -4,7 +4,7 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2023-06-25
+   Date:             2023-06-26
    Version:          12.6
 
    SD lib: https://github.com/greiman/SdFat
@@ -837,7 +837,7 @@ static const char modeItem9[] PROGMEM = "NeoGeo Pocket (3V)";
 static const char modeItem10[] PROGMEM = "Intellivision";
 static const char modeItem11[] PROGMEM = "Colecovision";
 static const char modeItem12[] PROGMEM = "Virtual Boy";
-static const char modeItem13[] PROGMEM = "Watara Supervision";
+static const char modeItem13[] PROGMEM = "Watara Supervision (3V)";
 static const char modeItem14[] PROGMEM = "Pocket Challenge W";
 static const char modeItem15[] PROGMEM = "Atari 2600";
 static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
@@ -847,7 +847,7 @@ static const char modeItem19[] PROGMEM = "Super A'can";
 static const char modeItem20[] PROGMEM = "MSX";
 static const char modeItem21[] PROGMEM = "Pokemon Mini (3V)";
 static const char modeItem22[] PROGMEM = "Flashrom Programmer";
-static const char modeItem23[] PROGMEM = "Self Test";
+static const char modeItem23[] PROGMEM = "Self Test (3V)";
 static const char modeItem24[] PROGMEM = "About";
 //static const char modeItem25[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, modeItem23, modeItem24, string_reset2 };
@@ -1046,6 +1046,9 @@ void mainMenu() {
 
 #ifdef enable_FLASH
     case 21:
+#ifdef ENABLE_VSELECT
+      setup_FlashVoltage();
+#endif
       flashMenu();
       break;
 #endif
@@ -1123,7 +1126,7 @@ static const char* const consoles90Options[] PROGMEM = { consoles90Item1, string
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
 static const char handheldsItem2[] PROGMEM = "WonderSwan (3V)";
 static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket (3V)";
-static const char handheldsItem4[] PROGMEM = "Watara Supervision";
+static const char handheldsItem4[] PROGMEM = "Watara Supervision (3V)";
 static const char handheldsItem5[] PROGMEM = "Pocket Challenge W";
 static const char handheldsItem6[] PROGMEM = "Pokemon Mini (3V)";
 //static const char handheldsItem6[] PROGMEM = "Reset"; (stored in common strings array)
@@ -1211,6 +1214,9 @@ void addonMenu() {
 
 #ifdef enable_FLASH
     case 4:
+#ifdef ENABLE_VSELECT
+      setup_FlashVoltage();
+#endif
       flashMenu();
       break;
 #endif
@@ -1439,6 +1445,11 @@ void handheldMenu() {
 #ifdef enable_selftest
 
 void selfTest() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 3V
+  setVoltage(VOLTS_SET_3V3);
+#endif
+
   display_Clear();
   println_Msg(F("Self Test"));
   println_Msg(F(""));
@@ -2134,7 +2145,7 @@ void setup() {
   statusLED(true);
 
   // Start menu system
-  startMenu();
+  mainMenu();
 }
 
 /******************************************

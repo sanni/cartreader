@@ -70,7 +70,6 @@ static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_r
 
 // PCE start menu
 void pcsMenu(void) {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 3 options to choose from
   unsigned char pceDev;
   // Copy menuOptions out of progmem
@@ -171,6 +170,11 @@ void pin_init_PCE(void) {
 }
 
 void setup_cart_PCE(void) {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
   // Output a high to disable CIC

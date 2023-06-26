@@ -83,7 +83,6 @@ static const char pokeMenuItem1[] PROGMEM = "Read ROM";
 static const char* const menuOptionsPOKE[] PROGMEM = { pokeMenuItem1, string_reset2 };
 
 void pokeMenu() {
-  setVoltage(VOLTS_SET_3V3);
   convertPgm(menuOptionsPOKE, 2);
   uint8_t mainMenu = question_box(F("POKEMON MINI MENU"), menuOptions, 2, 0);
 
@@ -106,6 +105,11 @@ void pokeMenu() {
 //  SETUP
 //******************************************
 void setup_POKE() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 3V
+  setVoltage(VOLTS_SET_3V3);
+#endif
+
   // Set Address Pins to Output
   // Pokemon Mini uses A0-A9 (DUAL A10-A19) + A20 (CONNECT TO SNES A10) [A11-A23 UNUSED]
   //A0-A7

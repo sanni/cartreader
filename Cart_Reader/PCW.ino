@@ -101,6 +101,11 @@ byte bank1;
 //******************************************
 
 void setup_PCW() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set Address Pins to Output
   //A8-A15
   DDRK = 0xFF;
@@ -141,7 +146,6 @@ static const char pcwmenuItem3[] PROGMEM = "Write SRAM";
 static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, string_reset2 };
 
 void pcwMenu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsPCW, 4);
   uint8_t mainMenu = question_box(F(" POCKET CHALLENGE W"), menuOptions, 4, 0);
 
@@ -629,7 +633,7 @@ uint32_t detect_rom_size_PCW(void) {
   } else if (detect_2m == DETECTION_SIZE) {
     rom_size = 0x200000;
   } else {
-      rom_size = 0x400000;
+    rom_size = 0x400000;
   }
 
   return rom_size;

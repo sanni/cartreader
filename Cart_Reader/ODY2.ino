@@ -69,6 +69,11 @@ static const char ody2MenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsODY2[] PROGMEM = { ody2MenuItem1, ody2MenuItem2, ody2MenuItem3, ody2MenuItem4 };
 
 void setup_ODY2() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set Address Pins to Output
   // Odyssey 2 uses A0-A13 [A14-A23 UNUSED]
   //A0-A7
@@ -110,7 +115,6 @@ void setup_ODY2() {
 }
 
 void ody2Menu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsODY2, 4);
   uint8_t mainMenu = question_box(F("ODYSSEY 2 MENU"), menuOptions, 4, 0);
 

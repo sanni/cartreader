@@ -26,31 +26,30 @@ static const char SMSRomSizeItem1[] PROGMEM = "8 KB";
 static const char SMSRomSizeItem2[] PROGMEM = "16 KB";
 static const char SMSRomSizeItem3[] PROGMEM = "24 KB";
 static const char SMSRomSizeItem4[] PROGMEM = "32 KB";
-static const char SMSRomSizeItem5[] PROGMEM = "40 KB"; //SG-1000 40k mapping not yet supported
-static const char SMSRomSizeItem6[] PROGMEM = "48 KB"; //SG-1000 40k mapping not yet supported
+static const char SMSRomSizeItem5[] PROGMEM = "40 KB";  //SG-1000 40k mapping not yet supported
+static const char SMSRomSizeItem6[] PROGMEM = "48 KB";  //SG-1000 40k mapping not yet supported
 static const char SMSRomSizeItem7[] PROGMEM = "64 KB";
 static const char SMSRomSizeItem8[] PROGMEM = "128 KB";
 static const char SMSRomSizeItem9[] PROGMEM = "256 KB";
 static const char SMSRomSizeItem10[] PROGMEM = "512 KB";
 static const char SMSRomSizeItem11[] PROGMEM = "1024 KB";
-static const char* const SG1RomSizeMenu[] PROGMEM = { SMSRomSizeItem1, SMSRomSizeItem2, SMSRomSizeItem3, SMSRomSizeItem4};                                     // Rom sizes for SG-1000
-static const char* const SMSRomSizeMenu[] PROGMEM = { SMSRomSizeItem4, SMSRomSizeItem7, SMSRomSizeItem8, SMSRomSizeItem9, SMSRomSizeItem10, SMSRomSizeItem11}; // Rom sizes for SMS and GG
+static const char* const SG1RomSizeMenu[] PROGMEM = { SMSRomSizeItem1, SMSRomSizeItem2, SMSRomSizeItem3, SMSRomSizeItem4 };                                      // Rom sizes for SG-1000
+static const char* const SMSRomSizeMenu[] PROGMEM = { SMSRomSizeItem4, SMSRomSizeItem7, SMSRomSizeItem8, SMSRomSizeItem9, SMSRomSizeItem10, SMSRomSizeItem11 };  // Rom sizes for SMS and GG
 
 // Init systems
-static bool system_sms = false;      // SMS or MarkIII
-static bool system_gg = false;       // GameGear
-static bool system_sg1000 = false;   // SG-1000
+static bool system_sms = false;     // SMS or MarkIII
+static bool system_gg = false;      // GameGear
+static bool system_sg1000 = false;  // SG-1000
 
 // Init adapters
-static bool adapter_raphnet = false; // raphet adapater (SMS-to-MD or MIII-to-MD)
-static bool adapter_retrode = false; // Retrode adapter (SMS-to-MD or GG-to-MD)
-static bool adapter_retron = false;  // Retron 3in1 adapter (SMS-to-MD or GG-to-MD)
+static bool adapter_raphnet = false;  // raphet adapater (SMS-to-MD or MIII-to-MD)
+static bool adapter_retrode = false;  // Retrode adapter (SMS-to-MD or GG-to-MD)
+static bool adapter_retron = false;   // Retron 3in1 adapter (SMS-to-MD or GG-to-MD)
 
 //*********************************************************
 //  Main menu with systems/adapters setups to choose from
 //*********************************************************
 void smsMenu() {
-  setVoltage(VOLTS_SET_5V);
   unsigned char SMSSetup;
   convertPgm(SMSAdapterMenu, 6);
   SMSSetup = question_box(F("Select your setup"), menuOptions, 6, 0);
@@ -62,7 +61,7 @@ void smsMenu() {
       adapter_raphnet = true;
       break;
 
-   case 1:
+    case 1:
       // SMS with Retrode adapter
       system_sms = true;
       adapter_retrode = true;
@@ -156,6 +155,11 @@ void smsOperations() {
 //   Setup I/O
 //********************************
 void setup_SMS() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 5V
+  setVoltage(VOLTS_SET_5V);
+#endif
+
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
@@ -178,7 +182,7 @@ void setup_SMS() {
     PORTH |= (1 << 6);
     // Setting WR(PL5) and RD(PL6) HIGH
     PORTL |= (1 << 5) | (1 << 6);
-  } 
+  }
 
   // For Raphnet and Retron adapters
   else {
@@ -215,7 +219,7 @@ void setup_SMS() {
 }
 
 //*****************************************
-//  Low level functions 
+//  Low level functions
 //*****************************************
 void writeByte_SMS(word myAddress, byte myData) {
   if (adapter_retrode && system_gg) {
@@ -354,7 +358,7 @@ byte readNibble(byte data, byte number) {
 //*****************************************
 //  Cartridges functions
 //*****************************************
-void getCartInfo_SMS() {  
+void getCartInfo_SMS() {
   // Get rom size
   switch (readNibble(readByte_SMS(0x7FFF), 0)) {
     // Adding UL gets rid of integer overflow compiler warning
@@ -450,7 +454,7 @@ void getCartInfo_SMS() {
   }
 
   // If "TMR SEGA" header is not found
-  if (strcmp(romName, "TMR SEGA") != 0) { 
+  if (strcmp(romName, "TMR SEGA") != 0) {
     // Set rom size manually
     unsigned char SMSRomSize;
 
@@ -460,23 +464,23 @@ void getCartInfo_SMS() {
       SMSRomSize = question_box(F("Select ROM size"), menuOptions, 4, 0);
       switch (SMSRomSize) {
         case 0:
-          cartSize = 8 * 1024UL; // 8KB
+          cartSize = 8 * 1024UL;  // 8KB
           break;
         case 1:
-          cartSize = 16 * 1024UL; // 16KB
+          cartSize = 16 * 1024UL;  // 16KB
           break;
         case 2:
-          cartSize = 24 * 1024UL; // 24KB
+          cartSize = 24 * 1024UL;  // 24KB
           break;
         case 3:
-          cartSize = 32 * 1024UL; // 32KB
+          cartSize = 32 * 1024UL;  // 32KB
           break;
-        //case 4:
-        //  cartSize = 40 * 1024UL; // 40KB
-        //  break;
-        //case 5:
-        //  cartSize = 48 * 1024UL; // 48KB
-        //  break;
+          //case 4:
+          //  cartSize = 40 * 1024UL; // 40KB
+          //  break;
+          //case 5:
+          //  cartSize = 48 * 1024UL; // 48KB
+          //  break;
       }
     } else {
       // Rom sizes for SMS and GG
@@ -484,22 +488,22 @@ void getCartInfo_SMS() {
       SMSRomSize = question_box(F("Select ROM size"), menuOptions, 6, 0);
       switch (SMSRomSize) {
         case 0:
-          cartSize = 32 * 1024UL; // 32KB
+          cartSize = 32 * 1024UL;  // 32KB
           break;
         case 1:
-          cartSize = 64 * 1024UL; // 64KB
+          cartSize = 64 * 1024UL;  // 64KB
           break;
         case 2:
-          cartSize = 128 * 1024UL; // 128KB
+          cartSize = 128 * 1024UL;  // 128KB
           break;
         case 3:
-          cartSize = 256 * 1024UL; // 256KB
+          cartSize = 256 * 1024UL;  // 256KB
           break;
         case 4:
-          cartSize = 512 * 1024UL; // 512KB
+          cartSize = 512 * 1024UL;  // 512KB
           break;
         case 5:
-          cartSize = 1024 * 1024UL; // 1MB
+          cartSize = 1024 * 1024UL;  // 1MB
           break;
       }
     }
@@ -534,13 +538,13 @@ void getCartInfo_SMS() {
     println_Msg(F(" "));
   }
 
-  // Wait for user input
-  #if (defined(enable_LCD) || defined(enable_OLED))
-    // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
-  #endif
+// Wait for user input
+#if (defined(enable_LCD) || defined(enable_OLED))
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+#endif
 
   // Turn off LED
   setColor_RGB(0, 0, 0);
@@ -647,9 +651,9 @@ void readROM_SMS() {
     compareCRC("sg1000.txt", 0, 1, 0);
   }
 
-  #ifdef global_log
-    save_log();
-  #endif
+#ifdef global_log
+  save_log();
+#endif
 
   print_STR(press_button_STR, 1);
 }
@@ -709,7 +713,7 @@ void readSRAM_SMS() {
     print_STR(press_button_STR, 1);
     display_Update();
   } else {
-      print_FatalError(sd_error_STR);
+    print_FatalError(sd_error_STR);
   }
 }
 
