@@ -173,7 +173,17 @@ VOLTS setVoltage(VOLTS volts) {
   switch(volts) {
     /* 5V */
     case VOLTS_SET_5V:
-      if (clock == CS_16MHZ && volts == VOLTS_SET_5V) return VOLTS_SUCCESS; // Just return if already as requested
+      if (
+  #if defined(ENABLE_3V3FIX)
+        clock == CS_16MHZ
+  #endif
+  #if defined(ENABLE_VSELECT) && defined(ENABLE_3V3FIX)
+        &&
+  #endif
+  #if defined(ENABLE_VSELECT)
+        VOLTS_SET_5V == voltage
+  #endif
+      ) return VOLTS_SUCCESS; // Just return if already as requested
 
       // Adjust voltage high if VSELECT is available
       #if defined(ENABLE_VSELECT)
@@ -203,7 +213,17 @@ VOLTS setVoltage(VOLTS volts) {
 
     /* 3.3V */
     case VOLTS_SET_3V3:
-      if (clock == CS_8MHZ && volts == VOLTS_SET_3V3) return VOLTS_SUCCESS; // Just return if already as requested
+      if (
+  #if defined(ENABLE_3V3FIX)
+        clock == CS_8MHZ
+  #endif
+  #if defined(ENABLE_VSELECT) && defined(ENABLE_3V3FIX)
+        &&
+  #endif
+  #if defined(ENABLE_VSELECT)
+        VOLTS_SET_3V3 == voltage
+  #endif
+      ) return VOLTS_SUCCESS; // Just return if already as requested
 
       // Adjust clock speed when 3V3FIX is enabled
       #if defined(ENABLE_3V3FIX)      
