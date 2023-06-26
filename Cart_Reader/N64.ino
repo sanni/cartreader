@@ -1061,7 +1061,7 @@ void nextscreen() {
 }
 
 void controllerTest_Display() {
-  int mode = 0;
+  boolean cmode = 1;
 
   //name of the current displayed result
   String anastick = "";
@@ -1171,7 +1171,7 @@ void controllerTest_Display() {
           display.drawStr(36, 8, "Range Test");
           display.drawLine(0, 9, 128, 9);
 
-          if (mode == 0) {
+          if (cmode == 0) {
             // Print Stick X Value
             String stickx = String("X:" + String(N64_status.stick_x, DEC) + "   ");
             printSTR(stickx, 22 + 54, 26);
@@ -1195,7 +1195,7 @@ void controllerTest_Display() {
           display.drawPixel(10 + xax - 68 / 4, 12 + yax + 68 / 4);
 
           //Draw Analog Stick
-          if (mode == 1) {
+          if (cmode == 1) {
             display.drawPixel(10 + xax + N64_status.stick_x / 4, 12 + yax - N64_status.stick_y / 4);
             //Update LCD
             display.updateDisplay();
@@ -1208,11 +1208,11 @@ void controllerTest_Display() {
 
           // switch mode
           if (button == "Press a button" && lastbutton == "Z") {
-            if (mode == 0) {
-              mode = 1;
+            if (cmode == 0) {
+              cmode = 1;
               display.clearDisplay();
             } else {
-              mode = 0;
+              cmode = 0;
               display.clearDisplay();
             }
           }
