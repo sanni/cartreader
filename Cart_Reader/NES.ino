@@ -1178,8 +1178,35 @@ void CreateCHRFileInSD() {
   myFile = createNewFile("CHR", "bin");
 }
 
+//createNewFile fails to dump RAM if ROM isn't dumped first
+//void CreateRAMFileInSD() {
+//myFile = createNewFile("RAM", "bin");
+//}
+//Temporary fix
 void CreateRAMFileInSD() {
-  myFile = createNewFile("RAM", "bin");
+  char fileCount[3];
+  strcpy(fileName, "RAM");
+  strcat(fileName, ".bin");
+  for (byte i = 0; i < 100; i++) {
+    if (!sd.exists(fileName)) {
+      myFile = sd.open(fileName, O_RDWR | O_CREAT);
+      break;
+    }
+    sprintf(fileCount, "%02d", i);
+    strcpy(fileName, "RAM.");
+    strcat(fileName, fileCount);
+    strcat(fileName, ".bin");
+  }
+  if (!myFile) {
+    LED_RED_ON;
+
+    display_Clear();
+    println_Msg(F("RAM FILE FAILED!"));
+    display_Update();
+    //print_Error(F("SD Error"), true);
+
+    LED_RED_OFF;
+  }
 }
 
 #ifndef nointro

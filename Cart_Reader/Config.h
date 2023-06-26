@@ -267,7 +267,7 @@
 *   other than HW5 and HW3.
 */
 
-#define ENABLE_UPDATER
+//#define ENABLE_UPDATER
 
 /****/
 

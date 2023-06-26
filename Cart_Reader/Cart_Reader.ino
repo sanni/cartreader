@@ -2081,8 +2081,10 @@ void setup() {
 #endif
 #endif
 
+#ifdef ENABLE_VSELECT
   // Set power to low to protect carts
   setVoltage(VOLTS_SET_3V3);
+#endif
 
 #ifdef enable_OLED
   display.begin();
