@@ -172,6 +172,9 @@ void snsMenu() {
 
 #ifdef enable_FLASH
     case 3:
+#ifdef ENABLE_VSELECT
+      setup_FlashVoltage();
+#endif
       reproMenu();
       break;
 #endif
