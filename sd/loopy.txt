@@ -1,23 +1,23 @@
 Anime Land (Japan).bin
-98A0597D
+3fd9713b,98a0597d
 
 Dream Change - Kogane-chan no Fashion Party (Japan).bin
-F6D41645
+0fb0a794,f6d41645
 
 HARIHARI Seal Paradise (Japan).bin
-7CB100B3
+b82ac7f3,7cb100b3
 
 Loopy Town no Oheya ga Hoshii! (Japan).bin
-8373E9DD
+352b4ae6,8373e9dd
 
 Lupiton no Wonder Palette (Japan).bin
-6E00CE71
+f4662e66,6e00ce71
 
 Nigaoe Artist (Japan).bin
-2046476F
+ef1b33f3,2046476f
 
 Pasocom Collection (Japan).bin
-F294F931
+fe3be881,f294f931
 
 Wanwan Aijou Monogatari (Japan).bin
-D90FE762
+10c5f568,d90fe762

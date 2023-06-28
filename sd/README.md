@@ -87,3 +87,16 @@ E95A3DD7,0C19,379A6FFB,12,024
 
 Name     
 CRC32, internal checksum, CRC32 of header area(0xFFB0-0xFFFF), size in Mbit, number of banks (lorom needs twice as many banks as hirom for the same rom size, lorom: 32kb banks, hirom: 64kb banks)
+
+## loopy.txt
+This is the Casio Loopy database.
+Currently missing two games, one of which was dumped incorrectly, one of which has yet to be dumped. We expect them to be available very soon.
+Note that most ROM packs you will find are incorrectly dumped little-endian. These CRCs are for the big-endian dump, including any padding. ROMs are 2MB or 3MB.
+The internal CRC32 is found in every game's header at 000008h.
+
+Example:
+Wanwan Aijou Monogatari (Japan).bin
+10c5f568,d90fe762
+
+Name
+CRC32 of full file, internal CRC32 from rom header
