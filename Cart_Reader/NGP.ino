@@ -21,6 +21,9 @@ uint8_t manufacturerID;
 uint8_t deviceID;
 
 void setup_NGP() {
+  // Request 3.3V
+  setVoltage(VOLTS_SET_3V3);
+
   // A0 - A7
   DDRF = 0xff;
   // A8 - A15
@@ -52,7 +55,6 @@ void setup_NGP() {
 }
 
 void ngpMenu() {
-  setVoltage(VOLTS_SET_3V3);
   uint8_t mainMenu;
 
   convertPgm(menuOptionsNGP, 4);

@@ -364,8 +364,8 @@ Sky Jinks,32,17
 Sky Skipper,64,17
 Slot Machine,32,19
 Slot Racers,32,20
-Smurf - Rescue in Gargamel's Castle,248,19
-Smurfs Save the Day,248,44
+Smurf Rescue in Gargamels Castle,248,19
+Smurfs Save the Day,248,41
 Sneak 'n Peek,64,28
 Snoopy and the Red Baron,248,21
 Solar Fox,248,33

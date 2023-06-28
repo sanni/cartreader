@@ -55,6 +55,9 @@ static const char colMenuItem3[] PROGMEM = "Set Size";
 static const char* const menuOptionsCOL[] PROGMEM = { colMenuItem1, colMenuItem2, colMenuItem3, string_reset2 };
 
 void setup_COL() {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
   // Set Address Pins to Output
   // Colecovision uses A0-A14 [A15-A23 UNUSED]
   //A0-A7
@@ -93,7 +96,6 @@ void setup_COL() {
 }
 
 void colMenu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsCOL, 4);
   uint8_t mainMenu = question_box(F("COLECOVISION MENU"), menuOptions, 4, 0);
 

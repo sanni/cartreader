@@ -151,10 +151,24 @@
 
 /****/
 
+/* [ MSX ------------------------------------------- ]
+*/
+
+//#define enable_MSX
+
+/****/
+
 /* [ PC Engine/TurboGrafx 16 -------------------------------------- ]
 */
 
 //#define enable_PCE
+
+/****/
+
+/* [ Pokemon Mini -------------------------------------- ]
+*/
+
+//#define enable_POKE
 
 /****/
 
@@ -253,7 +267,7 @@
 *   other than HW5 and HW3.
 */
 
-#define ENABLE_UPDATER
+//#define ENABLE_UPDATER
 
 /****/
 
@@ -265,32 +279,11 @@
 
 /****/
 
-/* [ Start Menu --------------------------------------------------- ]
-*   Change this when using a single slot cart reader to always start
-*   in that menu.
-*
-*   OPTIONS :
-*     mainMenu, snsMenu, mdMenu, n64Menu, gbxMenu, pcsMenu, 
-*     flashMenu, nesMenu, smsMenu
-*/
-
-#define startMenu mainMenu
-
-/****/
-
 /* [ Logging ------------------------------------------------------ ]
 *   Write all info to OSCR_LOG.txt in root dir
 */
 
 #define global_log
-
-/****/
-
-/* [ Use No Intro Database ---------------------------------------- ]
-*   Renames ROM if found in database
-*/
-
-#define nointro
 
 /****/
 

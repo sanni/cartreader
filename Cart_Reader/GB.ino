@@ -41,8 +41,7 @@ static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashI
 
 // Start menu for both GB and GBA
 void gbxMenu() {
-  setVoltage(VOLTS_SET_3V3);
-  // create menu with title and 4 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGBx, 5);
@@ -51,7 +50,6 @@ void gbxMenu() {
   // wait for user choice to come back from the question box menu
   switch (gbType) {
     case 0:
-      setVoltage(VOLTS_SET_5V);
       display_Clear();
       display_Update();
       setup_GB();
@@ -59,7 +57,6 @@ void gbxMenu() {
       break;
 
     case 1:
-      setVoltage(VOLTS_SET_3V3);
       display_Clear();
       display_Update();
       setup_GBA();
@@ -69,7 +66,6 @@ void gbxMenu() {
     case 2:
       // create submenu with title and 7 options to choose from
       unsigned char gbFlash;
-      setVoltage(VOLTS_SET_5V);
       // Copy menuOptions out of progmem
       convertPgm(menuOptionsGBFlash, 7);
       gbFlash = question_box(F("Select type"), menuOptions, 7, 0);
@@ -97,7 +93,6 @@ void gbxMenu() {
 
         case 1:
           //Flash MBC5
-          setVoltage(VOLTS_SET_5V);
           display_Clear();
           display_Update();
           setup_GB();
@@ -291,7 +286,7 @@ void gbxMenu() {
 }
 
 void gbMenu() {
-  // create menu with title and 3 options to choose from
+  // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGB, 4);
@@ -375,6 +370,9 @@ void gbMenu() {
    Setup
  *****************************************/
 void setup_GB() {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
   // Set Address Pins to Output
   //A0-A7
   DDRF = 0xFF;
@@ -876,7 +874,7 @@ void getCartInfo_GB() {
   if (romType == 32) {
     sramBanks = 8;
     lastByte = 0xAFFF;
-  } else if (romType == 34) { // MBC7
+  } else if (romType == 34) {                                       // MBC7
     lastByte = (*((uint16_t*)(eepbit + 6)) == 0xa5be ? 512 : 256);  // Only "Command Master" use LC66 EEPROM
   }
 

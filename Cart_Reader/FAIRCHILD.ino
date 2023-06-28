@@ -87,6 +87,9 @@ static const char fairchildMenuItem5[] PROGMEM = "Reset";
 static const char* const menuOptionsFAIRCHILD[] PROGMEM = { fairchildMenuItem1, fairchildMenuItem2, fairchildMenuItem3, fairchildMenuItem4, fairchildMenuItem5 };
 
 void setup_FAIRCHILD() {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
   // Set Address Pins to Output
   // Channel F uses A0-A4 [A5-A23 UNUSED]
   //A0-A7
@@ -126,7 +129,6 @@ void setup_FAIRCHILD() {
 }
 
 void fairchildMenu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsFAIRCHILD, 5);
   uint8_t mainMenu = question_box(F("CHANNEL F MENU"), menuOptions, 5, 0);
 

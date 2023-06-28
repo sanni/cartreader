@@ -13,6 +13,7 @@ word addrhi;
 word addrlo;
 word chksum;
 boolean is32x = 0;
+boolean isSVP = 0;
 
 //***********************************************
 // EEPROM SAVE TYPES
@@ -86,7 +87,7 @@ unsigned long bramSize = 0;
 boolean realtec = 0;
 
 #ifndef DEFAULT_VALUE_segaSram16bit
-  #define DEFAULT_VALUE_segaSram16bit 0
+#define DEFAULT_VALUE_segaSram16bit 0
 #endif
 int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
 
@@ -183,6 +184,11 @@ void mdLoadConf() {
 }
 #endif
 
+void pulse_clock(int n) {
+  for (int i = 0; i < n; i++)
+    PORTH ^= (1 << 1);
+}
+
 /******************************************
    Menu
  *****************************************/
@@ -211,7 +217,6 @@ static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2
 
 // Sega start menu
 void mdMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 4 options to choose from
   unsigned char mdDev;
   // Copy menuOptions out of progmem
@@ -308,7 +313,7 @@ void mdCartMenu() {
           readRealtec_MD();
         } else {
           readROM_MD();
-          // Calculate and compare CRC32 with nointro
+          // Calculate and compare CRC32 with database
           if (is32x)
             //database, crcString, renamerom, offset
             compareCRC("32x.txt", 0, 1, 0);
@@ -458,6 +463,9 @@ void segaCDMenu() {
    Setup
  *****************************************/
 void setup_MD() {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
 #ifdef use_md_conf
   mdLoadConf();
 #endif
@@ -473,18 +481,24 @@ void setup_MD() {
   // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6)
   DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
-  // Set TIME(PJ0) to Output
-  DDRJ |= (1 << 0);
+  // Set TIME(PJ0), AS(PJ1) to Output
+  DDRJ |= (1 << 0) | (1 << 1);
+
+  //set ASEL(PG5) to Output
+  DDRG |= (1 << 5);
 
   // Set Data Pins (D0-D15) to Input
   DDRC = 0x00;
   DDRA = 0x00;
 
-  // Setting RST(PH0) CLK(PH1) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6) HIGH
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  // Setting RST(PH0) CS(PH3) WRH(PH4) WRL(PH5) OE(PH6) HIGH
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
-  // Setting TIME(PJ0) HIGH
-  PORTJ |= (1 << 0);
+  // Setting TIME(PJ0) AS(PJ1) HIGH
+  PORTJ |= (1 << 0) | (1 << 1);
+
+  // setting ASEL(PG5) HIGH
+  PORTG |= (1 << 5);
 
   delay(200);
 
@@ -556,6 +570,12 @@ word readWord_MD(unsigned long myAddress) {
   PORTH &= ~(1 << 3);
   // Setting OE(PH6) LOW
   PORTH &= ~(1 << 6);
+  // Setting AS(PJ1) LOW
+  PORTJ &= ~(1 << 1);
+  // Setting ASEL(PG5) LOW
+  PORTG &= ~(1 << 5);
+  // Pulse CLK(PH1), needed for SVP enhanced carts
+  pulse_clock(10);
 
   // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
   NOP;
@@ -572,6 +592,12 @@ word readWord_MD(unsigned long myAddress) {
   PORTH |= (1 << 3);
   // Setting OE(PH6) HIGH
   PORTH |= (1 << 6);
+  // Setting AS(PJ1) HIGH
+  PORTJ |= (1 << 1);
+  // Setting ASEL(PG5) HIGH
+  PORTG |= (1 << 5);
+  // Pulse CLK(PH1), needed for SVP enhanced carts
+  pulse_clock(10);
 
   // these 6x nop delays have been here before, unknown what they mean
   NOP;
@@ -717,6 +743,12 @@ void getCartInfo_MD() {
     id[c] = hiByte;
     id[c + 1] = loByte;
   }
+
+  //Identify games using SVP chip
+  if (!strncmp("GM MK-1229 ", id, 11) || !strncmp("GM G-7001  ", id, 11))  // Virtua Racing (E/U/J)
+    isSVP = 1;
+  else
+    isSVP = 0;
 
   // Fix cartridge sizes according to no-intro database
   if (cartSize == 0x400000) {
@@ -1414,6 +1446,14 @@ void readROM_MD() {
       PORTH &= ~(1 << 3);
       // Setting OE(PH6) LOW
       PORTH &= ~(1 << 6);
+      // Setting AS(PJ1) LOW
+      PORTJ &= ~(1 << 1);
+      // Setting ASEL(PG5) LOW
+      PORTG &= ~(1 << 5);
+      // Pulse CLK(PH1)
+      if (isSVP)
+        pulse_clock(10);
+
       // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
       NOP;
       NOP;
@@ -1430,6 +1470,13 @@ void readROM_MD() {
       PORTH |= (1 << 3);
       // Setting OE(PH6) HIGH
       PORTH |= (1 << 6);
+      // Setting AS(PJ1) HIGH
+      PORTJ |= (1 << 1);
+      // Setting ASEL(PG5) HIGH
+      PORTG |= (1 << 5);
+      // Pulse CLK(PH1)
+      if (isSVP)
+        pulse_clock(10);
 
       // Skip first 256 words
       if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
@@ -1463,6 +1510,14 @@ void readROM_MD() {
         PORTH &= ~(1 << 3);
         // Setting OE(PH6) LOW
         PORTH &= ~(1 << 6);
+        // Setting AS(PJ1) LOW
+        PORTJ &= ~(1 << 1);
+        // Setting ASEL(PG5) LOW
+        PORTG &= ~(1 << 5);
+        // Pulse CLK(PH1)
+        if (isSVP)
+          pulse_clock(10);
+
         // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
         NOP;
         NOP;
@@ -1479,6 +1534,13 @@ void readROM_MD() {
         PORTH |= (1 << 3);
         // Setting OE(PH6) HIGH
         PORTH |= (1 << 6);
+        // Setting AS(PJ1) HIGH
+        PORTJ |= (1 << 1);
+        // Setting ASEL(PG5) HIGH
+        PORTG |= (1 << 5);
+        // Pulse CLK(PH1)
+        if (isSVP)
+          pulse_clock(10);
 
         // Skip first 256 words
         if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
@@ -1513,6 +1575,14 @@ void readROM_MD() {
         PORTH &= ~(1 << 3);
         // Setting OE(PH6) LOW
         PORTH &= ~(1 << 6);
+        // Setting AS(PJ1) LOW
+        PORTJ &= ~(1 << 1);
+        // Setting ASEL(PG5) LOW
+        PORTG &= ~(1 << 5);
+        // Pulse CLK(PH1)
+        if (isSVP)
+          PORTH ^= (1 << 1);
+
         // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
         NOP;
         NOP;
@@ -1529,6 +1599,13 @@ void readROM_MD() {
         PORTH |= (1 << 3);
         // Setting OE(PH6) HIGH
         PORTH |= (1 << 6);
+        // Setting AS(PJ1) HIGH
+        PORTJ |= (1 << 1);
+        // Setting ASEL(PG5) HIGH
+        PORTG |= (1 << 5);
+        // Pulse CLK(PH1)
+        if (isSVP)
+          PORTH ^= (1 << 1);
 
         calcCKSSonic2 += ((buffer[d] << 8) | buffer[d + 1]);
         d += 2;
@@ -2006,13 +2083,12 @@ void busyCheck_MD() {
 //******************************************
 // EEPROM Functions
 //******************************************
-void EepromInit(byte eepmode) {  // Acclaim Type 2
-  PORTF = 0x00;                  // ADDR A0-A7
-  PORTK = 0x00;                  // ADDR A8-A15
-  PORTL = 0x10;                  // ADDR A16-A23
-  PORTA = 0x00;                  // DATA D8-D15
-  PORTH |= (1 << 0);             // /RES HIGH
-
+void EepromInit(byte eepmode) {    // Acclaim Type 2
+  PORTF = 0x00;                    // ADDR A0-A7
+  PORTK = 0x00;                    // ADDR A8-A15
+  PORTL = 0x10;                    // ADDR A16-A23
+  PORTA = 0x00;                    // DATA D8-D15
+  PORTH |= (1 << 0);               // /RES HIGH
   PORTC = eepmode;                 // EEPROM Switch:  0 = Enable (Read EEPROM), 1 = Disable (Read ROM)
   PORTH &= ~(1 << 3);              // CE LOW
   PORTH &= ~(1 << 4) & ~(1 << 5);  // /UDSW + /LDSW LOW
@@ -2249,7 +2325,6 @@ void EepromSet1() {
     writeWord_MD(0x100000, 0x00);  // sda low, scl low
   }
 }
-
 
 void EepromDevice() {  // 24C02+
   EepromSet1();

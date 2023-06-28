@@ -70,7 +70,6 @@ static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_r
 
 // PCE start menu
 void pcsMenu(void) {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 3 options to choose from
   unsigned char pceDev;
   // Copy menuOptions out of progmem
@@ -171,6 +170,9 @@ void pin_init_PCE(void) {
 }
 
 void setup_cart_PCE(void) {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
   // Output a high to disable CIC
@@ -409,6 +411,12 @@ uint32_t detect_rom_size_PCE(void) {
     //Dinoforce (World)
     if (read_byte_PCE(0x15A) == 'D' && read_byte_PCE(0x15B) == 'I' && read_byte_PCE(0x15C) == 'N' && read_byte_PCE(0x15D) == 'O' && read_byte_PCE(0x15E) == '-' && read_byte_PCE(0x15F) == 'F' && read_byte_PCE(0x160) == 'O' && read_byte_PCE(0x161) == 'R' && read_byte_PCE(0x162) == 'C' && read_byte_PCE(0x163) == 'E') {
       rom_size = 512;
+    }
+  }
+  if (rom_size == 384) {
+    //"CD-ROM² Super System Card (v3.0)(Japan)" or "Arcade Card Pro CD-ROM²"
+    if (read_byte_PCE(0x29D1) == 'V' && read_byte_PCE(0x29D2) == 'E' && read_byte_PCE(0x29D3) == 'R' && read_byte_PCE(0x29D4) == '.' && read_byte_PCE(0x29D5) == ' ' && read_byte_PCE(0x29D6) == '3' && read_byte_PCE(0x29D7) == '.' && read_byte_PCE(0x29D8) == '0' && read_byte_PCE(0x29D9) == '0') {
+      rom_size = 256;
     }
   }
 

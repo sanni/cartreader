@@ -63,6 +63,9 @@ static const char atariMenuItem4[] PROGMEM = "Reset";
 static const char* const menuOptionsATARI[] PROGMEM = { atariMenuItem1, atariMenuItem2, atariMenuItem3, atariMenuItem4 };
 
 void setup_ATARI() {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
   // Set Address Pins to Output
   // Atari 2600 uses A0-A12 [A13-A23 UNUSED]
   //A0-A7
@@ -101,7 +104,6 @@ void setup_ATARI() {
 }
 
 void atariMenu() {
-  setVoltage(VOLTS_SET_5V);
   convertPgm(menuOptionsATARI, 4);
   uint8_t mainMenu = question_box(F("ATARI 2600 MENU"), menuOptions, 4, 0);
 

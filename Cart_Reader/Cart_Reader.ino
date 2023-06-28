@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2023-03-29
-   Version:          12.5
+   Date:             2023-06-26
+   Version:          12.6
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -15,13 +15,13 @@
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
-   Compiled with Arduino IDE 2.0.4
+   Compiled with Arduino IDE 2.1.0
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
-   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW, ARC, Atari, ODY2, Fairchild modules
+   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW, ARC, Atari, ODY2, Fairchild, MSX2, Pokemon Mini modules
    Tamanegi_taro - PCE and Satellaview modules
    splash5 - GBSmart, Wonderswan, NGP and Super A'can modules
    hkz & themanbehindthecurtain - N64 flashram commands
@@ -38,7 +38,7 @@
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
    Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
    philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage,
-   vpelletier, Ancyker, mattiacci, RWeick
+   vpelletier, Ancyker, mattiacci, RWeick, joshman196
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
@@ -248,6 +248,8 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_ARC 30
 #define mode_FAIRCHILD 31
 #define mode_SUPRACAN 32
+#define mode_MSX 33
+#define mode_POKE 34
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -367,7 +369,6 @@ void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
 byte eepbit[8];
 byte eeptemp;
 
-#ifdef nointro
 // Array to hold iNES header
 byte iNES_HEADER[16];
 //ID 0-3
@@ -382,7 +383,6 @@ byte iNES_HEADER[16];
 //TV_system 12
 //VS_hardware 13
 //reserved 14, 15
-#endif
 
 //******************************************
 // CRC32
@@ -491,7 +491,7 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc modules
  *****************************************/
-#if (defined(enable_ATARI) || defined(enable_ODY2) || defined(enable_ARC) || defined(enable_FAIRCHILD))
+#if (defined(enable_ATARI) || defined(enable_ODY2) || defined(enable_ARC) || defined(enable_FAIRCHILD) || defined(enable_MSX) || defined(enable_POKE))
 
 inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
   uint32_t idx = ((crc) ^ (ch)) & 0xff;
@@ -610,7 +610,6 @@ void rewind_line(FsFile& readfile, byte count = 1) {
 
 // Calculate CRC32 if needed and compare it to CRC read from database
 boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, int offset) {
-#ifdef nointro
   char crcStr[9];
   print_Msg(F("CRC32... "));
   display_Update();
@@ -688,7 +687,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
         if (renamerom) {
           println_Msg(gamename);
 
-          // Rename file to nointro
+          // Rename file to database name
           sd.chdir(folder);
           delay(100);
           if (myFile.open(fileName, O_READ)) {
@@ -712,9 +711,6 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
     print_Error(F("Database missing"));
     return 0;
   }
-#else   // nointro
-  println_Msg("");
-#endif  // !nointro
   return 0;
 }
 
@@ -835,18 +831,20 @@ static const char modeItem9[] PROGMEM = "NeoGeo Pocket (3V)";
 static const char modeItem10[] PROGMEM = "Intellivision";
 static const char modeItem11[] PROGMEM = "Colecovision";
 static const char modeItem12[] PROGMEM = "Virtual Boy";
-static const char modeItem13[] PROGMEM = "Watara Supervision";
+static const char modeItem13[] PROGMEM = "Watara Supervision (3V)";
 static const char modeItem14[] PROGMEM = "Pocket Challenge W";
 static const char modeItem15[] PROGMEM = "Atari 2600";
 static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
 static const char modeItem17[] PROGMEM = "Arcadia 2001";
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
 static const char modeItem19[] PROGMEM = "Super A'can";
-static const char modeItem20[] PROGMEM = "Flashrom Programmer";
-static const char modeItem21[] PROGMEM = "Self Test";
-static const char modeItem22[] PROGMEM = "About";
-//static const char modeItem22[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, string_reset2 };
+static const char modeItem20[] PROGMEM = "MSX";
+static const char modeItem21[] PROGMEM = "Pokemon Mini (3V)";
+static const char modeItem22[] PROGMEM = "Flashrom Programmer";
+static const char modeItem23[] PROGMEM = "Self Test (3V)";
+static const char modeItem24[] PROGMEM = "About";
+//static const char modeItem25[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, modeItem23, modeItem24, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -872,7 +870,7 @@ void mainMenu() {
       num_answers = 7;
     } else {  // currPage == 4
       option_offset = 21;
-      num_answers = 2;
+      num_answers = 4;
     }
     // Copy menuOptions out of progmem
     convertPgm(modeOptions + option_offset, num_answers);
@@ -901,9 +899,7 @@ void mainMenu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
       getMapping();
-#endif
       checkStatus_NES();
       nesMenu();
       break;
@@ -1026,23 +1022,40 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_MSX
     case 19:
+      setup_MSX();
+      msxMenu();
+      break;
+#endif
+
+#ifdef enable_POKE
+    case 20:
+      setup_POKE();
+      pokeMenu();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 21:
+#ifdef ENABLE_VSELECT
+      setup_FlashVoltage();
+#endif
       flashMenu();
       break;
 #endif
 
 #ifdef enable_selftest
-    case 20:
+    case 22:
       selfTest();
       break;
 #endif
 
-    case 21:
+    case 23:
       aboutScreen();
       break;
 
-    case 22:
+    case 24:
       resetArduino();
       break;
 
@@ -1093,8 +1106,9 @@ static const char* const consoles70Options[] PROGMEM = { consoles70Item1, consol
 static const char consoles80Item1[] PROGMEM = "NES/Famicom";
 static const char consoles80Item2[] PROGMEM = "PC Engine/TG16";
 static const char consoles80Item3[] PROGMEM = "SMS/GG/MIII/SG-1000";
-//static const char consoles80Item4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const consoles80Options[] PROGMEM = { consoles80Item1, consoles80Item2, consoles80Item3, string_reset2 };
+static const char consoles80Item4[] PROGMEM = "MSX";
+//static const char consoles80Item5[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const consoles80Options[] PROGMEM = { consoles80Item1, consoles80Item2, consoles80Item3, consoles80Item4, string_reset2 };
 
 // 90s Consoles submenu
 static const char consoles90Item1[] PROGMEM = "Super A'can";
@@ -1104,10 +1118,11 @@ static const char* const consoles90Options[] PROGMEM = { consoles90Item1, string
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
 static const char handheldsItem2[] PROGMEM = "WonderSwan (3V)";
 static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket (3V)";
-static const char handheldsItem4[] PROGMEM = "Watara Supervision";
+static const char handheldsItem4[] PROGMEM = "Watara Supervision (3V)";
 static const char handheldsItem5[] PROGMEM = "Pocket Challenge W";
+static const char handheldsItem6[] PROGMEM = "Pokemon Mini (3V)";
 //static const char handheldsItem6[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, string_reset2 };
+static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, handheldsItem6, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -1191,6 +1206,9 @@ void addonMenu() {
 
 #ifdef enable_FLASH
     case 4:
+#ifdef ENABLE_VSELECT
+      setup_FlashVoltage();
+#endif
       flashMenu();
       break;
 #endif
@@ -1275,8 +1293,8 @@ void consoles80Menu() {
   // create menu with title and 6 options to choose from
   unsigned char consoles80Menu;
   // Copy menuOptions out of progmem
-  convertPgm(consoles80Options, 4);
-  consoles80Menu = question_box(F("Choose Adapter"), menuOptions, 4, 0);
+  convertPgm(consoles80Options, 5);
+  consoles80Menu = question_box(F("Choose Adapter"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (consoles80Menu) {
@@ -1286,9 +1304,7 @@ void consoles80Menu() {
       display_Clear();
       display_Update();
       setup_NES();
-#ifdef nointro
       getMapping();
-#endif
       checkStatus_NES();
       nesMenu();
       break;
@@ -1306,7 +1322,14 @@ void consoles80Menu() {
       break;
 #endif
 
+#ifdef enable_MSX
     case 3:
+      setup_MSX();
+      msxMenu();
+      break;
+#endif
+
+    case 4:
       resetArduino();
       break;
 
@@ -1345,8 +1368,8 @@ void handheldMenu() {
   // create menu with title and 6 options to choose from
   unsigned char handheldsMenu;
   // Copy menuOptions out of progmem
-  convertPgm(handheldsOptions, 6);
-  handheldsMenu = question_box(F("Choose Adapter"), menuOptions, 6, 0);
+  convertPgm(handheldsOptions, 7);
+  handheldsMenu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (handheldsMenu) {
@@ -1389,7 +1412,14 @@ void handheldMenu() {
       break;
 #endif
 
+#ifdef enable_POKE
     case 5:
+      setup_POKE();
+      pokeMenu();
+      break;
+#endif
+
+    case 6:
       resetArduino();
       break;
 
@@ -1405,6 +1435,11 @@ void handheldMenu() {
 #ifdef enable_selftest
 
 void selfTest() {
+#ifdef ENABLE_VSELECT
+  // Set Automatic Voltage Selection to 3V
+  setVoltage(VOLTS_SET_3V3);
+#endif
+
   display_Clear();
   println_Msg(F("Self Test"));
   println_Msg(F(""));
@@ -2036,8 +2071,10 @@ void setup() {
 #endif
 #endif
 
+#ifdef ENABLE_VSELECT
   // Set power to low to protect carts
   setVoltage(VOLTS_SET_3V3);
+#endif
 
 #ifdef enable_OLED
   display.begin();
@@ -2100,7 +2137,7 @@ void setup() {
   statusLED(true);
 
   // Start menu system
-  startMenu();
+  mainMenu();
 }
 
 /******************************************
@@ -3547,6 +3584,16 @@ void loop() {
 #ifdef enable_SUPRACAN
   else if (mode == mode_SUPRACAN) {
     suprAcanMenu();
+  }
+#endif
+#ifdef enable_MSX
+  else if (mode == mode_MSX) {
+    msxMenu();
+  }
+#endif
+#ifdef enable_POKE
+  else if (mode == mode_POKE) {
+    pokeMenu();
   }
 #endif
   else {

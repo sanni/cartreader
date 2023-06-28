@@ -34,7 +34,6 @@ static const char GBASaveItem6[] PROGMEM = "1M FLASH";
 static const char* const saveOptionsGBA[] PROGMEM = { GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6 };
 
 void gbaMenu() {
-  setVoltage(VOLTS_SET_3V3);
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -247,6 +246,9 @@ void gbaMenu() {
    Setup
  *****************************************/
 void setup_GBA() {
+  // Request 3.3V
+  setVoltage(VOLTS_SET_3V3);
+
   setROM_GBA();
 
   // Get cart info
@@ -761,7 +763,7 @@ void getCartInfo_GBA() {
     }
 
     // Get name
-    buildRomName(romName, &sdBuffer[0xA0], 11);
+    buildRomName(romName, &sdBuffer[0xA0], 12);
 
     // Get ROM version
     romVersion = sdBuffer[0xBC];
@@ -892,6 +894,18 @@ void readROM_GBA() {
 
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
+  }
+
+  // Fix unmapped ROM area of cartridges with 32 MB ROM + EEPROM save type
+  if ((cartSize == 0x2000000) && ((saveType == 1) || (saveType == 2))) {
+    byte padding_byte[256];
+    char tempStr[32];
+    myFile.seek(0x1FFFEFF);
+    myFile.read(padding_byte, 1);
+    sprintf(tempStr, "Fixing ROM padding (0x%02X)", padding_byte[0]);
+    println_Msg(tempStr);
+    memset(padding_byte + 1, padding_byte[0], 255);
+    myFile.write(padding_byte, 256);
   }
 
   // Close the file:

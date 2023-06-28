@@ -50,6 +50,8 @@ Happy making. 🔧🔨😊
 - Fairchild Channel F     
 - Magnavox Odyssey 2  
 - Super A'Can    
+- MSX    
+- Pokemon Mini    
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   

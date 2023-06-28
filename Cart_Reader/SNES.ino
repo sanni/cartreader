@@ -70,7 +70,6 @@ static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMen
 
 // SNES repro menu
 void reproMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 6 options to choose from
   unsigned char snsRepro;
   // Copy menuOptions out of progmem
@@ -133,7 +132,6 @@ void reproMenu() {
 
 // SNES start menu
 void snsMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 6 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
@@ -174,6 +172,7 @@ void snsMenu() {
 
 #ifdef enable_FLASH
     case 3:
+      setup_FlashVoltage();
       reproMenu();
       break;
 #endif
@@ -192,7 +191,6 @@ void snsMenu() {
 
 // SNES Menu
 void snesMenu() {
-  setVoltage(VOLTS_SET_5V);
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
@@ -388,6 +386,9 @@ void stopSnesClocks_resetCic_resetCart() {
    Setup
  *****************************************/
 void setup_Snes() {
+  // Request 5V
+  setVoltage(VOLTS_SET_5V);
+
   // Set cicrstPin(PG1) to Output
   DDRG |= (1 << 1);
   // Output a high signal until we're ready to start

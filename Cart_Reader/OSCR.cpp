@@ -41,7 +41,7 @@
 /*==== VARIABLES ==================================================*/
 
 // Firmware Version
-char ver[5] = "12.5";
+char ver[5] = "12.6";
 
 // Clock speed
 unsigned long clock = CS_16MHZ;
@@ -173,55 +173,76 @@ VOLTS setVoltage(VOLTS volts) {
   switch(volts) {
     /* 5V */
     case VOLTS_SET_5V:
-      if (clock == CS_16MHZ && volts == VOLTS_SET_5V) return VOLTS_SUCCESS; // Just return if already as requested
+      if (
+  #if defined(ENABLE_3V3FIX)
+        clock == CS_16MHZ
+  #endif
+  #if defined(ENABLE_VSELECT) && defined(ENABLE_3V3FIX)
+        &&
+  #endif
+  #if defined(ENABLE_VSELECT)
+        VOLTS_SET_5V == voltage
+  #endif
+      ) return VOLTS_SUCCESS; // Just return if already as requested
 
       // Adjust voltage high if VSELECT is available
-      #if defined(ENABLE_VSELECT)
-        PORTD &= ~(1 << 7); /*[1]*/
-        voltage = VOLTS_SET_5V;
-      #endif
+  #if defined(ENABLE_VSELECT)
+      PORTD &= ~(1 << 7); /*[1]*/
+      voltage = VOLTS_SET_5V;
+  #endif
 
       // Adjust clock speed when 3V3FIX is enabled
-      #if defined(ENABLE_3V3FIX)
-        // Stop serial if running
-        #if !defined(enable_serial) && defined(ENABLE_UPDATER)
-          ClockedSerial.end();
-        #endif
-          // Set clock speed        
-          clock = CS_16MHZ;
-          setClockScale(volts); /*[2]*/
-        // Restart serial
-        #if !defined(enable_serial) && defined(ENABLE_UPDATER)
-          ClockedSerial.begin(UPD_BAUD);
-        #endif
-      #else
-          clock = CS_16MHZ;
-      #endif
+  #if defined(ENABLE_3V3FIX)
+      // Stop serial if running
+    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+      ClockedSerial.end();
+    #endif
+      // Set clock speed        
+      clock = CS_16MHZ;
+      setClockScale(volts); /*[2]*/
+      // Restart serial
+    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+      ClockedSerial.begin(UPD_BAUD);
+    #endif
+  #else
+      clock = CS_16MHZ;
+  #endif
 
       // Done
       return VOLTS_SUCCESS;
 
     /* 3.3V */
     case VOLTS_SET_3V3:
-      if (clock == CS_8MHZ && volts == VOLTS_SET_3V3) return VOLTS_SUCCESS; // Just return if already as requested
+      if (
+  #if defined(ENABLE_3V3FIX)
+        clock == CS_8MHZ
+  #endif
+  #if defined(ENABLE_VSELECT) && defined(ENABLE_3V3FIX)
+        &&
+  #endif
+  #if defined(ENABLE_VSELECT)
+        VOLTS_SET_3V3 == voltage
+  #endif
+      ) return VOLTS_SUCCESS; // Just return if already as requested
 
       // Adjust clock speed when 3V3FIX is enabled
-      #if defined(ENABLE_3V3FIX)      
-        #if !defined(enable_serial) && defined(ENABLE_UPDATER)
-          ClockedSerial.end();
-        #endif
-        clock = CS_8MHZ;
-        setClockScale(volts); /*[2]*/
-        #if !defined(enable_serial) && defined(ENABLE_UPDATER)
-          ClockedSerial.begin(UPD_BAUD);
-        #endif
-      #endif
+  #if defined(ENABLE_3V3FIX)      
+    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+      ClockedSerial.end();
+    #endif
+      // Set clock speed
+      clock = CS_8MHZ;
+      setClockScale(volts); /*[2]*/
+    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+      ClockedSerial.begin(UPD_BAUD);
+    #endif
+  #endif
 
       // Adjust voltage high if VSELECT is available
-      #if defined(ENABLE_VSELECT)
-        PORTD |= (1 << 7); /*[1]*/
-        voltage = VOLTS_SET_3V3;
-      #endif
+  #if defined(ENABLE_VSELECT)
+      PORTD |= (1 << 7); /*[1]*/
+      voltage = VOLTS_SET_3V3;
+  #endif
 
       // Done
       return VOLTS_SUCCESS;
@@ -232,6 +253,9 @@ VOLTS setVoltage(VOLTS volts) {
   }
 }
 #else
+// The compiler will optimize this out when this condition is met.
+// Yes, even though it has a return value it will only be compiled
+//   if something reads that value. Currently nothing does.
 VOLTS setVoltage(VOLTS volts __attribute__((unused))) {
   return VOLTS_NOTENABLED;
 }
