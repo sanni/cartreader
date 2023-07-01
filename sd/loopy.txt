@@ -6,7 +6,6 @@ Nigaoe Artist (Japan).bin,XK-404,16,ef1b33f3,2046476f
 Chakura-kun no Omajinai Paradise (Japan).bin,XK-405,16,0,0
 Wanwan Aijou Monogatari (Japan).bin,XK-501,16,10c5f568,d90fe762
 Pasocom Collection (Japan).bin,XK-502,16,fe3be881,f294f931
-# Missing good dump
-Little Romance (Japan).bin,XK-503,24,0,6a410bb2
+Little Romance (Japan).bin,XK-503,24,550616f0,6a410bb2
 Loopy Town no Oheya ga Hoshii! (Japan).bin,XK-504,24,352b4ae6,8373e9dd
 Lupiton no Wonder Palette (Japan).bin,XK-701,16,f4662e66,6e00ce71
