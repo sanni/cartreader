@@ -2,56 +2,11 @@
 // CASIO LOOPY MODULE
 //******************************************
 #ifdef enable_LOOPY
-// TODO EVERYTHING
 
-// Nintendo VirtualBoy
-// Cartridge Pinout
-// 60P 2.00mm pitch connector
-//
-//                 TOP SIDE             BOTTOM SIDE
-//                           +-------+
-//                      GND -| 1   2 |- GND
-// /WE0 (SRAM WRITE ENABLE) -| 3   4 |- nc
-//                       nc -| 5   6 |- /CS1 (SRAM ENABLE)
-//               CS2 (SRAM) -| 7   8 |- VCC(+5V)
-//                       nc -| 9  10 |- A23
-//                      A19 -| 11 12 |- A22
-//                      A18 -| 13 14 |- A21
-//                       A8 -| 15 16 |- A20
-//                       A7 -| 17 18 |- A9
-//                       A6 -| 19 20 |- A10
-//                       A5 -| 21 22 |- A11
-//                       A4 -| 23 24 |- A12
-//                       A3 -| 25 26 |- A13
-//                       A2 -| 27 28 |- A14
-//                       A1 -| 29 30 |- A15
-//                /CE (ROM) -| 31 32 |- A16
-//                      GND -| 33 34 |- A17
-//                      /OE -| 35 36 |- VCC(+5V)
-//                       D8 -| 37 38 |- D7
-//                       D0 -| 39 40 |- D15
-//                       D9 -| 41 42 |- D6
-//                       D1 -| 43 44 |- D14
-//                      D10 -| 45 46 |- D5
-//                       D2 -| 47 48 |- D13
-//                      D11 -| 49 50 |- D4
-//                       D3 -| 51 52 |- D12
-//                 VCC(+5V) -| 53 54 |- VCC(+5V)
-//                       nc -| 55 56 |- nc
-//                       nc -| 57 58 |- nc
-//                      GND -| 59 60 |- GND
-//                           +-------+
-//
-
-// CONTROL PINS:
-// CS2(SRAM)               - (PH0) - VBOY PIN 7  - SNES RST
-// /CE(ROM)                - (PH3) - VBOY PIN 31 - SNES /CS
-// /CS1(SRAM ENABLE)       - (PH4) - VBOY PIN 6  - SNES /IRQ
-// /WE0(SRAM WRITE ENABLE) - (PH5) - VBOY PIN 3  - SNES /WR
-// /OE                     - (PH6) - VBOY PIN 35 - SNES /RD
-
-// NOT CONNECTED:
-// CLK(PH1) - N/C
+// SH-1 memory map locations, ROM starts here
+const uint32_t LOOPY_MAP_ROM_ZERO = 0x0E000000;
+const uint32_t LOOPY_MAP_SRAM_ZERO = 0x02000000;
+const uint32_t LOOPY_SRAM_SIZE = 0x2000;
 
 //******************************************
 // SETUP
@@ -62,33 +17,23 @@ void setup_LOOPY() {
   setVoltage(VOLTS_SET_5V);
 
   // Set Address Pins to Output
-  //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
-  //A16-A23
-  DDRL = 0xFF;
+  // PK1-PK7, PA1-PA7, PC0-PC3, PL0-PL3 // Take whole port and unset the exceptions later
+  DDRK = DDRA = DDRC = DDRL = 0xFF;
 
   // Set Control Pins to Output
-  //      CS2(PH0)   ---(PH1)   /CE(PH3)   /CS1(PH4)  /WE0(PH5)  /OE(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
-  // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |= (1 << 0);
+  //      /RAMWE(PH6)/RAMCS2(PH4)
+  DDRH |= (1 << 6) | (1 << 4);
+  //      /CE(PL7)   /OE(PL6)
+  DDRL |= (1 << 7) | (1 << 6);
 
   // Set Pins (D0-D15) to Input
-  DDRC = 0x00;
-  DDRA = 0x00;
+  dataIn_LOOPY();
 
-  // Setting Control Pins to HIGH
-  //       ---(PH1)   /CE(PH3)   /CS1(PH4)  /WE0(PH5)  /OE(PH6)
-  PORTH |= (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-  // Set CS2(PH0) to LOW
-  PORTH &= ~(1 << 0);
+  // Reset HIGH (PF7)
+  DDRF |= (1 << 7);
+  PORTF |= (1 << 7);
 
-  // Set Unused Pins HIGH
-  PORTJ |= (1 << 0);  // TIME(PJ0)
-
+  strcpy(romName, "LOOPY");
   getCartInfo_LOOPY();
 
   mode = mode_LOOPY;
@@ -179,10 +124,96 @@ void loopyMenu() {
 //  LOW LEVEL FUNCTIONS
 //******************************************
 
+void setAddress_LOOPY(unsigned long A) {
+  // PK1	A0
+  // PK2	A1
+  // PK3	A21
+  // PK4	A3
+  // PK5	A20
+  // PK6	A15
+  // PK7	A13
+  PORTK = (bitRead(A, 0) << 1)
+          | (bitRead(A, 1) << 2)
+          | (bitRead(A, 21) << 3)
+          | (bitRead(A, 3) << 4)
+          | (bitRead(A, 20) << 5)
+          | (bitRead(A, 15) << 6)
+          | (bitRead(A, 13) << 7);
+  // PA1	A2
+  // PA2	A4
+  // PA3	A19
+  // PA4	A18
+  // PA5	A16
+  // PA6	A17
+  // PA7	A14
+  PORTA = (bitRead(A, 2) << 1)
+          | (bitRead(A, 4) << 2)
+          | (bitRead(A, 19) << 3)
+          | (bitRead(A, 18) << 4)
+          | (bitRead(A, 16) << 5)
+          | (bitRead(A, 17) << 6)
+          | (bitRead(A, 14) << 7);
+  // PC0	A6
+  // PC1	A8
+  // PC2	A10
+  // PC3	A12
+  PORTC = (bitRead(A, 6))
+          | (bitRead(A, 8) << 1)
+          | (bitRead(A, 10) << 2)
+          | (bitRead(A, 12) << 3);
+  // PL0	A5
+  // PL1	A7
+  // PL2	A9
+  // PL3	A11
+  PORTL = (bitRead(A, 5))
+          | (bitRead(A, 7) << 1)
+          | (bitRead(A, 9) << 2)
+          | (bitRead(A, 11) << 3);
+}
+
+uint16_t getWord_LOOPY() {
+  return digitalRead(A8)
+         | (digitalRead(22) << 1)
+         | (digitalRead(A6) << 2)
+         | (digitalRead(A5) << 3)
+         | (digitalRead(A3) << 4)
+         | (digitalRead(40) << 5)
+         | (digitalRead(A2) << 6)
+         | (digitalRead(41) << 7)
+         | (digitalRead(A1) << 8)
+         | (digitalRead(3) << 9)
+         | (digitalRead(A0) << 10)
+         | (digitalRead(2) << 11)
+         | (digitalRead(14) << 12)
+         | (digitalRead(15) << 13)
+         | (digitalRead(A4) << 14)
+         | (digitalRead(4) << 15);
+}
+
+uint8_t getByte_LOOPY() {
+  return digitalRead(A8)
+         | (digitalRead(22) << 1)
+         | (digitalRead(A6) << 2)
+         | (digitalRead(A5) << 3)
+         | (digitalRead(A3) << 4)
+         | (digitalRead(40) << 5)
+         | (digitalRead(A2) << 6)
+         | (digitalRead(41) << 7);
+}
+
+void setByte_LOOPY(uint8_t D) {
+  digitalWrite(A8, bitRead(D, 0));
+  digitalWrite(22, bitRead(D, 1));
+  digitalWrite(A6, bitRead(D, 2));
+  digitalWrite(A5, bitRead(D, 3));
+  digitalWrite(A3, bitRead(D, 4));
+  digitalWrite(40, bitRead(D, 5));
+  digitalWrite(A2, bitRead(D, 6));
+  digitalWrite(41, bitRead(D, 7));
+}
+
 void writeByte_LOOPY(unsigned long myAddress, byte myData) {
-  PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTL = (myAddress >> 16) & 0xFF;
+  setAddress_LOOPY(myAddress);
 
   __asm__("nop\n\t");
 
@@ -212,9 +243,7 @@ void writeByte_LOOPY(unsigned long myAddress, byte myData) {
 }
 
 word readWord_LOOPY(unsigned long myAddress) {
-  PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTL = (myAddress >> 16) & 0xFF;
+  setAddress_LOOPY(myAddress);
 
   __asm__("nop\n\t");
 
@@ -248,9 +277,7 @@ word readWord_LOOPY(unsigned long myAddress) {
 }
 
 byte readByte_LOOPY(unsigned long myAddress) {  // SRAM BYTE
-  PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTL = (myAddress >> 16) & 0xFF;
+  setAddress_LOOPY(myAddress);
 
   __asm__("nop\n\t");
 
@@ -292,14 +319,67 @@ byte readByte_LOOPY(unsigned long myAddress) {  // SRAM BYTE
 
 // Switch data pins to write
 void dataOut_LOOPY() {
-  DDRC = 0xFF;
-  DDRA = 0xFF;
+  // // PA0
+  // DDRA |= 0x01;
+  // // PK0
+  // DDRK |= 0x01;
+  // // PG0, PG1, PG5 (rest unused?)
+  // DDRG = 0xFF;
+  // // PJ0-1 (rest unused?)
+  // DDRJ = 0xFF;
+  // // PE4-PE5 (rest unused?)
+  // DDRE = 0xFF;
+  // // PF0-PF6
+  // DDRF |= 0b0111111;
+
+  pinMode(A8, OUTPUT);
+  pinMode(22, OUTPUT);
+  pinMode(A6, OUTPUT);
+  pinMode(A5, OUTPUT);
+  pinMode(A3, OUTPUT);
+  pinMode(40, OUTPUT);
+  pinMode(A2, OUTPUT);
+  pinMode(41, OUTPUT);
+  pinMode(A1, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(A0, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(A4, OUTPUT);
+  pinMode(4, OUTPUT);
 }
 
 // Switch data pins to read
 void dataIn_LOOPY() {
-  DDRC = 0x00;
-  DDRA = 0x00;
+  // // PA0
+  // DDRA &= ~0x01;
+  // // PK0
+  // DDRK &= ~0x01;
+  // // PG0, PG1, PG5 (rest unused?)
+  // DDRG = 0x00;
+  // // PJ0-1 (rest unused?)
+  // DDRJ = 0x00;
+  // // PE4-PE5 (rest unused?)
+  // DDRE = 0x00;
+  // // PF0-PF6
+  // DDRF &= ~0b0111111;
+  pinMode(A8, INPUT);
+  pinMode(22, INPUT);
+  pinMode(A6, INPUT);
+  pinMode(A5, INPUT);
+  pinMode(A3, INPUT);
+  pinMode(40, INPUT);
+  pinMode(A2, INPUT);
+  pinMode(41, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(3, INPUT);
+  pinMode(A0, INPUT);
+  pinMode(2, INPUT);
+  pinMode(14, INPUT);
+  pinMode(15, INPUT);
+  pinMode(A4, INPUT);
+  pinMode(4, INPUT);
 }
 
 //******************************************
@@ -310,85 +390,29 @@ void getCartInfo_LOOPY() {
   // Set control
   dataIn_LOOPY();
 
-  cartSize = 0;
-  for (unsigned long address = 0x80000; address <= 0x400000; address *= 2) {
-    // Get Serial
-    word vbSerial = readWord_LOOPY((address - 0x204) / 2);  // Cart Serial
+  // Last word of ROM stored as 32-bit pointer at 000004h
+  // TODO make sure you have endianness right when interpreting this
+  uint32_t headerRomSize = ((uint32_t)readWord_LOOPY(0x4) << 16 | (uint32_t)readWord_LOOPY(0x6));
+  cartSize = headerRomSize - LOOPY_MAP_ROM_ZERO + 2;
 
-    switch (vbSerial) {
-      case 0x4D54:           // MT = Mario's Tennis
-      case 0x4832:           // H2 = Panic Bomber/Tobidase! Panibomb
-      case 0x5350:           // SP = Space Invaders
-      case 0x5353:           // SS = Space Squash
-      case 0x5452:           // TR = V-Tetris
-        cartSize = 0x80000;  // 512KB
-        break;
+  // Get internal CRC32 from header
+  uint32_t cartHeaderCrc = (uint32_t)readWord_LOOPY(0x8) << 16 | (uint32_t)readWord_LOOPY(0xA);
+  snprintf(checksumStr, 8, "%08X", cartHeaderCrc);
 
-      case 0x494D:            // IM = Insmouse no Yakata
-      case 0x4A42:            // JB = Jack Bros.
-      case 0x4D43:            // MC = Mario Clash
-      case 0x5245:            // RE = Red Alarm
-      case 0x4833:            // H3 = Vertical Force
-      case 0x5642:            // VB = Virtual Bowling
-      case 0x4A56:            // JV = Virtual Lab
-      case 0x5650:            // VP = Virtual League Baseball/Virtual Pro Yakyuu '95
-        cartSize = 0x100000;  // 1MB
-        break;
+  // Look up in database
+  // compareCRC("loopy.txt", cartId, false, 0);
 
-      case 0x5042:            // PB = 3-D Tetris
-      case 0x4750:            // GP = Galactic Pinball
-      case 0x5344:            // SD = SD Gundam Dimension War
-      case 0x5442:            // TB = Teleroboxer
-      case 0x5646:            // VF = Virtual Fishing
-        cartSize = 0x100000;  // 1MB
-        sramSize = 0x2000;    // 8KB
-        break;
-
-      case 0x5647:            // VG = Golf/T&E Virtual Golf
-      case 0x4E46:            // NF = Nester's Funky Bowling
-      case 0x5745:            // WE = Waterworld
-        cartSize = 0x200000;  // 2MB
-        break;
-
-      case 0x5743:            // WC = Virtual Boy Wario Land
-        cartSize = 0x200000;  // 2MB
-        sramSize = 0x2000;    // 8KB
-        break;
-
-      case 0x4644:            // FD = Hyper Fighting
-        cartSize = 0x400000;  // 4MB
-        sramSize = 0x2000;    // 8KB
-        break;
-    }
-
-    if (cartSize)
-      break;
-  }
-
-  // Get name
-  for (byte c = 0; c < 20; c += 2) {
-    // split word
-    word myWord = readWord_LOOPY((cartSize - 0x220 + c) / 2);
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
-  }
-  byte myLength = 0;
-  for (unsigned int i = 0; i < 20; i++) {
-    if (((char(sdBuffer[i]) >= 48 && char(sdBuffer[i]) <= 57) || (char(sdBuffer[i]) >= 65 && char(sdBuffer[i]) <= 122)) && myLength < 15) {
-      romName[myLength] = char(sdBuffer[i]);
-      myLength++;
-    }
-  }
+  // SRAM size can be calculated from subtracting 32bit pointers 000014h (last byte of sram, memory mapped) - 000010h (first byte of sram, memory mapped)
+  // But this is fine
+  sramSize = LOOPY_SRAM_SIZE;
 
   display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(F(" "));
-  print_Msg(F("Name: "));
-  println_Msg(romName);
+  // print_Msg(F("Name: "));
+  // println_Msg(romName);
+  print_Msg(F("CRC32: "));
+  println_Msg(checksumStr);
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
@@ -417,7 +441,7 @@ void readROM_LOOPY() {
   dataIn_LOOPY();
 
   strcpy(fileName, romName);
-  strcat(fileName, ".vb");
+  strcat(fileName, ".bin");
 
   EEPROM_readAnything(0, foldern);
   sprintf(folder, "LOOPY/ROM/%s/%d", romName, foldern);
@@ -440,45 +464,25 @@ void readROM_LOOPY() {
   word d = 0;
   uint32_t progress = 0;
   draw_progressbar(0, cartSize);
-  // HYPER FIGHTING FIX
-  // VIRTUAL BOY ADDRESSING IS TOP DOWN
-  // ONLY FOR HYPER FIGHTING PLUGIN WITH ALL ADDRESS LINES CONNECTED
-  // NORMAL PLUGIN DOES NOT HAVE THE UPPER ADDRESS LINES CONNECTED
-  if (cartSize == 0x400000) {
-    unsigned long romData = 0x1000000 - (cartSize / 2);
-    for (unsigned long currBuffer = romData; currBuffer < 0x1000000; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_LOOPY(currBuffer + currWord);
-        // Split word into two bytes
-        sdBuffer[d] = ((myWord >> 8) & 0xFF);
-        sdBuffer[d + 1] = (myWord & 0xFF);
-        d += 2;
-      }
-      myFile.write(sdBuffer, 512);
-      d = 0;
-      progress += 512;
-      draw_progressbar(progress, cartSize);
+
+  for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
+    for (int currWord = 0; currWord < 256; currWord++) {
+      word myWord = readWord_LOOPY(currBuffer + currWord);
+      // Split word into two bytes
+      sdBuffer[d] = ((myWord >> 8) & 0xFF);
+      sdBuffer[d + 1] = (myWord & 0xFF);
+      d += 2;
     }
-  } else {
-    for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_LOOPY(currBuffer + currWord);
-        // Split word into two bytes
-        sdBuffer[d] = ((myWord >> 8) & 0xFF);
-        sdBuffer[d + 1] = (myWord & 0xFF);
-        d += 2;
-      }
-      myFile.write(sdBuffer, 512);
-      d = 0;
-      progress += 512;
-      draw_progressbar(progress, cartSize);
-    }
+    myFile.write(sdBuffer, 512);
+    d = 0;
+    progress += 512;
+    draw_progressbar(progress, cartSize);
   }
   myFile.close();
 
   // Compare CRC32 to database and rename ROM if found
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
-  compareCRC("vb.txt", 0, 1, 0);
+  compareCRC("loopy.txt", 0, 1, 0);
 
 #if (defined(enable_OLED) || defined(enable_LCD))
   // Wait for user input
