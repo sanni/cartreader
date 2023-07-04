@@ -881,10 +881,6 @@ void checkAltConf(char crcStr[9]) {
 
       // Check if checksum string is a match else go to next entry in database
       if (strcmp(tempStr2, checksumStr) == 0) {
-        print_Msg(F("Header CRC32: "));
-        println_Msg(crcStr);
-        display_Update();
-
         // Skip the , in the file
         myFile.seekCur(1);
 
@@ -893,6 +889,10 @@ void checkAltConf(char crcStr[9]) {
           tempStr3[k] = char(myFile.read());
         }
         tempStr3[8] = '\0';
+
+        print_Msg(F("Header CRC32: "));
+        println_Msg(tempStr3);
+        display_Update();
 
         // Skip the , in the file
         myFile.seekCur(1);
@@ -905,6 +905,11 @@ void checkAltConf(char crcStr[9]) {
 
         // Read number of banks
         byte numBanks2 = (myFile.read() - 48) * 100 + (myFile.read() - 48) * 10 + (myFile.read() - 48);
+
+        // skip CRLF
+        myFile.seekCur(2);
+        // skip third empty line
+        skip_line(&myFile);
 
         // Some games have the same checksum, so compare CRC32 of header area with database too
         if (strcmp(tempStr3, crcStr) == 0) {
