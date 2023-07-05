@@ -8,6 +8,15 @@ const uint32_t LOOPY_MAP_ROM_ZERO = 0x0E000000;
 const uint32_t LOOPY_MAP_SRAM_ZERO = 0x02000000;
 const uint32_t LOOPY_SRAM_SIZE = 0x2000;
 
+// Control pins
+const int LOOPY_ROMCE = 42;
+const int LOOPY_OE = 43;
+const int LOOPY_RAMWE = 6;
+const int LOOPY_RAMCS1 = 7;
+const int LOOPY_RAMCS2 = A7;
+
+char strbuf[9];
+
 //******************************************
 // SETUP
 //******************************************
@@ -20,20 +29,22 @@ void setup_LOOPY() {
   // PK1-PK7, PA1-PA7, PC0-PC3, PL0-PL3 // Take whole port and unset the exceptions later
   DDRK = DDRA = DDRC = DDRL = 0xFF;
 
-  // Set Control Pins to Output
-  //      /RAMWE(PH6)/RAMCS2(PH4)
-  DDRH |= (1 << 6) | (1 << 4);
-  //      /CE(PL7)   /OE(PL6)
-  DDRL |= (1 << 7) | (1 << 6);
+  // Control pins, all active low
+  pinMode(LOOPY_ROMCE, OUTPUT);
+  pinMode(LOOPY_OE, OUTPUT);
+  pinMode(LOOPY_RAMWE, OUTPUT);
+  pinMode(LOOPY_RAMCS1, OUTPUT);
+  pinMode(LOOPY_RAMCS2, OUTPUT);
+  digitalWrite(LOOPY_ROMCE, HIGH);
+  digitalWrite(LOOPY_OE, HIGH);
+  digitalWrite(LOOPY_RAMWE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, HIGH);
+  digitalWrite(LOOPY_RAMCS2, HIGH);
 
   // Set Pins (D0-D15) to Input
   dataIn_LOOPY();
 
-  // Reset HIGH (PF7)
-  DDRF |= (1 << 7);
-  PORTF |= (1 << 7);
-
-  strcpy(romName, "LOOPY");
+  strcpy(romName, "unknown");
   getCartInfo_LOOPY();
 
   mode = mode_LOOPY;
@@ -44,11 +55,12 @@ void setup_LOOPY() {
 //******************************************
 
 // Base Menu
+static const char loopyMenuItem0[] PROGMEM = "Cart Info";
 static const char loopyMenuItem1[] PROGMEM = "Read ROM";
 static const char loopyMenuItem2[] PROGMEM = "Read SRAM";
 static const char loopyMenuItem3[] PROGMEM = "Write SRAM";
 //static const char loopyMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsLOOPY[] PROGMEM = { loopyMenuItem1, loopyMenuItem2, loopyMenuItem3, string_reset2 };
+static const char* const menuOptionsLOOPY[] PROGMEM = { loopyMenuItem0, loopyMenuItem1, loopyMenuItem2, loopyMenuItem3, string_reset2 };
 
 void loopyMenu() {
   convertPgm(menuOptionsLOOPY, 4);
@@ -56,13 +68,19 @@ void loopyMenu() {
 
   switch (mainMenu) {
     case 0:
+      display_Clear();
+      display_Update();
+      setup_LOOPY();
+      break;
+
+    case 1:
       // Read ROM
       sd.chdir("/");
       readROM_LOOPY();
       sd.chdir("/");
       break;
 
-    case 1:
+    case 2:
       // Read SRAM
       if (sramSize) {
         sd.chdir("/");
@@ -83,7 +101,7 @@ void loopyMenu() {
 #endif
       break;
 
-    case 2:
+    case 3:
       // Write SRAM
       if (sramSize) {
         // Change working dir to root
@@ -113,7 +131,7 @@ void loopyMenu() {
 #endif
       break;
 
-    case 3:
+    case 4:
       // reset
       resetArduino();
       break;
@@ -213,6 +231,7 @@ void setByte_LOOPY(uint8_t D) {
 }
 
 void writeByte_LOOPY(unsigned long myAddress, byte myData) {
+  // TODO Update
   setAddress_LOOPY(myAddress);
 
   __asm__("nop\n\t");
@@ -245,38 +264,23 @@ void writeByte_LOOPY(unsigned long myAddress, byte myData) {
 word readWord_LOOPY(unsigned long myAddress) {
   setAddress_LOOPY(myAddress);
 
-  __asm__("nop\n\t");
+  digitalWrite(LOOPY_ROMCE, LOW);
+  digitalWrite(LOOPY_OE, LOW);
 
-  // Set CS2(PH0), /CS1(PH4), /WE0(PH5) to HIGH
-  PORTH |= (1 << 0) | (1 << 4) | (1 << 5);
-  // Set /CE(PH3), /OE(PH6) to LOW
-  PORTH &= ~(1 << 3) & ~(1 << 6);
+  // 16mhz = 62.5ns
+  NOP;
+  NOP;
 
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
+  word tempWord = getWord_LOOPY();
 
-  word tempWord = ((PINA & 0xFF) << 8) | (PINC & 0xFF);
-
-  // Set /CE(PH3), /OE(PH6) to HIGH
-  PORTH |= (1 << 3) | (1 << 6);
-  // Setting CS2(PH0) LOW
-  PORTH &= ~(1 << 0);
-
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
+  digitalWrite(LOOPY_ROMCE, HIGH);
+  digitalWrite(LOOPY_OE, HIGH);
 
   return tempWord;
 }
 
 byte readByte_LOOPY(unsigned long myAddress) {  // SRAM BYTE
+  // TODO Update
   setAddress_LOOPY(myAddress);
 
   __asm__("nop\n\t");
@@ -387,17 +391,19 @@ void dataIn_LOOPY() {
 //******************************************
 
 void getCartInfo_LOOPY() {
+  display_Clear();
+
   // Set control
   dataIn_LOOPY();
 
   // Last word of ROM stored as 32-bit pointer at 000004h
   // TODO make sure you have endianness right when interpreting this
-  uint32_t headerRomSize = ((uint32_t)readWord_LOOPY(0x4) << 16 | (uint32_t)readWord_LOOPY(0x6));
+  uint32_t headerRomSize = ((uint32_t)readWord_LOOPY(0x4) << 16) | (uint32_t)readWord_LOOPY(0x6);
   cartSize = headerRomSize - LOOPY_MAP_ROM_ZERO + 2;
 
   // Get internal CRC32 from header
-  uint32_t cartHeaderCrc = (uint32_t)readWord_LOOPY(0x8) << 16 | (uint32_t)readWord_LOOPY(0xA);
-  snprintf(checksumStr, 8, "%08X", cartHeaderCrc);
+  uint32_t cartHeaderCrc = ((uint32_t)readWord_LOOPY(0x8) << 16) | (uint32_t)readWord_LOOPY(0xA);
+  sprintf(checksumStr, "%08lx", cartHeaderCrc);
 
   // Look up in database
   // compareCRC("loopy.txt", cartId, false, 0);
@@ -406,9 +412,11 @@ void getCartInfo_LOOPY() {
   // But this is fine
   sramSize = LOOPY_SRAM_SIZE;
 
-  display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(F(" "));
+  print_Msg(F("Magic: "));
+  sprintf(strbuf, "0x%08lx", ((uint32_t)readWord_LOOPY(0) << 16) | (uint32_t)readWord_LOOPY(0x2));
+  println_Msg(strbuf);
   // print_Msg(F("Name: "));
   // println_Msg(romName);
   print_Msg(F("CRC32: "));
@@ -461,23 +469,20 @@ void readROM_LOOPY() {
     print_FatalError(sd_error_STR);
   }
 
-  word d = 0;
-  uint32_t progress = 0;
   draw_progressbar(0, cartSize);
 
-  for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
-    for (int currWord = 0; currWord < 256; currWord++) {
-      word myWord = readWord_LOOPY(currBuffer + currWord);
-      // Split word into two bytes
-      sdBuffer[d] = ((myWord >> 8) & 0xFF);
-      sdBuffer[d + 1] = (myWord & 0xFF);
-      d += 2;
+  // sdbuffer size is 512
+  const size_t sdBufferSize = 512;
+  for (unsigned long ptr = 0; ptr < cartSize;) {
+    word myWord = readWord_LOOPY(ptr);
+    sdBuffer[ptr++ % sdBufferSize] = ((myWord >> 8) & 0xFF);
+    sdBuffer[ptr++ % sdBufferSize] = (myWord & 0xFF);
+    if (ptr % sdBufferSize == 0) {
+      myFile.write(sdBuffer, sdBufferSize);
     }
-    myFile.write(sdBuffer, 512);
-    d = 0;
-    progress += 512;
-    draw_progressbar(progress, cartSize);
+    draw_progressbar(ptr, cartSize);
   }
+  // TODO this assumes size is divisible by 512
   myFile.close();
 
   // Compare CRC32 to database and rename ROM if found
@@ -499,6 +504,7 @@ void readROM_LOOPY() {
 //******************************************
 
 void writeSRAM_LOOPY() {
+  // TODO UPDATE
   dataOut_LOOPY();
 
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -521,6 +527,7 @@ void writeSRAM_LOOPY() {
 }
 
 void readSRAM_LOOPY() {
+  // TODO UPDATE
   dataIn_LOOPY();
 
   strcpy(fileName, romName);
@@ -552,6 +559,7 @@ void readSRAM_LOOPY() {
 }
 
 unsigned long verifySRAM_LOOPY() {
+  // TODO UPDATE
   dataIn_LOOPY();
   writeErrors = 0;
 

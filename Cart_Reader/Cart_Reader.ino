@@ -1040,6 +1040,7 @@ void mainMenu() {
 
 #ifdef enable_LOOPY
     case 21:
+      setup_LOOPY();
       loopyMenu();
       break;
 #endif

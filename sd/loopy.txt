@@ -4,7 +4,7 @@ Anime Land (Japan).bin
 HARIHARI Seal Paradise (Japan).bin
 b82ac7f3
 
-Dream Change - Kogane-chan no Fashion Party (Japan).bin
+Dream Change (Japan).bin
 0fb0a794
 
 Nigaoe Artist (Japan).bin
@@ -13,14 +13,14 @@ ef1b33f3
 Wanwan Aijou Monogatari (Japan).bin
 10c5f568
 
-Pasocom Collection (Japan).bin
+PC Collection (Japan).bin
 fe3be881
 
 Little Romance (Japan).bin
 550616f0
 
-Loopy Town no Oheya ga Hoshii! (Japan).bin
+Loopy Town no Oheya ga Hoshii (Japan).bin
 352b4ae6
 
-Lupiton no Wonder Palette (Japan).bin
+Lupiton's Wonder Palette (Japan).bin
 f4662e66
