@@ -1,0 +1,2 @@
+# Essential that the "database" files on the SD card use CRLF line endings
+sd/*.txt text eol=crlf
