@@ -11,14 +11,13 @@
 // SH-1 memory map locations, ROM starts here
 const uint32_t LOOPY_MAP_ROM_ZERO = 0x0E000000;
 const uint32_t LOOPY_MAP_SRAM_ZERO = 0x02000000;
-const uint32_t LOOPY_SRAM_SIZE = 0x2000;
 
 // Control pins
 const int LOOPY_ROMCE = 42;
 const int LOOPY_OE = 43;
 const int LOOPY_RAMWE = 6;
 const int LOOPY_RAMCS1 = 7;
-const int LOOPY_RAMCS2 = A7;
+const int LOOPY_RESET = A7;
 
 // The internal checksum read from the cart header at 08h, will be checked against an actual sum
 uint32_t loopyChecksum;
@@ -36,7 +35,8 @@ void setup_LOOPY() {
   setVoltage(VOLTS_SET_5V);
 
   // Set Address Pins to Output
-  // PK1-PK7, PA1-PA7, PC0-PC3, PL0-PL3 // Take whole port and unset the exceptions later
+  // PK1-PK7, PA1-PA7, PC0-PC3, PL0-PL3 
+  // Take whole port and unset the exceptions later
   DDRK = DDRA = DDRC = DDRL = 0xFF;
 
   // Control pins, all active low
@@ -44,12 +44,12 @@ void setup_LOOPY() {
   pinMode(LOOPY_OE, OUTPUT);
   pinMode(LOOPY_RAMWE, OUTPUT);
   pinMode(LOOPY_RAMCS1, OUTPUT);
-  pinMode(LOOPY_RAMCS2, OUTPUT);
+  pinMode(LOOPY_RESET, OUTPUT);
   digitalWrite(LOOPY_ROMCE, HIGH);
   digitalWrite(LOOPY_OE, HIGH);
   digitalWrite(LOOPY_RAMWE, HIGH);
   digitalWrite(LOOPY_RAMCS1, HIGH);
-  digitalWrite(LOOPY_RAMCS2, HIGH);
+  digitalWrite(LOOPY_RESET, HIGH);
 
   // Set Pins (D0-D15) to Input
   dataIn_LOOPY();
@@ -185,10 +185,23 @@ void setAddress_LOOPY(unsigned long A) {
   // PL1  A7
   // PL2  A9
   // PL3  A11
-  PORTL = (bitRead(A, 5))
-          | (bitRead(A, 7) << 1)
-          | (bitRead(A, 9) << 2)
-          | (bitRead(A, 11) << 3);
+  // CAUTION PORTL is shared!
+  // D42	PL7	CE
+  // D43	PL6	OE
+  // D44	PL5	
+  // D45	PL4	
+  // D46	PL3	A11
+  // D47	PL2	A9
+  // D48	PL1	A7
+  // D49	PL0	A5
+  digitalWrite(46, bitRead(A, 11));
+  digitalWrite(47, bitRead(A, 9));
+  digitalWrite(48, bitRead(A, 7));
+  digitalWrite(49, bitRead(A, 5));
+  // PORTL = (bitRead(A, 5))
+  //         | (bitRead(A, 7) << 1)
+  //         | (bitRead(A, 9) << 2)
+  //         | (bitRead(A, 11) << 3);
 }
 
 uint16_t getWord_LOOPY() {
@@ -225,23 +238,6 @@ uint16_t getWord_LOOPY() {
          | (bitRead(PINJ, 0) << 13)
          | (bitRead(PINF, 4) << 14)
          | (bitRead(PING, 5) << 15);
-
-  // return digitalRead(A8)
-  //        | (digitalRead(22) << 1)
-  //        | (digitalRead(A6) << 2)
-  //        | (digitalRead(A5) << 3)
-  //        | (digitalRead(A3) << 4)
-  //        | (digitalRead(40) << 5)
-  //        | (digitalRead(A2) << 6)
-  //        | (digitalRead(41) << 7)
-  //        | (digitalRead(A1) << 8)
-  //        | (digitalRead(3) << 9)
-  //        | (digitalRead(A0) << 10)
-  //        | (digitalRead(2) << 11)
-  //        | (digitalRead(14) << 12)
-  //        | (digitalRead(15) << 13)
-  //        | (digitalRead(A4) << 14)
-  //        | (digitalRead(4) << 15);
 }
 
 uint8_t getByte_LOOPY() {
@@ -253,14 +249,6 @@ uint8_t getByte_LOOPY() {
          | (bitRead(PING, 1) << 5)
          | (bitRead(PINF, 2) << 6)
          | (bitRead(PING, 0) << 7);
-  // return digitalRead(A8)
-  //        | (digitalRead(22) << 1)
-  //        | (digitalRead(A6) << 2)
-  //        | (digitalRead(A5) << 3)
-  //        | (digitalRead(A3) << 4)
-  //        | (digitalRead(40) << 5)
-  //        | (digitalRead(A2) << 6)
-  //        | (digitalRead(41) << 7);
 }
 
 void setByte_LOOPY(uint8_t D) {
@@ -277,42 +265,48 @@ void setByte_LOOPY(uint8_t D) {
 byte readByte_LOOPY(unsigned long myAddress) {
   setAddress_LOOPY(myAddress);
 
-  digitalWrite(LOOPY_RAMCS1, LOW);
-  digitalWrite(LOOPY_OE, LOW);
+  // 100ns MAX
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
 
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-
-  byte b = getByte_LOOPY();
-
-  digitalWrite(LOOPY_RAMCS1, HIGH);
-  digitalWrite(LOOPY_OE, HIGH);
-
-  return b;
+  return getByte_LOOPY();
 }
 
 void writeByte_LOOPY(unsigned long myAddress, byte myData) {
+  // TODO now that resolved issues with writing sram, can we simplify again
   setAddress_LOOPY(myAddress);
+
+  digitalWrite(LOOPY_RAMWE, LOW);
+
+  // tWHZ 35
+  NOP;
+  NOP;
+
+  NOP;
+  NOP;
+
+  dataOut_LOOPY();
 
   setByte_LOOPY(myData);
 
-  digitalWrite(LOOPY_RAMCS1, LOW);
-  digitalWrite(LOOPY_OE, HIGH);
-  digitalWrite(LOOPY_RAMWE, LOW);
+  // tWP 60
+  NOP;
+  NOP;
+  NOP;
+  NOP;
 
-  NOP;
-  NOP;
   NOP;
   NOP;
   NOP;
   NOP;
 
   digitalWrite(LOOPY_RAMWE, HIGH);
-  digitalWrite(LOOPY_RAMCS1, HIGH);
+  dataIn_LOOPY();
 }
 
 word readWord_LOOPY(unsigned long myAddress) {
@@ -347,6 +341,8 @@ void dataOut_LOOPY() {
   // DDRE = 0xFF;
   // // PF0-PF6
   // DDRF |= 0b0111111;
+
+  // TODO we could really only control the lower bits since we never write words just bytes
 
   pinMode(A8, OUTPUT);
   pinMode(22, OUTPUT);
@@ -483,6 +479,8 @@ void readROM_LOOPY() {
   const size_t sdBufferSize = 512;
   uint32_t sum = 0;
 
+  digitalWrite(LOOPY_ROMCE, LOW);
+
   for (unsigned long ptr = 0; ptr < cartSize;) {
     word myWord = readWord_LOOPY(ptr);
 
@@ -507,6 +505,8 @@ void readROM_LOOPY() {
   }
   // TODO this assumes size is divisible by 512
   myFile.close();
+
+  digitalWrite(LOOPY_ROMCE, HIGH);
 
   // Instead of the CRC32, check the internal integrity based on the header checksum
   print_Msg(F("Header sum: "));
@@ -544,23 +544,41 @@ void readROM_LOOPY() {
 //******************************************
 
 void writeSRAM_LOOPY() {
-  dataOut_LOOPY();
+  // dataOut_LOOPY();
 
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  //println_Msg(F("Writing..."));
+
+  char str[16];
+  sprintf(str, "Writing %ld bytes to", sramSize);
+  println_Msg(str);
+
   println_Msg(filePath);
   display_Update();
 
+  digitalWrite(LOOPY_ROMCE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, LOW);
+  digitalWrite(LOOPY_RESET, HIGH);
+  digitalWrite(LOOPY_OE, LOW);
+
   if (myFile.open(filePath, O_READ)) {
     for (unsigned long currByte = 0; currByte < sramSize; currByte++) {
-      writeByte_LOOPY(currByte, (myFile.read()));
+      writeByte_LOOPY(currByte, myFile.read());
+      if (currByte % 512 == 0) {
+        blinkLED();
+      }
     }
     myFile.close();
+
     print_STR(done_STR, 1);
     display_Update();
   } else {
     print_FatalError(sd_error_STR);
   }
+
+  digitalWrite(LOOPY_RAMCS1, HIGH);
+  digitalWrite(LOOPY_OE, HIGH);
+
   dataIn_LOOPY();
 }
 
@@ -581,13 +599,21 @@ void readSRAM_LOOPY() {
     print_FatalError(sd_error_STR);
   }
 
+  digitalWrite(LOOPY_ROMCE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, LOW);
+  digitalWrite(LOOPY_OE, LOW);
+
   const size_t sdBufferSize = 512;
   for (unsigned long ptr = 0; ptr < sramSize;) {
     sdBuffer[ptr++ % sdBufferSize] = readByte_LOOPY(ptr);
     if (ptr % sdBufferSize == 0) {
       myFile.write(sdBuffer, sdBufferSize);
+      blinkLED();
     }
   }
+
+  digitalWrite(LOOPY_OE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, HIGH);
 
   myFile.close();
   print_Msg(F("Saved to "));
@@ -599,6 +625,10 @@ void readSRAM_LOOPY() {
 unsigned long verifySRAM_LOOPY() {
   dataIn_LOOPY();
   writeErrors = 0;
+
+  digitalWrite(LOOPY_ROMCE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, LOW);
+  digitalWrite(LOOPY_OE, LOW);
 
   if (myFile.open(filePath, O_READ)) {
     for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
@@ -616,6 +646,9 @@ unsigned long verifySRAM_LOOPY() {
   } else {
     print_FatalError(sd_error_STR);
   }
+
+  digitalWrite(LOOPY_OE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, HIGH);
 
   return writeErrors;
 }
