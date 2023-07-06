@@ -278,7 +278,6 @@ byte readByte_LOOPY(unsigned long myAddress) {
 }
 
 void writeByte_LOOPY(unsigned long myAddress, byte myData) {
-  // TODO now that resolved issues with writing sram, can we simplify again
   setAddress_LOOPY(myAddress);
 
   digitalWrite(LOOPY_RAMWE, LOW);
@@ -286,20 +285,11 @@ void writeByte_LOOPY(unsigned long myAddress, byte myData) {
   // tWHZ 35
   NOP;
   NOP;
-
-  NOP;
-  NOP;
-
   dataOut_LOOPY();
 
   setByte_LOOPY(myData);
 
   // tWP 60
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-
   NOP;
   NOP;
   NOP;
@@ -352,14 +342,14 @@ void dataOut_LOOPY() {
   pinMode(40, OUTPUT);
   pinMode(A2, OUTPUT);
   pinMode(41, OUTPUT);
-  pinMode(A1, OUTPUT);
-  pinMode(3, OUTPUT);
-  pinMode(A0, OUTPUT);
-  pinMode(2, OUTPUT);
-  pinMode(14, OUTPUT);
-  pinMode(15, OUTPUT);
-  pinMode(A4, OUTPUT);
-  pinMode(4, OUTPUT);
+  // pinMode(A1, OUTPUT);
+  // pinMode(3, OUTPUT);
+  // pinMode(A0, OUTPUT);
+  // pinMode(2, OUTPUT);
+  // pinMode(14, OUTPUT);
+  // pinMode(15, OUTPUT);
+  // pinMode(A4, OUTPUT);
+  // pinMode(4, OUTPUT);
 }
 
 // Switch data pins to read
@@ -544,7 +534,8 @@ void readROM_LOOPY() {
 //******************************************
 
 void writeSRAM_LOOPY() {
-  // dataOut_LOOPY();
+  // Being nice to the SRAM and not touching the data bus except when WE is LOW
+  dataIn_LOOPY();
 
   sprintf(filePath, "%s/%s", filePath, fileName);
   //println_Msg(F("Writing..."));
