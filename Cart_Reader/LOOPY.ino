@@ -3,6 +3,9 @@
 //******************************************
 // IMPORTANT: All data are stored as BIG-ENDIAN. Many ROM dumps online are little endian.
 // See https://github.com/kasamikona/Loopy-Tools/blob/master/ROM%20Structure.md
+//
+// By @partlyhuman
+// Special thanks to @kasamikona
 #ifdef enable_LOOPY
 
 // SH-1 memory map locations, ROM starts here
@@ -19,6 +22,8 @@ const int LOOPY_RAMCS2 = A7;
 
 // The internal checksum read from the cart header at 08h, will be checked against an actual sum
 uint32_t loopyChecksum;
+uint32_t loopyChecksumStart;
+uint32_t loopyChecksumEnd;
 // Whether the cart was found (by checksum) in the database
 bool loopyCartRecognized;
 
@@ -403,9 +408,18 @@ void getCartInfo_LOOPY() {
   // Set control
   dataIn_LOOPY();
 
-  // Last word of ROM stored as 32-bit pointer at 000004h
-  uint32_t headerRomSize = ((uint32_t)readWord_LOOPY(0x4) << 16) | (uint32_t)readWord_LOOPY(0x6);
-  cartSize = headerRomSize - LOOPY_MAP_ROM_ZERO + 2;
+  // First word after header stored as 32-bit pointer at 0h, final word (inclusive) at 4h
+  // based on SH-1 memory mapped location of ROM (shift to rebase on zero)
+  loopyChecksumStart = (((uint32_t)readWord_LOOPY(0x0) << 16) | (uint32_t)readWord_LOOPY(0x2)) - LOOPY_MAP_ROM_ZERO;
+  loopyChecksumEnd = (((uint32_t)readWord_LOOPY(0x4) << 16) | (uint32_t)readWord_LOOPY(0x6)) - LOOPY_MAP_ROM_ZERO;
+  // Full cart size DOES include the header, don't subtract it off :)
+  cartSize = loopyChecksumEnd + 2;
+
+  // SRAM first and last byte locations stored at 10h and 14h, based on SH-1 memory mapped location of SRAM
+  uint32_t loopySramStart = (((uint32_t)readWord_LOOPY(0x10) << 16) | (uint32_t)readWord_LOOPY(0x12)) - LOOPY_MAP_SRAM_ZERO;
+  uint32_t loopySramEnd = (((uint32_t)readWord_LOOPY(0x14) << 16) | (uint32_t)readWord_LOOPY(0x16)) - LOOPY_MAP_SRAM_ZERO;
+  sramSize = loopySramEnd - loopySramStart + 1;
+  // TODO sanity check these values
 
   // Get internal checksum from header
   loopyChecksum = ((uint32_t)readWord_LOOPY(0x8) << 16) | (uint32_t)readWord_LOOPY(0xA);
@@ -423,10 +437,6 @@ void getCartInfo_LOOPY() {
   print_Msg(F("Size: "));
   print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
-
-  // SRAM size can be calculated from subtracting 32bit pointers 000014h (last byte of sram, memory mapped) - 000010h (first byte of sram, memory mapped)
-  // But this is fine
-  sramSize = LOOPY_SRAM_SIZE;
   print_Msg(F("Sram: "));
   print_Msg(sramSize * 8 / 1024);
   println_Msg(F(" KBit"));
@@ -477,8 +487,8 @@ void readROM_LOOPY() {
     word myWord = readWord_LOOPY(ptr);
 
     // aggregate checksum over 16-bit words, starting at 80h, this address is stored in header but never varies
-    if (ptr >= 0x80) {
-        sum += myWord;
+    if (ptr >= loopyChecksumStart) {
+      sum += myWord;
     }
 
     // Store in buffer
