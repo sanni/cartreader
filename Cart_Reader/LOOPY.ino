@@ -1,6 +1,59 @@
 //******************************************
 // CASIO LOOPY MODULE
 //******************************************
+// Loopy
+// Cartridge Pinout
+// 90P 2.1mm pitch connector
+//
+//         +--------+
+//    +5V -|  1  90 |- D11
+//        -|  2  89 |- +5V
+//        -|  3  88 |- D9
+//        -|  4  87 |-
+//        -|  5  86 |- D7
+//        -|  6  85 |- D5
+//        -|  7  84 |- D15
+//        -|  8  83 |- D13
+// RAMCS1 -|  9  82 |- D12
+//        -| 10  81 |- D1
+//  RAMWE -| 11  80 |-
+//        -| 12  79 |-
+//    GND -| 13  78 |- A2
+//    +5V -| 14  77 |- A4
+//        -| 15  76 |- A19
+//        -| 16  75 |- GND
+//        -| 17  74 |- A18
+//        -| 18  73 |- A16
+//        -| 19  72 |- A17
+//        -| 20  71 |- A14
+//        -| 21  70 |- A5
+//    A12 -| 22  69 |- A7
+//    A10 -| 23  68 |- A9
+//     A8 -| 24  67 |- A11
+//     A6 -| 25  66 |-
+//    A13 -| 26  65 |-
+//    A15 -| 27  64 |-
+//    A20 -| 28  63 |-
+//    +5V -| 29  62 |-
+//     A3 -| 30  61 |-
+//    A21 -| 31  60 |- CLK
+//     A1 -| 32  59 |-
+//     A0 -| 33  58 |-
+//        -| 34  57 |- +5V
+//     D0 -| 35  56 |- OE
+//  RESET -| 36  55 |-
+//     D2 -| 37  54 |- ROMCE
+//     D3 -| 38  53 |-
+//    D14 -| 39  52 |-
+//     D4 -| 40  51 |-
+//     D6 -| 41  50 |-
+//     D8 -| 42  49 |-
+//        -| 43  48 |-
+//    D10 -| 44  47 |- GND
+//    GND -| 45  46 |-
+//         +--------+
+//
+// * Blank pins have various uses depending on cartridge but are not necessary for dumping.
 // IMPORTANT: All data are stored as BIG-ENDIAN. Many ROM dumps online are little endian.
 // See https://github.com/kasamikona/Loopy-Tools/blob/master/ROM%20Structure.md
 //
@@ -23,8 +76,8 @@ const int LOOPY_RESET = A7;
 uint32_t loopyChecksum;
 uint32_t loopyChecksumStart;
 uint32_t loopyChecksumEnd;
-// Whether the cart was found (by checksum) in the database
-bool loopyCartRecognized;
+
+char loopyRomNameLong[64];
 
 //******************************************
 // SETUP
@@ -35,7 +88,7 @@ void setup_LOOPY() {
   setVoltage(VOLTS_SET_5V);
 
   // Set Address Pins to Output
-  // PK1-PK7, PA1-PA7, PC0-PC3, PL0-PL3 
+  // PK1-PK7, PA1-PA7, PC0-PC3, PL0-PL3
   // Take whole port and unset the exceptions later
   DDRK = DDRA = DDRC = DDRL = 0xFF;
 
@@ -54,7 +107,6 @@ void setup_LOOPY() {
   // Set Pins (D0-D15) to Input
   dataIn_LOOPY();
 
-  strcpy(romName, "unknown");
   getCartInfo_LOOPY();
 
   mode = mode_LOOPY;
@@ -69,14 +121,15 @@ static const char loopyMenuItem0[] PROGMEM = "Refresh Cart";
 static const char loopyMenuItem1[] PROGMEM = "Read ROM";
 static const char loopyMenuItem2[] PROGMEM = "Read SRAM";
 static const char loopyMenuItem3[] PROGMEM = "Write SRAM";
-//static const char loopyMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsLOOPY[] PROGMEM = { loopyMenuItem0, loopyMenuItem1, loopyMenuItem2, loopyMenuItem3, string_reset2 };
+static const char loopyMenuItem4[] PROGMEM = "Format SRAM";
+static const char* const menuOptionsLOOPY[] PROGMEM = { loopyMenuItem0, loopyMenuItem1, loopyMenuItem2, loopyMenuItem3, loopyMenuItem4, string_reset2 };
 
 void loopyMenu() {
-  convertPgm(menuOptionsLOOPY, 4);
-  uint8_t mainMenu = question_box(F("CASIO LOOPY MENU"), menuOptions, 4, 0);
+  convertPgm(menuOptionsLOOPY, 5);
+  uint8_t mainMenu = question_box(F("CASIO LOOPY MENU"), menuOptions, 5, 0);
   display_Clear();
   display_Update();
+  bool waitForInput = false;
 
   switch (mainMenu) {
     case 0:
@@ -88,6 +141,7 @@ void loopyMenu() {
       sd.chdir("/");
       readROM_LOOPY();
       sd.chdir("/");
+      waitForInput = true;
       break;
 
     case 2:
@@ -97,13 +151,7 @@ void loopyMenu() {
       display_Update();
       readSRAM_LOOPY();
       sd.chdir("/");
-#if (defined(enable_OLED) || defined(enable_LCD))
-      // Wait for user input
-      // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
-#endif
+      waitForInput = true;
       break;
 
     case 3:
@@ -123,21 +171,33 @@ void loopyMenu() {
         print_STR(_bytes_STR, 1);
         print_Error(did_not_verify_STR);
       }
-
-#if (defined(enable_OLED) || defined(enable_LCD))
-      // Wait for user input
-      // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
-#endif
+      waitForInput = true;
       break;
 
     case 4:
+      // Format SRAM
+      println_Msg(F("Formatting SRAM..."));
+      display_Update();
+      formatSRAM_LOOPY();
+      waitForInput = true;
+      break;
+
+    case 5:
       // reset
       resetArduino();
       break;
   }
+
+#if (defined(enable_OLED) || defined(enable_LCD))
+  if (waitForInput) {
+    // Wait for user input
+    println_Msg(F(""));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+  }
+#endif
 }
 
 //******************************************
@@ -181,15 +241,11 @@ void setAddress_LOOPY(unsigned long A) {
           | (bitRead(A, 8) << 1)
           | (bitRead(A, 10) << 2)
           | (bitRead(A, 12) << 3);
-  // PL0  A5
-  // PL1  A7
-  // PL2  A9
-  // PL3  A11
-  // CAUTION PORTL is shared!
+  // CAUTION PORTL is shared, writing to PORTL indiscriminately will mess with CE/OE
   // D42	PL7	CE
   // D43	PL6	OE
-  // D44	PL5	
-  // D45	PL4	
+  // D44	PL5
+  // D45	PL4
   // D46	PL3	A11
   // D47	PL2	A9
   // D48	PL1	A7
@@ -221,7 +277,6 @@ uint16_t getWord_LOOPY() {
   // D15  PJ0 D13
   // A4   PF4 D14
   // D4   PG5 D15
-
   return bitRead(PINK, 0)
          | (bitRead(PINA, 0) << 1)
          | (bitRead(PINF, 6) << 2)
@@ -252,6 +307,7 @@ uint8_t getByte_LOOPY() {
 }
 
 void setByte_LOOPY(uint8_t D) {
+  // Since D lines are spread among so many ports, this is far more legible, and only used for SRAM
   digitalWrite(A8, bitRead(D, 0));
   digitalWrite(22, bitRead(D, 1));
   digitalWrite(A6, bitRead(D, 2));
@@ -332,8 +388,7 @@ void dataOut_LOOPY() {
   // // PF0-PF6
   // DDRF |= 0b0111111;
 
-  // TODO we could really only control the lower bits since we never write words just bytes
-
+  // Only bothering to change lower bits since we never write words just bytes
   pinMode(A8, OUTPUT);
   pinMode(22, OUTPUT);
   pinMode(A6, OUTPUT);
@@ -388,6 +443,31 @@ void dataIn_LOOPY() {
 // CART INFO
 //******************************************
 
+// A little different than many games, loopy DB stores the checksum present in the header, so we can determine the rom name before saving, without renaming
+bool setRomName_LOOPY(const char* database, char* crcStr, int stripExtensionChars = 4) {
+  char gamename[96];
+  char crc_search[9];
+  bool found;
+
+  sd.chdir();
+  if (!myFile.open(database, O_READ)) {
+    return false;
+  }
+  while (myFile.available()) {
+    get_line(gamename, &myFile, sizeof(gamename));
+    get_line(crc_search, &myFile, sizeof(crc_search));
+    skip_line(&myFile);  //Skip every 3rd line
+    if (strcmp(crc_search, crcStr) == 0) {
+      found = true;
+      strlcpy(loopyRomNameLong, gamename, strlen(gamename) - stripExtensionChars + 1);
+      strcpy(romName, loopyRomNameLong);
+      break;
+    }
+  }
+  myFile.close();
+  return found;
+}
+
 void getCartInfo_LOOPY() {
   display_Clear();
 
@@ -412,12 +492,14 @@ void getCartInfo_LOOPY() {
   sprintf(checksumStr, "%08lX", loopyChecksum);
 
   // Look up in database
-  loopyCartRecognized = setRomName("loopy.txt", checksumStr);
+  strcpy(loopyRomNameLong, "LOOPY");
+  strcpy(romName, loopyRomNameLong);
+  setRomName_LOOPY("loopy.txt", checksumStr);
 
   println_Msg(F("Cart Info"));
   println_Msg(F(" "));
   print_Msg(F("Name: "));
-  println_Msg(romName);
+  println_Msg(loopyRomNameLong);
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
   print_Msg(F("Size: "));
@@ -514,19 +596,6 @@ void readROM_LOOPY() {
   }
 
   display_Update();
-
-  // Compare CRC32 to database and rename ROM if found
-  // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
-  //compareCRC("loopy.txt", 0, 1, 0x80);
-
-#if (defined(enable_OLED) || defined(enable_LCD))
-  // Wait for user input
-  println_Msg(F(""));
-  // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
-#endif
 }
 
 //******************************************
@@ -571,6 +640,27 @@ void writeSRAM_LOOPY() {
   digitalWrite(LOOPY_OE, HIGH);
 
   dataIn_LOOPY();
+}
+
+void formatSRAM_LOOPY() {
+  dataIn_LOOPY();
+  digitalWrite(LOOPY_ROMCE, HIGH);
+  digitalWrite(LOOPY_RAMCS1, LOW);
+  digitalWrite(LOOPY_RESET, HIGH);
+  digitalWrite(LOOPY_OE, LOW);
+
+  for (unsigned long currByte = 0; currByte < sramSize; currByte++) {
+    writeByte_LOOPY(currByte, 0);
+    if (currByte % 512 == 0) {
+      blinkLED();
+    }
+  }
+  
+  digitalWrite(LOOPY_RAMCS1, HIGH);
+  digitalWrite(LOOPY_OE, HIGH);
+  dataIn_LOOPY();
+  print_STR(done_STR, 1);
+  display_Update();
 }
 
 void readSRAM_LOOPY() {
@@ -644,6 +734,3 @@ unsigned long verifySRAM_LOOPY() {
   return writeErrors;
 }
 #endif
-//******************************************
-// End of File
-//******************************************

@@ -609,34 +609,6 @@ void rewind_line(FsFile& readfile, byte count = 1) {
     readfile.seekCur(1);
 }
 
-bool setRomName(const char* database, char* crcStr, int stripExtensionChars = 4) {
-  //Search for CRC32 in file
-  char gamename[96];
-  char crc_search[9];
-  bool found;
-
-  //go to root
-  sd.chdir();
-  if (!myFile.open(database, O_READ)) {
-    return false;
-  }
-  //Search for same CRC in list
-  while (myFile.available()) {
-    //Read 2 lines (game name and CRC)
-    get_line(gamename, &myFile, sizeof(gamename));
-    get_line(crc_search, &myFile, sizeof(crc_search));
-    skip_line(&myFile);  //Skip every 3rd line
-
-    if (strcmp(crc_search, crcStr) == 0) {
-      found = true;
-      strlcpy(romName, gamename, strlen(gamename) - stripExtensionChars + 1);
-      break;
-    }
-  }
-  myFile.close();
-  return found;
-}
-
 // Calculate CRC32 if needed and compare it to CRC read from database
 boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, int offset) {
   char crcStr[9];
