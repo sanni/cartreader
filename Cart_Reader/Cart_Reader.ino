@@ -845,7 +845,7 @@ static const char modeItem22[] PROGMEM = "Casio Loopy";
 static const char modeItem23[] PROGMEM = "Flashrom Programmer";
 static const char modeItem24[] PROGMEM = "Self Test (3V)";
 static const char modeItem25[] PROGMEM = "About";
-//static const char modeItem25[] PROGMEM = "Reset"; (stored in common strings array)
+//static const char modeItem26[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, modeItem23, modeItem24, modeItem25, string_reset2 };
 
 // All included slots

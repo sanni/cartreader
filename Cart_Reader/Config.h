@@ -29,7 +29,7 @@
 *   Choose your hardware version:
 */
 
-#define HW5
+//#define HW5
 //#define HW4
 //#define HW3
 //#define HW2
@@ -104,7 +104,7 @@
 /* [ Flashrom Programmer for SNES repros -------------------------- ]
 */
 
-//#define enable_FLASH
+#define enable_FLASH
 //#define enable_FLASH16
 
 /****/
@@ -133,14 +133,14 @@
 /* [ Nintendo 64 -------------------------------------------------- ]
 */
 
-//#define enable_N64
+#define enable_N64
 
 /****/
 
 /* [ Nintendo Entertainment System/Family Computer ---------------- ]
 */
 
-//#define enable_NES
+#define enable_NES
 
 /****/
 
@@ -175,35 +175,35 @@
 /* [ Sega Master System/Mark III/Game Gear/SG-1000 ---------------- ]
 */
 
-//#define enable_SMS
+#define enable_SMS
 
 /****/
 
 /* [ Sega Mega Drive/Genesis -------------------------------------- ]
 */
 
-//#define enable_MD
+#define enable_MD
 
 /****/
 
 /* [ Super Famicom SF Memory Cassette ----------------------------- ]
 */
 
-//#define enable_SFM
+#define enable_SFM
 
 /****/
 
 /* [ Super Famicom Satellaview ------------------------------------ ]
 */
 
-//#define enable_SV
+#define enable_SV
 
 /****/
 
 /* [ Super Nintendo ----------------------------------------------- ]
 */
 
-//#define enable_SNES
+#define enable_SNES
 
 /****/
 
@@ -238,7 +238,7 @@
 /* [ Casio Loopy -------------------------------------------------- ]
 */
 
-#define enable_LOOPY
+//#define enable_LOOPY
 
 /****/
 
@@ -251,7 +251,7 @@
 *     Green, Red, Blue
 */
 
-#define background_color 20, 100, 60
+#define background_color 100, 0, 0
 
 /****/
 
