@@ -28,3 +28,10 @@ fp-info-cache
 *.old
 *.old.*
 *gerber/
+
+# MacOS
+.DS_Store
+._*
+
+# ODS files
+.~lock*

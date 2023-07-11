@@ -250,6 +250,7 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_SUPRACAN 32
 #define mode_MSX 33
 #define mode_POKE 34
+#define mode_LOOPY 35
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -840,11 +841,12 @@ static const char modeItem18[] PROGMEM = "Fairchild Channel F";
 static const char modeItem19[] PROGMEM = "Super A'can";
 static const char modeItem20[] PROGMEM = "MSX";
 static const char modeItem21[] PROGMEM = "Pokemon Mini (3V)";
-static const char modeItem22[] PROGMEM = "Flashrom Programmer";
-static const char modeItem23[] PROGMEM = "Self Test (3V)";
-static const char modeItem24[] PROGMEM = "About";
-//static const char modeItem25[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, modeItem23, modeItem24, string_reset2 };
+static const char modeItem22[] PROGMEM = "Casio Loopy";
+static const char modeItem23[] PROGMEM = "Flashrom Programmer";
+static const char modeItem24[] PROGMEM = "Self Test (3V)";
+static const char modeItem25[] PROGMEM = "About";
+//static const char modeItem26[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, modeItem23, modeItem24, modeItem25, string_reset2 };
 
 // All included slots
 void mainMenu() {
@@ -1036,8 +1038,15 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_LOOPY
     case 21:
+      setup_LOOPY();
+      loopyMenu();
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 22:
 #ifdef ENABLE_VSELECT
       setup_FlashVoltage();
 #endif
@@ -1046,16 +1055,16 @@ void mainMenu() {
 #endif
 
 #ifdef enable_selftest
-    case 22:
+    case 23:
       selfTest();
       break;
 #endif
 
-    case 23:
+    case 24:
       aboutScreen();
       break;
 
-    case 24:
+    case 25:
       resetArduino();
       break;
 
@@ -1112,7 +1121,8 @@ static const char* const consoles80Options[] PROGMEM = { consoles80Item1, consol
 
 // 90s Consoles submenu
 static const char consoles90Item1[] PROGMEM = "Super A'can";
-static const char* const consoles90Options[] PROGMEM = { consoles90Item1, string_reset2 };
+static const char consoles90Item2[] PROGMEM = "Casio Loopy";
+static const char* const consoles90Options[] PROGMEM = { consoles90Item1, consoles90Item2, string_reset2 };
 
 // Handhelds submenu
 static const char handheldsItem1[] PROGMEM = "Virtual Boy";
@@ -1353,7 +1363,13 @@ void consoles90Menu() {
       break;
 #endif
 
+#ifdef enable_LOOPY
     case 1:
+      loopyMenu();
+      break;
+#endif
+
+    case 2:
       resetArduino();
       break;
 
@@ -3596,6 +3612,12 @@ void loop() {
     pokeMenu();
   }
 #endif
+#ifdef enable_LOOPY
+  else if (mode == mode_LOOPY) {
+    loopyMenu();
+  }
+#endif
+
   else {
     display_Clear();
     println_Msg(F("Menu Error"));
