@@ -882,6 +882,12 @@ void getCartInfo_MD() {
     cartSize = 0x100000;
   }
 
+  //Technoptimistic (Aftermarket)
+  if (!strncmp("MU REMUTE01", id, 11) && (chksum == 0x0000)) {
+    chksum = 0xB55C;
+    cartSize = 0x400000;
+  }
+
   //Decoder (Aftermarket)
   if (!strncmp("GM REMUTE02", id, 11) && (chksum == 0x0000)) {
     chksum = 0x5426;

@@ -6805,6 +6805,9 @@ Technocop (USA) (Beta) (September, 1990).md
 Technocop (USA) (Beta) (1990-09-12).md
 F06ED8CA
 
+TECHNOPTIMISTIC (World) (Aftermarket) (Unl).md
+2DAF3A81
+
 Tecmo Cup Football Game (Japan) (Proto) [b].md
 88FDD060
 
