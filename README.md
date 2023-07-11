@@ -51,7 +51,8 @@ Happy making. 🔧🔨😊
 - Magnavox Odyssey 2  
 - Super A'Can    
 - MSX    
-- Pokemon Mini    
+- Pokemon Mini     
+- Casio Loopy     
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   
