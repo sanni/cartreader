@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2023-07-04
-   Version:          12.6
+   Date:             2023-07-13
+   Version:          12.7
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -24,6 +24,7 @@
    skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW, ARC, Atari, ODY2, Fairchild, MSX, Pokemon Mini modules
    Tamanegi_taro - PCE and Satellaview modules
    splash5 - GBSmart, Wonderswan, NGP and Super A'can modules
+   partlyhuman - Casio Loopy module
    hkz & themanbehindthecurtain - N64 flashram commands
    Andrew Brown & Peter Den Hartog - N64 controller protocol
    libdragon - N64 controller checksum functions
@@ -38,7 +39,7 @@
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
    Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
    philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage,
-   vpelletier, Ancyker, mattiacci, RWeick, joshman196
+   vpelletier, Ancyker, mattiacci, RWeick, joshman196, partlyhuman
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
