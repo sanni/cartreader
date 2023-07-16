@@ -119,8 +119,8 @@ void setup_LOOPY() {
 // Base Menu
 static const char loopyMenuItem0[] PROGMEM = "Refresh Cart";
 static const char loopyMenuItem1[] PROGMEM = "Read ROM";
-static const char loopyMenuItem2[] PROGMEM = "Read SRAM";
-static const char loopyMenuItem3[] PROGMEM = "Write SRAM";
+static const char loopyMenuItem2[] PROGMEM = "Backup SRAM";
+static const char loopyMenuItem3[] PROGMEM = "Restore SRAM";
 static const char loopyMenuItem4[] PROGMEM = "Format SRAM";
 static const char* const menuOptionsLOOPY[] PROGMEM = { loopyMenuItem0, loopyMenuItem1, loopyMenuItem2, loopyMenuItem3, loopyMenuItem4, string_reset2 };
 
@@ -607,12 +607,7 @@ void writeSRAM_LOOPY() {
   dataIn_LOOPY();
 
   sprintf(filePath, "%s/%s", filePath, fileName);
-  //println_Msg(F("Writing..."));
-
-  char str[16];
-  sprintf(str, "Writing %ld bytes to", sramSize);
-  println_Msg(str);
-
+  println_Msg(F("Restoring SRAM from"));
   println_Msg(filePath);
   display_Update();
 
@@ -655,7 +650,7 @@ void formatSRAM_LOOPY() {
       blinkLED();
     }
   }
-  
+
   digitalWrite(LOOPY_RAMCS1, HIGH);
   digitalWrite(LOOPY_OE, HIGH);
   dataIn_LOOPY();
@@ -686,7 +681,8 @@ void readSRAM_LOOPY() {
 
   const size_t sdBufferSize = 512;
   for (unsigned long ptr = 0; ptr < sramSize;) {
-    sdBuffer[ptr++ % sdBufferSize] = readByte_LOOPY(ptr);
+    uint8_t b = readByte_LOOPY(ptr);
+    sdBuffer[ptr++ % sdBufferSize] = b;
     if (ptr % sdBufferSize == 0) {
       myFile.write(sdBuffer, sdBufferSize);
       blinkLED();
@@ -699,7 +695,6 @@ void readSRAM_LOOPY() {
   myFile.close();
   print_Msg(F("Saved to "));
   print_Msg(folder);
-  println_Msg(F("/"));
   display_Update();
 }
 
