@@ -81,6 +81,9 @@ void printVersionToSerial() {
   #if defined (ENABLE_VSELECT)
     ClockedSerial.print(F("|VSELECT"));
   #endif
+  #if defined (RTC_installed)
+    ClockedSerial.print(F("|RTC"));
+  #endif
   #if defined (clockgen_installed)
     ClockedSerial.print(F("|CLOCKGEN"));
   #endif
@@ -169,8 +172,8 @@ void setClockScale(VOLTS __x)
 *                   
 *F*/
 #if defined(ENABLE_VSELECT) || defined(ENABLE_3V3FIX)
-VOLTS setVoltage(VOLTS volts) {
-  switch(volts) {
+VOLTS setVoltage(VOLTS newVoltage) {
+  switch(newVoltage) {
     /* 5V */
     case VOLTS_SET_5V:
       if (
@@ -199,7 +202,7 @@ VOLTS setVoltage(VOLTS volts) {
     #endif
       // Set clock speed        
       clock = CS_16MHZ;
-      setClockScale(volts); /*[2]*/
+      setClockScale(newVoltage); /*[2]*/
       // Restart serial
     #if !defined(enable_serial) && defined(ENABLE_UPDATER)
       ClockedSerial.begin(UPD_BAUD);
@@ -232,7 +235,7 @@ VOLTS setVoltage(VOLTS volts) {
     #endif
       // Set clock speed
       clock = CS_8MHZ;
-      setClockScale(volts); /*[2]*/
+      setClockScale(newVoltage); /*[2]*/
     #if !defined(enable_serial) && defined(ENABLE_UPDATER)
       ClockedSerial.begin(UPD_BAUD);
     #endif
@@ -256,7 +259,7 @@ VOLTS setVoltage(VOLTS volts) {
 // The compiler will optimize this out when this condition is met.
 // Yes, even though it has a return value it will only be compiled
 //   if something reads that value. Currently nothing does.
-VOLTS setVoltage(VOLTS volts __attribute__((unused))) {
+VOLTS setVoltage(VOLTS newVoltage __attribute__((unused))) {
   return VOLTS_NOTENABLED;
 }
 #endif

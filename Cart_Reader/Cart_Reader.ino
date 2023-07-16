@@ -2940,6 +2940,22 @@ void checkUpdater() {
 #else
       ClockedSerial.println(F("Automatic voltage selection (VSELECT) is not enabled."));
 #endif
+    } else if (cmd == "GETTIME") {
+#if defined(RTC_installed)
+      ClockedSerial.print(F("Current Time: "));
+      ClockedSerial.println(RTCStamp());
+#else
+      ClockedSerial.println(F("RTC not installed"));
+#endif
+  } else if (cmd.substring(0,7) == "SETTIME") {
+#if defined(RTC_installed)
+      ClockedSerial.println(F("Setting Time..."));
+      rtc.adjust(DateTime(cmd.substring(8).toInt()));
+      ClockedSerial.print(F("Current Time: "));
+      ClockedSerial.println(RTCStamp());
+#else
+      ClockedSerial.println(F("RTC not installed"));
+#endif
     } else {
       ClockedSerial.println(F("OSCR: Unknown Command"));
     }
