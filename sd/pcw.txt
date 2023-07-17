@@ -1,3 +1,6 @@
+Shinkenzemi 'Chuugaku Kouza' - Chuu 2 Eigo (Japan) (5BB211NH).pcw
+505F954E
+
 Shinkenzemi 'Chuugaku Kouza' - Chuu 2 Eigo (Japan) (5BB212SS).pcw
 FF3E9B62
 
@@ -40,6 +43,9 @@ Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB214TE).pcw
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB311NH).pcw
 A18685A5
 
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB312SS).pcw
+C4676FC9
+
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB313NC).pcw
 DDE96468
 
@@ -81,6 +87,9 @@ BDC7847D
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (1-bunya) (Japan) (Rev 1) (7BF411).pcw
 0C80EC13
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (7BF412).pcw
+A6E409E8
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (Rev 1) (7BF412).pcw
 336289BC
