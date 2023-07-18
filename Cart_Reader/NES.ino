@@ -3331,9 +3331,10 @@ void readCHR(bool readrom) {
           break;
 
         case 3:  // 8K/16K/32K - bus conflicts
+        case 148:  // Sachen SA-008-A and Tengen 800008 - Bus conflicts
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
-            for (size_t x = 0; x < 0x2000; x++) {
+            for (size_t x = 0; x < 0x8000; x++) {
               if (read_prg_byte(0x8000 + x) == i) {
                 write_prg_byte(0x8000 + x, i);
                 break;
@@ -4057,26 +4058,6 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x6000, i);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
-          }
-          break;
-
-        case 148:  // Sachen SA-008-A and Tengen 800008 -- Bus conflicts
-          banks = int_pow(2, chrsize);
-          busConflict = true;
-          for (size_t i = 0; i < banks; i++) {
-            for (size_t x = 0; x < 0x8000; x++) {
-              if (read_prg_byte(0x8000 + x) == i) {
-                write_prg_byte(0x8000 + x, i & 0x07);
-                busConflict = false;
-                break;
-              }
-            }
-            if (busConflict) {
-              write_prg_byte(0x8000 + i, i & 0x07);
-            }
             for (size_t address = 0x0; address < 0x2000; address += 512) {
               dumpCHR(address);
             }
