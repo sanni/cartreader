@@ -2655,7 +2655,6 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 // Serial Monitor
 byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
   // Print menu to serial monitor
-  //Serial.println(question);
   Serial.println("");
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
@@ -2673,61 +2672,27 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
   // Read the incoming byte:
   incomingByte = Serial.read() - 48;
 
-  /* Import file (i)
-    if (incomingByte == 57) {
-    if (filebrowse == 1) {
-      // Make sure we have an import directory
-      sd.mkdir("IMPORT", true);
-
-      // Create and open file on sd card
-      EEPROM_readAnything(0, foldern);
-      sprintf(fileName, "IMPORT/%d.bin", foldern);
-      if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-        print_FatalError(create_file_STR);
-      }
-
-      // Read file from serial
-      fileSize = 0;
-      while (Serial.available() > 0) {
-        myFile.write(Serial.read());
-        fileSize++;
-        // Blink led
-        blinkLED();
-      }
-
-      // Close the file:
-      myFile.close();
-
-      // Write new folder number back to eeprom
-      foldern = foldern + 1;
-      EEPROM_writeAnything(0, foldern);
-
-      print_Msg(F("Imported "));
-      print_Msg(fileSize);
-      print_Msg(F(" bytes to file "));
-      println_Msg(fileName);
-      return 7;
-    }
-    }*/
-
   // Page up (u)
   if (incomingByte == 69) {
-    if (filebrowse == 1) {
       if (currPage > 1) {
         lastPage = currPage;
         currPage--;
       } else {
         root = 1;
       }
-    }
   }
 
   // Page down (d)
   else if (incomingByte == 52) {
-    if ((numPages > currPage) && (filebrowse == 1)) {
+      if (numPages > currPage) {
       lastPage = currPage;
       currPage++;
     }
+  }
+
+ // Execute choice
+  else if ((incomingByte >= 0) && (incomingByte < 7)){
+    numPages = 0;
   }
 
   // Print the received byte for validation e.g. in case of a different keyboard mapping
