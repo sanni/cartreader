@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2023-07-13
-   Version:          12.7
+   Date:             2023-07-19
+   Version:          12.8
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -817,37 +817,362 @@ void print_MissingModule(void) {
 }
 
 /******************************************
-  Main menu optimized for rotary encoder
+  Main menu
 *****************************************/
-#if defined(enable_LCD)
-// Main menu
+#ifdef enable_GBX
 static const char modeItem1[] PROGMEM = "Game Boy";
+#endif
+#ifdef enable_NES
 static const char modeItem2[] PROGMEM = "NES/Famicom";
+#endif
+#ifdef enable_SNES
 static const char modeItem3[] PROGMEM = "Super Nintendo/SFC";
+#endif
+#ifdef enable_N64
 static const char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
+#endif
+#ifdef enable_MD
 static const char modeItem5[] PROGMEM = "Mega Drive/Genesis";
+#endif
+#ifdef enable_SMS
 static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
+#endif
+#ifdef enable_PCE
 static const char modeItem7[] PROGMEM = "PC Engine/TG16";
+#endif
+#ifdef enable_WS
 static const char modeItem8[] PROGMEM = "WonderSwan (3V)";
+#endif
+#ifdef enable_NGP
 static const char modeItem9[] PROGMEM = "NeoGeo Pocket (3V)";
+#endif
+#ifdef enable_INTV
 static const char modeItem10[] PROGMEM = "Intellivision";
+#endif
+#ifdef enable_COLV
 static const char modeItem11[] PROGMEM = "Colecovision";
+#endif
+#ifdef enable_VBOY
 static const char modeItem12[] PROGMEM = "Virtual Boy";
+#endif
+#ifdef enable_WSV
 static const char modeItem13[] PROGMEM = "Watara Supervision (3V)";
+#endif
+#ifdef enable_PCW
 static const char modeItem14[] PROGMEM = "Pocket Challenge W";
+#endif
+#ifdef enable_ATARI
 static const char modeItem15[] PROGMEM = "Atari 2600";
+#endif
+#ifdef enable_ODY2
 static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
+#endif
+#ifdef enable_ARC
 static const char modeItem17[] PROGMEM = "Arcadia 2001";
+#endif
+#ifdef enable_FAIRCHILD
 static const char modeItem18[] PROGMEM = "Fairchild Channel F";
+#endif
+#ifdef enable_SUPRACAN
 static const char modeItem19[] PROGMEM = "Super A'can";
+#endif
+#ifdef enable_MSX
 static const char modeItem20[] PROGMEM = "MSX";
+#endif
+#ifdef enable_POKE
 static const char modeItem21[] PROGMEM = "Pokemon Mini (3V)";
+#endif
+#ifdef enable_LOOPY
 static const char modeItem22[] PROGMEM = "Casio Loopy";
+#endif
+#ifdef enable_FLASH
 static const char modeItem23[] PROGMEM = "Flashrom Programmer";
+#endif
 static const char modeItem24[] PROGMEM = "Self Test (3V)";
 static const char modeItem25[] PROGMEM = "About";
-//static const char modeItem26[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, modeItem7, modeItem8, modeItem9, modeItem10, modeItem11, modeItem12, modeItem13, modeItem14, modeItem15, modeItem16, modeItem17, modeItem18, modeItem19, modeItem20, modeItem21, modeItem22, modeItem23, modeItem24, modeItem25, string_reset2 };
+//static const char modeItem25[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const modeOptions[] PROGMEM = {
+#ifdef enable_GBX
+  modeItem1,
+#endif
+#ifdef enable_NES
+  modeItem2,
+#endif
+#ifdef enable_SNES
+  modeItem3,
+#endif
+#ifdef enable_N64
+  modeItem4,
+#endif
+#ifdef enable_MD
+  modeItem5,
+#endif
+#ifdef enable_SMS
+  modeItem6,
+#endif
+#ifdef enable_PCE
+  modeItem7,
+#endif
+#ifdef enable_WS
+  modeItem8,
+#endif
+#ifdef enable_NGP
+  modeItem9,
+#endif
+#ifdef enable_INTV
+  modeItem10,
+#endif
+#ifdef enable_COLV
+  modeItem11,
+#endif
+#ifdef enable_VBOY
+  modeItem12,
+#endif
+#ifdef enable_WSV
+  modeItem13,
+#endif
+#ifdef enable_PCW
+  modeItem14,
+#endif
+#ifdef enable_ATARI
+  modeItem15,
+#endif
+#ifdef enable_ODY2
+  modeItem16,
+#endif
+#ifdef enable_ARC
+  modeItem17,
+#endif
+#ifdef enable_FAIRCHILD
+  modeItem18,
+#endif
+#ifdef enable_SUPRACAN
+  modeItem19,
+#endif
+#ifdef enable_MSX
+  modeItem20,
+#endif
+#ifdef enable_POKE
+  modeItem21,
+#endif
+#ifdef enable_LOOPY
+  modeItem22,
+#endif
+#ifdef enable_FLASH
+  modeItem23,
+#endif
+  modeItem24, modeItem25, string_reset2
+};
+
+// Count menu entries
+byte countMenuEntries() {
+  byte count = 3;
+#ifdef enable_GBX
+  count++;
+#endif
+#ifdef enable_NES
+  count++;
+#endif
+#ifdef enable_SNES
+  count++;
+#endif
+#ifdef enable_N64
+  count++;
+#endif
+#ifdef enable_MD
+  count++;
+#endif
+#ifdef enable_SMS
+  count++;
+#endif
+#ifdef enable_PCE
+  count++;
+#endif
+#ifdef enable_WS
+  count++;
+#endif
+#ifdef enable_NGP
+  count++;
+#endif
+#ifdef enable_INTV
+  count++;
+#endif
+#ifdef enable_COLV
+  count++;
+#endif
+#ifdef enable_VBOY
+  count++;
+#endif
+#ifdef enable_WSV
+  count++;
+#endif
+#ifdef enable_PCW
+  count++;
+#endif
+#ifdef enable_ATARI
+  count++;
+#endif
+#ifdef enable_ODY2
+  count++;
+#endif
+#ifdef enable_ARC
+  count++;
+#endif
+#ifdef enable_FAIRCHILD
+  count++;
+#endif
+#ifdef enable_SUPRACAN
+  count++;
+#endif
+#ifdef enable_MSX
+  count++;
+#endif
+#ifdef enable_POKE
+  count++;
+#endif
+#ifdef enable_LOOPY
+  count++;
+#endif
+#ifdef enable_FLASH
+  count++;
+#endif
+  return count;
+}
+
+// Account for disabled menue entries
+unsigned char fixMenuOrder(unsigned char modeMenu) {
+  byte translationMatrix[26];
+  byte currentEntry = 0;
+
+#if defined(enable_GBX)
+  translationMatrix[currentEntry] = 0;
+  currentEntry++;
+#endif
+
+#if defined(enable_NES)
+  translationMatrix[currentEntry] = 1;
+  currentEntry++;
+#endif
+
+#if defined(enable_SNES)
+  translationMatrix[currentEntry] = 2;
+  currentEntry++;
+#endif
+
+#if defined(enable_N64)
+  translationMatrix[currentEntry] = 3;
+  currentEntry++;
+#endif
+
+#if defined(enable_MD)
+  translationMatrix[currentEntry] = 4;
+  currentEntry++;
+#endif
+
+#if defined(enable_SMS)
+  translationMatrix[currentEntry] = 5;
+  currentEntry++;
+#endif
+
+#if defined(enable_PCE)
+  translationMatrix[currentEntry] = 6;
+  currentEntry++;
+#endif
+
+#if defined(enable_WS)
+  translationMatrix[currentEntry] = 7;
+  currentEntry++;
+#endif
+
+#if defined(enable_NGP)
+  translationMatrix[currentEntry] = 8;
+  currentEntry++;
+#endif
+
+#if defined(enable_INTV)
+  translationMatrix[currentEntry] = 9;
+  currentEntry++;
+#endif
+
+#if defined(enable_COLV)
+  translationMatrix[currentEntry] = 10;
+  currentEntry++;
+#endif
+
+#if defined(enable_VBOY)
+  translationMatrix[currentEntry] = 11;
+  currentEntry++;
+#endif
+
+#if defined(enable_WSV)
+  translationMatrix[currentEntry] = 12;
+  currentEntry++;
+#endif
+
+#if defined(enable_PCW)
+  translationMatrix[currentEntry] = 13;
+  currentEntry++;
+#endif
+
+#if defined(enable_ATARI)
+  translationMatrix[currentEntry] = 14;
+  currentEntry++;
+#endif
+
+#if defined(enable_ODY2)
+  translationMatrix[currentEntry] = 15;
+  currentEntry++;
+#endif
+
+#if defined(enable_ARC)
+  translationMatrix[currentEntry] = 16;
+  currentEntry++;
+#endif
+
+#if defined(enable_FAIRCHILD)
+  translationMatrix[currentEntry] = 17;
+  currentEntry++;
+#endif
+
+#if defined(enable_SUPRACAN)
+  translationMatrix[currentEntry] = 18;
+  currentEntry++;
+#endif
+
+#if defined(enable_MSX)
+  translationMatrix[currentEntry] = 19;
+  currentEntry++;
+#endif
+
+#if defined(enable_POKE)
+  translationMatrix[currentEntry] = 20;
+  currentEntry++;
+#endif
+
+#if defined(enable_LOOPY)
+  translationMatrix[currentEntry] = 21;
+  currentEntry++;
+#endif
+
+#if defined(enable_FLASH)
+  translationMatrix[currentEntry] = 22;
+  currentEntry++;
+#endif
+
+  // Self Test
+  translationMatrix[currentEntry] = 23;
+  currentEntry++;
+
+  // About
+  translationMatrix[currentEntry] = 24;
+  currentEntry++;
+
+  // Reset
+  translationMatrix[currentEntry] = 25;
+  currentEntry++;
+
+  return translationMatrix[modeMenu];
+}
 
 // All included slots
 void mainMenu() {
@@ -856,24 +1181,39 @@ void mainMenu() {
   byte num_answers;
   byte option_offset;
 
+  // Count menu entries
+  byte menuCount = countMenuEntries();
+
   // Main menu spans across three pages
   currPage = 1;
   lastPage = 1;
-  numPages = 4;
+  if ((menuCount % 7) == 0)
+    numPages = menuCount / 7;
+  else
+    numPages = (byte)(menuCount / 7) + 1;
 
   while (1) {
     if (currPage == 1) {
       option_offset = 0;
-      num_answers = 7;
+      if (menuCount < 7)
+        num_answers = menuCount;
+      else
+        num_answers = 7;
     } else if (currPage == 2) {
       option_offset = 7;
-      num_answers = 7;
+      if (menuCount < 14)
+        num_answers = menuCount - 7;
+      else
+        num_answers = 7;
     } else if (currPage == 3) {
       option_offset = 14;
-      num_answers = 7;
+      if (menuCount < 21)
+        num_answers = menuCount - 14;
+      else
+        num_answers = 7;
     } else {  // currPage == 4
       option_offset = 21;
-      num_answers = 4;
+      num_answers = menuCount - 21;
     }
     // Copy menuOptions out of progmem
     convertPgm(modeOptions + option_offset, num_answers);
@@ -888,8 +1228,11 @@ void mainMenu() {
   // Reset page number
   currPage = 1;
 
+  modeMenu = fixMenuOrder(modeMenu);
+
   // wait for user choice to come back from the question box menu
   switch (modeMenu) {
+
 #ifdef enable_GBX
     case 0:
       gbxMenu();
@@ -1074,377 +1417,6 @@ void mainMenu() {
   }
 }
 
-/******************************************
-  Main menu optimized for buttons
-*****************************************/
-#else
-// Main menu
-static const char modeItem1[] PROGMEM = "Add-ons";
-#if defined(clockgen_installed)
-static const char modeItem2[] PROGMEM = "SNES/SFC (CLK0+1)";
-#else
-static const char modeItem2[] PROGMEM = "Super Nintendo/SFC";
-#endif
-static const char modeItem3[] PROGMEM = "Mega Drive/Genesis";
-static const char modeItem4[] PROGMEM = "N64 (3V EEP CLK1)";
-static const char modeItem5[] PROGMEM = "Game Boy";
-static const char modeItem6[] PROGMEM = "About";
-// static const char modeItem7[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const modeOptions[] PROGMEM = { modeItem1, modeItem2, modeItem3, modeItem4, modeItem5, modeItem6, string_reset2 };
-
-// Add-ons submenu
-static const char addonsItem1[] PROGMEM = "70s Consoles";
-static const char addonsItem2[] PROGMEM = "80s Consoles";
-static const char addonsItem3[] PROGMEM = "90s Consoles";
-static const char addonsItem4[] PROGMEM = "Handhelds";
-static const char addonsItem5[] PROGMEM = "Flashrom Programmer";
-static const char addonsItem6[] PROGMEM = "Self Test (EEP)";
-//static const char addonsItem7[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const addonsOptions[] PROGMEM = { addonsItem1, addonsItem2, addonsItem3, addonsItem4, addonsItem5, addonsItem6, string_reset2 };
-
-// 70s Consoles submenu
-static const char consoles70Item1[] PROGMEM = "Atari 2600";
-static const char consoles70Item2[] PROGMEM = "Magnavox Odyssey 2";
-static const char consoles70Item3[] PROGMEM = "Arcadia 2001";
-static const char consoles70Item4[] PROGMEM = "Fairchild Channel F";
-static const char consoles70Item5[] PROGMEM = "Intellivision";
-static const char consoles70Item6[] PROGMEM = "Colecovision";
-//static const char consoles70Item7[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const consoles70Options[] PROGMEM = { consoles70Item1, consoles70Item2, consoles70Item3, consoles70Item4, consoles70Item5, consoles70Item6, string_reset2 };
-
-// 80s Consoles submenu
-static const char consoles80Item1[] PROGMEM = "NES/Famicom";
-static const char consoles80Item2[] PROGMEM = "PC Engine/TG16";
-static const char consoles80Item3[] PROGMEM = "SMS/GG/MIII/SG-1000";
-static const char consoles80Item4[] PROGMEM = "MSX";
-//static const char consoles80Item5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const consoles80Options[] PROGMEM = { consoles80Item1, consoles80Item2, consoles80Item3, consoles80Item4, string_reset2 };
-
-// 90s Consoles submenu
-static const char consoles90Item1[] PROGMEM = "Super A'can";
-static const char consoles90Item2[] PROGMEM = "Casio Loopy";
-static const char* const consoles90Options[] PROGMEM = { consoles90Item1, consoles90Item2, string_reset2 };
-
-// Handhelds submenu
-static const char handheldsItem1[] PROGMEM = "Virtual Boy";
-static const char handheldsItem2[] PROGMEM = "WonderSwan (3V)";
-static const char handheldsItem3[] PROGMEM = "NeoGeo Pocket (3V)";
-static const char handheldsItem4[] PROGMEM = "Watara Supervision (3V)";
-static const char handheldsItem5[] PROGMEM = "Pocket Challenge W";
-static const char handheldsItem6[] PROGMEM = "Pokemon Mini (3V)";
-//static const char handheldsItem6[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const handheldsOptions[] PROGMEM = { handheldsItem1, handheldsItem2, handheldsItem3, handheldsItem4, handheldsItem5, handheldsItem6, string_reset2 };
-
-// All included slots
-void mainMenu() {
-  // create menu with title and 6 options to choose from
-  unsigned char modeMenu;
-  // Copy menuOptions out of progmem
-  convertPgm(modeOptions, 7);
-  modeMenu = question_box(F("OPENSOURCE CARTREADER"), menuOptions, 7, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (modeMenu) {
-    case 0:
-      addonMenu();
-      break;
-
-#ifdef enable_SNES
-    case 1:
-      snsMenu();
-      break;
-#endif
-
-#ifdef enable_MD
-    case 2:
-      mdMenu();
-      break;
-#endif
-
-#ifdef enable_N64
-    case 3:
-      n64Menu();
-      break;
-#endif
-
-#ifdef enable_GBX
-    case 4:
-      gbxMenu();
-      break;
-#endif
-
-    case 5:
-      aboutScreen();
-      break;
-
-    case 6:
-      resetArduino();
-      break;
-
-    default:
-      print_MissingModule();  // does not return
-  }
-}
-
-// Everything that needs an adapter
-void addonMenu() {
-  // create menu with title and 5 options to choose from
-  unsigned char addonsMenu;
-  // Copy menuOptions out of progmem
-  convertPgm(addonsOptions, 7);
-  addonsMenu = question_box(F("Type"), menuOptions, 7, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (addonsMenu) {
-    // 70s Consoles
-    case 0:
-      consoles70Menu();
-      break;
-
-      // 80s Consoles
-    case 1:
-      consoles80Menu();
-      break;
-
-    case 2:
-      consoles90Menu();
-      break;
-
-    // Handhelds
-    case 3:
-      handheldMenu();
-      break;
-
-#ifdef enable_FLASH
-    case 4:
-#ifdef ENABLE_VSELECT
-      setup_FlashVoltage();
-#endif
-      flashMenu();
-      break;
-#endif
-
-#ifdef enable_selftest
-    case 5:
-      selfTest();
-      break;
-#endif
-
-    case 6:
-      resetArduino();
-      break;
-
-    default:
-      print_MissingModule();  // does not return
-  }
-}
-
-// Everything that needs an adapter
-void consoles70Menu() {
-  // create menu with title and 7 options to choose from
-  unsigned char consoles70Menu;
-  // Copy menuOptions out of progmem
-  convertPgm(consoles70Options, 7);
-  consoles70Menu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
-  // wait for user choice to come back from the question box menu
-  switch (consoles70Menu) {
-#ifdef enable_ATARI
-    case 0:
-      setup_ATARI();
-      atariMenu();
-      break;
-#endif
-
-#ifdef enable_ODY2
-    case 1:
-      setup_ODY2();
-      ody2Menu();
-      break;
-#endif
-
-#ifdef enable_ARC
-    case 2:
-      setup_ARC();
-      arcMenu();
-      break;
-#endif
-
-#ifdef enable_FAIRCHILD
-    case 3:
-      setup_FAIRCHILD();
-      fairchildMenu();
-      break;
-#endif
-
-#ifdef enable_INTV
-    case 4:
-      setup_INTV();
-      intvMenu();
-      break;
-#endif
-
-#ifdef enable_COLV
-    case 5:
-      setup_COL();
-      colMenu();
-      break;
-#endif
-
-    case 6:
-      resetArduino();
-      break;
-
-    default:
-      print_MissingModule();  // does not return
-  }
-}
-
-// Everything that needs an adapter
-void consoles80Menu() {
-  // create menu with title and 6 options to choose from
-  unsigned char consoles80Menu;
-  // Copy menuOptions out of progmem
-  convertPgm(consoles80Options, 5);
-  consoles80Menu = question_box(F("Choose Adapter"), menuOptions, 5, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (consoles80Menu) {
-#ifdef enable_NES
-    case 0:
-      mode = mode_NES;
-      display_Clear();
-      display_Update();
-      setup_NES();
-      getMapping();
-      checkStatus_NES();
-      nesMenu();
-      break;
-#endif
-
-#ifdef enable_PCE
-    case 1:
-      pcsMenu();
-      break;
-#endif
-
-#ifdef enable_SMS
-    case 2:
-      smsMenu();
-      break;
-#endif
-
-#ifdef enable_MSX
-    case 3:
-      setup_MSX();
-      msxMenu();
-      break;
-#endif
-
-    case 4:
-      resetArduino();
-      break;
-
-    default:
-      print_MissingModule();  // does not return
-  }
-}
-
-// Everything that needs an adapter
-void consoles90Menu() {
-  unsigned char consoles90Menu;
-  // Copy menuOptions out of progmem
-  convertPgm(consoles90Options, 2);
-  consoles90Menu = question_box(F("Choose Adapter"), menuOptions, 2, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (consoles90Menu) {
-#ifdef enable_SUPRACAN
-    case 0:
-      setup_SuprAcan();
-      break;
-#endif
-
-#ifdef enable_LOOPY
-    case 1:
-      loopyMenu();
-      break;
-#endif
-
-    case 2:
-      resetArduino();
-      break;
-
-    default:
-      print_MissingModule();  // does not return
-      break;
-  }
-}
-
-// Everything that needs an adapter
-void handheldMenu() {
-  // create menu with title and 6 options to choose from
-  unsigned char handheldsMenu;
-  // Copy menuOptions out of progmem
-  convertPgm(handheldsOptions, 7);
-  handheldsMenu = question_box(F("Choose Adapter"), menuOptions, 7, 0);
-
-  // wait for user choice to come back from the question box menu
-  switch (handheldsMenu) {
-#ifdef enable_VBOY
-    case 0:
-      setup_VBOY();
-      vboyMenu();
-      break;
-#endif
-
-#ifdef enable_WS
-    case 1:
-      display_Clear();
-      display_Update();
-      setup_WS();
-      mode = mode_WS;
-      break;
-#endif
-
-#ifdef enable_NGP
-    case 2:
-      display_Clear();
-      display_Update();
-      setup_NGP();
-      mode = mode_NGP;
-      break;
-#endif
-
-#ifdef enable_WSV
-    case 3:
-      setup_WSV();
-      wsvMenu();
-      break;
-#endif
-
-#ifdef enable_PCW
-    case 4:
-      setup_PCW();
-      pcwMenu();
-      break;
-#endif
-
-#ifdef enable_POKE
-    case 5:
-      setup_POKE();
-      pokeMenu();
-      break;
-#endif
-
-    case 6:
-      resetArduino();
-      break;
-
-    default:
-      print_MissingModule();  // does not return
-  }
-}
-#endif
 
 /******************************************
   Self Test
@@ -2947,7 +2919,7 @@ void checkUpdater() {
 #else
       ClockedSerial.println(F("RTC not installed"));
 #endif
-  } else if (cmd.substring(0,7) == "SETTIME") {
+    } else if (cmd.substring(0, 7) == "SETTIME") {
 #if defined(RTC_installed)
       ClockedSerial.println(F("Setting Time..."));
       rtc.adjust(DateTime(cmd.substring(8).toInt()));
