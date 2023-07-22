@@ -15,7 +15,7 @@
 
 /*==== SANITY CHECKS ==============================================*/
 #if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
-  #error !!! PLEASE CHOOSE HARDWARE VERSION !!!
+  #error !!! PLEASE CHOOSE HARDWARE VERSION IN CONFIG.H !!!
 #endif
 
 #if defined(ENABLE_3V3FIX) && !defined(ENABLE_VSELECT)

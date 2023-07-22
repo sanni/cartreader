@@ -1645,7 +1645,11 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
   RTC Module
 *****************************************/
 #ifdef RTC_installed
+#if defined(DS3231)
 RTC_DS3231 rtc;
+#elif defined(DS1307)
+RTC_DS1307 rtc;
+#endif
 
 // Start Time
 void RTCStart() {
@@ -1654,11 +1658,14 @@ void RTCStart() {
     abort();
   }
 
+// RTC_DS1307 does not have lostPower()
+#if defined(DS3231)
   // Set RTC Date/Time of Sketch Build if it lost battery power
   // After initial setup it would have lost battery power ;)
   if (rtc.lostPower()) {
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
+#endif
 }
 
 // Set Date/Time Callback Funtion
@@ -2674,24 +2681,24 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 
   // Page up (u)
   if (incomingByte == 69) {
-      if (currPage > 1) {
-        lastPage = currPage;
-        currPage--;
-      } else {
-        root = 1;
-      }
+    if (currPage > 1) {
+      lastPage = currPage;
+      currPage--;
+    } else {
+      root = 1;
+    }
   }
 
   // Page down (d)
   else if (incomingByte == 52) {
-      if (numPages > currPage) {
+    if (numPages > currPage) {
       lastPage = currPage;
       currPage++;
     }
   }
 
- // Execute choice
-  else if ((incomingByte >= 0) && (incomingByte < 7)){
+  // Execute choice
+  else if ((incomingByte >= 0) && (incomingByte < 7)) {
     numPages = 0;
   }
 

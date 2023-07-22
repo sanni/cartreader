@@ -61,6 +61,8 @@
 */
 
 //#define RTC_installed
+#define DS3231
+//#define DS1307
 
 /****/
 
@@ -274,7 +276,7 @@
 *   other than HW5 and HW3.
 */
 
-//#define ENABLE_UPDATER
+#define ENABLE_UPDATER
 
 /****/
 
