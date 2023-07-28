@@ -272,7 +272,7 @@ void readROM_POKE() {
   }
   myFile.close();
 
-  calcCRC(fileName, 0x80000, NULL, 0);  // 512K
+  compareCRC("pkmn.txt", 0, 1, 0);
 
   println_Msg(F(""));
   // Prints string out of the common strings array either with or without newline
