@@ -4,11 +4,11 @@
 2 in 1 - Hash Blocks + Eagle Plan (USA, Europe).sv
 C1354952,21795D9D,64
 
-4 in 1 - Hash Block + Challenger Tank + Brain Power + Jacky Lucky (USA, Europe).sv
-AB3BBF1A,B2AA7578,64
-
 Alien (USA, Europe).sv
 8DBB2C53,B587490C,64
+
+Assembloids (World) (Aftermarket) (Unl).sv
+85A0E7C8,059EB9DC,64
 
 Balloon Fight (USA, Europe).sv
 8188B755,F59A28E2,64
@@ -195,6 +195,9 @@ AD147842,73276EBC,64
 
 Treasure Hunter (USA, Europe).sv
 DB35B809,B2AA7578,64
+
+Treasure Hunter (USA, Europe) (Rev 1).sv
+69068337,3E796E26,64
 
 TV-Link (USA, Europe).sv
 AF3EA0DD,96C646A2,32
