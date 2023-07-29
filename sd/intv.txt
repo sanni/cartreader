@@ -2,7 +2,7 @@ ABPA Backgammon ~ Backgammon (USA, Europe).int
 A60E25FC,C36165EC,0,08,0
 
 Advanced Dungeons & Dragons (USA, Europe).int
-F8B1F2B7,E1F0B155,0,16,0
+9D4355AA,E1F0B155,0,12,0
 
 Advanced Dungeons & Dragons - Treasure of Tarmin (USA).int
 16C3B62F,95A8ADB2,0,16,0
@@ -110,7 +110,7 @@ Demon Attack (USA, Europe).int
 5E6A8CD8,25554AAB,7,16,0
 
 Demonstration Cartridge - Blue (USA).int
-02919024,78C428C7,0,16,0
+C99E7554,78C428C7,0,12,0
 
 Demonstration Cartridge - Green (USA).int
 A3ACD160,3BC5456A,0,32,0
@@ -236,7 +236,7 @@ Lock 'N' Chase (USA, Europe) (Rev 1).int
 5C7E9848,E48B1C19,0,16,0
 
 Lock 'N' Chase (USA, Europe).int
-E00D1399,DCC7DDF1,0,16,0
+04977992,DCC7DDF1,0,12,0
 
 Loco-Motion (USA).int
 6B6E80EE,DF82461E,0,16,0
@@ -380,7 +380,7 @@ Rocky & Bullwinckle (USA) (Proto).int
 867F1941,5897B25B,0,16,0
 
 Royal Dealer (USA, Europe).int
-DCF4B15D,9E0D5725,0,16,0
+0458A491,9E0D5725,0,12,0
 
 Safecracker (USA, Europe).int
 47AA7977,D8A856C3,0,16,0
