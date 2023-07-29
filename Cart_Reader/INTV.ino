@@ -58,16 +58,16 @@
 // Cart Configurations
 // Format = {mapper,romlo,romhi,ramsize}
 static const byte PROGMEM intvmapsize[] = {
-  0, 0, 2, 0,  // default mattel up to 32K (8K/16K/24K/32K)
-  1, 1, 3, 0,  // demo cart 16K, championship tennis 32K, wsml baseball 48K
-  2, 1, 3, 0,  // up to 48K (16K/32K/48K)
-  3, 4, 4, 0,  // tower of doom 48K
-  4, 0, 1, 1,  // uscf chess 16K + RAM 1K
-  5, 2, 3, 0,  // congo bongo/defender/pac-man 24K, dig dug 32K
-  6, 1, 1, 0,  // centipede 16K
-  7, 1, 1, 0,  // imagic carts 16K
-  8, 1, 1, 0,  // mte-201 test cart 16K
-  9, 3, 3, 2,  // triple challenge 32K + RAM 2K
+  0, 0, 3, 0,  // default mattel up to 32K (8K/12K/16K/24K/32K)
+  1, 2, 4, 0,  // demo cart 16K, championship tennis 32K, wsml baseball 48K
+  2, 2, 4, 0,  // up to 48K (16K/32K/48K)
+  3, 5, 5, 0,  // tower of doom 48K
+  4, 2, 2, 1,  // uscf chess 16K + RAM 1K
+  5, 3, 4, 0,  // congo bongo/defender/pac-man 24K, dig dug 32K
+  6, 2, 2, 0,  // centipede 16K
+  7, 2, 2, 0,  // imagic carts 16K
+  8, 2, 2, 0,  // mte-201 test cart 16K
+  9, 4, 4, 2,  // triple challenge 32K + RAM 2K
 };
 
 byte intvmapcount = 10;  // (sizeof(mapsize)/sizeof(mapsize[0])) / 4;
@@ -75,9 +75,9 @@ boolean intvmapfound = false;
 byte intvmapselect;
 int intvindex;
 
-const byte INTV[] PROGMEM = { 8, 16, 24, 32, 48 };
+const byte INTV[] PROGMEM = { 8, 12, 16, 24, 32, 48 };
 byte intvlo = 0;  // Lowest Entry
-byte intvhi = 4;  // Highest Entry
+byte intvhi = 5;  // Highest Entry
 
 byte intvmapper;
 byte newintvmapper;
@@ -333,25 +333,28 @@ void readROM_INTV() {
   EEPROM_writeAnything(0, foldern);
 
   switch (intvmapper) {
-    case 0:                              //default mattel up to 32K (8K/16K/24K/32K)
+    case 0:                              //default mattel up to 32K (8K/12K/16K/24K/32K)
       readSegment_INTV(0x5000, 0x6000);  // 8K
       if (intvsize > 0) {
-        readSegment_INTV(0x6000, 0x7000);  // +8K = 16K
+        readSegment_INTV(0x6000, 0x6800);  // +4K = 12K
         if (intvsize > 1) {
-          readSegment_INTV(0xD000, 0xE000);  // +8K = 24K
-          if (intvsize > 2)
-            readSegment_INTV(0xF000, 0x10000);  // +8K = 32K
+          readSegment_INTV(0x6800, 0x7000);  // +4K = 16K
+          if (intvsize > 2) {
+            readSegment_INTV(0xD000, 0xE000);  // +8K = 24K
+            if (intvsize > 3)
+              readSegment_INTV(0xF000, 0x10000);  // +8K = 32K
+          }
         }
       }
       break;
 
     case 1:                              // demo cart/championship tennis/wsml baseball
       readSegment_INTV(0x5000, 0x7000);  // 16K Demo Cart
-      if (intvsize > 1) {
+      if (intvsize > 2) {
         readSegment_INTV(0xD000, 0xE000);  // +8K = 24K [NONE]
-        if (intvsize > 2) {
+        if (intvsize > 3) {
           readSegment_INTV(0xE000, 0xF000);  // +8K = 32K Championship Tennis
-          if (intvsize > 3) {
+          if (intvsize > 4) {
             readSegment_INTV(0xF000, 0x10000);  // +8K = 40K WSML Baseball [MISSING 8K ECS BANK]
             // ecs bank switch
             ecsBank(0xFFFF, 0x1);               // switch ecs page 1 to 0xF000
@@ -364,11 +367,11 @@ void readROM_INTV() {
 
     case 2:                              // up to 48K (16K/32K/48K)
       readSegment_INTV(0x5000, 0x7000);  // 16K
-      if (intvsize > 1) {
+      if (intvsize > 2) {
         readSegment_INTV(0x9000, 0xA000);  // +8K = 24K [NONE]
-        if (intvsize > 2) {
+        if (intvsize > 3) {
           readSegment_INTV(0xA000, 0xB000);  // +8K = 32K
-          if (intvsize > 3) {
+          if (intvsize > 4) {
             readSegment_INTV(0xB000, 0xC000);  // +8K = 40K
             readSegment_INTV(0xD000, 0xE000);  // +8K = 48K
           }
@@ -393,7 +396,7 @@ void readROM_INTV() {
     case 5:                              // congo bongo/defender/pac-man/dig dug
       readSegment_INTV(0x5000, 0x7000);  // 16K
       readSegment_INTV(0x7000, 0x8000);  // +8K = 24K Congo Bongo/Defender/Pac-Man
-      if (intvsize > 2) {
+      if (intvsize > 3) {
         readSegment_INTV(0x9000, 0xA000);  // +8K = 32K Dig Dug
         //readSegment_INTV(0xA000,0xC000); // +16K = 48K [UNUSED]
       }
@@ -751,7 +754,7 @@ void checkStatus_INTV() {
     intvmapper = 0;
     EEPROM_writeAnything(7, intvmapper);
   }
-  if (intvsize > 4) {
+  if (intvsize > 5) {
     intvsize = 0;
     EEPROM_writeAnything(8, intvsize);
   }
@@ -907,26 +910,30 @@ void setCart_INTV() {
 
         // Selection
         else if (b == 3) {
-          //byte INTV[] = {8, 16, 24, 32, 48};
+          //byte INTV[] = {8, 12, 16, 24, 32, 48};
           switch (cartSize) {
             case 8:
               intvsize = 0;
               break;
 
-            case 16:
+            case 12:
               intvsize = 1;
               break;
 
-            case 24:
+            case 16:
               intvsize = 2;
               break;
 
-            case 32:
+            case 24:
               intvsize = 3;
               break;
 
-            case 48:
+            case 32:
               intvsize = 4;
+              break;
+
+            case 48:
+              intvsize = 5;
               break;
 
             default:
