@@ -1440,6 +1440,18 @@ void selfTest() {
   wait();
   display_Clear();
 
+#if defined(HW3)
+  println_Msg(F("Self Test"));
+  println_Msg(F(""));
+  println_Msg(F("Turn the EEP switch on."));
+  println_Msg(F(""));
+  println_Msg(F(""));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+  display_Clear();
+#endif
+
   // Test if pin 7 is held high by 1K resistor
   pinMode(7, INPUT);
   println_Msg(F("Testing 1K resistor "));
