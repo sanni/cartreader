@@ -314,7 +314,6 @@ void gbxMenu() {
       display_Clear();
       display_Update();
       unsigned char gbPelican;
-            vselect(false);
             // Copy menuOptions out of progmem
             convertPgm(menuOptionsGBPelican, 2);
             gbPelican = question_box(F("Select operation:"), menuOptions, 2, 0);
