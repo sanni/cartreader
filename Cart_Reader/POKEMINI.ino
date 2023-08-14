@@ -263,18 +263,24 @@ void readROM_POKE() {
   foldern++;
   EEPROM_writeAnything(0, foldern);
 
+  // read rom
+  uint32_t progress = 0;
+  draw_progressbar(0, 0x80000);
   for (uint32_t addr = 0; addr < 0x80000; addr += 512) {  // 512K
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_POKE(addr + w);
       sdBuffer[w] = temp;
     }
     myFile.write(sdBuffer, 512);
+    progress += 512;
+    draw_progressbar(progress, 0x80000);
   }
   myFile.close();
 
+  // compare dump CRC with db values
   compareCRC("pkmn.txt", 0, 1, 0);
-
   println_Msg(F(""));
+
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
