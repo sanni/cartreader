@@ -1,4 +1,4 @@
-name: Open New Issue
+name: "Open New Issue"
 description: For issues that affect all OSCRs e.g. coding mistakes or hardware oversights.
 body:
   - type: input
@@ -28,11 +28,11 @@ body:
         - HW5 Rev6
     validations:
       required: true
-- type: textarea
+  - type: textarea
     id: attachment
     attributes:
       label: Attach OSCR_LOG.txt file here
-   - type: dropdown
+  - type: dropdown
     id: system
     attributes:
       label: System used
@@ -41,7 +41,7 @@ body:
         - Select a system
         - NES/Famicom/Family Basic
         - SNES/Super Famicom
-        - SF Memory 
+        - SF Memory
         - Satellaview
         - N64 Cartridge
         - N64 Controller Test
@@ -73,7 +73,7 @@ body:
         - MSX
         - Pokemon Mini
         - Casio Loopy
-        - Flashrom Programmer 
+        - Flashrom Programmer
     validations:
       required: false
   - type: textarea
