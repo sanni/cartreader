@@ -39,6 +39,7 @@ body:
       description: Which system is affected?
       options:
         - Select a system
+        - all/none/doesn't matter
         - NES/Famicom/Family Basic
         - SNES/Super Famicom
         - SF Memory
@@ -75,7 +76,7 @@ body:
         - Casio Loopy
         - Flashrom Programmer
     validations:
-      required: false
+      required: true
   - type: textarea
     id: bug-desc
     attributes:
