@@ -1,0 +1,84 @@
+name: Open New Issue
+description: For issues that affect all OSCRs e.g. coding mistakes or hardware oversights.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: OSCR firmware version
+      description: Which version of the OSCR firmware is currently flashed?
+    validations:
+      required: true
+  - type: dropdown
+    id: hardware
+    attributes:
+      label: OSCR hardware version
+      description: What hardware version are you using?
+      options:
+        - Select hardware version
+        - HW1
+        - HW2
+        - HW3
+        - HW3 Alter
+        - HW4
+        - HW5 Rev1
+        - HW5 Rev2
+        - HW5 Rev3
+        - HW5 Rev4
+        - HW5 Rev5
+        - HW5 Rev6
+    validations:
+      required: true
+- type: textarea
+    id: attachment
+    attributes:
+      label: Attach OSCR_LOG.txt file here
+   - type: dropdown
+    id: system
+    attributes:
+      label: System used
+      description: Which system is affected?
+      options:
+        - Select a system
+        - NES/Famicom/Family Basic
+        - SNES/Super Famicom
+        - SF Memory 
+        - Satellaview
+        - N64 Cartridge
+        - N64 Controller Test
+        - N64 Controller Pak
+        - N64 Gameshark
+        - Game Boy (Color)
+        - GB Memory
+        - Game Boy Advance
+        - Sega Mega Drive/Genesis
+        - Sega Master System
+        - Virtual Boy
+        - Sega Game Gear
+        - Sega Mark III
+        - Sega SG-1000
+        - Sega Cards
+        - PC engine/TG16
+        - WonderSwan (Color)
+        - NeoGeo Pocket (Color)
+        - Intellivision
+        - ColecoVision
+        - Benesse Pocket Challenge W
+        - Benesse Pocket Challenge V2
+        - Watara Supervision
+        - Atari 2600
+        - Emerson Arcadia 2001
+        - Fairchild Channel F
+        - Magnavox Odyssey 2
+        - Super A'Can
+        - MSX
+        - Pokemon Mini
+        - Casio Loopy
+        - Flashrom Programmer 
+    validations:
+      required: false
+  - type: textarea
+    id: bug-desc
+    attributes:
+      label: Describe the issue.
+    validations:
+      required: true
