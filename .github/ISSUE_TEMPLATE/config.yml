@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: OSCR Discussions forum
+    url: https://github.com/sanni/cartreader/discussions
+    about: For all issues that are specific to your OSCR e.g. soldering mistakes.
