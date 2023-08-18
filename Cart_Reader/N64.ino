@@ -55,8 +55,9 @@ static const char n64MenuItem1[] PROGMEM = "Game Cartridge";
 static const char n64MenuItem2[] PROGMEM = "Controller";
 static const char n64MenuItem3[] PROGMEM = "Flash Repro";
 static const char n64MenuItem4[] PROGMEM = "Flash Gameshark";
-//static const char n64MenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsN64[] PROGMEM = { n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4, string_reset2 };
+static const char n64MenuItem5[] PROGMEM = "Backup Xplorer 64";
+//static const char n64MenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsN64[] PROGMEM = { n64MenuItem1, n64MenuItem2, n64MenuItem3, n64MenuItem4, n64MenuItem5, string_reset2 };
 
 // N64 controller menu items
 static const char N64ContMenuItem1[] PROGMEM = "Test Controller";
@@ -114,11 +115,11 @@ static const char* const sectorOptionsN64[] PROGMEM = { N64SectorItem1, N64Secto
 
 // N64 start menu
 void n64Menu() {
-  // create menu with title and 5 options to choose from
+  // create menu with title and 6 options to choose from
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64, 5);
-  n64Dev = question_box(F("Select N64 device"), menuOptions, 5, 0);
+  convertPgm(menuOptionsN64, 6);
+  n64Dev = question_box(F("Select N64 device"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
@@ -156,6 +157,18 @@ void n64Menu() {
       break;
 
     case 4:
+      display_Clear();
+      display_Update();
+      setup_N64_Cart();
+      backupXplorer_N64();
+      mode = mode_N64_Cart;
+      print_STR(press_button_STR, 1);
+      display_Update();
+      wait();
+      resetArduino();
+      break;
+
+    case 5:
       resetArduino();
       break;
   }
@@ -4301,6 +4314,58 @@ unsigned long verifyGameshark_N64() {
     display_Update();
     return 9999;
   }
+}
+
+/******************************************
+   XPLORER 64 Functions
+ *****************************************/
+// Read rom and save to the SD card
+void backupXplorer_N64() {
+  // create a new folder
+  EEPROM_readAnything(0, foldern);
+  sprintf(fileName, "XP64%d", foldern);
+  strcat(fileName, ".z64");
+  sd.mkdir("N64/ROM/XPLORER64", true);
+  sd.chdir("N64/ROM/XPLORER64");
+
+  display_Clear();
+  print_Msg(F("Saving "));
+  print_Msg(fileName);
+  println_Msg(F("..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(sd_error_STR);
+  }
+
+  for (unsigned long currByte = 0x10400000; currByte < 0x1043FFFF; currByte += 512) {
+    // Blink led
+    if (currByte % 16384 == 0)
+      blinkLED();
+
+    // Set the address for the next 512 bytes
+    setAddress_N64(currByte);
+
+    for (int c = 0; c < 512; c += 2) {
+      // split word
+      word myWord = readWord_N64();
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
+
+      // write to buffer
+      sdBuffer[c] = hiByte;
+      sdBuffer[c + 1] = loByte;
+    }
+    myFile.write(sdBuffer, 512);
+  }
+  // Close the file:
+  myFile.close();
+  println_Msg(F("Done."));
 }
 
 #endif
