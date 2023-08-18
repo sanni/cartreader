@@ -4343,7 +4343,7 @@ void backupXplorer_N64() {
     print_FatalError(sd_error_STR);
   }
 
-  for (unsigned long currByte = 0x10400000; currByte < 0x1043FFFF; currByte += 512) {
+  for (unsigned long currByte = 0x10400000; currByte <= 0x1043FFFF; currByte += 512) {
     // Blink led
     if (currByte % 16384 == 0)
       blinkLED();
