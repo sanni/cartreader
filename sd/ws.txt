@@ -106,6 +106,9 @@ D2DBDF31
 Chuu 2 English (New Crown, Total English Taiou Ban) (Japan).pc2
 5C679BD3
 
+Chuu 2 English (Sunshine, One World Taiou Ban) (Japan).pc2
+F1E10E0E
+
 Chuu 2 Kokugo (Japan).pc2
 B17F0BD0
 
@@ -129,6 +132,9 @@ Chuu 3 English (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
 
 Chuu 3 Suugaku (Japan).pc2
 389D36A4
+
+Chuugaku Chiri (Japan) (2BD410).pc2
+CE351851
 
 Chuugaku Chiri (Japan) (3BD410).pc2
 AC0CB7D5
@@ -154,11 +160,17 @@ Chuugaku Koumin (Japan).pc2
 Chuugaku Rekishi (Japan).pc2
 4059E1B7
 
+Chuugaku Rika (1-bunya) (Japan) (2BF411).pc2
+73C68904
+
 Chuugaku Rika (1-bunya) (Japan) (5FF411).pc2
 C0653C7E
 
 Chuugaku Rika (1-bunya) (Japan) (6FF421).pc2
 BF3B02B3
+
+Chuugaku Rika (2-bunya) (Japan) (2BF412).pc2
+2582C734
 
 Chuugaku Rika (2-bunya) (Japan) (5FF412).pc2
 3686DC22
