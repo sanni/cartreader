@@ -20,8 +20,9 @@ static const char gbxMenuItem2[] PROGMEM = "GB Advance (3V)";
 static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
 static const char gbxMenuItem5[] PROGMEM = "Flash Codebreaker";
+static const char gbxMenuItem6[] PROGMEM = "Flash Datel Device";
 //static const char gbxMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5, string_reset2 };
+static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5, gbxMenuItem6, string_reset2 };
 
 // GB menu items
 static const char GBMenuItem1[] PROGMEM = "Read ROM";
