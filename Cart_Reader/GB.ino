@@ -45,13 +45,20 @@ static const char PelicanRead[] PROGMEM = "Read Device";
 static const char PelicanWrite[] PROGMEM = "Write Device";
 static const char* const menuOptionsGBPelican[] PROGMEM = { PelicanRead, PelicanWrite };
 
+// Datel Device Operation Menu
+static const char MegaMemRead[] PROGMEM = "Read Mega Memory";
+static const char MegaMemWrite[] PROGMEM = "Write Mega Memory";
+static const char GameSharkRead[] PROGMEM = "Read GameShark";
+static const char GameSharkWrite[] PROGMEM = "Write GameShark";
+static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWrite, GameSharkRead, GameSharkWrite };
+
 // Start menu for both GB and GBA
 void gbxMenu() {
   // create menu with title and 5 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 6);
-  gbType = question_box(F("Select Game Boy"), menuOptions, 6, 0);
+  convertPgm(menuOptionsGBx, 7);
+  gbType = question_box(F("Select Game Boy"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (gbType) {
@@ -343,6 +350,83 @@ void gbxMenu() {
       break;
      
     case 5:
+      // Read or Write a Datel Device (Mega Memory Card and Gameshark)
+      // Set Address Pins to Output
+      //A0-A7
+      DDRF = 0xFF;
+      //A8-A15
+      DDRK = 0xFF;
+    
+      // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
+      DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
+      // Output a high signal on all pins, pins are active low therefore everything is disabled now
+      PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+      // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
+      // Output a low signal on RST(PH0) to initialize MMC correctly
+      PORTH &= ~((1 << 0) | (1 << 1));
+    
+      // Set Data Pins (D0-D7) to Input
+      DDRC = 0x00;
+      // Enable Internal Pullups
+      PORTC = 0xFF;
+    
+      delay(400);
+    
+      // RST(PH0) to H
+      PORTH |= (1 << 0);
+      mode = mode_GB;
+      display_Clear();
+      display_Update();
+      unsigned char gbDatel;
+            // Copy menuOptions out of progmem
+            convertPgm(menuOptionsGBDatel, 4);
+            gbDatel = question_box(F("Select operation:"), menuOptions, 4, 0);
+    
+            // wait for user choice to come back from the question box menu
+            switch (gbDatel) {
+              case 0:
+                readMegaMem_GB();
+                // Reset
+                // Prints string out of the common strings array either with or without newline
+                print_STR(press_button_STR, 1);
+                display_Update();
+                wait();
+                resetArduino();
+                break;
+    
+              case 1:
+                writeMegaMem_GB();
+                // Reset
+                // Prints string out of the common strings array either with or without newline
+                print_STR(press_button_STR, 1);
+                display_Update();
+                wait();
+                resetArduino();
+                break;
+
+              case 2:
+                readGameshark_GB();
+                // Reset
+                // Prints string out of the common strings array either with or without newline
+                print_STR(press_button_STR, 1);
+                display_Update();
+                wait();
+                resetArduino();
+                break;
+                
+              case 3:
+                writeGameshark_GB();
+                // Reset
+                // Prints string out of the common strings array either with or without newline
+                print_STR(press_button_STR, 1);
+                display_Update();
+                wait();
+                resetArduino();
+                break;
+            }
+      break;
+     
+    case 6:
       resetArduino();
       break;
   }
@@ -2945,6 +3029,631 @@ bool isToggle(byte byte1, byte byte2) {
     
     // Check if only the 6th bit is different
     return difference == 0b00100000;
+}
+
+/******************************************************
+  Datel Mega Memory Card Gameboy Device Read Function
+******************************************************/
+// Read Mega Memory Card Rom and Save Backup Data
+void readMegaMem_GB() {
+// Dump the Rom
+  strcpy(fileName, "Rom");
+  strcat(fileName, ".GB");
+
+  // create a new folder for the rom file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/ROM/MegaMem/%d", foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  println_Msg(F("Rom.GB"));
+  display_Update();
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(create_file_STR);
+  }
+
+  word finalAddress = 0x3FFF;
+  word startAddress= 0x0;
+
+  // Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)16384;
+  draw_progressbar(0, totalProgressBar);
+
+      // Read banks and save to SD
+      while (startAddress <= finalAddress) {
+          for (int i = 0; i < 512; i++) {
+            sdBuffer[i] = readByte_GB(startAddress + i);
+          }
+          myFile.write(sdBuffer, 512);
+          startAddress += 512;
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
+      }
+
+  // Close the file:
+  myFile.close();
+
+  // Dump the Save Data SST28LF040
+  strcpy(fileName, "SaveData");
+  strcat(fileName, ".bin");
+
+  display_Clear();
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(F("/..."));
+    println_Msg(F("SaveData.bin"));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(create_file_STR);
+  }
+
+  finalAddress = 0x7FFF;
+  startAddress= 0x4000;
+  word startBank = 0;
+  word bankAddress = 0x2000;
+  romBanks = 32;
+
+  // Initialize progress bar
+  processedProgressBar = 0;
+  totalProgressBar = (uint32_t)(romBanks)*8192;
+  draw_progressbar(0, totalProgressBar);
+
+  for (int workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
+
+      startAddress = 0x4000;
+
+      writeByte_GB(bankAddress, (workBank & 0xFF));
+
+      // Read banks and save to SD
+      while (startAddress <= finalAddress) {
+          for (int i = 0; i < 512; i++) {
+              sdBuffer[i] = readByte_GB(startAddress + i);
+          }
+          myFile.write(sdBuffer, 512);
+          startAddress += 512;
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
+      }
+  }
+
+  // Close the file:
+  myFile.close();
+}
+
+/*******************************************************
+  Datel Mega Memory Card Gameboy Device Write Function
+*******************************************************/
+// Read Mega Memory Card Rom and Save Backup Data
+void writeMegaMem_GB() {
+  // Write Datel Mega Memory Card Save Storage Chip SST28LF040
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select file"));
+  display_Clear();
+
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+
+      writeByte_GB(0x2000, 0x1);
+      writeByte_GB(0x5555, 0xFF);
+      delay(100);
+      writeByte_GB(0x2000, 0x1);
+      writeByte_GB(0x5555, 0x90);
+      delay(100);
+      writeByte_GB(0x2000, 0x0);
+      flashid = readByte_GB(0x4000) << 8;
+      flashid |= readByte_GB(0x4001);
+      writeByte_GB(0x2000, 0x1);
+      writeByte_GB(0x5555, 0xFF);
+      delay(100);
+      if (flashid != 0xBF04) {
+        println_Msg(F("Unknown Flash ID"));
+        println_Msg(flashid);
+        print_STR(press_button_STR, 1);
+        display_Update();
+        wait();
+        mainMenu();
+      }
+    }
+
+    if (flashid == 0xBF04) {
+      println_Msg(F("SST 28LF040"));
+      romBanks = 32;
+      display_Update();
+      println_Msg(F("Erasing flash..."));
+      display_Update();
+
+      //Unprotect flash
+      writeByte_GB(0x2000, 0x0);
+      readByte_GB(0x5823);
+      readByte_GB(0x5820);
+      readByte_GB(0x5822);
+      readByte_GB(0x4418);
+      readByte_GB(0x441B);
+      readByte_GB(0x4419);
+      readByte_GB(0x441A);
+      delay(100);
+
+      //Erase flash
+      writeByte_GB(0x2000, 0x1);
+      writeByte_GB(0x5555, 0x30);
+      writeByte_GB(0x5555, 0x30);
+      delay(100);
+
+      writeByte_GB(0x2000, 0x1);
+      writeByte_GB(0x5555, 0xFF);
+      delay(100);
+    }
+
+      // Blankcheck
+      println_Msg(F("Blankcheck..."));
+      display_Update();
+
+      // Read x number of banks
+      for (word currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        blinkLED();
+
+        // Set ROM bank
+        writeByte_GB(0x2000, currBank);
+
+        for (word currAddr = 0x4000; currAddr < 0x8000; currAddr += 0x200) {
+          for (int currByte = 0; currByte < 512; currByte++) {
+            sdBuffer[currByte] = readByte_GB(currAddr + currByte);
+          }
+          for (int j = 0; j < 512; j++) {
+            if (sdBuffer[j] != 0xFF) {
+              println_Msg(F("Not empty"));
+              print_FatalError(F("Erase failed"));
+            }
+          }
+        }
+      }
+
+      println_Msg(F("Writing flash..."));
+      display_Update();
+
+      // Write flash
+      word currAddr = 0x4000;
+      word endAddr = 0x7FFF;
+      byte byte1;
+      byte byte2;
+      bool toggle = true;
+
+      //Unprotect flash
+      writeByte_GB(0x2000, 0x0);
+      readByte_GB(0x5823);
+      readByte_GB(0x5820);
+      readByte_GB(0x5822);
+      readByte_GB(0x4418);
+      readByte_GB(0x441B);
+      readByte_GB(0x4419);
+      readByte_GB(0x441A);
+      delay(100);
+
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+      draw_progressbar(0, totalProgressBar);
+
+      for (word currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        blinkLED();
+        currAddr = 0x4000;
+
+        if (flashid == 0xBF04) {
+          while (currAddr <= endAddr) {
+            myFile.read(sdBuffer, 512);
+
+            for (int currByte = 0; currByte < 512; currByte++) {
+
+              toggle = true;
+              // Write current byte
+              writeByte_GB(0x2000, 0x1);
+              writeByte_GB(0x5555, 0x10);
+              writeByte_GB(0x2000, currBank);
+              writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+              while (toggle) {
+                byte1 = readByte_GB(currAddr + currByte);
+                byte2 = readByte_GB(currAddr + currByte);
+                toggle = isToggle(byte1, byte2);
+              }
+              byte1 = readByte_GB(currAddr + currByte);
+              if (byte1 != sdBuffer[currByte]) {
+                writeByte_GB(0x2000, 0x1);
+                writeByte_GB(0x5555, 0x10);
+                writeByte_GB(0x2000, currBank);
+                writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+                while (toggle) {
+                  byte1 = readByte_GB(currAddr + currByte);
+                  byte2 = readByte_GB(currAddr + currByte);
+                  toggle = isToggle(byte1, byte2);
+                }
+              }
+            }
+            currAddr += 512;
+            processedProgressBar += 512;
+            draw_progressbar(processedProgressBar, totalProgressBar);
+          }
+        }
+      }
+
+    if (flashid == 0xBF04) {
+        //Protect flash
+        writeByte_GB(0x2000, 0x0);
+        readByte_GB(0x5823);
+        readByte_GB(0x5820);
+        readByte_GB(0x5822);
+        readByte_GB(0x4418);
+        readByte_GB(0x441B);
+        readByte_GB(0x4419);
+        readByte_GB(0x440A);
+        delay(100);
+    }
+
+    display_Clear();
+    print_STR(verifying_STR, 0);
+    display_Update();
+
+    // Go back to file beginning
+    myFile.seekSet(0);
+    //unsigned int addr = 0;  // unused
+    writeErrors = 0;
+
+    // Verify flashrom
+    word romAddress = 0x4000;
+
+    // Read number of banks and switch banks
+    for (word bank = 0; bank < romBanks; bank++) {
+      writeByte_GB(0x2000, bank);         // Set ROM bank
+      romAddress = 0x4000;
+
+      // Blink led
+      blinkLED();
+
+      // Read up to 3FFF per bank
+      while (romAddress < 0x8000) {
+        // Fill sdBuffer
+        myFile.read(sdBuffer, 512);
+        // Compare
+        for (int i = 0; i < 512; i++) {
+          if (readByte_GB(romAddress + i) != sdBuffer[i]) {
+            writeErrors++;
+          }
+        }
+        romAddress += 512;
+      }
+    }
+    // Close the file:
+    myFile.close();
+
+    if (writeErrors == 0) {
+      println_Msg(F("OK"));
+      println_Msg(F("Please turn off the power."));
+      display_Update();
+    } else {
+      println_Msg(F("Error"));
+      print_Msg(writeErrors);
+      print_STR(_bytes_STR, 1);
+      print_FatalError(did_not_verify_STR);
+    }
+}
+
+/***************************************************
+  Datel GBC Gameshark Gameboy Device Read Function
+***************************************************/
+// Read Datel GBC Gameshark Device
+void readGameshark_GB() {
+  // Get name, add extension and convert to char array for sd lib
+  strcpy(fileName, "Gameshark");
+  strcat(fileName, ".GB");
+
+  // create a new folder for the rom file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "GB/ROM/Gameshark/%d", foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+
+  display_Clear();
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(create_file_STR);
+  }
+
+  word finalAddress = 0x5FFF;
+  word startAddress= 0x4000;
+  word startBank = 0;
+  word bankAddress = 0x7FE1;
+  romBanks = 16;
+
+  //Enable bank addressing in the CPLD
+  readByte_GB(0x101);
+  readByte_GB(0x108);
+  readByte_GB(0x101);
+
+  // SST 39SF010 ID command sequence
+  writeByte_GB(bankAddress, 0x2);
+  writeByte_GB(0x5555, 0xAA);
+  writeByte_GB(bankAddress, 0x1);
+  writeByte_GB(0x4AAA, 0x55);
+  writeByte_GB(bankAddress, 0x2);
+  writeByte_GB(0x5555, 0x90);
+  delay(10);
+
+  // Read the two id bytes into a string
+  writeByte_GB(bankAddress, 0x0);
+  flashid = readByte_GB(0x4000) << 8;
+  flashid |= readByte_GB(0x4001);
+
+  // SST 39SF010 Flash ID Mode Exit
+  writeByte_GB(bankAddress, 0x2);
+  writeByte_GB(0x5555, 0xAA);
+  writeByte_GB(bankAddress, 0x1);
+  writeByte_GB(0x4AAA, 0x55);
+  writeByte_GB(bankAddress, 0x2);
+  writeByte_GB(0x5555, 0xF0);
+  delay(100);
+
+  if (flashid == 0xBFB5) {
+    println_Msg(F("SST 39SF010"));
+    println_Msg(F("Rom Size: 128 KB"));
+    display_Update();
+  }
+
+  // Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+  draw_progressbar(0, totalProgressBar);
+
+  for (int workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
+
+      startAddress = 0x4000;
+
+      writeByte_GB(bankAddress, (workBank & 0xFF));
+
+      // Read banks and save to SD
+      while (startAddress <= finalAddress) {
+          for (int i = 0; i < 512; i++) {
+              sdBuffer[i] = readByte_GB(startAddress + i);
+          }
+          myFile.write(sdBuffer, 512);
+          startAddress += 512;
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
+      }
+  }
+
+  // Close the file:
+  myFile.close();
+}
+
+/****************************************************
+  Datel GBC Gameshark Gameboy Device Write Function
+****************************************************/
+// Write Datel GBC Gameshark Device
+void writeGameshark_GB() {
+  // Launch filebrowser
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select file"));
+  display_Clear();
+
+  byte byte1;
+  bool toggle = true;
+
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+
+    // Enable Rom Banks
+    readByte_GB(0x101);
+    readByte_GB(0x108);
+    readByte_GB(0x101);
+    delay(100);
+
+    // SST 39SF010 ID command sequence
+  writeByte_GB(0x7FE1, 0x2);
+  writeByte_GB(0x5555, 0xAA);
+  writeByte_GB(0x7FE1, 0x1);
+  writeByte_GB(0x4AAA, 0x55);
+  writeByte_GB(0x7FE1, 0x2);
+  writeByte_GB(0x5555, 0x90);
+  delay(10);
+
+  // Read the two id bytes into a string
+  writeByte_GB(0x7FE1, 0x0);
+  flashid = readByte_GB(0x4000) << 8;
+  flashid |= readByte_GB(0x4001);
+
+  // SST 39SF010 Flash ID Mode Exit
+  writeByte_GB(0x7FE1, 0x2);
+  writeByte_GB(0x5555, 0xAA);
+  writeByte_GB(0x7FE1, 0x1);
+  writeByte_GB(0x4AAA, 0x55);
+  writeByte_GB(0x7FE1, 0x2);
+  writeByte_GB(0x5555, 0xF0);
+
+    if (flashid != 0xBFB5) {
+      println_Msg(F("Unknown Flash ID"));
+      println_Msg(flashid);
+      print_STR(press_button_STR, 1);
+      display_Update();
+      wait();
+      mainMenu();
+    }
+  }
+
+    if (flashid == 0xBFB5) {
+      println_Msg(F("SST 39SF010"));
+      romBanks = 16;
+      display_Update();
+      println_Msg(F("Erasing flash..."));
+      display_Update();
+
+      //Erase flash
+      writeByte_GB(0x7FE1, 0x2);
+      writeByte_GB(0x5555, 0xAA);
+      writeByte_GB(0x7FE1, 0x1);
+      writeByte_GB(0x4AAA, 0x55);
+      writeByte_GB(0x7FE1, 0x2);
+      writeByte_GB(0x5555, 0x80);
+      writeByte_GB(0x7FE1, 0x2);
+      writeByte_GB(0x5555, 0xAA);
+      writeByte_GB(0x7FE1, 0x1);
+      writeByte_GB(0x4AAA, 0x55);
+      writeByte_GB(0x7FE1, 0x2);
+      writeByte_GB(0x5555, 0x10);
+      delay(100);
+    }
+
+      // Blankcheck
+      println_Msg(F("Blankcheck..."));
+      display_Update();
+
+      // Read x number of banks
+      for (word currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        blinkLED();
+
+        // Set ROM bank
+        writeByte_GB(0x7FE1, currBank);
+
+        for (word currAddr = 0x4000; currAddr < 0x6000; currAddr += 0x200) {
+          for (int currByte = 0; currByte < 512; currByte++) {
+            sdBuffer[currByte] = readByte_GB(currAddr + currByte);
+          }
+          for (int j = 0; j < 512; j++) {
+            if (sdBuffer[j] != 0xFF) {
+              println_Msg(F("Not empty"));
+              print_FatalError(F("Erase failed"));
+            }
+          }
+        }
+      }
+
+      println_Msg(F("Writing flash..."));
+      display_Update();
+
+      // Write flash
+      word currAddr = 0x4000;
+      word endAddr = 0x5FFF;
+
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+      draw_progressbar(0, totalProgressBar);
+
+      for (word currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        blinkLED();
+        currAddr = 0x4000;
+
+        while (currAddr <= endAddr) {
+          myFile.read(sdBuffer, 512);
+
+          for (int currByte = 0; currByte < 512; currByte++) {
+
+            // Write command sequence
+            writeByte_GB(0x7FE1, 0x2);
+            writeByte_GB(0x5555, 0xAA);
+            writeByte_GB(0x7FE1, 0x1);
+            writeByte_GB(0x4AAA, 0x55);
+            writeByte_GB(0x7FE1, 0x2);
+            writeByte_GB(0x5555, 0xA0);
+
+            // Set ROM bank
+            writeByte_GB(0x7FE1, currBank);
+
+            toggle = true;
+
+            // Write current byte
+            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+            while (toggle) {
+                  byte1 = readByte_GB(currAddr + currByte);
+                  if (byte1 == sdBuffer[currByte]) {
+                    toggle = false;
+                  }
+            }
+          }
+          currAddr += 512;
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
+        }
+      }
+
+    display_Clear();
+    print_STR(verifying_STR, 0);
+    display_Update();
+
+    // Go back to file beginning
+    myFile.seekSet(0);
+    //unsigned int addr = 0;  // unused
+    writeErrors = 0;
+
+    // Verify flashrom
+    word romAddress = 0x4000;
+
+    // Read number of banks and switch banks
+    for (word bank = 0; bank < romBanks; bank++) {
+      writeByte_GB(0x7FE1, bank);         // Set ROM bank
+      romAddress = 0x4000;
+
+      // Blink led
+      blinkLED();
+
+      // Read up to 1FFF per bank
+      while (romAddress < 0x6000) {
+        // Fill sdBuffer
+        myFile.read(sdBuffer, 512);
+        // Compare
+        for (int i = 0; i < 512; i++) {
+          if (readByte_GB(romAddress + i) != sdBuffer[i]) {
+            writeErrors++;
+          }
+        }
+        romAddress += 512;
+      }
+    }
+    // Close the file:
+    myFile.close();
+
+    if (writeErrors == 0) {
+      println_Msg(F("OK"));
+      println_Msg(F("Please turn off the power."));
+      display_Update();
+    } else {
+      println_Msg(F("Error"));
+      print_Msg(writeErrors);
+      print_STR(_bytes_STR, 1);
+      print_FatalError(did_not_verify_STR);
+    }
 }
 
 #endif
