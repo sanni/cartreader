@@ -49,8 +49,8 @@ static const char* const menuOptionsGBPelican[] PROGMEM = { PelicanRead, Pelican
 // Datel Device Operation Menu
 static const char MegaMemRead[] PROGMEM = "Read Mega Memory";
 static const char MegaMemWrite[] PROGMEM = "Write Mega Memory";
-static const char GameSharkRead[] PROGMEM = "Read GameShark";
-static const char GameSharkWrite[] PROGMEM = "Write GameShark";
+static const char GameSharkRead[] PROGMEM = "Read GBC GameShark";
+static const char GameSharkWrite[] PROGMEM = "Write GBC GameShark";
 static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWrite, GameSharkRead, GameSharkWrite };
 
 // Start menu for both GB and GBA
