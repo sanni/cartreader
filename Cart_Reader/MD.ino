@@ -822,6 +822,9 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0x80000) {
     switch (chksum) {
+      case 0x5B3A:  //NHL 98 (USA)
+        cartSize = 0x200000;
+        break;
       case 0xD07D:  //Zero Wing (Japan)
         cartSize = 0x100000;
         chksum = 0xF204;
