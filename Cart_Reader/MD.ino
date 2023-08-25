@@ -783,6 +783,9 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0x200000) {
     switch (chksum) {
+      case 0x2078:  //Dynamite Headdy (USA, Europe)
+        chksum = 0x9877;
+        break;
       case 0xAE95:  //Winter Olympic Games (USA)
         chksum = 0x56A0;
         break;
@@ -824,6 +827,7 @@ void getCartInfo_MD() {
     switch (chksum) {
       case 0x5B3A:  //NHL 98 (USA)
         cartSize = 0x200000;
+        chksum = 0x5613;
         break;
       case 0xD07D:  //Zero Wing (Japan)
         cartSize = 0x100000;
@@ -839,6 +843,12 @@ void getCartInfo_MD() {
         break;
       case 0x0C6A:  //Monopoly (USA)
         chksum = 0xE1AA;
+        break;
+      case 0xA760:  //Gain Ground (USA)
+        chksum = 0x97CD;
+        break;
+      case 0x1404:  //Wonder Boy III - Monster Lair (Japan, Europe) (En)
+        chksum = 0x53B9;
         break;
     }
   }
