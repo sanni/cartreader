@@ -49,7 +49,8 @@
 /****/
 
 /* [ Clock Generator ---------------------------------------------- ]
-*   Enable this if you have the clock generator module.
+*   Enable this if you have the clock generator module. This will 
+*   automatically be enabled if you selected HW2 or newer above.
 */
 
 //#define clockgen_installed
@@ -57,12 +58,11 @@
 /****/
 
 /* [ Real Time Clock ---------------------------------------------- ]
-*   Enable this if you have the RTC module.
+*   Enable this if you have the RTC module. You can configure the 
+*   type later in this file.
 */
 
 //#define RTC_installed
-#define DS3231
-//#define DS1307
 
 /****/
 
@@ -293,6 +293,16 @@
 */
 
 #define global_log
+
+/****/
+
+/* [ RTC: IC Type ------------------------------------------------- ]
+*   When the RTC module is installed, choose the type here. This 
+*   setting is ignored if the RTC option is not enabled.
+*/
+
+#define DS3231
+//#define DS1307
 
 /****/
 
