@@ -456,10 +456,8 @@ void readROM_FAIRCHILD() {
               }
             }
           } else if (cartsize == 0x1000) {  // 4K
-            // Skip BIOS/Blocks Code for 4K Carts - Tested with Pro Football 4K
-            // Pro Football uses a DM74LS02N (Quad 2-Input NOR Gate) with two 2K ROM Chips
-            setROMC_FAIRCHILD(0x8);  // Clear PC0
-            setREAD_FAIRCHILD();
+            // Skip BIOS/Blocks Code for 4K Carts - Tested with Alien Invasion/Pro Football
+            // Alien Invasion/Pro Football both use a DM74LS02N (Quad 2-Input NOR Gate) with two 2K ROM Chips
             uint16_t offset = z * 0x200;
             for (int x = 0; x < 0x800 + offset; x++) {  // Skip BIOS/Previous Blocks
               readData_FAIRCHILD();
@@ -515,12 +513,10 @@ void read16K_FAIRCHILD()  // Read 16K Bytes
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   for (int y = 0; y < 0x20; y++) {
     if (cartsize == 0x1000) {  // 4K
-      // Skip BIOS/Blocks Code for 4K Carts - Tested with Pro Football 4K
-      // Pro Football uses a DM74LS02N (Quad 2-Input NOR Gate) with two 2K ROM Chips
-      // IF OTHER 4K CARTS DO NOT DUMP PROPERLY USING READROM
+      // Skip BIOS/Blocks Code for 4K Carts - Tested with Alien Invasion/Pro Football
+      // Alien Invasion/Pro Football both use a DM74LS02N (Quad 2-Input NOR Gate) with two 2K ROM Chips
+      // IF CASINO POKER DOES NOT DUMP PROPERLY USING READROM
       // TEST BY SETTING ROM SIZE TO 2K AND 4K THEN COMPARE 16K DUMPS
-      setROMC_FAIRCHILD(0x8);  // Clear PC0
-      setREAD_FAIRCHILD();
       uint16_t offset = y * 0x200;
       for (int x = 0; x < 0x800 + offset; x++) {  // Skip BIOS/Previous Blocks
         readData_FAIRCHILD();
