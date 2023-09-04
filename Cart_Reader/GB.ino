@@ -2604,7 +2604,6 @@ void readPelican_GB() {
 
   word finalAddress = 0x3FFF;
   word startAddress= 0x2000;
-  word startBank = 0;
   word bankAddress = 0xA000;
 
   //Enable bank addressing in the CPLD
@@ -2679,7 +2678,7 @@ void readPelican_GB() {
   uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
   draw_progressbar(0, totalProgressBar);
 
-  for (int workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
+  for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
 
       startAddress = 0x2000;
 
@@ -3103,7 +3102,6 @@ void readMegaMem_GB() {
 
   finalAddress = 0x7FFF;
   startAddress= 0x4000;
-  word startBank = 0;
   word bankAddress = 0x2000;
   romBanks = 32;
 
@@ -3112,7 +3110,7 @@ void readMegaMem_GB() {
   totalProgressBar = (uint32_t)(romBanks)*8192;
   draw_progressbar(0, totalProgressBar);
 
-  for (int workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
+  for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
 
       startAddress = 0x4000;
 
@@ -3388,7 +3386,6 @@ void readGameshark_GB() {
 
   word finalAddress = 0x5FFF;
   word startAddress= 0x4000;
-  word startBank = 0;
   word bankAddress = 0x7FE1;
   romBanks = 16;
 
@@ -3431,7 +3428,7 @@ void readGameshark_GB() {
   uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
   draw_progressbar(0, totalProgressBar);
 
-  for (int workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
+  for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
 
       startAddress = 0x4000;
 
