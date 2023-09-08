@@ -4056,8 +4056,8 @@ void flashGameshark_N64() {
   idGameshark_N64();
 
   // Check for SST 29LE010 (0808)/SST 28LF040 (0404)/AMTEL AT29LV010A (3535)/SST 29EE010 (0707)
-  // !!!!          This has been confirmed to allow reading of v1.07, v1.09, v2.0-2.21, v3.2-3.3           !!!!
-  // !!!!   29LE010/29EE010/AT29LV010A are very similar and can possibly be written to with this process.  !!!!
+  // !!!!          This has been confirmed to allow reading of v1.02, v1.04-v1.09, v2.0-2.21, v3.0-3.3     !!!!
+  // !!!!          All referenced eeproms/flashroms are confirmed as being writable with this process.     !!!!
   // !!!!                                                                                                  !!!!
   // !!!!                                PROCEED AT YOUR OWN RISK                                          !!!!
   // !!!!                                                                                                  !!!!
@@ -4179,12 +4179,10 @@ void idGameshark_N64() {
 
   if (flashid == 0x0808 || flashid == 0x3535 || flashid == 0x0707) {
     flashSize = 262144;
-  }
-
-  if (flashid == 0x0404) {
+  } else if (flashid == 0x0404) {
     //Set SST 28LF040 flashrom size
     flashSize = 1048574;
-      if (flashid != 0x0404) {
+    } else {
         println_Msg(F("Check cart connection"));
         println_Msg(F("Unknown Flash ID"));
         sprintf(flashid_str, "%04X", flashid);
@@ -4193,7 +4191,6 @@ void idGameshark_N64() {
         wait();
         mainMenu();
       }
-  }
   sprintf(flashid_str, "%04X", flashid);
   // Reset flashrom
   resetGameshark_N64();
@@ -4348,12 +4345,14 @@ void writeGameshark_N64() {
   // Write Gameshark with 2x SST 29LE010 / AMTEL AT29LV010A / SST 29EE010 Eeproms
   if (flashid == 0x0808 || flashid == 0x3535 || flashid == 0x0707) {
     // Each 29LE010 has 1024 pages, each 128 bytes in size
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)(fileSize);
+    draw_progressbar(0, totalProgressBar);
     myFile.seek(0);
     for (unsigned long currPage = 0; currPage < fileSize / 2; currPage += 128) {
       // Fill SD buffer with twice the amount since we flash 2 chips
       myFile.read(sdBuffer, 256);
-      // Blink led
-      blinkLED();
 
       //Send page write command to both flashroms
       setAddress_N64(0x1EF0AAA8);
@@ -4372,6 +4371,9 @@ void writeGameshark_N64() {
         // Send byte data
         writeWord_N64(currWord);
       }
+      processedProgressBar += 256;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+      blinkLED();
       delay(30);
     }
   }
@@ -4385,8 +4387,6 @@ void writeGameshark_N64() {
     bool toggle = true;
     myFile.seek(0);
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 16384) {
-      // Blink led
-      blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 16384; currSdBuffer += 256) {
         // Fill SD buffer
         myFile.read(sdBuffer, 256);
@@ -4436,13 +4436,15 @@ void writeGameshark_N64() {
 }
 
 unsigned long verifyGameshark_N64() {
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  println_Msg(F(""));
+  draw_progressbar(0, totalProgressBar);
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     writeErrors = 0;
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
-      // Blink led
-      blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
         myFile.read(sdBuffer, 512);
@@ -4456,6 +4458,9 @@ unsigned long verifyGameshark_N64() {
             writeErrors++;
           }
         }
+        processedProgressBar += 512;
+        draw_progressbar(processedProgressBar, totalProgressBar);
+        blinkLED();
       }
     }
     // Close the file:
