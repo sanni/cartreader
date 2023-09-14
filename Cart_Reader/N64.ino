@@ -44,6 +44,10 @@ String CRC1 = "";
 String CRC2 = "";
 #endif
 
+#if !defined(enable_FLASH)
+unsigned long flashSize;
+#endif
+
 static const char N64_EEP_FILENAME_FMT[] PROGMEM = "%s.eep";
 static const char N64_SAVE_DIRNAME_FMT[] PROGMEM = "N64/SAVE/%s/%d";
 
@@ -4181,15 +4185,15 @@ void idGameshark_N64() {
   } else if (flashid == 0x0404) {
     //Set SST 28LF040 flashrom size
     flashSize = 1048574;
-    } else {
-        println_Msg(F("Check cart connection"));
-        println_Msg(F("Unknown Flash ID"));
-        sprintf(flashid_str, "%04X", flashid);
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
-        mainMenu();
-      }
+  } else {
+    println_Msg(F("Check cart connection"));
+    println_Msg(F("Unknown Flash ID"));
+    sprintf(flashid_str, "%04X", flashid);
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+    mainMenu();
+  }
   sprintf(flashid_str, "%04X", flashid);
   // Reset flashrom
   resetGameshark_N64();
