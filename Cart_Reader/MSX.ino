@@ -1539,8 +1539,13 @@ bool getCartListInfo_MSX() {
       println_Msg(F(""));
       println_Msg(msxgame);
       display.setCursor(0, 48);
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+#if defined(enable_OLED)
+      print_STR(press_to_change_STR, 1);
+      print_STR(right_to_select_STR, 1);
+#elif defined(enable_LCD)
+      print_STR(rotate_to_change_STR, 1);
+      print_STR(press_to_select_STR, 1);
+#endif
       display_Update();
 #else
       Serial.print(F("CART TITLE:"));

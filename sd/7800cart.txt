@@ -1,0 +1,71 @@
+32 in 1,0,3,0
+Ace of Aces,1,4,15
+Alien Brigade,2,5,20
+Asteroids,0,0,22
+Atari 7800 Development Card,0,0,18
+Ballblazer,0,1,36
+Barnyard Blaster,1,4,19
+Baseball,0,1,25
+Basketbrawl,1,4,17
+Centipede,0,0,20
+Choplifter! (Europe),0,2,18
+Choplifter! (USA),0,1,29
+Commando,1,4,26
+Crack'ed,1,4,17
+Crossbow,2,5,17
+Dark Chambers,1,4,17
+Desert Falcon,0,2,22
+Diagnostic Test Cartridge,0,1,22
+Dig Dug (Europe),0,1,34
+Dig Dug (USA),0,0,25
+Donkey Kong,0,2,22
+Donkey Kong Junior,0,2,20
+Double Dragon,4,4,27
+F-18 Hornet,3,3,22
+Fatal Run,1,4,20
+Fight Night,1,4,18
+Food Fight (Europe),0,2,20
+Food Fight (USA),0,1,28
+Galaga (Europe),0,2,25
+Galaga (USA),0,1,24
+Hat Trick,0,2,21
+Ikari Warriors,1,4,18
+Impossible Mission,1,4,23
+Jinks,1,4,27
+Joust (Europe),0,2,14
+Joust (USA),0,1,23
+Karateka (Europe),6,3,20
+Karateka (USA),0,2,26
+Kung-Fu Master,0,1,23
+Mario Bros.,0,2,23
+Mat Mania Challenge,1,4,20
+Mean 18 Ultimate Golf,1,4,28
+Meltdown,1,4,30
+Midnight Mutants,1,4,17
+Motor Psycho,1,4,25
+Ms. Pac-Man (Europe),0,1,21
+Ms. Pac-Man (USA),0,0,29
+Ninja Golf,1,4,26
+One-on-One Basketball,0,2,19
+Pete Rose Baseball,0,1,30
+Planet Smashers,1,4,27
+Pole Position II,0,1,24
+Rampage,4,4,25
+RealSports Baseball,5,3,16
+Robotron 2084,0,1,28
+Scrapyard Dog,1,4,22
+Sentinel,1,4,22
+Summer Games,1,4,17
+Super Huey UH-IX,0,2,21
+Super Skateboardin',0,1,25
+Tank Command,5,3,28
+Title Match Pro Wrestling,0,1,21
+Tomcat,0,1,34
+Touchdown Football,1,4,15
+Tower Toppler,5,3,27
+Water Ski,5,3,22
+Winter Games,1,4,18
+Xenophobe,1,4,21
+Xevious (Europe),0,2,18
+Xevious (USA),0,1,25
+EOF,0,0,0

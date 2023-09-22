@@ -186,6 +186,9 @@ void snsMenu() {
 #endif
       resetArduino();
       break;
+
+      default:
+      print_MissingModule();  // does not return
   }
 }
 
