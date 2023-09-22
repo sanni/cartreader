@@ -45,14 +45,16 @@ Happy making. 🔧🔨😊
 - Benesse Pocket Challenge W    
 - Benesse Pocket Challenge V2    
 - Watara Supervision    
-- Atari 2600    
+- Atari 2600/5200/7800    
 - Emerson Arcadia 2001   
 - Fairchild Channel F     
 - Magnavox Odyssey 2  
 - Super A'Can    
 - MSX    
 - Pokemon Mini     
-- Casio Loopy     
+- Casio Loopy
+- C64    
+- Vectrex    
 
 #### Open Source Licenses:    
 - Software(everything in Cart_Reader folder) = GPL v3   
