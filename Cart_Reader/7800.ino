@@ -57,7 +57,7 @@ static const byte PROGMEM a7800mapsize[] = {
   3, 3, 3,  // F-18 Hornet 64K [78AB]
   4, 4, 4,  // Double Dragon/Rampage 128K [78AC]
   5, 3, 3,  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
-  6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant] [UNTESTED]
+  6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant]
 };
 
 byte a7800mapcount = 7;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
@@ -363,7 +363,7 @@ void readROM_7800() {
       }
       break;
 
-    case 6:  // Karateka (PAL) 64K [78S4 Variant] [UNTESTED]
+    case 6:  // Karateka (PAL) 64K [78S4 Variant]
       for (int x = 4; x < 8; x++) {
         writeData_7800(0x8000, x);
         readSegment_7800(0x8000, 0xC000);  // 16K * 4 = 64K
