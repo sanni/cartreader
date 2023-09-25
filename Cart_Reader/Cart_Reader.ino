@@ -905,7 +905,9 @@ static const char modeItem26[] PROGMEM = "Vectrex";
 #ifdef enable_FLASH
 static const char modeItem27[] PROGMEM = "Flashrom Programmer";
 #endif
+#ifdef enable_selftest
 static const char modeItem28[] PROGMEM = "Self Test (3V)";
+#endif
 static const char modeItem29[] PROGMEM = "About";
 //static const char modeItem30[] PROGMEM = "Reset"; (stored in common strings array)
 static const char* const modeOptions[] PROGMEM = {
@@ -990,12 +992,15 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef enable_FLASH
   modeItem27,
 #endif
-  modeItem28, modeItem29, string_reset2
+#ifdef enable_selftest
+  modeItem28
+#endif
+  modeItem29, string_reset2
 };
 
 // Count menu entries
 byte countMenuEntries() {
-  byte count = 3;
+  byte count = 2;
 #ifdef enable_GBX
   count++;
 #endif
@@ -1075,6 +1080,9 @@ byte countMenuEntries() {
   count++;
 #endif
 #ifdef enable_FLASH
+  count++;
+#endif
+#ifdef enable_selftest
   count++;
 #endif
   return count;
@@ -1220,9 +1228,10 @@ unsigned char fixMenuOrder(unsigned char modeMenu) {
   currentEntry++;
 #endif
 
-  // Self Test
+#if defined(enable_selftest)
   translationMatrix[currentEntry] = 27;
   currentEntry++;
+#endif
 
   // About
   translationMatrix[currentEntry] = 28;
