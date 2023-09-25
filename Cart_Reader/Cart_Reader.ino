@@ -818,7 +818,7 @@ byte starting_letter() {
 void print_MissingModule(void) {
   display_Clear();
   println_Msg(F("Please enable module"));
-  print_FatalError(F("in Cart_Reader.ino."));
+  print_FatalError(F("in Config.h."));
 }
 
 /******************************************
