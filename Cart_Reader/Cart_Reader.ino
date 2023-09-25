@@ -993,7 +993,7 @@ static const char* const modeOptions[] PROGMEM = {
   modeItem27,
 #endif
 #ifdef enable_selftest
-  modeItem28
+  modeItem28,
 #endif
   modeItem29, string_reset2
 };
