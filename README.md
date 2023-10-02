@@ -23,8 +23,8 @@ Happy making. 🔧🔨😊
 #### Supported Systems:    
 - NES/Famicom/Family Basic   
 - SNES/Super Famicom (including SF Memory and Satellaview)  
-- N64 (including Controller Pak and Gameshark)     
-- Game Boy Color (including GB Memory)  
+- N64 (including Controller Pak, Gameshark, and Xplorer 64)  
+- Game Boy Color (including GB Memory, Codebreaker, and Gameshark)  
 - Game Boy Advance    
 - Sega Mega Drive/Genesis    
 - Sega Master System   
