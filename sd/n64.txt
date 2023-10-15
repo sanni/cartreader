@@ -886,6 +886,9 @@ Glover (USA) (Proto) (1998-09-04).z64
 Glover (USA).z64
 F874571C,8E6E01FF,08,5
 
+Glover (USA) (En,Fr,Es) (Aftermarket) (Unl).z64
+9FB6A52B,869A5D37,08,0
+
 Glover 2 (USA) (Proto 1).z64
 D0809AFB,8E9F21D2,32,0
 
@@ -2982,6 +2985,9 @@ Worms Armageddon (Europe) (En,Fr,De,Es,It,Nl).z64
 
 Worms Armageddon (USA) (En,Fr,Es).z64
 5471AE3B,13E959A0,12,5
+
+Worms Armageddon (USA) (En,Fr,Es) (Aftermarket) (Unl).z64
+85F1E911,6BE9DA5C,12,0
 
 WWF Attitude (Europe).z64
 804FE494,5BF45B7B,32,0
