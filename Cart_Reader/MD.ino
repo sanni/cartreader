@@ -63,6 +63,7 @@ static const word PROGMEM eepid[] = {
   // EA
   0x8512, 0x84,  // Bill Walsh College Football (UE)                  [BAD HEADER SAVE DATA]
   0xA107, 0x84,  // John Madden Football '93 (UE)                     [NO HEADER SAVE DATA]
+  0x246A, 0x84,  // John Madden Football '93 (U) (EA Sports)          [NO HEADER SAVE DATA]
   0x5807, 0x84,  // John Madden Football '93 Championship Edition (U) [NO HEADER SAVE DATA]
   0x2799, 0x84,  // NHLPA Hockey '93 (UE) (Rev 0)                     [NO HEADER SAVE DATA]
   0xFA57, 0x84,  // NHLPA Hockey '93 (UE) (Rev 1)                     [NO HEADER SAVE DATA]
