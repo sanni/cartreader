@@ -335,10 +335,11 @@
 /****/
 
 /* [ SNES Core/CLOCKGEN: Read Clock Generator Calibration Data ---- ]
-    Toggle to use calibration data from snes_clk.txt
+    Toggle clock calibration menu and whether or not to use calibration data from snes_clk.txt
 */
 
 //#define clockgen_calibration
+//#define use_clockgen_calibration
 
 /****/
 
