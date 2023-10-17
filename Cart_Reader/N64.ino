@@ -2256,7 +2256,7 @@ void writeEeprom() {
   }
 }
 
-void readEepromPageList(byte* output, byte page_number, byte page_count) {
+boolean readEepromPageList(byte* output, byte page_number, byte page_count) {
   byte command[] = { 0x04, page_number };
 
   // Disable interrupts for more uniform clock pulses
@@ -2267,7 +2267,12 @@ void readEepromPageList(byte* output, byte page_number, byte page_count) {
     noInterrupts();
     sendJoyBus(command, sizeof(command));
     // XXX: is it possible to read more than 8 bytes at a time ?
-    recvJoyBus(output, 8);
+    if (recvJoyBus(output, 8) > 0) {
+      // If any missing bytes error out
+      interrupts();
+      return 0;
+      break;
+    }
     interrupts();
 
     if (page_count)
@@ -2276,6 +2281,7 @@ void readEepromPageList(byte* output, byte page_number, byte page_count) {
     command[1]++;
     output += 8;
   }
+  return 1;
 }
 
 // Dump Eeprom to SD
@@ -2300,14 +2306,19 @@ void readEeprom() {
     }
 
     for (int i = 0; i < eepPages; i += sizeof(sdBuffer) / 8) {
-      readEepromPageList(sdBuffer, i, sizeof(sdBuffer) / 8);
+      // If any missing bytes error out
+      if (readEepromPageList(sdBuffer, i, sizeof(sdBuffer) / 8) == 0) {
+        println_Msg(F(""));
+        print_STR(error_STR, 0);
+        println_Msg(F("no data received"));
+        println_Msg(F(""));
+        break;
+      }
       // Write 64 pages at once to the SD card
       myFile.write(sdBuffer, sizeof(sdBuffer));
     }
     // Close the file:
     myFile.close();
-    //clear the screen
-    display_Clear();
     print_Msg(F("Saved to "));
     print_Msg(folder);
     println_Msg(F("/"));
