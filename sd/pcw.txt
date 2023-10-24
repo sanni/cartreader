@@ -14,7 +14,7 @@ Shinkenzemi 'Chuugaku Kouza' - Koukou Juken (Ei - Sha - Ri) (Japan) (6BI711).pcw
 B9831924
 
 Shinkenzemi 'Chuugaku Kouza' - Koukou Juken (Koku - Suu) (Japan) (6BI712).pcw
-81F4FA3E
+AEEC5776
 
 Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB111NH).pcw
 D7FD8C5D
@@ -81,6 +81,9 @@ BF9DA3EA
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Koumin (Japan) (7BE310).pcw
 EFEF730E
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Rekishi (Japan) (0BC410).pcw
+D0FD58EE
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rekishi (Japan) (7BC410).pcw
 2EB6506E
