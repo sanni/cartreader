@@ -92,7 +92,8 @@
 #define ADDR_WRITE DDRC = 0xFF  // [OUTPUT]
 #define DETECTION_SIZE 64
 
-boolean multipack = 0;  // Multi-Pack Cart
+uint32_t rom_size;
+boolean multipack;
 byte bank0;
 byte bank1;
 
@@ -127,9 +128,6 @@ void setup_PCW() {
   // Set Unused Pins HIGH
   PORTJ |= (1 << 0);  // TIME(PJ0)
 
-  // Multi-Pack Cart Check
-  check_multi_PCW();
-
   strcpy(romName, "PCW");
 
   mode = mode_PCW;
@@ -151,10 +149,11 @@ void pcwMenu() {
     case 0:
       // Read ROM
       sd.chdir("/");
+      check_multi_PCW();
       if (multipack)
         readMultiROM_PCW();
       else
-        readROM_PCW();
+        readSingleROM_PCW();
       sd.chdir("/");
       break;
 
@@ -370,99 +369,53 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data) {
   NAND_1B_HIGH;
 }
 
-//==============================================================================
-// Overload Multi-Pack Bank Switch
-//
-// Known Multi-Pack Carts (Yellow Label Carts)
-// 0BD400 [PS] (2MB Version)
-// 0BD400 [PS] (4MB Version)
-// 0BF400 [PL]
-// 1BF400 [PZ]
-// 8BD400 [CR]
-// 8BF400 [LP]
-// 9BF400 [SLP] (Undumped)
+//******************************************
+//  SINGLE-PACK FUNCTIONS
+//******************************************
 
-// Per Overload, identify multi-pack cart by reading 0x3FFA-0x3FFE
-// Multi-Pack carts are non-zero
-// 0x3FFA - Current Cartridge Bank
-// 0x3FFC - Value to Switch to Cartridge Bank 0
-// 0x3FFD - Value to Switch to Cartridge Bank 1
-// 0x3FFE - Last Value written to 0xFFFF
+uint32_t detect_rom_size_PCW(void) {
+  uint8_t read_byte;
+  uint8_t current_byte;
+  uint8_t detect_1m, detect_2m;
 
-// Bank Settings for 2MB
-// Write 0x28 to 0xFFFF to read 1st half of ROM
-// Write 0x2E to 0xFFFF to read 2nd half of ROM
+  //Initialize variables
+  detect_1m = 0;
+  detect_2m = 0;
 
-// Bank Settings for 4MB
-// Write 0x20 to 0xFFFF to read 1st half of ROM
-// Write 0x31 to 0xFFFF to read 2nd half of ROM
+  //Confirm where mirror address starts from (1MB, 2MB or 4MB)
+  for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
+    if ((current_byte != detect_1m) && (current_byte != detect_2m)) {
+      //If none matched, size is 4MB
+      break;
+    }
 
-// MULTI-PACK CART CHECK
-void check_multi_PCW() {
-  read_setup_PCW();
-  byte tempbyte = read_rom_byte_PCW(0x3FFC);  // Bank 0 Switch
-  if (tempbyte) {
-    bank0 = tempbyte;                      // Store Bank 0 Switch
-    tempbyte = read_rom_byte_PCW(0x3FFD);  // Bank 1 Switch
-    if (tempbyte) {
-      bank1 = tempbyte;  // Store Bank 1 Switch
-      // Check for 00s
-      tempbyte = read_rom_byte_PCW(0x3FFB);  // Should be 00
-      if (!tempbyte) {
-        tempbyte = read_rom_byte_PCW(0x3FFF);  // Should be 00
-        if (!tempbyte)
-          multipack = 1;  // Flag Multi-Cart
-        else {
-          bank0 = 0;
-          bank1 = 0;
-        }
+    read_byte = read_rom_byte_PCW(current_byte);
+
+    if (current_byte == detect_1m) {
+      if (read_rom_byte_PCW(0x100000 + current_byte) == read_byte) {
+        detect_1m++;
+      }
+    }
+    if (current_byte == detect_2m) {
+      if (read_rom_byte_PCW(0x200000 + current_byte) == read_byte) {
+        detect_2m++;
       }
     }
   }
-}
 
-void write_bank_byte_PCW(unsigned char data) {
-  NAND_1A_LOW;
-  NAND_1A_HIGH;
-  NAND_1B_LOW;
-  // Write to Address 0xFFFF
-  PORTL = 0x00;
-  PORTK = 0xFF;  // A8-A15
-  // Latch Address on AD0-AD7
-  ADDR_WRITE;
-  LE_HIGH;       // Latch Enable
-  PORTC = 0xFF;  // A0-A7
-  LE_LOW;        // Address Latched
-  // Write Data on AD0-AD7 - WE LOW ~728-736ns
-  WE_LOW;
-  PORTC = data;
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-  WE_HIGH;
-  NAND_1B_HIGH;
-}
-
-void switchBank_PCW(int bank) {
-  if (bank == 1) {  // Upper Half
-    write_bank_byte_PCW(bank1);
-  } else {  // Lower Half (default)
-    write_bank_byte_PCW(bank0);
+  //ROM size detection
+  if (detect_1m == DETECTION_SIZE) {
+    rom_size = 0x100000;
+  } else if (detect_2m == DETECTION_SIZE) {
+    rom_size = 0x200000;
+  } else {
+    rom_size = 0x400000;
   }
+
+  return rom_size;
 }
 
-//******************************************
-// READ ROM FUNCTIONS
-//******************************************
-
-void readROM_PCW() {
+void readSingleROM_PCW() {
   // Setup read mode
   read_setup_PCW();
 
@@ -473,7 +426,6 @@ void readROM_PCW() {
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB SINGLE-PACK");
   println_Msg(F(""));
-  display_Update();
 
   // Create file
   strcpy(fileName, romName);
@@ -516,22 +468,112 @@ void readROM_PCW() {
 
   // Wait for user input
   println_Msg(F(""));
-  // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
 }
 
+//******************************************
+//  MULTI-PACK FUNCTIONS
+//******************************************
+
+// Known Multi-Pack Carts (Yellow Label Carts)
+// 0BD400 [PS] (2MB Version)
+// 0BD400 [PS] (4MB Version)
+// 0BF400 [PL]
+// 1BF400 [PZ]
+// 8BD400 [CR]
+// 8BF400 [LP]
+// 9BF400 [SLP] (Undumped)
+
+// Per Overload, identify multi-pack cart by reading 0x3FFA-0x3FFE. Multi-Pack carts are non-zero.
+// 0x3FFA - Current Cartridge Bank
+// 0x3FFC - Value to Switch to Cartridge Bank 0
+// 0x3FFD - Value to Switch to Cartridge Bank 1
+// 0x3FFE - Last Value written to 0xFFFF
+
+// Bank Settings for 2MB
+// Write 0x28 to 0xFFFF to read 1st half of ROM
+// Write 0x2E to 0xFFFF to read 2nd half of ROM
+
+// Bank Settings for 4MB
+// Write 0x20 to 0xFFFF to read 1st half of ROM
+// Write 0x31 to 0xFFFF to read 2nd half of ROM
+
+void check_multi_PCW() {
+  // init variables
+  read_setup_PCW();
+  multipack = 0;
+  bank0 = 0;
+  bank1 = 0;
+
+  byte tempbyte = read_rom_byte_PCW(0x3FFC); // Check for a bank 0 switch value
+  if (tempbyte) {
+    bank0 = tempbyte; // Store bank 0 switch value
+    tempbyte = read_rom_byte_PCW(0x3FFD); // Check for a bank 1 switch value
+    if (tempbyte) {
+      bank1 = tempbyte; // Store bank 1 switch value
+      if (!read_rom_byte_PCW(0x3FFB) && !read_rom_byte_PCW(0x3FFF)) { // Check for 00s
+        multipack = 1; // Flag as multi-pack
+        display_Clear();
+        if ((bank0 == 0x28) && (bank1 == 0x2E)) // 2MB multi-pack cart
+          rom_size = 0x200000;
+        else if ((bank0 == 0x20) && (bank1 == 0x31)) // 4MB multi-pack cart
+          rom_size = 0x400000;
+        else { // Warn for unknown bank switch values, size set to 4MB
+          println_Msg(F("Warning: Unknown cart size"));
+          rom_size = 0x400000;
+        }
+      }
+    }
+  }
+}
+
+void write_bank_byte_PCW(unsigned char data) {
+  NAND_1A_LOW;
+  NAND_1A_HIGH;
+  NAND_1B_LOW;
+  // Write to Address 0xFFFF
+  PORTL = 0x00;
+  PORTK = 0xFF;  // A8-A15
+  // Latch Address on AD0-AD7
+  ADDR_WRITE;
+  LE_HIGH;       // Latch Enable
+  PORTC = 0xFF;  // A0-A7
+  LE_LOW;        // Address Latched
+  // Write Data on AD0-AD7 - WE LOW ~728-736ns
+  WE_LOW;
+  PORTC = data;
+
+  for (unsigned int x = 0; x < 40; x++)
+      __asm__("nop\n\t");
+
+  WE_HIGH;
+  NAND_1B_HIGH;
+}
+
+void switchBank_PCW(int bank) {
+  if (bank == 1) {  // Upper Half
+    write_bank_byte_PCW(bank1);
+  } else {  // Lower Half (default)
+    write_bank_byte_PCW(bank0);
+  }
+}
+
 void readMultiROM_PCW() {
+  print_Msg(F("READING "));
+  print_Msg(rom_size / 1024 / 1024);
+  print_Msg("MB MULTI-PACK");
+  println_Msg(F(""));
+
+  // Create file
   strcpy(fileName, romName);
   strcat(fileName, ".pcw");
-
   EEPROM_readAnything(0, foldern);
   sprintf(folder, "PCW/ROM/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  display_Clear();
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
@@ -544,41 +586,37 @@ void readMultiROM_PCW() {
     print_FatalError(sd_error_STR);
   }
 
-  display_Clear();
-  println_Msg(F("READING MULTI-PACK"));
-  println_Msg(F(""));
-  display_Update();
-
   // Init progress bar
   uint32_t progress = 0;
-  draw_progressbar(0, 0x400000);
+  draw_progressbar(0, rom_size);
 
-  read_setup_PCW();
   // Lower Half
+  read_setup_PCW();
   switchBank_PCW(0);
-  for (unsigned long address = 0; address < 0x200000; address += 512) {  // 2MB
+  for (unsigned long address = 0; address < (rom_size / 2); address += 512) {
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
     myFile.write(sdBuffer, 512);
     progress += 512;
-    draw_progressbar(progress, 0x400000);
+    draw_progressbar(progress, rom_size);
   }
 
-  read_setup_PCW();
   // Upper Half
+  read_setup_PCW();
   switchBank_PCW(1);
-  for (unsigned long address = 0x200000; address < 0x400000; address += 512) {  // 2MB
+  for (unsigned long address = 0x200000; address < (0x200000 + (rom_size / 2)); address += 512) {
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
     myFile.write(sdBuffer, 512);
     progress += 512;
-    draw_progressbar(progress, 0x400000);
+    draw_progressbar(progress, rom_size);
   }
 
   myFile.flush();
   myFile.close();
+
   // Reset Bank
   switchBank_PCW(0);
 
@@ -588,53 +626,9 @@ void readMultiROM_PCW() {
 
   // Wait for user input
   println_Msg(F(""));
-  // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
-}
-
-uint32_t detect_rom_size_PCW(void) {
-  uint32_t rom_size;
-  uint8_t read_byte;
-  uint8_t current_byte;
-  uint8_t detect_1m, detect_2m;
-
-  //Initialize variables
-  detect_1m = 0;
-  detect_2m = 0;
-
-  //Confirm where mirror address starts from (1MB, 2MB or 4MB)
-  for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
-    if ((current_byte != detect_1m) && (current_byte != detect_2m)) {
-      //If none matched, size is 4MB
-      break;
-    }
-
-    read_byte = read_rom_byte_PCW(current_byte);
-
-    if (current_byte == detect_1m) {
-      if (read_rom_byte_PCW(0x100000 + current_byte) == read_byte) {
-        detect_1m++;
-      }
-    }
-    if (current_byte == detect_2m) {
-      if (read_rom_byte_PCW(0x200000 + current_byte) == read_byte) {
-        detect_2m++;
-      }
-    }
-  }
-
-  //ROM size detection
-  if (detect_1m == DETECTION_SIZE) {
-    rom_size = 0x100000;
-  } else if (detect_2m == DETECTION_SIZE) {
-    rom_size = 0x200000;
-  } else {
-    rom_size = 0x400000;
-  }
-
-  return rom_size;
 }
 
 //******************************************
