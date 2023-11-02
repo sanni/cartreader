@@ -1,14 +1,38 @@
+Eiken Jun 2-kyuu + 3-kyuu (Japan) (2BK922).pcw
+1BE3A77A
+
+Shinkenzemi 'Chuugaku Kouza' - Chuu 1 Eigo (Japan) (5BB111NH).pcw
+55AB157D
+
+Shinkenzemi 'Chuugaku Kouza' - Chuu 1 Eigo (Japan) (5BB112SS).pcw
+7F7AAF5B
+
 Shinkenzemi 'Chuugaku Kouza' - Chuu 2 Eigo (Japan) (5BB211NH).pcw
 505F954E
 
 Shinkenzemi 'Chuugaku Kouza' - Chuu 2 Eigo (Japan) (5BB212SS).pcw
 FF3E9B62
 
+Shinkenzemi 'Chuugaku Kouza' - Chuu 2 Eigo (Japan) (5BB215OW).pcw
+E07172BD
+
+Shinkenzemi 'Chuugaku Kouza' - Chuu 3 Eigo (Japan) (6BB311NH).pcw
+3CE2760D
+
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Japan) (6BD410).pcw
 AD5136AE
 
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Alt) (Japan) (6BD410).pcw
+32A902B8
+
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Koumin (Japan) (6BE310).pcw
+0AF098CA
+
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Rekishi (Japan) (5BC410).pcw
 7865BE62
+
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Rekishi (Alt) (Japan) (5BC410).pcw
+44AFEBAD
 
 Shinkenzemi 'Chuugaku Kouza' - Koukou Juken (Ei - Sha - Ri) (Japan) (6BI711).pcw
 B9831924
@@ -16,17 +40,17 @@ B9831924
 Shinkenzemi 'Chuugaku Kouza' - Koukou Juken (Koku - Suu) (Japan) (6BI712).pcw
 AEEC5776
 
-Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB111NH).pcw
-D7FD8C5D
-
 Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB113NC).pcw
-5711252F
+775E1A65
 
-Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (7BB111NH).pcw
+Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB111NH - 7BB111NH).pcw
 BE0CFA07
 
 Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (7BB112SS).pcw
-FEACC308
+742C17C3
+
+Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (7BB115OW).pcw
+2CB93051
 
 Shinkenzemi Chuugaku Kouza - Chuu 1 Suugaku (Japan) (1BM111).pcw
 5DB9B999
@@ -43,41 +67,71 @@ Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB213NC).pcw
 Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB214TE).pcw
 3C08E0DA
 
+Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB215OW).pcw
+370CFF2F
+
+Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (New Horizon, Columbus 21) (Japan) (2BB211).pcw
+0B20B2D4
+
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB311NH).pcw
+A18685A5
+
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB313NC - 7BB313NC).pcw
+DDE96468
+
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB314TE).pcw
+D87A661F
+
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB311NH).pcw
 A18685A5
 
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB312SS).pcw
 C4676FC9
 
-Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB313NC).pcw
-DDE96468
-
-Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB315OW).pcw
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB315OW - 7BB315OW).pcw
 AE06430D
 
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB317CB).pcw
 149501FB
 
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (New Crown, Total English) (Japan) (2BB314).pcw
+63CD8224
+
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (New Horizon, Columbus 21) (Japan) (2BB311).pcw
+919279ED
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (0BD410).pcw
+AC87B035
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (1BD411).pcw
+22E0A9B1
+
 Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (7BD410).pcw
 8DE1ED5A
 
-Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (9BD410).pcw
+Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (9BD410 - 9BD411).pcw
 A1B3C2C9
 
-Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japan) (8BD400).pcw
-77D1D534
-
 Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Japan) (0BD400).pcw
-21895AF8
+5601F35C
 
-Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Japan) (0BD401).pcw
+Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Japan) (0BD400) (Alt).pcw
 660E84A5
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Chiri - Rekishi Pack (Japan) (8BD400).pcw
+F27575FE
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Kokugo - Hyakunin Isshu (Japan) (1BK401).pcw
 B0444C88
 
+Shinkenzemi Chuugaku Kouza - Chuugaku Kokugo - Hyakunin Isshu (Japan) (1BK401) (Alt).pcw
+7A5EF3D5
+
 Shinkenzemi Chuugaku Kouza - Chuugaku Koumin (Japan) (0BE311).pcw
 BF9DA3EA
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Koumin (Japan) (2BE310).pcw
+48A3B1B7
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Koumin (Japan) (7BE310).pcw
 EFEF730E
@@ -88,11 +142,23 @@ D0FD58EE
 Shinkenzemi Chuugaku Kouza - Chuugaku Rekishi (Japan) (7BC410).pcw
 2EB6506E
 
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika (1-bunya) (Japan) (0BF411).pcw
+83883CB6
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika (1-bunya) (Japan) (1BF411).pcw
+1B2B5622
+
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (1-bunya) (Japan) (7BF411).pcw
 BDC7847D
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (1-bunya) (Japan) (Rev 1) (7BF411).pcw
 0C80EC13
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (0BF412).pcw
+B820F013
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (1BF412).pcw
+CAD91342
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (7BF412).pcw
 A6E409E8
@@ -100,14 +166,14 @@ A6E409E8
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika (2-bunya) (Japan) (Rev 1) (7BF412).pcw
 336289BC
 
-Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (1-bunya - Soft 2-bunya Soft Kanzen Taiou Ban) (Japan) (8BF400).pcw
-E1D5C9E0
-
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (Japan) (0BF400).pcw
-341E732B
+50016928
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (Japan) (1BF400).pcw
 6205144B
+
+Shinkenzemi Chuugaku Kouza - Chuugaku Rika Pack (Japan) (8BF400).pcw
+D35A38DA
 
 Shinkenzemi Chuugaku Kouza - Hinshutsu Sekaishi Kouryaku (Japan) (8BCD01).pcw
 38384AD4
@@ -132,6 +198,12 @@ Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Japan) (7BI712).pcw
 
 Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Japan) (9BI712).pcw
 0FCDC311
+
+Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Alt) (Japan) (9BI712).pcw
+C35A53A4
+
+Shinkenzemi Chuugaku Kouza - Koukou Juken EX (Yuugou - Shiryou Mondai Kouryaku) Rika Shakai (Japan) (3BI710).pcw
+588F8570
 
 Shinkenzemi Chuugaku Kouza - Hinshutsu Nihonshi Kouryaku (Japan) (8BCD02).pcw
 68BC5E95
