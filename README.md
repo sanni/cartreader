@@ -48,7 +48,7 @@ Happy making. 🔧🔨😊
 - Atari 2600/5200/7800    
 - Emerson Arcadia 2001   
 - Fairchild Channel F     
-- Magnavox Odyssey 2/Videopac  
+- Magnavox Odyssey 2/Philips Videopac+  
 - Super A'Can    
 - MSX    
 - Pokémon Mini     
