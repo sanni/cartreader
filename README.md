@@ -22,8 +22,8 @@ Happy making. 🔧🔨😊
 
 #### Supported Systems:    
 - NES/Famicom/Family Basic   
-- SNES/Super Famicom (including SF Memory and Satellaview)  
-- N64 (including Controller Pak, Gameshark, and Xplorer 64)  
+- Super Nintendo/Super Famicom (including SF Memory and Satellaview)  
+- Nintendo 64 (including Controller Pak, Gameshark, and Xplorer 64)  
 - Game Boy Color (including GB Memory, Codebreaker, and Gameshark)  
 - Game Boy Advance    
 - Sega Mega Drive/Genesis    
@@ -35,9 +35,9 @@ Happy making. 🔧🔨😊
 - Virtual Boy    
 - Sega Game Gear    
 - Sega Mark III     
-- Sega SG-1000    
+- Sega SG-1000/SC-3000    
 - Sega Cards    
-- PC engine/TG16    
+- PC engine/TurboGrafx-16    
 - WonderSwan (Color)    
 - NeoGeo Pocket (Color)    
 - Intellivision   
@@ -48,12 +48,12 @@ Happy making. 🔧🔨😊
 - Atari 2600/5200/7800    
 - Emerson Arcadia 2001   
 - Fairchild Channel F     
-- Magnavox Odyssey 2  
+- Magnavox Odyssey 2/Videopac  
 - Super A'Can    
 - MSX    
-- Pokemon Mini     
+- Pokémon Mini     
 - Casio Loopy
-- C64    
+- Commodore 64    
 - Vectrex    
 
 #### Open Source Licenses:    
