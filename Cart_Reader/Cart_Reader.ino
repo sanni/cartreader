@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2023-10-17
-   Version:          12.9
+   Date:             2023-11-23
+   Version:          13.0
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -40,7 +40,7 @@
    Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
    philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage,
    vpelletier, Ancyker, mattiacci, RWeick, joshman196, partlyhuman, ButThouMust, hxlnt,
-   breyell
+   breyell, qufb
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
