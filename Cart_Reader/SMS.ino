@@ -232,7 +232,7 @@ void writeByte_SMS(word myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   if (!adapter_retrode) {
-    // CE(PH3) and OE(PH6) are connected
+    // A15/M0-7(PH3) and OE(PH6) are connected
     PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
   }
 
@@ -304,7 +304,7 @@ byte readByte_SMS(word myAddress) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   if (!adapter_retrode) {
-    // CE(PH3) and OE(PH6) are connected
+    // A15/M0-7(PH3) and OE(PH6) are connected
     PORTH = (PORTH & 0b11110111) | ((myAddress >> 12) & 0b00001000);
   }
 
