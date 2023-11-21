@@ -537,7 +537,7 @@ void checkCSV_ARC() {
     Serial.println(F(""));
 #endif
   } else {
-#ifdef enable_OLED
+#if (defined(enable_OLED) || defined(enable_LCD))
     display.setCursor(0, 56);
     println_Msg(F("NO SELECTION"));
     display_Update();
