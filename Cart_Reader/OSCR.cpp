@@ -41,7 +41,7 @@
 /*==== VARIABLES ==================================================*/
 
 // Firmware Version
-char ver[5] = "13.0";
+char ver[5] = "13.1";
 
 // Clock speed
 unsigned long clock = CS_16MHZ;
