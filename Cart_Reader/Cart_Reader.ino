@@ -257,6 +257,7 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_5200 37
 #define mode_7800 38
 #define mode_VECTREX 39
+#define mode_ST 40
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -3590,6 +3591,11 @@ void loop() {
 #ifdef enable_SV
   else if (mode == mode_SV) {
     svMenu();
+  }
+#endif
+#ifdef enable_ST
+  else if (mode == mode_ST) {
+    stMenu();
   }
 #endif
 #ifdef enable_NES

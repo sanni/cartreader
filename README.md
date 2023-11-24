@@ -22,7 +22,7 @@ Happy making. 🔧🔨😊
 
 #### Supported Systems:    
 - NES/Famicom/Family Basic   
-- Super Nintendo/Super Famicom (including SF Memory and Satellaview)  
+- Super Nintendo/Super Famicom (including SF Memory, Satellaview, and Sufami Turbo)  
 - Nintendo 64 (including Controller Pak, Gameshark, and Xplorer 64)  
 - Game Boy Color (including GB Memory, Codebreaker, and Gameshark)  
 - Game Boy Advance    
