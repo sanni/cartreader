@@ -37,7 +37,7 @@ Happy making. 🔧🔨😊
 - Sega Mark III     
 - Sega SG-1000/SC-3000    
 - Sega Cards    
-- PC engine/TurboGrafx-16    
+- PC Engine/TurboGrafx-16/SuperGrafx    
 - WonderSwan (Color)    
 - NeoGeo Pocket (Color)    
 - Intellivision   

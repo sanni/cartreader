@@ -22,6 +22,9 @@
 [BIOS] TurboGrafx CD System Card (USA) (v2.0).pce
 FF2A5EC3
 
+1941 - Counter Attack (Japan).sgx
+8C4588E2
+
 1943 Kai (Japan).pce
 FDE08D6D
 
@@ -48,6 +51,9 @@ Air Zonk (USA).pce
 
 Air Zonk (USA, Europe) (WiiU Virtual Console).pce
 D76C4169
+
+Aldynes - The Misson Code for Rage Crisis (Japan).sgx
+4C2126B0
 
 Alien Crush (USA, Europe).pce
 EA488494
@@ -99,6 +105,9 @@ Barunba (Japan).pce
 
 Batman (Japan).pce
 106BB7B2
+
+Battle Ace (Japan).sgx
+3B13AF61
 
 Battle Chopper (World) (En,Ja).pce
 2CB92290
@@ -276,6 +285,9 @@ A594FAC0
 
 Daichi-kun Crisis - Do Natural (Japan).pce
 61A2935F
+
+Daimakaimura (Japan).sgx
+B486A8ED
 
 Daisenpuu (Japan).pce
 9107BCC8
@@ -657,6 +669,9 @@ Legendary Axe, The (USA).pce
 
 Lode Runner - Lost Labyrinth (Japan).pce
 E6EE1468
+
+Madou King Granzort (Japan).sgx
+1F041166
 
 Maerchen Maze (Japan).pce
 A15A1F37
