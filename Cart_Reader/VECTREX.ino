@@ -55,9 +55,9 @@
 #define PB6_ENABLE PORTH |= (1 << 5)    // PB6 HIGH
 #define PB6_DISABLE PORTH &= ~(1 << 5)  // PB6 LOW
 
-byte VECTREX[] = { 4, 8, 12 };
+byte VECTREX[] = { 4, 8, 12, 16, 32, 64 };
 byte vectrexlo = 0;  // Lowest Entry
-byte vectrexhi = 2;  // Highest Entry
+byte vectrexhi = 5;  // Highest Entry
 byte vectrexsize;
 byte newvectrexsize;
 
@@ -225,21 +225,22 @@ void readROM_VECTREX() {
   EEPROM_writeAnything(0, foldern);
 
   PB6_DISABLE;  // PB6 LOW - Switch Bank
+  
   // Standard Carts 4K/8K
-  readSegment_VECTREX(0x0000, 0x0400);  // 1K
-  readSegment_VECTREX(0x0400, 0x0800);  // +1K = 2K
-  readSegment_VECTREX(0x0800, 0x0C00);  // +1K = 3K
-  readSegment_VECTREX(0x0C00, 0x1000);  // +1K = 4K
+  readSegment_VECTREX(0x0000, 0x1000);  // 4K
   if (vectrexsize > 0) {
     readSegment_VECTREX(0x1000, 0x2000);  // +4K = 8K
-    // Dark Tower 12K
+    // 12K (Dark Tower)
     if (vectrexsize > 1)
       readSegment_VECTREX(0x2000, 0x3000);  // +4K = 12K
-    // Oversize 32K Cart
+    // 16K Carts
     if (vectrexsize > 2)
-      readSegment_VECTREX(0x3000, 0x8000);  // +20K = 32K
-    // Oversize 64K Cart - PB6 Bankswitch
-    if (vectrexsize > 3) {                  // [UNTESTED]
+      readSegment_VECTREX(0x3000, 0x4000);  // +4K = 16K
+    // Oversize 32K Carts
+    if (vectrexsize > 3)
+      readSegment_VECTREX(0x4000, 0x8000);  // +16K = 32K
+    // Oversize 64K Carts
+    if (vectrexsize > 4) {
       PB6_ENABLE;                           // PB6 HIGH - Switch Bank
       readSegment_VECTREX(0x0000, 0x8000);  // +32K = 64K
       PB6_DISABLE;                          // Reset PB6
@@ -332,7 +333,7 @@ void setROMSize_VECTREX() {
   }
   print_Msg(F("ROM SIZE "));
   print_Msg(VECTREX[newvectrexsize]);
-  println_Msg(F("K"));
+  println_Msg(F("KB"));
   display_Update();
   delay(1000);
 #else
@@ -346,7 +347,7 @@ setrom:
       Serial.print(i);
       Serial.print(F(" = "));
       Serial.print(VECTREX[i + vectrexlo]);
-      Serial.println(F("K"));
+      Serial.println(F("KB"));
     }
     Serial.print(F("Enter ROM Size: "));
     while (Serial.available() == 0) {}
@@ -361,7 +362,7 @@ setrom:
   }
   Serial.print(F("ROM Size = "));
   Serial.print(VECTREX[newvectrexsize]);
-  Serial.println(F("K"));
+  Serial.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newvectrexsize);
   vectrexsize = newvectrexsize;
@@ -381,13 +382,13 @@ void checkStatus_VECTREX() {
   println_Msg(F(""));
   print_Msg(F("ROM SIZE: "));
   print_Msg(VECTREX[vectrexsize]);
-  println_Msg(F("K"));
+  println_Msg(F("KB"));
   display_Update();
   wait();
 #else
   Serial.print(F("ROM SIZE: "));
   Serial.print(VECTREX[vectrexsize]);
-  Serial.println(F("K"));
+  Serial.println(F("KB"));
   Serial.println(F(""));
 #endif
 }
