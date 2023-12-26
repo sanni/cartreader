@@ -771,7 +771,7 @@ char a7800mm[3];                       // mapper
 char a7800rr[3];                       // mapper
 char a7800ll[4];                       // linelength (previous line)
 unsigned long a7800csvpos;             // CSV File Position
-char a7800cartCSV[] = "7800cart.txt";  // CSV List
+char a7800cartCSV[] = "7800.txt";      // CSV List
 char a7800csvEND[] = "EOF";            // CSV End Marker for scrolling
 
 bool readLine_7800(FsFile& f, char* line, size_t maxLen) {

@@ -245,7 +245,7 @@ void print_STR(byte string_number, boolean newline) {
 #define mode_VBOY 25
 #define mode_WSV 26
 #define mode_PCW 27
-#define mode_ATARI 28
+#define mode_2600 28
 #define mode_ODY2 29
 #define mode_ARC 30
 #define mode_FAIRCHILD 31
@@ -499,7 +499,7 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc, etc. modules
  *****************************************/
-#if (defined(enable_ATARI) || defined(enable_ODY2) || defined(enable_ARC) || defined(enable_FAIRCHILD) || defined(enable_MSX) || defined(enable_POKE) || defined(enable_5200) || defined(enable_7800) || defined(enable_C64) || defined(enable_VECTREX))
+#if (defined(enable_ODY2) || defined(enable_ARC) || defined(enable_FAIRCHILD) || defined(enable_MSX) || defined(enable_POKE) || defined(enable_2600) || defined(enable_5200) || defined(enable_7800) || defined(enable_C64) || defined(enable_VECTREX))
 
 inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
   uint32_t idx = ((crc) ^ (ch)) & 0xff;
@@ -867,7 +867,7 @@ static const char modeItem13[] PROGMEM = "Watara Supervision (3V)";
 #ifdef enable_PCW
 static const char modeItem14[] PROGMEM = "Pocket Challenge W";
 #endif
-#ifdef enable_ATARI
+#ifdef enable_2600
 static const char modeItem15[] PROGMEM = "Atari 2600";
 #endif
 #ifdef enable_ODY2
@@ -954,7 +954,7 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef enable_PCW
   modeItem14,
 #endif
-#ifdef enable_ATARI
+#ifdef enable_2600
   modeItem15,
 #endif
 #ifdef enable_ODY2
@@ -1044,7 +1044,7 @@ byte countMenuEntries() {
 #ifdef enable_PCW
   count++;
 #endif
-#ifdef enable_ATARI
+#ifdef enable_2600
   count++;
 #endif
 #ifdef enable_ODY2
@@ -1164,7 +1164,7 @@ unsigned char fixMenuOrder(unsigned char modeMenu) {
   currentEntry++;
 #endif
 
-#if defined(enable_ATARI)
+#if defined(enable_2600)
   translationMatrix[currentEntry] = 14;
   currentEntry++;
 #endif
@@ -1411,10 +1411,10 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef enable_ATARI
+#ifdef enable_2600
     case 14:
-      setup_ATARI();
-      atariMenu();
+      setup_2600();
+      a2600Menu();
       break;
 #endif
 
@@ -3657,11 +3657,6 @@ void loop() {
     pcwMenu();
   }
 #endif
-#ifdef enable_ATARI
-  else if (mode == mode_ATARI) {
-    atariMenu();
-  }
-#endif
 #ifdef enable_ODY2
   else if (mode == mode_ODY2) {
     ody2Menu();
@@ -3700,6 +3695,11 @@ void loop() {
 #ifdef enable_C64
   else if (mode == mode_C64) {
     c64Menu();
+  }
+#endif
+#ifdef enable_2600
+  else if (mode == mode_2600) {
+    a2600Menu();
   }
 #endif
 #ifdef enable_5200
