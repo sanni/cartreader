@@ -1,7 +1,7 @@
 //******************************************
 // ATARI 2600 MODULE
 //******************************************
-#if defined(enable_ATARI)
+#if defined(enable_2600)
 // Atari 2600
 // Cartridge Pinout
 // 24P 2.54mm pitch connector
@@ -20,7 +20,7 @@
 
 // Cart Configurations
 // Format = {mapper,romsize}
-static const byte PROGMEM atarimapsize[] = {
+static const byte PROGMEM a2600mapsize[] = {
   0x20, 0,  // 2K
   0x3F, 2,  // Tigervision 8K
   0x40, 1,  // 4K [DEFAULT]
@@ -38,15 +38,14 @@ static const byte PROGMEM atarimapsize[] = {
   0x0A, 2,  // "UA" UA Ltd 8K
 };
 
-byte atarimapcount = (sizeof(atarimapsize) / sizeof(atarimapsize[0])) / 2;
+byte a2600mapcount = (sizeof(a2600mapsize) / sizeof(a2600mapsize[0])) / 2;
+byte a2600mapselect;
+int a2600index;
 
-byte atarimapselect;
-int atariindex;
-
-byte ATARI[] = { 2, 4, 8, 12, 16, 32, 64 };
-byte atarimapper = 0;
-byte newatarimapper;
-byte atarisize;
+byte a2600[] = { 2, 4, 8, 12, 16, 32, 64 };
+byte a2600mapper = 0;
+byte new2600mapper;
+byte a2600size;
 byte e7size;
 
 // EEPROM MAPPING
@@ -57,13 +56,12 @@ byte e7size;
 //  Menu
 //******************************************
 // Base Menu
-static const char atariMenuItem1[] PROGMEM = "Select Cart";
-static const char atariMenuItem2[] PROGMEM = "Read ROM";
-static const char atariMenuItem3[] PROGMEM = "Set Mapper";
-static const char atariMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsATARI[] PROGMEM = { atariMenuItem1, atariMenuItem2, atariMenuItem3, atariMenuItem4 };
+static const char a2600MenuItem1[] PROGMEM = "Select Cart";
+static const char a2600MenuItem2[] PROGMEM = "Read ROM";
+static const char a2600MenuItem3[] PROGMEM = "Set Mapper";
+static const char* const menuOptions2600[] PROGMEM = { a2600MenuItem1, a2600MenuItem2, a2600MenuItem3, string_reset2 };
 
-void setup_ATARI() {
+void setup_2600() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
@@ -98,35 +96,35 @@ void setup_ATARI() {
   PORTL = 0xFF;       // A16-A23
   PORTJ |= (1 << 0);  // TIME(PJ0)
 
-  checkStatus_ATARI();
+  checkStatus_2600();
   strcpy(romName, "ATARI");
 
-  mode = mode_ATARI;
+  mode = mode_2600;
 }
 
-void atariMenu() {
-  convertPgm(menuOptionsATARI, 4);
+void a2600Menu() {
+  convertPgm(menuOptions2600, 4);
   uint8_t mainMenu = question_box(F("ATARI 2600 MENU"), menuOptions, 4, 0);
 
   switch (mainMenu) {
     case 0:
       // Select Cart
-      setCart_ATARI();
+      setCart_2600();
       wait();
-      setup_ATARI();
+      setup_2600();
       break;
 
     case 1:
       // Read ROM
       sd.chdir("/");
-      readROM_ATARI();
+      readROM_2600();
       sd.chdir("/");
       break;
 
     case 2:
       // Set Mapper
-      setMapper_ATARI();
-      checkStatus_ATARI();
+      setMapper_2600();
+      checkStatus_2600();
       break;
 
     case 3:
@@ -140,7 +138,7 @@ void atariMenu() {
 // READ CODE
 //******************************************
 
-uint8_t readData_ATARI(uint16_t addr)  // Add Input Pullup
+uint8_t readData_2600(uint16_t addr)  // Add Input Pullup
 {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A12
@@ -168,29 +166,29 @@ uint8_t readData_ATARI(uint16_t addr)  // Add Input Pullup
   return ret;
 }
 
-void readSegment_ATARI(uint16_t startaddr, uint16_t endaddr) {
+void readSegment_2600(uint16_t startaddr, uint16_t endaddr) {
   for (uint16_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
-      uint8_t temp = readData_ATARI(addr + w);
+      uint8_t temp = readData_2600(addr + w);
       sdBuffer[w] = temp;
     }
     myFile.write(sdBuffer, 512);
   }
 }
 
-void readSegmentF8_ATARI(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr) {
+void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr) {
   for (uint16_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       if (addr > 0x1FF9)  // SET BANK ADDRESS FOR 0x1FFA-0x1FFF
-        readData_ATARI(bankaddr);
-      uint8_t temp = readData_ATARI(addr + w);
+        readData_2600(bankaddr);
+      uint8_t temp = readData_2600(addr + w);
       sdBuffer[w] = temp;
     }
     myFile.write(sdBuffer, 512);
   }
 }
 
-void writeData_ATARI(uint16_t addr, uint8_t data) {
+void writeData_2600(uint16_t addr, uint8_t data) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A12
   NOP;
@@ -216,7 +214,7 @@ void writeData_ATARI(uint16_t addr, uint8_t data) {
   DDRC = 0x00;  // Reset to Input
 }
 
-void writeData3F_ATARI(uint16_t addr, uint8_t data) {
+void writeData3F_2600(uint16_t addr, uint8_t data) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A12
   NOP;
@@ -256,16 +254,16 @@ void writeData3F_ATARI(uint16_t addr, uint8_t data) {
 
 // E7 Mapper Check - Check Bank for FFs
 boolean checkE7(int bank) {
-  writeData_ATARI(0x1800, 0xFF);
-  readData_ATARI(0x1FE0 + bank);
-  uint32_t testdata = (readData_ATARI(0x1000) << 24) | (readData_ATARI(0x1001) << 16) | (readData_ATARI(0x1002) << 8) | (readData_ATARI(0x1003));
+  writeData_2600(0x1800, 0xFF);
+  readData_2600(0x1FE0 + bank);
+  uint32_t testdata = (readData_2600(0x1000) << 24) | (readData_2600(0x1001) << 16) | (readData_2600(0x1002) << 8) | (readData_2600(0x1003));
   if (testdata == 0xFFFFFFFF)
     return true;
   else
     return false;
 }
 
-void readROM_ATARI() {
+void readROM_2600() {
   strcpy(fileName, romName);
   strcat(fileName, ".a26");
 
@@ -293,31 +291,31 @@ void readROM_ATARI() {
   // Address A12-A0 = 0x1000 = 1 0000 0000 0000 = 4KB
   // Read Start 0x1000
 
-  switch (atarimapper) {
+  switch (a2600mapper) {
     case 0x20:  // 2K Standard 2KB
-      readSegment_ATARI(0x1000, 0x1800);
+      readSegment_2600(0x1000, 0x1800);
       break;
 
     case 0x3F:  // 3F Mapper 8KB
       for (int x = 0; x < 0x3; x++) {
-        writeData3F_ATARI(0x3F, x);
-        readSegment_ATARI(0x1000, 0x1800);
+        writeData3F_2600(0x3F, x);
+        readSegment_2600(0x1000, 0x1800);
       }
-      readSegment_ATARI(0x1800, 0x2000);
+      readSegment_2600(0x1800, 0x2000);
       break;
 
     case 0x40:  // 4K Default 4KB
-      readSegment_ATARI(0x1000, 0x2000);
+      readSegment_2600(0x1000, 0x2000);
       break;
 
     case 0xC0:  // CV Mapper 2KB
-      readSegment_ATARI(0x1800, 0x2000);
+      readSegment_2600(0x1800, 0x2000);
       break;
 
     case 0xD0:  // DPC Mapper 10KB
       // 8K ROM
       for (int x = 0; x < 0x2; x++) {
-        readData_ATARI(0x1FF8 + x);
+        readData_2600(0x1FF8 + x);
         // Split Read of 1st 0x200 bytes
         // 0x0000-0x0080 are DPC Registers (Random on boot)
         for (int y = 0; y < 0x80; y++) {
@@ -325,31 +323,31 @@ void readROM_ATARI() {
         }
         myFile.write(sdBuffer, 128);
         for (int z = 0; z < 0x180; z++) {
-          sdBuffer[z] = readData_ATARI(0x1080 + z);
+          sdBuffer[z] = readData_2600(0x1080 + z);
         }
         myFile.write(sdBuffer, 384);
         // Read Segment
-        readSegment_ATARI(0x1200, 0x1800);
+        readSegment_2600(0x1200, 0x1800);
         // 0x1000-0x1080 are DPC Registers (Random on boot)
         for (int y = 0; y < 0x80; y++) {
           sdBuffer[y] = 0xFF;  // Output 0xFFs for Registers
         }
         myFile.write(sdBuffer, 128);
         for (int z = 0; z < 0x180; z++) {
-          sdBuffer[z] = readData_ATARI(0x1880 + z);
+          sdBuffer[z] = readData_2600(0x1880 + z);
         }
         myFile.write(sdBuffer, 384);
         // Read Segment
-        readSegment_ATARI(0x1A00, 0x1E00);
+        readSegment_2600(0x1A00, 0x1E00);
         // Split Read of Last 0x200 bytes
         for (int y = 0; y < 0x1F8; y++) {
-          sdBuffer[y] = readData_ATARI(0x1E00 + y);
+          sdBuffer[y] = readData_2600(0x1E00 + y);
         }
         myFile.write(sdBuffer, 504);
         for (int z = 0; z < 8; z++) {
           // Set Bank to ensure 0x1FFA-0x1FFF is correct
-          readData_ATARI(0x1FF8 + x);
-          sdBuffer[z] = readData_ATARI(0x1FF8 + z);
+          readData_2600(0x1FF8 + x);
+          sdBuffer[z] = readData_2600(0x1FF8 + z);
         }
         myFile.write(sdBuffer, 8);
       }
@@ -359,18 +357,18 @@ void readROM_ATARI() {
       // Write Registers LSB 0x1050-0x1057 AND MSB 0x1058-0x105F
 
       // Set Data Fetcher 0 Limits
-      writeData_ATARI(0x1040, 0xFF);  // MAX for Data Fetcher 0
-      writeData_ATARI(0x1048, 0x00);  // MIN for Data Fetcher 0
+      writeData_2600(0x1040, 0xFF);  // MAX for Data Fetcher 0
+      writeData_2600(0x1048, 0x00);  // MIN for Data Fetcher 0
       // Set Data Fetcher 0 Counter (0x7FF)
-      writeData_ATARI(0x1050, 0xFF);  // LSB for Data Fetcher 0
-      writeData_ATARI(0x1058, 0x07);  // MSB for Data Fetcher 0
+      writeData_2600(0x1050, 0xFF);  // LSB for Data Fetcher 0
+      writeData_2600(0x1058, 0x07);  // MSB for Data Fetcher 0
       // Set Data Fetcher 1 Counter (0x7FF)
-      writeData_ATARI(0x1051, 0xFF);  // LSB for Data Fetcher 1
-      writeData_ATARI(0x1059, 0x07);  // MSB for Data Fetcher 1
+      writeData_2600(0x1051, 0xFF);  // LSB for Data Fetcher 1
+      writeData_2600(0x1059, 0x07);  // MSB for Data Fetcher 1
       for (int x = 0; x < 0x800; x += 512) {
         for (int y = 0; y < 512; y++) {
-          sdBuffer[y] = readData_ATARI(0x1008);  // Data Fetcher 0
-          readData_ATARI(0x1009);                // Data Fetcher 1
+          sdBuffer[y] = readData_2600(0x1008);  // Data Fetcher 0
+          readData_2600(0x1009);                // Data Fetcher 1
         }
         myFile.write(sdBuffer, 512);
       }
@@ -378,67 +376,67 @@ void readROM_ATARI() {
 
     case 0xE0:  // E0 Mapper 8KB
       for (int x = 0; x < 0x7; x++) {
-        readData_ATARI(0x1FE0 + x);
-        readSegment_ATARI(0x1000, 0x1400);
+        readData_2600(0x1FE0 + x);
+        readSegment_2600(0x1000, 0x1400);
       }
-      readSegment_ATARI(0x1C00, 0x2000);
+      readSegment_2600(0x1C00, 0x2000);
       break;
 
     case 0xE7: // E7 Mapper 8KB/12KB/16KB
       // Check Bank 0 - If 0xFFs then Bump 'n' Jump
       if (checkE7(0)) { // Bump 'n' Jump 8K
-        writeData_ATARI(0x1800, 0xFF);
+        writeData_2600(0x1800, 0xFF);
 
         for (int x = 4; x < 7; x++) { // Banks 4-6
-          readData_ATARI(0x1FE0 + x);
-          readSegment_ATARI(0x1000, 0x1800);
+          readData_2600(0x1FE0 + x);
+          readSegment_2600(0x1000, 0x1800);
         }
         e7size = 0;
       }
       // Check Bank 3 - If 0xFFs then BurgerTime
       else if (checkE7(3)) { // BurgerTime 12K
-        writeData_ATARI(0x1800, 0xFF);
+        writeData_2600(0x1800, 0xFF);
         for (int x = 0; x < 2; x++) { // Banks 0+1
-          readData_ATARI(0x1FE0 + x);
-          readSegment_ATARI(0x1000, 0x1800);
+          readData_2600(0x1FE0 + x);
+          readSegment_2600(0x1000, 0x1800);
         }
         for (int x = 4; x < 7; x++) { // Banks 4-6
-          readData_ATARI(0x1FE0 + x);
-          readSegment_ATARI(0x1000, 0x1800);
+          readData_2600(0x1FE0 + x);
+          readSegment_2600(0x1000, 0x1800);
         }
         e7size = 1;
       }
       else { // Masters of the Universe (or Unknown Cart) 16K
-        writeData_ATARI(0x1800, 0xFF);
+        writeData_2600(0x1800, 0xFF);
         for (int x = 0; x < 7; x++) { // Banks 0-6
-          readData_ATARI(0x1FE0 + x);
-          readSegment_ATARI(0x1000, 0x1800);
+          readData_2600(0x1FE0 + x);
+          readSegment_2600(0x1000, 0x1800);
         }
         e7size = 2;
       }
-      readSegment_ATARI(0x1800, 0x2000); // Bank 7
+      readSegment_2600(0x1800, 0x2000); // Bank 7
       break;
 
     case 0xF0:  // F0 Mapper 64KB
       for (int x = 0; x < 0x10; x++) {
-        readData_ATARI(0x1FF0);
-        readSegment_ATARI(0x1000, 0x2000);
+        readData_2600(0x1FF0);
+        readSegment_2600(0x1000, 0x2000);
       }
       break;
 
     case 0xF4: // F4 Mapper 32KB
       for (int x = 0; x < 8; x++) {
-        readData_ATARI(0x1FF4 + x);
-        readSegment_ATARI(0x1000, 0x1E00);
+        readData_2600(0x1FF4 + x);
+        readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
         for (int y = 0; y < 0x1F4; y++) {
-          sdBuffer[y] = readData_ATARI(0x1E00 + y);
+          sdBuffer[y] = readData_2600(0x1E00 + y);
         }
         myFile.write(sdBuffer, 500);
         for (int z = 0; z < 12; z++) {
           // Set Bank to ensure 0x1FFC-0x1FFF is correct
-          readData_ATARI(0x1FF4 + x);
-          sdBuffer[z] = readData_ATARI(0x1FF4 + z);
+          readData_2600(0x1FF4 + x);
+          sdBuffer[z] = readData_2600(0x1FF4 + z);
         }
         myFile.write(sdBuffer, 12);
       }
@@ -446,52 +444,52 @@ void readROM_ATARI() {
 
     case 0xF6: // F6 Mapper 16KB
       for (int w = 0; w < 4; w++) {
-        readData_ATARI(0x1FF6 + w);
-        readSegment_ATARI(0x1000, 0x1E00);
+        readData_2600(0x1FF6 + w);
+        readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
         for (int x = 0; x < 0x1F6; x++) {
-          sdBuffer[x] = readData_ATARI(0x1E00 + x);
+          sdBuffer[x] = readData_2600(0x1E00 + x);
         }
         myFile.write(sdBuffer, 502);
         // Bank Registers 0x1FF6-0x1FF9
         for (int y = 0; y < 4; y++){
-          readData_ATARI(0x1FFF); // Reset Bank
-          sdBuffer[y] = readData_ATARI(0x1FF6 + y);
+          readData_2600(0x1FFF); // Reset Bank
+          sdBuffer[y] = readData_2600(0x1FF6 + y);
         }
         // End of Bank 0x1FFA-0x1FFF
-        readData_ATARI(0x1FFF); // Reset Bank
-        readData_ATARI(0x1FF6 + w); // Set Bank
+        readData_2600(0x1FFF); // Reset Bank
+        readData_2600(0x1FF6 + w); // Set Bank
         for (int z = 4; z < 10; z++) {
-          sdBuffer[z] = readData_ATARI(0x1FF6 + z); // 0x1FFA-0x1FFF
+          sdBuffer[z] = readData_2600(0x1FF6 + z); // 0x1FFA-0x1FFF
         }
         myFile.write(sdBuffer, 10);
       }
-      readData_ATARI(0x1FFF); // Reset Bank
+      readData_2600(0x1FFF); // Reset Bank
       break;
 
     case 0xF8: // F8 Mapper 8KB
       for (int w = 0; w < 2; w++) {
-        readData_ATARI(0x1FF8 + w);
-        readSegment_ATARI(0x1000, 0x1E00);
+        readData_2600(0x1FF8 + w);
+        readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
         for (int x = 0; x < 0x1F8; x++) {
-          sdBuffer[x] = readData_ATARI(0x1E00 + x);
+          sdBuffer[x] = readData_2600(0x1E00 + x);
         }
         myFile.write(sdBuffer, 504);
         // Bank Registers 0x1FF8-0x1FF9
         for (int y = 0; y < 2; y++){
-          readData_ATARI(0x1FFF); // Reset Bank
-          sdBuffer[y] = readData_ATARI(0x1FF8 + y);
+          readData_2600(0x1FFF); // Reset Bank
+          sdBuffer[y] = readData_2600(0x1FF8 + y);
         }
         // End of Bank 0x1FFA-0x1FFF
-        readData_ATARI(0x1FFF); // Reset Bank
-        readData_ATARI(0x1FF8 + w); // Set Bank
+        readData_2600(0x1FFF); // Reset Bank
+        readData_2600(0x1FF8 + w); // Set Bank
         for (int z = 2; z < 8; z++) {
-          sdBuffer[z] = readData_ATARI(0x1FF8 + z); // 0x1FFA-0x1FFF
+          sdBuffer[z] = readData_2600(0x1FF8 + z); // 0x1FFA-0x1FFF
         }
         myFile.write(sdBuffer, 8);
       }
-      readData_ATARI(0x1FFF); // Reset Bank
+      readData_2600(0x1FFF); // Reset Bank
       break;
 
     case 0xF9: // Time Pilot Mapper 8KB
@@ -499,42 +497,42 @@ void readROM_ATARI() {
       // kevtris swapped the bank order - swapped banks may not match physical ROM data
       // Bankswitch code uses 0x1FFC and 0x1FF9
       for (int w = 3; w >= 0; w -= 3) {
-        readData_ATARI(0x1FF9 + w);
-        readSegment_ATARI(0x1000, 0x1E00);
+        readData_2600(0x1FF9 + w);
+        readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
         for (int x = 0; x < 0x1F9; x++) {
-          sdBuffer[x] = readData_ATARI(0x1E00 + x);
+          sdBuffer[x] = readData_2600(0x1E00 + x);
         }
         myFile.write(sdBuffer, 505);
-        readData_ATARI(0x1FFF); // Reset Bank
-        sdBuffer[0] = readData_ATARI(0x1FF9);
+        readData_2600(0x1FFF); // Reset Bank
+        sdBuffer[0] = readData_2600(0x1FF9);
         // End of Bank 0x1FFA-0x1FFF
-        readData_ATARI(0x1FFF); // Reset Bank
-        readData_ATARI(0x1FF9 + w); // Set Bank
+        readData_2600(0x1FFF); // Reset Bank
+        readData_2600(0x1FF9 + w); // Set Bank
         for (int z = 1; z < 7; z++) {
-          sdBuffer[z] = readData_ATARI(0x1FF9 + z); // 0x1FFA-0x1FFF
+          sdBuffer[z] = readData_2600(0x1FF9 + z); // 0x1FFA-0x1FFF
         }
         myFile.write(sdBuffer, 7);
       }
       // Reset Bank
-      readData_ATARI(0x1FF9);
-      readData_ATARI(0x1FFF);
-      readData_ATARI(0x1FFC);
+      readData_2600(0x1FF9);
+      readData_2600(0x1FFF);
+      readData_2600(0x1FFC);
       break;
 
     case 0xFA:  // FA Mapper 12KB
       for (int x = 0; x < 0x3; x++) {
-        writeData_ATARI(0x1FF8 + x, 0x1);  // Set Bank with D0 HIGH
-        readSegment_ATARI(0x1000, 0x1E00);
+        writeData_2600(0x1FF8 + x, 0x1);  // Set Bank with D0 HIGH
+        readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
         for (int y = 0; y < 0x1F8; y++) {
-          sdBuffer[y] = readData_ATARI(0x1E00 + y);
+          sdBuffer[y] = readData_2600(0x1E00 + y);
         }
         myFile.write(sdBuffer, 504);
         for (int z = 0; z < 8; z++) {
           // Set Bank to ensure 0x1FFB-0x1FFF is correct
-          writeData_ATARI(0x1FF8 + x, 0x1);  // Set Bank with D0 HIGH
-          sdBuffer[z] = readData_ATARI(0x1FF8 + z);
+          writeData_2600(0x1FF8 + x, 0x1);  // Set Bank with D0 HIGH
+          sdBuffer[z] = readData_2600(0x1FF8 + z);
         }
         myFile.write(sdBuffer, 8);
       }
@@ -542,28 +540,28 @@ void readROM_ATARI() {
 
     case 0xFE:  // FE Mapper 8KB
       for (int x = 0; x < 0x2; x++) {
-        writeData_ATARI(0x01FE, 0xF0 ^ (x << 5));
-        writeData_ATARI(0x01FF, 0xF0 ^ (x << 5));
-        readSegment_ATARI(0x1000, 0x2000);
+        writeData_2600(0x01FE, 0xF0 ^ (x << 5));
+        writeData_2600(0x01FF, 0xF0 ^ (x << 5));
+        readSegment_2600(0x1000, 0x2000);
       }
       break;
 
     case 0x0A:  // UA Mapper 8KB
-      readData_ATARI(0x220);
-      readSegment_ATARI(0x1000, 0x2000);
-      readData_ATARI(0x240);
-      readSegment_ATARI(0x1000, 0x2000);
+      readData_2600(0x220);
+      readSegment_2600(0x1000, 0x2000);
+      readData_2600(0x240);
+      readSegment_2600(0x1000, 0x2000);
       break;
   }
   myFile.close();
 
-  unsigned long crcsize = ATARI[atarisize] * 0x400;
+  unsigned long crcsize = a2600[a2600size] * 0x400;
   // Correct E7 Size for 8K/12K ROMs
-  if (atarimapper == 0xE7) {
+  if (a2600mapper == 0xE7) {
     if (e7size == 0)
-      crcsize = ATARI[atarisize] * 0x200;
+      crcsize = a2600[a2600size] * 0x200;
     else if (e7size == 1)
-      crcsize = ATARI[atarisize] * 0x300;
+      crcsize = a2600[a2600size] * 0x300;
   }
   calcCRC(fileName, crcsize, NULL, 0);
 
@@ -577,12 +575,12 @@ void readROM_ATARI() {
 // ROM SIZE
 //******************************************
 
-void checkStatus_ATARI() {
-  EEPROM_readAnything(7, atarimapper);
-  EEPROM_readAnything(8, atarisize);
-  if (atarisize > 6) {
-    atarisize = 1;  // default 4KB
-    EEPROM_writeAnything(8, atarisize);
+void checkStatus_2600() {
+  EEPROM_readAnything(7, a2600mapper);
+  EEPROM_readAnything(8, a2600size);
+  if (a2600size > 6) {
+    a2600size = 1;  // default 4KB
+    EEPROM_writeAnything(8, a2600size);
   }
 
 #if (defined(enable_OLED) || defined(enable_LCD))
@@ -591,49 +589,49 @@ void checkStatus_ATARI() {
   println_Msg(F("CURRENT SETTINGS"));
   println_Msg(F(""));
   print_Msg(F("MAPPER:   "));
-  if (atarimapper == 0x20)
+  if (a2600mapper == 0x20)
     println_Msg(F("2K"));
-  else if (atarimapper == 0x40)
+  else if (a2600mapper == 0x40)
     println_Msg(F("4K"));
-  else if (atarimapper == 0x0A)
+  else if (a2600mapper == 0x0A)
     println_Msg(F("UA"));
-  else if (atarimapper == 0xC0)
+  else if (a2600mapper == 0xC0)
     println_Msg(F("CV"));
-  else if (atarimapper == 0xD0)
+  else if (a2600mapper == 0xD0)
     println_Msg(F("DPC"));
-  else if (atarimapper == 0xF9)
+  else if (a2600mapper == 0xF9)
     println_Msg(F("TP"));
   else
-    println_Msg(atarimapper, HEX);
+    println_Msg(a2600mapper, HEX);
   print_Msg(F("ROM SIZE: "));
-  if (atarimapper == 0xD0)
+  if (a2600mapper == 0xD0)
     print_Msg(F("10"));
   else
-    print_Msg(ATARI[atarisize]);
+    print_Msg(a2600[a2600size]);
   println_Msg(F("K"));
   display_Update();
   wait();
 #else
   Serial.print(F("MAPPER:   "));
-  if (atarimapper == 0x20)
+  if (a2600mapper == 0x20)
     Serial.println(F("2K"));
-  else if (atarimapper == 0x40)
+  else if (a2600mapper == 0x40)
     Serial.println(F("4K"));
-  else if (atarimapper == 0x0A)
+  else if (a2600mapper == 0x0A)
     Serial.println(F("UA"));
-  else if (atarimapper == 0xC0)
+  else if (a2600mapper == 0xC0)
     Serial.println(F("CV"));
-  else if (atarimapper == 0xD0)
+  else if (a2600mapper == 0xD0)
     Serial.println(F("DPC"));
-  else if (atarimapper == 0xF9)
+  else if (a2600mapper == 0xF9)
     Serial.println(F("TP"));
   else
-    Serial.println(atarimapper, HEX);
+    Serial.println(a2600mapper, HEX);
   Serial.print(F("ROM SIZE: "));
-  if (atarimapper == 0xD0)
+  if (a2600mapper == 0xD0)
     Serial.print(F("10"));
   else
-    Serial.print(ATARI[atarisize]);
+    Serial.print(a2600[a2600size]);
   Serial.println(F("K"));
   Serial.println(F(""));
 #endif
@@ -643,7 +641,7 @@ void checkStatus_ATARI() {
 // SET MAPPER
 //******************************************
 
-void setMapper_ATARI() {
+void setMapper_2600() {
 #if (defined(enable_OLED) || defined(enable_LCD))
   int b = 0;
   int i = 0;
@@ -664,31 +662,31 @@ void setMapper_ATARI() {
       if (buttonVal1 == HIGH) {  // Button Released
         // Correct Overshoot
         if (i == 0)
-          i = atarimapcount - 1;
+          i = a2600mapcount - 1;
         else
           i--;
         break;
       }
       display_Clear();
       print_Msg(F("Mapper: "));
-      atariindex = i * 2;
-      atarimapselect = pgm_read_byte(atarimapsize + atariindex);
-      if (atarimapselect == 0x20)
+      a2600index = i * 2;
+      a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
+      if (a2600mapselect == 0x20)
         println_Msg(F("2K"));
-      else if (atarimapselect == 0x40)
+      else if (a2600mapselect == 0x40)
         println_Msg(F("4K"));
-      else if (atarimapselect == 0x0A)
+      else if (a2600mapselect == 0x0A)
         println_Msg(F("UA"));
-      else if (atarimapselect == 0xC0)
+      else if (a2600mapselect == 0xC0)
         println_Msg(F("CV"));
-      else if (atarimapselect == 0xD0)
+      else if (a2600mapselect == 0xD0)
         println_Msg(F("DPC"));
-      else if (atarimapselect == 0xF9)
+      else if (a2600mapselect == 0xF9)
         println_Msg(F("TP"));
       else
-        println_Msg(atarimapselect, HEX);
+        println_Msg(a2600mapselect, HEX);
       display_Update();
-      if (i == (atarimapcount - 1))
+      if (i == (a2600mapcount - 1))
         i = 0;
       else
         i++;
@@ -698,22 +696,22 @@ void setMapper_ATARI() {
 
   display_Clear();
   print_Msg(F("Mapper: "));
-  atariindex = i * 2;
-  atarimapselect = pgm_read_byte(atarimapsize + atariindex);
-  if (atarimapselect == 0x20)
+  a2600index = i * 2;
+  a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
+  if (a2600mapselect == 0x20)
     println_Msg(F("2K"));
-  else if (atarimapselect == 0x40)
+  else if (a2600mapselect == 0x40)
     println_Msg(F("4K"));
-  else if (atarimapselect == 0x0A)
+  else if (a2600mapselect == 0x0A)
     println_Msg(F("UA"));
-  else if (atarimapselect == 0xC0)
+  else if (a2600mapselect == 0xC0)
     println_Msg(F("CV"));
-  else if (atarimapselect == 0xD0)
+  else if (a2600mapselect == 0xD0)
     println_Msg(F("DPC"));
-  else if (atarimapselect == 0xF9)
+  else if (a2600mapselect == 0xF9)
     println_Msg(F("TP"));
   else
-    println_Msg(atarimapselect, HEX);
+    println_Msg(a2600mapselect, HEX);
   println_Msg(F(""));
 #if defined(enable_OLED)
   print_STR(press_to_change_STR, 1);
@@ -728,29 +726,29 @@ void setMapper_ATARI() {
     b = checkButton();
     if (b == 2) {  // Previous Mapper (doubleclick)
       if (i == 0)
-        i = atarimapcount - 1;
+        i = a2600mapcount - 1;
       else
         i--;
 
       // Only update display after input because of slow LCD library
       display_Clear();
       print_Msg(F("Mapper: "));
-      atariindex = i * 2;
-      atarimapselect = pgm_read_byte(atarimapsize + atariindex);
-      if (atarimapselect == 0x20)
+      a2600index = i * 2;
+      a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
+      if (a2600mapselect == 0x20)
         println_Msg(F("2K"));
-      else if (atarimapselect == 0x40)
+      else if (a2600mapselect == 0x40)
         println_Msg(F("4K"));
-      else if (atarimapselect == 0x0A)
+      else if (a2600mapselect == 0x0A)
         println_Msg(F("UA"));
-      else if (atarimapselect == 0xC0)
+      else if (a2600mapselect == 0xC0)
         println_Msg(F("CV"));
-      else if (atarimapselect == 0xD0)
+      else if (a2600mapselect == 0xD0)
         println_Msg(F("DPC"));
-      else if (atarimapselect == 0xF9)
+      else if (a2600mapselect == 0xF9)
         println_Msg(F("TP"));
       else
-        println_Msg(atarimapselect, HEX);
+        println_Msg(a2600mapselect, HEX);
       println_Msg(F(""));
 #if defined(enable_OLED)
       print_STR(press_to_change_STR, 1);
@@ -762,7 +760,7 @@ void setMapper_ATARI() {
       display_Update();
     }
     if (b == 1) {  // Next Mapper (press)
-      if (i == (atarimapcount - 1))
+      if (i == (a2600mapcount - 1))
         i = 0;
       else
         i++;
@@ -770,22 +768,22 @@ void setMapper_ATARI() {
       // Only update display after input because of slow LCD library
       display_Clear();
       print_Msg(F("Mapper: "));
-      atariindex = i * 2;
-      atarimapselect = pgm_read_byte(atarimapsize + atariindex);
-      if (atarimapselect == 0x20)
+      a2600index = i * 2;
+      a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
+      if (a2600mapselect == 0x20)
         println_Msg(F("2K"));
-      else if (atarimapselect == 0x40)
+      else if (a2600mapselect == 0x40)
         println_Msg(F("4K"));
-      else if (atarimapselect == 0x0A)
+      else if (a2600mapselect == 0x0A)
         println_Msg(F("UA"));
-      else if (atarimapselect == 0xC0)
+      else if (a2600mapselect == 0xC0)
         println_Msg(F("CV"));
-      else if (atarimapselect == 0xD0)
+      else if (a2600mapselect == 0xD0)
         println_Msg(F("DPC"));
-      else if (atarimapselect == 0xF9)
+      else if (a2600mapselect == 0xF9)
         println_Msg(F("TP"));
       else
-        println_Msg(atarimapselect, HEX);
+        println_Msg(a2600mapselect, HEX);
       println_Msg(F(""));
 #if defined(enable_OLED)
       print_STR(press_to_change_STR, 1);
@@ -797,26 +795,26 @@ void setMapper_ATARI() {
       display_Update();
     }
     if (b == 3) {  // Long Press - Execute (hold)
-      newatarimapper = atarimapselect;
+      new2600mapper = a2600mapselect;
       break;
     }
   }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
-  if (newatarimapper == 0x20)
+  if (new2600mapper == 0x20)
     println_Msg(F("2K"));
-  else if (newatarimapper == 0x40)
+  else if (new2600mapper == 0x40)
     println_Msg(F("4K"));
-  if (newatarimapper == 0x0A)
+  if (new2600mapper == 0x0A)
     print_Msg(F("UA"));
-  else if (newatarimapper == 0xC0)
+  else if (new2600mapper == 0xC0)
     print_Msg(F("CV"));
-  else if (newatarimapper == 0xD0)
+  else if (new2600mapper == 0xD0)
     println_Msg(F("DPC"));
-  else if (newatarimapper == 0xF9)
+  else if (new2600mapper == 0xF9)
     println_Msg(F("TP"));
   else
-    print_Msg(newatarimapper, HEX);
+    print_Msg(new2600mapper, HEX);
   println_Msg(F(" SELECTED"));
   display_Update();
   delay(1000);
@@ -843,27 +841,27 @@ setmapper:
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
-  atariindex = newmap.toInt() * 2;
-  newatarimapper = pgm_read_byte(atarimapsize + atariindex);
+  a2600index = newmap.toInt() * 2;
+  new2600mapper = pgm_read_byte(a2600mapsize + a2600index);
 #endif
-  EEPROM_writeAnything(7, newatarimapper);
-  atarimapper = newatarimapper;
+  EEPROM_writeAnything(7, new2600mapper);
+  a2600mapper = new2600mapper;
 
-  atarisize = pgm_read_byte(atarimapsize + atariindex + 1);
-  EEPROM_writeAnything(8, atarisize);
+  a2600size = pgm_read_byte(a2600mapsize + a2600index + 1);
+  EEPROM_writeAnything(8, a2600size);
 }
 
 //******************************************
 // CART SELECT CODE
 //******************************************
 
-FsFile ataricsvFile;
-char atarigame[36];                     // title
-char atarimm[4];                        // mapper
-char atarill[4];                        // linelength (previous line)
-unsigned long ataricsvpos;              // CSV File Position
-char ataricartCSV[] = "ataricart.txt";  // CSV List
-char ataricsvEND[] = "EOF";             // CSV End Marker for scrolling
+FsFile a2600csvFile;
+char a2600game[36];                     // title
+char a2600mm[4];                        // mapper
+char a2600ll[4];                        // linelength (previous line)
+unsigned long a2600csvpos;              // CSV File Position
+char a2600cartCSV[] = "2600.txt";       // CSV List
+char a2600csvEND[] = "EOF";             // CSV End Marker for scrolling
 
 bool readLine_ATARI(FsFile& f, char* line, size_t maxLen) {
   for (size_t n = 0; n < maxLen; n++) {
@@ -878,28 +876,28 @@ bool readLine_ATARI(FsFile& f, char* line, size_t maxLen) {
   return false;  // line too long
 }
 
-bool readVals_ATARI(char* atarigame, char* atarimm, char* atarill) {
+bool readVals_ATARI(char* a2600game, char* a2600mm, char* a2600ll) {
   char line[42];
-  ataricsvpos = ataricsvFile.position();
-  if (!readLine_ATARI(ataricsvFile, line, sizeof(line))) {
+  a2600csvpos = a2600csvFile.position();
+  if (!readLine_ATARI(a2600csvFile, line, sizeof(line))) {
     return false;  // EOF or too long
   }
   char* comma = strtok(line, ",");
   int x = 0;
   while (comma != NULL) {
     if (x == 0)
-      strcpy(atarigame, comma);
+      strcpy(a2600game, comma);
     else if (x == 1)
-      strcpy(atarimm, comma);
+      strcpy(a2600mm, comma);
     else if (x == 2)
-      strcpy(atarill, comma);
+      strcpy(a2600ll, comma);
     comma = strtok(NULL, ",");
     x += 1;
   }
   return true;
 }
 
-bool getCartListInfo_ATARI() {
+bool getCartListInfo_2600() {
   bool buttonreleased = 0;
   bool cartselected = 0;
 #if (defined(enable_OLED) || defined(enable_LCD))
@@ -917,19 +915,19 @@ bool getCartListInfo_ATARI() {
 #endif
   if (buttonVal1 == LOW) {  // Button Held - Fast Cycle
     while (1) {             // Scroll Game List
-      while (readVals_ATARI(atarigame, atarimm, atarill)) {
-        if (strcmp(ataricsvEND, atarigame) == 0) {
-          ataricsvFile.seek(0);  // Restart
+      while (readVals_ATARI(a2600game, a2600mm, a2600ll)) {
+        if (strcmp(a2600csvEND, a2600game) == 0) {
+          a2600csvFile.seek(0);  // Restart
         } else {
 #if (defined(enable_OLED) || defined(enable_LCD))
           display_Clear();
           println_Msg(F("CART TITLE:"));
           println_Msg(F(""));
-          println_Msg(atarigame);
+          println_Msg(a2600game);
           display_Update();
 #else
           Serial.print(F("CART TITLE:"));
-          Serial.println(atarigame);
+          Serial.println(a2600game);
 #endif
 #if defined(enable_OLED)
           buttonVal1 = (PIND & (1 << 7));  // PD7
@@ -967,15 +965,15 @@ bool getCartListInfo_ATARI() {
   Serial.println(F("HOLD TO SELECT"));
   Serial.println(F(""));
 #endif
-  while (readVals_ATARI(atarigame, atarimm, atarill)) {
-    if (strcmp(ataricsvEND, atarigame) == 0) {
-      ataricsvFile.seek(0);  // Restart
+  while (readVals_ATARI(a2600game, a2600mm, a2600ll)) {
+    if (strcmp(a2600csvEND, a2600game) == 0) {
+      a2600csvFile.seek(0);  // Restart
     } else {
 #if (defined(enable_OLED) || defined(enable_LCD))
       display_Clear();
       println_Msg(F("CART TITLE:"));
       println_Msg(F(""));
-      println_Msg(atarigame);
+      println_Msg(a2600game);
       display.setCursor(0, 48);
 #if defined(enable_OLED)
       print_STR(press_to_change_STR, 1);
@@ -987,7 +985,7 @@ bool getCartListInfo_ATARI() {
       display_Update();
 #else
       Serial.print(F("CART TITLE:"));
-      Serial.println(atarigame);
+      Serial.println(a2600game);
 #endif
       while (1) {  // Single Step
         int b = checkButton();
@@ -995,14 +993,14 @@ bool getCartListInfo_ATARI() {
           break;
         }
         if (b == 2) {  // Reset to Start of List (doubleclick)
-          byte prevline = strtol(atarill, NULL, 10);
-          ataricsvpos -= prevline;
-          ataricsvFile.seek(ataricsvpos);
+          byte prevline = strtol(a2600ll, NULL, 10);
+          a2600csvpos -= prevline;
+          a2600csvFile.seek(a2600csvpos);
           break;
         }
         if (b == 3) {  // Long Press - Select Cart (hold)
-          newatarimapper = strtol(atarimm, NULL, 10);
-          EEPROM_writeAnything(7, newatarimapper);
+          new2600mapper = strtol(a2600mm, NULL, 10);
+          EEPROM_writeAnything(7, new2600mapper);
           cartselected = 1;  // SELECTION MADE
 #if (defined(enable_OLED) || defined(enable_LCD))
           println_Msg(F("SELECTION MADE"));
@@ -1030,26 +1028,26 @@ bool getCartListInfo_ATARI() {
   return false;
 }
 
-void checkCSV_ATARI() {
-  if (getCartListInfo_ATARI()) {
+void checkCSV_2600() {
+  if (getCartListInfo_2600()) {
 #if (defined(enable_OLED) || defined(enable_LCD))
     display_Clear();
     println_Msg(F("CART SELECTED"));
     println_Msg(F(""));
-    println_Msg(atarigame);
+    println_Msg(a2600game);
     display_Update();
     // Display Settings
     display.setCursor(0, 56);
     print_Msg(F("CODE: "));
-    println_Msg(newatarimapper, HEX);
+    println_Msg(new2600mapper, HEX);
     display_Update();
 #else
     Serial.println(F(""));
     Serial.println(F("CART SELECTED"));
-    Serial.println(atarigame);
+    Serial.println(a2600game);
     // Display Settings
     Serial.print(F("CODE: "));
-    Serial.println(newatarimapper, HEX);
+    Serial.println(new2600mapper, HEX);
     Serial.println(F(""));
 #endif
   } else {
@@ -1063,29 +1061,29 @@ void checkCSV_ATARI() {
   }
 }
 
-void checkSize_ATARI() {
-  EEPROM_readAnything(7, atarimapper);
-  for (int i = 0; i < atarimapcount; i++) {
-    atariindex = i * 2;
-    if (atarimapper == pgm_read_byte(atarimapsize + atariindex)) {
-      atarisize = pgm_read_byte(atarimapsize + atariindex + 1);
-      EEPROM_writeAnything(8, atarisize);
+void checkSize_2600() {
+  EEPROM_readAnything(7, a2600mapper);
+  for (int i = 0; i < a2600mapcount; i++) {
+    a2600index = i * 2;
+    if (a2600mapper == pgm_read_byte(a2600mapsize + a2600index)) {
+      a2600size = pgm_read_byte(a2600mapsize + a2600index + 1);
+      EEPROM_writeAnything(8, a2600size);
       break;
     }
   }
 }
 
-void setCart_ATARI() {
+void setCart_2600() {
 #if (defined(enable_OLED) || defined(enable_LCD))
   display_Clear();
-  println_Msg(ataricartCSV);
+  println_Msg(a2600cartCSV);
   display_Update();
 #endif
   sd.chdir();
-  sprintf(folder, "ATARI/CSV");
+  sprintf(folder, "2600/CSV");
   sd.chdir(folder);  // Switch Folder
-  ataricsvFile = sd.open(ataricartCSV, O_READ);
-  if (!ataricsvFile) {
+  a2600csvFile = sd.open(a2600cartCSV, O_READ);
+  if (!a2600csvFile) {
 #if (defined(enable_OLED) || defined(enable_LCD))
     display_Clear();
     println_Msg(F("CSV FILE NOT FOUND!"));
@@ -1095,13 +1093,13 @@ void setCart_ATARI() {
 #endif
     while (1) {
       if (checkButton() != 0)
-        setup_ATARI();
+        setup_2600();
     }
   }
-  checkCSV_ATARI();
-  ataricsvFile.close();
+  checkCSV_2600();
+  a2600csvFile.close();
 
-  checkSize_ATARI();
+  checkSize_2600();
 }
 #endif
 //******************************************
