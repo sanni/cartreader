@@ -679,7 +679,7 @@ char a5200mm[3];                       // mapper
 char a5200rr[3];                       // romsize
 char a5200ll[4];                       // linelength (previous line)
 unsigned long a5200csvpos;             // CSV File Position
-char a5200cartCSV[] = "5200cart.txt";  // CSV List
+char a5200cartCSV[] = "5200.txt";      // CSV List
 char a5200csvEND[] = "EOF";            // CSV End Marker for scrolling
 
 bool readLine_5200(FsFile& f, char* line, size_t maxLen) {
