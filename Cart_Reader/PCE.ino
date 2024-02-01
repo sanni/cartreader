@@ -314,9 +314,10 @@ uint32_t detect_rom_size_PCE(void) {
   uint32_t rom_size;
   uint8_t read_byte;
   uint8_t current_byte;
-  uint8_t detect_32, detect_128, detect_256, detect_512, detect_768;
+  uint8_t detect_16, detect_32, detect_128, detect_256, detect_512, detect_768;
 
   //Initialize variables
+  detect_16 = 0;
   detect_32 = 0;
   detect_128 = 0;
   detect_256 = 0;
@@ -326,15 +327,22 @@ uint32_t detect_rom_size_PCE(void) {
   //Set pins to read PC Engine cart
   pin_read_write_PCE();
 
-  //Confirm where mirror address start from (32KB, 128KB, 256KB, 512KB, 768KB, or 1024KB)
+  //Confirm where mirror address start from (16KB, 32KB, 128KB, 256KB, 512KB, 768KB, or 1024KB)
   for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
-    if ((current_byte != detect_32) && (current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768)) {
+    if ((current_byte != detect_16) && (current_byte != detect_32) && (current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768)) {
       //If none matched, it is 1024KB
       break;
     }
 
-    //read byte for 32KB, 128KB, 256KB, 512KB detection
+    //read byte for 16KB, 32KB, 128KB, 256KB, 512KB detection
     read_byte = read_byte_PCE(current_byte);
+
+    //16KB detection
+    if (current_byte == detect_16) {
+      if (read_byte_PCE(current_byte + 16UL * 1024UL) == read_byte) {
+        detect_16++;
+      }
+    }
 
     //32KB detection
     if (current_byte == detect_32) {
@@ -374,11 +382,13 @@ uint32_t detect_rom_size_PCE(void) {
   }
 
   //debug
-  //sprintf(fileName, "%d %d %d %d %d", detect_32, detect_128, detect_256, detect_512, detect_768); //using filename global variable as string. Initialzed in below anyways.
+  //sprintf(fileName, "%d %d %d %d %d %d", detect_16, detect_32, detect_128, detect_256, detect_512, detect_768); //using filename global variable as string. Initialzed in below anyways.
   //println_Msg(fileName);
 
   //ROM size detection by result
-  if (detect_32 == DETECTION_SIZE) {
+  if (detect_16 == DETECTION_SIZE) {
+    rom_size = 16;
+  } else if (detect_32 == DETECTION_SIZE) {
     rom_size = 32;
   } else if (detect_128 == DETECTION_SIZE) {
     rom_size = 128;
@@ -408,7 +418,7 @@ uint32_t detect_rom_size_PCE(void) {
     if (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
       rom_size = 512;
     }
-    //Dinoforce (World)
+    //Dinoforce (Japan)
     if (read_byte_PCE(0x15A) == 'D' && read_byte_PCE(0x15B) == 'I' && read_byte_PCE(0x15C) == 'N' && read_byte_PCE(0x15D) == 'O' && read_byte_PCE(0x15E) == '-' && read_byte_PCE(0x15F) == 'F' && read_byte_PCE(0x160) == 'O' && read_byte_PCE(0x161) == 'R' && read_byte_PCE(0x162) == 'C' && read_byte_PCE(0x163) == 'E') {
       rom_size = 512;
     }
