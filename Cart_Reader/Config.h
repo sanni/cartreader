@@ -230,6 +230,13 @@
 
 /****/
 
+/* [ Super Famicom Game Processor RAM Cassette -------------------- ]
+*/
+
+//#define enable_GPC
+
+/****/
+
 /* [ Super Nintendo ----------------------------------------------- ]
 */
 

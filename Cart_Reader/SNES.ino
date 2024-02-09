@@ -33,14 +33,15 @@ static const char snsMenuItem1[] PROGMEM = "SNES/SFC cartridge";
 static const char snsMenuItem2[] PROGMEM = "SF Memory Cassette";
 static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "Sufami Turbo";
-static const char snsMenuItem5[] PROGMEM = "Flash repro";
+static const char snsMenuItem5[] PROGMEM = "Game Processor RAM";
+static const char snsMenuItem6[] PROGMEM = "Flash repro";
 #ifdef clockgen_calibration
-static const char snsMenuItem6[] PROGMEM = "Calibrate Clock";
-//static const char snsMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, string_reset2 };
+static const char snsMenuItem7[] PROGMEM = "Calibrate Clock";
+//static const char snsMenuItem8[] PROGMEM = "Reset"; (stored in common strings array)
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, snsMenuItem7, string_reset2 };
 #else
 //static const char snsMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, string_reset2 };
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, string_reset2 };
 #endif
 
 // SNES menu items
@@ -137,11 +138,11 @@ void snsMenu() {
   unsigned char snsCart;
   // Copy menuOptions out of progmem
 #ifdef clockgen_calibration
+  convertPgm(menuOptionsSNS, 8);
+  snsCart = question_box(F("Select Cart Type"), menuOptions, 8, 0);
+#else
   convertPgm(menuOptionsSNS, 7);
   snsCart = question_box(F("Select Cart Type"), menuOptions, 7, 0);
-#else
-  convertPgm(menuOptionsSNS, 6);
-  snsCart = question_box(F("Select Cart Type"), menuOptions, 6, 0);
 #endif
 
   // wait for user choice to come back from the question box menu
@@ -180,19 +181,28 @@ void snsMenu() {
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef enable_GPC
     case 4:
+      display_Clear();
+      display_Update();
+      setup_GPC();
+      mode = mode_GPC;
+      break;
+#endif
+
+#ifdef enable_FLASH
+    case 5:
       setup_FlashVoltage();
       reproMenu();
       break;
 #endif
 
-    case 5:
+    case 6:
 #ifdef clockgen_calibration
       clkcal();
       break;
 
-    case 6:
+    case 7:
 #endif
       resetArduino();
       break;
