@@ -2116,6 +2116,9 @@ Elitserien 96 (Sweden).md
 Empire of Steel (Europe).md
 E5517B77
 
+Enryuu Seiken Xiao-Mei (Japan) (Aftermarket) (Unl).md
+D7DD3791
+
 Escape 2042 - The Truth Defenders (World) (En,Ja,Fr,Es) (Preview) (Aftermarket) (Unl).md
 0D81511C
 
@@ -3462,6 +3465,9 @@ LHX Attack Chopper (USA, Europe).md
 
 Liberty or Death (USA).md
 2ADB0364
+
+Life on Earth - Reimagined (World) (Aftermarket) (Unl).md
+883552AD
 
 Life on Mars (World) (Aftermarket) (Unl).md
 FD214116
@@ -5494,14 +5500,17 @@ Runes (World) (Aftermarket) (Homebrew).bin
 Ryuuko no Ken (Japan).md
 054CF5F6
 
-Sacred Line Genesis (World) (1.1.9) (Aftermarket) (Unl).md
-2E029AB4
+Sacred Line Genesis (World) (v1.1.9) (Aftermarket) (Unl).md
+80D8F0CC
 
 Sacred Line Genesis (World) (Aftermarket) (Unl).md
 AFF86301
 
 Sacred Line Zero (World) (Proto) (Aftermarket) (Unl).md
 D8A662AF
+
+Sacred Line II (World) (v1.02) (Aftermarket) (Unl).md
+C03ABCED
 
 Sagaia (USA).md
 F1E22F43
