@@ -925,6 +925,30 @@ void getCartInfo_MD() {
     cartSize = 0x400000;
   }
 
+  //Enryuu Seiken Xiao-Mei (Aftermarket)
+  if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x1E0C)) {
+    chksum = 0xE7E5;
+    cartSize = 0x400000;
+  }
+
+  // Life on Earth - Reimagined (Aftermarket)
+  if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x6BD5)) {
+    chksum = 0x1FEA;
+    cartSize = 0x400000;
+  }
+
+  // Sasha Darko's Sacred Line I (Aftermarket)
+  if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x9F34)) {
+    chksum = 0xA094;
+    cartSize = 0x400000;
+  }
+
+  // Sasha Darko's Sacred Line II (Aftermarket)
+  if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x0E9B)) {
+    chksum = 0x6B4B;
+    cartSize = 0x400000;
+  }
+
   // Sonic & Knuckles Check
   SnKmode = 0;
   if (chksum == 0xDFB3) {
@@ -1095,7 +1119,10 @@ void getCartInfo_MD() {
           saveType = 3;  // BOTH
           sramSize = sramEnd - sramBase + 1;
           sramBase = sramBase >> 1;
-        } else {
+        } else if (sramBase == 0x3FFC00) {
+          // Used for some aftermarket carts without sram
+          saveType = 0;
+        }else {
           print_Msg(("sramType: "));
           print_Msg_PaddedHex16(sramType);
           println_Msg(F(""));
