@@ -194,6 +194,9 @@ Bonk's Revenge (USA, Europe) (Virtual Console).pce
 F36FFEE1
 
 Bonk's Revenge (USA).pce
+68782A2F
+
+Bonk's Revenge (USA) (Alt).pce
 14250F9A
 
 Bonk's Revenge (USA, Europe) (WiiU Virtual Console).pce
