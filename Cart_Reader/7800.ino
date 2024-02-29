@@ -99,8 +99,8 @@ void setup_7800() {
   DDRL = 0xFF;
 
   // Set Control Pins to Output
-  //       ---(PH0)   CLK(PH1)   ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  //       ---(PH0)   ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output (UNUSED)
   DDRJ |= (1 << 0);
@@ -109,8 +109,8 @@ void setup_7800() {
   DDRC = 0x00;
 
   // Setting Control Pins to HIGH
-  //       ---(PH0)   CLK(PH1)   ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  //       ---(PH0)    ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set Unused Data Pins (PA0-PA7) to Output
   DDRA = 0xFF;
@@ -119,6 +119,32 @@ void setup_7800() {
   PORTA = 0xFF;
   PORTL = 0xFF;       // A16-A23
   PORTJ |= (1 << 0);  // TIME(PJ0)
+
+#ifdef clockgen_installed
+  // Adafruit Clock Generator
+
+  initializeClockOffset();
+
+  if (!i2c_found) {
+    display_Clear();
+    print_FatalError(F("Clock Generator not found"));
+  }
+
+  // Set Eeprom clock to 1Mhz
+  clockgen.set_freq(200000000ULL, SI5351_CLK1);
+
+  // Start outputting Eeprom clock
+  clockgen.output_enable(SI5351_CLK1, 1);  // Eeprom clock
+
+  // Wait for clock generator
+  clockgen.update_status();
+
+#else
+  // Set CLK(PH1) to Output 
+  DDRH |= (1 << 1);
+  // Output a high signal CLK(PH1)
+  PORTH |= (1 << 1);
+#endif
 
   checkStatus_7800();
   strcpy(romName, "ATARI");
