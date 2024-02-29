@@ -66,7 +66,6 @@
  *****************************************/
 
 // SD Card
-#include "SdFat.h"
 SdFs sd;
 FsFile myFile;
 #ifdef global_log
@@ -2117,83 +2116,92 @@ int32_t initializeClockOffset() {
    Setup
  *****************************************/
 void setup() {
-#if !defined(enable_serial) && defined(ENABLE_UPDATER)
-  ClockedSerial.begin(UPD_BAUD);
-#endif
-
   // Set Button Pin PG2 to Input
   DDRG &= ~(1 << 2);
-#if defined(HW5) && !defined(ENABLE_VSELECT)
-  // HW5 has status LED connected to PD7
-  // Set LED Pin PD7 to Output
+# if defined(HW5) && !defined(ENABLE_VSELECT)
+  /**
+   * HW5 has status LED connected to PD7
+   * Set LED Pin PD7 to Output
+   **/
   DDRD |= (1 << 7);
   PORTD |= (1 << 7);
-#elif defined(ENABLE_VSELECT)
+# elif defined(ENABLE_VSELECT)
+  /**
+   * VSELECT uses pin PD7
+   * Set LED Pin PD7 to Output
+   **/
   DDRD |= (1 << 7);
-#else
-  // HW1/2/3 have button connected to PD7
-  // Set Button Pin PD7 to Input
+# else /* !defined(HW5) && !defined(HW5) */
+  /**
+   * HW1-3 have button connected to PD7
+   * Set pin PD7 to input for button
+   **/
   DDRD &= ~(1 << 7);
-#endif
-  // Activate Internal Pullup Resistors
-  //PORTG |= (1 << 2);
-  //PORTD |= (1 << 7);
+# endif /* HW5 &| ENABLE_VSELECT */
 
+  // Set power to low to protect carts
+  setVoltage(VOLTS_SET_3V3);
 
-  // Read current folder number out of eeprom
+# if defined(ENABLE_3V3FIX)
+  // Set clock high during setup
+  setClockScale(CLKSCALE_16MHZ);
+  delay(10);
+# endif /* ENABLE_3V3FIX */
+
+# if !defined(enable_serial) && defined(ENABLE_UPDATER)
+  ClockedSerial.begin(UPD_BAUD);
+  printVersionToSerial();
+  ClockedSerial.flush();
+# endif /* ENABLE_UPDATER */
+
+  // Read current folder number out of the EEPROM
   EEPROM_readAnything(0, foldern);
   if (foldern < 0) foldern = 0;
 
-#ifdef enable_LCD
+# ifdef enable_LCD
   display.begin();
   display.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
-#endif
+# endif /* enable_LCD */
 
-#ifdef enable_neopixel
-#if defined(ENABLE_3V3FIX)
-  // Set power high for neopixel
-  setVoltage(VOLTS_SET_5V);
-  delay(10);
-#endif
+# ifdef enable_neopixel
   pixels.begin();
-  pixels.clear();
-  pixels.setPixelColor(0, pixels.Color(background_color));
-  pixels.setPixelColor(1, pixels.Color(0, 0, 100));
-  pixels.setPixelColor(2, pixels.Color(0, 0, 100));
-  pixels.show();
+  setColor_RGB(0, 0, 100);
 
   // Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
-#if !(defined(enable_serial) || defined(HW5))
+#   if !(defined(enable_serial) || defined(HW5))
   DDRE |= (1 << 1);
-#endif
-#else
-#ifndef enable_LCD
-#ifdef CA_LED
+#   endif /* enable_serial */
+# else /* enable_neopixel */
+#   ifndef enable_LCD
+#     ifdef CA_LED
   // Turn LED off
   digitalWrite(12, 1);
   digitalWrite(11, 1);
   digitalWrite(10, 1);
-#endif
+#     endif /* CA_LED */
   // Configure 4 Pin RGB LED pins as output
   DDRB |= (1 << DDB6);  // Red LED (pin 12)
   DDRB |= (1 << DDB5);  // Green LED (pin 11)
   DDRB |= (1 << DDB4);  // Blue LED (pin 10)
-#endif
-#endif
+#   endif /* enable_LCD */
+# endif /* enable_neopixel */
 
-#ifdef ENABLE_VSELECT
-  // Set power to low to protect carts
-  setVoltage(VOLTS_SET_3V3);
-#endif
+# ifdef RTC_installed
+  // Start RTC
+  RTCStart();
 
-#ifdef enable_OLED
+  // Set Date/Time Callback Funtion
+  SdFile::dateTimeCallback(dateTime);
+# endif /* RTC_installed */
+
+# ifdef enable_OLED
   display.begin();
   //isplay.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
-#endif
+# endif /* enable_OLED */
 
-#ifdef enable_serial
+# ifdef enable_serial
   // Serial Begin
   Serial.begin(9600);
   Serial.println("");
@@ -2201,51 +2209,72 @@ void setup() {
   Serial.println(F("2023 github.com/sanni"));
   // LED Error
   setColor_RGB(0, 0, 255);
-#endif
+# endif /* enable_serial */
 
   // Init SD card
   if (!sd.begin(SS)) {
     display_Clear();
+# ifdef ENABLE_VSELECT
+    print_STR(sd_error_STR, 1);
+    println_Msg(F(""));
+    println_Msg(F("Press button to enable 5V for"));
+    println_Msg(F("  updating firmware..."));
+    display_Update();
+    wait();
+    display_Clear();
+    setVoltage(VOLTS_SET_5V); // Set voltage high for flashing
+    println_Msg(F(" ======== UPDATE MODE ======== "));
+    println_Msg(F("Waiting for update..."));
+    println_Msg(F(""));
+    println_Msg(F("Press button to cancel/restart."));
+    display_Update();
+    wait();
+    resetArduino();
+# else /* !ENABLE_VSELECT */
     print_FatalError(sd_error_STR);
+# endif /* ENABLE_VSELECT */
   }
 
-#if !defined(enable_serial) && defined(ENABLE_UPDATER)
-  printVersionToSerial();
-  ClockedSerial.flush();
-#endif
+# if defined(ENABLE_CONFIG)
+  configInit();
+#   if defined(global_log)
+  loggingEnabled = !!configGetLong(F("oscr.logging"), 1);
+#   endif /*ENABLE_CONFIG*/
 
-#ifdef global_log
+  // Change LCD background if config specified
+#   ifdef enable_neopixel
+  setColor_RGB(0, 0, 100);
+#   endif /* enable_neopixel */
+# endif /* ENABLE_CONFIG */
+
+# ifdef global_log
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
     print_FatalError(sd_error_STR);
   }
   println_Msg(F(""));
-#if defined(HW1)
+#   if defined(HW1)
   print_Msg(F("OSCR HW1"));
-#elif defined(HW2)
+#   elif defined(HW2)
   print_Msg(F("OSCR HW2"));
-#elif defined(HW3)
+#   elif defined(HW3)
   print_Msg(F("OSCR HW3"));
-#elif defined(HW4)
+#   elif defined(HW4)
   print_Msg(F("OSCR HW4"));
-#elif defined(HW5)
+#   elif defined(HW5)
   print_Msg(F("OSCR HW5"));
-#elif defined(SERIAL_MONITOR)
+#   elif defined(SERIAL_MONITOR)
   print_Msg(F("OSCR Serial"));
-#endif
+#   endif /* HWn */
   print_Msg(F(" V"));
   println_Msg(ver);
-#endif
+# endif /* global_log */
 
-#ifdef RTC_installed
-  // Start RTC
-  RTCStart();
-
-  // Set Date/Time Callback Funtion
-  SdFile::dateTimeCallback(dateTime);
-#endif
-
-  // status LED ON
+  // Turn status LED on
   statusLED(true);
+
+#   if defined(ENABLE_3V3FIX)
+  setClockScale(CLKSCALE_8MHZ); // Set clock back to low after setup
+#   endif /* ENABLE_3V3FIX */
 
   // Start menu system
   mainMenu();
@@ -2273,15 +2302,31 @@ void dataIn() {
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
 #if defined(enable_neopixel)
-#if defined(ENABLE_3V3FIX)
+# if defined(ENABLE_3V3FIX)
   if (clock == CS_8MHZ) return;
-#endif
+# endif
   // Dim Neopixel LEDs
   if (r >= 100) r = 100;
   if (g >= 100) g = 100;
   if (b >= 100) b = 100;
+
   pixels.clear();
+
+# if defined(ENABLE_CONFIG)
+  uint8_t lcdConfColor = configGetLong(F("lcd.confColor"));
+
+  if (lcdConfColor > 0) {
+    uint8_t lcdRed = configGetLong(F("lcd.red"));
+    uint8_t lcdGreen = configGetLong(F("lcd.green"));
+    uint8_t lcdBlue = configGetLong(F("lcd.blue"));
+
+    pixels.setPixelColor(0, pixels.Color(lcdGreen, lcdRed, lcdBlue));
+  } else {
+    pixels.setPixelColor(0, pixels.Color(background_color));
+  }
+# else /* !ENABLE_CONFIG */
   pixels.setPixelColor(0, pixels.Color(background_color));
+# endif /* ENABLE_CONFIG */
   pixels.setPixelColor(1, pixels.Color(g, r, b));
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
@@ -2465,7 +2510,7 @@ void print_Msg(const __FlashStringHelper* string) {
   Serial.print(string);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(string);
+  if (!dont_log && loggingEnabled) myLog.print(string);
 #endif
 }
 
@@ -2494,7 +2539,7 @@ void print_Msg(const char myString[]) {
   Serial.print(myString);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(myString);
+  if (!dont_log && loggingEnabled) myLog.print(myString);
 #endif
 }
 
@@ -2506,7 +2551,7 @@ void print_Msg(long unsigned int message) {
   Serial.print(message);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(message);
+  if (!dont_log && loggingEnabled) myLog.print(message);
 #endif
 }
 
@@ -2518,7 +2563,7 @@ void print_Msg(byte message, int outputFormat) {
   Serial.print(message, outputFormat);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2530,7 +2575,7 @@ void print_Msg(word message, int outputFormat) {
   Serial.print(message, outputFormat);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2542,7 +2587,7 @@ void print_Msg(int message, int outputFormat) {
   Serial.print(message, outputFormat);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2554,7 +2599,7 @@ void print_Msg(long unsigned int message, int outputFormat) {
   Serial.print(message, outputFormat);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2566,7 +2611,7 @@ void print_Msg(String string) {
   Serial.print(string);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.print(string);
+  if (!dont_log && loggingEnabled) myLog.print(string);
 #endif
 }
 
@@ -2595,7 +2640,7 @@ void println_Msg(String string) {
   Serial.println(string);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.println(string);
+  if (!dont_log && loggingEnabled) myLog.println(string);
 #endif
 }
 
@@ -2608,7 +2653,7 @@ void println_Msg(byte message, int outputFormat) {
   Serial.println(message, outputFormat);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.println(message, outputFormat);
+  if (!dont_log && loggingEnabled) myLog.println(message, outputFormat);
 #endif
 }
 
@@ -2638,7 +2683,7 @@ void println_Msg(const char myString[]) {
   Serial.println(myString);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.println(myString);
+  if (!dont_log && loggingEnabled) myLog.println(myString);
 #endif
 }
 
@@ -2654,7 +2699,7 @@ void println_Msg(const __FlashStringHelper* string) {
   char myBuffer[15];
   strlcpy_P(myBuffer, (char*)string, 15);
   if ((strncmp(myBuffer, "Press Button...", 14) != 0) && (strncmp(myBuffer, "Select file", 10) != 0)) {
-    if (!dont_log) myLog.println(string);
+    if (!dont_log && loggingEnabled) myLog.println(string);
   }
 #endif
 }
@@ -2668,7 +2713,7 @@ void println_Msg(long unsigned int message) {
   Serial.println(message);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.println(message);
+  if (!dont_log && loggingEnabled) myLog.println(message);
 #endif
 }
 
@@ -2680,7 +2725,7 @@ void display_Update() {
   delay(100);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.flush();
+  if (!dont_log && loggingEnabled) myLog.flush();
 #endif
 }
 
@@ -2690,7 +2735,7 @@ void display_Clear() {
   display.setCursor(0, 8);
 #endif
 #ifdef global_log
-  if (!dont_log) myLog.println("");
+  if (!dont_log && loggingEnabled) myLog.println("");
 #endif
 }
 
@@ -2980,41 +3025,50 @@ void checkUpdater() {
   if (ClockedSerial.available() > 0) {
     String cmd = ClockedSerial.readStringUntil('\n');
     cmd.trim();
-    if (cmd == "VERCHK") {
+    if (cmd == "VERCHK")
+    { // VERCHK: Gets OSCR version and features
       delay(500);
       printVersionToSerial();
-    } else if (cmd == "GETCLOCK") {
-#if defined(ENABLE_3V3FIX)
+    }
+    else if (cmd == "GETCLOCK")
+    { // GETCLOCK: Gets the MEGA's current clock speed.
+# if defined(ENABLE_3V3FIX)
       ClockedSerial.print(F("Clock is running at "));
       ClockedSerial.print((clock == CS_16MHZ) ? 16UL : 8UL);
       ClockedSerial.println(F("MHz"));
-#else
+# else /* !ENABLE_3V3FIX */
       ClockedSerial.println(F("Dynamic clock speed (3V3FIX) is not enabled."));
-#endif
-    } else if (cmd == "GETVOLTS") {
-#if defined(ENABLE_VSELECT)
+# endif /* ENABLE_3V3FIX */
+    }
+    else if (cmd.substring(1, 8) == "ETVOLTS")
+    { // (G/S)ETVOLTS: Get and set the voltage.
+# if defined(ENABLE_VSELECT)
+      if (cmd != "GETVOLTS") {
+        switch(cmd.substring(9, 10).toInt()) {
+          case 3: setVoltage(VOLTS_SET_3V3); break;
+          case 5: setVoltage(VOLTS_SET_5V); break;
+        }
+      }
       ClockedSerial.print(F("Voltage is set to "));
       ClockedSerial.print((voltage == VOLTS_SET_5V) ? 5 : 3.3);
       ClockedSerial.println(F("V"));
-#else
+# else /* !ENABLE_VSELECT */
       ClockedSerial.println(F("Automatic voltage selection (VSELECT) is not enabled."));
-#endif
-    } else if (cmd == "GETTIME") {
-#if defined(RTC_installed)
+# endif /* ENABLE_VSELECT */
+    }
+    // RTC commands
+    else if (cmd.substring(1, 7) == "ETTIME")
+    { // (G/S)ETTIME: Get and set the date/time.
+# if defined(RTC_installed)
+      if (cmd != "GETTIME") {
+        ClockedSerial.println(F("Setting Time..."));
+        rtc.adjust(DateTime(cmd.substring(8).toInt()));
+      }
       ClockedSerial.print(F("Current Time: "));
       ClockedSerial.println(RTCStamp());
-#else
+# else /* !RTC_installed */
       ClockedSerial.println(F("RTC not installed"));
-#endif
-    } else if (cmd.substring(0, 7) == "SETTIME") {
-#if defined(RTC_installed)
-      ClockedSerial.println(F("Setting Time..."));
-      rtc.adjust(DateTime(cmd.substring(8).toInt()));
-      ClockedSerial.print(F("Current Time: "));
-      ClockedSerial.println(RTCStamp());
-#else
-      ClockedSerial.println(F("RTC not installed"));
-#endif
+# endif /* RTC_installed */
     } else {
       ClockedSerial.println(F("OSCR: Unknown Command"));
     }

@@ -288,8 +288,29 @@
 
 /*==== FIRMWARE OPTIONS ===========================================*/
 
+/* [ Config File -------------------------------------------------- ]
+    Allow changing some configuration values via a config file. You
+    generally can only use the config to set options or disable
+    certain featuress. It cannot be used to toggle firmware options
+    on, only off.
+
+    Note For Developers: See OSCR.* for info.
+
+    Filename: config.txt
+*/
+
+//#define ENABLE_CONFIG
+
+/****/
+
 /* [ LCD: Background Color ---------------------------------------- ]
     Set the backlight color of the LCD if you have one.
+
+    Can be set using config:
+      lcd.confColor=1
+      lcd.red=0
+      lcd.green=0
+      lcd.blue=0
 
     PARAMETERS:
       Green, Red, Blue
@@ -332,6 +353,9 @@
 
 /* [ Logging ------------------------------------------------------ ]
     Write all info to OSCR_LOG.txt in root dir
+
+    Can be toggled off using config:
+      oscr.logging=0
 */
 
 #define global_log
@@ -367,13 +391,26 @@
       0: Output each byte once. Not supported by emulators. (default)
       1: Duplicate each byte. Usable by Kega Fusion.
       2: Same as 1 + pad with 0xFF so that the file size is 64KB.
+
+    **
+    ** DEPRECATED: Use the config file instead. See below.
+    **
 */
 
 //#define use_md_conf
 
 /*
-    Alternatively, define it here by uncommenting and changing the
-    following line. Setting both allows you to change the default.
+    Configure how the MD core saves are formatted.
+
+    Can be set using config:
+      md.sramType=0
+
+    If config is enabled, this option does nothing -- use the config.
+
+    Options:
+      0: Output each byte once. Not supported by emulators. (default)
+      1: Duplicate each byte. Usable by Kega Fusion.
+      2: Same as 1 + pad with 0xFF so that the file size is 64KB.
 */
 
 //#define DEFAULT_VALUE_segaSram16bit 0
@@ -404,39 +441,47 @@
               You probably shouldn't change this stuff!
 */
 
+#if defined(ENABLE_CONFIG)
+# define CONFIG_FILE       "config.txt"
+// Define the max length of the key=value pairs
+// Do your best not to have to increase these.
+# define CONFIG_KEY_MAX    32
+# define CONFIG_VALUE_MAX  32
+#endif
+
 #if (defined(HW4) || defined(HW5))
-#define enable_LCD
-#define enable_neopixel
-#define enable_rotary
-//#define rotate_counter_clockwise
-#define clockgen_installed
-#define fastcrc
-#define ws_adapter_v2
+# define enable_LCD
+# define enable_neopixel
+# define enable_rotary
+//# define rotate_counter_clockwise
+# define clockgen_installed
+# define fastcrc
+# define ws_adapter_v2
 #endif
 
 #if (defined(HW2) || defined(HW3))
-#define enable_OLED
-#define enable_Button2
-#define clockgen_installed
-#define CA_LED
-#define fastcrc
+# define enable_OLED
+# define enable_Button2
+# define clockgen_installed
+# define CA_LED
+# define fastcrc
 #endif
 
 #if defined(HW1)
-#define enable_OLED
+# define enable_OLED
 //#define clockgen_installed
 //#define fastcrc
 #endif
 
 #if defined(SERIAL_MONITOR)
-#define enable_serial
+# define enable_serial
 //#define clockgen_installed
 //#define fastcrc
 #endif
 
 /* Firmware updater only works with HW3 and HW5 */
 #if !(defined(HW5) || defined(HW3))
-#undef ENABLE_UPDATER
+# undef ENABLE_UPDATER
 #endif
 
 /* End of settings */

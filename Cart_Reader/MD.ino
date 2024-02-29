@@ -87,10 +87,19 @@ unsigned long bramSize = 0;
 // REALTEC MAPPER
 boolean realtec = 0;
 
-#ifndef DEFAULT_VALUE_segaSram16bit
-#define DEFAULT_VALUE_segaSram16bit 0
-#endif
+#if defined(ENABLED_CONFIG)
+
+int segaSram16bit = 0;
+
+#else /* !ENABLED_CONFIG */
+
+# ifndef DEFAULT_VALUE_segaSram16bit
+#   define DEFAULT_VALUE_segaSram16bit 0
+# endif /* !DEFAULT_VALUE_segaSram16bit */
+
 int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
+
+#endif /* ENABLED_CONFIG */
 
 //*****************************************
 // SONIC & KNUCKLES LOCK-ON MODE VARIABLES
@@ -111,12 +120,15 @@ static word chksumSonic2 = 0x0635;
 /******************************************
    Configuration
  *****************************************/
-#ifdef use_md_conf
+#if defined(use_md_conf) && !defined(ENABLE_CONFIG)
+
+#warning "DEPRECATED: use_md_conf is deprecated. You should use ENABLE_CONFIG instead."
+
 void mdLoadConf() {
   if (myFile.open("mdconf.txt", O_READ)) {
     char line[64];
-    int n;
-    int i;
+    unsigned int n;
+    unsigned int i;
     while ((n = myFile.fgets(line, sizeof(line) - 1)) > 0) {
       // preprocess
       for (i = 0; i < n; i++) {
@@ -467,9 +479,11 @@ void setup_MD() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
-#ifdef use_md_conf
+#if defined(ENABLE_CONFIG)
+  segaSram16bit = configGetLong(F("md.sramType"));
+#elif defined(use_md_conf)
   mdLoadConf();
-#endif
+#endif /*ENABLE_CONFIG*/
 
   // Set Address Pins to Output
   //A0-A7

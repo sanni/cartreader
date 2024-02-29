@@ -7,7 +7,10 @@
 *       Contains various enums, variables, etc, for the main program.
 *
 * PUBLIC FUNCTIONS :
-*       void    setClockScale( VOLTS )
+*       void    setClockScale( ClockScale )
+*       VOLTS   setVoltage( Voltage )
+*       long    configGetLong( Key, OnFailure )
+*       String  configGetStr( Key )
 *
 * NOTES :
 *       This file is a WIP, I've been moving things into it on my local working
@@ -32,6 +35,7 @@
 * CHANGES :
 *
 * REF NO    VERSION  DATE        WHO            DETAIL
+*           13.2     2024-02-29  Ancyker        Add config support
 *           12.5     2023-03-29  Ancyker        Initial version
 *
 *H*/
@@ -41,13 +45,29 @@
 /*==== VARIABLES ==================================================*/
 
 // Firmware Version
-char ver[5] = "13.1";
+char ver[5] = "13.2";
 
 // Clock speed
 unsigned long clock = CS_16MHZ;
 
 // Voltage
 VOLTS voltage = VOLTS_SET_5V;
+
+#if defined(ENABLE_CONFIG)
+
+FsFile configFile;
+bool useConfig = false;
+
+# if defined(global_log)
+// Logging
+bool loggingEnabled = true;
+# endif /* global_log */
+#else /* !ENABLE_CONFIG */
+# if defined(global_log)
+// Logging: Define it as true using a const instead.
+const bool loggingEnabled = true;
+# endif /* global_log */
+#endif /* ENABLE_CONFIG */
 
 /*==== /VARIABLES =================================================*/
 
@@ -107,7 +127,8 @@ void printVersionToSerial() {}
 *
 * INPUTS :
 *       PARAMETERS:
-*           VOLTS   ClockScale              Clock scale
+*           VOLTS      ClockScale              Clock scale
+*           CLKSCALE   ClockScale              Clock scale
 *
 * PROCESS :
 *                   [1]  Enable clock prescaler change
@@ -124,6 +145,24 @@ void printVersionToSerial() {}
 *F*/
 void setClockScale(VOLTS __x)
 {
+  uint8_t __tmp = _BV(CLKPCE); /*[1]*/
+  __asm__ __volatile__ (
+    "in __tmp_reg__,__SREG__" "\n\t"
+    "cli" "\n\t"
+    "sts %1, %0" "\n\t"
+    "sts %1, %2" "\n\t"
+    "out __SREG__, __tmp_reg__"
+    : /* no outputs */
+    : "d" (__tmp),
+    "M" (_SFR_MEM_ADDR(CLKPR)),
+    "d" (__x)
+    : "r0"
+  ); /*[2]*/
+}
+
+void setClockScale(CLKSCALE __x)
+{
+  clock = (__x == CLKSCALE_16MHZ ? CS_16MHZ : CS_8MHZ);
   uint8_t __tmp = _BV(CLKPCE); /*[1]*/
   __asm__ __volatile__ (
     "in __tmp_reg__,__SREG__" "\n\t"
@@ -263,3 +302,146 @@ VOLTS setVoltage(VOLTS newVoltage __attribute__((unused))) {
   return VOLTS_NOTENABLED;
 }
 #endif
+
+#if defined(ENABLE_CONFIG)
+
+/*F******************************************************************
+* NAME :            void configInit()
+*
+* DESCRIPTION :     Setup the config file.
+*                   
+*F*/
+void configInit() {
+  useConfig = configFile.open(CONFIG_FILE, O_READ);
+}
+
+/*F******************************************************************
+* NAME :            uint8_t configFindKey( Key, Value )
+*
+* DESCRIPTION :     Search for a key=value pair.
+*
+* INPUTS :
+*       PARAMETERS:
+*           __FlashStringHelper   Key       The key to get the value for.
+*           char*                 value     Variable to store the value in.
+*
+* OUTPUTS :
+*       RETURN :
+*            Type:   uint8_t      Length of the value.
+*
+* PROCESS :
+*                   [1]  Get key length and convert to char array/string.
+*                   [2]  Parse file line by line.
+*                   [3]  Check if key in file matches.
+*                   [4]  Copy string after equals character.
+*                   [5]  Add null terminator.
+*
+* NOTES :
+*       You aren't meant to use this function directly. Check the
+*       functions configGetStr() and configGetLong().
+*
+*F*/
+uint8_t configFindKey(const __FlashStringHelper* searchKey, char* value) {
+  if (!useConfig) return 0;
+
+  char key[CONFIG_KEY_MAX + 1];
+  char buffer[CONFIG_KEY_MAX + CONFIG_VALUE_MAX + 4];
+  int keyLen = 0;
+  int valueLen = 0;
+
+  keyLen = strlcpy_P(key, reinterpret_cast<const char *>(searchKey), CONFIG_KEY_MAX); /*[1]*/
+
+  configFile.rewind();
+
+  while (configFile.available()) { /*[2]*/
+    int bufferLen = configFile.readBytesUntil('\n', buffer, CONFIG_KEY_MAX + CONFIG_VALUE_MAX + 3);
+
+    if (buffer[bufferLen - 1] == '\r')
+      bufferLen--;
+
+    if (bufferLen > (keyLen + 1)) {
+      if (memcmp(buffer, key, keyLen) == 0) { /*[3]*/
+        if (buffer[keyLen] == '=') { /*[4]*/
+          valueLen = bufferLen - keyLen - 1;
+          memcpy(&value[0], &buffer[keyLen + 1], valueLen);
+          value[valueLen] = '\0'; /*[5]*/
+          break;
+        }
+      }
+    }
+  }
+
+  return valueLen;
+}
+
+/*F******************************************************************
+* NAME :            String configGetStr( Key )
+*
+* DESCRIPTION :     Return the value of a key as a string.
+*
+* INPUTS :
+*       PARAMETERS:
+*           __FlashStringHelper   Key       The key to get the value for.
+*
+* OUTPUTS :
+*       RETURN :
+*            Type:   String       The value of the key or an empty string.
+*
+* PROCESS :
+*                   [1]  Find the key via configFindKey().
+*                   [2]  Return empty if nothing was found.
+*                   [3]  Convert to String type.
+*
+* NOTES :
+*       You can use this to get strings stored in the config file.
+*       Take care when allocating memory for strings. You should 
+*       probably use malloc for it if it's a global variable. If
+*       you do, make sure to free() it after it's not needed.
+*
+*F*/
+String configGetStr(const __FlashStringHelper* key) {
+  if (!useConfig) return {};
+  char value[CONFIG_VALUE_MAX + 1];
+  
+  uint8_t valueLen = configFindKey(key, value); /*[1]*/
+  if (valueLen < 1) return {}; /*[2]*/
+
+  String stringVal(value); /*[3]*/
+
+  return stringVal;
+}
+
+/*F******************************************************************
+* NAME :            long configGetLong( Key, OnFailure )
+*
+* DESCRIPTION :     Return the value of a key as an int/long.
+*
+* INPUTS :
+*       PARAMETERS:
+*           __FlashStringHelper   Key      The key to get the value for.
+*           int                   onFail   Value to return on failure. (def=0)
+*
+* OUTPUTS :
+*       RETURN :
+*            Type:   int          The value of the key or onFail.
+*
+* PROCESS :
+*                   [1]  Find the key via configFindKey().
+*                   [2]  Return onFail if nothing was found.
+*                   [3]  Convert to long int type and return.
+*
+* NOTES :
+*       You can specify hex, i.e. 0xFF for 255, if you want to.
+*
+*F*/
+long configGetLong(const __FlashStringHelper* key, int onFail) {
+  if (!useConfig) return onFail;
+  char value[CONFIG_VALUE_MAX + 1];
+
+  uint8_t valueLen = configFindKey(key, value); /*[1]*/
+  if (valueLen < 1) return onFail; /*[2]*/
+
+  return strtol(value, NULL, 0); /*[3]*/
+}
+
+#endif /* ENABLE_CONFIG */

@@ -10,6 +10,7 @@
 #include <Wire.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
+#include "SdFat.h"
 
 #include "Config.h"
 
@@ -30,6 +31,13 @@ const unsigned long CS_16MHZ = 16000000UL;
 const unsigned long CS_8MHZ = 8000000UL;
 
 // ENUM for VSELECT & 3V3FIX
+enum CLKSCALE: uint8_t {
+  // Paramters to pass to setVoltage() and setClockScale()
+  CLKSCALE_16MHZ = 0, // ClockScale 0 = 16MHz
+  CLKSCALE_8MHZ,      // ClockScale 1 = 8MHz
+};
+
+// ENUM for VSELECT & 3V3FIX
 enum VOLTS: uint8_t {
   // Paramters to pass to setVoltage() and setClockScale()
   VOLTS_SET_5V = 0, // 5V parameter    [ClockScale 0 = 16MHz, Voltage = 5V]
@@ -47,10 +55,36 @@ extern unsigned long clock;
 extern char ver[5];
 extern VOLTS voltage;
 
+#if defined(ENABLE_CONFIG)
+  /**
+   * Config File Stuff
+   *
+   * You can register GLOBAL configuration variables in this section.
+   * You should put core-specific config variables in the related file.
+   **/
+
+  extern bool useConfig;
+# ifdef global_log
+  extern bool loggingEnabled;
+# endif /* global_log */
+#else /* !ENABLE_CONFIG */
+# ifdef global_log
+  extern const bool loggingEnabled;
+# endif /* global_log */
+#endif /* ENABLE_CONFIG */
+
 /*==== FUNCTIONS ==================================================*/
 extern void printVersionToSerial();
 extern void setClockScale(VOLTS __x);
+extern void setClockScale(CLKSCALE __x);
 extern VOLTS setVoltage(VOLTS volts);
+
+#if defined(ENABLE_CONFIG)
+extern void configInit();
+extern uint8_t configFindKey(const __FlashStringHelper* key, char* value);
+extern String configGetStr(const __FlashStringHelper* key);
+extern long configGetLong(const __FlashStringHelper* key, int onFail = 0);
+#endif /* ENABLE_CONFIG */
 
 #include "ClockedSerial.h"
 
