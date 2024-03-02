@@ -353,7 +353,7 @@ setrom:
     newvectrexsize = sizeROM.toInt() + vectrexlo;
     if (newvectrexsize > vectrexhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -386,7 +386,7 @@ void checkStatus_VECTREX() {
   Serial.print(F("ROM SIZE: "));
   Serial.print(VECTREX[vectrexsize]);
   Serial.println(F("KB"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -497,12 +497,12 @@ bool getCartListInfo_VECTREX() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_VECTREX(vectrexgame, vectrexrr, vectrexll)) {
     if (strcmp(vectrexcsvEND, vectrexgame) == 0) {
@@ -581,13 +581,13 @@ void checkCSV_VECTREX() {
     println_Msg(newvectrexsize);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(vectrexgame);
     // Display Settings
     Serial.print(F("CODE: R"));
     Serial.println(newvectrexsize);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

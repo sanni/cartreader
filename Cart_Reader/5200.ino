@@ -450,7 +450,7 @@ setrom:
     new5200size = sizeROM.toInt() + a5200lo;
     if (new5200size > a5200hi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -504,7 +504,7 @@ void checkStatus_5200() {
   Serial.print(F("ROM SIZE: "));
   Serial.print(a5200[a5200size]);
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -776,12 +776,12 @@ bool getCartListInfo_5200() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_5200(a5200game, a5200mm, a5200rr, a5200ll)) {
     if (strcmp(a5200csvEND, a5200game) == 0) {
@@ -864,7 +864,7 @@ void checkCSV_5200() {
     println_Msg(new5200size);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(a5200game);
     // Display Settings
@@ -872,7 +872,7 @@ void checkCSV_5200() {
     Serial.print(new5200mapper);
     Serial.print(F("/R"));
     Serial.println(new5200size);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

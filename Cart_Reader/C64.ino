@@ -849,7 +849,7 @@ setmapper:
   }
   if (c64mapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     newc64mapper = 0;
     goto setmapper;
   }
@@ -967,7 +967,7 @@ setrom:
     newc64size = sizeROM.toInt() + c64lo;
     if (newc64size > c64hi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -1089,7 +1089,7 @@ setrom:
   newc64port = sizeROM.toInt();
   if (newc64port > 3) {
     Serial.println(F("INVALID STATE"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     goto setrom;
   }
   Serial.print(F("Port State = "));
@@ -1142,7 +1142,7 @@ void checkStatus_C64() {
   Serial.println(F("K"));
   Serial.print(F("CURRENT PORT STATE: "));
   Setial.println(c64port);
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -1354,12 +1354,12 @@ bool getCartListInfo_C64() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_C64(c64game, c64mm, c64rr, c64pp, c64ll)) {
     if (strcmp(c64csvEND, c64game) == 0) {
@@ -1446,7 +1446,7 @@ void checkCSV_C64() {
     print_Msg(newc64port);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(c64game);
     // Display Settings
@@ -1456,7 +1456,7 @@ void checkCSV_C64() {
     Serial.print(newc64size);
     Serial.print(F("/P"));
     Serial.print(newc64port);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

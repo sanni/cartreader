@@ -1808,7 +1808,7 @@ void setup() {
 # ifdef ENABLE_SERIAL
   // Serial Begin
   Serial.begin(9600);
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("Cartridge Reader"));
   Serial.println(F("2024 github.com/sanni"));
   // LED Error
@@ -2426,17 +2426,17 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 // Serial Monitor
 byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
   // Print menu to serial monitor
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
     Serial.print(F(")"));
     Serial.println(answers[i]);
   }
   // Wait for user input
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
   Serial.println(F("and enter a selection by typing a number(0-6): _ "));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   while (Serial.available() == 0) {
   }
 
@@ -2468,7 +2468,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 
   // Print the received byte for validation e.g. in case of a different keyboard mapping
   //Serial.println(incomingByte);
-  //Serial.println(FSTRING_EMPTY);
+  //Serial.println(FS(FSTRING_EMPTY));
   return incomingByte;
 }
 #endif

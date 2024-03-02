@@ -296,7 +296,7 @@ setrom:
     newarcsize = sizeROM.toInt() + arclo;
     if (newarcsize > archi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -329,7 +329,7 @@ void checkStatus_ARC() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(ARC[arcsize]);
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -440,12 +440,12 @@ bool getCartListInfo_ARC() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_ARC(arcgame, arcrr, arcll)) {
     if (strcmp(arccsvEND, arcgame) == 0) {
@@ -524,13 +524,13 @@ void checkCSV_ARC() {
     println_Msg(newarcsize);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(arcgame);
     // Display Settings
     Serial.print(F("CODE: R"));
     Serial.println(newarcsize);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

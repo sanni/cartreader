@@ -614,7 +614,7 @@ setmapper:
   }
   if (intvmapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     newintvmapper = 0;
     goto setmapper;
   }
@@ -731,7 +731,7 @@ setrom:
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -773,7 +773,7 @@ void checkStatus_INTV() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(pgm_read_byte(&(INTV[intvsize])));
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 

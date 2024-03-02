@@ -1399,11 +1399,11 @@ setmapper:
     Serial.print("]");
     if (i < mapcount - 1) {
       if ((i != 0) && ((i + 1) % 10 == 0))
-        Serial.println(FSTRING_EMPTY);
+        Serial.println(FS(FSTRING_EMPTY));
       else
         Serial.print(F("\t"));
     } else
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
   }
   Serial.print(F("Enter Mapper: "));
   while (Serial.available() == 0) {}
@@ -1418,7 +1418,7 @@ setmapper:
   }
   if (mapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     newmapper = 0;
     goto setmapper;
   }
@@ -1551,7 +1551,7 @@ setprg:
     newprgsize = sizePRG.toInt() + prglo;
     if (newprgsize > prghi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setprg;
     }
   }
@@ -1671,7 +1671,7 @@ setchr:
     newchrsize = sizeCHR.toInt() + chrlo;
     if (newchrsize > chrhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setchr;
     }
   }
@@ -1880,7 +1880,7 @@ setram:
     newramsize = sizeRAM.toInt() + ramlo;
     if (newramsize > ramhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setram;
     }
   }
@@ -1893,7 +1893,7 @@ setram:
       sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
     Serial.print(sizeEEP);
     Serial.println(F("B"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
   } else if (mapper == 19) {
     Serial.print(F("RAM Size =  "));
     if (newramsize == 2)
@@ -1902,12 +1902,12 @@ setram:
       Serial.print(pgm_read_byte(&(RAM[newramsize])));
       Serial.println(F("K"));
     }
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
   } else if (mapper == 80) {
     Serial.print(F("RAM Size = "));
     Serial.print(pgm_read_byte(&(RAM[newramsize])) * 16);
     Serial.println(F("B"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
   } else {
     Serial.print(F("RAM Size = "));
     if (mapper == 0)
@@ -1917,7 +1917,7 @@ setram:
     else
       Serial.print(pgm_read_byte(&(RAM[newramsize])));
     Serial.println(F("K"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
   }
 #endif
   EEPROM_writeAnything(10, newramsize);
@@ -5019,7 +5019,7 @@ void writeFLASH() {
 #else
         Serial.print(F("*"));
         if ((i != 0) && ((i + 1) % 16 == 0))
-          Serial.println(FSTRING_EMPTY);
+          Serial.println(FS(FSTRING_EMPTY));
 #endif
       }
       myFile.close();

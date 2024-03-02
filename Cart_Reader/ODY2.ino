@@ -376,7 +376,7 @@ setrom:
     newody2size = sizeROM.toInt() + ody2lo;
     if (newody2size > ody2hi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -418,7 +418,7 @@ void checkStatus_ODY2() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(ODY2[ody2size]);
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -532,12 +532,12 @@ bool getCartListInfo_ODY2() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_ODY2(ody2game, ody2mm, ody2rr, ody2ll)) {
     if (strcmp(ody2csvEND, ody2game) == 0) {
@@ -620,7 +620,7 @@ void checkCSV_ODY2() {
     println_Msg(newody2size);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(ody2game);
     // Display Settings
@@ -628,7 +628,7 @@ void checkCSV_ODY2() {
     Serial.print(newody2mapper);
     Serial.print(F("/R"));
     Serial.println(newody2size);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

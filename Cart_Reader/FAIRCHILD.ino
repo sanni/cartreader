@@ -632,7 +632,7 @@ setrom:
     newfairchildsize = sizeROM.toInt() + fairchildlo;
     if (newfairchildsize > fairchildhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -665,7 +665,7 @@ void checkStatus_FAIRCHILD() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(FAIRCHILD[fairchildsize]);
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -776,12 +776,12 @@ bool getCartListInfo_FAIRCHILD() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_FAIRCHILD(fairchildgame, fairchildrr, fairchildll)) {
     if (strcmp(fairchildcsvEND, fairchildgame) == 0) {
@@ -860,13 +860,13 @@ void checkCSV_FAIRCHILD() {
     println_Msg(newfairchildsize);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(fairchildgame);
     // Display Settings
     Serial.print(F("CODE: R"));
     Serial.println(newfairchildsize);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

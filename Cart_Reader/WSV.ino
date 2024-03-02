@@ -338,7 +338,7 @@ setrom:
     newwsvsize = sizeROM.toInt() + wsvlo;
     if (newwsvsize > wsvhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -371,7 +371,7 @@ void checkStatus_WSV() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(pgm_read_word(&(WSV[wsvsize])));
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 

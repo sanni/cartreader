@@ -515,7 +515,7 @@ setrom:
     new7800size = sizeROM.toInt() + a7800lo;
     if (new7800size > a7800hi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -585,7 +585,7 @@ void checkStatus_7800() {
   Serial.print(F("ROM SIZE: "));
   Serial.print(A7800[a7800size]);
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -894,12 +894,12 @@ bool getCartListInfo_7800() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_7800(a7800game, a7800mm, a7800rr, a7800ll)) {
     if (strcmp(a7800csvEND, a7800game) == 0) {
@@ -982,7 +982,7 @@ void checkCSV_7800() {
     println_Msg(new7800size);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(a7800game);
     // Display Settings
@@ -990,7 +990,7 @@ void checkCSV_7800() {
     Serial.print(new7800mapper);
     Serial.print(F("/R"));
     Serial.println(new7800size);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))

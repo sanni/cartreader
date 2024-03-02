@@ -994,7 +994,7 @@ setmapper:
   }
   if (msxmapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     newmsxmapper = 0;
     goto setmapper;
   }
@@ -1137,13 +1137,13 @@ setrom:
     if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
       if ((newmsxromsize > 0) && (newmsxromsize < 4)) {
         Serial.println(F("SIZE NOT SUPPORTED"));
-        Serial.println(FSTRING_EMPTY);
+        Serial.println(FS(FSTRING_EMPTY));
         goto setrom;
       }
     }
     if (newmsxsize > msxhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -1272,13 +1272,13 @@ setram:
     if (msxmapper == 7) {        // Koei 8K/32K
       if (newmsxramsize == 3) {  // 16K
         Serial.println(F("SIZE NOT SUPPORTED"));
-        Serial.println(FSTRING_EMPTY);
+        Serial.println(FS(FSTRING_EMPTY));
         goto setram;
       }
     }
     if (newmsxramsize > msxramhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FSTRING_EMPTY);
+      Serial.println(FS(FSTRING_EMPTY));
       goto setram;
     }
   }
@@ -1341,7 +1341,7 @@ void checkStatus_MSX() {
   Serial.print(F("CURRENT RAM SIZE: "));
   Serial.print(MSXRAM[msxramsize]);
   Serial.println(F("K"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -1521,12 +1521,12 @@ bool getCartListInfo_MSX() {
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FSTRING_EMPTY);
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
   while (readVals_MSX(msxgame, msxmm, msxrr, msxss, msxll)) {
     if (strcmp(msxcsvEND, msxgame) == 0) {
@@ -1613,7 +1613,7 @@ void checkCSV_MSX() {
     println_Msg(newmsxramsize);
     display_Update();
 #else
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
     Serial.println(F("CART SELECTED"));
     Serial.println(msxgame);
     // Display Settings
@@ -1623,7 +1623,7 @@ void checkCSV_MSX() {
     Serial.print(newmsxsize);
     Serial.print(F("/S"));
     Serial.println(newmsxramsize);
-    Serial.println(FSTRING_EMPTY);
+    Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
