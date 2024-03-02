@@ -2,19 +2,16 @@
 // Super A'can MODULE
 // Only tested with HW3 and HW5
 //******************************************
-#ifdef enable_SUPRACAN
+#ifdef ENABLE_SUPRACAN
 
 /******************************************
   Menu
 *****************************************/
-static const char acanMenuItem1[] PROGMEM = "Read Rom";
-static const char acanMenuItem2[] PROGMEM = "Read Save";
-static const char acanMenuItem3[] PROGMEM = "Write Save";
 static const char acanMenuItem4[] PROGMEM = "Read UM6650";
 static const char acanMenuItem5[] PROGMEM = "Write UM6650";
 static const char acanMenuItem6[] PROGMEM = "Flash repro";
 
-static const char *const menuOptionsAcan[] PROGMEM = { acanMenuItem1, acanMenuItem2, acanMenuItem3, acanMenuItem4, acanMenuItem5, string_reset2, acanMenuItem6 };
+static const char *const menuOptionsAcan[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, acanMenuItem4, acanMenuItem5, FSTRING_RESET, acanMenuItem6 };
 
 void setup_SuprAcan() {
   // Request 5V
@@ -82,7 +79,7 @@ void setup_SuprAcan() {
     clockgen.update_status();
     delay(500);
   }
-#ifdef clockgen_installed
+#ifdef ENABLE_CLOCKGEN
   else {
     print_FatalError(F("Clock Generator not found"));
   }
@@ -142,7 +139,7 @@ void suprAcanMenu() {
       }
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -190,7 +187,7 @@ static void readROM_Acan() {
 
   print_Msg(F("CRC32: "));
   print_Msg_PaddedHex32(crc32);
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(done_STR, 1);
 }
 
@@ -482,7 +479,7 @@ static void checkRomExist_Acan() {
 
   cartSize = getRomSize_Acan();
   romSize = cartSize >> 17;
-  mode = mode_SUPRACAN;
+  mode = CORE_SUPRACAN;
 
   if (cartSize == 0)
     print_Error(F("Unable to find rom signature..."));

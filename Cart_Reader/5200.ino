@@ -1,7 +1,7 @@
 //******************************************
 // ATARI 5200 MODULE
 //******************************************
-#ifdef enable_5200
+#ifdef ENABLE_5200
 // Atari 5200
 // Cartridge Pinout
 // 36P 2.54mm pitch connector
@@ -85,10 +85,7 @@ byte new5200size;
 //  Menu
 //******************************************
 // Base Menu
-static const char a5200MenuItem1[] PROGMEM = "Select Cart";
-static const char a5200MenuItem2[] PROGMEM = "Read ROM";
-static const char a5200MenuItem3[] PROGMEM = "Set Mapper + Size";
-static const char* const menuOptions5200[] PROGMEM = { a5200MenuItem1, a5200MenuItem2, a5200MenuItem3, string_reset2 };
+static const char* const menuOptions5200[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void setup_5200() {
   // Request 5V
@@ -128,7 +125,7 @@ void setup_5200() {
   checkStatus_5200();
   strcpy(romName, "ATARI");
 
-  mode = mode_5200;
+  mode = CORE_5200;
 }
 
 void a5200Menu() {
@@ -334,7 +331,7 @@ void readROM_5200() {
   unsigned long crcsize = a5200[a5200size] * 0x400;
   calcCRC(fileName, crcsize, NULL, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -358,22 +355,22 @@ void checkMapperSize_5200() {
 }
 
 void setROMSize_5200() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (a5200lo == a5200hi)
     new5200size = a5200lo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = a5200lo;
 
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(a5200[i]);
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -391,11 +388,11 @@ void setROMSize_5200() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(a5200[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -411,11 +408,11 @@ void setROMSize_5200() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(a5200[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -453,7 +450,7 @@ setrom:
     new5200size = sizeROM.toInt() + a5200lo;
     if (new5200size > a5200hi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -477,11 +474,11 @@ void checkStatus_5200() {
     EEPROM_writeAnything(8, a5200size);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 5200 READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(a5200mapper);
   if (a5200mapper == 0)
@@ -507,7 +504,7 @@ void checkStatus_5200() {
   Serial.print(F("ROM SIZE: "));
   Serial.print(a5200[a5200size]);
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
@@ -516,20 +513,20 @@ void checkStatus_5200() {
 //******************************************
 
 void setMapper_5200() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  uint8_t b = 0;
   int i = 0;
   // Check Button Status
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {             // Button Pressed
     while (1) {                        // Scroll Mapper List
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       buttonVal1 = (PING & (1 << 2));      //PG2
 #endif
       if (buttonVal1 == HIGH) {        // Button Released
@@ -571,11 +568,11 @@ void setMapper_5200() {
         println_Msg(F("TWO CHIP"));
       else if (a5200mapselect == 2)
         println_Msg(F("BOUNTY BOB"));
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -601,11 +598,11 @@ void setMapper_5200() {
         println_Msg(F("TWO CHIP"));
       else if (a5200mapselect == 2)
         println_Msg(F("BOUNTY BOB"));
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -629,11 +626,11 @@ void setMapper_5200() {
         println_Msg(F("TWO CHIP"));
       else if (a5200mapselect == 2)
         println_Msg(F("BOUNTY BOB"));
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -721,7 +718,7 @@ bool readVals_5200(char* a5200game, char* a5200mm, char* a5200rr, char* a5200ll)
 bool getCartListInfo_5200() {
   bool buttonreleased = 0;
   bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F(" HOLD TO FAST CYCLE"));
   display_Update();
@@ -729,9 +726,9 @@ bool getCartListInfo_5200() {
   Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
 #endif
   delay(2000);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
@@ -740,19 +737,19 @@ bool getCartListInfo_5200() {
         if (strcmp(a5200csvEND, a5200game) == 0) {
           a5200csvFile.seek(0);  // Restart
         } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           display_Clear();
           println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(a5200game);
           display_Update();
 #else
           Serial.print(F("CART TITLE:"));
           Serial.println(a5200game);
 #endif
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
           buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
           if (buttonVal1 == HIGH) {        // Button Released
@@ -765,41 +762,41 @@ bool getCartListInfo_5200() {
           }
         }
       }
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       buttonVal1 = (PING & (1 << 2));      //PG2
 #endif
       if (buttonVal1 == HIGH)          // Button Released
         break;
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
   while (readVals_5200(a5200game, a5200mm, a5200rr, a5200ll)) {
     if (strcmp(a5200csvEND, a5200game) == 0) {
       a5200csvFile.seek(0);  // Restart
     } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       display_Clear();
       println_Msg(F("CART TITLE:"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(a5200game);
       display.setCursor(0, 48);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -809,7 +806,7 @@ bool getCartListInfo_5200() {
       Serial.println(a5200game);
 #endif
       while (1) {  // Single Step
-        int b = checkButton();
+        uint8_t b = checkButton();
         if (b == 1) {  // Continue (press)
           break;
         }
@@ -825,7 +822,7 @@ bool getCartListInfo_5200() {
           EEPROM_writeAnything(7, new5200mapper);
           EEPROM_writeAnything(8, new5200size);
           cartselected = 1;  // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           println_Msg(F("SELECTION MADE"));
           display_Update();
 #else
@@ -840,8 +837,8 @@ bool getCartListInfo_5200() {
       }
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("END OF FILE"));
   display_Update();
 #else
@@ -853,10 +850,10 @@ bool getCartListInfo_5200() {
 
 void checkCSV_5200() {
   if (getCartListInfo_5200()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(a5200game);
     display_Update();
     // Display Settings
@@ -867,7 +864,7 @@ void checkCSV_5200() {
     println_Msg(new5200size);
     display_Update();
 #else
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     Serial.println(F("CART SELECTED"));
     Serial.println(a5200game);
     // Display Settings
@@ -875,10 +872,10 @@ void checkCSV_5200() {
     Serial.print(new5200mapper);
     Serial.print(F("/R"));
     Serial.println(new5200size);
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
 #endif
   } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
     println_Msg(F("NO SELECTION"));
     display_Update();
@@ -901,7 +898,7 @@ void checkSize_5200() {
 }
 
 void setCart_5200() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(a5200cartCSV);
   display_Update();
@@ -911,7 +908,7 @@ void setCart_5200() {
   sd.chdir(folder);  // Switch Folder
   a5200csvFile = sd.open(a5200cartCSV, O_READ);
   if (!a5200csvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CSV FILE NOT FOUND!"));
     display_Update();

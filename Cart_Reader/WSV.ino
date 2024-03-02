@@ -1,7 +1,7 @@
 //******************************************
 // WSV MODULE
 //******************************************
-#ifdef enable_WSV
+#ifdef ENABLE_WSV
 // Watara Supervision
 // Cartridge Pinout
 // 40P 2.5mm pitch connector
@@ -94,7 +94,7 @@ void setup_WSV() {
   checkStatus_WSV();
   strcpy(romName, "SUPERVISION");
 
-  mode = mode_WSV;
+  mode = CORE_WSV;
 }
 
 //******************************************
@@ -102,11 +102,7 @@ void setup_WSV() {
 //******************************************
 
 // Base Menu
-static const char wsvMenuItem1[] PROGMEM = "Select Cart";
-static const char wsvMenuItem2[] PROGMEM = "Read ROM";
-static const char wsvMenuItem3[] PROGMEM = "Set Size";
-//static const char wsvMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSV[] PROGMEM = { wsvMenuItem1, wsvMenuItem2, wsvMenuItem3, string_reset2 };
+static const char* const menuOptionsSV[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void wsvMenu() {
   convertPgm(menuOptionsSV, 4);
@@ -235,7 +231,7 @@ void readROM_WSV() {
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
   compareCRC("wsv.txt", 0, 1, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -247,22 +243,22 @@ void readROM_WSV() {
 //******************************************
 
 void setROMSize_WSV() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (wsvlo == wsvhi)
     newwsvsize = wsvlo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = wsvlo;
 
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(pgm_read_word(&(WSV[i])));
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -280,11 +276,11 @@ void setROMSize_WSV() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(pgm_read_word(&(WSV[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -300,11 +296,11 @@ void setROMSize_WSV() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(pgm_read_word(&(WSV[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -342,7 +338,7 @@ setrom:
     newwsvsize = sizeROM.toInt() + wsvlo;
     if (newwsvsize > wsvhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -361,11 +357,11 @@ void checkStatus_WSV() {
     EEPROM_writeAnything(8, wsvsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("WATARA SUPERVISION"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("ROM SIZE: "));
   print_Msg(pgm_read_word(&(WSV[wsvsize])));
   println_Msg(F("K"));
@@ -375,7 +371,7 @@ void checkStatus_WSV() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(pgm_read_word(&(WSV[wsvsize])));
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
@@ -459,7 +455,7 @@ void setCart_WSV() {
       skip_line(&myFile);
 
       println_Msg(F("Select your cartridge"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(gamename);
       print_Msg(F("Size: "));
       if (cartSize == 51)
@@ -467,11 +463,11 @@ void setCart_WSV() {
       else
         print_Msg(cartSize);
       println_Msg(F("KB"));
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
@@ -480,7 +476,7 @@ void setCart_WSV() {
 #endif
       display_Update();
 
-      int b = 0;
+      uint8_t b = 0;
       while (1) {
         // Check button input
         b = checkButton();

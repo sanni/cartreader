@@ -3,7 +3,7 @@
 // Revision 1.0.0 October 22nd 2018
 // Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
-#ifdef enable_SV
+#ifdef ENABLE_SV
 
 /******************************************
    Satellaview 8M Memory Pack
@@ -37,8 +37,7 @@ static const char svFlashMenuItem1[] PROGMEM = "Read Memory Pack";
 static const char svFlashMenuItem2[] PROGMEM = "Write Memory Pack";
 static const char svFlashMenuItem3[] PROGMEM = "Read BS-X Sram";
 static const char svFlashMenuItem4[] PROGMEM = "Write BS-X Sram";
-static const char svFlashMenuItem5[] PROGMEM = "Back";
-static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, svFlashMenuItem5 };
+static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, FSTRING_RESET };
 
 
 void svMenu() {
@@ -122,7 +121,7 @@ void setup_SV() {
     clockgen.output_enable(SI5351_CLK1, 0);
     clockgen.output_enable(SI5351_CLK2, 1);
   }
-#ifdef clockgen_installed
+#ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
     print_FatalError(F("Clock Generator not found"));
@@ -517,7 +516,7 @@ void writeROM_SV(void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (0xFF != readBank_SV(currBank, currByte)) {
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(F("Erase failed"));
           display_Update();
           myFile.close();
@@ -560,7 +559,7 @@ void writeROM_SV(void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (myFile.read() != readBank_SV(currBank, currByte)) {
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(F("Verify failed"));
           display_Update();
           myFile.close();

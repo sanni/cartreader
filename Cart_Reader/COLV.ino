@@ -1,7 +1,7 @@
 //******************************************
 // COLECOVISION MODULE
 //******************************************
-#ifdef enable_COLV
+#ifdef ENABLE_COLV
 
 // Coleco Colecovision
 // Cartridge Pinout
@@ -48,11 +48,7 @@ byte newcolsize;
 //  Menu
 //******************************************
 // Base Menu
-static const char colMenuItem1[] PROGMEM = "Select Cart";
-static const char colMenuItem2[] PROGMEM = "Read ROM";
-static const char colMenuItem3[] PROGMEM = "Set Size";
-//static const char colMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsCOL[] PROGMEM = { colMenuItem1, colMenuItem2, colMenuItem3, string_reset2 };
+static const char* const menuOptionsCOL[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void setup_COL() {
   // Request 5V
@@ -92,7 +88,7 @@ void setup_COL() {
   checkStatus_COL();
   strcpy(romName, "COLECO");
 
-  mode = mode_COL;
+  mode = CORE_COL;
 }
 
 void colMenu() {
@@ -218,7 +214,7 @@ void readROM_COL() {
   // Compare CRC32 to database and rename ROM if found
   compareCRC("colv.txt", 0, 1, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -230,22 +226,22 @@ void readROM_COL() {
 //******************************************
 
 void setROMSize_COL() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (collo == colhi)
     newcolsize = collo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = collo;
 
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(pgm_read_byte(&(COL[i])));
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -263,11 +259,11 @@ void setROMSize_COL() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(pgm_read_byte(&(COL[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -283,11 +279,11 @@ void setROMSize_COL() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(pgm_read_byte(&(COL[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -325,7 +321,7 @@ setrom:
     newcolsize = sizeROM.toInt() + collo;
     if (newcolsize > colhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -344,15 +340,15 @@ void checkStatus_COL() {
     EEPROM_writeAnything(8, colsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("COLECOVISION READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("ROM SIZE: "));
   print_Msg(pgm_read_byte(&(COL[colsize])));
   println_Msg(F("K"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -361,7 +357,7 @@ void checkStatus_COL() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(pgm_read_byte(&(COL[colsize])));
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
@@ -445,16 +441,16 @@ void setCart_COL() {
       skip_line(&myFile);
 
       println_Msg(F("Select your cartridge"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(gamename);
       print_Msg(F("Size: "));
       print_Msg(cartSize);
       println_Msg(F("KB"));
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
@@ -463,7 +459,7 @@ void setCart_COL() {
 #endif
       display_Update();
 
-      int b = 0;
+      uint8_t b = 0;
       while (1) {
         // Check button input
         b = checkButton();

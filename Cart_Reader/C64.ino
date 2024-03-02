@@ -1,7 +1,7 @@
 //******************************************
 // COMMODORE 64 MODULE
 //******************************************
-#ifdef enable_C64
+#ifdef ENABLE_C64
 // Commodore 64
 // Cartridge Pinout
 // 44P 2.54mm pitch connector
@@ -126,10 +126,7 @@ byte newc64port;
 //  MENU
 //******************************************
 // Base Menu
-static const char c64MenuItem1[] PROGMEM = "Select Cart";
-static const char c64MenuItem2[] PROGMEM = "Read ROM";
-static const char c64MenuItem3[] PROGMEM = "Set Mapper + Size";
-static const char* const menuOptionsC64[] PROGMEM = { c64MenuItem1, c64MenuItem2, c64MenuItem3, string_reset2 };
+static const char* const menuOptionsC64[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void c64Menu() {
   convertPgm(menuOptionsC64, 4);
@@ -211,7 +208,7 @@ void setup_C64() {
   checkStatus_C64();
   strcpy(romName, "C64");
 
-  mode = mode_C64;
+  mode = CORE_C64;
 }
 
 //******************************************
@@ -709,7 +706,7 @@ void readROM_C64() {
   unsigned long crcsize = C64[c64size] * 0x400;
   calcCRC(fileName, crcsize, NULL, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -720,20 +717,20 @@ void readROM_C64() {
 // MAPPER CODE
 //******************************************
 void setMapper_C64() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  uint8_t b = 0;
   int i = 0;
   // Check Button Status
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {             // Button Pressed
     while (1) {                        // Scroll Mapper List
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
       if (buttonVal1 == HIGH) {        // Button Released
@@ -765,11 +762,11 @@ void setMapper_C64() {
   c64mapselect = pgm_read_byte(c64mapsize + c64index);
   println_Msg(c64mapselect);
   printMapper_C64(c64mapselect);
-  println_Msg(F(""));
-#if defined(enable_OLED)
+  println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
   print_STR(press_to_change_STR, 1);
   print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   print_STR(rotate_to_change_STR, 1);
   print_STR(press_to_select_STR, 1);
 #endif
@@ -789,11 +786,11 @@ void setMapper_C64() {
       c64mapselect = pgm_read_byte(c64mapsize + c64index);
       println_Msg(c64mapselect);
       printMapper_C64(c64mapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -812,11 +809,11 @@ void setMapper_C64() {
       c64mapselect = pgm_read_byte(c64mapsize + c64index);
       println_Msg(c64mapselect);
       printMapper_C64(c64mapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -852,7 +849,7 @@ setmapper:
   }
   if (c64mapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     newc64mapper = 0;
     goto setmapper;
   }
@@ -877,22 +874,22 @@ void checkMapperSize_C64() {
 // SET ROM SIZE
 //******************************************
 void setROMSize_C64() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (c64lo == c64hi)
     newc64size = c64lo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = c64lo;
 
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(C64[i]);
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -909,11 +906,11 @@ void setROMSize_C64() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(C64[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -928,11 +925,11 @@ void setROMSize_C64() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(C64[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -970,7 +967,7 @@ setrom:
     newc64size = sizeROM.toInt() + c64lo;
     if (newc64size > c64hi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -987,8 +984,8 @@ setrom:
 //******************************************
 void setPorts_C64()
 {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  uint8_t b = 0;
   int i = 0;
 
   display_Clear();
@@ -1006,7 +1003,7 @@ void setPorts_C64()
   else if (i == 3) {
     println_Msg(F("EXROM HIGH/GAME HIGH"));
   }
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("Press to Change"));
   println_Msg(F("Hold to Select"));
   display_Update();
@@ -1034,7 +1031,7 @@ void setPorts_C64()
       else if (i == 3) {
         println_Msg(F("EXROM HIGH/GAME HIGH"));
       }
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("Press to Change"));
       println_Msg(F("Hold to Select"));
       display_Update();
@@ -1061,7 +1058,7 @@ void setPorts_C64()
       else if (i == 3) {
         println_Msg(F("EXROM HIGH/GAME HIGH"));
       }
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("Press to Change"));
       println_Msg(F("Hold to Select"));
       display_Update();
@@ -1092,7 +1089,7 @@ setrom:
   newc64port = sizeROM.toInt();
   if (newc64port > 3) {
     Serial.println(F("INVALID STATE"));
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     goto setrom;
   }
   Serial.print(F("Port State = "));
@@ -1122,11 +1119,11 @@ void checkStatus_C64() {
     EEPROM_writeAnything(12, c64port);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("C64 READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:     "));
   println_Msg(c64mapper);
   printMapper_C64(c64mapper);
@@ -1145,12 +1142,12 @@ void checkStatus_C64() {
   Serial.println(F("K"));
   Serial.print(F("CURRENT PORT STATE: "));
   Setial.println(c64port);
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
 void printMapper_C64(byte c64maplabel) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   switch (c64maplabel) {
     case 0:
       println_Msg(F("NORMAL/ULTIMAX"));
@@ -1299,7 +1296,7 @@ bool readVals_C64(char* c64game, char* c64mm, char* c64rr, char* c64pp, char* c6
 bool getCartListInfo_C64() {
   bool buttonreleased = 0;
   bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F(" HOLD TO FAST CYCLE"));
   display_Update();
@@ -1307,9 +1304,9 @@ bool getCartListInfo_C64() {
   Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
 #endif
   delay(2000);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
@@ -1318,19 +1315,19 @@ bool getCartListInfo_C64() {
         if (strcmp(c64csvEND, c64game) == 0) {
           c64csvFile.seek(0);  // Restart
         } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           display_Clear();
           println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(c64game);
           display_Update();
 #else
           Serial.print(F("CART TITLE:"));
           Serial.println(c64game);
 #endif
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
           buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
           if (buttonVal1 == HIGH) {        // Button Released
@@ -1343,41 +1340,41 @@ bool getCartListInfo_C64() {
           }
         }
       }
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
       if (buttonVal1 == HIGH)          // Button Released
         break;
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
   while (readVals_C64(c64game, c64mm, c64rr, c64pp, c64ll)) {
     if (strcmp(c64csvEND, c64game) == 0) {
       c64csvFile.seek(0);  // Restart
     } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       display_Clear();
       println_Msg(F("CART TITLE:"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(c64game);
       display.setCursor(0, 48);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -1387,7 +1384,7 @@ bool getCartListInfo_C64() {
       Serial.println(c64game);
 #endif
       while (1) {  // Single Step
-        int b = checkButton();
+        uint8_t b = checkButton();
         if (b == 1) {  // Continue (press)
           break;
         }
@@ -1405,7 +1402,7 @@ bool getCartListInfo_C64() {
           EEPROM_writeAnything(8, newc64size);
           EEPROM_writeAnything(12, newc64port);
           cartselected = 1;  // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           println_Msg(F("SELECTION MADE"));
           display_Update();
 #else
@@ -1420,8 +1417,8 @@ bool getCartListInfo_C64() {
       }
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("END OF FILE"));
   display_Update();
 #else
@@ -1433,10 +1430,10 @@ bool getCartListInfo_C64() {
 
 void checkCSV_C64() {
   if (getCartListInfo_C64()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(c64game);
     display_Update();
     // Display Settings
@@ -1449,7 +1446,7 @@ void checkCSV_C64() {
     print_Msg(newc64port);
     display_Update();
 #else
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     Serial.println(F("CART SELECTED"));
     Serial.println(c64game);
     // Display Settings
@@ -1459,10 +1456,10 @@ void checkCSV_C64() {
     Serial.print(newc64size);
     Serial.print(F("/P"));
     Serial.print(newc64port);
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
 #endif
   } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
     println_Msg(F("NO SELECTION"));
     display_Update();
@@ -1473,7 +1470,7 @@ void checkCSV_C64() {
 }
 
 void setCart_C64() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(c64cartCSV);
   display_Update();
@@ -1483,7 +1480,7 @@ void setCart_C64() {
   sd.chdir(folder);  // Switch Folder
   c64csvFile = sd.open(c64cartCSV, O_READ);
   if (!c64csvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CSV FILE NOT FOUND!"));
     display_Update();

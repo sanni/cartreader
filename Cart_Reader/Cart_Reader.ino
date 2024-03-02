@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2023-11-21
-   Version:          13.1
+   Date:             2024-03-02
+   Version:          13.2
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -68,9 +68,9 @@
 // SD Card
 SdFs sd;
 FsFile myFile;
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
 FsFile myLog;
-boolean dont_log = false;
+bool dont_log = false;
 #endif
 
 // AVR Eeprom
@@ -80,13 +80,13 @@ template<class T> int EEPROM_writeAnything(int ee, const T& value);
 template<class T> int EEPROM_readAnything(int ee, T& value);
 
 // Graphic SPI LCD
-#ifdef enable_LCD
+#ifdef ENABLE_LCD
 #include <U8g2lib.h>
 U8G2_ST7567_OS12864_F_4W_HW_SPI display(U8G2_R2, /* cs=*/12, /* dc=*/11, /* reset=*/10);
 #endif
 
 // Rotary Encoder
-#ifdef enable_rotary
+#ifdef ENABLE_ROTARY
 #include <RotaryEncoder.h>
 #define PIN_IN1 18
 #define PIN_IN2 19
@@ -99,7 +99,7 @@ int rotaryPos = 0;
 #endif
 
 // Choose RGB LED type
-#ifdef enable_neopixel
+#ifdef ENABLE_NEOPIXEL
 // Neopixel
 #include <Adafruit_NeoPixel.h>
 Adafruit_NeoPixel pixels(3, 13, NEO_GRB + NEO_KHZ800);
@@ -116,7 +116,7 @@ typedef enum COLOR_T {
 } color_t;
 
 // Graphic I2C OLED
-#ifdef enable_OLED
+#ifdef ENABLE_OLED
 #include <U8g2lib.h>
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 #endif
@@ -127,13 +127,13 @@ Si5351 clockgen;
 bool i2c_found;
 
 // RTC Library
-#ifdef RTC_installed
+#ifdef ENABLE_RTC
 #define _RTC_H
 #include "RTClib.h"
 #endif
 
 // Clockgen Calibration
-#ifdef clockgen_calibration
+#ifdef OPTION_CLOCKGEN_CALIBRATION
 #include "FreqCount.h"
 #endif
 
@@ -183,25 +183,24 @@ template<class T> int EEPROM_readAnything(int ee, T& value) {
 #define press_to_select_STR 16
 
 // This arrays holds the most often uses strings
-static const char string_press_button0[] PROGMEM = "Press Button...";
-static const char string_sd_error1[] PROGMEM = "SD Error";
-static const char string_reset2[] PROGMEM = "Reset";
-static const char string_did_not_verify3[] PROGMEM = "did not verify";
-static const char string_bytes4[] PROGMEM = " bytes ";
-static const char string_error5[] PROGMEM = "Error: ";
-static const char string_create_file6[] PROGMEM = "Can't create file";
-static const char string_open_file7[] PROGMEM = "Can't open file";
-static const char string_file_too_big8[] PROGMEM = "File too big";
-static const char string_done9[] PROGMEM = "Done";
-static const char string_saving_to10[] PROGMEM = "Saving to ";
-static const char string_verifying11[] PROGMEM = "Verifying...";
-static const char string_flashing_file12[] PROGMEM = "Flashing file ";
-static const char string_press_to_change13[] PROGMEM = "Press left to Change";
-static const char string_right_to_select14[] PROGMEM = "and right to Select";
-static const char string_rotate_to_change15[] PROGMEM = "Rotate to Change";
-static const char string_press_to_select16[] PROGMEM = "Press to Select";
+constexpr char string_press_button0[] PROGMEM = "Press Button...";
+constexpr char string_sd_error1[] PROGMEM = "SD Error";
+constexpr char string_did_not_verify3[] PROGMEM = "did not verify";
+constexpr char string_bytes4[] PROGMEM = " bytes ";
+constexpr char string_error5[] PROGMEM = "Error: ";
+constexpr char string_create_file6[] PROGMEM = "Can't create file";
+constexpr char string_open_file7[] PROGMEM = "Can't open file";
+constexpr char string_file_too_big8[] PROGMEM = "File too big";
+constexpr char string_done9[] PROGMEM = "Done";
+constexpr char string_saving_to10[] PROGMEM = "Saving to ";
+constexpr char string_verifying11[] PROGMEM = "Verifying...";
+constexpr char string_flashing_file12[] PROGMEM = "Flashing file ";
+constexpr char string_press_to_change13[] PROGMEM = "Press left to Change";
+constexpr char string_right_to_select14[] PROGMEM = "and right to Select";
+constexpr char string_rotate_to_change15[] PROGMEM = "Rotate to Change";
+constexpr char string_press_to_select16[] PROGMEM = "Press to Select";
 
-static const char* const string_table[] PROGMEM = { string_press_button0, string_sd_error1, string_reset2, string_did_not_verify3, string_bytes4, string_error5, string_create_file6, string_open_file7, string_file_too_big8, string_done9, string_saving_to10, string_verifying11, string_flashing_file12, string_press_to_change13, string_right_to_select14, string_rotate_to_change15, string_press_to_select16 };
+static const char* const string_table[] PROGMEM = { string_press_button0, string_sd_error1, FSTRING_RESET, string_did_not_verify3, string_bytes4, string_error5, string_create_file6, string_open_file7, string_file_too_big8, string_done9, string_saving_to10, string_verifying11, string_flashing_file12, string_press_to_change13, string_right_to_select14, string_rotate_to_change15, string_press_to_select16 };
 
 void print_STR(byte string_number, boolean newline) {
   char string_buffer[22];
@@ -215,49 +214,6 @@ void print_STR(byte string_number, boolean newline) {
 /******************************************
   Defines
  *****************************************/
-// Mode menu
-#define mode_N64_Cart 0
-#define mode_N64_Controller 1
-#define mode_SNES 2
-#define mode_SFM 3
-#define mode_SFM_Flash 4
-#define mode_SFM_Game 5
-#define mode_GB 6
-#define mode_FLASH8 7
-#define mode_FLASH16 8
-#define mode_GBA 9
-#define mode_GBM 10
-#define mode_MD_Cart 11
-#define mode_EPROM 12
-#define mode_PCE 13
-#define mode_SV 14
-#define mode_NES 15
-#define mode_SMS 16
-#define mode_SEGA_CD 17
-#define mode_GB_GBSmart 18
-#define mode_GB_GBSmart_Flash 19
-#define mode_GB_GBSmart_Game 20
-#define mode_WS 21
-#define mode_NGP 22
-#define mode_INTV 23
-#define mode_COL 24
-#define mode_VBOY 25
-#define mode_WSV 26
-#define mode_PCW 27
-#define mode_2600 28
-#define mode_ODY2 29
-#define mode_ARC 30
-#define mode_FAIRCHILD 31
-#define mode_SUPRACAN 32
-#define mode_MSX 33
-#define mode_POKE 34
-#define mode_LOOPY 35
-#define mode_C64 36
-#define mode_5200 37
-#define mode_7800 38
-#define mode_VECTREX 39
-#define mode_ST 40
-#define mode_GPC 41
 
 // optimization-safe nop delay
 #define NOP __asm__ __volatile__("nop\n\t")
@@ -271,7 +227,7 @@ void print_STR(byte string_number, boolean newline) {
 /******************************************
    Variables
  *****************************************/
-#ifdef enable_rotary
+#ifdef ENABLE_ROTARY
 // Button debounce
 boolean buttonState = HIGH;          // the current reading from the input pin
 boolean lastButtonState = HIGH;      // the previous reading from the input pin
@@ -279,7 +235,7 @@ unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 #endif
 
-#ifdef enable_OLED
+#ifdef ENABLE_OLED
 // Button 1
 boolean buttonVal1 = HIGH;           // value read from button
 boolean buttonLast1 = HIGH;          // buffered value of the button's previous state
@@ -306,7 +262,7 @@ boolean holdEventPast2 = false;      // whether or not the hold event happened a
 boolean longholdEventPast2 = false;  // whether or not the long hold event happened already
 #endif
 
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
 // For incoming serial data
 int incomingByte;
 #endif
@@ -356,7 +312,7 @@ bool flashSwitchLastBits;
 unsigned long writeErrors;
 
 // Operation mode
-byte mode = 0xFF;
+CORES mode = CORE_MAX;
 
 //remember folder number to create a new folder for every game
 int foldern;
@@ -396,7 +352,7 @@ byte iNES_HEADER[16];
 // CRC32
 //******************************************
 // CRC32 lookup table // 256 entries
-static const uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
+constexpr uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
   0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
   0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
@@ -499,7 +455,7 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc, etc. modules
  *****************************************/
-#if (defined(enable_ODY2) || defined(enable_ARC) || defined(enable_FAIRCHILD) || defined(enable_MSX) || defined(enable_POKE) || defined(enable_2600) || defined(enable_5200) || defined(enable_7800) || defined(enable_C64) || defined(enable_VECTREX))
+#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX))
 
 inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
   uint32_t idx = ((crc) ^ (ch)) & 0xff;
@@ -652,8 +608,8 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
       //if checksum search successful, rename the file and end search
       if (strcmp(crc_search, crcStr) == 0) {
 
-#ifdef enable_NES
-        if ((mode == mode_NES) && (offset != 0)) {
+#ifdef ENABLE_NES
+        if ((mode == CORE_NES) && (offset != 0)) {
           // Rewind to iNES Header
           myFile.seekCur(-36);
 
@@ -670,14 +626,14 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
           //Skip CRLF
           myFile.seekCur(4);
         }
-#endif  // enable_NES
+#endif  // ENABLE_NES
 
         // Close the file:
         myFile.close();
 
         //Write iNES header
-#ifdef enable_NES
-        if ((mode == mode_NES) && (offset != 0)) {
+#ifdef ENABLE_NES
+        if ((mode == CORE_NES) && (offset != 0)) {
           // Write iNES header
           sd.chdir(folder);
           if (!myFile.open(fileName, O_RDWR)) {
@@ -688,7 +644,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
           }
           myFile.close();
         }
-#endif  // enable_NES
+#endif  // ENABLE_NES
         print_Msg(F(" -> "));
         display_Update();
 
@@ -722,24 +678,32 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
   return 0;
 }
 
+void starting_letter__subDraw(byte selection, byte line) {
+      display.setDrawColor(0);
+      for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);
+      display.setDrawColor(1);
+      display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
+      display_Update();
+}
+
 byte starting_letter() {
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
   dont_log = true;
 #endif
 
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   byte selection = 0;
   byte line = 0;
 
   display_Clear();
 
   println_Msg(F("[#] [A] [B] [C] [D] [E] [F]"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("[G] [H] [ I ] [J] [K] [L] [M]"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("[N] [O] [P] [Q] [R] [S] [T]"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("[U] [V] [W] [X] [Y] [Z] [?]"));
 
   // Draw selection line
@@ -748,7 +712,7 @@ byte starting_letter() {
   display_Update();
 
   while (1) {
-    int b = checkButton();
+    uint8_t b = checkButton();
     if (b == 2) {  // Previous
       if ((selection == 0) && (line > 0)) {
         line--;
@@ -759,17 +723,8 @@ byte starting_letter() {
       } else if (selection > 0) {
         selection--;
       }
-      display.setDrawColor(0);
-      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16);
-      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16);
-      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16);
-      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16);
-      display.setDrawColor(1);
-      display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
-      display_Update();
-
+      starting_letter__subDraw(selection, line);
     }
-
     else if (b == 1) {  // Next
       if ((selection == 6) && (line < 3)) {
         line++;
@@ -780,16 +735,8 @@ byte starting_letter() {
       } else if (selection < 6) {
         selection++;
       }
-      display.setDrawColor(0);
-      display.drawLine(0, 10 + 0 * 16, 128, 10 + 0 * 16);
-      display.drawLine(0, 10 + 1 * 16, 128, 10 + 1 * 16);
-      display.drawLine(0, 10 + 2 * 16, 128, 10 + 2 * 16);
-      display.drawLine(0, 10 + 3 * 16, 128, 10 + 3 * 16);
-      display.setDrawColor(1);
-      display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
-      display_Update();
+      starting_letter__subDraw(selection, line);
     }
-
     else if (b == 3) {  // Long Press - Execute
       if ((selection + line * 7) != 27) {
         display_Clear();
@@ -810,7 +757,7 @@ byte starting_letter() {
   return incomingByte;
 #endif
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   // Enable log again
   dont_log = false;
 #endif
@@ -825,700 +772,357 @@ void print_MissingModule(void) {
 /******************************************
   Main menu
 *****************************************/
-#ifdef enable_GBX
-static const char modeItem1[] PROGMEM = "Game Boy";
-#endif
-#ifdef enable_NES
-static const char modeItem2[] PROGMEM = "NES/Famicom";
-#endif
-#ifdef enable_SNES
-static const char modeItem3[] PROGMEM = "Super Nintendo/SFC";
-#endif
-#ifdef enable_N64
-static const char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
-#endif
-#ifdef enable_MD
-static const char modeItem5[] PROGMEM = "Mega Drive/Genesis";
-#endif
-#ifdef enable_SMS
-static const char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
-#endif
-#ifdef enable_PCE
-static const char modeItem7[] PROGMEM = "PC Engine/TG16";
-#endif
-#ifdef enable_WS
-static const char modeItem8[] PROGMEM = "WonderSwan (3V)";
-#endif
-#ifdef enable_NGP
-static const char modeItem9[] PROGMEM = "NeoGeo Pocket (3V)";
-#endif
-#ifdef enable_INTV
-static const char modeItem10[] PROGMEM = "Intellivision";
-#endif
-#ifdef enable_COLV
-static const char modeItem11[] PROGMEM = "Colecovision";
-#endif
-#ifdef enable_VBOY
-static const char modeItem12[] PROGMEM = "Virtual Boy";
-#endif
-#ifdef enable_WSV
-static const char modeItem13[] PROGMEM = "Watara Supervision (3V)";
-#endif
-#ifdef enable_PCW
-static const char modeItem14[] PROGMEM = "Pocket Challenge W";
-#endif
-#ifdef enable_2600
-static const char modeItem15[] PROGMEM = "Atari 2600";
-#endif
-#ifdef enable_ODY2
-static const char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
-#endif
-#ifdef enable_ARC
-static const char modeItem17[] PROGMEM = "Arcadia 2001";
-#endif
-#ifdef enable_FAIRCHILD
-static const char modeItem18[] PROGMEM = "Fairchild Channel F";
-#endif
-#ifdef enable_SUPRACAN
-static const char modeItem19[] PROGMEM = "Super A'can";
-#endif
-#ifdef enable_MSX
-static const char modeItem20[] PROGMEM = "MSX";
-#endif
-#ifdef enable_POKE
-static const char modeItem21[] PROGMEM = "Pokemon Mini (3V)";
-#endif
-#ifdef enable_LOOPY
-static const char modeItem22[] PROGMEM = "Casio Loopy";
-#endif
-#ifdef enable_C64
-static const char modeItem23[] PROGMEM = "Commodore 64";
-#endif
-#ifdef enable_5200
-static const char modeItem24[] PROGMEM = "Atari 5200";
-#endif
-#ifdef enable_7800
-static const char modeItem25[] PROGMEM = "Atari 7800";
-#endif
-#ifdef enable_VECTREX
-static const char modeItem26[] PROGMEM = "Vectrex";
-#endif
-#ifdef enable_FLASH
-static const char modeItem27[] PROGMEM = "Flashrom Programmer";
-#endif
-#ifdef enable_selftest
-static const char modeItem28[] PROGMEM = "Self Test (3V)";
-#endif
-static const char modeItem29[] PROGMEM = "About";
-//static const char modeItem30[] PROGMEM = "Reset"; (stored in common strings array)
+constexpr char modeItem1[] PROGMEM = "Game Boy";
+constexpr char modeItem2[] PROGMEM = "NES/Famicom";
+constexpr char modeItem3[] PROGMEM = "Super Nintendo/SFC";
+constexpr char modeItem4[] PROGMEM = "Nintendo 64 (3V)";
+constexpr char modeItem5[] PROGMEM = "Mega Drive/Genesis";
+constexpr char modeItem6[] PROGMEM = "SMS/GG/MIII/SG-1000";
+constexpr char modeItem7[] PROGMEM = "PC Engine/TG16";
+constexpr char modeItem8[] PROGMEM = "WonderSwan (3V)";
+constexpr char modeItem9[] PROGMEM = "NeoGeo Pocket (3V)";
+constexpr char modeItem10[] PROGMEM = "Intellivision";
+constexpr char modeItem11[] PROGMEM = "Colecovision";
+constexpr char modeItem12[] PROGMEM = "Virtual Boy";
+constexpr char modeItem13[] PROGMEM = "Watara Supervision (3V)";
+constexpr char modeItem14[] PROGMEM = "Pocket Challenge W";
+constexpr char modeItem15[] PROGMEM = "Atari 2600";
+constexpr char modeItem16[] PROGMEM = "Magnavox Odyssey 2";
+constexpr char modeItem17[] PROGMEM = "Arcadia 2001";
+constexpr char modeItem18[] PROGMEM = "Fairchild Channel F";
+constexpr char modeItem19[] PROGMEM = "Super A'can";
+constexpr char modeItem20[] PROGMEM = "MSX";
+constexpr char modeItem21[] PROGMEM = "Pokemon Mini (3V)";
+constexpr char modeItem22[] PROGMEM = "Casio Loopy";
+constexpr char modeItem23[] PROGMEM = "Commodore 64";
+constexpr char modeItem24[] PROGMEM = "Atari 5200";
+constexpr char modeItem25[] PROGMEM = "Atari 7800";
+constexpr char modeItem26[] PROGMEM = "Vectrex";
+constexpr char modeItem27[] PROGMEM = "Flashrom Programmer";
+constexpr char modeItem28[] PROGMEM = "Self Test (3V)";
+constexpr char modeItem29[] PROGMEM = "About";
+
 static const char* const modeOptions[] PROGMEM = {
-#ifdef enable_GBX
+#ifdef ENABLE_GBX
   modeItem1,
 #endif
-#ifdef enable_NES
+#ifdef ENABLE_NES
   modeItem2,
 #endif
-#ifdef enable_SNES
+#ifdef ENABLE_SNES
   modeItem3,
 #endif
-#ifdef enable_N64
+#ifdef ENABLE_N64
   modeItem4,
 #endif
-#ifdef enable_MD
+#ifdef ENABLE_MD
   modeItem5,
 #endif
-#ifdef enable_SMS
+#ifdef ENABLE_SMS
   modeItem6,
 #endif
-#ifdef enable_PCE
+#ifdef ENABLE_PCE
   modeItem7,
 #endif
-#ifdef enable_WS
+#ifdef ENABLE_WS
   modeItem8,
 #endif
-#ifdef enable_NGP
+#ifdef ENABLE_NGP
   modeItem9,
 #endif
-#ifdef enable_INTV
+#ifdef ENABLE_INTV
   modeItem10,
 #endif
-#ifdef enable_COLV
+#ifdef ENABLE_COLV
   modeItem11,
 #endif
-#ifdef enable_VBOY
+#ifdef ENABLE_VBOY
   modeItem12,
 #endif
-#ifdef enable_WSV
+#ifdef ENABLE_WSV
   modeItem13,
 #endif
-#ifdef enable_PCW
+#ifdef ENABLE_PCW
   modeItem14,
 #endif
-#ifdef enable_2600
+#ifdef ENABLE_2600
   modeItem15,
 #endif
-#ifdef enable_ODY2
+#ifdef ENABLE_ODY2
   modeItem16,
 #endif
-#ifdef enable_ARC
+#ifdef ENABLE_ARC
   modeItem17,
 #endif
-#ifdef enable_FAIRCHILD
+#ifdef ENABLE_FAIRCHILD
   modeItem18,
 #endif
-#ifdef enable_SUPRACAN
+#ifdef ENABLE_SUPRACAN
   modeItem19,
 #endif
-#ifdef enable_MSX
+#ifdef ENABLE_MSX
   modeItem20,
 #endif
-#ifdef enable_POKE
+#ifdef ENABLE_POKE
   modeItem21,
 #endif
-#ifdef enable_LOOPY
+#ifdef ENABLE_LOOPY
   modeItem22,
 #endif
-#ifdef enable_C64
+#ifdef ENABLE_C64
   modeItem23,
 #endif
-#ifdef enable_5200
+#ifdef ENABLE_5200
   modeItem24,
 #endif
-#ifdef enable_7800
+#ifdef ENABLE_7800
   modeItem25,
 #endif
-#ifdef enable_VECTREX
+#ifdef ENABLE_VECTREX
   modeItem26,
 #endif
-#ifdef enable_FLASH
+#ifdef ENABLE_FLASH
   modeItem27,
 #endif
-#ifdef enable_selftest
+#ifdef ENABLE_SELFTEST
   modeItem28,
 #endif
-  modeItem29, string_reset2
+  modeItem29, FSTRING_RESET
 };
 
-// Count menu entries
-byte countMenuEntries() {
-  byte count = 2;
-#ifdef enable_GBX
-  count++;
-#endif
-#ifdef enable_NES
-  count++;
-#endif
-#ifdef enable_SNES
-  count++;
-#endif
-#ifdef enable_N64
-  count++;
-#endif
-#ifdef enable_MD
-  count++;
-#endif
-#ifdef enable_SMS
-  count++;
-#endif
-#ifdef enable_PCE
-  count++;
-#endif
-#ifdef enable_WS
-  count++;
-#endif
-#ifdef enable_NGP
-  count++;
-#endif
-#ifdef enable_INTV
-  count++;
-#endif
-#ifdef enable_COLV
-  count++;
-#endif
-#ifdef enable_VBOY
-  count++;
-#endif
-#ifdef enable_WSV
-  count++;
-#endif
-#ifdef enable_PCW
-  count++;
-#endif
-#ifdef enable_2600
-  count++;
-#endif
-#ifdef enable_ODY2
-  count++;
-#endif
-#ifdef enable_ARC
-  count++;
-#endif
-#ifdef enable_FAIRCHILD
-  count++;
-#endif
-#ifdef enable_SUPRACAN
-  count++;
-#endif
-#ifdef enable_MSX
-  count++;
-#endif
-#ifdef enable_POKE
-  count++;
-#endif
-#ifdef enable_LOOPY
-  count++;
-#endif
-#ifdef enable_C64
-  count++;
-#endif
-#ifdef enable_5200
-  count++;
-#endif
-#ifdef enable_7800
-  count++;
-#endif
-#ifdef enable_VECTREX
-  count++;
-#endif
-#ifdef enable_FLASH
-  count++;
-#endif
-#ifdef enable_selftest
-  count++;
-#endif
-  return count;
-}
+uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStrings, uint8_t entryCount, uint8_t default_choice = 0) {
+  // Create menu
+  uint8_t modeMenu;
+  uint8_t num_answers;
+  uint8_t option_offset;
 
-// Account for disabled menue entries
-unsigned char fixMenuOrder(unsigned char modeMenu) {
-  byte translationMatrix[26];
-  byte currentEntry = 0;
-
-#if defined(enable_GBX)
-  translationMatrix[currentEntry] = 0;
-  currentEntry++;
-#endif
-
-#if defined(enable_NES)
-  translationMatrix[currentEntry] = 1;
-  currentEntry++;
-#endif
-
-#if defined(enable_SNES)
-  translationMatrix[currentEntry] = 2;
-  currentEntry++;
-#endif
-
-#if defined(enable_N64)
-  translationMatrix[currentEntry] = 3;
-  currentEntry++;
-#endif
-
-#if defined(enable_MD)
-  translationMatrix[currentEntry] = 4;
-  currentEntry++;
-#endif
-
-#if defined(enable_SMS)
-  translationMatrix[currentEntry] = 5;
-  currentEntry++;
-#endif
-
-#if defined(enable_PCE)
-  translationMatrix[currentEntry] = 6;
-  currentEntry++;
-#endif
-
-#if defined(enable_WS)
-  translationMatrix[currentEntry] = 7;
-  currentEntry++;
-#endif
-
-#if defined(enable_NGP)
-  translationMatrix[currentEntry] = 8;
-  currentEntry++;
-#endif
-
-#if defined(enable_INTV)
-  translationMatrix[currentEntry] = 9;
-  currentEntry++;
-#endif
-
-#if defined(enable_COLV)
-  translationMatrix[currentEntry] = 10;
-  currentEntry++;
-#endif
-
-#if defined(enable_VBOY)
-  translationMatrix[currentEntry] = 11;
-  currentEntry++;
-#endif
-
-#if defined(enable_WSV)
-  translationMatrix[currentEntry] = 12;
-  currentEntry++;
-#endif
-
-#if defined(enable_PCW)
-  translationMatrix[currentEntry] = 13;
-  currentEntry++;
-#endif
-
-#if defined(enable_2600)
-  translationMatrix[currentEntry] = 14;
-  currentEntry++;
-#endif
-
-#if defined(enable_ODY2)
-  translationMatrix[currentEntry] = 15;
-  currentEntry++;
-#endif
-
-#if defined(enable_ARC)
-  translationMatrix[currentEntry] = 16;
-  currentEntry++;
-#endif
-
-#if defined(enable_FAIRCHILD)
-  translationMatrix[currentEntry] = 17;
-  currentEntry++;
-#endif
-
-#if defined(enable_SUPRACAN)
-  translationMatrix[currentEntry] = 18;
-  currentEntry++;
-#endif
-
-#if defined(enable_MSX)
-  translationMatrix[currentEntry] = 19;
-  currentEntry++;
-#endif
-
-#if defined(enable_POKE)
-  translationMatrix[currentEntry] = 20;
-  currentEntry++;
-#endif
-
-#if defined(enable_LOOPY)
-  translationMatrix[currentEntry] = 21;
-  currentEntry++;
-#endif
-
-#if defined(enable_C64)
-  translationMatrix[currentEntry] = 22;
-  currentEntry++;
-#endif
-
-#if defined(enable_5200)
-  translationMatrix[currentEntry] = 23;
-  currentEntry++;
-#endif
-
-#if defined(enable_7800)
-  translationMatrix[currentEntry] = 24;
-  currentEntry++;
-#endif
-
-#if defined(enable_VECTREX)
-  translationMatrix[currentEntry] = 25;
-  currentEntry++;
-#endif
-
-#if defined(enable_FLASH)
-  translationMatrix[currentEntry] = 26;
-  currentEntry++;
-#endif
-
-#if defined(enable_selftest)
-  translationMatrix[currentEntry] = 27;
-  currentEntry++;
-#endif
-
-  // About
-  translationMatrix[currentEntry] = 28;
-  currentEntry++;
-
-  // Reset
-  translationMatrix[currentEntry] = 29;
-  currentEntry++;
-
-  return translationMatrix[modeMenu];
-}
-
-// All included slots
-void mainMenu() {
-  // create menu with title and 20 options to choose from
-  unsigned char modeMenu;
-  byte num_answers;
-  byte option_offset;
-
-  // Count menu entries
-  byte menuCount = countMenuEntries();
-
-  // Main menu spans across three pages
+  // Menu spans across multiple pages
   currPage = 1;
   lastPage = 1;
-  if ((menuCount % 7) == 0)
-    numPages = menuCount / 7;
-  else
-    numPages = (byte)(menuCount / 7) + 1;
 
-  while (1) {
-    if (currPage == 1) {
-      option_offset = 0;
-      if (menuCount < 7)
-        num_answers = menuCount;
-      else
-        num_answers = 7;
-    } else if (currPage == 2) {
-      option_offset = 7;
-      if (menuCount < 14)
-        num_answers = menuCount - 7;
-      else
-        num_answers = 7;
-    } else if (currPage == 3) {
-      option_offset = 14;
-      if (menuCount < 21)
-        num_answers = menuCount - 14;
-      else
-        num_answers = 7;
-    } else if (currPage == 4) {
-      option_offset = 21;
-      if (menuCount < 28)
-        num_answers = menuCount - 21;
-      else
-        num_answers = 7;
-    } else {  // currPage == 5
-      option_offset = 28;
-      num_answers = menuCount - 28;
-    }
+  numPages = (entryCount / 7) + ( (entryCount % 7) != 0 );
+
+  do {
+    option_offset = (currPage - 1) * 7;
+    num_answers = ( (entryCount < (option_offset + 7)) ? entryCount - option_offset : 7);
+
     // Copy menuOptions out of progmem
-    convertPgm(modeOptions + option_offset, num_answers);
-    modeMenu = question_box(F("OPEN SOURCE CART READER"), menuOptions, num_answers, 0);
-    if (numPages == 0) {
-      // Execute choice
-      modeMenu += option_offset;
-      break;
-    }
-  }
+    convertPgm(menuStrings + option_offset, num_answers);
+    modeMenu = question_box(question, menuOptions, num_answers, default_choice) + option_offset;
+  } while (numPages != 0);
 
   // Reset page number
   currPage = 1;
 
-  modeMenu = fixMenuOrder(modeMenu);
+  return modeMenu;
+}
 
+// All included slots
+void mainMenu() {
   // wait for user choice to come back from the question box menu
-  switch (modeMenu) {
+  switch (pageMenu(F("OPEN SOURCE CART READER"), modeOptions, SYSTEM_MENU_TOTAL)) {
 
-#ifdef enable_GBX
-    case 0:
-      gbxMenu();
-      break;
+#ifdef ENABLE_GBX
+    case SYSTEM_MENU_GBX:
+      return gbxMenu();
 #endif
 
-#ifdef enable_NES
-    case 1:
-      mode = mode_NES;
+#ifdef ENABLE_NES
+    case SYSTEM_MENU_NES:
+      mode = CORE_NES;
       display_Clear();
       display_Update();
       setup_NES();
       getMapping();
       checkStatus_NES();
-      nesMenu();
-      break;
+      return nesMenu();
 #endif
 
-#ifdef enable_SNES
-    case 2:
-      snsMenu();
-      break;
+#ifdef ENABLE_SNES
+    case SYSTEM_MENU_SNES:
+      return snsMenu();
 #endif
 
-#ifdef enable_N64
-    case 3:
-      n64Menu();
-      break;
+#ifdef ENABLE_N64
+    case SYSTEM_MENU_N64:
+      return n64Menu();
 #endif
 
-#ifdef enable_MD
-    case 4:
-      mdMenu();
-      break;
+#ifdef ENABLE_MD
+    case SYSTEM_MENU_MD:
+      return mdMenu();
 #endif
 
-#ifdef enable_SMS
-    case 5:
-      smsMenu();
-      break;
+#ifdef ENABLE_SMS
+    case SYSTEM_MENU_SMS:
+      return smsMenu();
 #endif
 
-#ifdef enable_PCE
-    case 6:
-      pcsMenu();
-      break;
+#ifdef ENABLE_PCE
+    case SYSTEM_MENU_PCE:
+      return pcsMenu();
 #endif
 
-#ifdef enable_WS
-    case 7:
+#ifdef ENABLE_WS
+    case SYSTEM_MENU_WS:
       display_Clear();
       display_Update();
       setup_WS();
-      mode = mode_WS;
-      break;
+      mode = CORE_WS;
+      return wsMenu();
 #endif
 
-#ifdef enable_NGP
-    case 8:
+#ifdef ENABLE_NGP
+    case SYSTEM_MENU_NGP:
       display_Clear();
       display_Update();
       setup_NGP();
-      mode = mode_NGP;
+      mode = CORE_NGP;
       break;
 #endif
 
-#ifdef enable_INTV
-    case 9:
+#ifdef ENABLE_INTV
+    case SYSTEM_MENU_INTV:
       setup_INTV();
-      intvMenu();
-      break;
+      return intvMenu();
 #endif
 
-#ifdef enable_COLV
-    case 10:
+#ifdef ENABLE_COLV
+    case SYSTEM_MENU_COLV:
       setup_COL();
-      colMenu();
+      return colMenu();
       break;
 #endif
 
-#ifdef enable_VBOY
-    case 11:
+#ifdef ENABLE_VBOY
+    case SYSTEM_MENU_VBOY:
       setup_VBOY();
       vboyMenu();
       break;
 #endif
 
-#ifdef enable_WSV
-    case 12:
+#ifdef ENABLE_WSV
+    case SYSTEM_MENU_WSV:
       setup_WSV();
-      wsvMenu();
+      return wsvMenu();
       break;
 #endif
 
-#ifdef enable_PCW
-    case 13:
+#ifdef ENABLE_PCW
+    case SYSTEM_MENU_PCW:
       setup_PCW();
-      pcwMenu();
+      return pcwMenu();
       break;
 #endif
 
-#ifdef enable_2600
-    case 14:
+#ifdef ENABLE_2600
+    case SYSTEM_MENU_2600:
       setup_2600();
-      a2600Menu();
+      return a2600Menu();
       break;
 #endif
 
-#ifdef enable_ODY2
-    case 15:
+#ifdef ENABLE_ODY2
+    case SYSTEM_MENU_ODY2:
       setup_ODY2();
-      ody2Menu();
+      return ody2Menu();
       break;
 #endif
 
-#ifdef enable_ARC
-    case 16:
+#ifdef ENABLE_ARC
+    case SYSTEM_MENU_ARC:
       setup_ARC();
-      arcMenu();
+      return arcMenu();
       break;
 #endif
 
-#ifdef enable_FAIRCHILD
-    case 17:
+#ifdef ENABLE_FAIRCHILD
+    case SYSTEM_MENU_FAIRCHILD:
       setup_FAIRCHILD();
-      fairchildMenu();
+      return fairchildMenu();
       break;
 #endif
 
-#ifdef enable_SUPRACAN
-    case 18:
-      setup_SuprAcan();
+#ifdef ENABLE_SUPRACAN
+    case SYSTEM_MENU_SUPRACAN:
+      return setup_SuprAcan();
       break;
 #endif
 
-#ifdef enable_MSX
-    case 19:
+#ifdef ENABLE_MSX
+    case SYSTEM_MENU_MSX:
       setup_MSX();
-      msxMenu();
+      return msxMenu();
       break;
 #endif
 
-#ifdef enable_POKE
-    case 20:
+#ifdef ENABLE_POKE
+    case SYSTEM_MENU_POKE:
       setup_POKE();
-      pokeMenu();
+      return pokeMenu();
       break;
 #endif
 
-#ifdef enable_LOOPY
-    case 21:
+#ifdef ENABLE_LOOPY
+    case SYSTEM_MENU_LOOPY:
       setup_LOOPY();
-      loopyMenu();
+      return loopyMenu();
       break;
 #endif
 
-#ifdef enable_C64
-    case 22:
+#ifdef ENABLE_C64
+    case SYSTEM_MENU_C64:
       setup_C64();
-      c64Menu();
+      return c64Menu();
       break;
 #endif
 
-#ifdef enable_5200
-    case 23:
+#ifdef ENABLE_5200
+    case SYSTEM_MENU_5200:
       setup_5200();
-      a5200Menu();
+      return a5200Menu();
       break;
 #endif
 
-#ifdef enable_7800
-    case 24:
+#ifdef ENABLE_7800
+    case SYSTEM_MENU_7800:
       setup_7800();
-      a7800Menu();
+      return a7800Menu();
       break;
 #endif
 
-#ifdef enable_VECTREX
-    case 25:
+#ifdef ENABLE_VECTREX
+    case SYSTEM_MENU_VECTREX:
       setup_VECTREX();
-      vectrexMenu();
+      return vectrexMenu();
       break;
 #endif
 
-#ifdef enable_FLASH
-    case 26:
-#ifdef ENABLE_VSELECT
+#ifdef ENABLE_FLASH
+    case SYSTEM_MENU_FLASH:
+# ifdef ENABLE_VSELECT
       setup_FlashVoltage();
-#endif
-      flashMenu();
+# endif
+      return flashMenu();
       break;
 #endif
 
-#ifdef enable_selftest
-    case 27:
-      selfTest();
+#ifdef ENABLE_SELFTEST
+    case SYSTEM_MENU_SELFTEST:
+      return selfTest();
       break;
 #endif
 
-    case 28:
-      aboutScreen();
+    case SYSTEM_MENU_ABOUT:
+      return aboutScreen();
       break;
 
-    case 29:
-      resetArduino();
+    case SYSTEM_MENU_RESET:
+      return resetArduino();
       break;
 
     default:
-      print_MissingModule();  // does not return
+      return print_MissingModule();  // does not return
   }
 }
 
@@ -1526,7 +1130,7 @@ void mainMenu() {
 /******************************************
   Self Test
 *****************************************/
-#ifdef enable_selftest
+#ifdef ENABLE_SELFTEST
 
 void selfTest() {
 #ifdef ENABLE_VSELECT
@@ -1536,10 +1140,10 @@ void selfTest() {
 
   display_Clear();
   println_Msg(F("Self Test"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("Remove all Cartridges"));
   println_Msg(F("before continuing!!!"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -1547,10 +1151,10 @@ void selfTest() {
 
 #if defined(HW3)
   println_Msg(F("Self Test"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("Turn the EEP switch on."));
-  println_Msg(F(""));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -1566,7 +1170,7 @@ void selfTest() {
     setColor_RGB(255, 0, 0);
     errorLvl = 1;
     println_Msg(F("Error"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     print_STR(press_button_STR, 1);
     display_Update();
     //wait();
@@ -1597,7 +1201,7 @@ void selfTest() {
           print_Msg(F("D"));
           println_Msg(pinNumber);
         }
-        println_Msg(F(""));
+        println_Msg(FS(FSTRING_EMPTY));
         print_STR(press_button_STR, 1);
         display_Update();
         wait();
@@ -1636,7 +1240,7 @@ void selfTest() {
               print_Msg(F("D"));
               println_Msg(pinNumber2);
             }
-            println_Msg(F(""));
+            println_Msg(FS(FSTRING_EMPTY));
             print_STR(press_button_STR, 1);
             display_Update();
             wait();
@@ -1655,14 +1259,14 @@ void selfTest() {
     errorLvl = 1;
     println_Msg(F("Error: Clock Generator"));
     println_Msg(F("not found"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     print_STR(press_button_STR, 1);
     display_Update();
     wait();
     resetArduino();
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -1678,21 +1282,21 @@ void aboutScreen() {
   display_Clear();
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2023 Version "));
-  println_Msg(ver);
-  println_Msg(F(""));
-  println_Msg(F(""));
-  println_Msg(F(""));
-  println_Msg(F(""));
+  print_Msg(F("2024 FW "));
+  println_Msg(FS(FSTRING_VERSION));
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
 
   while (1) {
 
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
     // get input button
-    int b = checkButton();
+    uint8_t b = checkButton();
 
     // if the cart readers input button is pressed shortly
     if (b == 1) {
@@ -1714,7 +1318,7 @@ void aboutScreen() {
       EEPROM_writeAnything(0, foldern);
       resetArduino();
     }
-#elif defined(enable_serial)
+#elif defined(ENABLE_SERIAL)
     wait_serial();
     resetArduino();
 #endif
@@ -1761,7 +1365,7 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
 /******************************************
   RTC Module
 *****************************************/
-#ifdef RTC_installed
+#ifdef ENABLE_RTC
 #if defined(DS3231)
 RTC_DS3231 rtc;
 #elif defined(DS1307)
@@ -1822,7 +1426,7 @@ String RTCStamp() {
 /******************************************
    Clockgen Calibration
  *****************************************/
-#ifdef clockgen_calibration
+#ifdef OPTION_CLOCKGEN_CALIBRATION
 int32_t cal_factor = 0;
 int32_t old_cal = 0;
 int32_t cal_offset = 100;
@@ -1896,13 +1500,13 @@ void clkcal() {
         println_Msg(String(cal_factor));
         print_Msg(F("Step:"));
         print_right(cal_offset);
-        println_Msg(F(""));
-#ifdef enable_Button2
+        println_Msg(FS(FSTRING_EMPTY));
+#ifdef ENABLE_BUTTON2
         println_Msg(F("(Hold button to save)"));
-        println_Msg(F(""));
+        println_Msg(FS(FSTRING_EMPTY));
         println_Msg(F("Decrease     Increase"));
 #else
-#ifdef enable_rotary
+#ifdef ENABLE_ROTARY
         println_Msg(F("Rotate to adjust Frequency"));
         println_Msg(F("Press to change step width"));
         println_Msg(F("Hold to save"));
@@ -1912,10 +1516,10 @@ void clkcal() {
 #endif
         display_Update();
       }
-#ifdef enable_Button2
+#ifdef ENABLE_BUTTON2
       // get input button
-      int a = checkButton1();
-      int b = checkButton2();
+      uint8_t a = checkButton1();
+      uint8_t b = checkButton2();
 
       // if the cart readers input button is pressed shortly
       if (a == 1) {
@@ -1950,7 +1554,7 @@ void clkcal() {
       }
 #else
       //Handle inputs for either rotary encoder or single button interface.
-      int a = checkButton();
+      uint8_t a = checkButton();
 
       if (a == 1) {  //clockwise rotation or single click
         old_cal = cal_factor;
@@ -1982,12 +1586,12 @@ void print_right(int32_t number) {
   if (abs_number < 0)
     abs_number *= -1;
   else
-    print_Msg(F(" "));
+    print_Msg(FS(FSTRING_SPACE));
 
   if (abs_number == 0)
     abs_number = 1;
   while (abs_number < 100000000ULL) {
-    print_Msg(F(" "));
+    print_Msg(FS(FSTRING_SPACE));
     abs_number *= 10ULL;
   }
   println_Msg(number);
@@ -2015,7 +1619,7 @@ void savetofile() {
 }
 #endif
 
-#if defined(clockgen_calibration) || defined(use_clockgen_calibration)
+#if defined(OPTION_CLOCKGEN_CALIBRATION) || defined(OPTION_CLOCKGEN_USE_CALIBRATION)
 int32_t atoi32_signed(const char* input_string) {
   if (input_string == NULL) {
     return 0;
@@ -2091,7 +1695,7 @@ int32_t readClockOffset() {
 #endif
 
 int32_t initializeClockOffset() {
-#ifdef use_clockgen_calibration
+#ifdef OPTION_CLOCKGEN_USE_CALIBRATION
   FsFile clock_file;
   const char zero_char_arr[] = { '0' };
   int32_t clock_offset = readClockOffset();
@@ -2148,7 +1752,7 @@ void setup() {
   delay(10);
 # endif /* ENABLE_3V3FIX */
 
-# if !defined(enable_serial) && defined(ENABLE_UPDATER)
+# if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
   ClockedSerial.begin(UPD_BAUD);
   printVersionToSerial();
   ClockedSerial.flush();
@@ -2158,65 +1762,65 @@ void setup() {
   EEPROM_readAnything(0, foldern);
   if (foldern < 0) foldern = 0;
 
-# ifdef enable_LCD
+# ifdef ENABLE_LCD
   display.begin();
   display.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
-# endif /* enable_LCD */
+# endif /* ENABLE_LCD */
 
-# ifdef enable_neopixel
+# ifdef ENABLE_NEOPIXEL
   pixels.begin();
   setColor_RGB(0, 0, 100);
 
   // Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
-#   if !(defined(enable_serial) || defined(HW5))
+#   if !(defined(ENABLE_SERIAL) || defined(HW5))
   DDRE |= (1 << 1);
-#   endif /* enable_serial */
-# else /* enable_neopixel */
-#   ifndef enable_LCD
-#     ifdef CA_LED
+#   endif /* ENABLE_SERIAL */
+# else /* !ENABLE_NEOPIXEL */
+#   ifndef ENABLE_LCD
+#     ifdef ENABLE_CA_LED
   // Turn LED off
   digitalWrite(12, 1);
   digitalWrite(11, 1);
   digitalWrite(10, 1);
-#     endif /* CA_LED */
+#     endif /* ENABLE_CA_LED */
   // Configure 4 Pin RGB LED pins as output
   DDRB |= (1 << DDB6);  // Red LED (pin 12)
   DDRB |= (1 << DDB5);  // Green LED (pin 11)
   DDRB |= (1 << DDB4);  // Blue LED (pin 10)
-#   endif /* enable_LCD */
-# endif /* enable_neopixel */
+#   endif /* ENABLE_LCD */
+# endif /* ENABLE_NEOPIXEL */
 
-# ifdef RTC_installed
+# ifdef ENABLE_RTC
   // Start RTC
   RTCStart();
 
   // Set Date/Time Callback Funtion
   SdFile::dateTimeCallback(dateTime);
-# endif /* RTC_installed */
+# endif /* ENABLE_RTC */
 
-# ifdef enable_OLED
+# ifdef ENABLE_OLED
   display.begin();
   //isplay.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
-# endif /* enable_OLED */
+# endif /* ENABLE_OLED */
 
-# ifdef enable_serial
+# ifdef ENABLE_SERIAL
   // Serial Begin
   Serial.begin(9600);
-  Serial.println("");
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2023 github.com/sanni"));
+  Serial.println(F("2024 github.com/sanni"));
   // LED Error
   setColor_RGB(0, 0, 255);
-# endif /* enable_serial */
+# endif /* ENABLE_SERIAL */
 
   // Init SD card
   if (!sd.begin(SS)) {
     display_Clear();
 # ifdef ENABLE_VSELECT
     print_STR(sd_error_STR, 1);
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press button to enable 5V for"));
     println_Msg(F("  updating firmware..."));
     display_Update();
@@ -2225,7 +1829,7 @@ void setup() {
     setVoltage(VOLTS_SET_5V); // Set voltage high for flashing
     println_Msg(F(" ======== UPDATE MODE ======== "));
     println_Msg(F("Waiting for update..."));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press button to cancel/restart."));
     display_Update();
     wait();
@@ -2237,21 +1841,21 @@ void setup() {
 
 # if defined(ENABLE_CONFIG)
   configInit();
-#   if defined(global_log)
+#   if defined(ENABLE_GLOBAL_LOG)
   loggingEnabled = !!configGetLong(F("oscr.logging"), 1);
 #   endif /*ENABLE_CONFIG*/
 
   // Change LCD background if config specified
-#   ifdef enable_neopixel
+#   ifdef ENABLE_NEOPIXEL
   setColor_RGB(0, 0, 100);
-#   endif /* enable_neopixel */
+#   endif /* ENABLE_NEOPIXEL */
 # endif /* ENABLE_CONFIG */
 
-# ifdef global_log
+# ifdef ENABLE_GLOBAL_LOG
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
     print_FatalError(sd_error_STR);
   }
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
 #   if defined(HW1)
   print_Msg(F("OSCR HW1"));
 #   elif defined(HW2)
@@ -2265,9 +1869,9 @@ void setup() {
 #   elif defined(SERIAL_MONITOR)
   print_Msg(F("OSCR Serial"));
 #   endif /* HWn */
-  print_Msg(F(" V"));
-  println_Msg(ver);
-# endif /* global_log */
+  print_Msg(FS(FSTRING_SPACE));
+  println_Msg(FS(FSTRING_VERSION));
+# endif /* ENABLE_GLOBAL_LOG */
 
   // Turn status LED on
   statusLED(true);
@@ -2301,7 +1905,7 @@ void dataIn() {
  *****************************************/
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
-#if defined(enable_neopixel)
+#if defined(ENABLE_NEOPIXEL)
 # if defined(ENABLE_3V3FIX)
   if (clock == CS_8MHZ) return;
 # endif
@@ -2322,15 +1926,15 @@ void setColor_RGB(byte r, byte g, byte b) {
 
     pixels.setPixelColor(0, pixels.Color(lcdGreen, lcdRed, lcdBlue));
   } else {
-    pixels.setPixelColor(0, pixels.Color(background_color));
+    pixels.setPixelColor(0, pixels.Color(OPTION_LCD_BG_COLOR));
   }
 # else /* !ENABLE_CONFIG */
-  pixels.setPixelColor(0, pixels.Color(background_color));
+  pixels.setPixelColor(0, pixels.Color(OPTION_LCD_BG_COLOR));
 # endif /* ENABLE_CONFIG */
   pixels.setPixelColor(1, pixels.Color(g, r, b));
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
-#elif defined(CA_LED)
+#elif defined(ENABLE_CA_LED)
   // Set color of analog 4 Pin common anode RGB LED
   analogWrite(12, 255 - r);
   analogWrite(11, 255 - g);
@@ -2390,7 +1994,7 @@ void print_Error(byte errorMessage) {
 }
 
 void _print_FatalError(void) {
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -2410,16 +2014,16 @@ void print_FatalError(byte errorMessage) {
 void wait() {
   // Switch status LED off
   statusLED(false);
-#if defined(enable_LCD)
+#if defined(ENABLE_LCD)
   wait_btn();
-#elif defined(enable_OLED)
+#elif defined(ENABLE_OLED)
   wait_btn();
-#elif defined(enable_serial)
+#elif defined(ENABLE_SERIAL)
   wait_serial();
 #endif
 }
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
 // Copies the last part of the current log file to the dump folder
 void save_log() {
   // Last found position
@@ -2496,26 +2100,26 @@ void save_log() {
 }
 #endif
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
 void println_Log(const __FlashStringHelper* string) {
   myLog.println(string);
 }
 #endif
 
 void print_Msg(const __FlashStringHelper* string) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(string);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(string);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(string);
 #endif
 }
 
 void print_Msg(const char myString[]) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
     unsigned int strPos = 0;
@@ -2535,82 +2139,82 @@ void print_Msg(const char myString[]) {
     display.print(myString);
   }
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(myString);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(myString);
 #endif
 }
 
 void print_Msg(long unsigned int message) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(message);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(message);
 #endif
 }
 
 void print_Msg(byte message, int outputFormat) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message, outputFormat);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(message, outputFormat);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
 void print_Msg(word message, int outputFormat) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message, outputFormat);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(message, outputFormat);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
 void print_Msg(int message, int outputFormat) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message, outputFormat);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(message, outputFormat);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
 void print_Msg(long unsigned int message, int outputFormat) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message, outputFormat);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(message, outputFormat);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
 #endif
 }
 
 void print_Msg(String string) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(string);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.print(string);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.print(string);
 #endif
 }
@@ -2632,33 +2236,33 @@ void print_Msg_PaddedHex32(unsigned long message) {
   print_Msg_PaddedHexByte((message >> 0) & 0xFF);
 }
 void println_Msg(String string) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(string);
   display.setCursor(0, display.ty + 8);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.println(string);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.println(string);
 #endif
 }
 
 void println_Msg(byte message, int outputFormat) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message, outputFormat);
   display.setCursor(0, display.ty + 8);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.println(message, outputFormat);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.println(message, outputFormat);
 #endif
 }
 
 void println_Msg(const char myString[]) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // test for word wrap
   if ((display.tx + strlen(myString) * 6) > 128) {
     unsigned int strPos = 0;
@@ -2679,23 +2283,23 @@ void println_Msg(const char myString[]) {
   }
   display.setCursor(0, display.ty + 8);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.println(myString);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.println(myString);
 #endif
 }
 
 void println_Msg(const __FlashStringHelper* string) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(string);
   display.setCursor(0, display.ty + 8);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.println(string);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   char myBuffer[15];
   strlcpy_P(myBuffer, (char*)string, 15);
   if ((strncmp(myBuffer, "Press Button...", 14) != 0) && (strncmp(myBuffer, "Select file", 10) != 0)) {
@@ -2705,42 +2309,42 @@ void println_Msg(const __FlashStringHelper* string) {
 }
 
 void println_Msg(long unsigned int message) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(message);
   display.setCursor(0, display.ty + 8);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   Serial.println(message);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.println(message);
 #endif
 }
 
 void display_Update() {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.updateDisplay();
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   delay(100);
 #endif
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled) myLog.flush();
 #endif
 }
 
 void display_Clear() {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.clearDisplay();
   display.setCursor(0, 8);
 #endif
-#ifdef global_log
-  if (!dont_log && loggingEnabled) myLog.println("");
+#ifdef ENABLE_GLOBAL_LOG
+  if (!dont_log && loggingEnabled) myLog.println(FSTRING_EMPTY);
 #endif
 }
 
 void display_Clear_Slow() {
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.setDrawColor(0);
   for (byte y = 0; y < 64; y++) {
     display.drawLine(0, y, 128, y);
@@ -2784,11 +2388,11 @@ void blinkLED() {
   // Nothing
 #elif defined(HW5)
   PORTD ^= (1 << 7);
-#elif defined(enable_OLED)
+#elif defined(ENABLE_OLED)
   PORTB ^= (1 << 4);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   PORTE ^= (1 << 1);
-#elif defined(enable_serial)
+#elif defined(ENABLE_SERIAL)
   PORTB ^= (1 << 4);
   PORTB ^= (1 << 7);
 #endif
@@ -2809,30 +2413,30 @@ void statusLED(boolean on __attribute__((unused))) {
 /******************************************
   Menu system
 *****************************************/
-unsigned char question_box(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
-#if (defined(enable_LCD) || defined(enable_OLED))
+unsigned char question_box(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   return questionBox_Display(question, answers, num_answers, default_choice);
 #endif
-#ifdef enable_serial
+#ifdef ENABLE_SERIAL
   return questionBox_Serial(question, answers, num_answers, default_choice);
 #endif
 }
 
-#if defined(enable_serial)
+#if defined(ENABLE_SERIAL)
 // Serial Monitor
-byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
+byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
   // Print menu to serial monitor
-  Serial.println("");
+  Serial.println(FSTRING_EMPTY);
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
     Serial.print(F(")"));
     Serial.println(answers[i]);
   }
   // Wait for user input
-  Serial.println("");
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
   Serial.println(F("and enter a selection by typing a number(0-6): _ "));
-  Serial.println("");
+  Serial.println(FSTRING_EMPTY);
   while (Serial.available() == 0) {
   }
 
@@ -2864,15 +2468,15 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 
   // Print the received byte for validation e.g. in case of a different keyboard mapping
   //Serial.println(incomingByte);
-  //Serial.println("");
+  //Serial.println(FSTRING_EMPTY);
   return incomingByte;
 }
 #endif
 
 // OLED & LCD
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
-unsigned char questionBox_Display(const __FlashStringHelper* question, char answers[7][20], int num_answers, int default_choice) {
+unsigned char questionBox_Display(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
   //clear the screen
   display.clearDisplay();
   display.updateDisplay();
@@ -2926,7 +2530,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       2 doubleClick/counter clockwise rotation
       3 hold/press
       4 longHold */
-    int b = checkButton();
+    uint8_t b = checkButton();
 
     // if button is pressed twice or rotary encoder turned left/counter clockwise
     if (b == 2) {
@@ -3010,8 +2614,8 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
   // pass on user choice
   setColor_RGB(0, 0, 0);
 
-#ifdef global_log
-  println_Msg("");
+#ifdef ENABLE_GLOBAL_LOG
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("[+] "));
   println_Msg(answers[choice]);
 #endif
@@ -3020,7 +2624,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
 }
 #endif
 
-#if !defined(enable_serial) && defined(ENABLE_UPDATER)
+#if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
 void checkUpdater() {
   if (ClockedSerial.available() > 0) {
     String cmd = ClockedSerial.readStringUntil('\n');
@@ -3037,7 +2641,7 @@ void checkUpdater() {
       ClockedSerial.print((clock == CS_16MHZ) ? 16UL : 8UL);
       ClockedSerial.println(F("MHz"));
 # else /* !ENABLE_3V3FIX */
-      ClockedSerial.println(F("Dynamic clock speed (3V3FIX) is not enabled."));
+      ClockedSerial.println(FS(FSTRING_MODULE_NOT_ENABLED));
 # endif /* ENABLE_3V3FIX */
     }
     else if (cmd.substring(1, 8) == "ETVOLTS")
@@ -3053,24 +2657,25 @@ void checkUpdater() {
       ClockedSerial.print((voltage == VOLTS_SET_5V) ? 5 : 3.3);
       ClockedSerial.println(F("V"));
 # else /* !ENABLE_VSELECT */
-      ClockedSerial.println(F("Automatic voltage selection (VSELECT) is not enabled."));
+      ClockedSerial.println(FS(FSTRING_MODULE_NOT_ENABLED));
 # endif /* ENABLE_VSELECT */
     }
     // RTC commands
     else if (cmd.substring(1, 7) == "ETTIME")
     { // (G/S)ETTIME: Get and set the date/time.
-# if defined(RTC_installed)
+# if defined(ENABLE_RTC)
       if (cmd != "GETTIME") {
         ClockedSerial.println(F("Setting Time..."));
         rtc.adjust(DateTime(cmd.substring(8).toInt()));
       }
       ClockedSerial.print(F("Current Time: "));
       ClockedSerial.println(RTCStamp());
-# else /* !RTC_installed */
-      ClockedSerial.println(F("RTC not installed"));
-# endif /* RTC_installed */
+# else /* !ENABLE_RTC */
+      ClockedSerial.println(FS(FSTRING_MODULE_NOT_ENABLED));
+# endif /* ENABLE_RTC */
     } else {
-      ClockedSerial.println(F("OSCR: Unknown Command"));
+      ClockedSerial.print(FS(FSTRING_OSCR));
+      ClockedSerial.println(F(": Unknown Command"));
     }
   }
 }
@@ -3082,8 +2687,8 @@ void checkUpdater() {}
   User Control
 *****************************************/
 // Using Serial Monitor
-#if defined(enable_serial)
-int checkButton() {
+#if defined(ENABLE_SERIAL)
+uint8_t checkButton() {
   while (Serial.available() == 0) {
   }
   incomingByte = Serial.read() - 48;
@@ -3147,10 +2752,10 @@ void wait_serial() {
 #endif
 
 // Using one or two push buttons (HW1/HW2/HW3)
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
 // Read button state
-int checkButton() {
-#ifdef enable_Button2
+uint8_t checkButton() {
+#ifdef ENABLE_BUTTON2
   byte eventButton2 = checkButton2();
   if ((eventButton2 > 0) && (eventButton2 < 2))
     return 3;
@@ -3161,8 +2766,8 @@ int checkButton() {
 }
 
 // Read button 1
-int checkButton1() {
-  int event = 0;
+uint8_t checkButton1() {
+  uint8_t event = 0;
 
   // Read the state of the button (PD7)
   buttonVal1 = (PIND & (1 << 7));
@@ -3221,8 +2826,8 @@ int checkButton1() {
 }
 
 // Read button 2
-int checkButton2() {
-  int event = 0;
+uint8_t checkButton2() {
+  uint8_t event = 0;
 
   // Read the state of the button (PG2)
   buttonVal2 = (PING & (1 << 2));
@@ -3288,7 +2893,7 @@ void wait_btn() {
 
   while (1) {
     // get input button
-    int b = checkButton();
+    uint8_t b = checkButton();
 
     // if the cart readers input button is pressed shortly
     if (b == 1) {
@@ -3310,9 +2915,9 @@ void wait_btn() {
 #endif
 
 // Using rotary encoder (HW4/HW5)
-#if (defined(enable_LCD) && defined(enable_rotary))
+#if (defined(ENABLE_LCD) && defined(ENABLE_ROTARY))
 // Read encoder state
-int checkButton() {
+uint8_t checkButton() {
   // Read rotary encoder
   encoder.tick();
   int newPos = encoder.getPosition();
@@ -3368,7 +2973,7 @@ void wait_btn() {
 
   while (1) {
     // get input button
-    int b = checkButton();
+    uint8_t b = checkButton();
 
     // if the cart readers input button is pressed shortly
     if (b == 1) {
@@ -3579,217 +3184,116 @@ page:
   Main loop
 *****************************************/
 void loop() {
-#ifdef enable_N64
-  if (mode == mode_N64_Controller) {
-    n64ControllerMenu();
-  } else if (mode == mode_N64_Cart) {
-    n64CartMenu();
-  }
-#else
-  if (1 == 0) {
-  }
+  switch (mode) {
+#ifdef ENABLE_N64
+  case CORE_N64_CART: return n64CartMenu();
+  case CORE_N64_CONTROLLER: return n64ControllerMenu();
 #endif
-#ifdef enable_SNES
-  else if (mode == mode_SNES) {
-    snesMenu();
-  }
+#ifdef ENABLE_SNES
+  case CORE_SNES: return snesMenu();
 #endif
-#ifdef enable_FLASH
-  else if (mode == mode_FLASH8) {
-    flashromMenu8();
-  }
-#ifdef enable_FLASH16
-  else if (mode == mode_FLASH16) {
-    flashromMenu16();
-  } else if (mode == mode_EPROM) {
-    epromMenu();
-  }
+#ifdef ENABLE_SFM
+  case CORE_SFM: return sfmMenu();
+# ifdef ENABLE_FLASH
+  case CORE_SFM_FLASH: return sfmFlashMenu();
+# endif
+  case CORE_SFM_GAME: return sfmGameOptions();
 #endif
+#ifdef ENABLE_GBX
+  case CORE_GB: return gbMenu();
+  case CORE_GBA: return gbaMenu();
+  case CORE_GBM: return gbmMenu();
+  case CORE_GB_GBSMART: return gbSmartMenu();
+  case CORE_GB_GBSMART_FLASH: return gbSmartFlashMenu();
+  case CORE_GB_GBSMART_GAME: return gbSmartGameOptions();
 #endif
-#ifdef enable_SFM
-  else if (mode == mode_SFM) {
-    sfmMenu();
-  }
+#ifdef ENABLE_FLASH
+  case CORE_FLASH8: return flashromMenu8();
+# ifdef ENABLE_FLASH16
+  case CORE_FLASH16: return flashromMenu16();
+  case CORE_EPROM: return epromMenu();
+# endif
 #endif
-#ifdef enable_GBX
-  else if (mode == mode_GB) {
-    gbMenu();
-  } else if (mode == mode_GBA) {
-    gbaMenu();
-  }
+#ifdef ENABLE_MD
+  case CORE_MD_CART: return mdCartMenu();
+  case CORE_SEGA_CD: return segaCDMenu();
 #endif
-#ifdef enable_SFM
-#ifdef enable_FLASH
-  else if (mode == mode_SFM_Flash) {
-    sfmFlashMenu();
-  }
+#ifdef ENABLE_PCE
+  case CORE_PCE: return pceMenu();
 #endif
-  else if (mode == mode_SFM_Game) {
-    sfmGameOptions();
-  }
+#ifdef ENABLE_SV
+  case CORE_SV: return svMenu();
 #endif
-#ifdef enable_GBX
-  else if (mode == mode_GBM) {
-    gbmMenu();
-  }
+#ifdef ENABLE_NES
+  case CORE_NES: return nesMenu();
 #endif
-#ifdef enable_MD
-  else if (mode == mode_MD_Cart) {
-    mdCartMenu();
-  }
+#ifdef ENABLE_SMS
+  case CORE_SMS: return smsMenu();
 #endif
-#ifdef enable_PCE
-  else if (mode == mode_PCE) {
-    pceMenu();
-  }
+#ifdef ENABLE_WS
+  case CORE_WS: return wsMenu();
 #endif
-#ifdef enable_SV
-  else if (mode == mode_SV) {
-    svMenu();
-  }
+#ifdef ENABLE_NGP
+  case CORE_NGP: return ngpMenu();
 #endif
-#ifdef enable_ST
-  else if (mode == mode_ST) {
-    stMenu();
-  }
+#ifdef ENABLE_INTV
+  case CORE_INTV: return intvMenu();
 #endif
-#ifdef enable_GPC
-  else if (mode == mode_GPC) {
-    gpcMenu();
-  }
+#ifdef ENABLE_COLV
+  case CORE_COL: return colMenu();
 #endif
-#ifdef enable_NES
-  else if (mode == mode_NES) {
-    nesMenu();
-  }
+#ifdef ENABLE_VBOY
+  case CORE_VBOY: return vboyMenu();
 #endif
-#ifdef enable_SMS
-  else if (mode == mode_SMS) {
-    smsMenu();
-  }
+#ifdef ENABLE_WSV
+  case CORE_WSV: return wsvMenu();
 #endif
-#ifdef enable_MD
-  else if (mode == mode_SEGA_CD) {
-    segaCDMenu();
-  }
+#ifdef ENABLE_PCW
+  case CORE_PCW: return pcwMenu();
 #endif
-#ifdef enable_GBX
-  else if (mode == mode_GB_GBSmart) {
-    gbSmartMenu();
-  } else if (mode == mode_GB_GBSmart_Flash) {
-    gbSmartFlashMenu();
-  } else if (mode == mode_GB_GBSmart_Game) {
-    gbSmartGameOptions();
-  }
+#ifdef ENABLE_ODY2
+  case CORE_ODY2: return ody2Menu();
 #endif
-#ifdef enable_WS
-  else if (mode == mode_WS) {
-    wsMenu();
-  }
+#ifdef ENABLE_ARC
+  case CORE_ARC: return arcMenu();
 #endif
-#ifdef enable_NGP
-  else if (mode == mode_NGP) {
-    ngpMenu();
-  }
+#ifdef ENABLE_FAIRCHILD
+  case CORE_FAIRCHILD: return fairchildMenu();
 #endif
-#ifdef enable_INTV
-  else if (mode == mode_INTV) {
-    intvMenu();
-  }
+#ifdef ENABLE_SUPRACAN
+  case CORE_SUPRACAN: return suprAcanMenu();
 #endif
-#ifdef enable_COLV
-  else if (mode == mode_COL) {
-    colMenu();
-  }
+#ifdef ENABLE_MSX
+  case CORE_MSX: return msxMenu();
 #endif
-#ifdef enable_VBOY
-  else if (mode == mode_VBOY) {
-    vboyMenu();
-  }
+#ifdef ENABLE_POKE
+  case CORE_POKE: return pokeMenu();
 #endif
-#ifdef enable_WSV
-  else if (mode == mode_WSV) {
-    wsvMenu();
-  }
+#ifdef ENABLE_LOOPY
+  case CORE_LOOPY: return loopyMenu();
 #endif
-#ifdef enable_PCW
-  else if (mode == mode_PCW) {
-    pcwMenu();
-  }
+#ifdef ENABLE_C64
+  case CORE_C64: return c64Menu();
 #endif
-#ifdef enable_ODY2
-  else if (mode == mode_ODY2) {
-    ody2Menu();
-  }
+#ifdef ENABLE_2600
+  case CORE_2600: return a2600Menu();
 #endif
-#ifdef enable_ARC
-  else if (mode == mode_ARC) {
-    arcMenu();
-  }
+#ifdef ENABLE_5200
+  case CORE_5200: return a5200Menu();
 #endif
-#ifdef enable_FAIRCHILD
-  else if (mode == mode_FAIRCHILD) {
-    fairchildMenu();
-  }
+#ifdef ENABLE_7800
+  case CORE_7800: return a7800Menu();
 #endif
-#ifdef enable_SUPRACAN
-  else if (mode == mode_SUPRACAN) {
-    suprAcanMenu();
-  }
+#ifdef ENABLE_VECTREX
+  case CORE_VECTREX: return vectrexMenu();
 #endif
-#ifdef enable_MSX
-  else if (mode == mode_MSX) {
-    msxMenu();
-  }
+#ifdef ENABLE_ST
+  case CORE_ST: return stMenu();
 #endif
-#ifdef enable_POKE
-  else if (mode == mode_POKE) {
-    pokeMenu();
-  }
+#ifdef ENABLE_GPC
+  case CORE_GPC: return gpcMenu();
 #endif
-#ifdef enable_LOOPY
-  else if (mode == mode_LOOPY) {
-    loopyMenu();
-  }
-#endif
-#ifdef enable_C64
-  else if (mode == mode_C64) {
-    c64Menu();
-  }
-#endif
-#ifdef enable_2600
-  else if (mode == mode_2600) {
-    a2600Menu();
-  }
-#endif
-#ifdef enable_5200
-  else if (mode == mode_5200) {
-    a5200Menu();
-  }
-#endif
-#ifdef enable_7800
-  else if (mode == mode_7800) {
-    a7800Menu();
-  }
-#endif
-#ifdef enable_VECTREX
-  else if (mode == mode_VECTREX) {
-    vectrexMenu();
-  }
-#endif
-  else {
-    display_Clear();
-    println_Msg(F("Menu Error"));
-    println_Msg("");
-    println_Msg("");
-    print_Msg(F("Mode = "));
-    print_Msg(mode);
-    println_Msg(F(""));
-    // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
-    resetArduino();
+  case CORE_MAX: return resetArduino();
   }
 }
 

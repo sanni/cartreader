@@ -1,7 +1,7 @@
 //******************************************
 // VECTREX MODULE
 //******************************************
-#ifdef enable_VECTREX
+#ifdef ENABLE_VECTREX
 // Vectrex
 // Cartridge Pinout
 // 36P 2.54mm pitch connector
@@ -68,10 +68,7 @@ byte newvectrexsize;
 //  Menu
 //******************************************
 // Base Menu
-static const char vectrexMenuItem1[] PROGMEM = "Select Cart";
-static const char vectrexMenuItem2[] PROGMEM = "Read ROM";
-static const char vectrexMenuItem3[] PROGMEM = "Set Size";
-static const char* const menuOptionsVECTREX[] PROGMEM = { vectrexMenuItem1, vectrexMenuItem2, vectrexMenuItem3, string_reset2 };
+static const char* const menuOptionsVECTREX[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void setup_VECTREX() {
   // Request 5V
@@ -116,7 +113,7 @@ void setup_VECTREX() {
   checkStatus_VECTREX();
   strcpy(romName, "VECTREX");
 
-  mode = mode_VECTREX;
+  mode = CORE_VECTREX;
 }
 
 void vectrexMenu() {
@@ -251,7 +248,7 @@ void readROM_VECTREX() {
   unsigned long crcsize = VECTREX[vectrexsize] * 0x400;
   calcCRC(fileName, crcsize, NULL, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -263,22 +260,22 @@ void readROM_VECTREX() {
 //******************************************
 
 void setROMSize_VECTREX() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (vectrexlo == vectrexhi)
     newvectrexsize = vectrexlo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = vectrexlo;
 
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(VECTREX[i]);
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -295,11 +292,11 @@ void setROMSize_VECTREX() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(VECTREX[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -314,11 +311,11 @@ void setROMSize_VECTREX() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(VECTREX[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -356,7 +353,7 @@ setrom:
     newvectrexsize = sizeROM.toInt() + vectrexlo;
     if (newvectrexsize > vectrexhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -375,11 +372,11 @@ void checkStatus_VECTREX() {
     EEPROM_writeAnything(8, vectrexsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("VECTREX READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("ROM SIZE: "));
   print_Msg(VECTREX[vectrexsize]);
   println_Msg(F("KB"));
@@ -389,7 +386,7 @@ void checkStatus_VECTREX() {
   Serial.print(F("ROM SIZE: "));
   Serial.print(VECTREX[vectrexsize]);
   Serial.println(F("KB"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
@@ -442,7 +439,7 @@ bool readVals_VECTREX(char* vectrexgame, char* vectrexrr, char* vectrexll) {
 bool getCartListInfo_VECTREX() {
   bool buttonreleased = 0;
   bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F(" HOLD TO FAST CYCLE"));
   display_Update();
@@ -450,9 +447,9 @@ bool getCartListInfo_VECTREX() {
   Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
 #endif
   delay(2000);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
@@ -461,19 +458,19 @@ bool getCartListInfo_VECTREX() {
         if (strcmp(vectrexcsvEND, vectrexgame) == 0) {
           vectrexcsvFile.seek(0);  // Restart
         } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           display_Clear();
           println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(vectrexgame);
           display_Update();
 #else
           Serial.print(F("CART TITLE:"));
           Serial.println(vectrexgame);
 #endif
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
           buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
           if (buttonVal1 == HIGH) {        // Button Released
@@ -486,41 +483,41 @@ bool getCartListInfo_VECTREX() {
           }
         }
       }
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
       if (buttonVal1 == HIGH)          // Button Released
         break;
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
   while (readVals_VECTREX(vectrexgame, vectrexrr, vectrexll)) {
     if (strcmp(vectrexcsvEND, vectrexgame) == 0) {
       vectrexcsvFile.seek(0);  // Restart
     } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       display_Clear();
       println_Msg(F("CART TITLE:"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(vectrexgame);
       display.setCursor(0, 48);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -530,7 +527,7 @@ bool getCartListInfo_VECTREX() {
       Serial.println(vectrexgame);
 #endif
       while (1) {  // Single Step
-        int b = checkButton();
+        uint8_t b = checkButton();
         if (b == 1) {  // Continue (press)
           break;
         }
@@ -544,7 +541,7 @@ bool getCartListInfo_VECTREX() {
           newvectrexsize = strtol(vectrexrr, NULL, 10);
           EEPROM_writeAnything(8, newvectrexsize);
           cartselected = 1;  // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           println_Msg(F("SELECTION MADE"));
           display_Update();
 #else
@@ -559,8 +556,8 @@ bool getCartListInfo_VECTREX() {
       }
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("END OF FILE"));
   display_Update();
 #else
@@ -572,10 +569,10 @@ bool getCartListInfo_VECTREX() {
 
 void checkCSV_VECTREX() {
   if (getCartListInfo_VECTREX()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(vectrexgame);
     display_Update();
     // Display Settings
@@ -584,16 +581,16 @@ void checkCSV_VECTREX() {
     println_Msg(newvectrexsize);
     display_Update();
 #else
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     Serial.println(F("CART SELECTED"));
     Serial.println(vectrexgame);
     // Display Settings
     Serial.print(F("CODE: R"));
     Serial.println(newvectrexsize);
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
 #endif
   } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
     println_Msg(F("NO SELECTION"));
     display_Update();
@@ -604,7 +601,7 @@ void checkCSV_VECTREX() {
 }
 
 void setCart_VECTREX() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(vectrexcartCSV);
   display_Update();
@@ -614,7 +611,7 @@ void setCart_VECTREX() {
   sd.chdir(folder);  // Switch Folder
   vectrexcsvFile = sd.open(vectrexcartCSV, O_READ);
   if (!vectrexcsvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CSV FILE NOT FOUND!"));
     display_Update();

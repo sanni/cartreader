@@ -2,7 +2,7 @@
 // GB SMART MODULE
 // Supports 32M cart with LH28F016SUT flash
 //******************************************
-#ifdef enable_GBX
+#ifdef ENABLE_GBX
 #define GB_SMART_GAMES_PER_PAGE 6
 
 /******************************************
@@ -11,8 +11,7 @@
 // GB Smart menu items
 static const char gbSmartMenuItem1[] PROGMEM = "Game Menu";
 static const char gbSmartMenuItem2[] PROGMEM = "Flash Menu";
-//static const char gbSmartMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
-static const char *const menuOptionsGBSmart[] PROGMEM = { gbSmartMenuItem1, gbSmartMenuItem2, string_reset2 };
+static const char *const menuOptionsGBSmart[] PROGMEM = { gbSmartMenuItem1, gbSmartMenuItem2, FSTRING_RESET };
 
 static const char gbSmartFlashMenuItem1[] PROGMEM = "Read Flash";
 static const char gbSmartFlashMenuItem2[] PROGMEM = "Write Flash";
@@ -20,11 +19,8 @@ static const char gbSmartFlashMenuItem3[] PROGMEM = "Back";
 static const char *const menuOptionsGBSmartFlash[] PROGMEM = { gbSmartFlashMenuItem1, gbSmartFlashMenuItem2, gbSmartFlashMenuItem3 };
 
 static const char gbSmartGameMenuItem1[] PROGMEM = "Read Game";
-static const char gbSmartGameMenuItem2[] PROGMEM = "Read SRAM";
-static const char gbSmartGameMenuItem3[] PROGMEM = "Write SRAM";
 static const char gbSmartGameMenuItem4[] PROGMEM = "Switch Game";
-//static const char gbSmartGameMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char *const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, gbSmartGameMenuItem2, gbSmartGameMenuItem3, gbSmartGameMenuItem4, string_reset2 };
+static const char *const menuOptionsGBSmartGame[] PROGMEM = { gbSmartGameMenuItem1, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, gbSmartGameMenuItem4, FSTRING_RESET };
 
 struct GBSmartGameInfo {
   uint8_t start_bank;
@@ -163,7 +159,7 @@ void gbSmartMenu() {
       }
     case 1:
       {
-        mode = mode_GB_GBSmart_Flash;
+        mode = CORE_GB_GBSMART_FLASH;
         break;
       }
     default:
@@ -227,7 +223,7 @@ void gbSmartGameOptions() {
   }
 
   if (gameSubMenu != 3) {
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -269,7 +265,7 @@ gb_smart_load_more_games:
   getCartInfo_GB();
   showCartInfo_GB();
 
-  mode = mode_GB_GBSmart_Game;
+  mode = CORE_GB_GBSMART_GAME;
 }
 
 void gbSmartFlashMenu() {
@@ -303,7 +299,7 @@ void gbSmartFlashMenu() {
         println_Msg(F("Attention"));
         println_Msg(F("This will erase your"));
         println_Msg(F("GB Smart Cartridge."));
-        println_Msg(F(""));
+        println_Msg(FS(FSTRING_EMPTY));
         // Prints string out of the common strings array either with or without newline
         print_STR(press_button_STR, 1);
         display_Update();
@@ -320,12 +316,12 @@ void gbSmartFlashMenu() {
       }
     default:
       {
-        mode = mode_GB_GBSmart;
+        mode = CORE_GB_GBSMART;
         return;
       }
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -476,7 +472,7 @@ void gbSmartWriteFlash() {
 
   writeErrors = gbSmartVerifyFlash();
   if (writeErrors == 0) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     display_Update();
   } else {
     print_STR(error_STR, 0);

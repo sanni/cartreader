@@ -1,7 +1,7 @@
 //*********************************************************
 // BANDAI WONDERSWAN & BENESSE POCKET CHALLENGE V2 MODULE
 //*********************************************************
-#ifdef enable_WS
+#ifdef ENABLE_WS
 // Cartridge pinout
 // 48P 1.25mm pitch connector
 // C1, C48     : GND
@@ -23,7 +23,7 @@
 // C46         : INT (for RTC alarm interrupt)
 // C47         : CLK (384KHz on WS)
 
-#ifdef ws_adapter_v2
+#ifdef OPTION_WS_ADAPTER_V2
 #define WS_CLK_BIT 5  // USE PE5 as CLK
 #else
 #define WS_CLK_BIT 3  // USE PE3 as CLK
@@ -32,12 +32,8 @@
 /******************************************
   Menu
 *****************************************/
-static const char wsMenuItem1[] PROGMEM = "Read Rom";
-static const char wsMenuItem2[] PROGMEM = "Read Save";
-static const char wsMenuItem3[] PROGMEM = "Write Save";
-//static const char wsMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
 static const char wsMenuItem5[] PROGMEM = "Write WitchOS";
-static const char *const menuOptionsWS[] PROGMEM = { wsMenuItem1, wsMenuItem2, wsMenuItem3, string_reset2, wsMenuItem5 };
+static const char *const menuOptionsWS[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET, wsMenuItem5 };
 static const uint8_t wwLaunchCode[] PROGMEM = { 0xea, 0x00, 0x00, 0x00, 0xe0, 0x00, 0xff, 0xff };
 static uint8_t wsGameOrientation = 0;
 static uint8_t wsGameHasRTC = 0;
@@ -183,7 +179,7 @@ void wsMenu() {
       }
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
 
@@ -1003,7 +999,7 @@ static boolean compareChecksum_WS(uint16_t checksum) {
 
     return 1;
   } else {
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     print_Error(F("Checksum Error"));
     return 0;
   }

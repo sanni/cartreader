@@ -1,7 +1,7 @@
 //******************************************
 // MSX COMPUTER MODULE
 //******************************************
-#ifdef enable_MSX
+#ifdef ENABLE_MSX
 // MSX
 // Cartridge Pinout
 // 50P 2.54mm pitch connector
@@ -126,11 +126,10 @@ boolean srambit7 = false;
 //  MENU
 //******************************************
 // Base Menu
-static const char msxMenuItem1[] PROGMEM = "Select Cart";
 static const char msxMenuItem2[] PROGMEM = "Read Cart";
 static const char msxMenuItem3[] PROGMEM = "Set Mapper + Size";
 static const char msxMenuItem4[] PROGMEM = "Write SRAM";
-static const char* const menuOptionsMSX[] PROGMEM = { msxMenuItem1, msxMenuItem2, msxMenuItem3, msxMenuItem4, string_reset2 };
+static const char* const menuOptionsMSX[] PROGMEM = { FSTRING_SELECT_CART, msxMenuItem2, msxMenuItem3, msxMenuItem4, FSTRING_RESET };
 
 void msxMenu() {
   convertPgm(menuOptionsMSX, 5);
@@ -163,7 +162,7 @@ void msxMenu() {
     case 3:
       // Write RAM
       writeRAM_MSX();
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -223,7 +222,7 @@ void setup_MSX() {
   checkStatus_MSX();
   strcpy(romName, "MSX");
 
-  mode = mode_MSX;
+  mode = CORE_MSX;
 }
 
 //******************************************
@@ -298,7 +297,7 @@ void writeData_MSX(uint16_t addr, uint8_t data) {
 //******************************************
 // POWER
 //******************************************
-#ifndef enable_NES
+#ifndef ENABLE_NES
 int int_pow(int base, int exp)  // Power for int
 {
   int result = 1;
@@ -563,7 +562,7 @@ void readROM_MSX() {
     unsigned long crcsize = MSX[msxsize] * 0x400;
     calcCRC(fileName, crcsize, NULL, 0);
 
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -723,7 +722,7 @@ void readRAM_MSX() {
     unsigned long crcsize = MSX[msxramsize] * 0x400;
     calcCRC(fileName, crcsize, NULL, 0);
 
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -847,7 +846,7 @@ void writeRAM_MSX() {
       }
       myFile.close();
 
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("RAM FILE WRITTEN!"));
       display_Update();
 
@@ -863,20 +862,20 @@ void writeRAM_MSX() {
 // MAPPER CODE
 //******************************************
 void setMapper_MSX() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  uint8_t b = 0;
   int i = 0;
 // Check Button Status
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {  // Button Pressed
     while (1) {             // Scroll Mapper List
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       buttonVal1 = (PING & (1 << 2));      //PG2
 #endif
       if (buttonVal1 == HIGH) {  // Button Released
@@ -908,11 +907,11 @@ void setMapper_MSX() {
   msxmapselect = pgm_read_byte(msxmapsize + msxindex);
   println_Msg(msxmapselect);
   printMapper(msxmapselect);
-  println_Msg(F(""));
-#if defined(enable_OLED)
+  println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
   print_STR(press_to_change_STR, 1);
   print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   print_STR(rotate_to_change_STR, 1);
   print_STR(press_to_select_STR, 1);
 #endif
@@ -933,11 +932,11 @@ void setMapper_MSX() {
       msxmapselect = pgm_read_byte(msxmapsize + msxindex);
       println_Msg(msxmapselect);
       printMapper(msxmapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -956,11 +955,11 @@ void setMapper_MSX() {
       msxmapselect = pgm_read_byte(msxmapsize + msxindex);
       println_Msg(msxmapselect);
       printMapper(msxmapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -995,7 +994,7 @@ setmapper:
   }
   if (msxmapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     newmsxmapper = 0;
     goto setmapper;
   }
@@ -1022,22 +1021,22 @@ void checkMapperSize_MSX() {
 // SET ROM SIZE
 //******************************************
 void setROMSize_MSX() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (msxlo == msxhi)
     newmsxsize = msxlo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = msxlo;
 
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(MSX[i]);
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -1061,11 +1060,11 @@ void setROMSize_MSX() {
           display_Clear();
           print_Msg(F("ROM Size: "));
           println_Msg(MSX[i]);
-          println_Msg(F(""));
-#if defined(enable_OLED)
+          println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
           print_STR(press_to_change_STR, 1);
           print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           print_STR(rotate_to_change_STR, 1);
           print_STR(press_to_select_STR, 1);
 #endif
@@ -1088,11 +1087,11 @@ void setROMSize_MSX() {
           display_Clear();
           print_Msg(F("ROM Size: "));
           println_Msg(MSX[i]);
-          println_Msg(F(""));
-#if defined(enable_OLED)
+          println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
           print_STR(press_to_change_STR, 1);
           print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           print_STR(rotate_to_change_STR, 1);
           print_STR(press_to_select_STR, 1);
 #endif
@@ -1138,13 +1137,13 @@ setrom:
     if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
       if ((newmsxromsize > 0) && (newmsxromsize < 4)) {
         Serial.println(F("SIZE NOT SUPPORTED"));
-        Serial.println(F(""));
+        Serial.println(FSTRING_EMPTY);
         goto setrom;
       }
     }
     if (newmsxsize > msxhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -1163,22 +1162,22 @@ setrom:
 // SET RAM SIZE
 //******************************************
 void setRAMSize_MSX() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (msxramlo == msxramhi)
     newmsxramsize = msxramlo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = msxramlo;
 
     display_Clear();
     print_Msg(F("RAM Size: "));
     println_Msg(MSXRAM[i]);
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -1202,11 +1201,11 @@ void setRAMSize_MSX() {
           display_Clear();
           print_Msg(F("RAM Size: "));
           println_Msg(MSXRAM[i]);
-          println_Msg(F(""));
-#if defined(enable_OLED)
+          println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
           print_STR(press_to_change_STR, 1);
           print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           print_STR(rotate_to_change_STR, 1);
           print_STR(press_to_select_STR, 1);
 #endif
@@ -1229,11 +1228,11 @@ void setRAMSize_MSX() {
           display_Clear();
           print_Msg(F("RAM Size: "));
           println_Msg(MSXRAM[i]);
-          println_Msg(F(""));
-#if defined(enable_OLED)
+          println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
           print_STR(press_to_change_STR, 1);
           print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           print_STR(rotate_to_change_STR, 1);
           print_STR(press_to_select_STR, 1);
 #endif
@@ -1273,13 +1272,13 @@ setram:
     if (msxmapper == 7) {        // Koei 8K/32K
       if (newmsxramsize == 3) {  // 16K
         Serial.println(F("SIZE NOT SUPPORTED"));
-        Serial.println(F(""));
+        Serial.println(FSTRING_EMPTY);
         goto setram;
       }
     }
     if (newmsxramsize > msxramhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setram;
     }
   }
@@ -1311,11 +1310,11 @@ void checkStatus_MSX() {
     EEPROM_writeAnything(10, msxramsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("MSX READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(msxmapper);
   printMapper(msxmapper);
@@ -1342,12 +1341,12 @@ void checkStatus_MSX() {
   Serial.print(F("CURRENT RAM SIZE: "));
   Serial.print(MSXRAM[msxramsize]);
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
 void printMapper(byte msxmaplabel) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   switch (msxmaplabel) {
     case 0:
       println_Msg(F("NONE"));
@@ -1464,7 +1463,7 @@ bool readVals_MSX(char* msxgame, char* msxmm, char* msxrr, char* msxss, char* ms
 bool getCartListInfo_MSX() {
   bool buttonreleased = 0;
   bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F(" HOLD TO FAST CYCLE"));
   display_Update();
@@ -1472,9 +1471,9 @@ bool getCartListInfo_MSX() {
   Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
 #endif
   delay(2000);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {  // Button Held - Fast Cycle
@@ -1483,19 +1482,19 @@ bool getCartListInfo_MSX() {
         if (strcmp(msxcsvEND, msxgame) == 0) {
           msxcsvFile.seek(0);  // Restart
         } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           display_Clear();
           println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(msxgame);
           display_Update();
 #else
           Serial.print(F("CART TITLE:"));
           Serial.println(msxgame);
 #endif
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
           buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
           if (buttonVal1 == HIGH) {  // Button Released
@@ -1508,41 +1507,41 @@ bool getCartListInfo_MSX() {
           }
         }
       }
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       buttonVal1 = (PING & (1 << 2));      //PG2
 #endif
       if (buttonVal1 == HIGH)  // Button Released
         break;
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
   while (readVals_MSX(msxgame, msxmm, msxrr, msxss, msxll)) {
     if (strcmp(msxcsvEND, msxgame) == 0) {
       msxcsvFile.seek(0);  // Restart
     } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       display_Clear();
       println_Msg(F("CART TITLE:"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(msxgame);
       display.setCursor(0, 48);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -1552,7 +1551,7 @@ bool getCartListInfo_MSX() {
       Serial.println(msxgame);
 #endif
       while (1) {  // Single Step
-        int b = checkButton();
+        uint8_t b = checkButton();
         if (b == 1) {  // Continue (press)
           break;
         }
@@ -1570,7 +1569,7 @@ bool getCartListInfo_MSX() {
           EEPROM_writeAnything(8, newmsxsize);
           EEPROM_writeAnything(10, newmsxramsize);
           cartselected = 1;  // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           println_Msg(F("SELECTION MADE"));
           display_Update();
 #else
@@ -1585,8 +1584,8 @@ bool getCartListInfo_MSX() {
       }
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("END OF FILE"));
   display_Update();
 #else
@@ -1598,10 +1597,10 @@ bool getCartListInfo_MSX() {
 
 void checkCSV_MSX() {
   if (getCartListInfo_MSX()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(msxgame);
     display_Update();
     // Display Settings
@@ -1614,7 +1613,7 @@ void checkCSV_MSX() {
     println_Msg(newmsxramsize);
     display_Update();
 #else
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     Serial.println(F("CART SELECTED"));
     Serial.println(msxgame);
     // Display Settings
@@ -1624,10 +1623,10 @@ void checkCSV_MSX() {
     Serial.print(newmsxsize);
     Serial.print(F("/S"));
     Serial.println(newmsxramsize);
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
 #endif
   } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
     println_Msg(F("NO SELECTION"));
     display_Update();
@@ -1638,7 +1637,7 @@ void checkCSV_MSX() {
 }
 
 void setCart_MSX() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(msxcartCSV);
   display_Update();
@@ -1648,7 +1647,7 @@ void setCart_MSX() {
   sd.chdir(folder);  // Switch Folder
   msxcsvFile = sd.open(msxcartCSV, O_READ);
   if (!msxcsvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CSV FILE NOT FOUND!"));
     display_Update();

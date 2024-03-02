@@ -1,7 +1,7 @@
 //******************************************
 // POKEMON MINI MODULE
 //******************************************
-#ifdef enable_POKE
+#ifdef ENABLE_POKE
 // Pokemon Mini
 // Cartridge Pinout
 // 32P 0.5mm pitch
@@ -79,8 +79,7 @@
 //  Menu
 //******************************************
 // Base Menu
-static const char pokeMenuItem1[] PROGMEM = "Read ROM";
-static const char* const menuOptionsPOKE[] PROGMEM = { pokeMenuItem1, string_reset2 };
+static const char* const menuOptionsPOKE[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
 void pokeMenu() {
   convertPgm(menuOptionsPOKE, 2);
@@ -145,7 +144,7 @@ void setup_POKE() {
 
   strcpy(romName, "POKEMINI");
 
-  mode = mode_POKE;
+  mode = CORE_POKE;
 }
 
 //******************************************
@@ -279,7 +278,7 @@ void readROM_POKE() {
 
   // compare dump CRC with db values
   compareCRC("pkmn.txt", 0, 1, 0);
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);

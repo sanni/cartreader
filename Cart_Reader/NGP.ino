@@ -1,13 +1,10 @@
 //******************************************
 // NGP MODULE
 //******************************************
-#ifdef enable_NGP
+#ifdef ENABLE_NGP
 
-static const char ngpMenuItem1[] PROGMEM = "Read ROM";
 static const char ngpMenuItem2[] PROGMEM = "Read chip info";
-static const char ngpMenuItem3[] PROGMEM = "Change ROM size";
-//static const char ngpMenuItemReset[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, ngpMenuItem3, string_reset2 };
+static const char* const menuOptionsNGP[] PROGMEM = { FSTRING_READ_ROM, ngpMenuItem2, FSTRING_SET_SIZE, FSTRING_RESET };
 
 static const char ngpRomItem1[] PROGMEM = "4 Mbits / 512 KB";
 static const char ngpRomItem2[] PROGMEM = "8 Mbits / 1 MB";
@@ -80,7 +77,7 @@ void ngpMenu() {
       break;
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();

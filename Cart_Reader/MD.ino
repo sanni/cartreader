@@ -2,7 +2,7 @@
 // SEGA MEGA DRIVE MODULE
 //******************************************
 // Writes to Sega CD Backup RAM Cart require an extra wire from MRES (B02) to VRES (B27)
-#ifdef enable_MD
+#ifdef ENABLE_MD
 
 /******************************************
    Variables
@@ -93,11 +93,11 @@ int segaSram16bit = 0;
 
 #else /* !ENABLED_CONFIG */
 
-# ifndef DEFAULT_VALUE_segaSram16bit
-#   define DEFAULT_VALUE_segaSram16bit 0
-# endif /* !DEFAULT_VALUE_segaSram16bit */
+# ifndef OPTION_MD_DEFAULT_SAVE_TYPE
+#   define OPTION_MD_DEFAULT_SAVE_TYPE 0
+# endif /* !OPTION_MD_DEFAULT_SAVE_TYPE */
 
-int segaSram16bit = DEFAULT_VALUE_segaSram16bit;
+int segaSram16bit = OPTION_MD_DEFAULT_SAVE_TYPE;
 
 #endif /* ENABLED_CONFIG */
 
@@ -185,7 +185,7 @@ void mdLoadConf() {
           // 2: Duplicate each byte. Pad with 0xFF so that the file size is 64KB.
           segaSram16bit = atoi(value);
           if (segaSram16bit != 0 && segaSram16bit != 1 && segaSram16bit != 2) {
-            segaSram16bit = DEFAULT_VALUE_segaSram16bit;
+            segaSram16bit = DEFAULT_VALUE_SAVE_TYPE;
           }
           print_Msg(F("segaSram16bit: "));
           println_Msg(segaSram16bit);
@@ -209,24 +209,17 @@ void pulse_clock(int n) {
 static const char MDMenuItem1[] PROGMEM = "Game Cartridge";
 static const char MDMenuItem2[] PROGMEM = "SegaCD RamCart";
 static const char MDMenuItem3[] PROGMEM = "Flash Repro";
-//static const char MDMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsMD[] PROGMEM = { MDMenuItem1, MDMenuItem2, MDMenuItem3, string_reset2 };
+static const char* const menuOptionsMD[] PROGMEM = { MDMenuItem1, MDMenuItem2, MDMenuItem3, FSTRING_RESET };
 
 // Cart menu items
-static const char MDCartMenuItem1[] PROGMEM = "Read Rom";
-static const char MDCartMenuItem2[] PROGMEM = "Read Sram";
-static const char MDCartMenuItem3[] PROGMEM = "Write Sram";
 static const char MDCartMenuItem4[] PROGMEM = "Read EEPROM";
 static const char MDCartMenuItem5[] PROGMEM = "Write EEPROM";
-static const char MDCartMenuItem6[] PROGMEM = "Cycle cart";
-//static const char MDCartMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsMDCart[] PROGMEM = { MDCartMenuItem1, MDCartMenuItem2, MDCartMenuItem3, MDCartMenuItem4, MDCartMenuItem5, MDCartMenuItem6, string_reset2 };
+static const char* const menuOptionsMDCart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, MDCartMenuItem4, MDCartMenuItem5, FSTRING_REFRESH_CART, FSTRING_RESET };
 
 // Sega CD Ram Backup Cartridge menu items
 static const char SCDMenuItem1[] PROGMEM = "Read Backup RAM";
 static const char SCDMenuItem2[] PROGMEM = "Write Backup RAM";
-//static const char SCDMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2, string_reset2 };
+static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2, FSTRING_RESET };
 
 // Sega start menu
 void mdMenu() {
@@ -242,22 +235,22 @@ void mdMenu() {
       display_Clear();
       display_Update();
       setup_MD();
-      mode = mode_MD_Cart;
+      mode = CORE_MD_CART;
       break;
 
     case 1:
       display_Clear();
       display_Update();
       setup_MD();
-      mode = mode_SEGA_CD;
+      mode = CORE_SEGA_CD;
       break;
 
-#ifdef enable_FLASH
+#ifdef ENABLE_FLASH
     case 2:
       display_Clear();
       display_Update();
       setup_MD();
-      mode = mode_MD_Cart;
+      mode = CORE_MD_CART;
       // Change working dir to root
       filePath[0] = '\0';
       sd.chdir("/");
@@ -291,7 +284,7 @@ void mdMenu() {
       verifyFlash_MD();
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -336,7 +329,7 @@ void mdCartMenu() {
       } else {
         print_Error(F("Cart has no ROM"));
       }
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
       break;
@@ -465,7 +458,7 @@ void segaCDMenu() {
       asm volatile("  jmp 0");
       break;
   }
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -480,7 +473,7 @@ void setup_MD() {
   setVoltage(VOLTS_SET_5V);
 
 #if defined(ENABLE_CONFIG)
-  segaSram16bit = configGetLong(F("md.sramType"));
+  segaSram16bit = configGetLong(F("md.saveType"));
 #elif defined(use_md_conf)
   mdLoadConf();
 #endif /*ENABLE_CONFIG*/
@@ -1111,13 +1104,13 @@ void getCartInfo_MD() {
         } else {
           print_Msg(("sramType: "));
           print_Msg_PaddedHex16(sramType);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_Msg(("sramBase: "));
           print_Msg_PaddedHex32(sramBase);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_FatalError(F("Unknown Sram Base"));
         }
       } else if (sramType == 0xE020) {  // SRAM BOTH BYTES
@@ -1139,13 +1132,13 @@ void getCartInfo_MD() {
         }else {
           print_Msg(("sramType: "));
           print_Msg_PaddedHex16(sramType);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_Msg(("sramBase: "));
           print_Msg_PaddedHex32(sramBase);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_FatalError(F("Unknown Sram Base"));
         }
       }
@@ -1263,13 +1256,13 @@ void getCartInfo_MD() {
 
   display_Clear();
   println_Msg(F("Cart Info"));
-  println_Msg(F(" "));
+  println_Msg(FS(FSTRING_SPACE));
   print_Msg(F("Name: "));
   println_Msg(romName);
   if (bramCheck != 0x00FF) {
     print_Msg(F("bramCheck: "));
     print_Msg_PaddedHex16(bramCheck);
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
   }
   if (bramSize > 0) {
     print_Msg(F("bramSize(KB): "));
@@ -1312,7 +1305,7 @@ void getCartInfo_MD() {
       print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
       break;
   }
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   if (saveType == 4) {
     print_Msg(F("Serial EEPROM: "));
     print_Msg(eepSize * 8 / 1024);
@@ -1325,10 +1318,10 @@ void getCartInfo_MD() {
     } else
       println_Msg(F("None"));
   }
-  println_Msg(F(" "));
+  println_Msg(FS(FSTRING_SPACE));
 
   // Wait for user input
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -1691,14 +1684,14 @@ void readROM_MD() {
   print_Msg(F("Internal checksum..."));
   display_Update();
   if (chksum == calcCKS) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     display_Update();
   } else {
     println_Msg(F("Error"));
     char calcsumStr[5];
     sprintf(calcsumStr, "%04X", calcCKS);
     println_Msg(calcsumStr);
-    print_Error(F(""));
+    print_Error(FS(FSTRING_EMPTY));
     display_Update();
   }
 
@@ -1706,28 +1699,28 @@ void readROM_MD() {
   if (SnKmode >= 2) {
     print_Msg(F("Lock-on checksum..."));
     if (chksumLockon == calcCKSLockon) {
-      println_Msg(F("OK"));
+      println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
       print_Msg(F("Error"));
       char calcsumStr[5];
       sprintf(calcsumStr, "%04X", calcCKSLockon);
       println_Msg(calcsumStr);
-      print_Error(F(""));
+      print_Error(FS(FSTRING_EMPTY));
       display_Update();
     }
   }
   if (SnKmode == 3) {
     print_Msg(F("Adittional checksum..."));
     if (chksumSonic2 == calcCKSSonic2) {
-      println_Msg(F("OK"));
+      println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
       print_Msg(F("Error"));
       char calcsumStr[5];
       sprintf(calcsumStr, "%04X", calcCKSSonic2);
       println_Msg(calcsumStr);
-      print_Error(F(""));
+      print_Error(FS(FSTRING_EMPTY));
       display_Update();
     }
   }
@@ -1937,7 +1930,7 @@ unsigned long verifySram_MD() {
   return writeErrors;
 }
 
-#ifdef enable_FLASH
+#ifdef ENABLE_FLASH
 //******************************************
 // Flashrom Functions
 //******************************************
@@ -2725,7 +2718,7 @@ void readEEP_MD() {
   }
   // Close the file:
   myFile.close();
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   display_Clear();
   print_Msg(F("Saved to "));
   print_Msg(folder);
@@ -2760,13 +2753,13 @@ void writeEEP_MD() {
         writeEepromByte(currByte);
         print_Msg(F("."));
         if ((currByte != 0) && ((currByte + 1) % 64 == 0))
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
         display_Update();  // ON SERIAL = delay(100)
       }
     }
     // Close the file:
     myFile.close();
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     display_Clear();
     print_STR(done_STR, 1);
     display_Update();
@@ -2813,7 +2806,7 @@ void readBram_MD() {
 
   // Close the file:
   myFile.close();
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   display_Clear();
   print_Msg(F("Saved to "));
   print_Msg(folder);
@@ -2845,7 +2838,7 @@ void writeBram_MD() {
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
     myFile.close();
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     display_Clear();
     print_STR(done_STR, 1);
     display_Update();

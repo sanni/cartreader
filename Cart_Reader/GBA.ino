@@ -1,19 +1,15 @@
 //******************************************
 // GAME BOY ADVANCE MODULE
 //******************************************
-#ifdef enable_GBX
+#ifdef ENABLE_GBX
 
 /******************************************
    Menu
  *****************************************/
 // GBA menu items
-static const char GBAMenuItem1[] PROGMEM = "Read ROM";
-static const char GBAMenuItem2[] PROGMEM = "Read Save";
-static const char GBAMenuItem3[] PROGMEM = "Write Save";
 static const char GBAMenuItem4[] PROGMEM = "Force Savetype";
 static const char GBAMenuItem5[] PROGMEM = "Flash Repro";
-//static const char GBAMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBA[] PROGMEM = { GBAMenuItem1, GBAMenuItem2, GBAMenuItem3, GBAMenuItem4, GBAMenuItem5, string_reset2 };
+static const char* const menuOptionsGBA[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, GBAMenuItem4, GBAMenuItem5, FSTRING_RESET };
 
 // Rom menu
 static const char GBARomItem1[] PROGMEM = "1 MB";
@@ -66,7 +62,7 @@ void gbaMenu() {
       compare_checksum_GBA();
       // CRC32
       compareCRC("gba.txt", 0, 1, 0);
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
       // Prints string out of the common strings array either with or without newline
@@ -116,7 +112,7 @@ void gbaMenu() {
           break;
       }
       setROM_GBA();
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -162,7 +158,7 @@ void gbaMenu() {
             printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
           } else {
             printFlashTypeAndWait(F("Unknown"));
-            //print_FatalError(F(""));
+            //print_FatalError(FSTRING_EMPTY);
           }
 
           if (flashid == 0x1F3D) {  // Atmel
@@ -188,7 +184,7 @@ void gbaMenu() {
             printFlashTypeAndWait(F("SANYO LE26FV10N1TS"));
           } else {
             printFlashTypeAndWait(F("Unknown"));
-            //print_FatalError(F(""));
+            //print_FatalError(FSTRING_EMPTY);
           }
 
           eraseFLASH_GBA();
@@ -211,7 +207,7 @@ void gbaMenu() {
           break;
       }
       setROM_GBA();
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -228,7 +224,7 @@ void gbaMenu() {
     case 4:
       display_Clear();
       flashRepro_GBA();
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -326,10 +322,10 @@ static byte getSaveType() {
 static void printFlashTypeAndWait(const __FlashStringHelper* caption) {
   print_Msg(F("FLASH ID: "));
   println_Msg(flashid_str);
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("FLASH Type: "));
   println_Msg(caption);
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -599,9 +595,9 @@ void getCartInfo_GBA() {
     display_Clear();
     print_Error(F("CARTRIDGE ERROR"));
     strcpy(romName, "ERROR");
-    println_Msg(F(""));
-    println_Msg(F(""));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press Button to"));
     println_Msg(F("ignore or powercycle"));
     println_Msg(F("to try again"));
@@ -630,7 +626,7 @@ void getCartInfo_GBA() {
     if (myFile.open("gba.txt", O_READ)) {
       char gamename[100];
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
       // Disable log to prevent unnecessary logging
       dont_log = true;
 #endif
@@ -703,21 +699,21 @@ void getCartInfo_GBA() {
             print_Msg(F("Save Lib: "));
             println_Msg(saveTypeStr);
 
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
             print_STR(press_to_change_STR, 1);
             print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-            println_Msg(F(""));
+#elif defined(ENABLE_LCD)
+            println_Msg(FS(FSTRING_EMPTY));
             print_STR(rotate_to_change_STR, 1);
             print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
-            println_Msg(F(""));
+            println_Msg(FS(FSTRING_EMPTY));
             println_Msg(F("U/D to Change"));
             println_Msg(F("Space to Select"));
 #endif
             display_Update();
 
-            int b = 0;
+            uint8_t b = 0;
             while (1) {
               // Check button input
               b = checkButton();
@@ -754,7 +750,7 @@ void getCartInfo_GBA() {
       // Close the file:
       myFile.close();
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
       // Enable log again
       dont_log = false;
 #endif
@@ -785,7 +781,7 @@ void getCartInfo_GBA() {
       sprintf(calcChecksumStr, "%02X", calcChecksum);
       println_Msg(calcChecksumStr);
       print_Error(F("Checksum Error"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -1723,7 +1719,7 @@ unsigned long verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
   PORTH |= (1 << 0);
 
   if (wrError == 0) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
   } else {
     print_Msg(wrError);
     print_Error(F(" Errors"));
@@ -2145,11 +2141,11 @@ void idFlashrom_GBA() {
       resetMX29GL128E_GBA();
     } else {
       println_Msg(F("Error"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("Unknown Flash"));
       print_Msg(F("Flash ID: "));
       println_Msg(flashid_str);
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       print_FatalError(F("Check voltage"));
     }
   }
@@ -2591,7 +2587,7 @@ void flashRepro_GBA() {
     println_Msg("");
     println_Msg(F("This will erase your"));
     println_Msg(F("Repro Cartridge."));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
@@ -2649,7 +2645,7 @@ void flashRepro_GBA() {
         print_Msg(F("Blankcheck..."));
         display_Update();
         if (blankcheckFlashrom_GBA()) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
       */
 
       //Write flashrom
@@ -2693,7 +2689,7 @@ void flashRepro_GBA() {
         delay(1000);
       }
       if (verifyFlashrom_GBA() == 1) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
         print_FatalError(F("ERROR"));
@@ -2709,11 +2705,11 @@ void flashRepro_GBA() {
     }
   } else {
     println_Msg(F("Error"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Unknown Flash"));
     print_Msg(F("Flash ID: "));
     println_Msg(flashid_str);
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     print_FatalError(F("Check voltage"));
   }
 }

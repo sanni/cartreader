@@ -10,7 +10,7 @@
 // Chris Covell - Tennokoe bank support
 //
 //******************************************
-#ifdef enable_PCE
+#ifdef ENABLE_PCE
 
 /******************************************
   Defines
@@ -53,10 +53,9 @@ uint8_t tennokoe_bank_index = 0;
 static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
 static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
 static const char pceMenuItem3[] PROGMEM = "Turbochip";
-static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, string_reset2 };
+static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, FSTRING_RESET };
 
 // PCE card menu items
-static const char menuOptionspceCart_0[] PROGMEM = "Read ROM";
 static const char menuOptionspceCart_1[] PROGMEM = "Read RAM Bank %d";
 static const char menuOptionspceCart_2[] PROGMEM = "Write RAM Bank %d";
 static const char menuOptionspceCart_3[] PROGMEM = "Inc Bank Number";
@@ -65,8 +64,7 @@ static const char menuOptionspceCart_5[] PROGMEM = "Set %dK ROM size";
 static const char menuOptionspceCart_5_fmt[] PROGMEM = "ROM size now %dK";
 
 // Turbochip menu items
-static const char pceTCMenuItem1[] PROGMEM = "Read ROM";
-static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_reset2 };
+static const char *const menuOptionspceTC[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
 // PCE start menu
 void pcsMenu(void) {
@@ -84,7 +82,7 @@ void pcsMenu(void) {
       display_Update();
       pce_internal_mode = HUCARD;
       setup_cart_PCE();
-      mode = mode_PCE;
+      mode = CORE_PCE;
       break;
 
     case 1:
@@ -93,7 +91,7 @@ void pcsMenu(void) {
       display_Update();
       pce_internal_mode = HUCARD_NOSWAP;
       setup_cart_PCE();
-      mode = mode_PCE;
+      mode = CORE_PCE;
       break;
 
     case 2:
@@ -102,7 +100,7 @@ void pcsMenu(void) {
       display_Update();
       pce_internal_mode = TURBOCHIP;
       setup_cart_PCE();
-      mode = mode_PCE;
+      mode = CORE_PCE;
       break;
 
     case 3:
@@ -600,9 +598,9 @@ void read_tennokoe_bank_PCE(int bank_index) {
     //   for (int i = 0; i < 16; i++) {
     //     uint8_t b = sdBuffer[c + i];
     //     print_Msg_PaddedHexByte(b);
-    //     //print_Msg(F(" "));
+    //     //print_Msg(FS(FSTRING_SPACE));
     //   }
-    //   println_Msg(F(""));
+    //   println_Msg(FS(FSTRING_EMPTY));
     // }
 
     if (block_index == 0) {
@@ -611,7 +609,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
         uint8_t b = sdBuffer[i];
         print_Msg_PaddedHexByte(b);
       }
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
     }
     if (block_index == 0 && sdBuffer[2] == 0x42 && sdBuffer[3] == 0x4D) {
       if (sdBuffer[0] != 0x48 || sdBuffer[1] != 0x55) {
@@ -630,7 +628,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   //Close the file:
   myFile.close();
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -730,7 +728,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     print_Error(F("File doesn't exist"));
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -820,7 +818,7 @@ void read_rom_PCE(void) {
   //CRC search and rename ROM
   crc_search(fileName, folder, rom_size, crc);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -832,7 +830,7 @@ void pceMenu() {
   unsigned char mainMenu;
 
   if (pce_internal_mode == HUCARD || pce_internal_mode == HUCARD_NOSWAP) {
-    strcpy_P(menuOptions[0], menuOptionspceCart_0);
+    strcpy_P(menuOptions[0], FSTRING_READ_ROM);
     sprintf_P(menuOptions[1], menuOptionspceCart_1, tennokoe_bank_index + 1);
     sprintf_P(menuOptions[2], menuOptionspceCart_2, tennokoe_bank_index + 1);
     strcpy_P(menuOptions[3], menuOptionspceCart_3);
@@ -842,7 +840,7 @@ void pceMenu() {
     } else {
       sprintf_P(menuOptions[5], menuOptionspceCart_5, FORCED_SIZE);
     }
-    strcpy_P(menuOptions[6], string_reset2);
+    strcpy_P(menuOptions[6], FSTRING_RESET);
     mainMenu = question_box(F("PCE HuCARD menu"), menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu

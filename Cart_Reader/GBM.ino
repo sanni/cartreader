@@ -1,7 +1,7 @@
 //******************************************
 // GB MEMORY MODULE
 //******************************************
-#ifdef enable_GBX
+#ifdef ENABLE_GBX
 
 /******************************************
   Menu
@@ -86,7 +86,7 @@ void gbmMenu() {
       // Clear screen
       display_Clear();
       if (blankcheckFlash_GBM()) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
         println_Msg(F("ERROR"));
@@ -162,7 +162,7 @@ void gbmMenu() {
       // Erase mapping
       eraseMapping_GBM();
       if (blankcheckMapping_GBM()) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
         print_Error(F("Erasing failed"));
@@ -173,7 +173,7 @@ void gbmMenu() {
       writeMapping_GBM();
       break;
   }
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();

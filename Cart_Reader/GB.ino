@@ -1,7 +1,7 @@
 //******************************************
 // GAME BOY MODULE
 //******************************************
-#ifdef enable_GBX
+#ifdef ENABLE_GBX
 
 /******************************************
    Variables
@@ -22,31 +22,24 @@ static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
 static const char gbxMenuItem5[] PROGMEM = "Flash Codebreaker";
 static const char gbxMenuItem6[] PROGMEM = "Flash Datel Device";
-//static const char gbxMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5, gbxMenuItem6, string_reset2 };
+static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2, gbxMenuItem3, gbxMenuItem4, gbxMenuItem5, gbxMenuItem6, FSTRING_RESET };
 
 // GB menu items
-static const char GBMenuItem1[] PROGMEM = "Read ROM";
-static const char GBMenuItem2[] PROGMEM = "Read Save";
-static const char GBMenuItem3[] PROGMEM = "Write Save";
-//static const char GBMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGB[] PROGMEM = { GBMenuItem1, GBMenuItem2, GBMenuItem3, string_reset2 };
+static const char* const menuOptionsGB[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
 // GB Flash items
 static const char GBFlashItem1[] PROGMEM = "29F016/32/33 Cart";
 static const char GBFlashItem2[] PROGMEM = "CFI Cart";
 static const char GBFlashItem3[] PROGMEM = "CFI Cart and Save";
 static const char GBFlashItem4[] PROGMEM = "GB Smart";
-//static const char GBFlashItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, string_reset2 };
+static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, FSTRING_RESET };
 
 // 29F Flash items
 static const char GBFlash29Item1[] PROGMEM = "DIY MBC3 (WR)";
 static const char GBFlash29Item2[] PROGMEM = "DIY MBC5 (WR)";
 static const char GBFlash29Item3[] PROGMEM = "HDR MBC30 (Audio)";
 static const char GBFlash29Item4[] PROGMEM = "HDR GameBoy Cam";
-//static const char GBFlashItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsGBFlash29[] PROGMEM = { GBFlash29Item1, GBFlash29Item2, GBFlash29Item3, GBFlash29Item4, string_reset2 };
+static const char* const menuOptionsGBFlash29[] PROGMEM = { GBFlash29Item1, GBFlash29Item2, GBFlash29Item3, GBFlash29Item4, FSTRING_RESET };
 
 // Pelican Codebreaker, Brainboy, and Monster Brain Operation Menu
 static const char PelicanRead[] PROGMEM = "Read Device";
@@ -74,14 +67,14 @@ void gbxMenu() {
       display_Clear();
       display_Update();
       setup_GB();
-      mode = mode_GB;
+      mode = CORE_GB;
       break;
 
     case 1:
       display_Clear();
       display_Update();
       setup_GBA();
-      mode = mode_GBA;
+      mode = CORE_GBA;
       break;
 
     case 2:
@@ -108,7 +101,7 @@ void gbxMenu() {
               display_Clear();
               display_Update();
               setup_GB();
-              mode = mode_GB;
+              mode = CORE_GB;
 
               // Change working dir to root
               sd.chdir("/");
@@ -127,7 +120,7 @@ void gbxMenu() {
               display_Clear();
               display_Update();
               setup_GB();
-              mode = mode_GB;
+              mode = CORE_GB;
 
               // Change working dir to root
               sd.chdir("/");
@@ -146,7 +139,7 @@ void gbxMenu() {
               display_Clear();
               display_Update();
               setup_GB();
-              mode = mode_GB;
+              mode = CORE_GB;
 
               //Setup Audio-In(PH4) as Output
               DDRH |= (1 << 4);
@@ -172,7 +165,7 @@ void gbxMenu() {
               display_Clear();
               display_Update();
               setup_GB();
-              mode = mode_GB;
+              mode = CORE_GB;
 
               //Flash first bank with erase
               // Change working dir to root
@@ -190,7 +183,7 @@ void gbxMenu() {
               println_Msg(F("to B2 (Bank 2)"));
               println_Msg(F("if you want to flash"));
               println_Msg(F("a second game"));
-              println_Msg(F(""));
+              println_Msg(FS(FSTRING_EMPTY));
               // Prints string out of the common strings array either with or without newline
               print_STR(press_button_STR, 1);
               display_Update();
@@ -203,7 +196,7 @@ void gbxMenu() {
               writeFlash29F_GB(3, 0);
 
               // Reset
-              println_Msg(F(""));
+              println_Msg(FS(FSTRING_EMPTY));
               // Prints string out of the common strings array either with or without newline
               print_STR(press_button_STR, 1);
               display_Update();
@@ -222,7 +215,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GB();
-          mode = mode_GB;
+          mode = CORE_GB;
 
           // Change working dir to root
           sd.chdir("/");
@@ -250,7 +243,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GB();
-          mode = mode_GB;
+          mode = CORE_GB;
 
           // Change working dir to root
           sd.chdir("/");
@@ -325,7 +318,7 @@ void gbxMenu() {
           display_Clear();
           display_Update();
           setup_GBSmart();
-          mode = mode_GB_GBSmart;
+          mode = CORE_GB_GBSMART;
           break;
 
         case 4:
@@ -339,7 +332,7 @@ void gbxMenu() {
       display_Clear();
       display_Update();
       setup_GBM();
-      mode = mode_GBM;
+      mode = CORE_GBM;
       break;
 
     case 4:
@@ -367,7 +360,7 @@ void gbxMenu() {
 
       // RST(PH0) to H
       PORTH |= (1 << 0);
-      mode = mode_GB;
+      mode = CORE_GB;
       display_Clear();
       display_Update();
       unsigned char gbPelican;
@@ -424,7 +417,7 @@ void gbxMenu() {
 
       // RST(PH0) to H
       PORTH |= (1 << 0);
-      mode = mode_GB;
+      mode = CORE_GB;
       display_Clear();
       display_Update();
       unsigned char gbDatel;
@@ -497,7 +490,7 @@ void gbMenu() {
       sd.chdir("/");
       readROM_GB();
       compare_checksums_GB();
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
       break;
@@ -517,7 +510,7 @@ void gbMenu() {
       } else {
         print_Error(F("No save or unsupported type"));
       }
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       break;
 
     case 2:
@@ -550,7 +543,7 @@ void gbMenu() {
       } else {
         print_Error(F("No save or unsupported type"));
       }
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       break;
 
     case 3:
@@ -657,7 +650,7 @@ void showCartInfo_GB() {
     else if (romType == 0x104)
       print_Msg(F("M161"));
 
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     print_Msg(F("ROM Size: "));
     switch (romSize) {
       case 0:
@@ -697,7 +690,7 @@ void showCartInfo_GB() {
         break;
     }
 
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     //print_Msg(F("Banks: "));
     //println_Msg(romBanks);
 
@@ -741,13 +734,13 @@ void showCartInfo_GB() {
 
       default: print_Msg(F("None"));
     }
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     //print_Msg(F("Checksum: "));
     //println_Msg(checksumStr);
     //display_Update();
 
     // Wait for user input
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -964,9 +957,9 @@ void getCartInfo_GB() {
 
     if (logoChecksum != 0x1546) {
     print_Error(F("STARTUP LOGO ERROR"));
-    println_Msg(F(""));
-    println_Msg(F(""));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press Button to"));
     println_Msg(F("ignore or powercycle"));
     println_Msg(F("to try again"));
@@ -995,9 +988,9 @@ void getCartInfo_GB() {
 
   if (headerChecksum != sdBuffer[0x14D]) {
     print_Error(F("HEADER CHECKSUM ERROR"));
-    println_Msg(F(""));
-    println_Msg(F(""));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press Button to"));
     println_Msg(F("ignore or clean"));
     println_Msg(F("cart and try again"));
@@ -1611,7 +1604,7 @@ void readSRAMFLASH_MBC6_GB() {
   myFile.close();
 
   // Signal end of process
-  println_Msg(F("OK"));
+  println_Msg(FS(FSTRING_OK));
   display_Update();
 }
 
@@ -2282,7 +2275,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     myFile.close();
 
     if (writeErrors == 0) {
-      println_Msg(F("OK"));
+      println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
       println_Msg(F("Error"));
@@ -2642,7 +2635,7 @@ bool writeCFI_GB() {
     myFile.close();
 
     if (writeErrors == 0) {
-      println_Msg(F("OK"));
+      println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
       print_STR(error_STR, 0);
@@ -3096,7 +3089,7 @@ void writePelican_GB() {
   myFile.close();
 
   if (writeErrors == 0) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     println_Msg(F("Please turn off the power."));
     display_Update();
   } else {
@@ -3428,7 +3421,7 @@ void writeMegaMem_GB() {
   myFile.close();
 
   if (writeErrors == 0) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     println_Msg(F("Please turn off the power."));
     display_Update();
   } else {
@@ -3736,7 +3729,7 @@ void writeGameshark_GB() {
   myFile.close();
 
   if (writeErrors == 0) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     println_Msg(F("Please turn off the power."));
     display_Update();
   } else {

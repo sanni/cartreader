@@ -53,7 +53,7 @@
     automatically be enabled if you selected HW2 or newer above.
 */
 
-//#define clockgen_installed
+//#define ENABLE_CLOCKGEN
 
 /****/
 
@@ -62,7 +62,7 @@
     type later in this file.
 */
 
-//#define RTC_installed
+//#define ENABLE_RTC
 
 /****/
 
@@ -71,218 +71,218 @@
 /* [ Atari 2600 --------------------------------------------------- ]
 */
 
-//#define enable_2600
+//#define ENABLE_2600
 
 /****/
 
 /* [ Atari 5200 --------------------------------------------------- ]
 */
 
-//#define enable_5200
+//#define ENABLE_5200
 
 /****/
 
 /* [ Atari 7800 --------------------------------------------------- ]
 */
 
-//#define enable_7800
+//#define ENABLE_7800
 
 /****/
 
 /* [ Benesse Pocket Challenge W ----------------------------------- ]
 */
 
-//#define enable_PCW
+//#define ENABLE_PCW
 
 /****/
 
 /* [ C64 --------------------------------------------------- ]
 */
 
-//#define enable_C64
+//#define ENABLE_C64
 
 /****/
 
 /* [ ColecoVision ------------------------------------------------- ]
 */
 
-//#define enable_COLV
+//#define ENABLE_COLV
 
 /****/
 
 /* [ Emerson Arcadia 2001 ----------------------------------------- ]
 */
 
-//#define enable_ARC
+//#define ENABLE_ARC
 
 /****/
 
 /* [ Fairchild Channel F ------------------------------------------ ]
 */
 
-//#define enable_FAIRCHILD
+//#define ENABLE_FAIRCHILD
 
 /****/
 
 /* [ Flashrom Programmer for SNES repros -------------------------- ]
 */
 
-//#define enable_FLASH
-//#define enable_FLASH16
+//#define ENABLE_FLASH
+//#define ENABLE_FLASH16
 
 /****/
 
 /* [ Game Boy (Color) and Advance --------------------------------- ]
 */
 
-#define enable_GBX
+#define ENABLE_GBX
 
 /****/
 
 /* [ Intellivision ------------------------------------------------ ]
 */
 
-//#define enable_INTV
+//#define ENABLE_INTV
 
 /****/
 
 /* [ Neo Geo Pocket ----------------------------------------------- ]
 */
 
-//#define enable_NGP
+//#define ENABLE_NGP
 
 /****/
 
 /* [ Nintendo 64 -------------------------------------------------- ]
 */
 
-#define enable_N64
+#define ENABLE_N64
 
 /****/
 
 /* [ Nintendo Entertainment System/Family Computer ---------------- ]
 */
 
-#define enable_NES
+#define ENABLE_NES
 
 /****/
 
 /* [ Magnavox Odyssey 2 ------------------------------------------- ]
 */
 
-//#define enable_ODY2
+//#define ENABLE_ODY2
 
 /****/
 
 /* [ MSX ------------------------------------------- ]
 */
 
-//#define enable_MSX
+//#define ENABLE_MSX
 
 /****/
 
 /* [ PC Engine/TurboGrafx 16 -------------------------------------- ]
 */
 
-//#define enable_PCE
+//#define ENABLE_PCE
 
 /****/
 
 /* [ Pokemon Mini -------------------------------------- ]
 */
 
-//#define enable_POKE
+//#define ENABLE_POKE
 
 /****/
 
 /* [ Sega Master System/Mark III/Game Gear/SG-1000 ---------------- ]
 */
 
-#define enable_SMS
+#define ENABLE_SMS
 
 /****/
 
 /* [ Sega Mega Drive/Genesis -------------------------------------- ]
 */
 
-#define enable_MD
+#define ENABLE_MD
 
 /****/
 
 /* [ Super Famicom SF Memory Cassette ----------------------------- ]
 */
 
-//#define enable_SFM
+//#define ENABLE_SFM
 
 /****/
 
 /* [ Super Famicom Satellaview ------------------------------------ ]
 */
 
-//#define enable_SV
+//#define ENABLE_SV
 
 /****/
 
 /* [ Super Famicom Sufami Turbo ----------------------------------- ]
 */
 
-// #define enable_ST
+// #define ENABLE_ST
 
 /****/
 
 /* [ Super Famicom Game Processor RAM Cassette -------------------- ]
 */
 
-//#define enable_GPC
+//#define ENABLE_GPC
 
 /****/
 
 /* [ Super Nintendo ----------------------------------------------- ]
 */
 
-#define enable_SNES
+#define ENABLE_SNES
 
 /****/
 
 /* [ Vectrex --------------------------------------------------- ]
 */
 
-//#define enable_VECTREX
+//#define ENABLE_VECTREX
 
 /****/
 
 /* [ Virtual Boy -------------------------------------------------- ]
 */
 
-//#define enable_VBOY
+//#define ENABLE_VBOY
 
 /****/
 
 /* [ Watara Supervision ------------------------------------------- ]
 */
 
-//#define enable_WSV
+//#define ENABLE_WSV
 
 /****/
 
 /* [ WonderSwan and Benesse Pocket Challenge v2 ------------------- ]
 */
 
-//#define enable_WS
+//#define ENABLE_WS
 
 /****/
 
 /* [ Super A'can -------------------------------------------------- ]
 */
 
-//#define enable_SUPRACAN
+//#define ENABLE_SUPRACAN
 
 /****/
 
 /* [ Casio Loopy -------------------------------------------------- ]
 */
 
-//#define enable_LOOPY
+//#define ENABLE_LOOPY
 
 /****/
 
@@ -316,7 +316,7 @@
       Green, Red, Blue
 */
 
-#define background_color 100, 0, 0
+#define OPTION_LCD_BG_COLOR 100, 0, 0
 
 /****/
 
@@ -347,7 +347,7 @@
     Tests for shorts and other issues in your OSCR build.
 */
 
-#define enable_selftest
+#define ENABLE_SELFTEST
 
 /****/
 
@@ -358,7 +358,7 @@
       oscr.logging=0
 */
 
-#define global_log
+#define ENABLE_GLOBAL_LOG
 
 /****/
 
@@ -376,8 +376,8 @@
     Toggle clock calibration menu and whether or not to use calibration data from snes_clk.txt
 */
 
-//#define clockgen_calibration
-//#define use_clockgen_calibration
+//#define OPTION_CLOCKGEN_CALIBRATION
+//#define OPTION_CLOCKGEN_USE_CALIBRATION
 
 /****/
 
@@ -403,7 +403,7 @@
     Configure how the MD core saves are formatted.
 
     Can be set using config:
-      md.sramType=0
+      md.saveType=0
 
     If config is enabled, this option does nothing -- use the config.
 
@@ -413,7 +413,7 @@
       2: Same as 1 + pad with 0xFF so that the file size is 64KB.
 */
 
-//#define DEFAULT_VALUE_segaSram16bit 0
+//#define OPTION_MD_DEFAULT_SAVE_TYPE 0
 
 /****/
 
@@ -423,7 +423,7 @@
     with all Cart Readers
 */
 
-//#define fastcrc
+//#define OPTION_N64_FASTCRC
 
 /****/
 
@@ -431,7 +431,7 @@
     Enable to save a n64log.txt file with rom info in /N64/ROM
 */
 
-//#define savesummarytotxt
+//#define OPTION_N64_SAVESUMMARY
 
 /****/
 
@@ -450,33 +450,33 @@
 #endif
 
 #if (defined(HW4) || defined(HW5))
-# define enable_LCD
-# define enable_neopixel
-# define enable_rotary
+# define ENABLE_LCD
+# define ENABLE_NEOPIXEL
+# define ENABLE_ROTARY
 //# define rotate_counter_clockwise
-# define clockgen_installed
-# define fastcrc
-# define ws_adapter_v2
+# define ENABLE_CLOCKGEN
+# define OPTION_N64_FASTCRC
+# define OPTION_WS_ADAPTER_V2
 #endif
 
 #if (defined(HW2) || defined(HW3))
-# define enable_OLED
-# define enable_Button2
-# define clockgen_installed
-# define CA_LED
-# define fastcrc
+# define ENABLE_OLED
+# define ENABLE_BUTTON2
+# define ENABLE_CLOCKGEN
+# define ENABLE_CA_LED
+# define OPTION_N64_FASTCRC
 #endif
 
 #if defined(HW1)
-# define enable_OLED
-//#define clockgen_installed
-//#define fastcrc
+# define ENABLE_OLED
+//#define ENABLE_CLOCKGEN
+//#define OPTION_N64_FASTCRC
 #endif
 
 #if defined(SERIAL_MONITOR)
-# define enable_serial
-//#define clockgen_installed
-//#define fastcrc
+# define ENABLE_SERIAL
+//#define ENABLE_CLOCKGEN
+//#define OPTION_N64_FASTCRC
 #endif
 
 /* Firmware updater only works with HW3 and HW5 */

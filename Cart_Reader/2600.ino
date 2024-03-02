@@ -1,7 +1,7 @@
 //******************************************
 // ATARI 2600 MODULE
 //******************************************
-#if defined(enable_2600)
+#if defined(ENABLE_2600)
 // Atari 2600
 // Cartridge Pinout
 // 24P 2.54mm pitch connector
@@ -56,10 +56,8 @@ byte e7size;
 //  Menu
 //******************************************
 // Base Menu
-static const char a2600MenuItem1[] PROGMEM = "Select Cart";
-static const char a2600MenuItem2[] PROGMEM = "Read ROM";
 static const char a2600MenuItem3[] PROGMEM = "Set Mapper";
-static const char* const menuOptions2600[] PROGMEM = { a2600MenuItem1, a2600MenuItem2, a2600MenuItem3, string_reset2 };
+static const char* const menuOptions2600[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, a2600MenuItem3, FSTRING_RESET };
 
 void setup_2600() {
   // Request 5V
@@ -99,7 +97,7 @@ void setup_2600() {
   checkStatus_2600();
   strcpy(romName, "ATARI");
 
-  mode = mode_2600;
+  mode = CORE_2600;
 }
 
 void a2600Menu() {
@@ -565,7 +563,7 @@ void readROM_2600() {
   }
   calcCRC(fileName, crcsize, NULL, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -583,11 +581,11 @@ void checkStatus_2600() {
     EEPROM_writeAnything(8, a2600size);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 2600 READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   if (a2600mapper == 0x20)
     println_Msg(F("2K"));
@@ -633,7 +631,7 @@ void checkStatus_2600() {
   else
     Serial.print(a2600[a2600size]);
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
@@ -642,21 +640,21 @@ void checkStatus_2600() {
 //******************************************
 
 void setMapper_2600() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  uint8_t b = 0;
   int i = 0;
   // Check Button Status
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
 
   if (buttonVal1 == LOW) {  // Button Pressed
     while (1) {             // Scroll Mapper List
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       buttonVal1 = (PING & (1 << 2));      //PG2
 #endif
       if (buttonVal1 == HIGH) {  // Button Released
@@ -712,11 +710,11 @@ void setMapper_2600() {
     println_Msg(F("TP"));
   else
     println_Msg(a2600mapselect, HEX);
-  println_Msg(F(""));
-#if defined(enable_OLED)
+  println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
   print_STR(press_to_change_STR, 1);
   print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   print_STR(rotate_to_change_STR, 1);
   print_STR(press_to_select_STR, 1);
 #endif
@@ -749,11 +747,11 @@ void setMapper_2600() {
         println_Msg(F("TP"));
       else
         println_Msg(a2600mapselect, HEX);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -784,11 +782,11 @@ void setMapper_2600() {
         println_Msg(F("TP"));
       else
         println_Msg(a2600mapselect, HEX);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -900,7 +898,7 @@ bool readVals_ATARI(char* a2600game, char* a2600mm, char* a2600ll) {
 bool getCartListInfo_2600() {
   bool buttonreleased = 0;
   bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F(" HOLD TO FAST CYCLE"));
   display_Update();
@@ -908,9 +906,9 @@ bool getCartListInfo_2600() {
   Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
 #endif
   delay(2000);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
   if (buttonVal1 == LOW) {  // Button Held - Fast Cycle
@@ -919,19 +917,19 @@ bool getCartListInfo_2600() {
         if (strcmp(a2600csvEND, a2600game) == 0) {
           a2600csvFile.seek(0);  // Restart
         } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           display_Clear();
           println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(a2600game);
           display_Update();
 #else
           Serial.print(F("CART TITLE:"));
           Serial.println(a2600game);
 #endif
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
           buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
           buttonVal1 = (PING & (1 << 2));  //PG2
 #endif
           if (buttonVal1 == HIGH) {  // Button Released
@@ -944,41 +942,41 @@ bool getCartListInfo_2600() {
           }
         }
       }
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       buttonVal1 = (PING & (1 << 2));      //PG2
 #endif
       if (buttonVal1 == HIGH)  // Button Released
         break;
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);
   println_Msg(F("FAST CYCLE OFF"));
   display_Update();
 #else
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
   Serial.println(F("FAST CYCLE OFF"));
   Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
   Serial.println(F("DOUBLE CLICK TO STEP BACK"));
   Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
   while (readVals_ATARI(a2600game, a2600mm, a2600ll)) {
     if (strcmp(a2600csvEND, a2600game) == 0) {
       a2600csvFile.seek(0);  // Restart
     } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       display_Clear();
       println_Msg(F("CART TITLE:"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(a2600game);
       display.setCursor(0, 48);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -988,7 +986,7 @@ bool getCartListInfo_2600() {
       Serial.println(a2600game);
 #endif
       while (1) {  // Single Step
-        int b = checkButton();
+        uint8_t b = checkButton();
         if (b == 1) {  // Continue (press)
           break;
         }
@@ -1002,7 +1000,7 @@ bool getCartListInfo_2600() {
           new2600mapper = strtol(a2600mm, NULL, 10);
           EEPROM_writeAnything(7, new2600mapper);
           cartselected = 1;  // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           println_Msg(F("SELECTION MADE"));
           display_Update();
 #else
@@ -1017,8 +1015,8 @@ bool getCartListInfo_2600() {
       }
     }
   }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("END OF FILE"));
   display_Update();
 #else
@@ -1030,10 +1028,10 @@ bool getCartListInfo_2600() {
 
 void checkCSV_2600() {
   if (getCartListInfo_2600()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(a2600game);
     display_Update();
     // Display Settings
@@ -1042,16 +1040,16 @@ void checkCSV_2600() {
     println_Msg(new2600mapper, HEX);
     display_Update();
 #else
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     Serial.println(F("CART SELECTED"));
     Serial.println(a2600game);
     // Display Settings
     Serial.print(F("CODE: "));
     Serial.println(new2600mapper, HEX);
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
 #endif
   } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
     println_Msg(F("NO SELECTION"));
     display_Update();
@@ -1074,7 +1072,7 @@ void checkSize_2600() {
 }
 
 void setCart_2600() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(a2600cartCSV);
   display_Update();
@@ -1084,7 +1082,7 @@ void setCart_2600() {
   sd.chdir(folder);  // Switch Folder
   a2600csvFile = sd.open(a2600cartCSV, O_READ);
   if (!a2600csvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
     println_Msg(F("CSV FILE NOT FOUND!"));
     display_Update();

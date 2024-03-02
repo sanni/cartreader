@@ -49,15 +49,14 @@ Also all the menus are stored in progmem and are only recalled to sram when need
 const char N64ContMenuItem1[] PROGMEM = "Test Controller";  
 const char N64ContMenuItem2[] PROGMEM = "Read ControllerPak";  
 const char N64ContMenuItem3[] PROGMEM = "Write ControllerPak";  
-const char N64ContMenuItem4[] PROGMEM = "Reset";  
-const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, N64ContMenuItem4};  
+const char* const menuOptionsN64Controller[] PROGMEM = {N64ContMenuItem1, N64ContMenuItem2, N64ContMenuItem3, FSTRING_RESET};
 ```
 In an effort to keep the codebase as portable as possible instead of using the functions supplied by the OLED library directly to print out text, auxiliary functions like `println_Msg` are being used. So if you want to change to another display library you don't need to change all the code but only the helper functions. 
 ```
 void print_Msg(long unsigned int message) {
-  if (enable_OLED)
+  if (ENABLE_OLED)
     display.print(message);
-  if (enable_Serial)
+  if (ENABLE_SERIAL)
     Serial.print(message);
 }
 ```

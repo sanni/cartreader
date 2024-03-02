@@ -77,7 +77,7 @@ void DynamicClockSerial::begin(unsigned long baud, byte config, unsigned long sc
 }
 
 // ClockedSerial setup
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SERIAL) && !defined(enable_serial) && defined(ENABLE_UPDATER)
+#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SERIAL) && !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
   #if defined(UBRRH) && defined(UBRRL)
     DynamicClockSerial ClockedSerial(&UBRRH, &UBRRL, &UCSRA, &UCSRB, &UCSRC, &UDR);
   #else

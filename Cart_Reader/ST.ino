@@ -1,7 +1,7 @@
 /******************************************
   SUPER FAMICOM SUFAMI TURBO MODULE
 ******************************************/
-#ifdef enable_ST
+#ifdef ENABLE_ST
 
 /******************************************
   Menu
@@ -9,7 +9,7 @@
 // Sufami Turbo menu items
 static const char stMenuItem1[] PROGMEM = "Read cart in Slot A";
 static const char stMenuItem2[] PROGMEM = "Read cart in Slot B";
-static const char* const menuOptionsST[] PROGMEM = { stMenuItem1, stMenuItem2, string_reset2 };
+static const char* const menuOptionsST[] PROGMEM = { stMenuItem1, stMenuItem2, FSTRING_RESET };
 
 void stMenu() {
   // Create ST menu with title and 3 options to choose from

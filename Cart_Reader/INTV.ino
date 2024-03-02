@@ -1,7 +1,7 @@
 //******************************************
 // INTELLIVISION MODULE
 //******************************************
-#ifdef enable_INTV
+#ifdef ENABLE_INTV
 
 // Mattel Intellivision
 // Cartridge Pinout
@@ -92,11 +92,7 @@ byte newintvsize;
 //  Menu
 //******************************************
 // Base Menu
-static const char intvMenuItem1[] PROGMEM = "Select Cart";
-static const char intvMenuItem2[] PROGMEM = "Read ROM";
-static const char intvMenuItem3[] PROGMEM = "Set Mapper + Size";
-//static const char intvMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsINTV[] PROGMEM = { intvMenuItem1, intvMenuItem2, intvMenuItem3, string_reset2 };
+static const char* const menuOptionsINTV[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void setup_INTV() {
   // Request 5V
@@ -134,7 +130,7 @@ void setup_INTV() {
   checkStatus_INTV();
   strcpy(romName, "INTV");
 
-  mode = mode_INTV;
+  mode = CORE_INTV;
 }
 
 void intvMenu() {
@@ -428,7 +424,7 @@ void readROM_INTV() {
   // Compare CRC32 to database and rename ROM if found
   compareCRC("intv.txt", 0, 1, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -490,20 +486,20 @@ void ecsBank(uint32_t addr, uint8_t bank) {
 //******************************************
 
 void setMapper_INTV() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  uint8_t b = 0;
   int i = 0;
   // Check Button Status
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));      // PG2
 #endif
   if (buttonVal1 == LOW) {  // Button Pressed
     while (1) {             // Scroll Mapper List
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       boolean buttonVal1 = (PING & (1 << 2));  // PG2
 #endif
       if (buttonVal1 == HIGH) {  // Button Released
@@ -533,11 +529,11 @@ void setMapper_INTV() {
   intvindex = i * 4;
   intvmapselect = pgm_read_byte(intvmapsize + intvindex);
   println_Msg(intvmapselect);
-  println_Msg(F(""));
-#if defined(enable_OLED)
+  println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
   print_STR(press_to_change_STR, 1);
   print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
   print_STR(rotate_to_change_STR, 1);
   print_STR(press_to_select_STR, 1);
 #endif
@@ -558,11 +554,11 @@ void setMapper_INTV() {
       intvindex = i * 4;
       intvmapselect = pgm_read_byte(intvmapsize + intvindex);
       println_Msg(intvmapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -580,11 +576,11 @@ void setMapper_INTV() {
       intvindex = i * 4;
       intvmapselect = pgm_read_byte(intvmapsize + intvindex);
       println_Msg(intvmapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
+      println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #endif
@@ -618,7 +614,7 @@ setmapper:
   }
   if (intvmapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(F(""));
+    Serial.println(FSTRING_EMPTY);
     newintvmapper = 0;
     goto setmapper;
   }
@@ -640,23 +636,23 @@ void checkMapperSize_INTV() {
 }
 
 void setROMSize_INTV() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (intvlo == intvhi)
     newintvsize = intvlo;
   else {
-    int b = 0;
+    uint8_t b = 0;
     int i = intvlo;
 
     // Only update display after input because of slow LCD library
     display_Clear();
     print_Msg(F("ROM Size: "));
     println_Msg(pgm_read_byte(&(INTV[i])));
-    println_Msg(F(""));
-#if defined(enable_OLED)
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
 #endif
@@ -674,11 +670,11 @@ void setROMSize_INTV() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(pgm_read_byte(&(INTV[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -693,11 +689,11 @@ void setROMSize_INTV() {
         display_Clear();
         print_Msg(F("ROM Size: "));
         println_Msg(pgm_read_byte(&(INTV[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
+        println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
         print_STR(press_to_change_STR, 1);
         print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
         print_STR(rotate_to_change_STR, 1);
         print_STR(press_to_select_STR, 1);
 #endif
@@ -735,7 +731,7 @@ setrom:
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FSTRING_EMPTY);
       goto setrom;
     }
   }
@@ -759,11 +755,11 @@ void checkStatus_INTV() {
     EEPROM_writeAnything(8, intvsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("INTELLIVISION READER"));
   println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
   print_Msg(F("ROM SIZE: "));
@@ -777,7 +773,7 @@ void checkStatus_INTV() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(pgm_read_byte(&(INTV[intvsize])));
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FSTRING_EMPTY);
 #endif
 }
 
@@ -873,17 +869,17 @@ void setCart_INTV() {
       skip_line(&myFile);
 
       println_Msg(F("Select your cartridge"));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(gamename);
       print_Msg(F("Size: "));
       print_Msg(cartSize);
       println_Msg(F("KB"));
       print_Msg(F("Mapper: "));
       println_Msg(intvmapper);
-#if defined(enable_OLED)
+#if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
+#elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
@@ -892,7 +888,7 @@ void setCart_INTV() {
 #endif
       display_Update();
 
-      int b = 0;
+      uint8_t b = 0;
       while (1) {
         // Check button input
         b = checkButton();

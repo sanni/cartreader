@@ -1,7 +1,7 @@
 //******************************************
 // SF MEMORY MODULE
 //******************************************
-#ifdef enable_SFM
+#ifdef ENABLE_SFM
 
 /******************************************
    SF Memory Clock Source
@@ -29,8 +29,7 @@ byte gameAddress[8];
 // SFM menu items
 static const char sfmMenuItem1[] PROGMEM = "Game Menu";
 static const char sfmMenuItem2[] PROGMEM = "Flash Menu";
-//static const char sfmMenuItem3[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSFM[] PROGMEM = { sfmMenuItem1, sfmMenuItem2, string_reset2 };
+static const char* const menuOptionsSFM[] PROGMEM = { sfmMenuItem1, sfmMenuItem2, FSTRING_RESET };
 
 // SFM flash menu items
 static const char sfmFlashMenuItem1[] PROGMEM = "Read Flash";
@@ -42,12 +41,9 @@ static const char sfmFlashMenuItem6[] PROGMEM = "Back";
 static const char* const menuOptionsSFMFlash[] PROGMEM = { sfmFlashMenuItem1, sfmFlashMenuItem2, sfmFlashMenuItem3, sfmFlashMenuItem4, sfmFlashMenuItem5, sfmFlashMenuItem6 };
 
 // SFM game menu items
-static const char sfmGameMenuItem1[] PROGMEM = "Read Sram";
 static const char sfmGameMenuItem2[] PROGMEM = "Read Game";
-static const char sfmGameMenuItem3[] PROGMEM = "Write Sram";
 static const char sfmGameMenuItem4[] PROGMEM = "Switch Game";
-//static const char sfmGameMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSFMGame[] PROGMEM = { sfmGameMenuItem1, sfmGameMenuItem2, sfmGameMenuItem3, sfmGameMenuItem4, string_reset2 };
+static const char* const menuOptionsSFMGame[] PROGMEM = { FSTRING_READ_SAVE, sfmGameMenuItem2, FSTRING_WRITE_SAVE, sfmGameMenuItem4, FSTRING_RESET };
 
 void sfmMenu() {
   // create menu with title and 3 options to choose from
@@ -64,7 +60,7 @@ void sfmMenu() {
       break;
     // Flash menu
     case 1:
-      mode = mode_SFM_Flash;
+      mode = CORE_SFM_FLASH;
       break;
     // Reset
     case 2:
@@ -108,7 +104,7 @@ void sfmGameMenu() {
           print_Msg(gameSubMenu + 0x80, HEX);
           println_Msg(F(" Timeout"));
           println_Msg(readBank_SFM(0, 0x2400), HEX);
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           print_FatalError(F("Powercycle SFM cart"));
         }
       }
@@ -117,7 +113,7 @@ void sfmGameMenu() {
 
       // Print info
       getCartInfo_SFM();
-      mode = mode_SFM_Game;
+      mode = CORE_SFM_GAME;
     } else {
       // No menu so switch to only game
       // Switch to game
@@ -129,7 +125,7 @@ void sfmGameMenu() {
 
       // Print info
       getCartInfo_SFM();
-      mode = mode_SFM_Game;
+      mode = CORE_SFM_GAME;
     }
   } else {
     print_Error(F("Switch to HiRom failed"));
@@ -193,7 +189,7 @@ void sfmGameOptions() {
       break;
   }
   if (gameSubMenu != 3) {
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -201,7 +197,7 @@ void sfmGameOptions() {
   }
 }
 
-#ifdef enable_FLASH
+#ifdef ENABLE_FLASH
 void sfmFlashMenu() {
   // create menu with title and 6 options to choose from
   unsigned char flashSubMenu;
@@ -224,7 +220,7 @@ void sfmFlashMenu() {
       print_Msg(F("Switch to HiRom..."));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
 
         // Reset flash
@@ -301,7 +297,7 @@ void sfmFlashMenu() {
       print_Msg(F("Switch to HiRom..."));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
         idFlash_SFM(0xC0);
         if (flashid == 0xc2f3) {
@@ -340,7 +336,7 @@ void sfmFlashMenu() {
       print_Msg(F("Switch to HiRom..."));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
         idFlash_SFM(0xC0);
         if (flashid == 0xc2f3) {
@@ -391,7 +387,7 @@ void sfmFlashMenu() {
       print_Msg(F("Blankcheck..."));
       display_Update();
       if (blankcheckMapping_SFM()) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
         println_Msg(F("Nope"));
@@ -420,11 +416,11 @@ void sfmFlashMenu() {
 
     // Go back
     case 5:
-      mode = mode_SFM;
+      mode = CORE_SFM;
       break;
   }
   if (flashSubMenu != 5) {
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -577,7 +573,7 @@ void setup_SFM() {
     clockgen.output_enable(SI5351_CLK2, 0);
     clockgen.output_enable(SI5351_CLK0, 1);
   }
-#ifdef clockgen_installed
+#ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
     print_FatalError(F("Clock Generator not found"));
@@ -600,8 +596,8 @@ void setup_SFM() {
     // Abort, something is wrong
     if (timeout == 5) {
       println_Msg(F("Hirom All Timeout"));
-      println_Msg(F(""));
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
+      println_Msg(FS(FSTRING_EMPTY));
       print_FatalError(F("Powercycle SFM cart"));
     }
   }
@@ -741,7 +737,7 @@ void getCartInfo_SFM() {
   display_Clear();
   print_Msg(F("Name: "));
   println_Msg(romName);
-  println_Msg(F(" "));
+  println_Msg(FS(FSTRING_SPACE));
 
   print_Msg(F("Version: 1."));
   println_Msg(romVersion);
@@ -1641,14 +1637,14 @@ boolean unlockHirom() {
   print_Msg(F("Switch to HiRom..."));
   display_Update();
   if (send_SFM(0x04) == 0x2A) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     display_Update();
     // Unlock Write Protection
     print_Msg(F("Enable Write..."));
     display_Update();
     send_SFM(0x02);
     if (readBank_SFM(0, 0x2401) == 0x4) {
-      println_Msg(F("OK"));
+      println_Msg(FS(FSTRING_OK));
       display_Update();
       return 1;
     } else {
@@ -1720,7 +1716,7 @@ void write_SFM(int startBank, uint32_t pos) {
       print_Msg(F("Blankcheck..."));
       display_Update();
       if (blankcheck_SFM(startBank)) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
         println_Msg(F("Nope"));
@@ -1733,7 +1729,7 @@ void write_SFM(int startBank, uint32_t pos) {
         print_Msg(F("Blankcheck..."));
         display_Update();
         if (blankcheck_SFM(startBank)) {
-          println_Msg(F("OK"));
+          println_Msg(FS(FSTRING_OK));
           display_Update();
         } else {
           print_FatalError(F("Could not erase flash"));
@@ -1750,7 +1746,7 @@ void write_SFM(int startBank, uint32_t pos) {
       display_Update();
       writeErrors = verifyFlash_SFM(startBank, pos);
       if (writeErrors == 0) {
-        println_Msg(F("OK"));
+        println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
         print_STR(error_STR, 0);

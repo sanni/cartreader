@@ -2,7 +2,7 @@
 // SNES Game Processor RAM Cassette code by LuigiBlood
 // Revision 1.0.0 February 2024
 //******************************************
-#ifdef enable_GPC
+#ifdef ENABLE_GPC
 
 /******************************************
    Game Processor RAM Cassette
@@ -29,8 +29,7 @@ void writeRAM_GPC(void);
 // GPC flash menu items
 static const char gpcFlashMenuItem1[] PROGMEM = "Read RAM";
 static const char gpcFlashMenuItem2[] PROGMEM = "Write RAM";
-static const char gpcFlashMenuItem3[] PROGMEM = "Back";
-static const char* const menuOptionsGPCFlash[] PROGMEM = { gpcFlashMenuItem1, gpcFlashMenuItem2, gpcFlashMenuItem3 };
+static const char* const menuOptionsGPCFlash[] PROGMEM = { gpcFlashMenuItem1, gpcFlashMenuItem2, FSTRING_RESET };
 
 
 void gpcMenu() {
@@ -100,7 +99,7 @@ void setup_GPC() {
     clockgen.output_enable(SI5351_CLK1, 0);
     clockgen.output_enable(SI5351_CLK2, 1);
   }
-#ifdef clockgen_installed
+#ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
     print_FatalError(F("Clock Generator not found"));

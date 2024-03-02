@@ -1,7 +1,7 @@
 //******************************************
 // SUPER NINTENDO MODULE
 //******************************************
-#ifdef enable_SNES
+#ifdef ENABLE_SNES
 
 /******************************************
   Defines
@@ -35,40 +35,31 @@ static const char snsMenuItem3[] PROGMEM = "Satellaview BS-X";
 static const char snsMenuItem4[] PROGMEM = "Sufami Turbo";
 static const char snsMenuItem5[] PROGMEM = "Game Processor RAM";
 static const char snsMenuItem6[] PROGMEM = "Flash repro";
-#ifdef clockgen_calibration
+#ifdef OPTION_CLOCKGEN_CALIBRATION
 static const char snsMenuItem7[] PROGMEM = "Calibrate Clock";
-//static const char snsMenuItem8[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, snsMenuItem7, string_reset2 };
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, snsMenuItem7, FSTRING_RESET };
 #else
-//static const char snsMenuItem6[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, string_reset2 };
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, FSTRING_RESET };
 #endif
 
 // SNES menu items
-static const char SnesMenuItem1[] PROGMEM = "Read ROM";
-static const char SnesMenuItem2[] PROGMEM = "Read Save";
-static const char SnesMenuItem3[] PROGMEM = "Write Save";
 static const char SnesMenuItem4[] PROGMEM = "Test SRAM";
-static const char SnesMenuItem5[] PROGMEM = "Cycle cart";
 static const char SnesMenuItem6[] PROGMEM = "Force cart type";
-//static const char SnesMenuItem7[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsSNES[] PROGMEM = { SnesMenuItem1, SnesMenuItem2, SnesMenuItem3, SnesMenuItem4, SnesMenuItem5, SnesMenuItem6, string_reset2 };
+static const char* const menuOptionsSNES[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, SnesMenuItem4, FSTRING_REFRESH_CART, SnesMenuItem6, FSTRING_RESET };
 
 // Manual config menu items
 static const char confMenuItem1[] PROGMEM = "Use header info";
 static const char confMenuItem2[] PROGMEM = "4MB LoROM 256K SRAM";
 static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
 static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
-//static const char confMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, string_reset2 };
+static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, FSTRING_RESET };
 
 // Repro menu items
 static const char reproMenuItem1[] PROGMEM = "LoROM (P0)";
 static const char reproMenuItem2[] PROGMEM = "HiROM (P0)";
 static const char reproMenuItem3[] PROGMEM = "ExLoROM (P1)";
 static const char reproMenuItem4[] PROGMEM = "ExHiROM (P1)";
-//static const char reproMenuItem5[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, string_reset2 };
+static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, FSTRING_RESET };
 
 // SNES repro menu
 void reproMenu() {
@@ -80,7 +71,7 @@ void reproMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (snsRepro) {
-#ifdef enable_FLASH
+#ifdef ENABLE_FLASH
     case 0:
       // LoRom
       display_Clear();
@@ -89,7 +80,7 @@ void reproMenu() {
       setup_Flash8();
       id_Flash8();
       wait();
-      mode = mode_FLASH8;
+      mode = CORE_FLASH8;
       break;
 
     case 1:
@@ -100,7 +91,7 @@ void reproMenu() {
       setup_Flash8();
       id_Flash8();
       wait();
-      mode = mode_FLASH8;
+      mode = CORE_FLASH8;
       break;
 
     case 2:
@@ -111,7 +102,7 @@ void reproMenu() {
       setup_Flash8();
       id_Flash8();
       wait();
-      mode = mode_FLASH8;
+      mode = CORE_FLASH8;
       break;
 
     case 3:
@@ -122,7 +113,7 @@ void reproMenu() {
       setup_Flash8();
       id_Flash8();
       wait();
-      mode = mode_FLASH8;
+      mode = CORE_FLASH8;
       break;
 #endif
 
@@ -137,12 +128,12 @@ void snsMenu() {
   // create menu with title and 7 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-#ifdef clockgen_calibration
+#ifdef OPTION_CLOCKGEN_CALIBRATION
   convertPgm(menuOptionsSNS, 8);
-  snsCart = question_box(F("Select Cart Type"), menuOptions, 8, 0);
+  snsCart = question_box(FS(FSTRING_SELECT_CART_TYPE), menuOptions, 8, 0);
 #else
   convertPgm(menuOptionsSNS, 7);
-  snsCart = question_box(F("Select Cart Type"), menuOptions, 7, 0);
+  snsCart = question_box(FS(FSTRING_SELECT_CART_TYPE), menuOptions, 7, 0);
 #endif
 
   // wait for user choice to come back from the question box menu
@@ -151,46 +142,46 @@ void snsMenu() {
       display_Clear();
       display_Update();
       setup_Snes();
-      mode = mode_SNES;
+      mode = CORE_SNES;
       break;
 
-#ifdef enable_SFM
+#ifdef ENABLE_SFM
     case 1:
       display_Clear();
       display_Update();
       setup_SFM();
-      mode = mode_SFM;
+      mode = CORE_SFM;
       break;
 #endif
 
-#ifdef enable_SV
+#ifdef ENABLE_SV
     case 2:
       display_Clear();
       display_Update();
       setup_SV();
-      mode = mode_SV;
+      mode = CORE_SV;
       break;
 #endif
 
-#ifdef enable_ST
+#ifdef ENABLE_ST
     case 3:
       display_Clear();
       display_Update();
       setup_ST();
-      mode = mode_ST;
+      mode = CORE_ST;
       break;
 #endif
 
-#ifdef enable_GPC
+#ifdef ENABLE_GPC
     case 4:
       display_Clear();
       display_Update();
       setup_GPC();
-      mode = mode_GPC;
+      mode = CORE_GPC;
       break;
 #endif
 
-#ifdef enable_FLASH
+#ifdef ENABLE_FLASH
     case 5:
       setup_FlashVoltage();
       reproMenu();
@@ -198,7 +189,7 @@ void snsMenu() {
 #endif
 
     case 6:
-#ifdef clockgen_calibration
+#ifdef OPTION_CLOCKGEN_CALIBRATION
       clkcal();
       break;
 
@@ -234,7 +225,7 @@ void snesMenu() {
           compare_checksum();
           // CRC32
           compareCRC("snes.txt", 0, 1, 0);
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
           save_log();
 #endif
           display_Update();
@@ -286,8 +277,8 @@ void snesMenu() {
         println_Msg(F("Warning:"));
         println_Msg(F("This can erase"));
         println_Msg(F("your save games"));
-        println_Msg(F(""));
-        println_Msg(F(""));
+        println_Msg(FS(FSTRING_EMPTY));
+        println_Msg(FS(FSTRING_EMPTY));
         println_Msg(F("Press any button to"));
         println_Msg(F("start sram testing"));
         display_Update();
@@ -344,7 +335,7 @@ void snesMenu() {
       resetArduino();
       break;
   }
-  //println_Msg(F(""));
+  //println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -489,7 +480,7 @@ void setup_Snes() {
     clockgen.update_status();
     delay(500);
   }
-#ifdef clockgen_installed
+#ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
     print_FatalError(F("Clock Generator not found"));
@@ -755,8 +746,8 @@ void getCartInfo_SNES() {
     println_Msg(F("ERROR"));
     println_Msg(F("Rom header corrupt"));
     println_Msg(F("or missing"));
-    println_Msg(F(""));
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press button for"));
     println_Msg(F("manual configuration"));
     println_Msg(F("or powercycle if SA1"));
@@ -782,7 +773,7 @@ void getCartInfo_SNES() {
     print_Msg(F("ExHiRom"));
   else
     print_Msg(romType);
-  print_Msg(F(" "));
+  print_Msg(FS(FSTRING_SPACE));
   if (romSpeed == 0)
     println_Msg(F("SlowROM"));
   else if (romSpeed == 2)
@@ -830,7 +821,7 @@ void getCartInfo_SNES() {
   else if (romChips == 249)
     println_Msg(F("SPC RAM RTC"));
   else
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
 
 
   if (altconf)
@@ -860,14 +851,14 @@ void getCartInfo_SNES() {
   display_Update();
 
   // Wait for user input
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
 #endif
-#ifdef enable_serial
-  println_Msg(F(" "));
+#ifdef ENABLE_SERIAL
+  println_Msg(FS(FSTRING_SPACE));
 #endif
 
   // Start manual config
@@ -1456,7 +1447,7 @@ void readROM_SNES() {
         display_Update();
         readHiRomBanks(240, 256, &myFile);
       }
-      //println_Msg(F(""));
+      //println_Msg(FS(FSTRING_EMPTY));
       display_Clear();  // need more space due to the 4 progress bars
 
       // Return mapping registers to initial settings...
@@ -2256,7 +2247,7 @@ boolean eraseSRAM(byte b) {
     }
   }
   if (writeErrors == 0) {
-    println_Msg(F("OK"));
+    println_Msg(FS(FSTRING_OK));
     return 1;
   } else {
     println_Msg(F("ERROR"));

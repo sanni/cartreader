@@ -1,7 +1,7 @@
 //******************************************
 // BENESSE POCKET CHALLENGE W MODULE
 //******************************************
-#ifdef enable_PCW
+#ifdef ENABLE_PCW
 
 // Benesse Pocket Challenge W
 // Cartridge Pinout
@@ -130,16 +130,13 @@ void setup_PCW() {
 
   strcpy(romName, "PCW");
 
-  mode = mode_PCW;
+  mode = CORE_PCW;
 }
 
 //******************************************
 //  MENU
 //******************************************
-static const char pcwmenuItem1[] PROGMEM = "Read ROM";
-static const char pcwmenuItem2[] PROGMEM = "Read SRAM";
-static const char pcwmenuItem3[] PROGMEM = "Write SRAM";
-static const char* const menuOptionsPCW[] PROGMEM = { pcwmenuItem1, pcwmenuItem2, pcwmenuItem3, string_reset2 };
+static const char* const menuOptionsPCW[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
 void pcwMenu() {
   convertPgm(menuOptionsPCW, 4);
@@ -425,7 +422,7 @@ void readSingleROM_PCW() {
   print_Msg(F("READING "));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB SINGLE-PACK");
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
 
   // Create file
   strcpy(fileName, romName);
@@ -467,7 +464,7 @@ void readSingleROM_PCW() {
   compareCRC("pcw.txt", 0, 1, 0);
 
   // Wait for user input
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -564,7 +561,7 @@ void readMultiROM_PCW() {
   print_Msg(F("READING "));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB MULTI-PACK");
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
 
   // Create file
   strcpy(fileName, romName);
@@ -625,7 +622,7 @@ void readMultiROM_PCW() {
   compareCRC("pcw.txt", 0, 1, 0);
 
   // Wait for user input
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();

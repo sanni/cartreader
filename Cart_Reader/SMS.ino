@@ -1,7 +1,7 @@
 //***********************************************************
 // SEGA MASTER SYSTEM / MARK III / GAME GEAR / SG-1000 MODULE
 //***********************************************************
-#ifdef enable_SMS
+#ifdef ENABLE_SMS
 
 //******************************************
 //   Menus
@@ -16,10 +16,7 @@ static const char SMSAdapterItem6[] PROGMEM = "SG-1000 raphnet";
 static const char* const SMSAdapterMenu[] PROGMEM = { SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5, SMSAdapterItem6 };
 
 // Operations menu
-static const char SMSOperationItem1[] PROGMEM = "Read Rom";
-static const char SMSOperationItem2[] PROGMEM = "Read from SRAM";
-static const char SMSOperationItem3[] PROGMEM = "Write to SRAM";
-static const char* const SMSOperationMenu[] PROGMEM = { SMSOperationItem1, SMSOperationItem2, SMSOperationItem3, string_reset2 };
+static const char* const SMSOperationMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
 // Rom sizes menu
 static const char SMSRomSizeItem1[] PROGMEM = "8 KB";
@@ -122,21 +119,21 @@ void smsOperations() {
   switch (SMSOperation) {
     case 0:
       // Read ROM
-      mode = mode_SMS;
+      mode = CORE_SMS;
       setup_SMS();
       readROM_SMS();
       break;
 
     case 1:
       // Read SRAM
-      mode = mode_SMS;
+      mode = CORE_SMS;
       setup_SMS();
       readSRAM_SMS();
       break;
 
     case 2:
       // Write SRAM
-      mode = mode_SMS;
+      mode = CORE_SMS;
       setup_SMS();
       writeSRAM_SMS();
       break;
@@ -421,7 +418,7 @@ void getCartInfo_SMS() {
     // print_Msg(bank);
     // print_Msg(F(" offset "));
     // print_Msg_PaddedHex32(mirror_offset + 0x7FF0);
-    // println_Msg(F(""));
+    // println_Msg(FS(FSTRING_EMPTY));
 
     if (strcmp(romName2, romName) == 0) {
       break;
@@ -509,13 +506,13 @@ void getCartInfo_SMS() {
     // Display cart info
     display_Clear();
     println_Msg(F("SMS/GG header not found"));
-    println_Msg(F(" "));
+    println_Msg(FS(FSTRING_SPACE));
     print_Msg(F("Name: "));
     println_Msg(romName);
     print_Msg(F("Selected Size: "));
     print_Msg(cartSize / 1024);
     println_Msg(F("KB"));
-    println_Msg(F(" "));
+    println_Msg(FS(FSTRING_SPACE));
     sprintf(romName, "UNKNOWN");
   }
 
@@ -527,17 +524,17 @@ void getCartInfo_SMS() {
     } else {
       println_Msg(F("GG header info"));
     }
-    println_Msg(F(" "));
+    println_Msg(FS(FSTRING_SPACE));
     print_Msg(F("Name: "));
     println_Msg(romName);
     print_Msg(F("Size: "));
     print_Msg(cartSize / 1024);
     println_Msg(F("KB"));
-    println_Msg(F(" "));
+    println_Msg(FS(FSTRING_SPACE));
   }
 
 // Wait for user input
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -619,13 +616,13 @@ void readROM_SMS() {
       //   for (word xi = 0; xi < 0x100; xi++) {
       //     if (xi%16==0) {
       //       print_Msg_PaddedHex16(xi);
-      //       print_Msg(F(" "));
+      //       print_Msg(FS(FSTRING_SPACE));
       //     }
       //     print_Msg_PaddedHexByte(sdBuffer[xi]);
       //     if (xi>0&&((xi+1)%16)==0) {
-      //       println_Msg(F(""));
+      //       println_Msg(FS(FSTRING_EMPTY));
       //     } else {
-      //       print_Msg(F(" "));
+      //       print_Msg(FS(FSTRING_SPACE));
       //     }
       //   }
       // }
@@ -649,7 +646,7 @@ void readROM_SMS() {
     compareCRC("sg1000.txt", 0, 1, 0);
   }
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   save_log();
 #endif
 
@@ -740,7 +737,7 @@ void writeSRAM_SMS() {
       }
       print_Msg(F("sramSize: "));
       print_Msg(sramSize);
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       word bankSize = 16 * 1024;
       for (word address = 0x0; address < sramSize; address += 512) {
         byte currBank = address >= bankSize ? 1 : 0;

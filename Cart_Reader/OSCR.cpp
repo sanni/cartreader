@@ -35,6 +35,7 @@
 * CHANGES :
 *
 * REF NO    VERSION  DATE        WHO            DETAIL
+*           13.2     2024-03-02  Ancyker        Add string constants
 *           13.2     2024-02-29  Ancyker        Add config support
 *           12.5     2023-03-29  Ancyker        Initial version
 *
@@ -42,10 +43,36 @@
 
 #include "OSCR.h"
 
-/*==== VARIABLES ==================================================*/
+/*==== CONSTANTS ==================================================*/
 
+/**
+ * String Constants
+ **/
 // Firmware Version
-char ver[5] = "13.2";
+constexpr char PROGMEM FSTRING_VERSION[] = "V13.2";
+
+// Universal
+constexpr char PROGMEM FSTRING_RESET[] = "Reset";
+constexpr char PROGMEM FSTRING_OK[] = "OK";
+constexpr char PROGMEM FSTRING_EMPTY[] = "";
+constexpr char PROGMEM FSTRING_SPACE[] = " ";
+
+// Messages
+constexpr char PROGMEM FSTRING_OSCR[] = "OSCR";
+constexpr char PROGMEM FSTRING_MODULE_NOT_ENABLED[] = "Module is not enabled.";
+
+// Cart
+constexpr char PROGMEM FSTRING_READ_ROM[] = "Read ROM";
+constexpr char PROGMEM FSTRING_READ_SAVE[] = "Read Save";
+constexpr char PROGMEM FSTRING_WRITE_SAVE[] = "Write Save";
+constexpr char PROGMEM FSTRING_SELECT_CART[] = "Select Cart";
+constexpr char PROGMEM FSTRING_SELECT_CART_TYPE[] = "Select Cart Type";
+constexpr char PROGMEM FSTRING_SET_SIZE[] = "Set Size";
+constexpr char PROGMEM FSTRING_REFRESH_CART[] = "Refresh Cart";
+
+/*==== /CONSTANTS =================================================*/
+
+/*==== VARIABLES ==================================================*/
 
 // Clock speed
 unsigned long clock = CS_16MHZ;
@@ -56,17 +83,12 @@ VOLTS voltage = VOLTS_SET_5V;
 #if defined(ENABLE_CONFIG)
 
 FsFile configFile;
-bool useConfig = false;
+bool useConfig;
 
-# if defined(global_log)
+# if defined(ENABLE_GLOBAL_LOG)
 // Logging
 bool loggingEnabled = true;
-# endif /* global_log */
-#else /* !ENABLE_CONFIG */
-# if defined(global_log)
-// Logging: Define it as true using a const instead.
-const bool loggingEnabled = true;
-# endif /* global_log */
+# endif /* ENABLE_GLOBAL_LOG */
 #endif /* ENABLE_CONFIG */
 
 /*==== /VARIABLES =================================================*/
@@ -77,11 +99,11 @@ const bool loggingEnabled = true;
 * DESCRIPTION :     Prints the version & feature string to serial
 *                   
 *F*/
-#if !defined(enable_serial) && defined(ENABLE_UPDATER)
+#if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
 void printVersionToSerial() {
-    ClockedSerial.print(F("OSCR"));
+    ClockedSerial.print(FS(FSTRING_OSCR));
     ClockedSerial.print(F("::"));
-    ClockedSerial.print(ver);
+    ClockedSerial.print(FS(FSTRING_VERSION));
     ClockedSerial.print(F("//"));
   #if defined(HW1)
     ClockedSerial.print(F("HW1"));
@@ -101,20 +123,20 @@ void printVersionToSerial() {
   #if defined (ENABLE_VSELECT)
     ClockedSerial.print(F("|VSELECT"));
   #endif
-  #if defined (RTC_installed)
+  #if defined (ENABLE_RTC)
     ClockedSerial.print(F("|RTC"));
   #endif
-  #if defined (clockgen_installed)
+  #if defined (ENABLE_CLOCKGEN)
     ClockedSerial.print(F("|CLOCKGEN"));
   #endif
-  #if defined (fastcrc)
+  #if defined (OPTION_N64_FASTCRC)
     ClockedSerial.print(F("|FASTCRC"));
   #endif
   #if defined (ENABLE_3V3FIX)
     ClockedSerial.print(F("|3V3FIX"));
   #endif
 
-  ClockedSerial.println(F(""));
+  ClockedSerial.println(FS(FSTRING_EMPTY));
 }
 #else
 void printVersionToSerial() {}
@@ -236,14 +258,14 @@ VOLTS setVoltage(VOLTS newVoltage) {
       // Adjust clock speed when 3V3FIX is enabled
   #if defined(ENABLE_3V3FIX)
       // Stop serial if running
-    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+    #if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
       ClockedSerial.end();
     #endif
       // Set clock speed        
       clock = CS_16MHZ;
       setClockScale(newVoltage); /*[2]*/
       // Restart serial
-    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+    #if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
       ClockedSerial.begin(UPD_BAUD);
     #endif
   #else
@@ -269,13 +291,13 @@ VOLTS setVoltage(VOLTS newVoltage) {
 
       // Adjust clock speed when 3V3FIX is enabled
   #if defined(ENABLE_3V3FIX)      
-    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+    #if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
       ClockedSerial.end();
     #endif
       // Set clock speed
       clock = CS_8MHZ;
       setClockScale(newVoltage); /*[2]*/
-    #if !defined(enable_serial) && defined(ENABLE_UPDATER)
+    #if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
       ClockedSerial.begin(UPD_BAUD);
     #endif
   #endif

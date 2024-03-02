@@ -1,7 +1,7 @@
 //******************************************
 // VIRTUALBOY MODULE
 //******************************************
-#ifdef enable_VBOY
+#ifdef ENABLE_VBOY
 // Nintendo VirtualBoy
 // Cartridge Pinout
 // 60P 2.00mm pitch connector
@@ -89,7 +89,7 @@ void setup_VBOY() {
 
   getCartInfo_VB();
 
-  mode = mode_VBOY;
+  mode = CORE_VBOY;
 }
 
 //******************************************
@@ -97,11 +97,7 @@ void setup_VBOY() {
 //******************************************
 
 // Base Menu
-static const char vboyMenuItem1[] PROGMEM = "Read ROM";
-static const char vboyMenuItem2[] PROGMEM = "Read SRAM";
-static const char vboyMenuItem3[] PROGMEM = "Write SRAM";
-//static const char vboyMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsVBOY[] PROGMEM = { vboyMenuItem1, vboyMenuItem2, vboyMenuItem3, string_reset2 };
+static const char* const menuOptionsVBOY[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
 void vboyMenu() {
   convertPgm(menuOptionsVBOY, 4);
@@ -127,7 +123,7 @@ void vboyMenu() {
       } else {
         print_Error(F("Cart has no SRAM"));
       }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -157,7 +153,7 @@ void vboyMenu() {
       } else {
         print_Error(F("Cart has no SRAM"));
       }
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -384,7 +380,7 @@ void getCartInfo_VB() {
 
   display_Clear();
   println_Msg(F("Cart Info"));
-  println_Msg(F(" "));
+  println_Msg(FS(FSTRING_SPACE));
   print_Msg(F("Name: "));
   println_Msg(romName);
   print_Msg(F("Size: "));
@@ -396,9 +392,9 @@ void getCartInfo_VB() {
     println_Msg(F(" KBit"));
   } else
     println_Msg(F("None"));
-  println_Msg(F(" "));
+  println_Msg(FS(FSTRING_SPACE));
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   // Wait for user input
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
@@ -478,9 +474,9 @@ void readROM_VB() {
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
   compareCRC("vb.txt", 0, 1, 0);
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   // Wait for user input
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
