@@ -752,7 +752,7 @@ void getCartInfo_MD() {
     id[c + 1] = loByte;
   }
 
-  //Identify games using SVP chip
+  // Identify games using SVP chip
   if (!strncmp("GM MK-1229 ", id, 11) || !strncmp("GM G-7001  ", id, 11))  // Virtua Racing (E/U/J)
     isSVP = 1;
   else
@@ -777,48 +777,48 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0x300000) {
     switch (chksum) {
-      case 0xBC5F:  //Batman Forever (World)
-      case 0x3CDD:  //Donald in Maui Mallard (Brazil) (En)
-      case 0x44AD:  //Donald in Maui Mallard (Europe) (Rev A)
-      case 0x2D9A:  //Foreman for Real (World)
-      case 0x5648:  //Justice League Task Force (World)
-      case 0x0A29:  //Mega 6 Vol. 3 (Europe)
-      case 0x7651:  //NFL Quarterback Club (World)
-      case 0x74CA:  //WWF RAW (World)
+      case 0xBC5F:  // Batman Forever (World)
+      case 0x3CDD:  // Donald in Maui Mallard (Brazil) (En)
+      case 0x44AD:  // Donald in Maui Mallard (Europe) (Rev A)
+      case 0x2D9A:  // Foreman for Real (World)
+      case 0x5648:  // Justice League Task Force (World)
+      case 0x0A29:  // Mega 6 Vol. 3 (Europe)
+      case 0x7651:  // NFL Quarterback Club (World)
+      case 0x74CA:  // WWF RAW (World)
         cartSize = 0x400000;
         break;
     }
   }
   if (cartSize == 0x200000) {
     switch (chksum) {
-      case 0x2078:  //Dynamite Headdy (USA, Europe)
+      case 0x2078:  // Dynamite Headdy (USA, Europe)
         chksum = 0x9877;
         break;
-      case 0xAE95:  //Winter Olympic Games (USA)
+      case 0xAE95:  // Winter Olympic Games (USA)
         chksum = 0x56A0;
         break;
     }
   }
   if (cartSize == 0x180000) {
     switch (chksum) {
-      case 0xFFE2:  //Cannon Fodder (Europe)
-      case 0xF418:  //Chaos Engine, The (Europe)
-      case 0xF71D:  //Fatal Fury (Europe, Korea) (En)
-      case 0xA884:  //Flashback (Europe) (En,Fr)
-      case 0x7D68:  //Flashback - The Quest for Identity (USA) (En,Fr)
-      case 0x030D:  //Shining Force (Europe)
-      case 0xE975:  //Shining Force (USA)
+      case 0xFFE2:  // Cannon Fodder (Europe)
+      case 0xF418:  // Chaos Engine, The (Europe)
+      case 0xF71D:  // Fatal Fury (Europe, Korea) (En)
+      case 0xA884:  // Flashback (Europe) (En,Fr)
+      case 0x7D68:  // Flashback - The Quest for Identity (USA) (En,Fr)
+      case 0x030D:  // Shining Force (Europe)
+      case 0xE975:  // Shining Force (USA)
         cartSize = 0x200000;
         break;
     }
   }
   if (cartSize == 0x100000) {
     switch (chksum) {
-      case 0xCDF5:  //Life on Mars (Aftermarket)
+      case 0xCDF5:  // Life on Mars (Aftermarket)
         cartSize = 0x400000;
         chksum = 0x603A;
         break;
-      case 0xF85F:  //Metal Dragon (Aftermarket)
+      case 0xF85F:  // Metal Dragon (Aftermarket)
         cartSize = 0x200000;
         chksum = 0x6965;
         break;
@@ -826,55 +826,59 @@ void getCartInfo_MD() {
   }
   if (cartSize == 0xC0000) {
     switch (chksum) {
-      case 0x9D79:  //Wonder Boy in Monster World (USA, Europe)
+      case 0x9D79:  // Wonder Boy in Monster World (USA, Europe)
         cartSize = 0x100000;
         break;
     }
   }
   if (cartSize == 0x80000) {
     switch (chksum) {
-      case 0x5B3A:  //NHL 98 (USA)
+      case 0x06C1:  // Madden NFL 98 (USA)
+        cartSize = 0x200000;
+        chksum = 0x8473;
+        break;
+      case 0x5B3A:  // NHL 98 (USA)
         cartSize = 0x200000;
         chksum = 0x5613;
         break;
-      case 0xD07D:  //Zero Wing (Japan)
+      case 0xD07D:  // Zero Wing (Japan)
         cartSize = 0x100000;
         chksum = 0xF204;
         break;
-      case 0x95C9:  //Zero Wing (Europe)
-      case 0x9144:  //Zoop (Europe)
-      case 0xB8D4:  //Zoop (USA)
+      case 0x95C9:  // Zero Wing (Europe)
+      case 0x9144:  // Zoop (Europe)
+      case 0xB8D4:  // Zoop (USA)
         cartSize = 0x100000;
         break;
-      case 0xC422:  //Jeopardy! (USA)
+      case 0xC422:  // Jeopardy! (USA)
         chksum = 0xC751;
         break;
-      case 0x0C6A:  //Monopoly (USA)
+      case 0x0C6A:  // Monopoly (USA)
         chksum = 0xE1AA;
         break;
-      case 0xA760:  //Gain Ground (USA)
+      case 0xA760:  // Gain Ground (USA)
         chksum = 0x97CD;
         break;
-      case 0x1404:  //Wonder Boy III - Monster Lair (Japan, Europe) (En)
+      case 0x1404:  // Wonder Boy III - Monster Lair (Japan, Europe) (En)
         chksum = 0x53B9;
         break;
     }
   }
   if (cartSize == 0x40000) {
     switch (chksum) {
-      case 0x8BC6:  //Pac-Attack (USA)
-      case 0xB344:  //Pac-Panic (Europe)
+      case 0x8BC6:  // Pac-Attack (USA)
+      case 0xB344:  // Pac-Panic (Europe)
         cartSize = 0x100000;
         break;
     }
   }
   if (cartSize == 0x20000) {
     switch (chksum) {
-      case 0x7E50:  //Micro Machines 2 - Turbo Tournament (Europe)
+      case 0x7E50:  // Micro Machines 2 - Turbo Tournament (Europe)
         cartSize = 0x100000;
         chksum = 0xD074;
         break;
-      case 0x168B:  //Micro Machines - Military (Europe)
+      case 0x168B:  // Micro Machines - Military (Europe)
         cartSize = 0x100000;
         chksum = 0xCEE0;
         break;
@@ -897,42 +901,42 @@ void getCartInfo_MD() {
     chksum = 0x45C6;
   }
 
-  //YM2612 Instrument Editor (Aftermarket)
+  // YM2612 Instrument Editor (Aftermarket)
   if (!strncmp("GM 10101010", id, 11) && (chksum == 0xC439)) {
     chksum = 0x21B0;
     cartSize = 0x100000;
   }
 
-  //Technoptimistic (Aftermarket)
+  // Technoptimistic (Aftermarket)
   if (!strncmp("MU REMUTE01", id, 11) && (chksum == 0x0000)) {
     chksum = 0xB55C;
     cartSize = 0x400000;
   }
 
-  //Decoder (Aftermarket)
+  // Decoder (Aftermarket)
   if (!strncmp("GM REMUTE02", id, 11) && (chksum == 0x0000)) {
     chksum = 0x5426;
     cartSize = 0x400000;
   }
 
-  //Handy Harvy (Aftermarket)
+  // Handy Harvy (Aftermarket)
   if (!strncmp("GM HHARVYSG", id, 11) && (chksum == 0x0000)) {
     chksum = 0xD9D2;
     cartSize = 0x100000;
   }
 
-  //Jim Power - The Lost Dimension in 3D (Aftermarket)
+  // Jim Power - The Lost Dimension in 3D (Aftermarket)
   if (!strncmp("GM T-107036", id, 11) && (chksum == 0x0000)) {
     chksum = 0xAA28;
   }
 
-  //mikeyeldey95 (Aftermarket)
+  // mikeyeldey95 (Aftermarket)
   if (!strncmp("GM 00000000-43", id, 14) && (chksum == 0x0000)) {
     chksum = 0x921B;
     cartSize = 0x400000;
   }
 
-  //Enryuu Seiken Xiao-Mei (Aftermarket)
+  // Enryuu Seiken Xiao-Mei (Aftermarket)
   if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x1E0C)) {
     chksum = 0xE7E5;
     cartSize = 0x400000;
@@ -953,6 +957,34 @@ void getCartInfo_MD() {
   // Sasha Darko's Sacred Line II (Aftermarket)
   if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x0E9B)) {
     chksum = 0x6B4B;
+    cartSize = 0x400000;
+  }
+
+  // Sasha Darko's Sacred Line (Watermelon Release) (Aftermarket)
+  if (!strncmp("GM T-574323-00", id, 14) && (chksum == 0xAEDD)) {
+    cartSize = 0x400000;
+  }
+
+  // Kromasphere (Aftermarket)
+   if (!strncmp("GM MK-0000 -00", id, 14) && (chksum == 0xC536)) {
+    chksum = 0xFAB1;
+    cartSize = 0x200000;
+   }
+
+  // YM2017 (Aftermarket)
+   if (!strncmp("GM CSET0001-02", id, 14) && (chksum == 0x0000)) {
+    chksum = 0xE3A9;
+   }
+
+  // The Curse of Illmore Bay (Aftermarket)
+  if (!strncmp("1774          ", id, 14) && (chksum == 0x0000)) {
+    chksum = 0x6E34;
+    cartSize = 0x400000;
+  }
+
+  // Coffee Crisis (Aftermarket)
+  if (!strncmp("JN-20160131-03", id, 14) && (chksum == 0x0000)) {
+    chksum = 0x8040;
     cartSize = 0x400000;
   }
 
