@@ -3334,6 +3334,138 @@ F1098A5F,AQWP,04,SRAM_F_V102
 Game & Watch Gallery Advance (Europe).gba
 85C837AF,AQWP,04,SRAM_F_V102
 
+Game Boy Advance Video - All Grown Up! - Volume 1 (USA).gba
+FFBD4DA9,MGUE,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Edition Platinum (France).gba
+FC042F18,MCNF,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Edition Premium (France).gba
+58F1CDE8,MCPF,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Edition Speciale (France).gba
+71154D42,MCSF,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Limited Edition (USA).gba
+5D918B2D,MCME,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Platinum Edition (USA, Europe).gba
+6443554B,MCNE,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Premium Edition (USA, Europe).gba
+F2825729,MCPE,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Special Edition (USA) (Rev 5).gba
+1BAF372D,MCSE,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Special Edition (USA, Europe).gba
+E9B7B8A4,MCSE,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Volume 1 (USA, Europe).gba
+91F39447,MCTE,32,NONE
+
+Game Boy Advance Video - Cartoon Network Collection - Volume 2 (USA, Europe).gba
+4BFAA8DE,MC2E,32,NONE
+
+Game Boy Advance Video - Codename - Kids Next Door - Volume 1 (USA, Europe).gba
+4463F345,MKDE,32,NONE
+
+Game Boy Advance Video - Disney Channel Collection - Volume 1 (USA).gba
+7CC985CB,MDCE,32,NONE
+
+Game Boy Advance Video - Disney Channel Collection - Volume 2 (USA) (Rev 5).gba
+DA3B64F3,MDSE,32,NONE
+
+Game Boy Advance Video - Dora the Explorer - Volume 1 (USA).gba
+DD6A7FCC,MDRE,32,NONE
+
+Game Boy Advance Video - Dragon Ball GT - Volume 1 (USA).gba
+DA559199,MDBE,32,NONE
+
+Game Boy Advance Video - Nicktoons - Volume 3 (USA).gba
+6FBF5CEB,MN3E,32,NONE
+
+Game Boy Advance Video - Nicktoons Collection - Volume 1 (USA).gba
+5D47676F,MNCE,32,NONE
+
+Game Boy Advance Video - Nicktoons Collection - Volume 2 (USA).gba
+65DEEEB6,MN2E,32,NONE
+
+Game Boy Advance Video - Pokemon - Volume 1 (USA).gba
+A59EF954,MPAE,32,NONE
+
+Game Boy Advance Video - Pokemon - Volume 2 (USA).gba
+0DA1A383,MPBE,32,NONE
+
+Game Boy Advance Video - Pokemon - Volume 3 (USA).gba
+A36AA9C5,MPCE,32,NONE
+
+Game Boy Advance Video - Pokemon - Volume 4 (USA).gba
+BE468496,MPDE,32,NONE
+
+Game Boy Advance Video - Shark Tale (USA) (Rev 5).gba
+01468820,MSAE,64,NONE
+
+Game Boy Advance Video - Shark Tale (USA) (Rev 6).gba
+D2CF417A,MSAE,64,NONE
+
+Game Boy Advance Video - Shrek (USA) (Rev 5).gba
+690176E5,MSKE,64,NONE
+
+Game Boy Advance Video - Shrek (USA) (Rev 6).gba
+4010E9FA,MSKE,64,NONE
+
+Game Boy Advance Video - Shrek + Shark Tale (USA) (Rev 5).gba
+AADB3E3D,MSTE,64,NONE
+
+Game Boy Advance Video - Shrek 2 (USA) (Rev 5).gba
+0D353654,M2SE,64,NONE
+
+Game Boy Advance Video - Shrek 2 (USA) (Rev 6).gba
+925B6C02,M2SE,64,NONE
+
+Game Boy Advance Video - Sonic X - Volume 1 (USA).gba
+363C3EB8,MSHE,32,NONE
+
+Game Boy Advance Video - SpongeBob SquarePants - Volume 1 (USA) (Rev 1).gba
+D47BF1D4,MSSE,32,NONE
+
+Game Boy Advance Video - SpongeBob SquarePants - Volume 2 (USA) (Rev 1).gba
+7074364A,MS2E,32,NONE
+
+Game Boy Advance Video - SpongeBob SquarePants - Volume 3 (USA).gba
+9772CA45,MS3E,32,NONE
+
+Game Boy Advance Video - Strawberry Shortcake - Volume 1 (USA).gba
+FF7582EF,MSBE,32,NONE
+
+Game Boy Advance Video - Super Robot Monkey Team - Hyper Force Go! - Volume 1 (USA).gba
+D743A070,MSRE,32,NONE
+
+Game Boy Advance Video - Teenage Mutant Ninja Turtles - Le Demenagement (France).gba
+1EE78166,MTMF,32,NONE
+
+Game Boy Advance Video - Teenage Mutant Ninja Turtles - Things Change (USA, Europe).gba
+046589C8,MTME,32,NONE
+
+Game Boy Advance Video - The Adventures of Jimmy Neutron Boy Genius - Volume 1 (USA).gba
+0E556EDF,MJME,32,NONE
+
+Game Boy Advance Video - The Fairly OddParents! - Volume 1 (USA).gba
+7958DF20,MFOE,32,NONE
+
+Game Boy Advance Video - The Fairly OddParents! - Volume 2 (USA) (Rev 1).gba
+BBCBC6FD,MF2E,32,NONE
+
+Game Boy Advance Video - The Proud Family - Volume 1 (USA).gba
+C6A91365,MFPE,32,NONE
+
+Game Boy Advance Video - Yu-Gi-Oh! - Yugi vs. Joey (France).gba
+C9B6CCF1,MYGF,32,NONE
+
+Game Boy Advance Video - Yu-Gi-Oh! - Yugi vs. Joey (USA, Europe).gba
+8D631F4E,MYGE,32,NONE
+
 Game Boy Gallery 4 (Japan) (Virtual Console).gba
 11CFC797,AQWJ,04,SRAM_F_V102
 
