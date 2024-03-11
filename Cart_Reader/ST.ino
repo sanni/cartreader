@@ -194,6 +194,10 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // Close file:
   myFile.close();
 
+  // Compare dump CRC with db values
+  compareCRC("st.txt", 0, 1, 0);
+  
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
