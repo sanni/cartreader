@@ -44,6 +44,7 @@
 // CONTROL PINS:
 // CLK(PH1) - SNES CPUCLK
 // R/W(PH6) - SNES /RD
+// HALT(PH0) - SNES /RESET
 
 //******************************************
 //  Supported Mappers
@@ -58,9 +59,10 @@ static const byte PROGMEM a7800mapsize[] = {
   4, 4, 4,  // Double Dragon/Rampage 128K [78AC]
   5, 3, 3,  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
   6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant]
+  7, 1, 4,  // Bankset switching
 };
 
-byte a7800mapcount = 7;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
+byte a7800mapcount = 8;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
 byte a7800mapselect;
 int a7800index;
 
@@ -96,7 +98,7 @@ void setup_7800() {
   DDRL = 0xFF;
 
   // Set Control Pins to Output
-  //       ---(PH0)   ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
+  //       HALT(PH0)  ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
   DDRH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output (UNUSED)
@@ -106,7 +108,7 @@ void setup_7800() {
   DDRC = 0x00;
 
   // Setting Control Pins to HIGH
-  //       ---(PH0)    ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
+  //       HALT(PH0)   ---(PH3)   ---(PH4)   ---(PH5)   R/W(PH6)
   PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set Unused Data Pins (PA0-PA7) to Output
@@ -263,7 +265,32 @@ void writeData_7800(uint32_t addr, uint8_t data) {
   NOP;
   NOP;
   NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
   PORTH |= (1 << 6);  // R/W(PH6) HIGH = READ
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
 
   DDRC = 0x00;  // Reset to Input
 }
@@ -321,20 +348,11 @@ void readROM_7800() {
 
   switch (a7800mapper) {
     case 0:  // Standard 16K/32K/48K [7816/7832/7848]
-      if (a7800size > 1)
-        readSegment_7800(0x4000, 0x8000);  // +16K = 48K
-      if (a7800size > 0)
-        readSegment_7800(0x8000, 0xC000);  // +16K = 32K
-      // Base 16K
-      readSegment_7800(0xC000, 0x10000);  // 16K
+      readStandard_7800();
       break;
 
     case 1:  // SuperGame 128K [78SG]
-      for (int x = 0; x < 7; x++) {
-        writeData_7800(0x8000, x);         // Banks 0-6
-        readSegment_7800(0x8000, 0xC000);  // 16K * 7 = 112K
-      }
-      readSegment_7800(0xC000, 0x10000);  // Bank 7 +16 = 128K
+      readSupergame_7800();
       break;
 
     case 2:                              // SuperGame - Alien Brigade/Crossbow 144K [78S9]
@@ -392,6 +410,20 @@ void readROM_7800() {
         readSegment_7800(0x8000, 0xC000);  // 16K * 4 = 64K
       }
       break;
+
+    case 7: // Bankset switching
+      if (a7800size > 3) {
+        setHalt_7800(1);
+        readSupergame_7800();
+        setHalt_7800(0);
+        readSupergame_7800();
+      } else {
+        setHalt_7800(1);
+        readStandard_7800();
+        setHalt_7800(0);
+        readStandard_7800();
+      }
+      break;
   }
   myFile.close();
 
@@ -403,6 +435,38 @@ void readROM_7800() {
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
+}
+
+void readStandard_7800() {
+  if (a7800size > 1)
+    readSegment_7800(0x4000, 0x8000);  // +16K = 48K
+  if (a7800size > 0)
+    readSegment_7800(0x8000, 0xC000);  // +16K = 32K
+  // Base 16K
+  readSegment_7800(0xC000, 0x10000);  // 16K
+}
+
+void readSupergame_7800() {
+  for (int x = 0; x < 7; x++) {
+    writeData_7800(0x8000, x);         // Banks 0-6
+    readSegment_7800(0x8000, 0xC000);  // 16K * 7 = 112K
+  }
+  readSegment_7800(0xC000, 0x10000);  // Bank 7 +16 = 128K
+}
+
+void setHalt_7800(byte on) {
+  if(on == 1) {
+    PORTH |= (1 << 0);  // HALT(PH0) HIGH = SALLY
+  } else {
+    PORTH &= ~(1 << 0); // HALT(PH0) LOW = MARIA
+  }
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
 }
 
 //******************************************
@@ -560,6 +624,8 @@ void checkStatus_7800() {
     println_Msg(F("BASEBALL/ETC [78S4]"));
   else if (a7800mapper == 6)
     println_Msg(F("KARATEKA(PAL)[78S4]"));
+  else if (a7800mapper == 7)
+    println_Msg(F("BANKSET"));
   print_Msg(F("ROM SIZE: "));
   print_Msg(a7800[a7800size]);
   println_Msg(F("K"));
@@ -582,6 +648,8 @@ void checkStatus_7800() {
     Serial.println(F("Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
   else if (a7800mapper == 6)
     Serial.println(F("Karateka (PAL) [78S4 Variant]"));
+  else if (a7800mapper == 7)
+    Serial.println(F("Bankset"));
   Serial.print(F("ROM SIZE: "));
   Serial.print(A7800[a7800size]);
   Serial.println(F("K"));
@@ -637,6 +705,8 @@ void setMapper_7800() {
         println_Msg(F("BASEBALL/ETC  [78S4]"));
       else if (a7800mapselect == 6)
         println_Msg(F("KARATEKA(PAL) [78S4]"));
+      else if (a7800mapselect == 7)
+        println_Msg(F("BANKSET"));
       display_Update();
       if (i == (a7800mapcount - 1))
         i = 0;
@@ -665,6 +735,8 @@ void setMapper_7800() {
         println_Msg(F("BASEBALL/ETC  [78S4]"));
       else if (a7800mapselect == 6)
         println_Msg(F("KARATEKA(PAL) [78S4]"));
+      else if (a7800mapselect == 7)
+        println_Msg(F("BANKSET"));
       println_Msg(FS(FSTRING_EMPTY));
 #if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
@@ -702,6 +774,8 @@ void setMapper_7800() {
         println_Msg(F("BASEBALL/ETC  [78S4]"));
       else if (a7800mapselect == 6)
         println_Msg(F("KARATEKA(PAL) [78S4]"));
+      else if (a7800mapselect == 7)
+        println_Msg(F("BANKSET"));
       println_Msg(FS(FSTRING_EMPTY));
 #if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
@@ -738,6 +812,8 @@ void setMapper_7800() {
         println_Msg(F("BASEBALL/ETC  [78S4]"));
       else if (a7800mapselect == 6)
         println_Msg(F("KARATEKA(PAL) [78S4]"));
+      else if (a7800mapselect == 7)
+        println_Msg(F("BANKSET"));
       println_Msg(FS(FSTRING_EMPTY));
 #if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
@@ -770,7 +846,8 @@ setmapper:
   Serial.println(F("4 = Double Dragon/Rampage [78AC]"));
   Serial.println(F("5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
   Serial.println(F("6 = Karateka (PAL) [78S4 Variant]"));
-  Serial.print(F("Enter Mapper [0-6]: "));
+  Serial.println(F("7 = Bankset"));
+  Serial.print(F("Enter Mapper [0-7]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
