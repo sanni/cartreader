@@ -21,6 +21,9 @@
 // Cart Configurations
 // Format = {mapper,romsize}
 static const byte PROGMEM a2600mapsize[] = {
+  0x04, 5,  // Atari 32K with RAM (F4SC)
+  0x06, 4,  // Atari 16K with RAM (F6SC)
+  0x08, 2,  // Atari 8K with RAM (F8SC)
   0x20, 0,  // 2K
   0x3F, 2,  // Tigervision 8K
   0x40, 1,  // 4K [DEFAULT]
@@ -166,12 +169,15 @@ uint8_t readData_2600(uint16_t addr)  // Add Input Pullup
 
 void readSegment_2600(uint16_t startaddr, uint16_t endaddr) {
   for (uint16_t addr = startaddr; addr < endaddr; addr += 512) {
-    for (int w = 0; w < 512; w++) {
-      uint8_t temp = readData_2600(addr + w);
-      sdBuffer[w] = temp;
-    }
-    myFile.write(sdBuffer, 512);
+    readDataArray_2600(addr, 512);
   }
+}
+
+void readDataArray_2600(uint16_t addr, uint16_t size) {
+    for (int w = 0; w < size; w++) {
+      sdBuffer[w] = readData_2600(addr + w);
+    }
+    myFile.write(sdBuffer, size);
 }
 
 void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr) {
@@ -184,6 +190,11 @@ void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr)
     }
     myFile.write(sdBuffer, 512);
   }
+}
+
+void outputFF_2600(uint16_t size) {
+  memset(sdBuffer, 0xFF, size * sizeof(sdBuffer[0]));
+  myFile.write(sdBuffer, size);
 }
 
 void writeData_2600(uint16_t addr, uint8_t data) {
@@ -316,32 +327,17 @@ void readROM_2600() {
         readData_2600(0x1FF8 + x);
         // Split Read of 1st 0x200 bytes
         // 0x0000-0x0080 are DPC Registers (Random on boot)
-        for (int y = 0; y < 0x80; y++) {
-          sdBuffer[y] = 0xFF;  // Output 0xFFs for Registers
-        }
-        myFile.write(sdBuffer, 128);
-        for (int z = 0; z < 0x180; z++) {
-          sdBuffer[z] = readData_2600(0x1080 + z);
-        }
-        myFile.write(sdBuffer, 384);
+        outputFF_2600(0x80); // Output 0xFFs for Registers
+        readDataArray_2600(0x1080, 0x180);
         // Read Segment
         readSegment_2600(0x1200, 0x1800);
         // 0x1000-0x1080 are DPC Registers (Random on boot)
-        for (int y = 0; y < 0x80; y++) {
-          sdBuffer[y] = 0xFF;  // Output 0xFFs for Registers
-        }
-        myFile.write(sdBuffer, 128);
-        for (int z = 0; z < 0x180; z++) {
-          sdBuffer[z] = readData_2600(0x1880 + z);
-        }
-        myFile.write(sdBuffer, 384);
+        outputFF_2600(0x80); // Output 0xFFs for Registers
+        readDataArray_2600(0x1880, 0x180);
         // Read Segment
         readSegment_2600(0x1A00, 0x1E00);
         // Split Read of Last 0x200 bytes
-        for (int y = 0; y < 0x1F8; y++) {
-          sdBuffer[y] = readData_2600(0x1E00 + y);
-        }
-        myFile.write(sdBuffer, 504);
+        readDataArray_2600(0x1E00, 0x1F8);
         for (int z = 0; z < 8; z++) {
           // Set Bank to ensure 0x1FFA-0x1FFF is correct
           readData_2600(0x1FF8 + x);
@@ -422,14 +418,19 @@ void readROM_2600() {
       }
       break;
 
+    case 0x04: // F4SC Mapper 32KB \w RAM
     case 0xF4: // F4 Mapper 32KB
       for (int x = 0; x < 8; x++) {
         readData_2600(0x1FF4 + x);
-        readSegment_2600(0x1000, 0x1E00);
-        // Split Read of Last 0x200 bytes
-        for (int y = 0; y < 0x1F4; y++) {
-          sdBuffer[y] = readData_2600(0x1E00 + y);
+        if(a2600mapper == 0xF4) {
+          readSegment_2600(0x1000, 0x1200);
+        } else {
+          outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
+          readDataArray_2600(0x1100, 0x100);
         }
+        readSegment_2600(0x1200, 0x1E00);
+        // Split Read of Last 0x200 bytes
+        readDataArray_2600(0x1E00, 0x1F4);
         myFile.write(sdBuffer, 500);
         for (int z = 0; z < 12; z++) {
           // Set Bank to ensure 0x1FFC-0x1FFF is correct
@@ -440,15 +441,19 @@ void readROM_2600() {
       }
       break;
 
+    case 0x06: // F6SC Mapper 16KB \w RAM
     case 0xF6: // F6 Mapper 16KB
       for (int w = 0; w < 4; w++) {
         readData_2600(0x1FF6 + w);
-        readSegment_2600(0x1000, 0x1E00);
-        // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F6; x++) {
-          sdBuffer[x] = readData_2600(0x1E00 + x);
+        if(a2600mapper == 0xF6) {
+          readSegment_2600(0x1000, 0x1200);
+        } else {
+          outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
+          readDataArray_2600(0x1100, 0x100);
         }
-        myFile.write(sdBuffer, 502);
+        readSegment_2600(0x1200, 0x1E00);
+        // Split Read of Last 0x200 bytes
+        readDataArray_2600(0x1E00, 0x1F6);
         // Bank Registers 0x1FF6-0x1FF9
         for (int y = 0; y < 4; y++){
           readData_2600(0x1FFF); // Reset Bank
@@ -465,15 +470,19 @@ void readROM_2600() {
       readData_2600(0x1FFF); // Reset Bank
       break;
 
+    case 0x08: // F8SC Mapper 8KB \w RAM
     case 0xF8: // F8 Mapper 8KB
       for (int w = 0; w < 2; w++) {
         readData_2600(0x1FF8 + w);
-        readSegment_2600(0x1000, 0x1E00);
-        // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F8; x++) {
-          sdBuffer[x] = readData_2600(0x1E00 + x);
+        if(a2600mapper == 0xF8) {
+          readSegment_2600(0x1000, 0x1200);
+        } else {
+          outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
+          readDataArray_2600(0x1100, 0x100);
         }
-        myFile.write(sdBuffer, 504);
+        readSegment_2600(0x1200, 0x1E00);
+        // Split Read of Last 0x200 bytes
+        readDataArray_2600(0x1E00, 0x1F8);
         // Bank Registers 0x1FF8-0x1FF9
         for (int y = 0; y < 2; y++){
           readData_2600(0x1FFF); // Reset Bank
@@ -498,10 +507,7 @@ void readROM_2600() {
         readData_2600(0x1FF9 + w);
         readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F9; x++) {
-          sdBuffer[x] = readData_2600(0x1E00 + x);
-        }
-        myFile.write(sdBuffer, 505);
+        readDataArray_2600(0x1E00, 0x1F9);
         readData_2600(0x1FFF); // Reset Bank
         sdBuffer[0] = readData_2600(0x1FF9);
         // End of Bank 0x1FFA-0x1FFF
@@ -523,10 +529,7 @@ void readROM_2600() {
         writeData_2600(0x1FF8 + x, 0x1);  // Set Bank with D0 HIGH
         readSegment_2600(0x1000, 0x1E00);
         // Split Read of Last 0x200 bytes
-        for (int y = 0; y < 0x1F8; y++) {
-          sdBuffer[y] = readData_2600(0x1E00 + y);
-        }
-        myFile.write(sdBuffer, 504);
+        readDataArray_2600(0x1E00, 0x1F8);
         for (int z = 0; z < 8; z++) {
           // Set Bank to ensure 0x1FFB-0x1FFF is correct
           writeData_2600(0x1FF8 + x, 0x1);  // Set Bank with D0 HIGH
@@ -573,6 +576,31 @@ void readROM_2600() {
 // ROM SIZE
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void println_Mapper(byte mapper) {
+  if (mapper == 0x04)
+    println_Msg(F("F4SC"));
+  else if (mapper == 0x06)
+    println_Msg(F("F6SC"));
+  else if (mapper == 0x08)
+    println_Msg(F("F8SC"));
+  else if (mapper == 0x20)
+    println_Msg(F("2K"));
+  else if (mapper == 0x40)
+    println_Msg(F("4K"));
+  else if (mapper == 0x0A)
+    println_Msg(F("UA"));
+  else if (mapper == 0xC0)
+    println_Msg(F("CV"));
+  else if (mapper == 0xD0)
+    println_Msg(F("DPC"));
+  else if (mapper == 0xF9)
+    println_Msg(F("TP"));
+  else
+    println_Msg(mapper, HEX);
+}
+#endif
+
 void checkStatus_2600() {
   EEPROM_readAnything(7, a2600mapper);
   EEPROM_readAnything(8, a2600size);
@@ -587,20 +615,7 @@ void checkStatus_2600() {
   println_Msg(F("CURRENT SETTINGS"));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
-  if (a2600mapper == 0x20)
-    println_Msg(F("2K"));
-  else if (a2600mapper == 0x40)
-    println_Msg(F("4K"));
-  else if (a2600mapper == 0x0A)
-    println_Msg(F("UA"));
-  else if (a2600mapper == 0xC0)
-    println_Msg(F("CV"));
-  else if (a2600mapper == 0xD0)
-    println_Msg(F("DPC"));
-  else if (a2600mapper == 0xF9)
-    println_Msg(F("TP"));
-  else
-    println_Msg(a2600mapper, HEX);
+  println_Mapper(a2600mapper);
   print_Msg(F("ROM SIZE: "));
   if (a2600mapper == 0xD0)
     print_Msg(F("10"));
@@ -611,7 +626,13 @@ void checkStatus_2600() {
   wait();
 #else
   Serial.print(F("MAPPER:   "));
-  if (a2600mapper == 0x20)
+  if (mapper == 0x04)
+    Serial.println(F("F4SC"));
+  else if (mapper == 0x06)
+    Serial.println(F("F6SC"));
+  else if (mapper == 0x08)
+    Serial.println(F("F8SC"));
+  else if (a2600mapper == 0x20)
     Serial.println(F("2K"));
   else if (a2600mapper == 0x40)
     Serial.println(F("4K"));
@@ -625,6 +646,7 @@ void checkStatus_2600() {
     Serial.println(F("TP"));
   else
     Serial.println(a2600mapper, HEX);
+
   Serial.print(F("ROM SIZE: "));
   if (a2600mapper == 0xD0)
     Serial.print(F("10"));
@@ -638,6 +660,25 @@ void checkStatus_2600() {
 //******************************************
 // SET MAPPER
 //******************************************
+
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void displayMapperSelect_2600(int index) {
+  display_Clear();
+  print_Msg(F("Mapper: "));
+  a2600index = index * 2;
+  a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
+  println_Mapper(a2600mapselect);
+  println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
+  print_STR(press_to_change_STR, 1);
+  print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
+#endif
+  display_Update();
+}
+#endif
 
 void setMapper_2600() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -669,20 +710,7 @@ void setMapper_2600() {
       print_Msg(F("Mapper: "));
       a2600index = i * 2;
       a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
-      if (a2600mapselect == 0x20)
-        println_Msg(F("2K"));
-      else if (a2600mapselect == 0x40)
-        println_Msg(F("4K"));
-      else if (a2600mapselect == 0x0A)
-        println_Msg(F("UA"));
-      else if (a2600mapselect == 0xC0)
-        println_Msg(F("CV"));
-      else if (a2600mapselect == 0xD0)
-        println_Msg(F("DPC"));
-      else if (a2600mapselect == 0xF9)
-        println_Msg(F("TP"));
-      else
-        println_Msg(a2600mapselect, HEX);
+      println_Mapper(a2600mapselect);
       display_Update();
       if (i == (a2600mapcount - 1))
         i = 0;
@@ -692,33 +720,7 @@ void setMapper_2600() {
     }
   }
 
-  display_Clear();
-  print_Msg(F("Mapper: "));
-  a2600index = i * 2;
-  a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
-  if (a2600mapselect == 0x20)
-    println_Msg(F("2K"));
-  else if (a2600mapselect == 0x40)
-    println_Msg(F("4K"));
-  else if (a2600mapselect == 0x0A)
-    println_Msg(F("UA"));
-  else if (a2600mapselect == 0xC0)
-    println_Msg(F("CV"));
-  else if (a2600mapselect == 0xD0)
-    println_Msg(F("DPC"));
-  else if (a2600mapselect == 0xF9)
-    println_Msg(F("TP"));
-  else
-    println_Msg(a2600mapselect, HEX);
-  println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-  print_STR(press_to_change_STR, 1);
-  print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
-#endif
-  display_Update();
+  displayMapperSelect_2600(i);
 
   while (1) {
     b = checkButton();
@@ -729,33 +731,7 @@ void setMapper_2600() {
         i--;
 
       // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a2600index = i * 2;
-      a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
-      if (a2600mapselect == 0x20)
-        println_Msg(F("2K"));
-      else if (a2600mapselect == 0x40)
-        println_Msg(F("4K"));
-      else if (a2600mapselect == 0x0A)
-        println_Msg(F("UA"));
-      else if (a2600mapselect == 0xC0)
-        println_Msg(F("CV"));
-      else if (a2600mapselect == 0xD0)
-        println_Msg(F("DPC"));
-      else if (a2600mapselect == 0xF9)
-        println_Msg(F("TP"));
-      else
-        println_Msg(a2600mapselect, HEX);
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_2600(i);
     }
     if (b == 1) {  // Next Mapper (press)
       if (i == (a2600mapcount - 1))
@@ -764,33 +740,7 @@ void setMapper_2600() {
         i++;
 
       // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a2600index = i * 2;
-      a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
-      if (a2600mapselect == 0x20)
-        println_Msg(F("2K"));
-      else if (a2600mapselect == 0x40)
-        println_Msg(F("4K"));
-      else if (a2600mapselect == 0x0A)
-        println_Msg(F("UA"));
-      else if (a2600mapselect == 0xC0)
-        println_Msg(F("CV"));
-      else if (a2600mapselect == 0xD0)
-        println_Msg(F("DPC"));
-      else if (a2600mapselect == 0xF9)
-        println_Msg(F("TP"));
-      else
-        println_Msg(a2600mapselect, HEX);
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_2600(i);
     }
     if (b == 3) {  // Long Press - Execute (hold)
       new2600mapper = a2600mapselect;
@@ -799,20 +749,7 @@ void setMapper_2600() {
   }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
-  if (new2600mapper == 0x20)
-    println_Msg(F("2K"));
-  else if (new2600mapper == 0x40)
-    println_Msg(F("4K"));
-  if (new2600mapper == 0x0A)
-    print_Msg(F("UA"));
-  else if (new2600mapper == 0xC0)
-    print_Msg(F("CV"));
-  else if (new2600mapper == 0xD0)
-    println_Msg(F("DPC"));
-  else if (new2600mapper == 0xF9)
-    println_Msg(F("TP"));
-  else
-    print_Msg(new2600mapper, HEX);
+  println_Mapper(new2600mapper);
   println_Msg(F(" SELECTED"));
   display_Update();
   delay(1000);
@@ -820,22 +757,25 @@ void setMapper_2600() {
 setmapper:
   String newmap;
   Serial.println(F("SUPPORTED MAPPERS:"));
-  Serial.println(F("0 = 2K [Standard 2K]"));
-  Serial.println(F("1 = 3F [Tigervision]"));
-  Serial.println(F("2 = 4K [Standard 4K]"));
-  Serial.println(F("3 = CV [Commavid]"));
-  Serial.println(F("4 = DPC [Pitfall II]"));
-  Serial.println(F("5 = E0 [Parker Bros]"));
-  Serial.println(F("6 = E7 [M-Network]"));
-  Serial.println(F("7 = F0 [Megaboy]"));
-  Serial.println(F("8 = F4 [Atari 32K]"));
-  Serial.println(F("9 = F6 [Atari 16K]"));
-  Serial.println(F("10 = F8 [Atari 8K]"));
-  Serial.println(F("11 = FA [CBS RAM Plus]"));
-  Serial.println(F("12 = FE [Activision]"));
-  Serial.println(F("13 = TP [Time Pilot 8K]"));
-  Serial.println(F("14 = UA [UA Ltd]"));
-  Serial.print(F("Enter Mapper [0-14]: "));
+  Serial.println(F("0 = F4SC [Atari 32K \w RAM]"));
+  Serial.println(F("1 = F6SC [Atari 16K \w RAM]"));
+  Serial.println(F("2 = F8SC [Atari 8K \w RAM]"));
+  Serial.println(F("3 = 2K [Standard 2K]"));
+  Serial.println(F("4 = 3F [Tigervision]"));
+  Serial.println(F("5 = 4K [Standard 4K]"));
+  Serial.println(F("6 = CV [Commavid]"));
+  Serial.println(F("7 = DPC [Pitfall II]"));
+  Serial.println(F("8 = E0 [Parker Bros]"));
+  Serial.println(F("9 = E7 [M-Network]"));
+  Serial.println(F("10 = F0 [Megaboy]"));
+  Serial.println(F("11 = F4 [Atari 32K]"));
+  Serial.println(F("12 = F6 [Atari 16K]"));
+  Serial.println(F("13 = F8 [Atari 8K]"));
+  Serial.println(F("14 = FA [CBS RAM Plus]"));
+  Serial.println(F("15 = FE [Activision]"));
+  Serial.println(F("16 = TP [Time Pilot 8K]"));
+  Serial.println(F("16 = UA [UA Ltd]"));
+  Serial.print(F("Enter Mapper [0-17]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
