@@ -278,7 +278,7 @@ E7BAA5B9,BX2E,16,EEPROM_V124
 E76DB6EF,BX3P,32,EEPROM_V125
 
 2 in 1 Game Pack - Spider-Man + Spider-Man 2 (USA) (En,Fr,De+En,Fr,De,Es).gba
-0AE3637F,BX3E,32,EEPROM_V125
+3ABC30BD,BX3E,32,EEPROM_V125
 
 2 in 1 Game Pack - Tony Hawk's Underground + Kelly Slater's Pro Surfer (USA, Europe).gba
 6D8EF48A,BX4E,16,EEPROM_V122
@@ -1778,7 +1778,7 @@ Crash & Spyro Superpack - Spyro - Season of Ice + Crash Bandicoot - The Huge Adv
 CDBE00E3,B54E,16,EEPROM_V122
 
 Crash & Spyro Superpack - Spyro Orange - The Cortex Conspiracy + Crash Bandicoot Purple - Ripto's Rampage (USA).gba
-5940906E,B53E,32,EEPROM_V126
+9B76B90B,B53E,32,EEPROM_V126
 
 Crash Advance IV (USA) (Unl).gba
 4B67247C,0000,32,NONE
@@ -1835,7 +1835,7 @@ Crayon Shin-chan - Arashi o Yobu Cinemaland no Daibouken! (Japan).gba
 6E936A54,BKCJ,16,EEPROM_V124
 
 Crayon Shin-chan - Densetsu o Yobu Omake no Miyako Shockgaan! (Japan).gba
-45C84466,BC2J,32,EEPROM_V126
+52F463FE,BC2J,32,EEPROM_V126
 
 Crazy Chase (Europe) (En,Fr,De).gba
 313F4FFC,ACCP,04,EEPROM_V122
@@ -3887,7 +3887,7 @@ Harry Potter and the Sorcerer's Stone (USA, Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,
 F755065C,AHRE,08,EEPROM_V122
 
 Harry Potter Collection (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da).gba
-FFA9F4FB,BJPP,32,EEPROM_V126
+4F39C174,BJPP,32,EEPROM_V126
 
 Harry Potter IV (USA) (Unl).gba
 8F482DF4,0000,32,NONE
@@ -4787,10 +4787,10 @@ Legend of Spyro, The - A New Beginning (USA).gba
 1B81CC00,B3YE,16,EEPROM_V124
 
 Legend of Spyro, The - The Eternal Night (Europe) (En,Fr,De,Es,It,Nl).gba
-93B18353,BU7P,32,EEPROM_V126
+A3EED091,BU7P,32,EEPROM_V126
 
 Legend of Spyro, The - The Eternal Night (USA) (En,Fr).gba
-BD2751E6,BU7E,32,EEPROM_V126
+8D780224,BU7E,32,EEPROM_V126
 
 Legend of Zelda, The - A Link to the Past & Four Swords (Europe) (En,Fr,De,Es,It).gba
 5A164321,AZLP,08,EEPROM_V122
@@ -6110,7 +6110,7 @@ MX 2002 Featuring Ricky Carmichael (USA, Europe).gba
 0BF1DC56,A2XE,04,NONE
 
 My Animal Centre in Africa (Europe) (En,Fr,De,Es,It).gba
-16C0E028,BFRP,32,EEPROM_V126
+D4F6C94D,BFRP,32,EEPROM_V126
 
 My Little Pony - Crystal Princess - The Runaway Rainbow (USA).gba
 90DBD5EB,BL6E,04,NONE
@@ -9671,13 +9671,13 @@ Yaoxi Dao (China).gba
 9C32A829,A3AC,04,EEPROM_V122
 
 Yggdra Union - We'll Never Fight Alone (Europe).gba
-3E0DF130,BYUP,32,EEPROM_V126
+2931D6A8,BYUP,32,EEPROM_V126
 
 Yggdra Union - We'll Never Fight Alone (USA).gba
-3BFA68F7,BYUE,32,EEPROM_V126
+84B5666C,BYUE,32,EEPROM_V126
 
 Yggdra Union (Japan).gba
-A86F844A,BYUJ,32,EEPROM_V126
+BF53A3D2,BYUJ,32,EEPROM_V126
 
 Yoshi no Banyuuinryoku (Japan).gba
 31594B7A,KYGJ,08,EEPROM_V124
