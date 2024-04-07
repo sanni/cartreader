@@ -22,7 +22,7 @@ Shinkenzemi 'Chuugaku Kouza' - Chuu 3 Eigo (Japan) (6BB311NH).pcw
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Japan) (6BD410).pcw
 AD5136AE
 
-Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Alt) (Japan) (6BD410).pcw
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Japan) (6BD410) (Alt).pcw
 32A902B8
 
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Koumin (Japan) (6BE310).pcw
@@ -31,8 +31,11 @@ Shinkenzemi 'Chuugaku Kouza' - Chuugaku Koumin (Japan) (6BE310).pcw
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Rekishi (Japan) (5BC410).pcw
 7865BE62
 
-Shinkenzemi 'Chuugaku Kouza' - Chuugaku Rekishi (Alt) (Japan) (5BC410).pcw
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Rekishi (Japan) (5BC410) (Alt).pcw
 44AFEBAD
+
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Rekishi (Japan) (5BC410) (Alt 2).pcw
+A5EEC22E
 
 Shinkenzemi 'Chuugaku Kouza' - Koukou Juken (Ei - Sha - Ri) (Japan) (6BI711).pcw
 B9831924
@@ -196,7 +199,7 @@ Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Japan) (7BI712).pcw
 Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Japan) (9BI712).pcw
 0FCDC311
 
-Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Alt) (Japan) (9BI712).pcw
+Shinkenzemi Chuugaku Kouza - Koukou Juken (Koku - Suu) (Japan) (9BI712) (Alt).pcw
 C35A53A4
 
 Shinkenzemi Chuugaku Kouza - Koukou Juken EX (Yuugou - Shiryou Mondai Kouryaku) Rika Shakai (Japan) (3BI710).pcw
