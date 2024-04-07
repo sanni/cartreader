@@ -73,16 +73,13 @@ Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB215OW).pcw
 Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (New Horizon, Columbus 21) (Japan) (2BB211).pcw
 0B20B2D4
 
-Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB311NH).pcw
-A18685A5
-
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB313NC - 7BB313NC).pcw
 DDE96468
 
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB314TE).pcw
 D87A661F
 
-Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB311NH).pcw
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (0BB311NH - 7BB311NH).pcw
 A18685A5
 
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Japan) (7BB312SS).pcw
