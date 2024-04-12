@@ -472,7 +472,7 @@ void readROM_C64() {
     // Read 0x8002 to determine whether Single Chip or Two Chip
     // IF 0x75 OR 0x83, THEN Two Chip ELSE Single Chip
 
-    case 5:          // Ocean 128K/256K/512K
+    case 5: {        // Ocean 128K/256K/512K
       GAME_ENABLE;   // LOW
       EXROM_ENABLE;  // LOW
       ROML_ENABLE;
@@ -508,7 +508,7 @@ void readROM_C64() {
       }
       disablePorts_C64();
       break;
-
+    }
     case 6:           // Expert Cartridge (8K)
       GAME_DISABLE;   // HIGH
       EXROM_DISABLE;  // HIGH
