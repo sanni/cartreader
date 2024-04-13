@@ -485,6 +485,27 @@ void checkMapperSize_7800() {
   }
 }
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void println_Mapper7800(byte mapper) {
+  if (mapper == 0)
+    println_Msg(F("STANDARD"));
+  else if (mapper == 1)
+    println_Msg(F("SUPERGAME 128K[78SG]"));
+  else if (mapper == 2)
+    println_Msg(F("SUPERGAME 144K[78S9]"));
+  else if (mapper == 3)
+    println_Msg(F("F-18 HORNET   [78AB]"));
+  else if (mapper == 4)
+    println_Msg(F("DBLDRGN/RMPG  [78AC]"));
+  else if (mapper == 5)
+    println_Msg(F("BASEBALL/ETC  [78S4]"));
+  else if (mapper == 6)
+    println_Msg(F("KARATEKA(PAL) [78S4]"));
+  else if (mapper == 7)
+    println_Msg(F("BANKSET"));
+}
+#endif
+
 void setROMSize_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
@@ -610,22 +631,7 @@ void checkStatus_7800() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(a7800mapper);
-  if (a7800mapper == 0)
-    println_Msg(F("STANDARD"));
-  else if (a7800mapper == 1)
-    println_Msg(F("SUPERGAME [78SG]"));
-  else if (a7800mapper == 2)
-    println_Msg(F("SUPERGAME [78S9]"));
-  else if (a7800mapper == 3)
-    println_Msg(F("F-18 HORNET [78AB]"));
-  else if (a7800mapper == 4)
-    println_Msg(F("DBLDRGN/RMPG [78AC]"));
-  else if (a7800mapper == 5)
-    println_Msg(F("BASEBALL/ETC [78S4]"));
-  else if (a7800mapper == 6)
-    println_Msg(F("KARATEKA(PAL)[78S4]"));
-  else if (a7800mapper == 7)
-    println_Msg(F("BANKSET"));
+  println_Mapper7800(a7800mapper);
   print_Msg(F("ROM SIZE: "));
   print_Msg(a7800[a7800size]);
   println_Msg(F("K"));
@@ -661,6 +667,26 @@ void checkStatus_7800() {
 // SET MAPPER
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void displayMapperSelect_7800(int index) {
+  display_Clear();
+  print_Msg(F("Mapper: "));
+  a7800index = index * 3;
+  a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
+  println_Msg(a7800mapselect);
+  println_Mapper7800(a7800mapselect);
+  println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
+  print_STR(press_to_change_STR, 1);
+  print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
+#endif
+  display_Update();
+}
+#endif
+
 void setMapper_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   uint8_t b = 0;
@@ -691,22 +717,7 @@ void setMapper_7800() {
       a7800index = i * 3;
       a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
       println_Msg(a7800mapselect);
-      if (a7800mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a7800mapselect == 1)
-        println_Msg(F("SUPERGAME 128K[78SG]"));
-      else if (a7800mapselect == 2)
-        println_Msg(F("SUPERGAME 144K[78S9]"));
-      else if (a7800mapselect == 3)
-        println_Msg(F("F-18 HORNET   [78AB]"));
-      else if (a7800mapselect == 4)
-        println_Msg(F("DBLDRGN/RAMPG [78AC]"));
-      else if (a7800mapselect == 5)
-        println_Msg(F("BASEBALL/ETC  [78S4]"));
-      else if (a7800mapselect == 6)
-        println_Msg(F("KARATEKA(PAL) [78S4]"));
-      else if (a7800mapselect == 7)
-        println_Msg(F("BANKSET"));
+      println_Mapper7800(a7800mapselect);
       display_Update();
       if (i == (a7800mapcount - 1))
         i = 0;
@@ -716,36 +727,7 @@ void setMapper_7800() {
     }
   }
 
- display_Clear();
-      print_Msg(F("Mapper: "));
-      a7800index = i * 3;
-      a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
-      println_Msg(a7800mapselect);
-      if (a7800mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a7800mapselect == 1)
-        println_Msg(F("SUPERGAME 128K[78SG]"));
-      else if (a7800mapselect == 2)
-        println_Msg(F("SUPERGAME 144K[78S9]"));
-      else if (a7800mapselect == 3)
-        println_Msg(F("F-18 HORNET   [78AB]"));
-      else if (a7800mapselect == 4)
-        println_Msg(F("DBLDRGN/RAMPG [78AC]"));
-      else if (a7800mapselect == 5)
-        println_Msg(F("BASEBALL/ETC  [78S4]"));
-      else if (a7800mapselect == 6)
-        println_Msg(F("KARATEKA(PAL) [78S4]"));
-      else if (a7800mapselect == 7)
-        println_Msg(F("BANKSET"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+  displayMapperSelect_7800(i);
   
   while (1) {
     b = checkButton();
@@ -755,36 +737,7 @@ void setMapper_7800() {
       else
         i--;
 
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a7800index = i * 3;
-      a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
-      println_Msg(a7800mapselect);
-      if (a7800mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a7800mapselect == 1)
-        println_Msg(F("SUPERGAME 128K[78SG]"));
-      else if (a7800mapselect == 2)
-        println_Msg(F("SUPERGAME 144K[78S9]"));
-      else if (a7800mapselect == 3)
-        println_Msg(F("F-18 HORNET   [78AB]"));
-      else if (a7800mapselect == 4)
-        println_Msg(F("DBLDRGN/RAMPG [78AC]"));
-      else if (a7800mapselect == 5)
-        println_Msg(F("BASEBALL/ETC  [78S4]"));
-      else if (a7800mapselect == 6)
-        println_Msg(F("KARATEKA(PAL) [78S4]"));
-      else if (a7800mapselect == 7)
-        println_Msg(F("BANKSET"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_7800(i);
 
     }
     if (b == 1) {  // Next Mapper (press)
@@ -793,36 +746,7 @@ void setMapper_7800() {
       else
         i++;
 
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a7800index = i * 3;
-      a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
-      println_Msg(a7800mapselect);
-      if (a7800mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a7800mapselect == 1)
-        println_Msg(F("SUPERGAME 128K[78SG]"));
-      else if (a7800mapselect == 2)
-        println_Msg(F("SUPERGAME 144K[78S9]"));
-      else if (a7800mapselect == 3)
-        println_Msg(F("F-18 HORNET   [78AB]"));
-      else if (a7800mapselect == 4)
-        println_Msg(F("DBLDRGN/RAMPG [78AC]"));
-      else if (a7800mapselect == 5)
-        println_Msg(F("BASEBALL/ETC  [78S4]"));
-      else if (a7800mapselect == 6)
-        println_Msg(F("KARATEKA(PAL) [78S4]"));
-      else if (a7800mapselect == 7)
-        println_Msg(F("BANKSET"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_7800(i);
     }
     if (b == 3) {  // Long Press - Execute (hold)
       new7800mapper = a7800mapselect;
