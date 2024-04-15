@@ -188,6 +188,9 @@ Tasac 2010 (USA, Europe).sv
 3D5F3964,9B451BB4,64
 
 Tennis Pro '92 (USA, Europe).sv
+EAA08104,22802ED1,64
+
+Tennis Pro '92 (USA, Europe) (Alt).sv
 BD004CB7,22802ED1,64
 
 Thunder Shooting (USA, Europe).sv
