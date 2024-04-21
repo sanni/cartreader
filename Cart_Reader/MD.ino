@@ -1239,7 +1239,7 @@ void getCartInfo_MD() {
   }
   romName[copyToRomName_MD(romName, sdBuffer, sizeof(romName) - 1)] = 0;
   
-   // Check for Slaughter Sport
+  // Check for Slaughter Sport
   if (!strncmp("GMT5604600jJ", romName, 12) && (chksum == 0xFFFF)) {
     strcpy(romName, "SLAUGHTERSPORT");
     chksum = 0x6BAE;
