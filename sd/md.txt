@@ -2162,7 +2162,7 @@ ESPN Baseball Tonight (USA).md
 96D8440C
 
 ESPN National Hockey Night (USA).md
-1D08828C
+401DC618
 
 ESPN National Hockey Night (USA) (Beta).md
 A427814A
@@ -5843,7 +5843,7 @@ Slap Fight MD (Japan) (En) (Beta).md
 DBB62949
 
 Slaughter Sport (USA).md
-AF9F9D9C
+AAB2C6C4
 
 Slime World (Japan).md
 7FF5529F
