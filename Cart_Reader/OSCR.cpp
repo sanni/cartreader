@@ -56,6 +56,9 @@ constexpr char PROGMEM FSTRING_RESET[] = "Reset";
 constexpr char PROGMEM FSTRING_OK[] = "OK";
 constexpr char PROGMEM FSTRING_EMPTY[] = "";
 constexpr char PROGMEM FSTRING_SPACE[] = " ";
+constexpr char PROGMEM FSTRING_CURRENT_SETTINGS[] = "CURRENT SETTINGS";
+constexpr char PROGMEM FSTRING_NO_SELECTION[] = "NO SELECTION";
+constexpr char PROGMEM FSTRING_END_OF_FILE[] = "END OF FILE";
 
 // Messages
 constexpr char PROGMEM FSTRING_OSCR[] = "OSCR";
@@ -69,6 +72,7 @@ constexpr char PROGMEM FSTRING_SELECT_CART[] = "Select Cart";
 constexpr char PROGMEM FSTRING_SELECT_CART_TYPE[] = "Select Cart Type";
 constexpr char PROGMEM FSTRING_SET_SIZE[] = "Set Size";
 constexpr char PROGMEM FSTRING_REFRESH_CART[] = "Refresh Cart";
+constexpr char PROGMEM FSTRING_CART_SELECTED[] = "CART SELECTED";
 
 /*==== /CONSTANTS =================================================*/
 

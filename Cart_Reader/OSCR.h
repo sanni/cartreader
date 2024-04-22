@@ -36,6 +36,9 @@ extern const char PROGMEM FSTRING_OK[];
 extern const char PROGMEM FSTRING_EMPTY[];
 extern const char PROGMEM FSTRING_SPACE[];
 extern const char PROGMEM FSTRING_RESET[];
+extern const char PROGMEM FSTRING_CURRENT_SETTINGS[];
+extern const char PROGMEM FSTRING_NO_SELECTION[];
+extern const char PROGMEM FSTRING_END_OF_FILE[];
 
 // Messages
 extern const char PROGMEM FSTRING_OSCR[];
@@ -49,6 +52,7 @@ extern const char PROGMEM FSTRING_SELECT_CART[];
 extern const char PROGMEM FSTRING_SELECT_CART_TYPE[];
 extern const char PROGMEM FSTRING_SET_SIZE[];
 extern const char PROGMEM FSTRING_REFRESH_CART[];
+extern const char PROGMEM FSTRING_CART_SELECTED[];
 
 #define FS(pmem_string) (reinterpret_cast<const __FlashStringHelper *>(pmem_string))
 

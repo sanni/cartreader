@@ -484,6 +484,27 @@ void ecsBank(uint32_t addr, uint8_t bank) {
 //******************************************
 // MAPPER CODE
 //******************************************
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void displayMapperSelect_INTV(int index, boolean printInstructions) {
+  display_Clear();
+  print_Msg(F("Mapper: "));
+  intvindex = index * 4;
+  intvmapselect = pgm_read_byte(intvmapsize + intvindex);
+  println_Msg(intvmapselect);
+
+  if(printInstructions) {
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
+#endif
+  }
+  display_Update();
+}
+#endif
 
 void setMapper_INTV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -510,12 +531,7 @@ void setMapper_INTV() {
           i--;
         break;
       }
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      intvindex = i * 4;
-      intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-      println_Msg(intvmapselect);
-      display_Update();
+      displayMapperSelect_INTV(i, false);
       if (i == (intvmapcount - 1))
         i = 0;
       else
@@ -524,20 +540,7 @@ void setMapper_INTV() {
     }
   }
 
-  display_Clear();
-  print_Msg(F("Mapper: "));
-  intvindex = i * 4;
-  intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-  println_Msg(intvmapselect);
-  println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-  print_STR(press_to_change_STR, 1);
-  print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
-#endif
-  display_Update();
+  displayMapperSelect_INTV(i, true);
 
   while (1) {
     b = checkButton();
@@ -549,20 +552,7 @@ void setMapper_INTV() {
         i--;
 
       // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      intvindex = i * 4;
-      intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-      println_Msg(intvmapselect);
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_INTV(i, true);
     }
     if (b == 1) {  // Next Mapper (press)
       if (i == (intvmapcount - 1))
@@ -571,20 +561,7 @@ void setMapper_INTV() {
         i++;
 
       // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      intvindex = i * 4;
-      intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-      println_Msg(intvmapselect);
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_INTV(i, true);
     }
     if (b == 3) {  // Long Press - Execute (hold)
       newintvmapper = intvmapselect;
@@ -758,7 +735,7 @@ void checkStatus_INTV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("INTELLIVISION READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);

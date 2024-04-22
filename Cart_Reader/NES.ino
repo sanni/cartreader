@@ -1972,7 +1972,7 @@ void checkStatus_NES() {
   display_Clear();
   println_Msg(F("NES CART READER"));
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   printNESSettings();
   println_Msg(FS(FSTRING_EMPTY));

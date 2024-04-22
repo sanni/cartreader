@@ -375,7 +375,7 @@ void checkStatus_VECTREX() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("VECTREX READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("ROM SIZE: "));
   print_Msg(VECTREX[vectrexsize]);
@@ -558,10 +558,10 @@ bool getCartListInfo_VECTREX() {
   }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("END OF FILE"));
+  println_Msg(FS(FSTRING_END_OF_FILE));
   display_Update();
 #else
-  Serial.println(F("END OF FILE"));
+  Serial.println(FS(FSTRING_END_OF_FILE));
 #endif
 
   return false;
@@ -571,7 +571,7 @@ void checkCSV_VECTREX() {
   if (getCartListInfo_VECTREX()) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
-    println_Msg(F("CART SELECTED"));
+    println_Msg(FS(FSTRING_CART_SELECTED));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(vectrexgame);
     display_Update();
@@ -582,7 +582,7 @@ void checkCSV_VECTREX() {
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(F("CART SELECTED"));
+    Serial.println(FS(FSTRING_CART_SELECTED));
     Serial.println(vectrexgame);
     // Display Settings
     Serial.print(F("CODE: R"));
@@ -592,10 +592,10 @@ void checkCSV_VECTREX() {
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
+    println_Msg(FS(FSTRING_NO_SELECTION));
     display_Update();
 #else
-    Serial.println(F("NO SELECTION"));
+    Serial.println(FS(FSTRING_NO_SELECTION));
 #endif
   }
 }

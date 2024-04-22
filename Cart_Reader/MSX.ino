@@ -1313,7 +1313,7 @@ void checkStatus_MSX() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("MSX READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(msxmapper);
@@ -1586,10 +1586,10 @@ bool getCartListInfo_MSX() {
   }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("END OF FILE"));
+  println_Msg(FS(FSTRING_END_OF_FILE));
   display_Update();
 #else
-  Serial.println(F("END OF FILE"));
+  Serial.println(FS(FSTRING_END_OF_FILE));
 #endif
 
   return false;
@@ -1599,7 +1599,7 @@ void checkCSV_MSX() {
   if (getCartListInfo_MSX()) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
-    println_Msg(F("CART SELECTED"));
+    println_Msg(FS(FSTRING_CART_SELECTED));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(msxgame);
     display_Update();
@@ -1614,7 +1614,7 @@ void checkCSV_MSX() {
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(F("CART SELECTED"));
+    Serial.println(FS(FSTRING_CART_SELECTED));
     Serial.println(msxgame);
     // Display Settings
     Serial.print(F("CODE: M"));
@@ -1628,10 +1628,10 @@ void checkCSV_MSX() {
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
+    println_Msg(FS(FSTRING_NO_SELECTION));
     display_Update();
 #else
-    Serial.println(F("NO SELECTION"));
+    Serial.println(FS(FSTRING_NO_SELECTION));
 #endif
   }
 }

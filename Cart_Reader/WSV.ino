@@ -360,7 +360,7 @@ void checkStatus_WSV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("WATARA SUPERVISION"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("ROM SIZE: "));
   print_Msg(pgm_read_word(&(WSV[wsvsize])));
