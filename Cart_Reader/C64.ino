@@ -179,8 +179,8 @@ void setup_C64() {
   DDRL = 0xFF;
 
   // Set Control Pins to Output
-  //       /RST(PH0)  PHI2(PH1) /GAME(PH3) /EXROM(PH4) ---(PH5)   R/W(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  //       /RST(PH0) /GAME(PH3) /EXROM(PH4) ---(PH5)   R/W(PH6)
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set TIME(PJ0) to Output (UNUSED)
   DDRJ |= (1 << 0);
@@ -189,8 +189,8 @@ void setup_C64() {
   DDRC = 0x00;
 
   // Setting Control Pins to HIGH
-  //       /RST(PH0)  PHI2(PH1) /GAME(PH3) /EXROM(PH4) ---(PH5)   R/W(PH6)
-  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  //       /RST(PH0)  /GAME(PH3) /EXROM(PH4) ---(PH5)   R/W(PH6)
+  PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set /GAME(PH3) and /EXROM(PH4) to LOW
   PORTH &= ~(1 << 3) & ~(1 << 4);
@@ -204,6 +204,32 @@ void setup_C64() {
   // Set Unused Pins HIGH
   PORTA = 0xFF;
   PORTJ |= (1 << 0);  // TIME(PJ0)
+
+#ifdef ENABLE_CLOCKGEN
+  // Adafruit Clock Generator
+
+  initializeClockOffset();
+
+  if (!i2c_found) {
+    display_Clear();
+    print_FatalError(F("Clock Generator not found"));
+  }
+
+  // Set Eeprom clock to 1Mhz
+  clockgen.set_freq(100000000ULL, SI5351_CLK1);
+
+  // Start outputting Eeprom clock
+  clockgen.output_enable(SI5351_CLK1, 1);  // Eeprom clock
+
+  // Wait for clock generator
+  clockgen.update_status();
+
+#else
+  // Set PHI2(PH1 to Output 
+  DDRH |= (1 << 1);
+  // Setting Control Pins to HIGH for PHI2(PH1)
+  PHI2_ENABLE;
+#endif
 
   checkStatus_C64();
   strcpy(romName, "C64");
@@ -982,31 +1008,40 @@ setrom:
 //******************************************
 // SET PORT STATE
 //******************************************
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void println_C64_PortState(int state)
+{ 
+  display_Clear();
+  print_Msg(F("Port State: "));
+  println_Msg(state);
+  switch (state) {
+    case 0:
+      println_Msg(F("EXROM LOW/GAME LOW"));
+      break;
+    case 1:
+      println_Msg(F("EXROM LOW/GAME HIGH"));
+      break;
+    case 2:
+      println_Msg(F("EXROM HIGH/GAME LOW"));
+      break;
+    case 3:
+      println_Msg(F("EXROM HIGH/GAME HIGH"));
+      break;
+  }
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(F("Press to Change"));
+  println_Msg(F("Hold to Select"));
+  display_Update();
+}
+#endif
+
 void setPorts_C64()
 {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   uint8_t b = 0;
   int i = 0;
 
-  display_Clear();
-  print_Msg(F("Port State: "));
-  println_Msg(i);
-  if (i == 0) {
-    println_Msg(F("EXROM LOW/GAME LOW"));
-  }
-  else if (i == 1) {
-    println_Msg(F("EXROM LOW/GAME HIGH"));
-  }
-  else if (i == 2) {
-    println_Msg(F("EXROM HIGH/GAME LOW"));
-  }
-  else if (i == 3) {
-    println_Msg(F("EXROM HIGH/GAME HIGH"));
-  }
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("Press to Change"));
-  println_Msg(F("Hold to Select"));
-  display_Update();
+  println_C64_PortState(i);
 
   while (1) {
     b = checkButton();
@@ -1016,26 +1051,7 @@ void setPorts_C64()
       else
         i--;
 
-      display_Clear();
-      print_Msg(F("Port State: "));
-      println_Msg(i);
-      if (i == 0) {
-        println_Msg(F("EXROM LOW/GAME LOW"));
-      }
-      else if (i == 1) {
-        println_Msg(F("EXROM LOW/GAME HIGH"));
-      }
-      else if (i == 2) {
-        println_Msg(F("EXROM HIGH/GAME LOW"));
-      }
-      else if (i == 3) {
-        println_Msg(F("EXROM HIGH/GAME HIGH"));
-      }
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
-
+      println_C64_PortState(i);
     }
     if (b == 1) { // Next (press)
       if (i == 3)
@@ -1043,26 +1059,7 @@ void setPorts_C64()
       else
         i++;
 
-      display_Clear();
-      print_Msg(F("Port State: "));
-      println_Msg(i);
-      if (i == 0) {
-        println_Msg(F("EXROM LOW/GAME LOW"));
-      }
-      else if (i == 1) {
-        println_Msg(F("EXROM LOW/GAME HIGH"));
-      }
-      else if (i == 2) {
-        println_Msg(F("EXROM HIGH/GAME LOW"));
-      }
-      else if (i == 3) {
-        println_Msg(F("EXROM HIGH/GAME HIGH"));
-      }
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
-      display_Update();
-
+      println_C64_PortState(i);
     }
     if (b == 3) { // Long Press - Execute (hold)
       newc64port = i;
