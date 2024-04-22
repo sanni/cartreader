@@ -627,7 +627,7 @@ void checkStatus_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 7800 READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(a7800mapper);
@@ -668,21 +668,24 @@ void checkStatus_7800() {
 //******************************************
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_7800(int index) {
+void displayMapperSelect_7800(int index, boolean printInstructions) {
   display_Clear();
   print_Msg(F("Mapper: "));
   a7800index = index * 3;
   a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
   println_Msg(a7800mapselect);
   println_Mapper7800(a7800mapselect);
-  println_Msg(FS(FSTRING_EMPTY));
+
+  if(printInstructions) {
+    println_Msg(FS(FSTRING_EMPTY));
 #if defined(ENABLE_OLED)
-  print_STR(press_to_change_STR, 1);
-  print_STR(right_to_select_STR, 1);
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
+  }
   display_Update();
 }
 #endif
@@ -712,13 +715,7 @@ void setMapper_7800() {
           i--;
         break;
       }
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a7800index = i * 3;
-      a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
-      println_Msg(a7800mapselect);
-      println_Mapper7800(a7800mapselect);
-      display_Update();
+      displayMapperSelect_7800(i, false);
       if (i == (a7800mapcount - 1))
         i = 0;
       else
@@ -727,7 +724,7 @@ void setMapper_7800() {
     }
   }
 
-  displayMapperSelect_7800(i);
+  displayMapperSelect_7800(i, true);
   
   while (1) {
     b = checkButton();
@@ -736,17 +733,14 @@ void setMapper_7800() {
         i = a7800mapcount - 1;
       else
         i--;
-
-      displayMapperSelect_7800(i);
-
+      displayMapperSelect_7800(i, true);
     }
     if (b == 1) {  // Next Mapper (press)
       if (i == (a7800mapcount - 1))
         i = 0;
       else
         i++;
-
-      displayMapperSelect_7800(i);
+      displayMapperSelect_7800(i, true);
     }
     if (b == 3) {  // Long Press - Execute (hold)
       new7800mapper = a7800mapselect;
@@ -958,10 +952,10 @@ bool getCartListInfo_7800() {
   }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("END OF FILE"));
+  println_Msg(FS(FSTRING_END_OF_FILE));
   display_Update();
 #else
-  Serial.println(F("END OF FILE"));
+  Serial.println(FS(FSTRING_END_OF_FILE));
 #endif
 
   return false;
@@ -971,7 +965,7 @@ void checkCSV_7800() {
   if (getCartListInfo_7800()) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
-    println_Msg(F("CART SELECTED"));
+    println_Msg(FS(FSTRING_CART_SELECTED));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(a7800game);
     display_Update();
@@ -984,7 +978,7 @@ void checkCSV_7800() {
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(F("CART SELECTED"));
+    Serial.println(FS(FSTRING_CART_SELECTED));
     Serial.println(a7800game);
     // Display Settings
     Serial.print(F("CODE: M"));
@@ -996,10 +990,10 @@ void checkCSV_7800() {
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
+    println_Msg(FS(FSTRING_NO_SELECTION));
     display_Update();
 #else
-    Serial.println(F("NO SELECTION"));
+    Serial.println(FS(FSTRING_NO_SELECTION));
 #endif
   }
 }

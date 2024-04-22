@@ -654,7 +654,7 @@ void checkStatus_FAIRCHILD() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("CHANNEL F READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("ROM SIZE: "));
   print_Msg(FAIRCHILD[fairchildsize]);
@@ -837,10 +837,10 @@ bool getCartListInfo_FAIRCHILD() {
   }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("END OF FILE"));
+  println_Msg(FS(FSTRING_END_OF_FILE));
   display_Update();
 #else
-  Serial.println(F("END OF FILE"));
+  Serial.println(FS(FSTRING_END_OF_FILE));
 #endif
 
   return false;
@@ -850,7 +850,7 @@ void checkCSV_FAIRCHILD() {
   if (getCartListInfo_FAIRCHILD()) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
-    println_Msg(F("CART SELECTED"));
+    println_Msg(FS(FSTRING_CART_SELECTED));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(fairchildgame);
     display_Update();
@@ -861,7 +861,7 @@ void checkCSV_FAIRCHILD() {
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(F("CART SELECTED"));
+    Serial.println(FS(FSTRING_CART_SELECTED));
     Serial.println(fairchildgame);
     // Display Settings
     Serial.print(F("CODE: R"));
@@ -871,10 +871,10 @@ void checkCSV_FAIRCHILD() {
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
+    println_Msg(FS(FSTRING_NO_SELECTION));
     display_Update();
 #else
-    Serial.println(F("NO SELECTION"));
+    Serial.println(FS(FSTRING_NO_SELECTION));
 #endif
   }
 }

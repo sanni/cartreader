@@ -49,7 +49,6 @@ byte a2600[] = { 2, 4, 8, 12, 16, 32, 64 };
 byte a2600mapper = 0;
 byte new2600mapper;
 byte a2600size;
-byte e7size;
 
 // EEPROM MAPPING
 // 07 MAPPER
@@ -273,6 +272,7 @@ boolean checkE7(int bank) {
 }
 
 void readROM_2600() {
+  byte e7size;
   strcpy(fileName, romName);
   strcat(fileName, ".a26");
 
@@ -576,8 +576,8 @@ void readROM_2600() {
 // ROM SIZE
 //******************************************
 
+void println_Mapper2600(byte mapper) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void println_Mapper(byte mapper) {
   if (mapper == 0x04)
     println_Msg(F("F4SC"));
   else if (mapper == 0x06)
@@ -598,8 +598,29 @@ void println_Mapper(byte mapper) {
     println_Msg(F("TP"));
   else
     println_Msg(mapper, HEX);
-}
+#else
+  if (mapper == 0x04)
+    Serial.println(F("F4SC"));
+  else if (mapper == 0x06)
+    Serial.println(F("F6SC"));
+  else if (mapper == 0x08)
+    Serial.println(F("F8SC"));
+  else if (mapper == 0x20)
+    Serial.println(F("2K"));
+  else if (mapper == 0x40)
+    Serial.println(F("4K"));
+  else if (mapper == 0x0A)
+    Serial.println(F("UA"));
+  else if (mapper == 0xC0)
+    Serial.println(F("CV"));
+  else if (mapper == 0xD0)
+    Serial.println(F("DPC"));
+  else if (mapper == 0xF9)
+    Serial.println(F("TP"));
+  else
+    Serial.println(mapper, HEX);
 #endif
+}
 
 void checkStatus_2600() {
   EEPROM_readAnything(7, a2600mapper);
@@ -612,10 +633,10 @@ void checkStatus_2600() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 2600 READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
-  println_Mapper(a2600mapper);
+  println_Mapper2600(a2600mapper);
   print_Msg(F("ROM SIZE: "));
   if (a2600mapper == 0xD0)
     print_Msg(F("10"));
@@ -626,26 +647,7 @@ void checkStatus_2600() {
   wait();
 #else
   Serial.print(F("MAPPER:   "));
-  if (mapper == 0x04)
-    Serial.println(F("F4SC"));
-  else if (mapper == 0x06)
-    Serial.println(F("F6SC"));
-  else if (mapper == 0x08)
-    Serial.println(F("F8SC"));
-  else if (a2600mapper == 0x20)
-    Serial.println(F("2K"));
-  else if (a2600mapper == 0x40)
-    Serial.println(F("4K"));
-  else if (a2600mapper == 0x0A)
-    Serial.println(F("UA"));
-  else if (a2600mapper == 0xC0)
-    Serial.println(F("CV"));
-  else if (a2600mapper == 0xD0)
-    Serial.println(F("DPC"));
-  else if (a2600mapper == 0xF9)
-    Serial.println(F("TP"));
-  else
-    Serial.println(a2600mapper, HEX);
+  println_Mapper2600(a2600mapper);
 
   Serial.print(F("ROM SIZE: "));
   if (a2600mapper == 0xD0)
@@ -662,20 +664,23 @@ void checkStatus_2600() {
 //******************************************
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_2600(int index) {
+void displayMapperSelect_2600(uint8_t index, boolean printInstructions) {
   display_Clear();
   print_Msg(F("Mapper: "));
   a2600index = index * 2;
   a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
-  println_Mapper(a2600mapselect);
-  println_Msg(FS(FSTRING_EMPTY));
+  println_Mapper2600(a2600mapselect);
+
+  if(printInstructions) {
+    println_Msg(FS(FSTRING_EMPTY));
 #if defined(ENABLE_OLED)
-  print_STR(press_to_change_STR, 1);
-  print_STR(right_to_select_STR, 1);
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
 #endif
+  }
   display_Update();
 }
 #endif
@@ -706,12 +711,7 @@ void setMapper_2600() {
           i--;
         break;
       }
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a2600index = i * 2;
-      a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
-      println_Mapper(a2600mapselect);
-      display_Update();
+      displayMapperSelect_2600(i, false);
       if (i == (a2600mapcount - 1))
         i = 0;
       else
@@ -719,8 +719,9 @@ void setMapper_2600() {
       delay(250);
     }
   }
+  b = 0;
 
-  displayMapperSelect_2600(i);
+  displayMapperSelect_2600(i, true);
 
   while (1) {
     b = checkButton();
@@ -731,7 +732,7 @@ void setMapper_2600() {
         i--;
 
       // Only update display after input because of slow LCD library
-      displayMapperSelect_2600(i);
+      displayMapperSelect_2600(i, true);
     }
     if (b == 1) {  // Next Mapper (press)
       if (i == (a2600mapcount - 1))
@@ -740,7 +741,7 @@ void setMapper_2600() {
         i++;
 
       // Only update display after input because of slow LCD library
-      displayMapperSelect_2600(i);
+      displayMapperSelect_2600(i, true);
     }
     if (b == 3) {  // Long Press - Execute (hold)
       new2600mapper = a2600mapselect;
@@ -749,7 +750,7 @@ void setMapper_2600() {
   }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
-  println_Mapper(new2600mapper);
+  println_Mapper2600(new2600mapper);
   println_Msg(F(" SELECTED"));
   display_Update();
   delay(1000);
@@ -774,7 +775,7 @@ setmapper:
   Serial.println(F("14 = FA [CBS RAM Plus]"));
   Serial.println(F("15 = FE [Activision]"));
   Serial.println(F("16 = TP [Time Pilot 8K]"));
-  Serial.println(F("16 = UA [UA Ltd]"));
+  Serial.println(F("17 = UA [UA Ltd]"));
   Serial.print(F("Enter Mapper [0-17]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
@@ -957,10 +958,10 @@ bool getCartListInfo_2600() {
   }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("END OF FILE"));
+  println_Msg(FS(FSTRING_END_OF_FILE));
   display_Update();
 #else
-  Serial.println(F("END OF FILE"));
+  Serial.println(FS(FSTRING_END_OF_FILE));
 #endif
 
   return false;
@@ -970,7 +971,7 @@ void checkCSV_2600() {
   if (getCartListInfo_2600()) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
-    println_Msg(F("CART SELECTED"));
+    println_Msg(FS(FSTRING_CART_SELECTED));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(a2600game);
     display_Update();
@@ -981,7 +982,7 @@ void checkCSV_2600() {
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(F("CART SELECTED"));
+    Serial.println(FS(FSTRING_CART_SELECTED));
     Serial.println(a2600game);
     // Display Settings
     Serial.print(F("CODE: "));
@@ -991,10 +992,10 @@ void checkCSV_2600() {
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
+    println_Msg(FS(FSTRING_NO_SELECTION));
     display_Update();
 #else
-    Serial.println(F("NO SELECTION"));
+    Serial.println(FS(FSTRING_NO_SELECTION));
 #endif
   }
 }

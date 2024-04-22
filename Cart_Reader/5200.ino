@@ -342,6 +342,24 @@ void readROM_5200() {
 // ROM SIZE
 //******************************************
 
+void println_Mapper5200(byte mapper) {
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  if (mapper == 0)
+    println_Msg(F("STANDARD"));
+  else if (mapper == 1)
+    println_Msg(F("TWO CHIP"));
+  else if (mapper == 2)
+    println_Msg(F("BOUNTY BOB"));
+#else
+  if (mapper == 0)
+    Serial.println(F("STANDARD"));
+  else if (mapper == 1)
+    Serial.println(F("TWO CHIP"));
+  else if (mapper == 2)
+    Serial.println(F("BOUNTY BOB"));
+#endif
+}
+
 void checkMapperSize_5200() {
   for (int i = 0; i < a5200mapcount; i++) {
     a5200index = i * 3;
@@ -477,16 +495,11 @@ void checkStatus_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 5200 READER"));
-  println_Msg(F("CURRENT SETTINGS"));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(a5200mapper);
-  if (a5200mapper == 0)
-    println_Msg(F("STANDARD"));
-  else if (a5200mapper == 1)
-    println_Msg(F("TWO CHIP"));
-  else if (a5200mapper == 2)
-    println_Msg(F("BOUNTY BOB"));
+  println_Mapper5200(a5200mapper);
   print_Msg(F("ROM SIZE: "));
   print_Msg(a5200[a5200size]);
   println_Msg(F("K"));
@@ -495,12 +508,7 @@ void checkStatus_5200() {
 #else
   Serial.print(F("MAPPER:   "));
   Serial.println(a5200mapper);
-  if (a5200mapper == 0)
-    Serial.println(F("STANDARD"));
-  else if (a5200mapper == 1)
-    Serial.println(F("TWO CHIP"));
-  else if (a5200mapper == 2)
-    Serial.println(F("BOUNTY BOB"));
+  println_Mapper5200(a5200mapper);
   Serial.print(F("ROM SIZE: "));
   Serial.print(a5200[a5200size]);
   Serial.println(F("K"));
@@ -511,6 +519,29 @@ void checkStatus_5200() {
 //******************************************
 // SET MAPPER
 //******************************************
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void displayMapperSelect_5200(int index, boolean printInstructions) {
+  display_Clear();
+  print_Msg(F("Mapper: "));
+  a5200index = index * 3;
+  a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
+  println_Msg(a5200mapselect);
+  println_Mapper5200(a5200mapselect);
+
+  if(printInstructions) {
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
+#endif
+  }
+  display_Update();
+}
+#endif
+
 
 void setMapper_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -537,18 +568,7 @@ void setMapper_5200() {
           i--;
         break;
       }
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a5200index = i * 3;
-      a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
-      println_Msg(a5200mapselect);
-      if (a5200mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a5200mapselect == 1)
-        println_Msg(F("TWO CHIP"));
-      else if (a5200mapselect == 2)
-        println_Msg(F("BOUNTY BOB"));
-      display_Update();
+      displayMapperSelect_5200(i, false);
       if (i == (a5200mapcount - 1))
         i = 0;
       else
@@ -557,26 +577,7 @@ void setMapper_5200() {
     }
   }
 
- display_Clear();
-      print_Msg(F("Mapper: "));
-      a5200index = i * 3;
-      a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
-      println_Msg(a5200mapselect);
-      if (a5200mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a5200mapselect == 1)
-        println_Msg(F("TWO CHIP"));
-      else if (a5200mapselect == 2)
-        println_Msg(F("BOUNTY BOB"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+  displayMapperSelect_5200(i, true);
   
   while (1) {
     b = checkButton();
@@ -587,26 +588,7 @@ void setMapper_5200() {
         i--;
 
       // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a5200index = i * 3;
-      a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
-      println_Msg(a5200mapselect);
-      if (a5200mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a5200mapselect == 1)
-        println_Msg(F("TWO CHIP"));
-      else if (a5200mapselect == 2)
-        println_Msg(F("BOUNTY BOB"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_5200(i, true);
     }
     if (b == 1) {  // Next Mapper (press)
       if (i == (a5200mapcount - 1))
@@ -615,26 +597,7 @@ void setMapper_5200() {
         i++;
 
       // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      a5200index = i * 3;
-      a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
-      println_Msg(a5200mapselect);
-      if (a5200mapselect == 0)
-        println_Msg(F("STANDARD"));
-      else if (a5200mapselect == 1)
-        println_Msg(F("TWO CHIP"));
-      else if (a5200mapselect == 2)
-        println_Msg(F("BOUNTY BOB"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
+      displayMapperSelect_5200(i, true);
 
     }
     if (b == 3) {  // Long Press - Execute (hold)
@@ -839,10 +802,10 @@ bool getCartListInfo_5200() {
   }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("END OF FILE"));
+  println_Msg(FS(FSTRING_END_OF_FILE));
   display_Update();
 #else
-  Serial.println(F("END OF FILE"));
+  Serial.println(FS(FSTRING_END_OF_FILE));
 #endif
 
   return false;
@@ -852,7 +815,7 @@ void checkCSV_5200() {
   if (getCartListInfo_5200()) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display_Clear();
-    println_Msg(F("CART SELECTED"));
+    println_Msg(FS(FSTRING_CART_SELECTED));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(a5200game);
     display_Update();
@@ -865,7 +828,7 @@ void checkCSV_5200() {
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(F("CART SELECTED"));
+    Serial.println(FS(FSTRING_CART_SELECTED));
     Serial.println(a5200game);
     // Display Settings
     Serial.print(F("CODE: M"));
@@ -877,10 +840,10 @@ void checkCSV_5200() {
   } else {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
     display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
+    println_Msg(FS(FSTRING_NO_SELECTION));
     display_Update();
 #else
-    Serial.println(F("NO SELECTION"));
+    Serial.println(FS(FSTRING_NO_SELECTION));
 #endif
   }
 }
