@@ -142,7 +142,7 @@
 /* [ Intellivision ------------------------------------------------ ]
 */
 
-#define ENABLE_INTV
+//#define ENABLE_INTV
 
 /****/
 
@@ -198,7 +198,7 @@
 /* [ Sega Master System/Mark III/Game Gear/SG-1000 ---------------- ]
 */
 
-//#define ENABLE_SMS
+#define ENABLE_SMS
 
 /****/
 
