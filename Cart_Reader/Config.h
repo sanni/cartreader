@@ -29,7 +29,7 @@
     Choose your hardware version:
 */
 
-#define HW5
+//#define HW5
 //#define HW4
 //#define HW3
 //#define HW2
@@ -71,56 +71,56 @@
 /* [ Atari 2600 --------------------------------------------------- ]
 */
 
-#define ENABLE_2600
+//#define ENABLE_2600
 
 /****/
 
 /* [ Atari 5200 --------------------------------------------------- ]
 */
 
-// #define ENABLE_5200
+//#define ENABLE_5200
 
 /****/
 
 /* [ Atari 7800 --------------------------------------------------- ]
 */
 
-#define ENABLE_7800
+//#define ENABLE_7800
 
 /****/
 
 /* [ Benesse Pocket Challenge W ----------------------------------- ]
 */
 
-// #define ENABLE_PCW
+//#define ENABLE_PCW
 
 /****/
 
 /* [ C64 --------------------------------------------------- ]
 */
 
-#define ENABLE_C64
+//#define ENABLE_C64
 
 /****/
 
 /* [ ColecoVision ------------------------------------------------- ]
 */
 
-#define ENABLE_COLV
+//#define ENABLE_COLV
 
 /****/
 
 /* [ Emerson Arcadia 2001 ----------------------------------------- ]
 */
 
-// #define ENABLE_ARC
+//#define ENABLE_ARC
 
 /****/
 
 /* [ Fairchild Channel F ------------------------------------------ ]
 */
 
-// #define ENABLE_FAIRCHILD
+//#define ENABLE_FAIRCHILD
 
 /****/
 
@@ -142,21 +142,21 @@
 /* [ Intellivision ------------------------------------------------ ]
 */
 
-// #define ENABLE_INTV
+//#define ENABLE_INTV
 
 /****/
 
 /* [ Neo Geo Pocket ----------------------------------------------- ]
 */
 
-// #define ENABLE_NGP
+//#define ENABLE_NGP
 
 /****/
 
 /* [ Nintendo 64 -------------------------------------------------- ]
 */
 
-// #define ENABLE_N64
+#define ENABLE_N64
 
 /****/
 
@@ -170,28 +170,28 @@
 /* [ Magnavox Odyssey 2 ------------------------------------------- ]
 */
 
-#define ENABLE_ODY2
+//#define ENABLE_ODY2
 
 /****/
 
 /* [ MSX ------------------------------------------- ]
 */
 
-#define ENABLE_MSX
+//#define ENABLE_MSX
 
 /****/
 
 /* [ PC Engine/TurboGrafx 16 -------------------------------------- ]
 */
 
-#define ENABLE_PCE
+//#define ENABLE_PCE
 
 /****/
 
 /* [ Pokemon Mini -------------------------------------- ]
 */
 
-#define ENABLE_POKE
+//#define ENABLE_POKE
 
 /****/
 
@@ -212,28 +212,28 @@
 /* [ Super Famicom SF Memory Cassette ----------------------------- ]
 */
 
-// #define ENABLE_SFM
+//#define ENABLE_SFM
 
 /****/
 
 /* [ Super Famicom Satellaview ------------------------------------ ]
 */
 
-// #define ENABLE_SV
+//#define ENABLE_SV
 
 /****/
 
 /* [ Super Famicom Sufami Turbo ----------------------------------- ]
 */
 
-// #define ENABLE_ST
+//#define ENABLE_ST
 
 /****/
 
 /* [ Super Famicom Game Processor RAM Cassette -------------------- ]
 */
 
-// #define ENABLE_GPC
+//#define ENABLE_GPC
 
 /****/
 
@@ -247,42 +247,42 @@
 /* [ Vectrex --------------------------------------------------- ]
 */
 
-#define ENABLE_VECTREX
+//#define ENABLE_VECTREX
 
 /****/
 
 /* [ Virtual Boy -------------------------------------------------- ]
 */
 
-#define ENABLE_VBOY
+//#define ENABLE_VBOY
 
 /****/
 
 /* [ Watara Supervision ------------------------------------------- ]
 */
 
-#define ENABLE_WSV
+//#define ENABLE_WSV
 
 /****/
 
 /* [ WonderSwan and Benesse Pocket Challenge v2 ------------------- ]
 */
 
-#define ENABLE_WS
+//#define ENABLE_WS
 
 /****/
 
 /* [ Super A'can -------------------------------------------------- ]
 */
 
-#define ENABLE_SUPRACAN
+//#define ENABLE_SUPRACAN
 
 /****/
 
 /* [ Casio Loopy -------------------------------------------------- ]
 */
 
-#define ENABLE_LOOPY
+//#define ENABLE_LOOPY
 
 /****/
 
