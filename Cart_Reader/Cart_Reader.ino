@@ -660,7 +660,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
             myFile.close();
           }
         } else {
-          println_Msg("OK");
+          println_Msg(FS(FSTRING_OK));
         }
         return 1;
         break;
@@ -676,6 +676,35 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
     return 0;
   }
   return 0;
+}
+
+// move file pointer to first game line with matching letter. If no match is found the last database entry is selected
+void seek_first_letter_in_database(FsFile& database, byte myLetter) {
+    char gamename_str[3];
+#ifdef ENABLE_GLOBAL_LOG
+    // Disable log to prevent unnecessary logging
+    println_Log(F("Select Mapping from List"));
+    dont_log = true;
+#endif
+    database.rewind();
+    // Skip ahead to selected starting letter
+    if ((myLetter > 0) && (myLetter <= 26)) {
+      myLetter += 'A' - 1;
+      do {
+        // Read current name
+        get_line(gamename_str, &database, 2);
+        // Skip data line
+        skip_line(&database);
+        // Skip empty line
+        skip_line(&database);
+
+      } while (database.available() && gamename_str[0] != myLetter);
+      rewind_line(database, 3);
+    }
+#ifdef ENABLE_GLOBAL_LOG
+    // Enable log again
+    dont_log = false;
+#endif
 }
 
 void starting_letter__subDraw(byte selection, byte line) {

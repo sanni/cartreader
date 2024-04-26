@@ -226,7 +226,7 @@
 /* [ Super Famicom Sufami Turbo ----------------------------------- ]
 */
 
-// #define ENABLE_ST
+//#define ENABLE_ST
 
 /****/
 

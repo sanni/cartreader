@@ -755,7 +755,7 @@ static void readDatabaseEntry(FsFile& database, struct database_entry* entry) {
 
 bool selectMapping(FsFile& database) {
   // Select starting letter
-  uint8_t myLetter = starting_letter();
+  byte myLetter = starting_letter();
 
   if (myLetter == 27) {
     // Change Mapper
@@ -766,26 +766,7 @@ bool selectMapping(FsFile& database) {
     setRAMSize();
     return 0;
   } else {
-#ifdef ENABLE_GLOBAL_LOG
-    // Disable log to prevent unnecessary logging
-    println_Log(F("Select Mapping from List"));
-    dont_log = true;
-#endif
-    database.rewind();
-    // Skip ahead to selected starting letter
-    if ((myLetter > 0) && (myLetter <= 26)) {
-      myLetter += 'A' - 1;
-      struct database_entry entry;
-      // Read current name
-      do {
-        readDatabaseEntry(database, &entry);
-      } while (database.available() && entry.filename[0] != myLetter);
-      rewind_line(database, 3);
-    }
-#ifdef ENABLE_GLOBAL_LOG
-    // Enable log again
-    dont_log = false;
-#endif
+    seek_first_letter_in_database(database, myLetter);
   }
   return 1;
 }

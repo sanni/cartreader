@@ -391,24 +391,7 @@ void setCart_WSV() {
 
   // Open database
   if (myFile.open("wsv.txt", O_READ)) {
-    // Skip ahead to selected starting letter
-    if ((myLetter > 0) && (myLetter <= 26)) {
-      while (myFile.available()) {
-        // Read current name
-        get_line(gamename, &myFile, 96);
-
-        // Compare selected letter with first letter of current name until match
-        while (gamename[0] != 64 + myLetter) {
-          skip_line(&myFile);
-          skip_line(&myFile);
-          get_line(gamename, &myFile, 96);
-        }
-        break;
-      }
-
-      // Rewind one line
-      rewind_line(myFile);
-    }
+    seek_first_letter_in_database(myFile, myLetter);
 
     // Display database
     while (myFile.available()) {
