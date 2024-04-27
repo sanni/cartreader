@@ -98,3 +98,61 @@ D90FE762
 
 Name     
 Checksum
+
+## 2600.txt
+This file stores known Atari VCS / 2600 games with the required mapping value.
+
+Example:
+Wall-Defender
+064
+
+Name
+mapper
+
+mapper:
+004 = Atari 32K with RAM [F4SC]
+006 = Atari 16K with RAM [F6SC]
+008 = Atari 8K with RAM [F8SC]
+010 = UA Ltd 8K [UA]
+032 = Atari 2K
+063 = Tigervision 8K
+064 = Atari 4K (Default)
+192 = Commavid 2K [CV]
+208 = Pitfall II 10K [DPC]
+224 = Parker Bros 8K
+231 = M-Network 16K
+240 = Megaboy 64K
+244 = Atari 32K [F4]
+246 = Atari 16K [F6]
+248 = Atari 8K [F8]
+249 = Time Pilot 8K [TP]
+250 = CBS RAM Plus 12K
+254 = Activision 8K
+
+## 7800.txt
+This file stores known Atari 7800 games with the required mapping value and cart size.
+
+Example:
+Rampage
+4,4
+
+Name
+mapper, cart size
+
+mapper:
+0 = Standard 16K/32K/48K [7816/7832/7848]
+1 = SuperGame 128K [78SG]
+2 = SuperGame - Alien Brigade/Crossbow 144K [78S9]
+3 = F-18 Hornet 64K [78AB]
+4 = Double Dragon/Rampage 128K [78AC]
+5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
+6 = Karateka (PAL) 64K [78S4 Variant]
+7 = Bankset switching
+
+cart size:
+0 = 16K
+1 = 32K
+2 = 48K
+3 = 64K
+4 = 128K
+5 = 144K
