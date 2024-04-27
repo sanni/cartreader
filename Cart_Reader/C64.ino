@@ -57,10 +57,6 @@
 //******************************************
 #define PHI2_ENABLE PORTH |= (1 << 1)
 #define PHI2_DISABLE PORTH &= ~(1 << 1)
-#define GAME_DISABLE PORTH |= (1 << 3)
-#define GAME_ENABLE PORTH &= ~(1 << 3)
-#define EXROM_DISABLE PORTH |= (1 << 4)
-#define EXROM_ENABLE PORTH &= ~(1 << 4)
 #define ROML_DISABLE PORTL |= (1 << 0)
 #define ROML_ENABLE PORTL &= ~(1 << 0)
 #define ROMH_DISABLE PORTL |= (1 << 1)
@@ -77,15 +73,15 @@
 // Format = {c64mapper,c64lo,c64hi}
 static const byte PROGMEM c64mapsize[] = {
   0, 0, 3,   // Normal 4K/8K/16K + Ultimax 8K/16K
-  1, 5, 5,   // Action Replay 32K                               [UNTESTED]
-  2, 3, 3,   // KCS Power Cartridge 16K                         [UNTESTED]
-  3, 6, 6,   // Final Cartridge III 64K                         [UNTESTED]
-  4, 3, 3,   // Simons Basic 16K                                [UNTESTED]
+  1, 5, 5,   // Action Replay 32K                              [UNTESTED]
+  2, 3, 3,   // KCS Power Cartridge 16K                        [UNTESTED]
+  3, 6, 6,   // Final Cartridge III 64K                        [UNTESTED]
+  4, 3, 3,   // Simons Basic 16K                               [UNTESTED]
   5, 7, 9,   // Ocean 128K/256K/512K
-  6, 2, 2,   // Expert Cartridge 8K                             [UNTESTED]
-  7, 7, 7,   // Fun Play, Power Play 128K                       [UNTESTED]
-  8, 6, 6,   // Super Games 64K                                 [UNTESTED]
-  9, 5, 5,   // Atomic Power 32K                                [UNTESTED]
+  6, 2, 2,   // Expert Cartridge 8K                            [UNTESTED]
+  7, 7, 7,   // Fun Play, Power Play 128K                      [UNTESTED]
+  8, 6, 6,   // Super Games 64K                                [UNTESTED]
+  9, 5, 5,   // Atomic Power 32K                               [UNTESTED]
   10, 2, 2,  // Epyx Fastload 8K                               [UNTESTED]
   11, 3, 3,  // Westermann Learning 16K                        [UNTESTED]
   12, 1, 1,  // Rex Utility 8K                                 [UNTESTED]
@@ -114,12 +110,10 @@ byte c64size;
 byte newc64size;
 uint8_t c64banks;
 byte c64port;  // exrom+game
-byte newc64port;
 
 // EEPROM MAPPING
 // 07 MAPPER
 // 08 ROM SIZE
-// 12 PORT STATE - EXROM/GAME
 
 //******************************************
 //  MENU
@@ -147,11 +141,10 @@ void c64Menu() {
       break;
 
     case 2:
-      // Set Mapper + Size + Ports
+      // Set Mapper + Size
       setMapper_C64();
       checkMapperSize_C64();
       setROMSize_C64();
-      setPorts_C64();
       break;
 
     case 3:
@@ -178,9 +171,13 @@ void setup_C64() {
   DDRL = 0xFF;
 
   // Set Control Pins to Output
-  //       /RST(PH0) /GAME(PH3) /EXROM(PH4) ---(PH5)   R/W(PH6)
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
+  //       /RST(PH0) ---(PH5)   R/W(PH6)
+  DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
+  
+  // Set Port Pins to Input
+  //      /GAME(PH3) /EXROM(PH4)
+  DDRH &= ~((1 << 3) | (1 << 4));
+  
   // Set TIME(PJ0) to Output (UNUSED)
   DDRJ |= (1 << 0);
 
@@ -188,11 +185,8 @@ void setup_C64() {
   DDRC = 0x00;
 
   // Setting Control Pins to HIGH
-  //       /RST(PH0)  /GAME(PH3) /EXROM(PH4) ---(PH5)   R/W(PH6)
-  PORTH |= (1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
-  // Set /GAME(PH3) and /EXROM(PH4) to LOW
-  PORTH &= ~(1 << 3) & ~(1 << 4);
+  //       /RST(PH0)  ---(PH5)   R/W(PH6)
+  PORTH |= (1 << 0) | (1 << 5) | (1 << 6);
 
   // Set /ROML, /ROMH, /IO1, /IO2 to HIGH
   PORTL = 0xFF;  // A16-A23 (A16 = /ROML, A17 = /ROMH, A18 = /IO1, A19 = /IO2)
@@ -245,9 +239,6 @@ uint8_t readData_C64(uint16_t addr) {
   NOP;
   NOP;
 
-  // Set /GAME(PH3) + /EXROM(PH4) to LOW
-  //  PORTH &= ~(1 << 3) & ~(1 << 4);
-
   // Set R/W(PH6) to HIGH
   PORTH |= (1 << 6);  // R/W HIGH (READ)
   NOP;
@@ -255,10 +246,6 @@ uint8_t readData_C64(uint16_t addr) {
   NOP;
 
   uint8_t ret = PINC;
-
-  // Set /GAME(PH3) + /EXROM(PH4) to HIGH
-  //  PORTH |= (1 << 3) | (1 << 4);
-  //  NOP; NOP;
 
   return ret;
 }
@@ -344,27 +331,10 @@ void bankSwitch_C64(uint16_t addr, uint8_t data) {
 }
 
 //******************************************
-// PORT STATE
+// READ PORT STATE
 //******************************************
-void enablePorts_C64() {
-  if (c64port == 0) {  // 0 = 00 = EXROM LOW/GAME LOW
-    EXROM_ENABLE;
-    GAME_ENABLE;
-  } else if (c64port == 1) {  // 1 = 01 = EXROM LOW/GAME HIGH
-    EXROM_ENABLE;
-    GAME_DISABLE;
-  } else if (c64port == 2) {  // 2 = 10 = EXROM HIGH/GAME LOW
-    EXROM_DISABLE;
-    GAME_ENABLE;
-  } else {  // c64port == 3 = 11 = EXROM HIGH/GAME HIGH
-    EXROM_DISABLE;
-    GAME_DISABLE;
-  }
-}
-
-void disablePorts_C64() {  // EXROM HIGH/GAME HIGH
-  EXROM_DISABLE;
-  GAME_DISABLE;
+void readPorts_C64() {
+  c64port = (PINH >> 3) & 0x3;
 }
 
 //******************************************
@@ -402,10 +372,9 @@ void readROM_C64() {
 
   switch (c64mapper) {
     case 0:  // Normal (4K/8K/16K) & Ultimax (8K/16K)
+      readPorts_C64();
       // ULTIMAX CARTS
       if (c64port == 2) {   // 2 = 10 = EXROM HIGH/GAME LOW
-        GAME_ENABLE;        // LOW
-        EXROM_DISABLE;      // HIGH
         if (c64size > 1) {  // 16K [NO ROML FOR 8K]
           ROML_ENABLE;
           readSegment_C64(0x8000, 0xA000);  // 8K
@@ -415,7 +384,6 @@ void readROM_C64() {
         readSegment_C64(0xE000, 0x10000);  // +8K = 8K/16K
         ROMH_DISABLE;
       } else {              // NORMAL CARTS
-        enablePorts_C64();  // MOST CARTS EXROM LOW/GAME LOW BUT VARIATIONS EXIST
         ROML_ENABLE;
         readSegment_C64(0x8000, 0x9000);  // 4K
         if (c64size > 0)
@@ -427,37 +395,28 @@ void readROM_C64() {
           ROMH_DISABLE;
         }
       }
-      disablePorts_C64();
       break;
 
     case 1:          // Action Replay (32K)
-      GAME_DISABLE;  // HIGH
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDE00, x << 3);   // Switch Bank using D3-D4
         readSegment_C64(0x8000, 0xA000);  // 8K *4 = 32K
       }
       ROML_DISABLE;
-      disablePorts_C64();
       break;
 
     case 2:          // KCS Power Cartridge (16K)
     case 11:         // Westermann Learning (16K)
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       readSegment_C64(0x8000, 0xA000);  // 8K
       ROML_DISABLE;
       ROMH_ENABLE;
       readSegment_C64(0xA000, 0xC000);  // +8K = 16K
       ROMH_DISABLE;
-      disablePorts_C64();
       break;
 
     case 3:           // Final Cartridge III (64K)
-      GAME_DISABLE;   // HIGH
-      EXROM_DISABLE;  // HIGH
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDFFF, 0x40 + x);  // Switch Bank using $DFFF
         ROML_ENABLE;
@@ -470,8 +429,6 @@ void readROM_C64() {
       break;
 
     case 4:          // Simons Basic (16K)
-      GAME_DISABLE;  // HIGH
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       readSegment_C64(0x8000, 0xA000);  // 8K
       ROML_DISABLE;
@@ -479,7 +436,6 @@ void readROM_C64() {
       bankSwitch_C64(0xDE00, 0x1);      // Switch Bank to ROM
       readSegment_C64(0xA000, 0xC000);  // +8K = 16K
       ROMH_DISABLE;
-      disablePorts_C64();
       break;
 
     // Ocean Bank 1/B (Single Chip) Selection Notes (Luigi Di Fraia):
@@ -498,8 +454,6 @@ void readROM_C64() {
     // IF 0x75 OR 0x83, THEN Two Chip ELSE Single Chip
 
     case 5: {        // Ocean 128K/256K/512K
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       bankSwitch_C64(0xDE00, 0);  // Reset Bank 0
       uint8_t checkOcean = readData_C64(0x8002);
@@ -531,20 +485,15 @@ void readROM_C64() {
         }
         ROML_DISABLE;
       }
-      disablePorts_C64();
       break;
     }
     case 6:           // Expert Cartridge (8K)
-      GAME_DISABLE;   // HIGH
-      EXROM_DISABLE;  // HIGH
       ROML_ENABLE;
       readSegment_C64(0x8000, 0xA000);  // 8K
       ROML_DISABLE;
       break;
 
     case 7:          // Fun Play, Power Play (128K)
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       for (int x = 0; x < 8; x++) {
         bankSwitch_C64(0xDE00, x * 8);    // Switch Bank 0-8
@@ -558,12 +507,9 @@ void readROM_C64() {
       }
       ROMH_DISABLE;
       bankSwitch_C64(0xDE00, 0x86);  // Reset ROM
-      disablePorts_C64();
       break;
 
     case 8:          // Super Games (64K)
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDF00, x);  // Switch Bank
         ROML_ENABLE;
@@ -573,24 +519,18 @@ void readROM_C64() {
         readSegment_C64(0xA000, 0xC000);  // +8K = 16K
         ROMH_DISABLE;
       }
-      disablePorts_C64();
       break;
 
     case 9:          // Atomic Power (32K)
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDE00, x << 3);   // Switch Bank using D3-D4
         readSegment_C64(0x8000, 0xA000);  // 8K
       }
       ROML_DISABLE;
-      disablePorts_C64();
       break;
 
     case 10:          // Epyx Fastload (8K)
-      GAME_DISABLE;   // HIGH
-      EXROM_DISABLE;  // HIGH
       ROML_ENABLE;
       bankSwitch_C64(0xDE00, 0);             // Read IO1 - Trigger Access
       readSegment_C64(0x8000, 0x9E00);       // 7680 Bytes
@@ -601,18 +541,13 @@ void readROM_C64() {
       break;
 
     case 12:         // Rex Utility (8K)
-      GAME_DISABLE;  // HIGH
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       bankSwitch_C64(0xDFC0, 0);        // Enable ROM
       readSegment_C64(0x8000, 0xA000);  // 8K
       ROML_DISABLE;
-      disablePorts_C64();
       break;
 
     case 13:                      // Final Cartridge I (16K)
-      GAME_DISABLE;               // HIGH
-      EXROM_DISABLE;              // HIGH
       bankSwitch_C64(0xDF00, 0);  // Enable ROM
       ROML_ENABLE;
       readSegment_C64(0x8000, 0xA000);  // 8K
@@ -623,55 +558,42 @@ void readROM_C64() {
       break;
 
     case 14:         // Magic Formel (64K)
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       ROMH_ENABLE;
       for (int x = 0; x < 8; x++) {
         bankSwitch_C64(0xDF00 + x, 0);     // Switch Bank using A0-A2
         readSegment_C64(0xE000, 0x10000);  // 8K * 8 = 64K
       }
       ROMH_DISABLE;
-      disablePorts_C64();
       break;
 
     case 15:          // C64 Game System, System 3 (512K)
-      GAME_ENABLE;    // LOW
-      EXROM_DISABLE;  // HIGH
       ROML_ENABLE;
       for (int x = 0; x < 64; x++) {
         bankSwitch_C64(0xDE00 + x, 0);    // Switch Bank using A0-A4
         readSegment_C64(0x8000, 0xA000);  // 8K * 64 = 512K
       }
-      disablePorts_C64();
+      ROML_DISABLE;
       break;
 
     case 16:         // WarpSpeed (16K)
-      GAME_ENABLE;   // LOW
-      EXROM_ENABLE;  // LOW
       ROML_ENABLE;
       readSegment_C64(0x8000, 0xA000);  // 8K
       ROML_DISABLE;
       ROMH_ENABLE;
       readSegment_C64(0xA000, 0xC000);  // +8K = 16K
       ROMH_DISABLE;
-      disablePorts_C64();
       break;
 
-    case 17:          // Dinamic (128K) - Luigi Di Fraia has opposite PORT states - GAME_DISABLE/EXROM_ENABLE
-      GAME_ENABLE;    // LOW
-      EXROM_DISABLE;  // HIGH
+    case 17:          // Dinamic (128K)
       ROML_ENABLE;
       for (int x = 0; x < 16; x++) {
         bankSwitch_C64(0xDE00 + x, 0);    // Switch Bank using A0-A4
         readSegment_C64(0x8000, 0xA000);  // 8K * 16 = 128K
       }
       ROML_DISABLE;
-      disablePorts_C64();
       break;
 
     case 18:          // Zaxxon, Super Zaxxon (SEGA) (20K)
-      GAME_DISABLE;   // HIGH
-      EXROM_DISABLE;  // HIGH
       ROML_ENABLE;
       readSegment_C64(0x8000, 0x9000);  // 4K
       ROML_DISABLE;
@@ -686,8 +608,6 @@ void readROM_C64() {
       break;
 
     case 19:          // Magic Desk, Domark, HES Australia (32K/64K/128K)
-      GAME_ENABLE;    // LOW
-      EXROM_DISABLE;  // HIGH
       ROML_ENABLE;
       c64banks = C64[c64size] / 8;
       for (int x = 0; x < c64banks; x++) {
@@ -695,12 +615,9 @@ void readROM_C64() {
         readSegment_C64(0x8000, 0xA000);  // 8K * Banks = 32K/64K/128K
       }
       ROML_DISABLE;
-      disablePorts_C64();
       break;
 
     case 20:  // Super Snapshot 5 (64K)
-      GAME_DISABLE;
-      EXROM_DISABLE;
       for (int x = 0; x < 4; x++) {
         int bank = (((x & 2) << 3) | (0 << 3) | ((x & 1) << 2));
         bankSwitch_C64(0xDE00, bank);  // Switch Bank using D2-D4 (D3 == 0 Enable ROM)
@@ -714,8 +631,6 @@ void readROM_C64() {
       break;
 
     case 21:  // Comal-80 (64K)
-      GAME_DISABLE;
-      EXROM_DISABLE;
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDE00, x + 0x80);  // Switch Bank
         ROML_ENABLE;
@@ -979,103 +894,11 @@ setrom:
 }
 
 //******************************************
-// SET PORT STATE
-//******************************************
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void println_C64_PortState(int state)
-{ 
-  display_Clear();
-  print_Msg(F("Port State: "));
-  println_Msg(state);
-  switch (state) {
-    case 0:
-      println_Msg(F("EXROM LOW/GAME LOW"));
-      break;
-    case 1:
-      println_Msg(F("EXROM LOW/GAME HIGH"));
-      break;
-    case 2:
-      println_Msg(F("EXROM HIGH/GAME LOW"));
-      break;
-    case 3:
-      println_Msg(F("EXROM HIGH/GAME HIGH"));
-      break;
-  }
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("Press to Change"));
-  println_Msg(F("Hold to Select"));
-  display_Update();
-}
-#endif
-
-void setPorts_C64()
-{
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-
-  println_C64_PortState(i);
-
-  while (1) {
-    b = checkButton();
-    if (b == 2) { // Previous (doubleclick)
-      if (i == 0)
-        i = 3;
-      else
-        i--;
-
-      println_C64_PortState(i);
-    }
-    if (b == 1) { // Next (press)
-      if (i == 3)
-        i = 0;
-      else
-        i++;
-
-      println_C64_PortState(i);
-    }
-    if (b == 3) { // Long Press - Execute (hold)
-      newc64port = i;
-      break;
-    }
-  }
-  display.setCursor(0, 56); // Display selection at bottom
-  print_Msg(F("PORT STATE "));
-  println_Msg(newc64port);
-  display_Update();
-  delay(1000);
-#else
-setrom:
-  String sizeROM;
-  Serial.print(F("Select Port State [0-3]:"));
-  Serial.println(F("0 = EXROM LOW/GAME LOW"));
-  Serial.println(F("1 = EXROM LOW/GAME HIGH"));
-  Serial.println(F("2 = EXROM HIGH/GAME LOW"));
-  Serial.println(F("3 = EXROM HIGH/GAME HIGH"));
-  Serial.print(F("Enter Port State: "));
-  while (Serial.available() == 0) {}
-  sizeROM = Serial.readStringUntil('\n');
-  Serial.println(sizeROM);
-  newc64port = sizeROM.toInt();
-  if (newc64port > 3) {
-    Serial.println(F("INVALID STATE"));
-    Serial.println(FS(FSTRING_EMPTY));
-    goto setrom;
-  }
-  Serial.print(F("Port State = "));
-  Serial.println(newc64port);
-#endif
-  EEPROM_writeAnything(12, newc64port);
-  c64port = newc64port;
-}
-
-//******************************************
 // CHECK STATUS
 //******************************************
 void checkStatus_C64() {
   EEPROM_readAnything(7, c64mapper);
   EEPROM_readAnything(8, c64size);
-  EEPROM_readAnything(12, c64port);
   if (c64mapper > 21) {
     c64mapper = 0;
     EEPROM_writeAnything(7, c64mapper);
@@ -1083,10 +906,6 @@ void checkStatus_C64() {
   if (c64size > 9) {
     c64size = 0;
     EEPROM_writeAnything(8, c64size);
-  }
-  if (c64port > 3) {
-    c64port = 0;
-    EEPROM_writeAnything(12, c64port);
   }
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -1100,8 +919,6 @@ void checkStatus_C64() {
   print_Msg(F("ROM SIZE:   "));
   print_Msg(C64[c64size]);
   println_Msg(F("K"));
-  print_Msg(F("PORT STATE: "));
-  println_Msg(c64port);
   display_Update();
   wait();
 #else
@@ -1110,8 +927,6 @@ void checkStatus_C64() {
   Serial.print(F("CURRENT ROM SIZE:   "));
   Serial.print(C64[c64size]);
   Serial.println(F("K"));
-  Serial.print(F("CURRENT PORT STATE: "));
-  Setial.println(c64port);
   Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
@@ -1216,10 +1031,9 @@ void printMapper_C64(byte c64maplabel) {
 // CART SELECT CODE
 //******************************************
 FsFile c64csvFile;
-char c64game[47];                   // title
+char c64game[45];                   // title
 char c64mm[3];                      // mapper
 char c64rr[3];                      // romsize
-char c64pp[3];                      // port state (exrom+game)
 char c64ll[4];                      // linelength (previous line)
 unsigned long c64csvpos;            // CSV File Position
 char c64cartCSV[] = "c64cart.txt";  // CSV List
@@ -1238,7 +1052,7 @@ bool readLine_C64(FsFile& f, char* line, size_t maxLen) {
   return false;  // line too long
 }
 
-bool readVals_C64(char* c64game, char* c64mm, char* c64rr, char* c64pp, char* c64ll) {
+bool readVals_C64(char* c64game, char* c64mm, char* c64rr, char* c64ll) {
   char line[54];
   c64csvpos = c64csvFile.position();
   if (!readLine_C64(c64csvFile, line, sizeof(line))) {
@@ -1254,8 +1068,6 @@ bool readVals_C64(char* c64game, char* c64mm, char* c64rr, char* c64pp, char* c6
     else if (x == 2)
       strcpy(c64rr, comma);
     else if (x == 3)
-      strcpy(c64pp, comma);
-    else if (x == 4)
       strcpy(c64ll, comma);
     comma = strtok(NULL, ",");
     x += 1;
@@ -1281,7 +1093,7 @@ bool getCartListInfo_C64() {
 #endif
   if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
     while (1) {                    // Scroll Game List
-      while (readVals_C64(c64game, c64mm, c64rr, c64pp, c64ll)) {
+      while (readVals_C64(c64game, c64mm, c64rr, c64ll)) {
         if (strcmp(c64csvEND, c64game) == 0) {
           c64csvFile.seek(0);  // Restart
         } else {
@@ -1331,7 +1143,7 @@ bool getCartListInfo_C64() {
   Serial.println(F("HOLD TO SELECT"));
   Serial.println(FS(FSTRING_EMPTY));
 #endif
-  while (readVals_C64(c64game, c64mm, c64rr, c64pp, c64ll)) {
+  while (readVals_C64(c64game, c64mm, c64rr, c64ll)) {
     if (strcmp(c64csvEND, c64game) == 0) {
       c64csvFile.seek(0);  // Restart
     } else {
@@ -1367,10 +1179,8 @@ bool getCartListInfo_C64() {
         if (b == 3) {  // Long Press - Select Cart (hold)
           newc64mapper = strtol(c64mm, NULL, 10);
           newc64size = strtol(c64rr, NULL, 10);
-          newc64port = strtol(c64pp, NULL, 10);
           EEPROM_writeAnything(7, newc64mapper);
           EEPROM_writeAnything(8, newc64size);
-          EEPROM_writeAnything(12, newc64port);
           cartselected = 1;  // SELECTION MADE
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
           println_Msg(F("SELECTION MADE"));
@@ -1412,8 +1222,6 @@ void checkCSV_C64() {
     print_Msg(newc64mapper);
     print_Msg(F("/R"));
     print_Msg(newc64size);
-    print_Msg(F("/P"));
-    print_Msg(newc64port);
     display_Update();
 #else
     Serial.println(FS(FSTRING_EMPTY));
@@ -1424,8 +1232,6 @@ void checkCSV_C64() {
     Serial.print(newc64mapper);
     Serial.print(F("/R"));
     Serial.print(newc64size);
-    Serial.print(F("/P"));
-    Serial.print(newc64port);
     Serial.println(FS(FSTRING_EMPTY));
 #endif
   } else {
