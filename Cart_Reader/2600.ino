@@ -47,7 +47,6 @@ int a2600index;
 
 byte a2600[] = { 2, 4, 8, 12, 16, 32, 64 };
 byte a2600mapper = 0;
-byte new2600mapper;
 byte a2600size;
 
 // EEPROM MAPPING
@@ -110,7 +109,6 @@ void a2600Menu() {
     case 0:
       // Select Cart
       setCart_2600();
-      wait();
       setup_2600();
       break;
 
@@ -686,6 +684,7 @@ void displayMapperSelect_2600(uint8_t index, boolean printInstructions) {
 #endif
 
 void setMapper_2600() {
+  byte new2600mapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   uint8_t b = 0;
   int i = 0;
@@ -794,251 +793,86 @@ setmapper:
 // CART SELECT CODE
 //******************************************
 
-FsFile a2600csvFile;
-char a2600game[36];                     // title
-char a2600mm[4];                        // mapper
-char a2600ll[4];                        // linelength (previous line)
-unsigned long a2600csvpos;              // CSV File Position
-char a2600cartCSV[] = "2600.txt";       // CSV List
-char a2600csvEND[] = "EOF";             // CSV End Marker for scrolling
+void setCart_2600() {
+  //go to root
+  sd.chdir();
 
-bool readLine_ATARI(FsFile& f, char* line, size_t maxLen) {
-  for (size_t n = 0; n < maxLen; n++) {
-    int c = f.read();
-    if (c < 0 && n == 0) return false;  // EOF
-    if (c < 0 || c == '\n') {
-      line[n] = 0;
-      return true;
-    }
-    line[n] = c;
-  }
-  return false;  // line too long
-}
+  char gamename[100];
+  byte gameMapper;
+  byte gameSize;
 
-bool readVals_ATARI(char* a2600game, char* a2600mm, char* a2600ll) {
-  char line[42];
-  a2600csvpos = a2600csvFile.position();
-  if (!readLine_ATARI(a2600csvFile, line, sizeof(line))) {
-    return false;  // EOF or too long
-  }
-  char* comma = strtok(line, ",");
-  int x = 0;
-  while (comma != NULL) {
-    if (x == 0)
-      strcpy(a2600game, comma);
-    else if (x == 1)
-      strcpy(a2600mm, comma);
-    else if (x == 2)
-      strcpy(a2600ll, comma);
-    comma = strtok(NULL, ",");
-    x += 1;
-  }
-  return true;
-}
+  // Select starting letter
+  byte myLetter = starting_letter();
 
-bool getCartListInfo_2600() {
-  bool buttonreleased = 0;
-  bool cartselected = 0;
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(F(" HOLD TO FAST CYCLE"));
-  display_Update();
-#else
-  Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
-#endif
-  delay(2000);
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {  // Button Held - Fast Cycle
-    while (1) {             // Scroll Game List
-      while (readVals_ATARI(a2600game, a2600mm, a2600ll)) {
-        if (strcmp(a2600csvEND, a2600game) == 0) {
-          a2600csvFile.seek(0);  // Restart
-        } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          display_Clear();
-          println_Msg(F("CART TITLE:"));
-          println_Msg(FS(FSTRING_EMPTY));
-          println_Msg(a2600game);
-          display_Update();
-#else
-          Serial.print(F("CART TITLE:"));
-          Serial.println(a2600game);
-#endif
-#if defined(ENABLE_OLED)
-          buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-          buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-          if (buttonVal1 == HIGH) {  // Button Released
-            buttonreleased = 1;
-            break;
-          }
-          if (buttonreleased) {
-            buttonreleased = 0;  // Reset Flag
-            break;
-          }
-        }
-      }
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
-      if (buttonVal1 == HIGH)  // Button Released
-        break;
-    }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display.setCursor(0, 56);
-  println_Msg(F("FAST CYCLE OFF"));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_EMPTY));
-  Serial.println(F("FAST CYCLE OFF"));
-  Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
-  Serial.println(F("DOUBLE CLICK TO STEP BACK"));
-  Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FS(FSTRING_EMPTY));
-#endif
-  while (readVals_ATARI(a2600game, a2600mm, a2600ll)) {
-    if (strcmp(a2600csvEND, a2600game) == 0) {
-      a2600csvFile.seek(0);  // Restart
-    } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  // Open database
+  if (myFile.open("2600.txt", O_READ)) {
+    seek_first_letter_in_database(myFile, myLetter);
+
+    // Display database
+    while (myFile.available()) {
       display_Clear();
-      println_Msg(F("CART TITLE:"));
+
+      get_line(gamename, &myFile, sizeof(gamename));   
+
+      // Read mapper with three ascii character and subtract 48 to convert to decimal
+      gameMapper = ((myFile.read() - 48) * 100) + ((myFile.read() - 48) * 10) + (myFile.read() - 48);
+
+      // Skip rest of line
+      myFile.seekCur(2);
+
+      skip_line(&myFile); 
+
+      println_Msg(F("Select your cartridge"));
       println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(a2600game);
-      display.setCursor(0, 48);
+      println_Msg(gamename);
+
 #if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
+#elif defined(SERIAL_MONITOR)
+      println_Msg(F("U/D to Change"));
+      println_Msg(F("Space to Select"));
 #endif
       display_Update();
-#else
-      Serial.print(F("CART TITLE:"));
-      Serial.println(a2600game);
-#endif
-      while (1) {  // Single Step
-        uint8_t b = checkButton();
-        if (b == 1) {  // Continue (press)
+
+      uint8_t b = 0;
+      while (1) {
+        // Check button input
+        b = checkButton();
+
+        // Next
+        if (b == 1) {
           break;
         }
-        if (b == 2) {  // Reset to Start of List (doubleclick)
-          byte prevline = strtol(a2600ll, NULL, 10);
-          a2600csvpos -= prevline;
-          a2600csvFile.seek(a2600csvpos);
+
+        // Previous
+        else if (b == 2) {
+          rewind_line(myFile, 6);
           break;
         }
-        if (b == 3) {  // Long Press - Select Cart (hold)
-          new2600mapper = strtol(a2600mm, NULL, 10);
-          EEPROM_writeAnything(7, new2600mapper);
-          cartselected = 1;  // SELECTION MADE
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          println_Msg(F("SELECTION MADE"));
-          display_Update();
-#else
-          Serial.println(F("SELECTION MADE"));
-#endif
+
+        // Selection
+        else if (b == 3) {
+          EEPROM_writeAnything(7, gameMapper);
+          for (int i = 0; i < a2600mapcount; i++) {
+            a2600index = i * 2;
+            if (gameMapper == pgm_read_byte(a2600mapsize + a2600index)) {
+              a2600size = pgm_read_byte(a2600mapsize + a2600index + 1);
+              EEPROM_writeAnything(8, a2600size);
+              break;
+            }
+          }
+          myFile.close();
           break;
         }
-      }
-      if (cartselected) {
-        cartselected = 0;  // Reset Flag
-        return true;
       }
     }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_END_OF_FILE));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_END_OF_FILE));
-#endif
-
-  return false;
-}
-
-void checkCSV_2600() {
-  if (getCartListInfo_2600()) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(FS(FSTRING_CART_SELECTED));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(a2600game);
-    display_Update();
-    // Display Settings
-    display.setCursor(0, 56);
-    print_Msg(F("CODE: "));
-    println_Msg(new2600mapper, HEX);
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(FS(FSTRING_CART_SELECTED));
-    Serial.println(a2600game);
-    // Display Settings
-    Serial.print(F("CODE: "));
-    Serial.println(new2600mapper, HEX);
-    Serial.println(FS(FSTRING_EMPTY));
-#endif
   } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display.setCursor(0, 56);
-    println_Msg(FS(FSTRING_NO_SELECTION));
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_NO_SELECTION));
-#endif
+    print_FatalError(F("Database file not found"));
   }
-}
-
-void checkSize_2600() {
-  EEPROM_readAnything(7, a2600mapper);
-  for (int i = 0; i < a2600mapcount; i++) {
-    a2600index = i * 2;
-    if (a2600mapper == pgm_read_byte(a2600mapsize + a2600index)) {
-      a2600size = pgm_read_byte(a2600mapsize + a2600index + 1);
-      EEPROM_writeAnything(8, a2600size);
-      break;
-    }
-  }
-}
-
-void setCart_2600() {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(a2600cartCSV);
-  display_Update();
-#endif
-  sd.chdir();
-  sprintf(folder, "2600/CSV");
-  sd.chdir(folder);  // Switch Folder
-  a2600csvFile = sd.open(a2600cartCSV, O_READ);
-  if (!a2600csvFile) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(F("CSV FILE NOT FOUND!"));
-    display_Update();
-#else
-    Serial.println(F("CSV FILE NOT FOUND!"));
-#endif
-    while (1) {
-      if (checkButton() != 0)
-        setup_2600();
-    }
-  }
-  checkCSV_2600();
-  a2600csvFile.close();
-
-  checkSize_2600();
 }
 #endif
 //******************************************

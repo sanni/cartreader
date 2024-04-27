@@ -781,17 +781,6 @@ setmapper:
 //******************************************
 // CART SELECT CODE
 //******************************************
-void checkSize_7800() {
-  EEPROM_readAnything(7, a7800mapper);
-  for (int i = 0; i < a7800mapcount; i++) {
-    a7800index = i * 3;
-    if (a7800mapper == pgm_read_byte(a7800mapsize + a7800index)) {
-      a7800size = pgm_read_byte(a7800mapsize + a7800index + 1);
-      EEPROM_writeAnything(8, a7800size);
-      break;
-    }
-  }
-}
 
 void setCart_7800() {
   //go to root
