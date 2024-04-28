@@ -613,7 +613,7 @@ setrom:
 void checkStatus_7800() {
   EEPROM_readAnything(7, a7800mapper);
   EEPROM_readAnything(8, a7800size);
-  if (a7800mapper > 6) {
+  if (a7800mapper > 7) {
     a7800mapper = 0;  // default
     EEPROM_writeAnything(7, a7800mapper);
   }
