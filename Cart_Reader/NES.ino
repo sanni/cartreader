@@ -514,6 +514,69 @@ void setRomnameFromString(const char* input) {
   }
 }
 
+void printDataLine_NES(struct database_entry* entry) {
+  uint8_t iNES[16];
+  uint8_t* output;
+  char* input;    
+
+  input = entry->iNES_str;
+  output = iNES;
+  for (uint8_t i = 0; i < sizeof(iNES); i++) {
+    unsigned int buf;
+
+    sscanf(input, "%2X", &buf);
+    *(output++) = buf;
+    input += 2;
+  }
+
+  mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | (iNES[8] & 0x0F);
+
+  if ((iNES[9] & 0x0F) != 0x0F) {
+    // simple notation
+    prgsize = (iNES[4] | ((iNES[9] & 0x0F) << 8));  //*16
+  } else {
+    // exponent-multiplier notation
+    prgsize = (((1 << (iNES[4] >> 2)) * ((iNES[4] & 0b11) * 2 + 1)) >> 14);  //*16
+  }
+  if (prgsize != 0)
+    prgsize = (int(log(prgsize) / log(2)));
+
+  if ((iNES[9] & 0xF0) != 0xF0) {
+    // simple notation
+    chrsize = (uppow2(iNES[5] | ((iNES[9] & 0xF0) << 4))) * 2;  //*4
+  } else {
+    // exponent-multiplier notation
+    chrsize = (((1 << (iNES[5] >> 2)) * ((iNES[5] & 0b11) * 2 + 1)) >> 13) * 2;  //*4
+  }
+  if (chrsize != 0)
+    chrsize = (int(log(chrsize) / log(2)));
+
+  ramsize = ((iNES[10] & 0xF0) ? (64 << ((iNES[10] & 0xF0) >> 4)) : 0) / 4096;  //*4
+  if (ramsize != 0)
+    ramsize = (int(log(ramsize) / log(2)));
+
+  prg = (int_pow(2, prgsize)) * 16;
+  if (chrsize == 0)
+    chr = 0;  // 0K
+  else
+    chr = (int_pow(2, chrsize)) * 4;
+  if (ramsize == 0)
+    ram = 0;  // 0K
+  else if (mapper == 82)
+    ram = 5;  // 5K
+  else
+    ram = (int_pow(2, ramsize)) * 4;
+
+  // Mapper Variants
+  // Identify variant for use across multiple functions
+  if (mapper == 4) {  // Check for MMC6/MMC3
+    checkMMC6();
+    if (mmc6)
+      ram = 1;  // 1K
+  }
+  printNESSettings();
+}
+
 void getMapping() {
   FsFile database;
   uint32_t oldcrc32 = 0xFFFFFFFF;
@@ -590,143 +653,15 @@ void getMapping() {
     }
   }
   if (browseDatabase) {
-    uint8_t fastScrolling = 1;
+    struct database_entry entry;
 
-    // Display database
-    while (database.available()) {
-#ifdef ENABLE_GLOBAL_LOG
-      // Disable log to prevent unnecessary logging
-      dont_log = true;
-#endif
-
-      uint8_t iNES[16];
-      uint8_t* output;
-      char* input;
-
-      struct database_entry entry;
-      display_Clear();
-      readDatabaseEntry(database, &entry);
-
-      input = entry.iNES_str;
-      output = iNES;
-      for (uint8_t i = 0; i < sizeof(iNES); i++) {
-        unsigned int buf;
-
-        sscanf(input, "%2X", &buf);
-        *(output++) = buf;
-        input += 2;
-      }
-
-      mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | (iNES[8] & 0x0F);
-
-      if ((iNES[9] & 0x0F) != 0x0F) {
-        // simple notation
-        prgsize = (iNES[4] | ((iNES[9] & 0x0F) << 8));  //*16
-      } else {
-        // exponent-multiplier notation
-        prgsize = (((1 << (iNES[4] >> 2)) * ((iNES[4] & 0b11) * 2 + 1)) >> 14);  //*16
-      }
-      if (prgsize != 0)
-        prgsize = (int(log(prgsize) / log(2)));
-
-      if ((iNES[9] & 0xF0) != 0xF0) {
-        // simple notation
-        chrsize = (uppow2(iNES[5] | ((iNES[9] & 0xF0) << 4))) * 2;  //*4
-      } else {
-        // exponent-multiplier notation
-        chrsize = (((1 << (iNES[5] >> 2)) * ((iNES[5] & 0b11) * 2 + 1)) >> 13) * 2;  //*4
-      }
-      if (chrsize != 0)
-        chrsize = (int(log(chrsize) / log(2)));
-
-      ramsize = ((iNES[10] & 0xF0) ? (64 << ((iNES[10] & 0xF0) >> 4)) : 0) / 4096;  //*4
-      if (ramsize != 0)
-        ramsize = (int(log(ramsize) / log(2)));
-
-      prg = (int_pow(2, prgsize)) * 16;
-      if (chrsize == 0)
-        chr = 0;  // 0K
-      else
-        chr = (int_pow(2, chrsize)) * 4;
-      if (ramsize == 0)
-        ram = 0;  // 0K
-      else if (mapper == 82)
-        ram = 5;  // 5K
-      else
-        ram = (int_pow(2, ramsize)) * 4;
-
-      // Mapper Variants
-      // Identify variant for use across multiple functions
-      if (mapper == 4) {  // Check for MMC6/MMC3
-        checkMMC6();
-        if (mmc6)
-          ram = 1;  // 1K
-      }
-
-      println_Msg(entry.filename);
-      printNESSettings();
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 0);
-      if (fastScrolling > 1)
-        println_Msg(F(" (fast)"));
-      else
-        println_Msg("");
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 0);
-      if (fastScrolling > 1)
-        println_Msg(F(" (fast)"));
-      else
-        println_Msg("");
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-#ifdef ENABLE_GLOBAL_LOG
-      // Enable log again
-      dont_log = false;
-#endif
-      uint8_t b = 0;
-      do {
-        b = checkButton();
-      } while (b == 0);
-
-      if (b == 1) {
-        // 1: Next record
-        if (fastScrolling > 1) {
-          for (uint8_t skipped = 0; skipped < fastScrolling * 3; skipped++) {
-            skip_line(&database);
-          }
-        }
-        continue;
-      }
-      if (b == 2) {
-        // 2: Previous record
-        if (fastScrolling > 1)
-          rewind_line(database, fastScrolling * 3 + 3);
-        else
-          rewind_line(database, 6);
-        continue;
-      }
-      if (b == 4) {
-        // 4: Toggle Fast Scrolling
-        if (fastScrolling == 1)
-          fastScrolling = 30;
-        else
-          fastScrolling = 1;
-        continue;
-      }
+    if(checkCartSelection(database, &readDataLine_NES, &entry, &printDataLine_NES, &setRomnameFromString)) {
       // anything else: select current record
-      setRomnameFromString(entry.filename);
       // Save Mapper
       EEPROM_writeAnything(7, mapper);
       EEPROM_writeAnything(8, prgsize);
       EEPROM_writeAnything(9, chrsize);
       EEPROM_writeAnything(10, ramsize);
-      break;
     }
   }
   database.close();
@@ -734,8 +669,12 @@ void getMapping() {
 
 static void readDatabaseEntry(FsFile& database, struct database_entry* entry) {
   get_line(entry->filename, &database, sizeof(entry->filename));
-  get_line(entry->crc_str, &database, sizeof(entry->crc_str));
+  readDataLine_NES(database, entry);
   skip_line(&database);
+}
+
+void readDataLine_NES(FsFile& database, struct database_entry* entry) {
+  get_line(entry->crc_str, &database, sizeof(entry->crc_str));
 
   entry->crc_str[8] = 0;
   entry->crc512_str = &entry->crc_str[8 + 1];

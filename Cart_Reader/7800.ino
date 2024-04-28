@@ -781,14 +781,30 @@ setmapper:
 //******************************************
 // CART SELECT CODE
 //******************************************
+struct database_entry_7800 {
+  byte gameMapper;
+  byte gameSize;
+};
+
+void readDataLine_7800(FsFile& database, struct database_entry_7800* entry) {
+  // Read mapper
+  entry->gameMapper = database.read() - 48;
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read rom size
+  entry->gameSize = database.read() - 48;
+
+  // Skip rest of line
+  database.seekCur(2);
+}
 
 void setCart_7800() {
   //go to root
   sd.chdir();
 
-  char gamename[100];
-  byte gameMapper;
-  byte gameSize;
+  struct database_entry_7800 entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -797,66 +813,9 @@ void setCart_7800() {
   if (myFile.open("7800.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    // Display database
-    while (myFile.available()) {
-      display_Clear();
-
-      get_line(gamename, &myFile, sizeof(gamename));   
-
-      // Read mapper
-      gameMapper = myFile.read() - 48;
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read rom size
-      gameSize = myFile.read() - 48;
-
-      // Skip rest of line
-      myFile.seekCur(2);
-
-      skip_line(&myFile); 
-
-      println_Msg(F("Select your cartridge"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(gamename);
-
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-      uint8_t b = 0;
-      while (1) {
-        // Check button input
-        b = checkButton();
-
-        // Next
-        if (b == 1) {
-          break;
-        }
-
-        // Previous
-        else if (b == 2) {
-          rewind_line(myFile, 6);
-          break;
-        }
-
-        // Selection
-        else if (b == 3) {
-          EEPROM_writeAnything(7, gameMapper);
-          EEPROM_writeAnything(8, gameSize);
-          myFile.close();
-          break;
-        }
-      }
+    if(checkCartSelection(myFile, &readDataLine_7800, &entry)) {
+      EEPROM_writeAnything(7, entry.gameMapper);
+      EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
     print_FatalError(F("Database file not found"));

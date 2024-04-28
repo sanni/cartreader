@@ -707,6 +707,108 @@ void seek_first_letter_in_database(FsFile& database, byte myLetter) {
 #endif
 }
 
+// navigate through the database file using OSSC input buttons. Requires function pointer readData for reading device specific data line from database
+// printDataLine - optional callback for printing device specific data informations about the currently browsed game
+// setRomName - callback function to set rom name if game is selected
+// returns true if a game was selected, false otherwise
+boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), void* data, void (*printDataLine)(void*) = NULL, void (setRomName)(const char* input) = NULL) {
+  char gamename[128];
+  uint8_t fastScrolling = 1;
+
+  // Display database
+  while (database.available()) {
+#ifdef ENABLE_GLOBAL_LOG
+    // Disable log to prevent unnecessary logging
+    dont_log = true;
+#endif
+    display_Clear();
+
+    get_line(gamename, &database, sizeof(gamename));   
+
+    readData(database, data);
+
+    skip_line(&database); 
+
+    println_Msg(F("Select your cartridge"));
+    println_Msg(FS(FSTRING_EMPTY));
+    println_Msg(gamename);
+
+    if(printDataLine) {
+      printDataLine(data);
+    }
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
+    print_STR(press_to_change_STR, 0);
+    if (fastScrolling > 1)
+      println_Msg(F(" (fast)"));
+    else
+      println_Msg("");
+    print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+    print_STR(rotate_to_change_STR, 0);
+    if (fastScrolling > 1)
+      println_Msg(F(" (fast)"));
+    else
+      println_Msg("");
+    print_STR(press_to_select_STR, 1);
+#elif defined(SERIAL_MONITOR)
+    println_Msg(F("U/D to Change"));
+    println_Msg(F("Space to Select"));
+#endif
+    display_Update();
+
+#ifdef ENABLE_GLOBAL_LOG
+      // Enable log again
+      dont_log = false;
+#endif
+    uint8_t b = 0;
+    while (1) {
+      // Check button input
+      b = checkButton();
+
+      // Next
+      if (b == 1) {
+        // 1: Next record
+        if (fastScrolling > 1) {
+          for (uint8_t skipped = 0; skipped < fastScrolling * 3; skipped++) {
+            skip_line(&database);
+          }
+        }
+        break;
+      }
+
+      // Previous
+      else if (b == 2) {
+        // 2: Previous record
+        if (fastScrolling > 1)
+          rewind_line(database, fastScrolling * 3 + 3);
+        else
+          rewind_line(database, 6);
+        break;
+      }
+
+      // Selection
+      else if (b == 3) {
+        if(setRomName) {
+          setRomName(gamename);
+        }
+        database.close();
+        return true;
+      }
+
+      else if (b == 4) {
+        // 4: Toggle Fast Scrolling
+        if (fastScrolling == 1)
+          fastScrolling = 30;
+        else
+          fastScrolling = 1;
+        continue;
+      }
+    }
+  }
+  return false;
+}
+
 void starting_letter__subDraw(byte selection, byte line) {
       display.setDrawColor(0);
       for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);

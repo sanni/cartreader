@@ -792,12 +792,18 @@ setmapper:
 //******************************************
 // CART SELECT CODE
 //******************************************
+void readDataLine_2600(FsFile& database, byte* gameMapper) {
+  // Read mapper with three ascii character and subtract 48 to convert to decimal
+  (*gameMapper) = ((database.read() - 48) * 100) + ((database.read() - 48) * 10) + (database.read() - 48);
+
+  // Skip rest of line
+  database.seekCur(2);
+}
 
 void setCart_2600() {
   //go to root
   sd.chdir();
 
-  char gamename[100];
   byte gameMapper;
   byte gameSize;
 
@@ -808,64 +814,13 @@ void setCart_2600() {
   if (myFile.open("2600.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    // Display database
-    while (myFile.available()) {
-      display_Clear();
-
-      get_line(gamename, &myFile, sizeof(gamename));   
-
-      // Read mapper with three ascii character and subtract 48 to convert to decimal
-      gameMapper = ((myFile.read() - 48) * 100) + ((myFile.read() - 48) * 10) + (myFile.read() - 48);
-
-      // Skip rest of line
-      myFile.seekCur(2);
-
-      skip_line(&myFile); 
-
-      println_Msg(F("Select your cartridge"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(gamename);
-
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-      uint8_t b = 0;
-      while (1) {
-        // Check button input
-        b = checkButton();
-
-        // Next
-        if (b == 1) {
-          break;
-        }
-
-        // Previous
-        else if (b == 2) {
-          rewind_line(myFile, 6);
-          break;
-        }
-
-        // Selection
-        else if (b == 3) {
-          EEPROM_writeAnything(7, gameMapper);
-          for (int i = 0; i < a2600mapcount; i++) {
-            a2600index = i * 2;
-            if (gameMapper == pgm_read_byte(a2600mapsize + a2600index)) {
-              a2600size = pgm_read_byte(a2600mapsize + a2600index + 1);
-              EEPROM_writeAnything(8, a2600size);
-              break;
-            }
-          }
-          myFile.close();
+    if(checkCartSelection(myFile, &readDataLine_2600, &gameMapper)) {
+      EEPROM_writeAnything(7, gameMapper);
+      for (int i = 0; i < a2600mapcount; i++) {
+        a2600index = i * 2;
+        if (gameMapper == pgm_read_byte(a2600mapsize + a2600index)) {
+          a2600size = pgm_read_byte(a2600mapsize + a2600index + 1);
+          EEPROM_writeAnything(8, a2600size);
           break;
         }
       }

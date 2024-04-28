@@ -378,13 +378,56 @@ void checkStatus_WSV() {
 //******************************************
 // CART SELECT CODE
 //******************************************
-void setCart_WSV() {
-  char gamename[100];
-  char tempStr2[2];
+struct database_entry_WSV {
   char crc_search[9];
+  byte gameSize;
+};
 
+void readDataLine_WSV(FsFile& database, struct database_entry_WSV* entry) {
+  char tempStr2[2];
+
+  // Read CRC32 checksum
+  sprintf(checksumStr, "%c", database.read());
+  for (byte i = 0; i < 7; i++) {
+    sprintf(tempStr2, "%c", database.read());
+    strcat(checksumStr, tempStr2);
+  }
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read CRC32 of first 512 bytes
+  sprintf(entry->crc_search, "%c", database.read());
+  for (byte i = 0; i < 7; i++) {
+    sprintf(tempStr2, "%c", database.read());
+    strcat(entry->crc_search, tempStr2);
+  }
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read rom size
+  // Read the next ascii character and subtract 48 to convert to decimal
+  entry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
+
+  // Skip rest of line
+  database.seekCur(2);
+}
+
+void printDataLine_WSV(struct database_entry_WSV* entry) {
+  print_Msg(F("Size: "));
+  if (entry->gameSize == 51)
+    print_Msg(F("512"));
+  else
+    print_Msg(entry->gameSize);
+  println_Msg(F("KB"));
+}
+
+void setCart_WSV() {
   //go to root
   sd.chdir();
+
+  struct database_entry_WSV entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -393,109 +436,22 @@ void setCart_WSV() {
   if (myFile.open("wsv.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    // Display database
-    while (myFile.available()) {
-      display_Clear();
+    if(checkCartSelection(myFile, &readDataLine_WSV, &entry, &printDataLine_WSV)) {
+      //word WSV[] = {32,64,512};
+      switch (entry.gameSize) {
+        case 32:
+          wsvsize = 0;
+          break;
 
-      // Read game name
-      get_line(gamename, &myFile, 96);
+        case 64:
+          wsvsize = 1;
+          break;
 
-      // Read CRC32 checksum
-      sprintf(checksumStr, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(checksumStr, tempStr2);
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read CRC32 of first 512 bytes
-      sprintf(crc_search, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(crc_search, tempStr2);
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read rom size
-      // Read the next ascii character and subtract 48 to convert to decimal
-      cartSize = myFile.read() - 48;
-
-      // Remove leading 0 for single digit cart sizes
-      if (cartSize != 0) {
-        cartSize = cartSize * 10 + myFile.read() - 48;
-      } else {
-        cartSize = myFile.read() - 48;
-      }
-
-      // Skip rest of line
-      myFile.seekCur(2);
-
-      // Skip every 3rd line
-      skip_line(&myFile);
-
-      println_Msg(F("Select your cartridge"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(gamename);
-      print_Msg(F("Size: "));
-      if (cartSize == 51)
-        print_Msg(F("512"));
-      else
-        print_Msg(cartSize);
-      println_Msg(F("KB"));
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-      uint8_t b = 0;
-      while (1) {
-        // Check button input
-        b = checkButton();
-
-        // Next
-        if (b == 1) {
+        case 51:
+          wsvsize = 2;
           break;
         }
-
-        // Previous
-        else if (b == 2) {
-          rewind_line(myFile, 6);
-          break;
-        }
-
-        // Selection
-        else if (b == 3) {
-          //word WSV[] = {32,64,512};
-          switch (cartSize) {
-            case 32:
-              wsvsize = 0;
-              break;
-
-            case 64:
-              wsvsize = 1;
-              break;
-
-            case 51:
-              wsvsize = 2;
-              break;
-          }
-          EEPROM_writeAnything(8, wsvsize);
-          myFile.close();
-          break;
-        }
-      }
+        EEPROM_writeAnything(8, wsvsize);
     }
   } else {
     print_FatalError(F("Database file not found"));

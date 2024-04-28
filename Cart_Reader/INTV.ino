@@ -757,13 +757,68 @@ void checkStatus_INTV() {
 //******************************************
 // CART SELECT CODE
 //******************************************
-void setCart_INTV() {
-  char gamename[100];
-  char tempStr2[2];
+struct database_entry_INTV {
   char crc_search[9];
+  byte gameMapper;
+  byte gameSize;
+};
 
+void readDataLine_INTV(FsFile& database, struct database_entry_INTV* entry) {
+  char tempStr2[2];
+
+  // Read CRC32 checksum
+  sprintf(checksumStr, "%c", database.read());
+  for (byte i = 0; i < 7; i++) {
+    sprintf(tempStr2, "%c", database.read());
+    strcat(checksumStr, tempStr2);
+  }
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read CRC32 of first 512 bytes
+  sprintf(entry->crc_search, "%c", database.read());
+  for (byte i = 0; i < 7; i++) {
+    sprintf(tempStr2, "%c", database.read());
+    strcat(entry->crc_search, tempStr2);
+  }
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read mapper
+  entry->gameMapper = database.read() - 48;
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read rom size
+  // Read the next ascii character and subtract 48 to convert to decimal
+  entry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read SRAM size
+  byte sramSize __attribute__((unused)) = database.read() - 48;
+
+  // Skip rest of line
+  database.seekCur(2);
+}
+
+void printDataLine_INTV(struct database_entry_INTV* entry) {
+  print_Msg(F("Size: "));
+  print_Msg(entry->gameSize);
+  println_Msg(F("KB"));
+  print_Msg(F("Mapper: "));
+  println_Msg(entry->gameMapper);
+}
+
+void setCart_INTV() {
   //go to root
   sd.chdir();
+
+  struct database_entry_INTV entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -772,136 +827,39 @@ void setCart_INTV() {
   if (myFile.open("intv.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    // Display database
-    while (myFile.available()) {
-      display_Clear();
-
-      // Read game name
-      get_line(gamename, &myFile, 96);
-
-      // Read CRC32 checksum
-      sprintf(checksumStr, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(checksumStr, tempStr2);
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read CRC32 of first 512 bytes
-      sprintf(crc_search, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(crc_search, tempStr2);
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read mapper
-      intvmapper = myFile.read() - 48;
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read rom size
-      // Read the next ascii character and subtract 48 to convert to decimal
-      cartSize = myFile.read() - 48;
-
-      // Remove leading 0 for single digit cart sizes
-      if (cartSize != 0) {
-        cartSize = cartSize * 10 + myFile.read() - 48;
-      } else {
-        cartSize = myFile.read() - 48;
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read SRAM size
-      byte sramSize __attribute__((unused)) = myFile.read() - 48;
-
-      // Skip rest of line
-      myFile.seekCur(2);
-
-      // Skip every 3rd line
-      skip_line(&myFile);
-
-      println_Msg(F("Select your cartridge"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(gamename);
-      print_Msg(F("Size: "));
-      print_Msg(cartSize);
-      println_Msg(F("KB"));
-      print_Msg(F("Mapper: "));
-      println_Msg(intvmapper);
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-      uint8_t b = 0;
-      while (1) {
-        // Check button input
-        b = checkButton();
-
-        // Next
-        if (b == 1) {
+    if(checkCartSelection(myFile, &readDataLine_INTV, &entry, &printDataLine_INTV)) {
+      //byte INTV[] = {8, 12, 16, 24, 32, 48};
+      switch (entry.gameSize) {
+        case 8:
+          intvsize = 0;
           break;
-        }
 
-        // Previous
-        else if (b == 2) {
-          rewind_line(myFile, 6);
+        case 12:
+          intvsize = 1;
           break;
-        }
 
-        // Selection
-        else if (b == 3) {
-          //byte INTV[] = {8, 12, 16, 24, 32, 48};
-          switch (cartSize) {
-            case 8:
-              intvsize = 0;
-              break;
-
-            case 12:
-              intvsize = 1;
-              break;
-
-            case 16:
-              intvsize = 2;
-              break;
-
-            case 24:
-              intvsize = 3;
-              break;
-
-            case 32:
-              intvsize = 4;
-              break;
-
-            case 48:
-              intvsize = 5;
-              break;
-
-            default:
-              intvsize = 0;
-              break;
-          }
-          EEPROM_writeAnything(7, intvmapper);
-          EEPROM_writeAnything(8, intvsize);
-          myFile.close();
+        case 16:
+          intvsize = 2;
           break;
-        }
+
+        case 24:
+          intvsize = 3;
+          break;
+
+        case 32:
+          intvsize = 4;
+          break;
+
+        case 48:
+          intvsize = 5;
+          break;
+
+        default:
+          intvsize = 0;
+          break;
       }
+      EEPROM_writeAnything(7, entry.gameMapper);
+      EEPROM_writeAnything(8, intvsize);
     }
   } else {
     print_FatalError(F("Database file not found"));

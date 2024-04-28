@@ -1029,13 +1029,30 @@ void printMapper_C64(byte c64maplabel) {
 //******************************************
 // CART SELECT CODE
 //******************************************
+struct database_entry_C64 {
+  byte gameMapper;
+  byte gameSize;
+};
+
+void readDataLine_C64(FsFile& database, struct database_entry_C64* entry) {
+  // Read mapper with two ascii character and subtract 48 to convert to decimal
+  entry->gameMapper = ((database.read() - 48) * 10) + (database.read() - 48);
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read size and subtract 48 to convert to decimal
+  entry->gameSize = database.read() - 48;
+
+  // Skip rest of line
+  database.seekCur(2);
+}
+
 void setCart_C64() {
   //go to root
   sd.chdir();
 
-  char gamename[100];
-  byte gameMapper;
-  byte gameSize;
+  struct database_entry_C64 entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -1044,65 +1061,9 @@ void setCart_C64() {
   if (myFile.open("c64cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    // Display database
-    while (myFile.available()) {
-      display_Clear();
-
-      get_line(gamename, &myFile, sizeof(gamename));   
-
-      // Read mapper with two ascii character and subtract 48 to convert to decimal
-      gameMapper = ((myFile.read() - 48) * 10) + (myFile.read() - 48);
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read size and subtract 48 to convert to decimal
-      gameSize = myFile.read() - 48;
-
-      // Skip rest of line
-      myFile.seekCur(2);
-
-      skip_line(&myFile); 
-
-      println_Msg(F("Select your cartridge"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(gamename);
-
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-      uint8_t b = 0;
-      while (1) {
-        // Check button input
-        b = checkButton();
-
-        // Next
-        if (b == 1) {
-          break;
-        }
-
-        // Previous
-        else if (b == 2) {
-          rewind_line(myFile, 6);
-          break;
-        }
-        // Selection
-        else if (b == 3) {
-          EEPROM_writeAnything(7, gameMapper);
-          EEPROM_writeAnything(8, gameSize);
-          myFile.close();
-          break;
-        }
-      }
+    if(checkCartSelection(myFile, &readDataLine_C64, &entry)) {
+      EEPROM_writeAnything(7, entry.gameMapper);
+      EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
     print_FatalError(F("Database file not found"));
