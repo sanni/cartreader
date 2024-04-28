@@ -156,3 +156,49 @@ cart size:
 3 = 64K
 4 = 128K
 5 = 144K
+
+## c64cart.txt
+This file stores known Commodore 64 games with the required mapping value and cart size.
+
+Example:
+Donkey Kong
+00,3
+
+Name
+mapper, cart size
+
+mapper:
+00 = Normal 4K/8K/16K + Ultimax 8K/16K
+01 = Action Replay 32K
+02 = KCS Power Cartridge 16K
+03 = Final Cartridge III 64K
+04 = Simons Basic 16K
+05 = Ocean 128K/256K/512K
+06 = Expert Cartridge 8K
+07 = Fun Play, Power Play 128K
+08 = Super Games 64K
+09 = Atomic Power 32K
+10 = Epyx Fastload 8K
+11 = Westermann Learning 16K
+12 = Rex Utility 8K
+13 = Final Cartridge I 16K
+14 = Magic Formel 64K
+15 = C64 Game System, System 3 512K
+16 = WarpSpeed 16K
+17 = Dinamic 128K
+18 = Zaxxon, Super Zaxxon (SEGA) 20K
+19 = Magic Desk, Domark, HES Australia 32K/64K/128K
+20 = Super Snapshot 5 64K
+21 = Comal-80 64K
+
+cart size:
+0 = 4K
+1 = 8K
+2 = 12K
+3 = 16K
+4 = 20K
+5 = 32K
+6 = 64K
+7 = 128K
+8 = 256K
+9 = 512K
