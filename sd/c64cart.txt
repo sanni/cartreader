@@ -1,274 +1,819 @@
-128er Quickload,0,1,0
-256K-EPROM-System,0,1,23
-64 Doctor,0,1,26
-64MON,0,1,18
-Action Cartridge Plus,1,5,14
-Action Replay Professional,1,5,30
-Activision Decathlon,0,3,35
-Adventure 1,0,3,29
-Adventure 3,0,3,20
-Adventure Creator,0,3,20
-Aegean Voyage,0,3,26
-After the War,17,7,22
-Alf in the Color Caves,0,3,23
-Alien Sidestep,0,1,31
-Alpha Build,0,1,23
-Alphabet Zoo,0,3,20
-Arnie Armchair's Howzat Cricket Game,0,3,21
-Astroblitz,0,1,45
-Attack of the Mutant Camels,0,1,19
-Avenger (MAX),0,1,36
-BadLands,5,6,22
-Batman,5,7,17
-Battle Command,5,7,15
-Battlezone,0,3,23
-BC's Quest for Tires,0,3,19
-Beamrider,0,3,29
-Big Bird's Funhouse,0,3,18
-Big Bird's Special Delivery,0,3,28
-Black Box,0,3,36
-Blueprint,0,3,18
-Bowling (MAX),0,3,18
-Bridge 64,0,3,22
-Bubble Burst,0,3,18
-Buck Rogers,0,3,21
-Bug Crusher,0,1,20
-C-64 Diagnostic,0,1,20
-C-64 Import Test Diag,0,1,24
-C64-FORTH,0,2,30
-Calc Result Advanced,0,1,18
-Castle Hassle,0,3,29
-Centipede,0,1,22
-Chase H.Q. II,5,8,18
-Checkers,0,3,22
-Choplifter!,0,3,17
-Close Encounters of the Worst Kind,0,1,20
-Clowns (MAX),0,1,43
-Coccinelle cherche dessinateur,0,1,21
-Coco-Notes,0,3,39
-Colossus Chess +2,8,6,19
-COMAL 80,21,6,26
-Commodore 64 Diagnostic,0,1,18
-Congo Bongo,0,3,32
-Conrad Disk Booster,0,1,20
-Cosmic Life,0,1,28
-Crisis Mountain,0,3,20
-Cyberball,5,7,24
-Dance Fantasy,0,1,18
-Dancing Feats,0,3,22
-Defender,0,3,22
-Dela S-4-Modul,0,1,17
-Delta Drawing,0,3,23
-Der Rechenlowe,11,3,22
-Der Rechtschreiblowe,11,3,24
-Designer's Pencil,0,3,30
-Diamond Mine,0,3,26
-Diary 64,0,1,21
-Dig Dug,0,3,17
-Doc'64,0,1,16
-Donkey Kong,0,3,15
-Dot Gobbler,0,1,20
-Double Dragon (HES),19,7,20
-Double Dragon (Ocean),5,7,29
-Dragonsden,0,3,30
-Ducks Ahoy!,0,3,19
-Electronic Mailbox-64,0,1,20
-Epyx Fast Load Cartridge,10,1,30
-Ernie's Magic Shapes,0,3,34
-Espial,0,3,29
-ExBASIC Level II,0,1,15
-Expert,6,1,25
-Facemaker,0,1,15
-Falconian Invaders,0,1,18
-Fiendish Freddy's Big Top o' Fun +3,15,9,27
-Final Cartridge,13,3,45
-Final Cartridge III,3,6,25
-Financial Advisor,0,1,28
-Format- und Hardcopymodul,12,1,26
-Fraction Fever,0,1,35
-Frog Master,0,1,23
-Frogger,0,3,20
-Frogger +3,19,6,16
-Frogger II,0,3,20
-Galaxian,0,3,19
-Galaxions +1,0,3,17
-Gateway to Apshai,0,3,21
-Ghostbusters,5,5,26
-Gorf,0,3,21
-Graf 64,0,1,13
-Gridrunner,0,1,16
-Gridrunner II,0,1,19
-Gyruss,0,3,22
-H.E.R.O.,0,3,15
-Halftime Battlin' Bands,0,3,17
-Happy-Packer,12,1,32
-HES Mon 64,0,1,22
-HES Writer 64,0,1,19
-Hop Along Counting,0,1,22
-Human Skeleton Tutorial,0,1,27
-Hypra-Disk-Modul II,0,1,32
-International Football,0,3,28
-Jack Attack,0,3,31
-James Bond 007,0,3,20
-Jawbreaker,0,1,23
-Juice!,0,3,19
-Jukebox,0,1,15
-Jumpman Junior,0,3,16
-Jungle Hunt,0,3,23
-Jupiter Lander (MAX),0,1,20
-Kickman (MAX),0,1,29
-Kids on Keys,0,1,22
-Kindercomp,0,1,21
-Kung-Fu Master,5,5,19
-Laser Cycles,0,1,23
-Lazarian,0,3,21
-Lazer Zone,0,1,17
-Leader Board,5,5,19
-Learning with Leeper,0,3,21
-LeMans (MAX),0,1,29
-Linking Logic,0,3,21
-Lode Runner,0,3,22
-Logic Levels,0,3,20
-Lunar Leeper,0,3,21
-Magic Desk I,19,5,21
-Magic Formel,14,6,22
-Mario's Brewery,0,1,22
-MasterType,0,3,24
-Math Mileage,0,3,19
-MAX BASIC (MAX),0,3,21
-Maze Man,0,1,24
-Maze Master,0,3,17
-Memory Manor,0,1,20
-MicroProse Soccer +2,7,7,21
-Miner 2049er,0,3,29
-MINI BASIC I (MAX),0,1,21
-Minnesota Fat's Pool Challenger,0,1,27
-Mole Attack (MAX),0,1,40
-Money Wars (MAX),0,1,26
-Moon Patrol,0,3,25
-Moondust,0,1,20
-Motor Mania,0,3,17
-Mountain King,0,3,20
-Movie Musical Madness,0,3,22
-Mr. Cool,0,1,30
-Mr. TNT,0,1,17
-Ms. Pac-Man,0,3,16
-Muistio 64,0,1,20
-Music Composer (MAX),0,1,19
-Music Machine (MAX),0,1,29
-Myth,15,9,28
-Narco Police,17,7,14
-Navy SEALs,5,7,22
-Ninja Remix,15,9,19
-Nordic Power Action Cartridge,9,5,21
-Nova Blast,0,3,38
-Number Nabber Shape Grabber,0,1,19
-Number Tumblers,0,1,36
-Oil's Well,0,3,24
-Omega Race,0,1,19
-Omega Race (MAX),0,1,19
-Pac-Man,0,1,25
-Paint Brush,0,3,16
-Pancho,0,3,20
-Pang,5,7,15
-Park Patrol,19,5,13
-Pastfinder,0,3,21
-Peanut Butter Panic,0,3,19
-Pinball Spectacular (MAX),0,3,28
-Pipes,0,1,34
-Pit,0,1,14
-Pitfall II,0,3,12
-Pitfall!,0,1,19
-Pitstop,0,3,17
-Pole Position,0,3,16
-Popeye,0,3,22
-Power Cartridge,2,3,15
-Princess and the Frog,0,3,24
-Professional Skateboard Simulator +2,7,7,30
-PS-64t,0,1,45
-Q-bert,0,3,15
-Rack 'em Up!,0,3,15
-Radar Rat Race(MAX),0,1,21
-Ranch,0,3,28
-Retro Ball,0,1,14
-REX-Ramfloppy,0,1,19
-River Raid,0,3,22
-Road Race (MAX),0,1,19
-RoboCop 2,5,8,24
-RoboCop 3,5,7,18
-Robotron - 2084,0,3,18
-Rootin' Tootin',0,3,24
-Sales Cartridge,0,3,24
-Sammy Lightfoot,0,3,24
-Satan,17,7,24
-Save New York,0,1,15
-Sea Speller,0,1,22
-Sea Wolf (MAX),0,1,20
-Seafox,0,3,23
-Seahorse Hide'n Seek,0,3,15
-Serpentine,0,3,29
-Sesame Street,0,3,19
-Shadow of the Beast,5,8,22
-Simons' BASIC,4,3,28
-Solar Fox,0,3,22
-Song Maker,0,1,18
-Space Action,0,1,19
-Space Gun,5,8,21
-Space Ric-O-Shay,0,1,18
-Space Shuttle,0,3,25
-Speed Math & Bingo Math (MAX),0,1,22
-Speedsaver $C000,0,0,38
-Speedsaver Combi,0,1,25
-Spitball,0,1,25
-Spy Hunter,0,3,17
-Star Post,0,1,19
-Star Ranger,0,3,18
-Star Trek,0,3,20
-Star Wars,0,3,18
-Stat 64,0,1,18
-States and Capitals Tutorial,0,1,16
-Stix,0,1,37
-Story Machine,0,3,13
-Super Alien (MAX),0,1,22
-Super Expander 64,0,1,26
-Super Sketch,0,1,26
-Super Smash,0,1,21
-Super Snapshot 5,20,6,20
-Super Zaxxon,18,4,26
-Tank Wars,0,1,22
-Tapper,0,3,18
-Teledata,0,1,15
-Tennis,19,5,17
-Tenpins,0,1,16
-Tenpins +2,19,5,16
-Terminator 2 +2,5,9,20
-Threshold,0,1,24
-Timebound,0,3,18
-Toki,5,7,18
-Tool-64,0,1,13
-Tooth Invaders,0,3,16
-Toy Bizarre,0,3,23
-Trashman,0,1,20
-Turbo Maze Man,0,1,17
-Tyler's Dungeons,0,1,23
-Ultrex Quadro Maze,0,1,25
-Up & Add'Em,0,3,27
-Up for Grabs,0,1,20
-Up'n Down,0,3,21
-Utah Counties Tutorial,0,1,18
-VIC-Text 64,0,3,31
-Viduzzles,0,3,20
-Viking Raider,0,3,18
-Vindicators,5,6,22
-Visible Solar System (MAX),0,1,20
-Warp Speed,16,3,35
-Webster,0,3,20
-Wizard of Id's Wiztype,0,3,16
-Wizard of Wor,0,3,31
-Wizard of Wor (MAX),0,1,22
-Wonder Boy,5,6,28
-Write Now! 64,0,3,19
-Zaxxon,18,4,22
-Zenji,0,3,16
-Zone Ranger,0,3,14
-EOF,0,0,0
+128er Quickload
+00,1
+
+256K-EPROM-System
+00,1
+
+64 Doctor
+00,1
+
+64MON
+00,1
+
+Action Cartridge Plus
+01,5
+
+Action Replay Professional
+01,5
+
+Activision Decathlon
+00,3
+
+Adventure 1
+00,3
+
+Adventure 3
+00,3
+
+Adventure Creator
+00,3
+
+Aegean Voyage
+00,3
+
+After the War
+17,7
+
+Alf in the Color Caves
+00,3
+
+Alien Sidestep
+00,1
+
+Alpha Build
+00,1
+
+Alphabet Zoo
+00,3
+
+Arnie Armchair's Howzat Cricket Game
+00,3
+
+Astroblitz
+00,1
+
+Attack of the Mutant Camels
+00,1
+
+Avenger (MAX)
+00,1
+
+BadLands
+05,6
+
+Batman
+05,7
+
+Battle Command
+05,7
+
+Battlezone
+00,3
+
+BC's Quest for Tires
+00,3
+
+Beamrider
+00,3
+
+Big Bird's Funhouse
+00,3
+
+Big Bird's Special Delivery
+00,3
+
+Black Box
+00,3
+
+Blueprint
+00,3
+
+Bowling (MAX)
+00,3
+
+Bridge 64
+00,3
+
+Bubble Burst
+00,3
+
+Buck Rogers
+00,3
+
+Bug Crusher
+00,1
+
+C-64 Diagnostic
+00,1
+
+C-64 Import Test Diag
+00,1
+
+C64-FORTH
+00,2
+
+Calc Result Advanced
+00,1
+
+Castle Hassle
+00,3
+
+Centipede
+00,1
+
+Chase H.Q. II
+05,8
+
+Checkers
+00,3
+
+Choplifter!
+00,3
+
+Close Encounters of the Worst Kind
+00,1
+
+Clowns (MAX)
+00,1
+
+Coccinelle cherche dessinateur
+00,1
+
+Coco-Notes
+00,3
+
+Colossus Chess +2
+08,6
+
+COMAL 80
+21,6
+
+Commodore 64 Diagnostic
+00,1
+
+Congo Bongo
+00,3
+
+Conrad Disk Booster
+00,1
+
+Cosmic Life
+00,1
+
+Crisis Mountain
+00,3
+
+Cyberball
+05,7
+
+Dance Fantasy
+00,1
+
+Dancing Feats
+00,3
+
+Defender
+00,3
+
+Dela S-4-Modul
+00,1
+
+Delta Drawing
+00,3
+
+Der Rechenlowe
+11,3
+
+Der Rechtschreiblowe
+11,3
+
+Designer's Pencil
+00,3
+
+Diamond Mine
+00,3
+
+Diary 64
+00,1
+
+Dig Dug
+00,3
+
+Doc'64
+00,1
+
+Donkey Kong
+00,3
+
+Dot Gobbler
+00,1
+
+Double Dragon (HES)
+19,7
+
+Double Dragon (Ocean)
+05,7
+
+Dragonsden
+00,3
+
+Ducks Ahoy!
+00,3
+
+Electronic Mailbox-64
+00,1
+
+Epyx Fast Load Cartridge
+10,1
+
+Ernie's Magic Shapes
+00,3
+
+Espial
+00,3
+
+ExBASIC Level II
+00,1
+
+Expert
+06,1
+
+Facemaker
+00,1
+
+Falconian Invaders
+00,1
+
+Fiendish Freddy's Big Top o' Fun +3
+15,9
+
+Final Cartridge
+13,3
+
+Final Cartridge III
+03,6
+
+Financial Advisor
+00,1
+
+Format- und Hardcopymodul
+12,1
+
+Fraction Fever
+00,1
+
+Frog Master
+00,1
+
+Frogger
+00,3
+
+Frogger +3
+19,6
+
+Frogger II
+00,3
+
+Galaxian
+00,3
+
+Galaxions +1
+00,3
+
+Gateway to Apshai
+00,3
+
+Ghostbusters
+05,5
+
+Gorf
+00,3
+
+Graf 64
+00,1
+
+Gridrunner
+00,1
+
+Gridrunner II
+00,1
+
+Gyruss
+00,3
+
+H.E.R.O.
+00,3
+
+Halftime Battlin' Bands
+00,3
+
+Happy-Packer
+12,1
+
+HES Mon 64
+00,1
+
+HES Writer 64
+00,1
+
+Hop Along Counting
+00,1
+
+Human Skeleton Tutorial
+00,1
+
+Hypra-Disk-Modul II
+00,1
+
+International Football
+00,3
+
+Jack Attack
+00,3
+
+James Bond 007
+00,3
+
+Jawbreaker
+00,1
+
+Juice!
+00,3
+
+Jukebox
+00,1
+
+Jumpman Junior
+00,3
+
+Jungle Hunt
+00,3
+
+Jupiter Lander (MAX)
+00,1
+
+Kickman (MAX)
+00,1
+
+Kids on Keys
+00,1
+
+Kindercomp
+00,1
+
+Kung-Fu Master
+05,5
+
+Laser Cycles
+00,1
+
+Lazarian
+00,3
+
+Lazer Zone
+00,1
+
+Leader Board
+05,5
+
+Learning with Leeper
+00,3
+
+LeMans (MAX)
+00,1
+
+Linking Logic
+00,3
+
+Lode Runner
+00,3
+
+Logic Levels
+00,3
+
+Lunar Leeper
+00,3
+
+Magic Desk I
+19,5
+
+Magic Formel
+14,6
+
+Mario's Brewery
+00,1
+
+MasterType
+00,3
+
+Math Mileage
+00,3
+
+MAX BASIC (MAX)
+00,3
+
+Maze Man
+00,1
+
+Maze Master
+00,3
+
+Memory Manor
+00,1
+
+MicroProse Soccer +2
+07,7
+
+Miner 2049er
+00,3
+
+MINI BASIC I (MAX)
+00,1
+
+Minnesota Fat's Pool Challenger
+00,1
+
+Mole Attack (MAX)
+00,1
+
+Money Wars (MAX)
+00,1
+
+Moon Patrol
+00,3
+
+Moondust
+00,1
+
+Motor Mania
+00,3
+
+Mountain King
+00,3
+
+Movie Musical Madness
+00,3
+
+Mr. Cool
+00,1
+
+Mr. TNT
+00,1
+
+Ms. Pac-Man
+00,3
+
+Muistio 64
+00,1
+
+Music Composer (MAX)
+00,1
+
+Music Machine (MAX)
+00,1
+
+Myth
+15,9
+
+Narco Police
+17,7
+
+Navy SEALs
+05,7
+
+Ninja Remix
+15,9
+
+Nordic Power Action Cartridge
+09,5
+
+Nova Blast
+00,3
+
+Number Nabber Shape Grabber
+00,1
+
+Number Tumblers
+00,1
+
+Oil's Well
+00,3
+
+Omega Race
+00,1
+
+Omega Race (MAX)
+00,1
+
+Pac-Man
+00,1
+
+Paint Brush
+00,3
+
+Pancho
+00,3
+
+Pang
+05,7
+
+Park Patrol
+19,5
+
+Pastfinder
+00,3
+
+Peanut Butter Panic
+00,3
+
+Pinball Spectacular (MAX)
+00,3
+
+Pipes
+00,1
+
+Pit
+00,1
+
+Pitfall II
+00,3
+
+Pitfall!
+00,1
+
+Pitstop
+00,3
+
+Pole Position
+00,3
+
+Popeye
+00,3
+
+Power Cartridge
+02,3
+
+Princess and the Frog
+00,3
+
+Professional Skateboard Simulator +2
+07,7
+
+PS-64t
+00,1
+
+Q-bert
+00,3
+
+Rack 'em Up!
+00,3
+
+Radar Rat Race(MAX)
+00,1
+
+Ranch
+00,3
+
+Retro Ball
+00,1
+
+REX-Ramfloppy
+00,1
+
+River Raid
+00,3
+
+Road Race (MAX)
+00,1
+
+RoboCop 2
+05,8
+
+RoboCop 3
+05,7
+
+Robotron - 2084
+00,3
+
+Rootin' Tootin'
+00,3
+
+Sales Cartridge
+00,3
+
+Sammy Lightfoot
+00,3
+
+Satan
+17,7
+
+Save New York
+00,1
+
+Sea Speller
+00,1
+
+Sea Wolf (MAX)
+00,1
+
+Seafox
+00,3
+
+Seahorse Hide'n Seek
+00,3
+
+Serpentine
+00,3
+
+Sesame Street
+00,3
+
+Shadow of the Beast
+05,8
+
+Simons' BASIC
+04,3
+
+Solar Fox
+00,3
+
+Song Maker
+00,1
+
+Space Action
+00,1
+
+Space Gun
+05,8
+
+Space Ric-O-Shay
+00,1
+
+Space Shuttle
+00,3
+
+Speed Math & Bingo Math (MAX)
+00,1
+
+Speedsaver $C000
+00,0
+
+Speedsaver Combi
+00,1
+
+Spitball
+00,1
+
+Spy Hunter
+00,3
+
+Star Post
+00,1
+
+Star Ranger
+00,3
+
+Star Trek
+00,3
+
+Star Wars
+00,3
+
+Stat 64
+00,1
+
+States and Capitals Tutorial
+00,1
+
+Stix
+00,1
+
+Story Machine
+00,3
+
+Super Alien (MAX)
+00,1
+
+Super Expander 64
+00,1
+
+Super Sketch
+00,1
+
+Super Smash
+00,1
+
+Super Snapshot 5
+20,6
+
+Super Zaxxon
+18,4
+
+Tank Wars
+00,1
+
+Tapper
+00,3
+
+Teledata
+00,1
+
+Tennis
+19,5
+
+Tenpins
+00,1
+
+Tenpins +2
+19,5
+
+Terminator 2 +2
+05,9
+
+Threshold
+00,1
+
+Timebound
+00,3
+
+Toki
+05,7
+
+Tool-64
+00,1
+
+Tooth Invaders
+00,3
+
+Toy Bizarre
+00,3
+
+Trashman
+00,1
+
+Turbo Maze Man
+00,1
+
+Tyler's Dungeons
+00,1
+
+Ultrex Quadro Maze
+00,1
+
+Up & Add'Em
+00,3
+
+Up for Grabs
+00,1
+
+Up'n Down
+00,3
+
+Utah Counties Tutorial
+00,1
+
+VIC-Text 64
+00,3
+
+Viduzzles
+00,3
+
+Viking Raider
+00,3
+
+Vindicators
+05,6
+
+Visible Solar System (MAX)
+00,1
+
+Warp Speed
+16,3
+
+Webster
+00,3
+
+Wizard of Id's Wiztype
+00,3
+
+Wizard of Wor
+00,3
+
+Wizard of Wor (MAX)
+00,1
+
+Wonder Boy
+05,6
+
+Write Now! 64
+00,3
+
+Zaxxon
+18,4
+
+Zenji
+00,3
+
+Zone Ranger
+00,3
+

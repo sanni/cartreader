@@ -105,9 +105,7 @@ byte c64mapselect;
 int c64index;
 
 byte c64mapper;
-byte newc64mapper;
 byte c64size;
-byte newc64size;
 uint8_t c64banks;
 byte c64port;  // exrom+game
 
@@ -129,7 +127,6 @@ void c64Menu() {
     case 0:
       // Select Cart
       setCart_C64();
-      wait();
       setup_C64();
       break;
 
@@ -681,6 +678,7 @@ void displayMapperSelect_C64(int index, boolean printInstructions) {
 
 
 void setMapper_C64() {
+  byte newc64mapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   uint8_t b = 0;
   int i = 0;
@@ -788,6 +786,7 @@ void checkMapperSize_C64() {
 // SET ROM SIZE
 //******************************************
 void setROMSize_C64() {
+  byte newc64size;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (c64lo == c64hi)
@@ -1030,246 +1029,83 @@ void printMapper_C64(byte c64maplabel) {
 //******************************************
 // CART SELECT CODE
 //******************************************
-FsFile c64csvFile;
-char c64game[45];                   // title
-char c64mm[3];                      // mapper
-char c64rr[3];                      // romsize
-char c64ll[4];                      // linelength (previous line)
-unsigned long c64csvpos;            // CSV File Position
-char c64cartCSV[] = "c64cart.txt";  // CSV List
-char c64csvEND[] = "EOF";           // CSV End Marker for scrolling
+void setCart_C64() {
+  //go to root
+  sd.chdir();
 
-bool readLine_C64(FsFile& f, char* line, size_t maxLen) {
-  for (size_t n = 0; n < maxLen; n++) {
-    int c = f.read();
-    if (c < 0 && n == 0) return false;  // EOF
-    if (c < 0 || c == '\n') {
-      line[n] = 0;
-      return true;
-    }
-    line[n] = c;
-  }
-  return false;  // line too long
-}
+  char gamename[100];
+  byte gameMapper;
+  byte gameSize;
 
-bool readVals_C64(char* c64game, char* c64mm, char* c64rr, char* c64ll) {
-  char line[54];
-  c64csvpos = c64csvFile.position();
-  if (!readLine_C64(c64csvFile, line, sizeof(line))) {
-    return false;  // EOF or too long
-  }
-  char* comma = strtok(line, ",");
-  int x = 0;
-  while (comma != NULL) {
-    if (x == 0)
-      strcpy(c64game, comma);
-    else if (x == 1)
-      strcpy(c64mm, comma);
-    else if (x == 2)
-      strcpy(c64rr, comma);
-    else if (x == 3)
-      strcpy(c64ll, comma);
-    comma = strtok(NULL, ",");
-    x += 1;
-  }
-  return true;
-}
+  // Select starting letter
+  byte myLetter = starting_letter();
 
-bool getCartListInfo_C64() {
-  bool buttonreleased = 0;
-  bool cartselected = 0;
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(F(" HOLD TO FAST CYCLE"));
-  display_Update();
-#else
-  Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
-#endif
-  delay(2000);
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
-    while (1) {                    // Scroll Game List
-      while (readVals_C64(c64game, c64mm, c64rr, c64ll)) {
-        if (strcmp(c64csvEND, c64game) == 0) {
-          c64csvFile.seek(0);  // Restart
-        } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          display_Clear();
-          println_Msg(F("CART TITLE:"));
-          println_Msg(FS(FSTRING_EMPTY));
-          println_Msg(c64game);
-          display_Update();
-#else
-          Serial.print(F("CART TITLE:"));
-          Serial.println(c64game);
-#endif
-#if defined(ENABLE_OLED)
-          buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-          boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-          if (buttonVal1 == HIGH) {        // Button Released
-            buttonreleased = 1;
-            break;
-          }
-          if (buttonreleased) {
-            buttonreleased = 0;  // Reset Flag
-            break;
-          }
-        }
-      }
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-      if (buttonVal1 == HIGH)          // Button Released
-        break;
-    }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display.setCursor(0, 56);
-  println_Msg(F("FAST CYCLE OFF"));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_EMPTY));
-  Serial.println(F("FAST CYCLE OFF"));
-  Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
-  Serial.println(F("DOUBLE CLICK TO STEP BACK"));
-  Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FS(FSTRING_EMPTY));
-#endif
-  while (readVals_C64(c64game, c64mm, c64rr, c64ll)) {
-    if (strcmp(c64csvEND, c64game) == 0) {
-      c64csvFile.seek(0);  // Restart
-    } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  // Open database
+  if (myFile.open("c64cart.txt", O_READ)) {
+    seek_first_letter_in_database(myFile, myLetter);
+
+    // Display database
+    while (myFile.available()) {
       display_Clear();
-      println_Msg(F("CART TITLE:"));
+
+      get_line(gamename, &myFile, sizeof(gamename));   
+
+      // Read mapper with two ascii character and subtract 48 to convert to decimal
+      gameMapper = ((myFile.read() - 48) * 10) + (myFile.read() - 48);
+
+      // Skip over semicolon
+      myFile.seekCur(1);
+
+      // Read size and subtract 48 to convert to decimal
+      gameSize = myFile.read() - 48;
+
+      // Skip rest of line
+      myFile.seekCur(2);
+
+      skip_line(&myFile); 
+
+      println_Msg(F("Select your cartridge"));
       println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(c64game);
-      display.setCursor(0, 48);
+      println_Msg(gamename);
+
 #if defined(ENABLE_OLED)
       print_STR(press_to_change_STR, 1);
       print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
       print_STR(rotate_to_change_STR, 1);
       print_STR(press_to_select_STR, 1);
+#elif defined(SERIAL_MONITOR)
+      println_Msg(F("U/D to Change"));
+      println_Msg(F("Space to Select"));
 #endif
       display_Update();
-#else
-      Serial.print(F("CART TITLE:"));
-      Serial.println(c64game);
-#endif
-      while (1) {  // Single Step
-        uint8_t b = checkButton();
-        if (b == 1) {  // Continue (press)
+
+      uint8_t b = 0;
+      while (1) {
+        // Check button input
+        b = checkButton();
+
+        // Next
+        if (b == 1) {
           break;
         }
-        if (b == 2) {  // Reset to Start of List (doubleclick)
-          byte prevline = strtol(c64ll, NULL, 10);
-          c64csvpos -= prevline;
-          c64csvFile.seek(c64csvpos);
+
+        // Previous
+        else if (b == 2) {
+          rewind_line(myFile, 6);
           break;
         }
-        if (b == 3) {  // Long Press - Select Cart (hold)
-          newc64mapper = strtol(c64mm, NULL, 10);
-          newc64size = strtol(c64rr, NULL, 10);
-          EEPROM_writeAnything(7, newc64mapper);
-          EEPROM_writeAnything(8, newc64size);
-          cartselected = 1;  // SELECTION MADE
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          println_Msg(F("SELECTION MADE"));
-          display_Update();
-#else
-          Serial.println(F("SELECTION MADE"));
-#endif
+        // Selection
+        else if (b == 3) {
+          EEPROM_writeAnything(7, gameMapper);
+          EEPROM_writeAnything(8, gameSize);
+          myFile.close();
           break;
         }
-      }
-      if (cartselected) {
-        cartselected = 0;  // Reset Flag
-        return true;
       }
     }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_END_OF_FILE));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_END_OF_FILE));
-#endif
-
-  return false;
-}
-
-void checkCSV_C64() {
-  if (getCartListInfo_C64()) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(FS(FSTRING_CART_SELECTED));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(c64game);
-    display_Update();
-    // Display Settings
-    display.setCursor(0, 56);
-    print_Msg(F("CODE: M"));
-    print_Msg(newc64mapper);
-    print_Msg(F("/R"));
-    print_Msg(newc64size);
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(FS(FSTRING_CART_SELECTED));
-    Serial.println(c64game);
-    // Display Settings
-    Serial.print(F("CODE: M"));
-    Serial.print(newc64mapper);
-    Serial.print(F("/R"));
-    Serial.print(newc64size);
-    Serial.println(FS(FSTRING_EMPTY));
-#endif
   } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display.setCursor(0, 56);
-    println_Msg(FS(FSTRING_NO_SELECTION));
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_NO_SELECTION));
-#endif
+    print_FatalError(F("Database file not found"));
   }
-}
-
-void setCart_C64() {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(c64cartCSV);
-  display_Update();
-#endif
-  sd.chdir();
-  sprintf(folder, "C64/CSV");
-  sd.chdir(folder);  // Switch Folder
-  c64csvFile = sd.open(c64cartCSV, O_READ);
-  if (!c64csvFile) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(F("CSV FILE NOT FOUND!"));
-    display_Update();
-#else
-    Serial.println(F("CSV FILE NOT FOUND!"));
-#endif
-    while (1) {
-      if (checkButton() != 0)
-        setup_C64();
-    }
-  }
-  checkCSV_C64();
-
-  c64csvFile.close();
 }
 #endif
