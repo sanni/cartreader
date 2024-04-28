@@ -10,11 +10,11 @@ Alien Brigade
 Asteroids
 0,0
 
-Attack of the Petscii Robots
-7,4
-
 Atari 7800 Development Card
 0,0
+
+Attack of the Petscii Robots
+7,4
 
 Ballblazer
 0,1
