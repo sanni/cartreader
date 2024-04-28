@@ -102,103 +102,103 @@ Checksum
 ## 2600.txt
 This file stores known Atari VCS / 2600 games with the required mapping value.
 
-Example:
-Wall-Defender
+Example:   
+Wall-Defender   
 064
 
-Name
+Name   
 mapper
 
-mapper:
-004 = Atari 32K with RAM [F4SC]
-006 = Atari 16K with RAM [F6SC]
-008 = Atari 8K with RAM [F8SC]
-010 = UA Ltd 8K [UA]
-032 = Atari 2K
-063 = Tigervision 8K
-064 = Atari 4K (Default)
-192 = Commavid 2K [CV]
-208 = Pitfall II 10K [DPC]
-224 = Parker Bros 8K
-231 = M-Network 16K
-240 = Megaboy 64K
-244 = Atari 32K [F4]
-246 = Atari 16K [F6]
-248 = Atari 8K [F8]
-249 = Time Pilot 8K [TP]
-250 = CBS RAM Plus 12K
-254 = Activision 8K
+mapper:   
+004 = Atari 32K with RAM [F4SC]   
+006 = Atari 16K with RAM [F6SC]   
+008 = Atari 8K with RAM [F8SC]   
+010 = UA Ltd 8K [UA]   
+032 = Atari 2K   
+063 = Tigervision 8K   
+064 = Atari 4K (Default)   
+192 = Commavid 2K [CV]   
+208 = Pitfall II 10K [DPC]   
+224 = Parker Bros 8K   
+231 = M-Network 16K   
+240 = Megaboy 64K   
+244 = Atari 32K [F4]   
+246 = Atari 16K [F6]   
+248 = Atari 8K [F8]   
+249 = Time Pilot 8K [TP]   
+250 = CBS RAM Plus 12K   
+254 = Activision 8K   
 
 ## 7800.txt
 This file stores known Atari 7800 games with the required mapping value and cart size.
 
-Example:
-Rampage
+Example:   
+Rampage   
 4,4
 
-Name
+Name   
 mapper, cart size
 
-mapper:
-0 = Standard 16K/32K/48K [7816/7832/7848]
-1 = SuperGame 128K [78SG]
-2 = SuperGame - Alien Brigade/Crossbow 144K [78S9]
-3 = F-18 Hornet 64K [78AB]
-4 = Double Dragon/Rampage 128K [78AC]
-5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
-6 = Karateka (PAL) 64K [78S4 Variant]
-7 = Bankset switching
+mapper:   
+0 = Standard 16K/32K/48K [7816/7832/7848]   
+1 = SuperGame 128K [78SG]   
+2 = SuperGame - Alien Brigade/Crossbow 144K [78S9]   
+3 = F-18 Hornet 64K [78AB]   
+4 = Double Dragon/Rampage 128K [78AC]   
+5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]   
+6 = Karateka (PAL) 64K [78S4 Variant]   
+7 = Bankset switching   
 
-cart size:
-0 = 16K
-1 = 32K
-2 = 48K
-3 = 64K
-4 = 128K
-5 = 144K
+cart size:   
+0 = 16K   
+1 = 32K   
+2 = 48K   
+3 = 64K   
+4 = 128K   
+5 = 144K   
 
 ## c64cart.txt
 This file stores known Commodore 64 games with the required mapping value and cart size.
 
-Example:
-Donkey Kong
+Example:   
+Donkey Kong   
 00,3
 
-Name
+Name   
 mapper, cart size
 
-mapper:
-00 = Normal 4K/8K/16K + Ultimax 8K/16K
-01 = Action Replay 32K
-02 = KCS Power Cartridge 16K
-03 = Final Cartridge III 64K
-04 = Simons Basic 16K
-05 = Ocean 128K/256K/512K
-06 = Expert Cartridge 8K
-07 = Fun Play, Power Play 128K
-08 = Super Games 64K
-09 = Atomic Power 32K
-10 = Epyx Fastload 8K
-11 = Westermann Learning 16K
-12 = Rex Utility 8K
-13 = Final Cartridge I 16K
-14 = Magic Formel 64K
-15 = C64 Game System, System 3 512K
-16 = WarpSpeed 16K
-17 = Dinamic 128K
-18 = Zaxxon, Super Zaxxon (SEGA) 20K
-19 = Magic Desk, Domark, HES Australia 32K/64K/128K
-20 = Super Snapshot 5 64K
-21 = Comal-80 64K
+mapper:   
+00 = Normal 4K/8K/16K + Ultimax 8K/16K   
+01 = Action Replay 32K   
+02 = KCS Power Cartridge 16K   
+03 = Final Cartridge III 64K   
+04 = Simons Basic 16K   
+05 = Ocean 128K/256K/512K   
+06 = Expert Cartridge 8K   
+07 = Fun Play, Power Play 128K   
+08 = Super Games 64K   
+09 = Atomic Power 32K   
+10 = Epyx Fastload 8K   
+11 = Westermann Learning 16K   
+12 = Rex Utility 8K   
+13 = Final Cartridge I 16K   
+14 = Magic Formel 64K   
+15 = C64 Game System, System 3 512K   
+16 = WarpSpeed 16K   
+17 = Dinamic 128K   
+18 = Zaxxon, Super Zaxxon (SEGA) 20K   
+19 = Magic Desk, Domark, HES Australia 32K/64K/128K   
+20 = Super Snapshot 5 64K   
+21 = Comal-80 64K   
 
-cart size:
-0 = 4K
-1 = 8K
-2 = 12K
-3 = 16K
-4 = 20K
-5 = 32K
-6 = 64K
-7 = 128K
-8 = 256K
-9 = 512K
+cart size:   
+0 = 4K   
+1 = 8K   
+2 = 12K   
+3 = 16K   
+4 = 20K   
+5 = 32K   
+6 = 64K   
+7 = 128K   
+8 = 256K   
+9 = 512K   
