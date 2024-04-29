@@ -136,7 +136,6 @@ void a5200Menu() {
     case 0:
       // Select Cart
       setCart_5200();
-      wait();
       setup_5200();
       break;
 
@@ -632,258 +631,44 @@ setmapper:
 //******************************************
 // CART SELECT CODE
 //******************************************
+struct database_entry_5200 {
+  byte gameMapper;
+  byte gameSize;
+};
 
-FsFile a5200csvFile;
-char a5200game[39];                    // title
-char a5200mm[3];                       // mapper
-char a5200rr[3];                       // romsize
-char a5200ll[4];                       // linelength (previous line)
-unsigned long a5200csvpos;             // CSV File Position
-char a5200cartCSV[] = "5200.txt";      // CSV List
-char a5200csvEND[] = "EOF";            // CSV End Marker for scrolling
+void readDataLine_5200(FsFile& database, struct database_entry_5200* entry) {
+  // Read mapper
+  entry->gameMapper = database.read() - 48;
 
-bool readLine_5200(FsFile& f, char* line, size_t maxLen) {
-  for (size_t n = 0; n < maxLen; n++) {
-    int c = f.read();
-    if (c < 0 && n == 0) return false;  // EOF
-    if (c < 0 || c == '\n') {
-      line[n] = 0;
-      return true;
-    }
-    line[n] = c;
-  }
-  return false;  // line too long
-}
+  // Skip over semicolon
+  database.seekCur(1);
 
-bool readVals_5200(char* a5200game, char* a5200mm, char* a5200rr, char* a5200ll) {
-  char line[44];
-  a5200csvpos = a5200csvFile.position();
-  if (!readLine_5200(a5200csvFile, line, sizeof(line))) {
-    return false;  // EOF or too long
-  }
-  char* comma = strtok(line, ",");
-  int x = 0;
-  while (comma != NULL) {
-    if (x == 0)
-      strcpy(a5200game, comma);
-    else if (x == 1)
-      strcpy(a5200mm, comma);
-    else if (x == 2)
-      strcpy(a5200rr, comma);
-    else if (x == 3)
-      strcpy(a5200ll, comma);
-    comma = strtok(NULL, ",");
-    x += 1;
-  }
-  return true;
-}
+  // Read rom size
+  entry->gameSize = database.read() - 48;
 
-bool getCartListInfo_5200() {
-  bool buttonreleased = 0;
-  bool cartselected = 0;
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(F(" HOLD TO FAST CYCLE"));
-  display_Update();
-#else
-  Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
-#endif
-  delay(2000);
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
-    while (1) {                    // Scroll Game List
-      while (readVals_5200(a5200game, a5200mm, a5200rr, a5200ll)) {
-        if (strcmp(a5200csvEND, a5200game) == 0) {
-          a5200csvFile.seek(0);  // Restart
-        } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          display_Clear();
-          println_Msg(F("CART TITLE:"));
-          println_Msg(FS(FSTRING_EMPTY));
-          println_Msg(a5200game);
-          display_Update();
-#else
-          Serial.print(F("CART TITLE:"));
-          Serial.println(a5200game);
-#endif
-#if defined(ENABLE_OLED)
-          buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-          buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-          if (buttonVal1 == HIGH) {        // Button Released
-            buttonreleased = 1;
-            break;
-          }
-          if (buttonreleased) {
-            buttonreleased = 0;  // Reset Flag
-            break;
-          }
-        }
-      }
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
-      if (buttonVal1 == HIGH)          // Button Released
-        break;
-    }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display.setCursor(0, 56);
-  println_Msg(F("FAST CYCLE OFF"));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_EMPTY));
-  Serial.println(F("FAST CYCLE OFF"));
-  Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
-  Serial.println(F("DOUBLE CLICK TO STEP BACK"));
-  Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FS(FSTRING_EMPTY));
-#endif
-  while (readVals_5200(a5200game, a5200mm, a5200rr, a5200ll)) {
-    if (strcmp(a5200csvEND, a5200game) == 0) {
-      a5200csvFile.seek(0);  // Restart
-    } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-      display_Clear();
-      println_Msg(F("CART TITLE:"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(a5200game);
-      display.setCursor(0, 48);
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-#else
-      Serial.print(F("CART TITLE:"));
-      Serial.println(a5200game);
-#endif
-      while (1) {  // Single Step
-        uint8_t b = checkButton();
-        if (b == 1) {  // Continue (press)
-          break;
-        }
-        if (b == 2) {  // Reset to Start of List (doubleclick)
-          byte prevline = strtol(a5200ll, NULL, 10);
-          a5200csvpos -= prevline;
-          a5200csvFile.seek(a5200csvpos);
-          break;
-        }
-        if (b == 3) {  // Long Press - Select Cart (hold)
-          new5200mapper = strtol(a5200mm, NULL, 10);
-          new5200size = strtol(a5200rr, NULL, 10);
-          EEPROM_writeAnything(7, new5200mapper);
-          EEPROM_writeAnything(8, new5200size);
-          cartselected = 1;  // SELECTION MADE
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          println_Msg(F("SELECTION MADE"));
-          display_Update();
-#else
-          Serial.println(F("SELECTION MADE"));
-#endif
-          break;
-        }
-      }
-      if (cartselected) {
-        cartselected = 0;  // Reset Flag
-        return true;
-      }
-    }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_END_OF_FILE));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_END_OF_FILE));
-#endif
-
-  return false;
-}
-
-void checkCSV_5200() {
-  if (getCartListInfo_5200()) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(FS(FSTRING_CART_SELECTED));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(a5200game);
-    display_Update();
-    // Display Settings
-    display.setCursor(0, 56);
-    print_Msg(F("CODE: M"));
-    print_Msg(new5200mapper);
-    print_Msg(F("/R"));
-    println_Msg(new5200size);
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(FS(FSTRING_CART_SELECTED));
-    Serial.println(a5200game);
-    // Display Settings
-    Serial.print(F("CODE: M"));
-    Serial.print(new5200mapper);
-    Serial.print(F("/R"));
-    Serial.println(new5200size);
-    Serial.println(FS(FSTRING_EMPTY));
-#endif
-  } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display.setCursor(0, 56);
-    println_Msg(FS(FSTRING_NO_SELECTION));
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_NO_SELECTION));
-#endif
-  }
-}
-
-void checkSize_5200() {
-  EEPROM_readAnything(7, a5200mapper);
-  for (int i = 0; i < a5200mapcount; i++) {
-    a5200index = i * 3;
-    if (a5200mapper == pgm_read_byte(a5200mapsize + a5200index)) {
-      a5200size = pgm_read_byte(a5200mapsize + a5200index + 1);
-      EEPROM_writeAnything(8, a5200size);
-      break;
-    }
-  }
+  // Skip rest of line
+  database.seekCur(2);
 }
 
 void setCart_5200() {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(a5200cartCSV);
-  display_Update();
-#endif
+  //go to root
   sd.chdir();
-  sprintf(folder, "5200/CSV");
-  sd.chdir(folder);  // Switch Folder
-  a5200csvFile = sd.open(a5200cartCSV, O_READ);
-  if (!a5200csvFile) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(F("CSV FILE NOT FOUND!"));
-    display_Update();
-#else
-    Serial.println(F("CSV FILE NOT FOUND!"));
-#endif
-    while (1) {
-      if (checkButton() != 0)
-        setup_5200();
+
+  struct database_entry_5200 entry;
+
+  // Select starting letter
+  byte myLetter = starting_letter();
+
+  // Open database
+  if (myFile.open("5200.txt", O_READ)) {
+    seek_first_letter_in_database(myFile, myLetter);
+
+    if(checkCartSelection(myFile, &readDataLine_5200, &entry)) {
+      EEPROM_writeAnything(7, entry.gameMapper);
+      EEPROM_writeAnything(8, entry.gameSize);
     }
+  } else {
+    print_FatalError(F("Database file not found"));
   }
-  checkCSV_5200();
-  a5200csvFile.close();
 }
 #endif

@@ -1,49 +1,144 @@
-3D Bowling,1,0
-3D Soccer,3,16
-Alien Invaders,1,16
-American Football,2,21
-Astro Invader,3,24
-Autorace,3,20
-Baseball,1,15
-Basketball,1,15
-Blackjack and Poker,1,17
-Boxing,1,26
-Brain Quiz,1,13
-Breakaway,1,17
-Capture,0,16
-Cat Trax,1,14
-Circus,1,15
-Combat,3,13
-Crazy Climber,1,13
-Crazy Gobbler,0,20
-Escape,1,20
-Funky Fish,3,13
-Golf,3,17
-Grand Slam Tennis,3,11
-Hobo,3,24
-Horse Racing,1,11
-Jump Bug,3,19
-Jungler,3,15
-Missile War,1,14
-Monaco Grand Prix,1,18
-Nibblemen,1,24
-Ocean Battle,1,16
-Parashooter,1,19
-Pleiades,3,18
-R2D Tank,1,15
-Red Clash,3,15
-Robot Killer,1,16
-Route 16,3,19
-Soccer,3,15
-Space Attack,1,13
-Space Mission,1,19
-Space Raiders,1,20
-Space Squadron,1,20
-Space Vultures,2,21
-Spiders,3,21
-Star Chess,1,14
-Super Gobbler,1,17
-Tanks a Lot,1,20
-The End,1,18
-Turtles,3,14
-EOF,0,0
+3D Bowling
+1
+
+3D Soccer
+3
+
+Alien Invaders
+1
+
+American Football
+2
+
+Astro Invader
+3
+
+Autorace
+3
+
+Baseball
+1
+
+Basketball
+1
+
+Blackjack and Poker
+1
+
+Boxing
+1
+
+Brain Quiz
+1
+
+Breakaway
+1
+
+Capture
+0
+
+Cat Trax
+1
+
+Circus
+1
+
+Combat
+3
+
+Crazy Climber
+1
+
+Crazy Gobbler
+0
+
+Escape
+1
+
+Funky Fish
+3
+
+Golf
+3
+
+Grand Slam Tennis
+3
+
+Hobo
+3
+
+Horse Racing
+1
+
+Jump Bug
+3
+
+Jungler
+3
+
+Missile War
+1
+
+Monaco Grand Prix
+1
+
+Nibblemen
+1
+
+Ocean Battle
+1
+
+Parashooter
+1
+
+Pleiades
+3
+
+R2D Tank
+1
+
+Red Clash
+3
+
+Robot Killer
+1
+
+Route 16
+3
+
+Soccer
+3
+
+Space Attack
+1
+
+Space Mission
+1
+
+Space Raiders
+1
+
+Space Squadron
+1
+
+Space Vultures
+2
+
+Spiders
+3
+
+Star Chess
+1
+
+Super Gobbler
+1
+
+Tanks a Lot
+1
+
+The End
+1
+
+Turtles
+3
+

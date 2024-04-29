@@ -370,23 +370,18 @@ struct database_entry_COL {
 };
 
 void readDataLine_COL(FsFile& database, struct database_entry_COL* entry) {
-  char tempStr2[2];
 
   // Read CRC32 checksum
-  sprintf(checksumStr, "%c", database.read());
-  for (byte i = 0; i < 7; i++) {
-    sprintf(tempStr2, "%c", database.read());
-    strcat(checksumStr, tempStr2);
+  for (byte i = 0; i < 8; i++) {
+    checksumStr[i] = char(database.read());
   }
 
   // Skip over semicolon
   database.seekCur(1);
 
   // Read CRC32 of first 512 bytes
-  sprintf(entry->crc_search, "%c", database.read());
-  for (byte i = 0; i < 7; i++) {
-    sprintf(tempStr2, "%c", database.read());
-    strcat(entry->crc_search, tempStr2);
+  for (byte i = 0; i < 8; i++) {
+    entry->crc_search[i] = char(database.read());
   }
 
   // Skip over semicolon
