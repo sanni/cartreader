@@ -129,6 +129,28 @@ mapper:
 250 = CBS RAM Plus 12K   
 254 = Activision 8K   
 
+## 5200.txt
+This file stores known Atari 5200 games with the required mapping value and cart size.
+
+Example:   
+Defender   
+1,2   
+
+Name   
+mapper, cart size
+
+mapper:   
+0 = Standard 4K/8K/16K/32K   
+1 = Two Chip 16K   
+2 = Bounty Bob Strikes Back 40K   
+
+cart size:   
+0 = 4K   
+1 = 8K   
+2 = 16K   
+3 = 32K   
+4 = 40K   
+
 ## 7800.txt
 This file stores known Atari 7800 games with the required mapping value and cart size.
 
@@ -156,6 +178,23 @@ cart size:
 3 = 64K   
 4 = 128K   
 5 = 144K   
+
+## arccart.txt
+This file stores known Emerson Arcadia 2001 games with the required cart size.
+
+
+Example:   
+American Football   
+2
+
+Name   
+cart size
+
+cart size:   
+0 = 2K   
+1 = 4K   
+2 = 6K   
+3 = 8K   
 
 ## c64cart.txt
 This file stores known Commodore 64 games with the required mapping value and cart size.
