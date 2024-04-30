@@ -1006,6 +1006,8 @@ boolean checkcart_SNES() {
     romType = EX;  // Check if ExHiROM
   } else if (romType == 0x3A) {
     romType = HI;  // Check if SPC7110
+  } else if (strcmp("3BB0", checksumStr) == 0) { // invalid romType due to too long ROM name (Yuyu no Quiz de GO!GO!)
+    romType = LO; 
   } else {
     romType &= 1;  // Must be LoROM or HiROM
   }
