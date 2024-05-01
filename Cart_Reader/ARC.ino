@@ -186,8 +186,7 @@ void readROM_ARC() {
   }
   myFile.close();
 
-  unsigned long crcsize = ARC[arcsize] * 0x400;
-  calcCRC(fileName, crcsize, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);

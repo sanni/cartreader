@@ -455,43 +455,22 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc, etc. modules
  *****************************************/
-#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX))
+#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES))
 
-inline uint32_t updateCRC(uint8_t ch, uint32_t crc) {
-  uint32_t idx = ((crc) ^ (ch)) & 0xff;
-  uint32_t tab_value = pgm_read_dword(crc_32_tab + idx);
-  return tab_value ^ ((crc) >> 8);
-}
-
-FsFile crcFile;
-char tempCRC[9];
-
-uint32_t crc32(FsFile& file, uint32_t& charcnt) {
-  uint32_t oldcrc32 = 0xFFFFFFFF;
-  charcnt = 0;
-  while (file.available()) {
-    crcFile.read(sdBuffer, 512);
-    for (int x = 0; x < 512; x++) {
-      uint8_t c = sdBuffer[x];
-      charcnt++;
-      oldcrc32 = updateCRC(c, oldcrc32);
-    }
-  }
-  return ~oldcrc32;
-}
-
-void calcCRC(char* checkFile, unsigned long filesize, uint32_t* crcCopy, unsigned long offset) {
+void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
   uint32_t crc;
-  crcFile = sd.open(checkFile);
+  char tempCRC[9];
+  FsFile crcFile = sd.open(checkFile);
+
   crcFile.seek(offset);
-  crc = crc32(crcFile, filesize);
+  crc = calculateCRC(crcFile);
   crcFile.close();
-  sprintf(tempCRC, "%08lX", crc);
 
   if (crcCopy != NULL) {
     *crcCopy = crc;
   }
 
+  sprintf(tempCRC, "%08lX", crc);
   print_Msg(F("CRC: "));
   println_Msg(tempCRC);
   display_Update();

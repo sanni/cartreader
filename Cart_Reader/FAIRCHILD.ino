@@ -471,7 +471,7 @@ void readROM_FAIRCHILD() {
   }
   myFile.close();
 
-  calcCRC(fileName, cartsize, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
@@ -526,7 +526,7 @@ void read16K_FAIRCHILD()  // Read 16K Bytes
   }
   myFile.close();
 
-  calcCRC(fileName, 0x4000, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);

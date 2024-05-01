@@ -327,8 +327,7 @@ void readROM_5200() {
   }
   myFile.close();
 
-  unsigned long crcsize = a5200[a5200size] * 0x400;
-  calcCRC(fileName, crcsize, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline

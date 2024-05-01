@@ -640,8 +640,7 @@ void readROM_C64() {
   }
   myFile.close();
 
-  unsigned long crcsize = C64[c64size] * 0x400;
-  calcCRC(fileName, crcsize, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline

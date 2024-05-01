@@ -555,8 +555,7 @@ void readROM_MSX() {
     }
     myFile.close();
 
-    unsigned long crcsize = MSX[msxsize] * 0x400;
-    calcCRC(fileName, crcsize, NULL, 0);
+    printCRC(fileName, NULL, 0);
 
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
@@ -715,8 +714,7 @@ void readRAM_MSX() {
     }
     myFile.close();
 
-    unsigned long crcsize = MSX[msxramsize] * 0x400;
-    calcCRC(fileName, crcsize, NULL, 0);
+    printCRC(fileName, NULL, 0);
 
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline

@@ -1003,28 +1003,6 @@ int int_pow(int base, int exp) {  // Power for int
 }
 
 /******************************************
-   CRC Functions
- *****************************************/
-
-void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
-  uint32_t crc;
-  char tempCRC[9];
-  FsFile crcFile = sd.open(checkFile);
-
-  crcFile.seek(offset);
-  crc = calculateCRC(crcFile);
-  crcFile.close();
-
-  if (crcCopy != NULL) {
-    *crcCopy = crc;
-  }
-  sprintf(tempCRC, "%08lX", crc);
-  print_Msg(F("CRC: "));
-  println_Msg(tempCRC);
-  display_Update();
-}
-
-/******************************************
    File Functions
  *****************************************/
 void CreateROMFolderInSD() {

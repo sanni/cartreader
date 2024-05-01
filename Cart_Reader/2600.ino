@@ -554,15 +554,7 @@ void readROM_2600() {
   }
   myFile.close();
 
-  unsigned long crcsize = a2600[a2600size] * 0x400;
-  // Correct E7 Size for 8K/12K ROMs
-  if (a2600mapper == 0xE7) {
-    if (e7size == 0)
-      crcsize = a2600[a2600size] * 0x200;
-    else if (e7size == 1)
-      crcsize = a2600[a2600size] * 0x300;
-  }
-  calcCRC(fileName, crcsize, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
