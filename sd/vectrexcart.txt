@@ -1,32 +1,94 @@
-3D Crazy Coaster,1,0
-3D Mine Storm,1,22
-3D Narrow Escape,1,20
-AnimAction,1,23
-Armor..Attack,0,17
-Art Master,0,20
-Bedlam,0,17
-Berzerk,0,13
-Blitz!,1,14
-Clean Sweep,0,13
-Cosmic Chasm,0,18
-Fortress of Narzod,1,19
-Heads-Up,1,25
-HyperChase,0,15
-Melody Master,1,17
-Mine Storm,0,20
-Mine Storm II,0,17
-Polar Rescue,1,20
-Pole Position,1,19
-Rip Off,0,20
-Scramble,0,14
-Solar Quest,0,15
-Space Wars,0,18
-Spike,1,17
-Spin ball,1,12
-Star Castle,0,16
-Star Ship,0,18
-Star Trek,0,16
-StarHawk,0,16
-WebWarp,1,15
-WebWars,1,14
-EOF,0,0
+3D Crazy Coaster
+1
+
+3D Mine Storm
+1
+
+3D Narrow Escape
+1
+
+AnimAction
+1
+
+Armor..Attack
+0
+
+Art Master
+0
+
+Bedlam
+0
+
+Berzerk
+0
+
+Blitz!
+1
+
+Clean Sweep
+0
+
+Cosmic Chasm
+0
+
+Fortress of Narzod
+1
+
+Heads-Up
+1
+
+HyperChase
+0
+
+Melody Master
+1
+
+Mine Storm
+0
+
+Mine Storm II
+0
+
+Polar Rescue
+1
+
+Pole Position
+1
+
+Rip Off
+0
+
+Scramble
+0
+
+Solar Quest
+0
+
+Space Wars
+0
+
+Spike
+1
+
+Spin ball
+1
+
+Star Castle
+0
+
+Star Ship
+0
+
+Star Trek
+0
+
+StarHawk
+0
+
+WebWarp
+1
+
+WebWars
+1
+
+

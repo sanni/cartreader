@@ -1,134 +1,399 @@
-4 en 1 Ligne,1,1,0
-4 in 1 Row,1,1,20
-Air Battle (V+),0,3,19
-Alien Invaders - Plus,0,0,24
-Alpine Skiing,0,0,30
-Armored Encounter + Sub Chase,0,0,22
-Atlantis,0,1,38
-Attack of the Timelord,0,1,17
-Baseball,0,0,31
-Billard Americain,0,0,17
-Billard Americain (V+),0,2,26
-Billard Electrique,0,0,31
-Billard Electrique (V+),0,2,27
-Blackjack,0,0,32
-Blobbers,0,2,18
-Blockout + Breakdown,0,0,17
-Bombardeio Submarino + Tiro ao Alvo,0,0,29
-Bowling + Basketball,0,0,44
-Buraco Negro,0,2,29
-Casino Slot Machine,0,0,21
-Catch the Ball + Noughts and Crosses,0,0,28
-Chat et Souris,0,1,45
-Chess,0,0,23
-Chez Maxime (V+),0,1,14
-Chinese Logic,0,0,25
-Clay Pigeon,0,1,22
-Comando Noturno,0,2,20
-Computer Golf,0,0,24
-Computer Intro,0,0,22
-Computer Programmer,0,0,23
-Conflit Cosmique,0,0,28
-Conquest of the World,0,1,25
-Cosmic Conflict,0,0,30
-Cosmic Conflict (V+),0,2,24
-Course de Voitures + Autodrome + Cryptogramme,0,0,29
-Course de Voitures + Autodrome + Cryptogramme (V+),0,2,54
-Demon Attack,0,1,59
-Demon Attack (V+),0,2,21
-Depth Charge + Marksman,0,0,26
-Desafio Chines,0,0,32
-Dynasty,0,0,23
-Electronic Table Soccer,0,0,16
-Exojet (V+),0,2,32
-Football,0,0,20
-Football Electronique + Hockey Electronique,0,0,17
-Freedom Fighters,0,1,52
-Freedom Fighters (V+),0,2,25
-Frogger,0,2,30
-Golf,0,0,16
-Great Wall Street Fortune Hunt,0,1,13
-Guerre de l'Espace (V+),0,2,39
-Guerre Laser,0,0,32
-Gunfighter,0,0,21
-Helicopter Rescue (V+),0,4,19
-Hockey + Soccer,0,0,31
-I've Got Your Number,0,0,24
-Invaders from Hyperspace,0,0,29
-Jeu de Quilles + Basketball,0,0,33
-Jeu de Quilles + Basketball (V+),0,2,36
-Jumping Acrobats,0,0,41
-K.C. Munchkin,0,1,25
-K.C.'s Krazy Chase,0,1,22
-Keyboard Creations,0,0,27
-Killer Bees,0,2,27
-Killer Bees (V+),0,2,20
-Kinder im Verkehr 1,0,0,25
-La Quete des Anneaux,0,1,28
-La Ruche Infernale (V+),0,2,29
-Labyrinth Game + Supermind,0,0,32
-Las Vegas,0,0,35
-Las Vegas Blackjack,0,0,18
-Laser War,0,0,28
-Le Mur Magique,0,0,18
-Le Tresor Englouti (V+),0,2,23
-Loony Balloon (V+),0,2,32
-Matchmaker + Logix + Buzzword,0,0,27
-Math-A-Magic + Echo,0,0,38
-Mathematicien + Echo,0,0,28
-Monkeyshines,0,1,29
-Morse,0,0,21
-Moto-Crash (V+),0,2,14
-Mousing Cat,0,1,24
-Munchkin,0,1,20
-Musician,1,1,17
-Neutron Star (V+),0,3,17
-Newscaster,0,0,26
-Nightmare,0,2,19
-Nightmare (V+),0,2,18
-Nimble Numbers Ned,0,1,23
-Norseman (V+),0,2,27
-O Malabarista + Jogo da Velha,0,0,22
-O Segredo do Farao,0,1,38
-Out of this World + Helicopter Rescue,0,0,27
-P.T. Barnum's Acrobats,0,1,46
-Pachinko,0,0,31
-Pairs + Space Rendezvous + Logic,0,0,17
-Pick Axe Pete,0,1,41
-Pickaxe Pete (V+),0,2,22
-Pocket Billiards,0,0,26
-Popeye,0,2,25
-Power Lords,0,1,15
-Power Lords (Alt),0,2,20
-Prendre l'Argent et Fuir,0,0,26
-Q-Bert,0,2,33
-Quest for the Rings,0,1,15
-Race + Spin-out + Cryptogram (V+),0,2,28
-Samurai,0,0,42
-Satellite Attack,0,0,16
-Satellite Attack (V+),0,2,25
-Secret of the Pharaohs,0,0,30
-Showdown in 2100 A.D.,0,0,31
-Sid the Spellbinder,0,1,30
-Skiing,0,0,28
-Smithereens,0,1,15
-Speedway + Spin-out + Crypto-logic,0,0,20
-Stone Sling,0,0,43
-Stone Sling (V+),0,2,20
-Super Bee,0,1,25
-Super Cobra,0,2,18
-Syracuse (V+),0,1,20
-Take the Money and Run,0,0,22
-Terrahawks (V+),0,2,31
-Thunderball,0,0,24
-Trans American Rally (V+),0,4,20
-Turtles,0,2,34
-Type & Tell,0,1,16
-UFO,0,0,20
-Verkehrsspiele 1,0,0,12
-Verkehrsspiele 2,0,0,25
-Volleyball,0,0,25
-Volleyball Electronique,0,0,19
-Wall Street,0,1,32
-War of Nerves,0,0,20
-EOF,0,0,22
+4 en 1 Ligne
+1,1
+
+4 in 1 Row
+1,1
+
+Air Battle (V+)
+0,3
+
+Alien Invaders - Plus
+0,0
+
+Alpine Skiing
+0,0
+
+Armored Encounter + Sub Chase
+0,0
+
+Atlantis
+0,1
+
+Attack of the Timelord
+0,1
+
+Baseball
+0,0
+
+Billard Americain
+0,0
+
+Billard Americain (V+)
+0,2
+
+Billard Electrique
+0,0
+
+Billard Electrique (V+)
+0,2
+
+Blackjack
+0,0
+
+Blobbers
+0,2
+
+Blockout + Breakdown
+0,0
+
+Bombardeio Submarino + Tiro ao Alvo
+0,0
+
+Bowling + Basketball
+0,0
+
+Buraco Negro
+0,2
+
+Casino Slot Machine
+0,0
+
+Catch the Ball + Noughts and Crosses
+0,0
+
+Chat et Souris
+0,1
+
+Chess
+0,0
+
+Chez Maxime (V+)
+0,1
+
+Chinese Logic
+0,0
+
+Clay Pigeon
+0,1
+
+Comando Noturno
+0,2
+
+Computer Golf
+0,0
+
+Computer Intro
+0,0
+
+Computer Programmer
+0,0
+
+Conflit Cosmique
+0,0
+
+Conquest of the World
+0,1
+
+Cosmic Conflict
+0,0
+
+Cosmic Conflict (V+)
+0,2
+
+Course de Voitures + Autodrome + Cryptogramme
+0,0
+
+Course de Voitures + Autodrome + Cryptogramme (V+)
+0,2
+
+Demon Attack
+0,1
+
+Demon Attack (V+)
+0,2
+
+Depth Charge + Marksman
+0,0
+
+Desafio Chines
+0,0
+
+Dynasty
+0,0
+
+Electronic Table Soccer
+0,0
+
+Exojet (V+)
+0,2
+
+Football
+0,0
+
+Football Electronique + Hockey Electronique
+0,0
+
+Freedom Fighters
+0,1
+
+Freedom Fighters (V+)
+0,2
+
+Frogger
+0,2
+
+Golf
+0,0
+
+Great Wall Street Fortune Hunt
+0,1
+
+Guerre de l'Espace (V+)
+0,2
+
+Guerre Laser
+0,0
+
+Gunfighter
+0,0
+
+Helicopter Rescue (V+)
+0,4
+
+Hockey + Soccer
+0,0
+
+I've Got Your Number
+0,0
+
+Invaders from Hyperspace
+0,0
+
+Jeu de Quilles + Basketball
+0,0
+
+Jeu de Quilles + Basketball (V+)
+0,2
+
+Jumping Acrobats
+0,0
+
+K.C. Munchkin
+0,1
+
+K.C.'s Krazy Chase
+0,1
+
+Keyboard Creations
+0,0
+
+Killer Bees
+0,2
+
+Killer Bees (V+)
+0,2
+
+Kinder im Verkehr 1
+0,0
+
+La Quete des Anneaux
+0,1
+
+La Ruche Infernale (V+)
+0,2
+
+Labyrinth Game + Supermind
+0,0
+
+Las Vegas
+0,0
+
+Las Vegas Blackjack
+0,0
+
+Laser War
+0,0
+
+Le Mur Magique
+0,0
+
+Le Tresor Englouti (V+)
+0,2
+
+Loony Balloon (V+)
+0,2
+
+Matchmaker + Logix + Buzzword
+0,0
+
+Math-A-Magic + Echo
+0,0
+
+Mathematicien + Echo
+0,0
+
+Monkeyshines
+0,1
+
+Morse
+0,0
+
+Moto-Crash (V+)
+0,2
+
+Mousing Cat
+0,1
+
+Munchkin
+0,1
+
+Musician
+1,1
+
+Neutron Star (V+)
+0,3
+
+Newscaster
+0,0
+
+Nightmare
+0,2
+
+Nightmare (V+)
+0,2
+
+Nimble Numbers Ned
+0,1
+
+Norseman (V+)
+0,2
+
+O Malabarista + Jogo da Velha
+0,0
+
+O Segredo do Farao
+0,1
+
+Out of this World + Helicopter Rescue
+0,0
+
+P.T. Barnum's Acrobats
+0,1
+
+Pachinko
+0,0
+
+Pairs + Space Rendezvous + Logic
+0,0
+
+Pick Axe Pete
+0,1
+
+Pickaxe Pete (V+)
+0,2
+
+Pocket Billiards
+0,0
+
+Popeye
+0,2
+
+Power Lords
+0,1
+
+Power Lords (Alt)
+0,2
+
+Prendre l'Argent et Fuir
+0,0
+
+Q-Bert
+0,2
+
+Quest for the Rings
+0,1
+
+Race + Spin-out + Cryptogram (V+)
+0,2
+
+Samurai
+0,0
+
+Satellite Attack
+0,0
+
+Satellite Attack (V+)
+0,2
+
+Secret of the Pharaohs
+0,0
+
+Showdown in 2100 A.D.
+0,0
+
+Sid the Spellbinder
+0,1
+
+Skiing
+0,0
+
+Smithereens
+0,1
+
+Speedway + Spin-out + Crypto-logic
+0,0
+
+Stone Sling
+0,0
+
+Stone Sling (V+)
+0,2
+
+Super Bee
+0,1
+
+Super Cobra
+0,2
+
+Syracuse (V+)
+0,1
+
+Take the Money and Run
+0,0
+
+Terrahawks (V+)
+0,2
+
+Thunderball
+0,0
+
+Trans American Rally (V+)
+0,4
+
+Turtles
+0,2
+
+Type & Tell
+0,1
+
+UFO
+0,0
+
+Verkehrsspiele 1
+0,0
+
+Verkehrsspiele 2
+0,0
+
+Volleyball
+0,0
+
+Volleyball Electronique
+0,0
+
+Wall Street
+0,1
+
+War of Nerves
+0,0
+

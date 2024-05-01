@@ -360,7 +360,7 @@ void setCart_ARC() {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(F("Database file not found"));
+    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
   }
 }
 #endif

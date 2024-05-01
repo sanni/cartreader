@@ -1,33 +1,96 @@
-Alien Invasion,2,0
-Backgammon/Acey-Deucey,0,20
-Baseball,0,29
-Bowling,0,15
-Casino Poker,2,14
-Checkers,0,19
-Demonstration Cartridge,0,15
-Demonstration Cartridge 2,0,30
-Desert Fox/Shooting Gallery,0,32
-Dodge It,0,34
-Drag Race,0,15
-Galactic Space Wars/Lunar Lander,0,16
-Hangman,1,39
-Magic Numbers,0,14
-Math Quiz I,0,20
-Math Quiz II,0,18
-Maze (Multi),0,19
-Memory Match 1 & 2,0,19
-Muehle (Multi),0,25
-Ordtaevling,1,21
-Pinball Challenge,0,18
-Pro Football,2,24
-Rat' Mal,1,19
-Robot War/Torpedo Alley,0,15
-Schach,3,30
-Slot Machine,0,13
-Sonar Search,0,19
-Space War,0,19
-Spitfire,0,16
-Tic-Tac-Toe (Multi),0,15
-Video Blackjack,0,26
-Video Whizball,1,22
-EOF,0,0
+Alien Invasion
+2
+
+Backgammon/Acey-Deucey
+0
+
+Baseball
+0
+
+Bowling
+0
+
+Casino Poker
+2
+
+Checkers
+0
+
+Demonstration Cartridge
+0
+
+Demonstration Cartridge 2
+0
+
+Desert Fox/Shooting Gallery
+0
+
+Dodge It
+0
+
+Drag Race
+0
+
+Galactic Space Wars/Lunar Lander
+0
+
+Hangman
+1
+
+Magic Numbers
+0
+
+Math Quiz I
+0
+
+Math Quiz II
+0
+
+Maze (Multi)
+0
+
+Memory Match 1 & 2
+0
+
+Muehle (Multi)
+0
+
+Ordtaevling
+1
+
+Pinball Challenge
+0
+
+Pro Football
+2
+
+Rat' Mal
+1
+
+Robot War/Torpedo Alley
+0
+
+Schach
+3
+
+Slot Machine
+0
+
+Sonar Search
+0
+
+Space War
+0
+
+Spitfire
+0
+
+Tic-Tac-Toe (Multi)
+0
+
+Video Blackjack
+0
+
+Video Whizball
+1
+

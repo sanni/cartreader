@@ -59,7 +59,6 @@ byte VECTREX[] = { 4, 8, 12, 16, 32, 64 };
 byte vectrexlo = 0;  // Lowest Entry
 byte vectrexhi = 5;  // Highest Entry
 byte vectrexsize;
-byte newvectrexsize;
 
 // EEPROM MAPPING
 // 08 ROM SIZE
@@ -124,7 +123,6 @@ void vectrexMenu() {
     case 0:
       // Select Cart
       setCart_VECTREX();
-      wait();
       setup_VECTREX();
       break;
 
@@ -260,6 +258,7 @@ void readROM_VECTREX() {
 //******************************************
 
 void setROMSize_VECTREX() {
+  byte newvectrexsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (vectrexlo == vectrexhi)
@@ -393,237 +392,32 @@ void checkStatus_VECTREX() {
 //******************************************
 // CART SELECT CODE
 //******************************************
+void readDataLine_VECTREX(FsFile& database, byte* gameSize) {
+  // Read rom size
+  (*gameSize) = database.read() - 48;
 
-FsFile vectrexcsvFile;
-char vectrexgame[25];                       // title
-char vectrexrr[4];                          // romsize
-char vectrexll[4];                          // linelength (previous line)
-unsigned long vectrexcsvpos;                // CSV File Position
-char vectrexcartCSV[] = "vectrexcart.txt";  // CSV List
-char vectrexcsvEND[] = "EOF";               // CSV End Marker for scrolling
-
-bool readLine_VECTREX(FsFile& f, char* line, size_t maxLen) {
-  for (size_t n = 0; n < maxLen; n++) {
-    int c = f.read();
-    if (c < 0 && n == 0) return false;  // EOF
-    if (c < 0 || c == '\n') {
-      line[n] = 0;
-      return true;
-    }
-    line[n] = c;
-  }
-  return false;  // line too long
-}
-
-bool readVals_VECTREX(char* vectrexgame, char* vectrexrr, char* vectrexll) {
-  char line[31];
-  vectrexcsvpos = vectrexcsvFile.position();
-  if (!readLine_VECTREX(vectrexcsvFile, line, sizeof(line))) {
-    return false;  // EOF or too long
-  }
-  char* comma = strtok(line, ",");
-  int x = 0;
-  while (comma != NULL) {
-    if (x == 0)
-      strcpy(vectrexgame, comma);
-    else if (x == 1)
-      strcpy(vectrexrr, comma);
-    else if (x == 2)
-      strcpy(vectrexll, comma);
-    comma = strtok(NULL, ",");
-    x += 1;
-  }
-  return true;
-}
-
-bool getCartListInfo_VECTREX() {
-  bool buttonreleased = 0;
-  bool cartselected = 0;
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(F(" HOLD TO FAST CYCLE"));
-  display_Update();
-#else
-  Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
-#endif
-  delay(2000);
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {         // Button Held - Fast Cycle
-    while (1) {                    // Scroll Game List
-      while (readVals_VECTREX(vectrexgame, vectrexrr, vectrexll)) {
-        if (strcmp(vectrexcsvEND, vectrexgame) == 0) {
-          vectrexcsvFile.seek(0);  // Restart
-        } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          display_Clear();
-          println_Msg(F("CART TITLE:"));
-          println_Msg(FS(FSTRING_EMPTY));
-          println_Msg(vectrexgame);
-          display_Update();
-#else
-          Serial.print(F("CART TITLE:"));
-          Serial.println(vectrexgame);
-#endif
-#if defined(ENABLE_OLED)
-          buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-          boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-          if (buttonVal1 == HIGH) {        // Button Released
-            buttonreleased = 1;
-            break;
-          }
-          if (buttonreleased) {
-            buttonreleased = 0;  // Reset Flag
-            break;
-          }
-        }
-      }
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-      if (buttonVal1 == HIGH)          // Button Released
-        break;
-    }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display.setCursor(0, 56);
-  println_Msg(F("FAST CYCLE OFF"));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_EMPTY));
-  Serial.println(F("FAST CYCLE OFF"));
-  Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
-  Serial.println(F("DOUBLE CLICK TO STEP BACK"));
-  Serial.println(F("HOLD TO SELECT"));
-  Serial.println(FS(FSTRING_EMPTY));
-#endif
-  while (readVals_VECTREX(vectrexgame, vectrexrr, vectrexll)) {
-    if (strcmp(vectrexcsvEND, vectrexgame) == 0) {
-      vectrexcsvFile.seek(0);  // Restart
-    } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-      display_Clear();
-      println_Msg(F("CART TITLE:"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(vectrexgame);
-      display.setCursor(0, 48);
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-#else
-      Serial.print(F("CART TITLE:"));
-      Serial.println(vectrexgame);
-#endif
-      while (1) {  // Single Step
-        uint8_t b = checkButton();
-        if (b == 1) {  // Continue (press)
-          break;
-        }
-        if (b == 2) {  // Reset to Start of List (doubleclick)
-          byte prevline = strtol(vectrexll, NULL, 10);
-          vectrexcsvpos -= prevline;
-          vectrexcsvFile.seek(vectrexcsvpos);
-          break;
-        }
-        if (b == 3) {  // Long Press - Select Cart (hold)
-          newvectrexsize = strtol(vectrexrr, NULL, 10);
-          EEPROM_writeAnything(8, newvectrexsize);
-          cartselected = 1;  // SELECTION MADE
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-          println_Msg(F("SELECTION MADE"));
-          display_Update();
-#else
-          Serial.println(F("SELECTION MADE"));
-#endif
-          break;
-        }
-      }
-      if (cartselected) {
-        cartselected = 0;  // Reset Flag
-        return true;
-      }
-    }
-  }
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_END_OF_FILE));
-  display_Update();
-#else
-  Serial.println(FS(FSTRING_END_OF_FILE));
-#endif
-
-  return false;
-}
-
-void checkCSV_VECTREX() {
-  if (getCartListInfo_VECTREX()) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(FS(FSTRING_CART_SELECTED));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(vectrexgame);
-    display_Update();
-    // Display Settings
-    display.setCursor(0, 56);
-    print_Msg(F("CODE: R"));
-    println_Msg(newvectrexsize);
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_EMPTY));
-    Serial.println(FS(FSTRING_CART_SELECTED));
-    Serial.println(vectrexgame);
-    // Display Settings
-    Serial.print(F("CODE: R"));
-    Serial.println(newvectrexsize);
-    Serial.println(FS(FSTRING_EMPTY));
-#endif
-  } else {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display.setCursor(0, 56);
-    println_Msg(FS(FSTRING_NO_SELECTION));
-    display_Update();
-#else
-    Serial.println(FS(FSTRING_NO_SELECTION));
-#endif
-  }
+  // Skip rest of line
+  database.seekCur(2);
 }
 
 void setCart_VECTREX() {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  display_Clear();
-  println_Msg(vectrexcartCSV);
-  display_Update();
-#endif
+  //go to root
   sd.chdir();
-  sprintf(folder, "VECTREX/CSV");
-  sd.chdir(folder);  // Switch Folder
-  vectrexcsvFile = sd.open(vectrexcartCSV, O_READ);
-  if (!vectrexcsvFile) {
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    display_Clear();
-    println_Msg(F("CSV FILE NOT FOUND!"));
-    display_Update();
-#else
-    Serial.println(F("CSV FILE NOT FOUND!"));
-#endif
-    while (1) {
-      if (checkButton() != 0)
-        setup_VECTREX();
+
+  byte gameSize;
+
+  // Select starting letter
+  //byte myLetter = starting_letter();
+
+  // Open database
+  if (myFile.open("vectrexcart.txt", O_READ)) {
+    // seek_first_letter_in_database(myFile, myLetter);
+
+    if(checkCartSelection(myFile, &readDataLine_ARC, &gameSize)) {
+      EEPROM_writeAnything(8, gameSize);
     }
+  } else {
+    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
   }
-  checkCSV_VECTREX();
-  vectrexcsvFile.close();
 }
 #endif

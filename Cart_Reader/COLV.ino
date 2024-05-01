@@ -448,7 +448,7 @@ void setCart_COL() {
         EEPROM_writeAnything(8, colsize);
     }
   } else {
-    print_FatalError(F("Database file not found"));
+    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
   }
 }
 #endif

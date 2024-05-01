@@ -587,7 +587,7 @@ void getMapping() {
 
   sd.chdir();
   if (!database.open("nes.txt", O_READ)) {
-    print_FatalError(F("Database file not found"));
+    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
     // never reached
   }
 
