@@ -783,6 +783,89 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
   return false;
 }
 
+#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printInstructions() {
+    println_Msg(FS(FSTRING_EMPTY));
+#if defined(ENABLE_OLED)
+    print_STR(press_to_change_STR, 1);
+    print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+    print_STR(rotate_to_change_STR, 1);
+    print_STR(press_to_select_STR, 1);
+#endif
+    display_Update();
+}
+
+int navigateMenu(int min, int max, void (*printSelection)(int)) {
+  uint8_t b = 0;
+  int i = min;
+  // Check Button Status
+#if defined(ENABLE_OLED)
+  buttonVal1 = (PIND & (1 << 7));  // PD7
+#elif defined(ENABLE_LCD)
+  boolean buttonVal1 = (PING & (1 << 2));  //PG2
+#endif
+
+  if (buttonVal1 == LOW) {  // Button Pressed
+    while (1) {             // Scroll Mapper List
+#if defined(ENABLE_OLED)
+      buttonVal1 = (PIND & (1 << 7));  // PD7
+#elif defined(ENABLE_LCD)
+      buttonVal1 = (PING & (1 << 2));      //PG2
+#endif
+      if (buttonVal1 == HIGH) {  // Button Released
+        // Correct Overshoot
+        if (i == min)
+          i = max;
+        else
+          i--;
+        break;
+      }
+      printSelection(i);
+      display_Update();
+      if (i == max)
+        i = min;
+      else
+        i++;
+      delay(250);
+    }
+  }
+  b = 0;
+
+  printSelection(i);
+  printInstructions();
+
+  while (1) {
+    b = checkButton();
+    if (b == 2) {  // Previous Mapper (doubleclick)
+      if (i == min)
+        i = max;
+      else
+        i--;
+
+      // Only update display after input because of slow LCD library
+      printSelection(i);
+      printInstructions();
+    }
+    if (b == 1) {  // Next Mapper (press)
+      if (i == max)
+        i = min;
+      else
+        i++;
+
+      // Only update display after input because of slow LCD library
+      printSelection(i);
+      printInstructions();
+    }
+    if (b == 3) {  // Long Press - Execute (hold)
+      return i;
+    }
+  }
+}
+#endif
+#endif
+
 void starting_letter__subDraw(byte selection, byte line) {
       display.setDrawColor(0);
       for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);

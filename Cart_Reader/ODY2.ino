@@ -276,6 +276,14 @@ void readROM_ODY2() {
 // ROM SIZE
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_ODY2(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(ODY2[index]);
+}
+#endif
+
 void setROMSize_ODY2() {
   byte newody2size;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -283,69 +291,8 @@ void setROMSize_ODY2() {
   if (ody2lo == ody2hi)
     newody2size = ody2lo;
   else {
-    uint8_t b = 0;
-    int i = ody2lo;
+    newody2size = navigateMenu(ody2lo, ody2hi, &printRomSize_ODY2);
 
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(ODY2[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == ody2lo)
-          i = ody2hi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(ODY2[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == ody2hi)
-          i = ody2lo;
-        else
-          i++;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(ODY2[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newody2size = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));

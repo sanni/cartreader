@@ -256,6 +256,14 @@ void readROM_VECTREX() {
 // ROM SIZE
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_VECTREX(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(VECTREX[index]);
+}
+#endif
+
 void setROMSize_VECTREX() {
   byte newvectrexsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -263,67 +271,8 @@ void setROMSize_VECTREX() {
   if (vectrexlo == vectrexhi)
     newvectrexsize = vectrexlo;
   else {
-    uint8_t b = 0;
-    int i = vectrexlo;
-
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(VECTREX[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == vectrexlo)
-          i = vectrexhi;
-        else
-          i--;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(VECTREX[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == vectrexhi)
-          i = vectrexlo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(VECTREX[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newvectrexsize = i;
-        break;
-      }
-    }
+    newvectrexsize = navigateMenu(vectrexlo, vectrexhi, &printRomSize_VECTREX);
+    
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));

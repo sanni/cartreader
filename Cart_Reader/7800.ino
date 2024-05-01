@@ -500,6 +500,12 @@ void println_Mapper7800(byte mapper) {
   else if (mapper == 7)
     println_Msg(F("BANKSET"));
 }
+
+void printRomSize_7800(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(a7800[index]);
+}
 #endif
 
 void setROMSize_7800() {
@@ -510,66 +516,10 @@ void setROMSize_7800() {
     new7800size = a7800lo;
   else {
     uint8_t b = 0;
-    int i = a7800lo;
 
     display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(a7800[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
 
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == a7800lo)
-          i = a7800hi;
-        else
-          i--;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(a7800[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == a7800hi)
-          i = a7800lo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(a7800[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        new7800size = i;
-        break;
-      }
-    }
+    new7800size = navigateMenu(a7800lo, a7800hi, &printRomSize_7800);
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));
@@ -665,86 +615,22 @@ void checkStatus_7800() {
 //******************************************
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_7800(int index, boolean printInstructions) {
+void printMapperSelection_7800(int index) {
   display_Clear();
   print_Msg(F("Mapper: "));
   a7800index = index * 3;
   a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
   println_Msg(a7800mapselect);
   println_Mapper7800(a7800mapselect);
-
-  if(printInstructions) {
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-  }
-  display_Update();
 }
 #endif
 
 void setMapper_7800() {
   byte new7800mapper = 0;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-  // Check Button Status
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {             // Button Pressed
-    while (1) {                        // Scroll Mapper List
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-      if (buttonVal1 == HIGH) {        // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = a7800mapcount - 1;
-        else
-          i--;
-        break;
-      }
-      displayMapperSelect_7800(i, false);
-      if (i == (a7800mapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
+  navigateMenu(0, a7800mapcount - 1, &printMapperSelection_7800);
+  new7800mapper = a7800mapselect;
 
-  displayMapperSelect_7800(i, true);
-  
-  while (1) {
-    b = checkButton();
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = a7800mapcount - 1;
-      else
-        i--;
-      displayMapperSelect_7800(i, true);
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (a7800mapcount - 1))
-        i = 0;
-      else
-        i++;
-      displayMapperSelect_7800(i, true);
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      new7800mapper = a7800mapselect;
-      break;
-    }
-  }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(new7800mapper);

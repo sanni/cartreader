@@ -73,9 +73,7 @@ byte a5200[] = { 4, 8, 16, 32, 40 };
 byte a5200lo = 0;  // Lowest Entry
 byte a5200hi = 4;  // Highest Entry
 byte a5200mapper = 0;
-byte new5200mapper;
 byte a5200size;
-byte new5200size;
 
 // EEPROM MAPPING
 // 07 MAPPER
@@ -370,75 +368,23 @@ void checkMapperSize_5200() {
   }
 }
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_5200(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(a5200[index]);
+}
+#endif
+
 void setROMSize_5200() {
+  byte new5200size;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (a5200lo == a5200hi)
     new5200size = a5200lo;
   else {
-    uint8_t b = 0;
-    int i = a5200lo;
-
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(a5200[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == a5200lo)
-          i = a5200hi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(a5200[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == a5200hi)
-          i = a5200lo;
-        else
-          i++;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(a5200[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        new5200size = i;
-        break;
-      }
-    }
+    new5200size = navigateMenu(a5200lo, a5200hi, &printRomSize_5200);
+    
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));
@@ -517,92 +463,24 @@ void checkStatus_5200() {
 //******************************************
 // SET MAPPER
 //******************************************
+
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_5200(int index, boolean printInstructions) {
+void printMapperSelection_5200(int index) {
   display_Clear();
   print_Msg(F("Mapper: "));
   a5200index = index * 3;
   a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
   println_Msg(a5200mapselect);
   println_Mapper5200(a5200mapselect);
-
-  if(printInstructions) {
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-  }
-  display_Update();
 }
 #endif
 
-
 void setMapper_5200() {
+  byte new5200mapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-  // Check Button Status
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {             // Button Pressed
-    while (1) {                        // Scroll Mapper List
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
-      if (buttonVal1 == HIGH) {        // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = a5200mapcount - 1;
-        else
-          i--;
-        break;
-      }
-      displayMapperSelect_5200(i, false);
-      if (i == (a5200mapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
+  navigateMenu(0, a5200mapcount - 1, &printMapperSelection_5200);
+  new5200mapper = a5200mapselect;
 
-  displayMapperSelect_5200(i, true);
-  
-  while (1) {
-    b = checkButton();
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = a5200mapcount - 1;
-      else
-        i--;
-
-      // Only update display after input because of slow LCD library
-      displayMapperSelect_5200(i, true);
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (a5200mapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      // Only update display after input because of slow LCD library
-      displayMapperSelect_5200(i, true);
-
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      new5200mapper = a5200mapselect;
-      break;
-    }
-  }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(new5200mapper);

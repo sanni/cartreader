@@ -652,26 +652,15 @@ void readROM_C64() {
 //******************************************
 // MAPPER CODE
 //******************************************
+
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_C64(int index, boolean printInstructions) {
+void printMapperSelection_C64(int index) {
   display_Clear();
   print_Msg(F("Mapper: "));
   c64index = index * 3;
   c64mapselect = pgm_read_byte(c64mapsize + c64index);
   println_Msg(c64mapselect);
   printMapper_C64(c64mapselect);
-
-  if(printInstructions) {
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-  }
-  display_Update();
 }
 #endif
 
@@ -679,63 +668,9 @@ void displayMapperSelect_C64(int index, boolean printInstructions) {
 void setMapper_C64() {
   byte newc64mapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-  // Check Button Status
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {             // Button Pressed
-    while (1) {                        // Scroll Mapper List
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-      if (buttonVal1 == HIGH) {        // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = c64mapcount - 1;
-        else
-          i--;
-        break;
-      }
-      displayMapperSelect_C64(i, false);
-      if (i == (c64mapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
+  navigateMenu(0, c64mapcount - 1, &printMapperSelection_C64);
+  newc64mapper = c64mapselect;
 
-  displayMapperSelect_C64(i, true);
-
-  while (1) {
-    b = checkButton();
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = c64mapcount - 1;
-      else
-        i--;
-
-      displayMapperSelect_C64(i, true);
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (c64mapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      displayMapperSelect_C64(i, true);
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      newc64mapper = c64mapselect;
-      break;
-    }
-  }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(newc64mapper);
@@ -784,6 +719,15 @@ void checkMapperSize_C64() {
 //******************************************
 // SET ROM SIZE
 //******************************************
+
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_C64(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(C64[index]);
+}
+#endif
+
 void setROMSize_C64() {
   byte newc64size;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -791,67 +735,8 @@ void setROMSize_C64() {
   if (c64lo == c64hi)
     newc64size = c64lo;
   else {
-    uint8_t b = 0;
-    int i = c64lo;
+    newc64size = navigateMenu(c64lo, c64hi, &printRomSize_C64);
 
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(C64[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == c64lo)
-          i = c64hi;
-        else
-          i--;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(C64[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == c64hi)
-          i = c64lo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(C64[i]);
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newc64size = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));

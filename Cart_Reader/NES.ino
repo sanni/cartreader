@@ -241,11 +241,8 @@ bool busConflict = false;
 // Cartridge Config
 uint8_t mapper;
 uint8_t prgsize;
-uint8_t newprgsize;
 uint8_t chrsize;
-uint8_t newchrsize;
 uint8_t ramsize;
-uint8_t newramsize;
 
 /******************************************
   Menus
@@ -1077,6 +1074,16 @@ void CreateRAMFileInSD() {
 /******************************************
    Config Functions
  *****************************************/
+
+#if defined(ENABLE_LCD)
+void printMapperSelection_NES(int index) {
+  display_Clear();
+  mapselect = pgm_read_byte(mapsize + index * 7);
+  print_Msg(F("Mapper: "));
+  println_Msg(mapselect);
+}
+#endif
+
 void setMapper() {
   uint8_t newmapper;
 #ifdef ENABLE_GLOBAL_LOG
@@ -1224,58 +1231,9 @@ chooseMapper:
 
   // LCD
 #elif defined(ENABLE_LCD)
-  int i = 0;
-
-  display_Clear();
-  mapselect = pgm_read_byte(mapsize + i * 7);
-  print_Msg(F("Mapper: "));
-  println_Msg(mapselect);
-  println_Msg(FS(FSTRING_EMPTY));
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
-  display_Update();
-
-  while (1) {
-    uint8_t b = checkButton();
-
-    if (b == 2) {  // Previous Mapper
-      if (i == 0)
-        i = mapcount - 1;
-      else
-        i--;
-
-      display_Clear();
-      mapselect = pgm_read_byte(mapsize + i * 7);
-      print_Msg(F("Mapper: "));
-      println_Msg(mapselect);
-      println_Msg(FS(FSTRING_EMPTY));
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-      display_Update();
-    }
-
-    else if (b == 1) {  // Next Mapper
-      if (i == (mapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      display_Clear();
-      mapselect = pgm_read_byte(mapsize + i * 7);
-      print_Msg(F("Mapper: "));
-      println_Msg(mapselect);
-      println_Msg(FS(FSTRING_EMPTY));
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-      display_Update();
-    }
-
-    else if (b == 3) {  // Long Press - Execute
-      newmapper = mapselect;
-      break;
-    }
-  }
-
+  navigateMenu(0, mapcount - 1, &printMapperSelection_NES);
+  newmapper = mapselect;
+  
   display.setCursor(0, 56 + 8);
   print_Msg(F("MAPPER "));
   print_Msg(newmapper);
@@ -1347,7 +1305,17 @@ void checkMapperSize() {
   }
 }
 
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+void printPrgSize_NES(int index) {
+  display_Clear();
+  print_Msg(F("PRG Size: "));
+  println_Msg(pgm_read_word(&(PRG[index])));
+}
+#endif
+
 void setPRGSize() {
+  uint8_t newprgsize;
+
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
   println_Log(F("Set PRG Size"));
@@ -1359,67 +1327,7 @@ void setPRGSize() {
   if (prglo == prghi)
     newprgsize = prglo;
   else {
-    int i = prglo;
-
-    display_Clear();
-    print_Msg(F("PRG Size: "));
-    println_Msg(pgm_read_word(&(PRG[i])));
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      uint8_t b = checkButton();
-
-      if (b == doubleclick) {  // Previous
-        if (i == prglo)
-          i = prghi;
-        else
-          i--;
-
-        display_Clear();
-        print_Msg(F("PRG Size: "));
-        println_Msg(pgm_read_word(&(PRG[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == press) {  // Next
-        if (i == prghi)
-          i = prglo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("PRG Size: "));
-        println_Msg(pgm_read_word(&(PRG[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == hold) {  // Long Press - Execute
-        newprgsize = i;
-        break;
-      }
-    }
+    newprgsize = navigateMenu(prglo, prghi, &printPrgSize_NES);
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
@@ -1466,7 +1374,16 @@ setprg:
 #endif
 }
 
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+void printChrSize_NES(int index) {
+  display_Clear();
+  print_Msg(F("CHR Size: "));
+  println_Msg(pgm_read_word(&(CHR[index])));
+}
+#endif
+
 void setCHRSize() {
+  uint8_t newchrsize;
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
   println_Log(F("Set CHR Size"));
@@ -1478,69 +1395,8 @@ void setCHRSize() {
   if (chrlo == chrhi)
     newchrsize = chrlo;
   else {
-    int i = chrlo;
+    newchrsize = navigateMenu(chrlo, chrhi, &printChrSize_NES);
 
-    display_Clear();
-    print_Msg(F("CHR Size: "));
-    println_Msg(pgm_read_word(&(CHR[i])));
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      uint8_t b = checkButton();
-
-      if (b == doubleclick) {  // Previous
-        if (i == chrlo)
-          i = chrhi;
-        else
-          i--;
-
-        display_Clear();
-        print_Msg(F("CHR Size: "));
-        println_Msg(pgm_read_word(&(CHR[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-
-      if (b == press) {  // Next
-        if (i == chrhi)
-          i = chrlo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("CHR Size: "));
-        println_Msg(pgm_read_word(&(CHR[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-
-      if (b == hold) {  // Long Press - Execute
-        newchrsize = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("CHR SIZE "));
@@ -1586,7 +1442,30 @@ setchr:
 #endif
 }
 
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+void printRamSize_NES(int index) {
+  display_Clear();
+  print_Msg(F("RAM Size: "));
+  if (mapper == 0)
+    println_Msg(pgm_read_byte(&(RAM[index])) / 4);
+  else if (mapper == 16)
+    println_Msg(pgm_read_byte(&(RAM[index])) * 32);
+  else if (mapper == 19) {
+    if (index == 2)
+      println_Msg(F("128"));
+    else
+      println_Msg(pgm_read_byte(&(RAM[index])));
+  } else if ((mapper == 159) || (mapper == 80))
+    println_Msg(pgm_read_byte(&(RAM[index])) * 16);
+  else if (mapper == 82)
+    println_Msg(index * 5);
+  else
+    println_Msg(pgm_read_byte(&(RAM[index])));
+}
+#endif
+
 void setRAMSize() {
+  uint8_t newramsize;
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
   println_Log(F("Set RAM Size"));
@@ -1598,111 +1477,7 @@ void setRAMSize() {
   if (ramlo == ramhi)
     newramsize = ramlo;
   else {
-    int i = 0;
-
-    display_Clear();
-    print_Msg(F("RAM Size: "));
-    if (mapper == 0)
-      println_Msg(pgm_read_byte(&(RAM[i])) / 4);
-    else if (mapper == 16)
-      println_Msg(pgm_read_byte(&(RAM[i])) * 32);
-    else if (mapper == 19) {
-      if (i == 2)
-        println_Msg(F("128"));
-      else
-        println_Msg(pgm_read_byte(&(RAM[i])));
-    } else if ((mapper == 159) || (mapper == 80))
-      println_Msg(pgm_read_byte(&(RAM[i])) * 16);
-    else if (mapper == 82)
-      println_Msg(i * 5);
-    else
-      println_Msg(pgm_read_byte(&(RAM[i])));
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      uint8_t b = checkButton();
-
-      if (b == doubleclick) {  // Previous Mapper
-        if (i == 0)
-          i = ramhi;
-        else
-          i--;
-
-        display_Clear();
-        print_Msg(F("RAM Size: "));
-        if (mapper == 0)
-          println_Msg(pgm_read_byte(&(RAM[i])) / 4);
-        else if (mapper == 16)
-          println_Msg(pgm_read_byte(&(RAM[i])) * 32);
-        else if (mapper == 19) {
-          if (i == 2)
-            println_Msg(F("128"));
-          else
-            println_Msg(pgm_read_byte(&(RAM[i])));
-        } else if ((mapper == 159) || (mapper == 80))
-          println_Msg(pgm_read_byte(&(RAM[i])) * 16);
-        else if (mapper == 82)
-          println_Msg(i * 5);
-        else
-          println_Msg(pgm_read_byte(&(RAM[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-
-      if (b == press) {  // Next
-        if (i == ramhi)
-          i = 0;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("RAM Size: "));
-        if (mapper == 0)
-          println_Msg(pgm_read_byte(&(RAM[i])) / 4);
-        else if (mapper == 16)
-          println_Msg(pgm_read_byte(&(RAM[i])) * 32);
-        else if (mapper == 19) {
-          if (i == 2)
-            println_Msg(F("128"));
-          else
-            println_Msg(pgm_read_byte(&(RAM[i])));
-        } else if ((mapper == 159) || (mapper == 80))
-          println_Msg(pgm_read_byte(&(RAM[i])) * 16);
-        else if (mapper == 82)
-          println_Msg(i * 5);
-        else
-          println_Msg(pgm_read_byte(&(RAM[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        println_Msg(F("Press right to select"));
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-
-      if (b == hold) {  // Long Press - Execute
-        newramsize = i;
-        break;
-      }
-    }
+    newramsize = navigateMenu(0, ramhi, &printRamSize_NES);
 
     display.setCursor(0, 56);  // Display selection at bottom
   }

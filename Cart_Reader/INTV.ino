@@ -80,9 +80,7 @@ byte intvlo = 0;  // Lowest Entry
 byte intvhi = 5;  // Highest Entry
 
 byte intvmapper;
-byte newintvmapper;
 byte intvsize;
-byte newintvsize;
 
 // EEPROM MAPPING
 // 07 MAPPER
@@ -485,89 +483,21 @@ void ecsBank(uint32_t addr, uint8_t bank) {
 // MAPPER CODE
 //******************************************
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_INTV(int index, boolean printInstructions) {
+void printMapperSelection_INTV(int index) {
   display_Clear();
   print_Msg(F("Mapper: "));
   intvindex = index * 4;
   intvmapselect = pgm_read_byte(intvmapsize + intvindex);
   println_Msg(intvmapselect);
-
-  if(printInstructions) {
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-  }
-  display_Update();
 }
 #endif
 
 void setMapper_INTV() {
+  byte newintvmapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-  // Check Button Status
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));      // PG2
-#endif
-  if (buttonVal1 == LOW) {  // Button Pressed
-    while (1) {             // Scroll Mapper List
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      boolean buttonVal1 = (PING & (1 << 2));  // PG2
-#endif
-      if (buttonVal1 == HIGH) {  // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = intvmapcount - 1;
-        else
-          i--;
-        break;
-      }
-      displayMapperSelect_INTV(i, false);
-      if (i == (intvmapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
-
-  displayMapperSelect_INTV(i, true);
-
-  while (1) {
-    b = checkButton();
-
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = intvmapcount - 1;
-      else
-        i--;
-
-      // Only update display after input because of slow LCD library
-      displayMapperSelect_INTV(i, true);
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (intvmapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      // Only update display after input because of slow LCD library
-      displayMapperSelect_INTV(i, true);
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      newintvmapper = intvmapselect;
-      break;
-    }
-  }
+  navigateMenu(0, intvmapcount - 1, &printMapperSelection_INTV);
+  newintvmapper = intvmapselect;
+  
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(newintvmapper);
@@ -612,75 +542,23 @@ void checkMapperSize_INTV() {
   }
 }
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_INTV(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(pgm_read_byte(&(INTV[index])));
+}
+#endif
+
 void setROMSize_INTV() {
+  byte newintvsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (intvlo == intvhi)
     newintvsize = intvlo;
   else {
-    uint8_t b = 0;
-    int i = intvlo;
+    newintvsize = navigateMenu(intvlo, intvhi, &printRomSize_INTV);
 
-    // Only update display after input because of slow LCD library
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(pgm_read_byte(&(INTV[i])));
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == intvlo)
-          i = intvhi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_byte(&(INTV[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == intvhi)
-          i = intvlo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_byte(&(INTV[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newintvsize = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));

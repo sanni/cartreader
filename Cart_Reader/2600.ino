@@ -653,91 +653,21 @@ void checkStatus_2600() {
 //******************************************
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void displayMapperSelect_2600(uint8_t index, boolean printInstructions) {
+void printMapperSelection_2600(uint8_t index) {
   display_Clear();
   print_Msg(F("Mapper: "));
   a2600index = index * 2;
   a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
   println_Mapper2600(a2600mapselect);
-
-  if(printInstructions) {
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-  }
-  display_Update();
 }
 #endif
 
 void setMapper_2600() {
   byte new2600mapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-  // Check Button Status
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
+  navigateMenu(0, a2600mapcount - 1, &printMapperSelection_2600);
+  new2600mapper = a2600mapselect;
 
-  if (buttonVal1 == LOW) {  // Button Pressed
-    while (1) {             // Scroll Mapper List
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
-      if (buttonVal1 == HIGH) {  // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = a2600mapcount - 1;
-        else
-          i--;
-        break;
-      }
-      displayMapperSelect_2600(i, false);
-      if (i == (a2600mapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
-  b = 0;
-
-  displayMapperSelect_2600(i, true);
-
-  while (1) {
-    b = checkButton();
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = a2600mapcount - 1;
-      else
-        i--;
-
-      // Only update display after input because of slow LCD library
-      displayMapperSelect_2600(i, true);
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (a2600mapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      // Only update display after input because of slow LCD library
-      displayMapperSelect_2600(i, true);
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      new2600mapper = a2600mapselect;
-      break;
-    }
-  }
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   println_Mapper2600(new2600mapper);

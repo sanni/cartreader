@@ -43,7 +43,6 @@ byte wsvlo = 0;  // Lowest Entry
 byte wsvhi = 2;  // Highest Entry
 
 byte wsvsize;
-byte newwsvsize;
 
 // EEPROM MAPPING
 // 08 ROM SIZE
@@ -242,75 +241,23 @@ void readROM_WSV() {
 // ROM SIZE
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_WSV(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(pgm_read_word(&(WSV[index])));
+}
+#endif
+
 void setROMSize_WSV() {
+  byte newwsvsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (wsvlo == wsvhi)
     newwsvsize = wsvlo;
   else {
-    uint8_t b = 0;
-    int i = wsvlo;
+    newwsvsize = navigateMenu(wsvlo, wsvhi, &printRomSize_WSV);
 
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(pgm_read_word(&(WSV[i])));
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == wsvlo)
-          i = wsvhi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_word(&(WSV[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == wsvhi)
-          i = wsvlo;
-        else
-          i++;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_word(&(WSV[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newwsvsize = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("ROM SIZE "));

@@ -39,7 +39,6 @@ byte collo = 0;  // Lowest Entry
 byte colhi = 5;  // Highest Entry
 
 byte colsize;
-byte newcolsize;
 
 // EEPROM MAPPING
 // 08 ROM SIZE
@@ -225,77 +224,26 @@ void readROM_COL() {
 // ROM SIZE
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_COL(int index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(pgm_read_byte(&(COL[index])));
+}
+#endif
+
 void setROMSize_COL() {
+  byte newcolsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (collo == colhi)
     newcolsize = collo;
   else {
-    uint8_t b = 0;
-    int i = collo;
-
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(pgm_read_byte(&(COL[i])));
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == collo)
-          i = colhi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_byte(&(COL[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == colhi)
-          i = collo;
-        else
-          i++;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_byte(&(COL[i])));
-        println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newcolsize = i;
-        break;
-      }
-    }
+    newcolsize = navigateMenu(collo, colhi, &printRomSize_COL);
+  
     display.setCursor(0, 56);  // Display selection at bottom
   }
+  
   print_Msg(F("ROM SIZE "));
   print_Msg(pgm_read_byte(&(COL[newcolsize])));
   println_Msg(F("K"));

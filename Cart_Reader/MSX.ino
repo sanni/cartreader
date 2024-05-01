@@ -855,116 +855,24 @@ void writeRAM_MSX() {
 //******************************************
 // MAPPER CODE
 //******************************************
-void setMapper_MSX() {
-  byte newmsxmapper;
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  uint8_t b = 0;
-  int i = 0;
-// Check Button Status
-#if defined(ENABLE_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {  // Button Pressed
-    while (1) {             // Scroll Mapper List
-#if defined(ENABLE_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
-      if (buttonVal1 == HIGH) {  // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = msxmapcount - 1;
-        else
-          i--;
-        break;
-      }
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      msxindex = i * 5;
-      msxmapselect = pgm_read_byte(msxmapsize + msxindex);
-      println_Msg(msxmapselect);
-      printMapper(msxmapselect);
-      display_Update();
-      if (i == (msxmapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printMapperSelection_MSX(int index) {
   display_Clear();
   print_Msg(F("Mapper: "));
-  msxindex = i * 5;
+  msxindex = index * 5;
   msxmapselect = pgm_read_byte(msxmapsize + msxindex);
   println_Msg(msxmapselect);
   printMapper(msxmapselect);
-  println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-  print_STR(press_to_change_STR, 1);
-  print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
+}
 #endif
-  display_Update();
 
-  while (1) {
-    b = checkButton();
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = msxmapcount - 1;
-      else
-        i--;
-
-      // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      msxindex = i * 5;
-      msxmapselect = pgm_read_byte(msxmapsize + msxindex);
-      println_Msg(msxmapselect);
-      printMapper(msxmapselect);
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (msxmapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      msxindex = i * 5;
-      msxmapselect = pgm_read_byte(msxmapsize + msxindex);
-      println_Msg(msxmapselect);
-      printMapper(msxmapselect);
-      println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      newmsxmapper = msxmapselect;
-      break;
-    }
-  }
+void setMapper_MSX() {
+  byte newmsxmapper;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  navigateMenu(0, msxmapcount - 1, &printMapperSelection_MSX);
+  newmsxmapper = msxmapselect;
+  
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(newmsxmapper);
@@ -1015,6 +923,15 @@ void checkMapperSize_MSX() {
 //******************************************
 // SET ROM SIZE
 //******************************************
+
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_MSX(uint8_t index) {
+    display_Clear();
+    print_Msg(F("ROM Size: "));
+    println_Msg(MSX[index]);
+}
+#endif
+
 void setROMSize_MSX() {
   byte newmsxsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -1025,18 +942,8 @@ void setROMSize_MSX() {
     uint8_t b = 0;
     int i = msxlo;
 
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(MSX[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
+    printRomSize_MSX(i);
+    printInstructions();
 
     while (1) {
       b = checkButton();
@@ -1053,18 +960,8 @@ void setROMSize_MSX() {
             i--;
 
           // Only update display after input because of slow LCD library
-          display_Clear();
-          print_Msg(F("ROM Size: "));
-          println_Msg(MSX[i]);
-          println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-          print_STR(press_to_change_STR, 1);
-          print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-          print_STR(rotate_to_change_STR, 1);
-          print_STR(press_to_select_STR, 1);
-#endif
-          display_Update();
+          printRomSize_MSX(i);
+          printInstructions();
         }
       }
       if (b == 1) {             // Next (press)
@@ -1080,18 +977,8 @@ void setROMSize_MSX() {
             i++;
 
           // Only update display after input because of slow LCD library
-          display_Clear();
-          print_Msg(F("ROM Size: "));
-          println_Msg(MSX[i]);
-          println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-          print_STR(press_to_change_STR, 1);
-          print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-          print_STR(rotate_to_change_STR, 1);
-          print_STR(press_to_select_STR, 1);
-#endif
-          display_Update();
+          printRomSize_MSX(i);
+          printInstructions();
         }
       }
       if (b == 3) {  // Long Press - Execute (hold)
@@ -1157,6 +1044,15 @@ setrom:
 //******************************************
 // SET RAM SIZE
 //******************************************
+
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRamSize_MSX(uint8_t index) {
+    display_Clear();
+    print_Msg(F("RAM Size: "));
+    println_Msg(MSXRAM[index]);
+}
+#endif
+
 void setRAMSize_MSX() {
   byte newmsxramsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -1167,18 +1063,8 @@ void setRAMSize_MSX() {
     uint8_t b = 0;
     int i = msxramlo;
 
-    display_Clear();
-    print_Msg(F("RAM Size: "));
-    println_Msg(MSXRAM[i]);
-    println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
+    printRamSize_MSX(i);
+    printInstructions();
 
     while (1) {
       b = checkButton();
@@ -1195,18 +1081,8 @@ void setRAMSize_MSX() {
             i--;
 
           // Only update display after input because of slow LCD library
-          display_Clear();
-          print_Msg(F("RAM Size: "));
-          println_Msg(MSXRAM[i]);
-          println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-          print_STR(press_to_change_STR, 1);
-          print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-          print_STR(rotate_to_change_STR, 1);
-          print_STR(press_to_select_STR, 1);
-#endif
-          display_Update();
+          printRamSize_MSX(i);
+          printInstructions();
         }
       }
       if (b == 1) {            // Next (press)
@@ -1222,18 +1098,8 @@ void setRAMSize_MSX() {
             i++;
 
           // Only update display after input because of slow LCD library
-          display_Clear();
-          print_Msg(F("RAM Size: "));
-          println_Msg(MSXRAM[i]);
-          println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
-          print_STR(press_to_change_STR, 1);
-          print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-          print_STR(rotate_to_change_STR, 1);
-          print_STR(press_to_select_STR, 1);
-#endif
-          display_Update();
+          printRamSize_MSX(i);
+          printInstructions();
         }
       }
       if (b == 3) {  // Long Press - Execute (hold)
