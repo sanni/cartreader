@@ -182,7 +182,6 @@ cart size:
 ## arccart.txt
 This file stores known Emerson Arcadia 2001 games with the required cart size.
 
-
 Example:   
 American Football   
 2
@@ -241,3 +240,102 @@ cart size:
 7 = 128K   
 8 = 256K   
 9 = 512K   
+
+## fairchildcart.txt
+This file stores known Fairchild Channel F games with the required cart size.
+
+Example:   
+Hangman   
+1   
+
+Name   
+cart size   
+
+cart size:   
+0 = 2K   
+1 = 3K   
+2 = 4K   
+3 = 6K   
+
+## msxcart.txt
+This file stores known MSX games with the required mapper, cart size and ram size.
+
+Example:   
+Aoki Ookami - Genchou Hishi   
+7,8,4   
+
+Name   
+mapper, cart size, ram size   
+
+mapper:   
+0 = NONE   
+1 = ASCII8   
+2 = ASCII16   
+3 = CROSS BLAIM   
+4 = GAME MASTER 2   
+5 = HAL NOTE   
+6 = HARRY FOX YUKI   
+7 = KOEI   
+8 = KONAMI   
+9 = KONAMI SSC   
+10 = MSX-DOS2   
+11 = PAC/FM-PAC   
+12 = R-TYPE   
+13 = SUPER LODE RUNNER   
+
+cart size:   
+0 = 0K   
+1 = 8K   
+2 = 16K   
+3 = 32K   
+4 = 64K   
+5 = 128K   
+6 = 256K   
+7 = 512K   
+8 = 1024K   
+
+ram size:   
+0 = 0K   
+1 = 2K   
+2 = 8K   
+3 = 16K   
+4 = 32K   
+
+## ody2cart.txt
+This file stores known Magnavox Odyssey 2 games with the required mapper and cart size.
+
+Example:   
+Baseball   
+0,0   
+
+Name   
+mapper, cart size   
+
+mapper:   
+0 = STANDARD   
+1 = A10
+
+cart size:   
+0 = 2K   
+1 = 4K   
+2 = 8K   
+3 = 12K   
+4 = 16K   
+
+## vectrexcart.txt
+This file stores known Vectrex games with the required cart size.
+
+Example:   
+Mine Storm II   
+0   
+
+Name    
+cart size
+
+cart size:   
+0 = 4K   
+1 = 8K   
+2 = 12K   
+3 = 16K   
+4 = 32K   
+5 = 64K   
