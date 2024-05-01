@@ -262,22 +262,22 @@ This file stores known MSX games with the required mapper, cart size and ram siz
 
 Example:   
 Aoki Ookami - Genchou Hishi   
-7,8,4   
+07,8,4   
 
 Name   
 mapper, cart size, ram size   
 
 mapper:   
-0 = NONE   
-1 = ASCII8   
-2 = ASCII16   
-3 = CROSS BLAIM   
-4 = GAME MASTER 2   
-5 = HAL NOTE   
-6 = HARRY FOX YUKI   
-7 = KOEI   
-8 = KONAMI   
-9 = KONAMI SSC   
+00 = NONE   
+01 = ASCII8   
+02 = ASCII16   
+03 = CROSS BLAIM   
+04 = GAME MASTER 2   
+05 = HAL NOTE   
+06 = HARRY FOX YUKI   
+07 = KOEI   
+08 = KONAMI   
+09 = KONAMI SSC   
 10 = MSX-DOS2   
 11 = PAC/FM-PAC   
 12 = R-TYPE   

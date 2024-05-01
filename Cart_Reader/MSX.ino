@@ -1419,7 +1419,7 @@ struct database_entry_MSX {
 
 void readDataLine_MSX(FsFile& database, struct database_entry_MSX* entry) {
   // Read mapper
-  entry->gameMapper = database.read() - 48;
+  entry->gameMapper = ((database.read() - 48) * 10) + (database.read() - 48);
 
   // Skip over semicolon
   database.seekCur(1);
