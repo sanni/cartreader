@@ -431,7 +431,7 @@ uint32_t calculateCRC(FsFile& infile) {
 }
 
 // Calculate rom's CRC32 from SD
-uint32_t calculateCRC(char* fileName, char* folder, int offset) {
+uint32_t calculateCRC(char* fileName, char* folder, unsigned long offset) {
   FsFile infile;
   uint32_t result;
 
@@ -458,13 +458,8 @@ uint32_t calculateCRC(char* fileName, char* folder, int offset) {
 #if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES))
 
 void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
-  uint32_t crc;
+  uint32_t crc = calculateCRC(checkFile, folder, offset);
   char tempCRC[9];
-  FsFile crcFile = sd.open(checkFile);
-
-  crcFile.seek(offset);
-  crc = calculateCRC(crcFile);
-  crcFile.close();
 
   if (crcCopy != NULL) {
     *crcCopy = crc;
