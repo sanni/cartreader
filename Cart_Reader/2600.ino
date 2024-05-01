@@ -429,7 +429,6 @@ void readROM_2600() {
         readSegment_2600(0x1200, 0x1E00);
         // Split Read of Last 0x200 bytes
         readDataArray_2600(0x1E00, 0x1F4);
-        myFile.write(sdBuffer, 500);
         for (int z = 0; z < 12; z++) {
           // Set Bank to ensure 0x1FFC-0x1FFF is correct
           readData_2600(0x1FF4 + x);
