@@ -270,7 +270,6 @@ boolean checkE7(int bank) {
 }
 
 void readROM_2600() {
-  byte e7size;
   strcpy(fileName, romName);
   strcat(fileName, ".a26");
 
@@ -383,7 +382,6 @@ void readROM_2600() {
           readData_2600(0x1FE0 + x);
           readSegment_2600(0x1000, 0x1800);
         }
-        e7size = 0;
       }
       // Check Bank 3 - If 0xFFs then BurgerTime
       else if (checkE7(3)) { // BurgerTime 12K
@@ -396,7 +394,6 @@ void readROM_2600() {
           readData_2600(0x1FE0 + x);
           readSegment_2600(0x1000, 0x1800);
         }
-        e7size = 1;
       }
       else { // Masters of the Universe (or Unknown Cart) 16K
         writeData_2600(0x1800, 0xFF);
@@ -404,7 +401,6 @@ void readROM_2600() {
           readData_2600(0x1FE0 + x);
           readSegment_2600(0x1000, 0x1800);
         }
-        e7size = 2;
       }
       readSegment_2600(0x1800, 0x2000); // Bank 7
       break;
@@ -653,7 +649,7 @@ void checkStatus_2600() {
 //******************************************
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void printMapperSelection_2600(uint8_t index) {
+void printMapperSelection_2600(int index) {
   display_Clear();
   print_Msg(F("Mapper: "));
   a2600index = index * 2;
@@ -726,7 +722,6 @@ void setCart_2600() {
   sd.chdir();
 
   byte gameMapper;
-  byte gameSize;
 
   // Select starting letter
   byte myLetter = starting_letter();

@@ -685,7 +685,7 @@ void seek_first_letter_in_database(FsFile& database, byte myLetter) {
 // printDataLine - optional callback for printing device specific data informations about the currently browsed game
 // setRomName - callback function to set rom name if game is selected
 // returns true if a game was selected, false otherwise
-boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), void* data, void (*printDataLine)(void*) = NULL, void (setRomName)(const char* input) = NULL) {
+boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), void* data, void (*printDataLine)(void*) = NULL, void (*setRomName)(const char* input) = NULL) {
   char gamename[128];
   uint8_t fastScrolling = 1;
 

@@ -515,8 +515,6 @@ void setROMSize_7800() {
   if (a7800lo == a7800hi)
     new7800size = a7800lo;
   else {
-    uint8_t b = 0;
-
     display_Clear();
 
     new7800size = navigateMenu(a7800lo, a7800hi, &printRomSize_7800);
