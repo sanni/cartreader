@@ -1281,21 +1281,22 @@ struct database_entry_MSX {
   byte ramSize;
 };
 
-void readDataLine_MSX(FsFile& database, struct database_entry_MSX* entry) {
+void readDataLine_MSX(FsFile& database, void* entry) {
+  database_entry_MSX* castEntry = (database_entry_MSX*)entry;
   // Read mapper
-  entry->gameMapper = ((database.read() - 48) * 10) + (database.read() - 48);
+  castEntry->gameMapper = ((database.read() - 48) * 10) + (database.read() - 48);
 
   // Skip over semicolon
   database.seekCur(1);
 
   // Read rom size
-  entry->gameSize = database.read() - 48;
+  castEntry->gameSize = database.read() - 48;
 
   // Skip over semicolon
   database.seekCur(1);
 
   // Read ram size
-  entry->ramSize = database.read() - 48;
+  castEntry->ramSize = database.read() - 48;
 
   // Skip rest of line
   database.seekCur(2);

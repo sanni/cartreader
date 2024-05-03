@@ -330,8 +330,8 @@ struct database_entry_WSV {
   byte gameSize;
 };
 
-void readDataLine_WSV(FsFile& database, struct database_entry_WSV* entry) {
-
+void readDataLine_WSV(FsFile& database, void* entry) {
+  struct database_entry_WSV* castEntry = (database_entry_WSV*)entry;
   // Read CRC32 checksum
   for (byte i = 0; i < 8; i++) {
     checksumStr[i] = char(database.read());
@@ -342,7 +342,7 @@ void readDataLine_WSV(FsFile& database, struct database_entry_WSV* entry) {
 
   // Read CRC32 of first 512 bytes
   for (byte i = 0; i < 8; i++) {
-    entry->crc_search[i] = char(database.read());
+    castEntry->crc_search[i] = char(database.read());
   }
 
   // Skip over semicolon
@@ -350,18 +350,19 @@ void readDataLine_WSV(FsFile& database, struct database_entry_WSV* entry) {
 
   // Read rom size
   // Read the next ascii character and subtract 48 to convert to decimal
-  entry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
+  castEntry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
 
   // Skip rest of line
   database.seekCur(2);
 }
 
-void printDataLine_WSV(struct database_entry_WSV* entry) {
+void printDataLine_WSV(void* entry) {
+  struct database_entry_WSV* castEntry = (database_entry_WSV*)entry;
   print_Msg(F("Size: "));
-  if (entry->gameSize == 51)
+  if (castEntry->gameSize == 51)
     print_Msg(F("512"));
   else
-    print_Msg(entry->gameSize);
+    print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
 }
 

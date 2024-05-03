@@ -171,7 +171,7 @@ void readSegment_2600(uint16_t startaddr, uint16_t endaddr) {
 }
 
 void readDataArray_2600(uint16_t addr, uint16_t size) {
-    for (int w = 0; w < size; w++) {
+    for (uint16_t w = 0; w < size; w++) {
       sdBuffer[w] = readData_2600(addr + w);
     }
     myFile.write(sdBuffer, size);
@@ -709,9 +709,9 @@ setmapper:
 //******************************************
 // CART SELECT CODE
 //******************************************
-void readDataLine_2600(FsFile& database, byte* gameMapper) {
+void readDataLine_2600(FsFile& database, void* gameMapper) {
   // Read mapper with three ascii character and subtract 48 to convert to decimal
-  (*gameMapper) = ((database.read() - 48) * 100) + ((database.read() - 48) * 10) + (database.read() - 48);
+  (*(byte*)gameMapper) = ((database.read() - 48) * 100) + ((database.read() - 48) * 10) + (database.read() - 48);
 
   // Skip rest of line
   database.seekCur(2);

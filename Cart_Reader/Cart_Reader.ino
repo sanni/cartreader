@@ -681,6 +681,45 @@ void seek_first_letter_in_database(FsFile& database, byte myLetter) {
 #endif
 }
 
+#if (defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_VECTREX))
+// read single digit data line as byte
+void readDataLineSingleDigit(FsFile& database, void* byteData) {
+  // Read rom size
+  (*(byte*)byteData) = database.read() - 48;
+
+  // Skip rest of line
+  database.seekCur(2);
+}
+#endif
+
+#if (defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64))
+struct database_entry_mapper_size {
+  byte gameMapper;
+  byte gameSize;
+};
+
+// read database entry with mapper and size digits
+void readDataLineMapperSize(FsFile& database, void* entry) {
+  struct database_entry_mapper_size* castEntry = (database_entry_mapper_size*)entry;
+  // Read mapper
+  castEntry->gameMapper = database.read() - 48;
+
+  // if next char is not a semicolon expect an additional digit
+  char temp = database.read();
+  if(temp != ',') {
+    castEntry->gameMapper = (castEntry->gameMapper * 10) + (temp - 48);
+    // Skip over semicolon
+    database.seekCur(1);
+  }
+
+  // Read rom size
+  castEntry->gameSize = database.read() - 48;
+
+  // Skip rest of line
+  database.seekCur(2);
+}
+#endif
+
 // navigate through the database file using OSSC input buttons. Requires function pointer readData for reading device specific data line from database
 // printDataLine - optional callback for printing device specific data informations about the currently browsed game
 // setRomName - callback function to set rom name if game is selected

@@ -281,14 +281,6 @@ void checkStatus_ARC() {
 //******************************************
 // CART SELECT CODE
 //******************************************
-void readDataLine_ARC(FsFile& database, byte* gameSize) {
-  // Read rom size
-  (*gameSize) = database.read() - 48;
-
-  // Skip rest of line
-  database.seekCur(2);
-}
-
 void setCart_ARC() {
   //go to root
   sd.chdir();
@@ -302,7 +294,7 @@ void setCart_ARC() {
   if (myFile.open("arccart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_ARC, &gameSize)) {
+    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

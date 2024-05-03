@@ -317,7 +317,8 @@ struct database_entry_COL {
   byte gameSize;
 };
 
-void readDataLine_COL(FsFile& database, struct database_entry_COL* entry) {
+void readDataLine_COL(FsFile& database, void* entry) {
+  struct database_entry_COL* castEntry = (database_entry_COL*)entry;
 
   // Read CRC32 checksum
   for (byte i = 0; i < 8; i++) {
@@ -329,7 +330,7 @@ void readDataLine_COL(FsFile& database, struct database_entry_COL* entry) {
 
   // Read CRC32 of first 512 bytes
   for (byte i = 0; i < 8; i++) {
-    entry->crc_search[i] = char(database.read());
+    castEntry->crc_search[i] = char(database.read());
   }
 
   // Skip over semicolon
@@ -337,15 +338,17 @@ void readDataLine_COL(FsFile& database, struct database_entry_COL* entry) {
 
   // Read rom size
   // Read the next ascii character and subtract 48 to convert to decimal
-  entry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
+  castEntry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
 
   // Skip rest of line
   database.seekCur(2);
 }
 
-void printDataLine_COL(struct database_entry_COL* entry) {
+void printDataLine_COL(void* entry) {
+  struct database_entry_COL* castEntry = (database_entry_COL*)entry;
+
   print_Msg(F("Size: "));
-  print_Msg(entry->gameSize);
+  print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
 }
 

@@ -511,12 +511,13 @@ void setRomnameFromString(const char* input) {
   }
 }
 
-void printDataLine_NES(struct database_entry* entry) {
+void printDataLine_NES(void* entry) {
+  struct database_entry* castEntry = (struct database_entry*) entry;
   uint8_t iNES[16];
   uint8_t* output;
   char* input;    
 
-  input = entry->iNES_str;
+  input = castEntry->iNES_str;
   output = iNES;
   for (uint8_t i = 0; i < sizeof(iNES); i++) {
     unsigned int buf;
@@ -670,7 +671,8 @@ static void readDatabaseEntry(FsFile& database, struct database_entry* entry) {
   skip_line(&database);
 }
 
-void readDataLine_NES(FsFile& database, struct database_entry* entry) {
+void readDataLine_NES(FsFile& database, void* e) {
+  struct database_entry* entry = (database_entry*)e;
   get_line(entry->crc_str, &database, sizeof(entry->crc_str));
 
   entry->crc_str[8] = 0;

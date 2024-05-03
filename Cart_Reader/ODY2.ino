@@ -369,30 +369,11 @@ void checkStatus_ODY2() {
 //******************************************
 // CART SELECT CODE
 //******************************************
-struct database_entry_ODY2 {
-  byte gameMapper;
-  byte gameSize;
-};
-
-void readDataLine_ODY2(FsFile& database, struct database_entry_ODY2* entry) {
-  // Read mapper
-  entry->gameMapper = database.read() - 48;
-
-  // Skip over semicolon
-  database.seekCur(1);
-
-  // Read rom size
-  entry->gameSize = database.read() - 48;
-
-  // Skip rest of line
-  database.seekCur(2);
-}
-
 void setCart_ODY2() {
   //go to root
   sd.chdir();
 
-  struct database_entry_ODY2 entry;
+  struct database_entry_mapper_size entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -401,7 +382,7 @@ void setCart_ODY2() {
   if (myFile.open("ody2cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_ODY2, &entry)) {
+    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }

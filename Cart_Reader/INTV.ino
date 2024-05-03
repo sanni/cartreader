@@ -641,8 +641,8 @@ struct database_entry_INTV {
   byte gameSize;
 };
 
-void readDataLine_INTV(FsFile& database, struct database_entry_INTV* entry) {
-
+void readDataLine_INTV(FsFile& database, void* entry) {
+  struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
   // Read CRC32 checksum
   for (byte i = 0; i < 8; i++) {
     checksumStr[i] = char(database.read());
@@ -653,21 +653,21 @@ void readDataLine_INTV(FsFile& database, struct database_entry_INTV* entry) {
 
   // Read CRC32 of first 512 bytes
   for (byte i = 0; i < 8; i++) {
-    entry->crc_search[i] = char(database.read());
+    castEntry->crc_search[i] = char(database.read());
   }
 
   // Skip over semicolon
   database.seekCur(1);
 
   // Read mapper
-  entry->gameMapper = database.read() - 48;
+  castEntry->gameMapper = database.read() - 48;
 
   // Skip over semicolon
   database.seekCur(1);
 
   // Read rom size
   // Read the next ascii character and subtract 48 to convert to decimal
-  entry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
+  castEntry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
 
   // Skip over semicolon
   database.seekCur(1);
@@ -679,12 +679,13 @@ void readDataLine_INTV(FsFile& database, struct database_entry_INTV* entry) {
   database.seekCur(2);
 }
 
-void printDataLine_INTV(struct database_entry_INTV* entry) {
+void printDataLine_INTV(void* entry) {
+  struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
   print_Msg(F("Size: "));
-  print_Msg(entry->gameSize);
+  print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
   print_Msg(F("Mapper: "));
-  println_Msg(entry->gameMapper);
+  println_Msg(castEntry->gameMapper);
 }
 
 void setCart_INTV() {

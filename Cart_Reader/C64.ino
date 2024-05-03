@@ -913,30 +913,12 @@ void printMapper_C64(byte c64maplabel) {
 //******************************************
 // CART SELECT CODE
 //******************************************
-struct database_entry_C64 {
-  byte gameMapper;
-  byte gameSize;
-};
-
-void readDataLine_C64(FsFile& database, struct database_entry_C64* entry) {
-  // Read mapper with two ascii character and subtract 48 to convert to decimal
-  entry->gameMapper = ((database.read() - 48) * 10) + (database.read() - 48);
-
-  // Skip over semicolon
-  database.seekCur(1);
-
-  // Read size and subtract 48 to convert to decimal
-  entry->gameSize = database.read() - 48;
-
-  // Skip rest of line
-  database.seekCur(2);
-}
 
 void setCart_C64() {
   //go to root
   sd.chdir();
 
-  struct database_entry_C64 entry;
+  struct database_entry_mapper_size entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -945,7 +927,7 @@ void setCart_C64() {
   if (myFile.open("c64cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_C64, &entry)) {
+    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }

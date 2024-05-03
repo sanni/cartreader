@@ -664,30 +664,12 @@ setmapper:
 //******************************************
 // CART SELECT CODE
 //******************************************
-struct database_entry_7800 {
-  byte gameMapper;
-  byte gameSize;
-};
-
-void readDataLine_7800(FsFile& database, struct database_entry_7800* entry) {
-  // Read mapper
-  entry->gameMapper = database.read() - 48;
-
-  // Skip over semicolon
-  database.seekCur(1);
-
-  // Read rom size
-  entry->gameSize = database.read() - 48;
-
-  // Skip rest of line
-  database.seekCur(2);
-}
 
 void setCart_7800() {
   //go to root
   sd.chdir();
 
-  struct database_entry_7800 entry;
+  struct database_entry_mapper_size entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -696,7 +678,7 @@ void setCart_7800() {
   if (myFile.open("7800.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_7800, &entry)) {
+    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }
