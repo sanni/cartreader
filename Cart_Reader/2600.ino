@@ -39,6 +39,7 @@ static const byte PROGMEM a2600mapsize[] = {
   0xFE, 2,  // Activision 8K
   0xF9, 2,  // "TP" Time Pilot 8K
   0x0A, 2,  // "UA" UA Ltd 8K
+  0x3E, 5,  // Tigervision 32K with 32K RAM
 };
 
 byte a2600mapcount = (sizeof(a2600mapsize) / sizeof(a2600mapsize[0])) / 2;
@@ -309,6 +310,14 @@ void readROM_2600() {
       }
       readSegment_2600(0x1800, 0x2000);
       break;
+
+    case 0x3E:  // 3E Mapper 32KB ROM 32K RAM
+      for (int x = 0; x < 15; x++) {
+        writeData3F_2600(0x3F, x);
+        readSegment_2600(0x1000, 0x1800);
+      }
+      readSegment_2600(0x1800, 0x2000);
+      break;    
 
     case 0x40:  // 4K Default 4KB
       readSegment_2600(0x1000, 0x2000);
@@ -678,7 +687,7 @@ setmapper:
   Serial.println(F("1 = F6SC [Atari 16K \w RAM]"));
   Serial.println(F("2 = F8SC [Atari 8K \w RAM]"));
   Serial.println(F("3 = 2K [Standard 2K]"));
-  Serial.println(F("4 = 3F [Tigervision]"));
+  Serial.println(F("4 = 3F [Tigervision 8K]"));
   Serial.println(F("5 = 4K [Standard 4K]"));
   Serial.println(F("6 = CV [Commavid]"));
   Serial.println(F("7 = DPC [Pitfall II]"));
@@ -692,6 +701,7 @@ setmapper:
   Serial.println(F("15 = FE [Activision]"));
   Serial.println(F("16 = TP [Time Pilot 8K]"));
   Serial.println(F("17 = UA [UA Ltd]"));
+  Serial.println(F("18 = 3E [Tigervision 32K \w RAM]"));
   Serial.print(F("Enter Mapper [0-17]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
