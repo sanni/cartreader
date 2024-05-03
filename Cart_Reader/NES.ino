@@ -236,7 +236,6 @@ word eepsize;
 uint8_t bytecheck;
 uint8_t firstbyte;
 bool flashfound = false;  // NESmaker 39SF040 Flash Cart
-bool busConflict = false;
 
 // Cartridge Config
 uint8_t mapper;
@@ -336,7 +335,7 @@ void nesMenu() {
         resetROM();
       } else {
         display_Clear();
-        println_Msg(F("Error:"));
+        println_Msg(FS(string_error5));
         println_Msg(F("Can't write to this cartridge"));
         println_Msg(FS(FSTRING_EMPTY));
         // Prints string out of the common strings array either with or without newline
@@ -709,10 +708,10 @@ bool selectMapping(FsFile& database) {
   return 1;
 }
 
-void readRom_NES() {
-  // Get name, add extension and convert to char array for sd lib
+void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersize, const boolean renamerom) {
+    // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
-  strcat(fileName, ".nes");
+  strcat(fileName, fileSuffix);
 
   // create a new folder
   EEPROM_readAnything(0, foldern);
@@ -737,15 +736,17 @@ void readRom_NES() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(16 + prgsize * 16 * 1024 + chrsize * 4 * 1024);
+  uint32_t totalProgressBar = (uint32_t)(headersize + prgsize * 16 * 1024 + chrsize * 4 * 1024);
   draw_progressbar(0, totalProgressBar);
 
-  //Write iNES header
-  myFile.write(iNES_HEADER, 16);
+  //Write header
+  if(headersize > 0) {
+    myFile.write(header, headersize);
 
-  // update progress bar
-  processedProgressBar += 16;
-  draw_progressbar(processedProgressBar, totalProgressBar);
+    // update progress bar
+    processedProgressBar += headersize;
+    draw_progressbar(processedProgressBar, totalProgressBar);
+  }
 
   //Write PRG
   readPRG(true);
@@ -765,59 +766,15 @@ void readRom_NES() {
   myFile.close();
 
   // Compare CRC32 with database
-  compareCRC("nes.txt", 0, 1, 16);
+  compareCRC("nes.txt", 0, renamerom, headersize);
+}
+
+void readRom_NES() {
+  read_NES(".nes", iNES_HEADER, 16, true);
 }
 
 void readRaw_NES() {
-  // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "NES/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
-
-  //Initialize progress bar
-  uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(prgsize * 16 * 1024 + chrsize * 4 * 1024);
-  draw_progressbar(0, totalProgressBar);
-
-  //Write PRG
-  readPRG(true);
-
-  // update progress bar
-  processedProgressBar += prgsize * 16 * 1024;
-  draw_progressbar(processedProgressBar, totalProgressBar);
-
-  //Write CHR
-  readCHR(true);
-
-  // update progress bar
-  processedProgressBar += chrsize * 4 * 1024;
-  draw_progressbar(processedProgressBar, totalProgressBar);
-
-  // Close the file:
-  myFile.close();
-
-  // Compare CRC32 with database
-  compareCRC("nes.txt", 0, 0, 0);
+  read_NES(".bin", NULL, 0, false);
 }
 
 /******************************************
