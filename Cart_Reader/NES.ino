@@ -1693,6 +1693,18 @@ void writeMMC5RAM(word base, word address) {  // MMC5 SRAM WRITE
   write_prg_byte(0x5103, 0);  // PRG RAM PROTECT2
 }
 
+void dumpBankPRG(const size_t from, const size_t to, const size_t base) {
+  for (size_t address = from; address < to; address += 512) {
+    dumpPRG(base, address);
+  }
+}
+
+void dumpBankCHR(const size_t from, const size_t to) {
+  for (size_t address = from; address < to; address += 512) {
+    dumpCHR(address);
+  }
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     display_Clear();
@@ -1715,12 +1727,10 @@ void readPRG(bool readrom) {
       case 0:
       case 3:
       case 13:
-      case 87:                                                                                   // 16K/32K
-      case 184:                                                                                  // 32K
-      case 185:                                                                                  // 16K/32K
-        for (size_t address = 0; address < (((word)prgsize) * 0x4000) + 0x4000; address += 512) {  // 16K or 32K
-          dumpPRG(base, address);
-        }
+      case 87:                                                      // 16K/32K
+      case 184:                                                     // 32K
+      case 185:                                                     // 16K/32K
+        dumpBankPRG(0, (((word)prgsize) * 0x4000) + 0x4000, base);  // 16K or 32K
         break;
 
       case 1:
@@ -1734,13 +1744,9 @@ void readPRG(bool readrom) {
           if (i > 15)                          // Switch Upper 256K
             write_mmc1_byte(0xA000, 0x10);     // Set 512K Flag
           write_mmc1_byte(0xE000, i);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {  // Final Bank ($C000-$FFFF)
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);     // Final Bank ($C000-$FFFF)
         break;
 
       case 2:   // bus conflicts - fixed last bank
@@ -1758,13 +1764,9 @@ void readPRG(bool readrom) {
           if (busConflict) {
             write_prg_byte(0xC000 + i, i);
           }
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);
         break;
 
       case 4:
@@ -1787,17 +1789,13 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, i);
           write_prg_byte(0x8000, 7);  // PRG Bank 1 ($A000-$BFFF)
           write_prg_byte(0x8001, i + 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         if ((mapper == 64) || (mapper == 158)) {
           write_prg_byte(0x8000, 15);  // PRG Bank 2 ($C000-$DFFF)
           write_prg_byte(0x8001, banks);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {  // Final 2 Banks ($C000-$FFFF)
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base); // Final 2 Banks ($C000-$FFFF)
         break;
 
       case 5:  // 128K/256K/512K
@@ -1806,9 +1804,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {  // 128K/256K/512K
           write_prg_byte(0x5114, i | 0x80);
           write_prg_byte(0x5115, (i + 1) | 0x80);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -1820,43 +1816,31 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {  // 32K Banks
           write_prg_byte(0x8000, i);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);     // 32K Banks ($8000-$FFFF)
         }
         break;
 
-      case 9:                                                           // 128K
-        for (size_t i = 0; i < 13; i++) {                               // 16-3 = 13 = 128K
-          write_prg_byte(0xA000, i);                                    // $8000-$9FFF
-          for (size_t address = 0x0; address < 0x2000; address += 512) {  // Switch Bank ($8000-$9FFF)
-            dumpPRG(base, address);
-          }
+      case 9:                                 // 128K
+        for (size_t i = 0; i < 13; i++) {     // 16-3 = 13 = 128K
+          write_prg_byte(0xA000, i);          // $8000-$9FFF
+          dumpBankPRG(0x0, 0x2000, base);     // Switch Bank ($8000-$9FFF)
         }
-        for (size_t address = 0x2000; address < 0x8000; address += 512) {  // Final 3 Banks ($A000-$FFFF)
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x2000, 0x8000, base);    // Final 3 Banks ($A000-$FFFF)
         break;
 
       case 10:  // 128K/256K
         for (size_t i = 0; i < (unsigned)(((prgsize - 3) * 8) + 7); i++) {
           write_prg_byte(0xA000, i);                                    // $8000-$BFFF
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // Switch Bank ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);                               // Switch Bank ($8000-$BFFF)
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {  // Final Bank ($C000-$FFFF)
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);                              // Final Bank ($C000-$FFFF)
         break;
 
       case 11:
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xFFB0 + i, i);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -1864,9 +1848,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -1874,11 +1856,9 @@ void readPRG(bool readrom) {
       case 159:  // 128K/256K
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6008, i);                                    // Submapper 4
-          write_prg_byte(0x8008, i);                                    // Submapper 5
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          write_prg_byte(0x6008, i);         // Submapper 4
+          write_prg_byte(0x8008, i);         // Submapper 5
+          dumpBankPRG(0x0, 0x4000, base);    // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -1889,9 +1869,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, (i >> 4) & 0xF);
           write_prg_byte(0x8002, (i + 1) & 0xF);
           write_prg_byte(0x8003, ((i + 1) >> 4) & 0xF);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -1902,9 +1880,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i++) {
           write_ram_byte(0xE000, i);  // PRG Bank 0 ($8000-$9FFF)
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -1912,9 +1888,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, i);
-          for (size_t address = 0x2000; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x2000, 0x4000, base);
         }
         break;
 
@@ -1931,9 +1905,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i);
           write_prg_byte(0xA000, i + 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -1943,9 +1915,7 @@ void readPRG(bool readrom) {
         write_prg_byte(0x9008, 0);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000, i);
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -1955,9 +1925,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0x8000, i);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x2000, 0x4000, base);  // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -1974,9 +1942,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, 0x81);
           write_prg_byte(0x8000, i);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -1991,20 +1957,16 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5FFD, i + 5);
           write_prg_byte(0x5FFE, i + 6);
           write_prg_byte(0x5FFF, i + 7);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
       case 32:  // 128K/256K
         banks = int_pow(2, prgsize) * 2;
-        for (size_t i = 0; i < banks; i++) {                               // 128K/256K
-          write_prg_byte(0x9000, 1);                                       // PRG Mode 0 - Read $A000-$BFFF to avoid difference between Modes 0 and 1
-          write_prg_byte(0xA000, i);                                       // PRG Bank
-          for (size_t address = 0x2000; address < 0x4000; address += 512) {  // 8K Banks ($A000-$BFFF)
-            dumpPRG(base, address);
-          }
+        for (size_t i = 0; i < banks; i++) { // 128K/256K
+          write_prg_byte(0x9000, 1);         // PRG Mode 0 - Read $A000-$BFFF to avoid difference between Modes 0 and 1
+          write_prg_byte(0xA000, i);         // PRG Bank
+          dumpBankPRG(0x2000, 0x4000, base); // 8K Banks ($A000-$BFFF)
         }
         break;
 
@@ -2012,23 +1974,19 @@ void readPRG(bool readrom) {
       case 48:  // 128K/256K
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000, i);                                    // PRG Bank 0 ($8000-$9FFF)
-          write_prg_byte(0x8001, i + 1);                                // PRG Bank 1 ($A000-$BFFF)
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 8K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          write_prg_byte(0x8000, i);            // PRG Bank 0 ($8000-$9FFF)
+          write_prg_byte(0x8001, i + 1);        // PRG Bank 1 ($A000-$BFFF)
+          dumpBankPRG(0x0, 0x4000, base);       // 8K Banks ($A000-$BFFF)
         }
         break;
 
       case 34:  // BxROM/NINA
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x7FFD, i);                                    // NINA Bank select
-          write_prg_byte(0x8000, i);                                    // BxROM bank select
-          delay(200);                                                   // NINA seems slow to switch banks
-          for (size_t address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
-            dumpPRG(base, address);
-          }
+          write_prg_byte(0x7FFD, i);            // NINA Bank select
+          write_prg_byte(0x8000, i);            // BxROM bank select
+          delay(200);                           // NINA seems slow to switch banks
+          dumpBankPRG(0x0, 0x8000, base);       // 32K Banks ($8000-$FFFF)
         }
         break;
 
@@ -2042,9 +2000,7 @@ void readPRG(bool readrom) {
         for (uint8_t i = 0; i < banks; i++) {
           write_prg_byte(0xD003, (((i >> 5) & 0x06) | 0x20));
           write_prg_byte(0x8000, (i & 0x3f));
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -2058,9 +2014,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x4100, 0);
           write_prg_byte(0x4103, 0xFF);
           write_prg_byte(0xFFFF, 0xFF);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2078,22 +2032,16 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, i);
           write_prg_byte(0x8000, 7);  // PRG Bank 1 ($A000-$BFFF)
           write_prg_byte(0x8001, i + 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {  // Final 2 Banks ($C000-$FFFF)
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base); // Final 2 Banks ($C000-$FFFF)
         break;
 
       case 38:
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x7000, i);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2102,14 +2050,10 @@ void readPRG(bool readrom) {
         base = 0x6000;  // 8k switchable PRG ROM bank at $6000-$7FFF
         for (size_t i = 0; i < banks - 4; i++) {
           write_prg_byte(0xE000, i & 0x0F);
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
         }
         base = 0x8000;  // last 32k fixed to $8000-$FFFF
-        for (size_t address = 0x0; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x0, 0x8000, base);
         break;
 
       case 45:                                    // MMC3 Clone with Outer Registers
@@ -2123,9 +2067,7 @@ void readPRG(bool readrom) {
           // set inner bank registers
           write_prg_byte(0x8000, 6);  // PRG Bank 0 ($8000-$9FFF)
           write_prg_byte(0x8001, i);
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
           // set outer bank registers
           write_prg_byte(0x6000, 0x00);                     // CHR-OR
           write_prg_byte(0x6000, ((i + 1) & 0xC0));         // PRG-OR
@@ -2134,13 +2076,9 @@ void readPRG(bool readrom) {
           // set inner bank registers
           write_prg_byte(0x8000, 7);  // PRG Bank 1 ($A000-$BFFF)
           write_prg_byte(0x8001, i + 1);
-          for (size_t address = 0x2000; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x2000, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {  // Final 2 Banks ($C000-$FFFF)
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);  // Final 2 Banks ($C000-$FFFF)
         break;
 
       case 46:
@@ -2148,9 +2086,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6000, (i & 0x1E) >> 1);  // high bits
           write_prg_byte(0x8000, i & 0x01);         // low bit
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2159,9 +2095,7 @@ void readPRG(bool readrom) {
         write_prg_byte(0xA001, 0x80);  // enable WRAM write
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6000, (i & 0x07) | 0x08);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2170,9 +2104,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xE000, 1);
           write_prg_byte(0xF000, i);
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -2181,9 +2113,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8800, (i & 0x07) << 5);
           write_prg_byte(0x8000, 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2192,9 +2122,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i & 0x07), 0x00);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2202,22 +2130,16 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte((0x8000 + (i & 0x07)) << 4 | 0x80, 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
       case 60:
-        for (size_t address = 0; address < 0x4000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x0, 0x4000, base);
         for (size_t i = 0; i < 3; i++) {
           write_prg_byte(0x8D8D, i);
           delay(500);
-          for (size_t address = 0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2225,19 +2147,15 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i * 512) + ((i & 32) << 1), 0x00);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
       case 66:  // 64K/128K
         banks = int_pow(2, prgsize) / 2;
-        for (size_t i = 0; i < banks; i++) {                            // 64K/128K
-          write_prg_byte(0x8000, i << 4);                               // bits 4-5
-          for (size_t address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
-            dumpPRG(base, address);
-          }
+        for (size_t i = 0; i < banks; i++) {  // 64K/128K
+          write_prg_byte(0x8000, i << 4);     // bits 4-5
+          dumpBankPRG(0x0, 0x8000, base);     // 32K Banks ($8000-$FFFF)
         }
         break;
 
@@ -2245,19 +2163,15 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < 192; i++) {
           write_prg_byte(0x8000 + (i << 2), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
       case 67:  // 128K
         banks = int_pow(2, prgsize);
-        for (size_t i = 0; i < banks; i++) {                            // 128K
-          write_reg_byte(0xF800, i);                                    // [WRITE RAM SAFE]
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+        for (size_t i = 0; i < banks; i++) {  // 128K
+          write_reg_byte(0xF800, i);          // [WRITE RAM SAFE]
+          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2266,22 +2180,18 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0xF000, i);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
       case 69:  // 128K/256K
         banks = int_pow(2, prgsize) * 2;
-        write_prg_byte(0x8000, 8);                                         // Command Register - PRG Bank 0
-        write_prg_byte(0xA000, 0);                                         // Parameter Register - PRG RAM Disabled, PRG ROM, Bank 0 to $6000-$7FFF
-        for (size_t i = 0; i < banks; i++) {                               // 128K/256K
-          write_prg_byte(0x8000, 9);                                       // Command Register - PRG Bank 1
-          write_prg_byte(0xA000, i);                                       // Parameter Register - ($8000-$9FFF)
-          for (size_t address = 0x0000; address < 0x2000; address += 512) {  // 8K Banks ($8000-$9FFF)
-            dumpPRG(base, address);
-          }
+        write_prg_byte(0x8000, 8);             // Command Register - PRG Bank 0
+        write_prg_byte(0xA000, 0);             // Parameter Register - PRG RAM Disabled, PRG ROM, Bank 0 to $6000-$7FFF
+        for (size_t i = 0; i < banks; i++) {   // 128K/256K
+          write_prg_byte(0x8000, 9);           // Command Register - PRG Bank 1
+          write_prg_byte(0xA000, i);           // Parameter Register - ($8000-$9FFF)
+          dumpBankPRG(0x0, 0x2000, base);      // 8K Banks ($8000-$9FFF)
         }
         break;
 
@@ -2291,9 +2201,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0x8000, i << 4);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2301,21 +2209,17 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xC000, i);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);    // 16K Banks ($8000-$BFFF)
         }
         break;
 
       case 72:  // 128K
         banks = int_pow(2, prgsize);
-        write_prg_byte(0x8000, 0);                                      // Reset Register
-        for (size_t i = 0; i < banks; i++) {                            // 128K
-          write_prg_byte(0x8000, i | 0x80);                             // PRG Command + Bank
-          write_prg_byte(0x8000, i);                                    // PRG Bank
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+        write_prg_byte(0x8000, 0);            // Reset Register
+        for (size_t i = 0; i < banks; i++) {  // 128K
+          write_prg_byte(0x8000, i | 0x80);   // PRG Command + Bank
+          write_prg_byte(0x8000, i);          // PRG Bank
+          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2330,13 +2234,9 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, i);
           write_prg_byte(0x8000, 7);
           write_prg_byte(0x8001, i | 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);
         break;
 
       case 79:
@@ -2344,9 +2244,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x4100, i << 3);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2356,41 +2254,33 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x7EFA, i);      // PRG Bank 0 ($8000-$9FFF)
           write_prg_byte(0x7EFC, i + 1);  // PRG Bank 1 ($A000-$BFFF)
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
       case 82:  // 128K
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x7EFA, i << 2);                               // PRG Bank 0 ($8000-$9FFF)
-          write_prg_byte(0x7EFB, (i + 1) << 2);                         // PRG Bank 1 ($A000-$BFFF)
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 8K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          write_prg_byte(0x7EFA, i << 2);        // PRG Bank 0 ($8000-$9FFF)
+          write_prg_byte(0x7EFB, (i + 1) << 2);  // PRG Bank 1 ($A000-$BFFF)
+          dumpBankPRG(0x0, 0x4000, base);        // 8K Banks ($8000-$BFFF)
         }
         break;
 
       case 85:  // 128K/512K
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000, i);                                    // PRG Bank 0 ($8000-$9FFF)
-          for (size_t address = 0x0; address < 0x2000; address += 512) {  // 8K Banks ($8000-$9FFF)
-            dumpPRG(base, address);
-          }
+          write_prg_byte(0x8000, i);            // PRG Bank 0 ($8000-$9FFF)
+          dumpBankPRG(0x0, 0x2000, base);       // 8K Banks ($8000-$9FFF)
         }
         break;
 
       case 86:
       case 140:  // 128K
         banks = int_pow(2, prgsize) / 2;
-        for (size_t i = 0; i < banks; i++) {                            // 128K
-          write_prg_byte(0x6000, i << 4);                               // bits 4-5
-          for (size_t address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
-            dumpPRG(base, address);
-          }
+        for (size_t i = 0; i < banks; i++) {    // 128K
+          write_prg_byte(0x6000, i << 4);       // bits 4-5
+          dumpBankPRG(0x0, 0x8000, base);       // 32K Banks ($8000-$FFFF)
         }
         break;
 
@@ -2399,24 +2289,18 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < (banks - 2); i += 2) {
           write_prg_byte(0x7000, (i | 0));
           write_prg_byte(0x7001, (i | 1));
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);
         break;
 
       case 92:  // 256K
         banks = int_pow(2, prgsize);
-        write_prg_byte(0x8000, 0);                                         // Reset Register
-        for (size_t i = 0; i < banks; i++) {                               // 256K
-          write_prg_byte(0x8000, i | 0x80);                                // PRG Command + Bank
-          write_prg_byte(0x8000, i);                                       // PRG Bank
-          for (size_t address = 0x4000; address < 0x8000; address += 512) {  // 16K Banks ($C000-$FFFF)
-            dumpPRG(base, address);
-          }
+        write_prg_byte(0x8000, 0);              // Reset Register
+        for (size_t i = 0; i < banks; i++) {    // 256K
+          write_prg_byte(0x8000, i | 0x80);     // PRG Command + Bank
+          write_prg_byte(0x8000, i);            // PRG Bank
+          dumpBankPRG(0x4000, 0x8000, base);    // 16K Banks ($C000-$FFFF)
         }
         break;
 
@@ -2425,9 +2309,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6000, i);
           write_prg_byte(0x8000, i << 4 | 0x01);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2445,22 +2327,16 @@ void readPRG(bool readrom) {
           if (busConflict) {
             write_prg_byte(0x8000 + i, i << 2);
           }
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);
         break;
 
       case 97:   // fixed first bank
       case 180:  // bus conflicts - fixed fist bank
         banks = int_pow(2, prgsize);
         busConflict = true;
-        for (size_t address = 0x0; address < 0x4000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x0, 0x4000, base);
         for (size_t i = 1; i < banks; i++) {
           for (size_t x = 0; x < 0x4000; x++) {
             if (read_prg_byte(0x8000 + x) == i) {
@@ -2472,9 +2348,7 @@ void readPRG(bool readrom) {
           if (busConflict) {
             write_prg_byte(0x8000 + i, i);
           }
-          for (size_t address = 0x4000; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x4000, 0x8000, base);
         }
         break;
 
@@ -2483,17 +2357,13 @@ void readPRG(bool readrom) {
         write_mmc1_byte(0xA000, 0x10);   // Set PRG Init/IRQ (Bit 4) to enable bank swapping
         for (size_t i = 0; i < 4; i++) { // PRG CHIP 1 128K
           write_mmc1_byte(0xA000, i << 1);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {  // 32K Banks ($8000-$FFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);// 32K Banks ($8000-$FFFF)
         }
         write_mmc1_byte(0x8000, 0x0C);  // Switch 16K Bank ($8000-$BFFF) + Fixed Last Bank ($C000-$FFFF)
         write_mmc1_byte(0xA000, 0x08);  // Select PRG CHIP 2 (Bit 3)
         for (size_t j = 0; j < 8; j++) {   // PRG CHIP 2 128K
           write_mmc1_byte(0xE000, j);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);  // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2501,9 +2371,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, i);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2511,9 +2379,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x4100, (i & 0x07) << 3);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2523,9 +2389,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, 4);
           write_prg_byte(0xC000, i);
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -2539,9 +2403,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, i);
           write_prg_byte(0x8000, 7);  // 8k bank 1 at $A000
           write_prg_byte(0x8001, i + 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2554,9 +2416,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, i);
           write_prg_byte(0x8000, 7);  // 8k bank 1 at $A000
           write_prg_byte(0x8001, i + 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2572,9 +2432,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0xF000, i + 2);
           write_prg_byte(0xE000, 3);  // Select 8 KB PRG bank at CPU $C000-$DFFF
           write_prg_byte(0xF000, i + 3);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2592,36 +2450,28 @@ void readPRG(bool readrom) {
           if (busConflict) {
             write_prg_byte(0x8000 + i, i << 3);
           }
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
       case 153:  // 512K
         banks = int_pow(2, prgsize);
-        for (size_t i = 0; i < banks; i++) {                               // 512K
-          write_prg_byte(0x8000, i >> 4);                                  // PRG Outer Bank (Documentation says duplicate over $8000-$8003 registers)
-          write_prg_byte(0x8001, i >> 4);                                  // PRG Outer Bank
-          write_prg_byte(0x8002, i >> 4);                                  // PRG Outer Bank
-          write_prg_byte(0x8003, i >> 4);                                  // PRG Outer Bank
-          write_prg_byte(0x8008, i & 0xF);                                 // PRG Inner Bank
-          for (size_t address = 0x0000; address < 0x4000; address += 512) {  // 16K Banks ($8000-$BFFF)
-            dumpPRG(base, address);
-          }
+        for (size_t i = 0; i < banks; i++) { // 512K
+          write_prg_byte(0x8000, i >> 4);    // PRG Outer Bank (Documentation says duplicate over $8000-$8003 registers)
+          write_prg_byte(0x8001, i >> 4);    // PRG Outer Bank
+          write_prg_byte(0x8002, i >> 4);    // PRG Outer Bank
+          write_prg_byte(0x8003, i >> 4);    // PRG Outer Bank
+          write_prg_byte(0x8008, i & 0xF);   // PRG Inner Bank
+          dumpBankPRG(0x0, 0x4000, base);    // 16K Banks ($8000-$BFFF)
         }
         break;
 
       case 157:
         for (size_t i = 0; i < 15; i++) {
           write_prg_byte(0x8008, i);  // select 16k bank at $8000-$BFFF
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {  // last 16k bank fixed at $C000-$FFFF
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base); // last 16k bank fixed at $C000-$FFFF
         break;
 
       case 162:
@@ -2630,9 +2480,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
           write_prg_byte(0x5000, i & 0x0F);         // A18-A15
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2642,18 +2490,14 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
           write_prg_byte(0x5000, i & 0x0F);         // A18-A15
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
       case 174:  // 128k
         for (size_t i = 0; i < 8; i++) {
           write_prg_byte(0xFF00 + (i << 4), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2667,13 +2511,9 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, i);
           write_prg_byte(0x8000, 7);
           write_prg_byte(0x8001, i + 1);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
-        for (size_t address = 0x4000; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x4000, 0x8000, base);
         break;
 
       case 178:
@@ -2683,9 +2523,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x4802, i >> 3);    // high PRG (up to 8 bits?!)
           write_prg_byte(0x4801, i & 0x07);  // low PRG (3 bits)
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2694,9 +2532,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i & 0x07), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2704,9 +2540,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i & 0xFF), 0);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2714,9 +2548,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | (i << 1), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2724,9 +2556,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000, (i & 0x1F) << 2);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2735,9 +2565,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0xE000, i);      // PRG Bank 0 ($8000-$9FFF) [WRITE NO RAM]
           write_prg_byte(0xE800, i + 1);  // PRG Bank 1 ($A000-$BFFF) [WRITE NO RAM]
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2745,9 +2573,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | (i << 2), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2756,9 +2582,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000 + (((i & 0x40) << 8) | ((i & 0x3F) << 6)), 0);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2767,9 +2591,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8001, (i & 0x40) >> 6);
           write_prg_byte(0x8000, ((i & 0x20) << 2) | (i & 0x1F));
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2777,9 +2599,7 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8083 + ((i & 0xF) << 3), 0);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -2788,30 +2608,22 @@ void readPRG(bool readrom) {
         write_prg_byte(0x8000, 0);
         for (size_t i = 0; i < banks; i += 2) {  // up to 1024k PRG
           write_prg_byte(0x8000 + ((i & 0x3F) << 6), 0);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         if (prgsize > 5) {  // reading the 3rd 512k PRG chip (Action 52)
           for (size_t i = 0; i < 32; i += 2) {
             write_prg_byte(0x9800 + ((i & 0x1F) << 6), 0);
-            for (size_t address = 0x0; address < 0x8000; address += 512) {
-              dumpPRG(base, address);
-            }
+            dumpBankPRG(0x0, 0x8000, base);
           }
         }
         break;
 
       case 229:
         write_prg_byte(0x8000, 0);
-        for (size_t address = 0x0; address < 0x8000; address += 512) {
-          dumpPRG(base, address);
-        }
+        dumpBankPRG(0x0, 0x8000, base);
         for (size_t i = 2; i < 32; i++) {
           write_prg_byte(0x8000 + i, i);
-          for (size_t address = 0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2821,9 +2633,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8000, outerbank << 3);
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xC000, i);
-            for (size_t address = 0x0; address < 0x4000; address += 512) {
-              dumpPRG(base, address);
-            }
+            dumpBankPRG(0x0, 0x4000, base);
           }
         }
         break;
@@ -2831,29 +2641,21 @@ void readPRG(bool readrom) {
       case 235:
         for (size_t i = 0; i < 32; i++) {
           write_prg_byte(0x8000 + i, 0);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         if (prgsize > 6) {
           for (size_t i = 32; i < 64; i++) {
             write_prg_byte(0x80E0 + i, 0);
-            for (size_t address = 0x0; address < 0x8000; address += 512) {
-              dumpPRG(base, address);
-            }
+            dumpBankPRG(0x0, 0x8000, base);
           }
           if (prgsize > 7) {
             for (size_t i = 64; i < 96; i++) {
               write_prg_byte(0x81E0 + i, 0);
-              for (size_t address = 0x0; address < 0x8000; address += 512) {
-                dumpPRG(base, address);
-              }
+              dumpBankPRG(0x0, 0x8000, base);
             }
             for (size_t i = 96; i < 128; i++) {
               write_prg_byte(0x82E0 + i, 0);
-              for (size_t address = 0x0; address < 0x8000; address += 512) {
-                dumpPRG(base, address);
-              }
+              dumpBankPRG(0x0, 0x8000, base);
             }
           }
         }
@@ -2864,9 +2666,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | ((i & 0x38) >> 3), 0);  // A19-A17
           write_prg_byte(0xC030 | (i & 0x0F), 0);         // A17-A14
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2874,24 +2674,18 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5FFF, (i & 0xF) << 4);
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
       case 242:                            // total size is 640k THIS IS NORMAL
         for (size_t i = 0; i < 32; i++) {  // dump 1st chip of 512k
           write_prg_byte(0x8400 + (i * 4), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         for (size_t i = 0; i < 8; i++) {  // dump 2nd chip of 128k
           write_prg_byte(0x8000 + (i * 4), 0);
-          for (size_t address = 0x0; address < 0x4000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -2902,9 +2696,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x6001, (i | 1));
           write_prg_byte(0x6002, (i | 2));
           write_prg_byte(0x6003, (i | 3));
-          for (size_t address = 0x0; address < 0x8000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
     }
@@ -2942,9 +2734,7 @@ void readCHR(bool readrom) {
     if (myFile) {
       switch (mapper) {
         case 0:  // 8K
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpCHR(address);
-          }
+          dumpBankCHR(0x0, 0x2000);
           break;
 
         case 1:
@@ -2953,9 +2743,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i += 2) {  // 8K/16K/32K/64K/128K (Bank #s are based on 4K Banks)
             write_prg_byte(0x8000, 0x80);       // Clear Register
             write_mmc1_byte(0xA000, i);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -2969,9 +2757,7 @@ void readCHR(bool readrom) {
                 break;
               }
             }
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -2995,9 +2781,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8001, i);
             write_prg_byte(0x8000, 1);  // CHR Bank 1 ($0800-$0FFF)
             write_prg_byte(0x8001, i + 2);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3014,9 +2798,7 @@ void readCHR(bool readrom) {
             else if (i == 24)
               write_prg_byte(0x5130, 3);  // Set Upper 2 bits
             write_prg_byte(0x5127, i);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {  // ($0000-$1FFF)
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3029,9 +2811,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {  // 64K/128K
             write_prg_byte(0xB000, i);
             write_prg_byte(0xC000, i);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3039,9 +2819,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xFFB0 + i, i << 4);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3051,9 +2829,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, i);  // Submapper 4
             write_prg_byte(0x8000, i);  // Submapper 5
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3062,9 +2838,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xA000, i & 0xF);         // CHR Bank Lower 4 bits
             write_prg_byte(0xA001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3083,9 +2857,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0xA800, i + 5);  // CHR Bank 5
             write_prg_byte(0xB000, i + 6);  // CHR Bank 6
             write_prg_byte(0xB800, i + 7);  // CHR Bank 7
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3097,9 +2869,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0xB002, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4a (Wai Wai World 2)
             else                                       // banks == 256
               write_prg_byte(0xB040, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4c (Ganbare Goemon Gaiden 2)
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3108,9 +2878,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, (i << 1) & 0xF);  // CHR Bank Lower 4 bits
             write_prg_byte(0xB002, (i >> 3) & 0xF);  // CHR Bank Upper 4 bits
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3130,9 +2898,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0xB004, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4e
             else
               write_prg_byte(0xB001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC2b/VRC4f
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3140,17 +2906,15 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) * 4;
           write_prg_byte(0xB003, 0);  // PPU Banking Mode 0
           for (size_t i = 0; i < banks; i += 8) {
-            write_prg_byte(0xD000, i);                                    // CHR Bank 0
-            write_prg_byte(0xD001, i + 1);                                // CHR Bank 1
-            write_prg_byte(0xD002, i + 2);                                // CHR Bank 2
-            write_prg_byte(0xD003, i + 3);                                // CHR Bank 3
-            write_prg_byte(0xE000, i + 4);                                // CHR Bank 4 [WRITE NO RAM]
-            write_prg_byte(0xE001, i + 5);                                // CHR Bank 5 [WRITE NO RAM]
-            write_prg_byte(0xE002, i + 6);                                // CHR Bank 6 [WRITE NO RAM]
-            write_prg_byte(0xE003, i + 7);                                // CHR Bank 7 [WRITE NO RAM]
-            for (size_t address = 0x0; address < 0x2000; address += 512) {  // 1K Banks
-              dumpCHR(address);
-            }
+            write_prg_byte(0xD000, i);            // CHR Bank 0
+            write_prg_byte(0xD001, i + 1);        // CHR Bank 1
+            write_prg_byte(0xD002, i + 2);        // CHR Bank 2
+            write_prg_byte(0xD003, i + 3);        // CHR Bank 3
+            write_prg_byte(0xE000, i + 4);        // CHR Bank 4 [WRITE NO RAM]
+            write_prg_byte(0xE001, i + 5);        // CHR Bank 5 [WRITE NO RAM]
+            write_prg_byte(0xE002, i + 6);        // CHR Bank 6 [WRITE NO RAM]
+            write_prg_byte(0xE003, i + 7);        // CHR Bank 7 [WRITE NO RAM]
+            dumpBankCHR(0x0, 0x2000);             // 1K Banks
           }
           break;
 
@@ -3159,9 +2923,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
             write_prg_byte(0xB00A, (i >> 4) & 0xF);  // Combine VRC2c and VRC4b, VRC4d reg
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3169,13 +2931,11 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) * 4;
           write_prg_byte(0xB003, 0x00);
           for (size_t i = 0; i < banks; i += 4) {
-            write_prg_byte(0xD000, i + 0);                                // CHR Bank 0
-            write_prg_byte(0xD002, i + 1);                                // CHR Bank 1
-            write_prg_byte(0xD001, i + 2);                                // CHR Bank 2
-            write_prg_byte(0xD003, i + 3);                                // CHR Bank 3
-            for (size_t address = 0x0; address < 0x1000; address += 512) {  // 1K Banks
-              dumpCHR(address);
-            }
+            write_prg_byte(0xD000, i + 0);        // CHR Bank 0
+            write_prg_byte(0xD002, i + 1);        // CHR Bank 1
+            write_prg_byte(0xD001, i + 2);        // CHR Bank 2
+            write_prg_byte(0xD003, i + 3);        // CHR Bank 3
+            dumpBankCHR(0x0, 0x1000);             // 1K Banks
           }
           break;
 
@@ -3191,9 +2951,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0xB005, i + 5);  // CHR Bank 5
             write_prg_byte(0xB006, i + 6);  // CHR Bank 6
             write_prg_byte(0xB007, i + 7);  // CHR Bank 7
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3203,9 +2961,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i += 2) {  // 2K Banks
             write_prg_byte(0x8002, i);             // CHR Bank 0
             write_prg_byte(0x8003, i + 1);         // CHR Bank 1
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3214,9 +2970,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i += 2) {
             write_prg_byte(0x7FFE, i);      // Select 4 KB CHR bank at $0000
             write_prg_byte(0x7FFF, i + 1);  // Select 4 KB CHR bank at $1000
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3230,9 +2984,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xD003, (((i >> 3) & 0x18) | 0x20));
             write_prg_byte(0x9000, (i & 0x3f));
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3240,9 +2992,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x4200, i);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3258,9 +3008,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8001, i);
             write_prg_byte(0x8000, 1);  // CHR Bank 1 ($0800-$0FFF)
             write_prg_byte(0x8001, i + 2);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3268,9 +3016,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x7000, i << 2);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3278,9 +3024,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize);
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, i & 0x0F);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3318,9 +3062,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, (i & 0x78) << 1);  // high bits
             write_prg_byte(0x8000, (i & 0x07) << 4);  // low bits
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3329,9 +3071,7 @@ void readCHR(bool readrom) {
           write_prg_byte(0xA001, 0x80);  // enable WRAM write
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, (i & 0x04) << 2 | (i & 0x03) << 4 | 0x40);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3339,9 +3079,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) * 4;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xFC00, i);
-            for (size_t address = 0x0; address < 0x400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x400);
           }
           break;
 
@@ -3350,9 +3088,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8800, i & 0x07);                  // A15-A13
             write_prg_byte(0x8000, 0x80 | ((i & 0x08) << 3));  // A16
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3361,9 +3097,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + ((i & 0x07) << 3), 0x00);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3371,9 +3105,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0x07), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3381,9 +3113,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < 4; i++) {
             write_prg_byte(0x8D8D, i);
             delay(500);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3391,9 +3121,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i / 4), i & 3);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3403,9 +3131,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x8000, i);          // CHR Bank 0
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3416,9 +3142,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x9800, i + 1);         // CHR Bank 1
             write_prg_byte(0xA800, i + 2);         // CHR Bank 2
             write_prg_byte(0xB800, i + 3);         // CHR Bank 3
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3429,20 +3153,16 @@ void readCHR(bool readrom) {
             write_prg_byte(0x9000, i + 1);         // CHR Bank 1
             write_prg_byte(0xA000, i + 2);         // CHR Bank 2
             write_prg_byte(0xB000, i + 3);         // CHR Bank 3
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
         case 69:  // 128K/256K
           banks = int_pow(2, chrsize) * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, 0);                                   // Command Register - CHR Bank 0
-            write_prg_byte(0xA000, i);                                   // Parameter Register - ($0000-$03FF)
-            for (size_t address = 0x0; address < 0x400; address += 512) {  // 1K Banks
-              dumpCHR(address);
-            }
+            write_prg_byte(0x8000, 0);  // Command Register - CHR Bank 0
+            write_prg_byte(0xA000, i);  // Parameter Register - ($0000-$03FF)
+            dumpBankCHR(0x0, 0x400);    // 1K Banks
           }
           break;
 
@@ -3452,9 +3172,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) { // 8K Banks
             write_prg_byte(0x8000, i | 0x40);  // CHR Command + Bank
             write_prg_byte(0x8000, i);         // CHR Bank
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3463,9 +3181,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {        // 4K Banks
             write_reg_byte(0xE000, i);                // CHR Bank Low Bits [WRITE RAM SAFE]
             write_prg_byte(0x9000, (i & 0x10) >> 3);  // High Bit
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3476,9 +3192,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8001, i);             // CHR Bank
             write_prg_byte(0x8000, 3);             // CHR Command ($0800-$0FFF) 2K Bank
             write_prg_byte(0x8001, i + 1);         // CHR Bank
-            for (size_t address = 0x0000; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3486,19 +3200,15 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) * 2;
           for (size_t i = 0; i < banks; i++) {  // 2K Banks
             write_prg_byte(0x8000, i << 4);     // CHR Bank 0
-            for (size_t address = 0x0; address < 0x800; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x800);
           }
           break;
 
         case 78:  // 128K
           banks = int_pow(2, chrsize) / 2;
-          for (size_t i = 0; i < banks; i++) {                            // 8K Banks
-            write_prg_byte(0x8000, i << 4);                               // CHR Bank 0
-            for (size_t address = 0x0; address < 0x2000; address += 512) {  // 8K Banks ($0000-$1FFF)
-              dumpCHR(address);
-            }
+          for (size_t i = 0; i < banks; i++) {  // 8K Banks
+            write_prg_byte(0x8000, i << 4);     // CHR Bank 0
+            dumpBankCHR(0x0, 0x2000);           // 8K Banks ($0000-$1FFF)
           }
           break;
 
@@ -3507,9 +3217,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x4100, i);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3522,9 +3230,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x7EF3, i + 1);  // CHR Bank 3
             write_prg_byte(0x7EF4, i + 2);  // CHR Bank 4
             write_prg_byte(0x7EF5, i + 3);  // CHR Bank 5
-            for (size_t address = 0x1000; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3539,9 +3245,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0xC008, i + 5);  // CHR Bank 5
             write_prg_byte(0xD000, i + 6);  // CHR Bank 6
             write_prg_byte(0xD008, i + 7);  // CHR Bank 7
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3552,9 +3256,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x6000, i & 0x3);
             else
               write_prg_byte(0x6000, (i | 0x40) & 0x43);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3562,9 +3264,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {  // 16K/32K
             write_prg_byte(0x6000, (((i & 0x1) << 1) | ((i & 0x2) >> 1)));
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3577,17 +3277,13 @@ void readCHR(bool readrom) {
             if (i < 64) {
               write_prg_byte(0x8000, 0);           // CHR Command ($0000-$07FF) 2K Bank
               write_prg_byte(0x8001, i & 0x3F);    // CHR Bank
-              for (size_t address = 0x0; address < 0x800; address += 512) {
-                dumpCHR(address);
-              }
+              dumpBankCHR(0x0, 0x800);
             } else {
               write_prg_byte(0x8000, 2);      // CHR Command ($1000-$13FF) 1K Bank
               write_prg_byte(0x8001, i);      // CHR Bank
               write_prg_byte(0x8000, 3);      // CHR Command ($1400-$17FF) 1K Bank
               write_prg_byte(0x8001, i + 1);  // CHR Bank
-              for (size_t address = 0x1000; address < 0x1800; address += 512) {
-                dumpCHR(address);
-              }
+              dumpBankCHR(0x1000, 0x1800);
             }
           }
           break;
@@ -3599,9 +3295,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x8000, i & 0x7);
             else
               write_prg_byte(0x8000, (i | 0x80) & 0x87);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3612,9 +3306,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x6001, (i / 2) | 1);
             write_prg_byte(0x6002, (i / 2) | 2);
             write_prg_byte(0x6003, (i / 2) | 3);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3624,9 +3316,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) { // 8K Banks
             write_prg_byte(0x8000, i | 0x40);  // CHR Command + Bank
             write_prg_byte(0x8000, i);         // CHR Bank
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3634,9 +3324,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x4100, (i & 0x08) << 3 | (i & 0x07));
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3646,9 +3334,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x6000, (i & 0x80) >> 7);
             write_prg_byte(0xA000, 6);
             write_prg_byte(0xC000, i);
-            for (size_t address = 0x1000; address < 0x1400; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x1000, 0x1400);
           }
           break;
 
@@ -3662,9 +3348,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8001, i);
             write_prg_byte(0x8000, 1);  // 2k bank 1 at $0800
             write_prg_byte(0x8001, i + 2);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3677,9 +3361,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8001, i);
             write_prg_byte(0x8000, 1);  // 2k bank 1 at $0800
             write_prg_byte(0x8001, i + 2);
-            for (size_t address = 0x0; address < 0x1000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
@@ -3687,18 +3369,14 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x6000, i);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
         case 174:  // 64k
           for (size_t i = 0; i < 8; i++) {
             write_prg_byte(0xFF00 + (i << 1), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3724,19 +3402,15 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8001, i + 6);
             write_prg_byte(0x8000, 5);
             write_prg_byte(0x8001, i + 7);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
         case 184:  // 16K/32K
           banks = int_pow(2, chrsize);
-          for (size_t i = 0; i < banks; i++) {                            // 4K Banks
-            write_prg_byte(0x6000, i);                                    // CHR LOW (Bits 0-2) ($0000-$0FFF)
-            for (size_t address = 0x0; address < 0x1000; address += 512) {  // 4K Banks ($0000-$0FFF)
-              dumpCHR(address);
-            }
+          for (size_t i = 0; i < banks; i++) { // 4K Banks
+            write_prg_byte(0x6000, i);         // CHR LOW (Bits 0-2) ($0000-$0FFF)
+            dumpBankCHR(0x0, 0x1000);          // 4K Banks ($0000-$0FFF)
           }
           break;
 
@@ -3759,9 +3433,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0x07), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3769,9 +3441,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0xFF), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3779,9 +3449,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i << 1), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3789,9 +3457,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, (i & 0x03));
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3807,9 +3473,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0xA800, i + 5);  // CHR Bank 5
             write_prg_byte(0xB000, i + 6);  // CHR Bank 6
             write_prg_byte(0xB800, i + 7);  // CHR Bank 7
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3817,9 +3481,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i << 2), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3828,9 +3490,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (((i & 0x40) << 8) | (i & 0x3F)), 0);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3839,18 +3499,14 @@ void readCHR(bool readrom) {
           write_prg_byte(0x8000, 0);
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + ((i & 0x3C) >> 2), i & 0x03);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
         case 229:
           for (size_t i = 0; i < 32; i++) {
             write_prg_byte(0x8000 + i, i);
-            for (size_t address = 0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3858,9 +3514,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i & 0x0F), 0);  // A16-A13
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3868,9 +3522,7 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x5FFF, (i & 0xF));
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
@@ -3881,9 +3533,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x6005, (i | 1));
             write_prg_byte(0x6006, (i | 2));
             write_prg_byte(0x6007, (i | 3));
-            for (size_t address = 0x0; address < 0x2000; address += 512) {
-              dumpCHR(address);
-            }
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
       }
@@ -3923,11 +3573,9 @@ void readRAM() {
     word base = 0x6000;
     if (myFile) {
       switch (mapper) {
-        case 0:                                                                    // 2K/4K
-          for (size_t address = 0x0; address < (0x800 * ramsize); address += 512) {  // 2K/4K
-            dumpPRG(base, address);                                                // SWITCH MUST BE IN OFF POSITION
-          }
-          break;
+        case 0:                                       // 2K/4K
+          dumpBankPRG(0x0, (0x800 * ramsize), base);  // 2K/4K
+          break;                                      // SWITCH MUST BE IN OFF POSITION
 
         case 1:
         case 155:                               // 8K/16K/32K
@@ -3940,9 +3588,7 @@ void readRAM() {
               write_mmc1_byte(0xA000, i << 2);
             else
               write_mmc1_byte(0xA000, i << 3);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {  // 8K
-              dumpPRG(base, address);
-            }
+            dumpBankPRG(0x0, 0x2000, base);     // 8K
           }
           break;
 
@@ -3961,9 +3607,7 @@ void readRAM() {
             write_prg_byte(0x8000, 6);                                  // PRG RAM DISABLE
           } else {                                                      // MMC3 8K
             write_prg_byte(0xA001, 0xC0);                               // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
-            for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-              dumpPRG(base, address);
-            }
+            dumpBankPRG(0x0, 0x2000, base);                             // 8K
           }
           break;
 
@@ -4017,9 +3661,7 @@ void readRAM() {
             for (size_t i = 0; i < 64; i++) {  // Init Register
               write_ram_byte(0xE000, 0);
             }
-            for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-              dumpPRG(base, address);
-            }
+            dumpBankPRG(0x0, 0x2000, base);    // 8K
           }
           break;
 
@@ -4066,9 +3708,7 @@ void readRAM() {
             write_ram_byte(0xE000, 0x80);                             // PRG RAM ENABLE
           else if (mapper == 153)                                     // 8K
             write_prg_byte(0x800D, 0x20);                             // PRG RAM Chip Enable
-          for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);                             // 8K
           if (mapper == 85)             // 8K
             write_reg_byte(0xE000, 0);  // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
@@ -4093,6 +3733,24 @@ void readRAM() {
   LED_GREEN_OFF;
 }
 
+void writeBankPRG(const size_t from, const size_t to, const size_t base) {
+  for (size_t address = from; address < to; address += 512) {
+    myFile.read(sdBuffer, 512);
+    for (size_t x = 0; x < 512; x++) {
+      write_prg_byte(base + address + x, sdBuffer[x]);
+    }
+  }
+}
+
+void writeBankWRAM(const size_t from, const size_t to, const size_t base) {
+  for (size_t address = from; address < to; address += 512) {
+    myFile.read(sdBuffer, 512);
+    for (size_t x = 0; x < 512; x++) {
+      write_wram_byte(base + address + x, sdBuffer[x]);
+    }
+  }
+}
+
 void writeRAM() {
   display_Clear();
 
@@ -4114,14 +3772,9 @@ void writeRAM() {
     //open file on sd card
     if (myFile.open(filePath, O_READ)) {
       switch (mapper) {
-        case 0:                                                                    // 2K/4K
-          for (size_t address = 0x0; address < (0x800 * ramsize); address += 512) {  // 2K/4K
-            myFile.read(sdBuffer, 512);
-            for (size_t x = 0; x < 512; x++) {
-              write_prg_byte(base + address + x, sdBuffer[x]);  // SWITCH MUST BE IN OFF POSITION
-            }
-          }
-          break;
+        case 0:                                        // 2K/4K
+          writeBankPRG(0x0, (0x800 * ramsize), base);  // 2K/4K
+          break;                                       // SWITCH MUST BE IN OFF POSITION
 
         case 1:
         case 155:
@@ -4134,42 +3787,24 @@ void writeRAM() {
               write_mmc1_byte(0xA000, i << 2);
             else
               write_mmc1_byte(0xA000, i << 3);
-            for (size_t address = 0x0; address < 0x2000; address += 512) {  // 8K
-              myFile.read(sdBuffer, 512);
-              for (size_t x = 0; x < 512; x++) {
-                write_prg_byte(base + address + x, sdBuffer[x]);
-              }
-            }
+            writeBankPRG(0x0, 0x2000, base);    // 8K
           }
           break;
 
-        case 4:                                                              // 1K/8K (MMC6/MMC3)
-          if (mmc6) {                                                        // MMC6 1K
-            write_prg_byte(0x8000, 0x20);                                    // PRG RAM ENABLE
-            write_prg_byte(0xA001, 0x30);                                    // PRG RAM PROTECT - Enable reading/writing to RAM at $7000-$71FF
-            for (size_t address = 0x1000; address < 0x1200; address += 512) {  // 512B
-              myFile.read(sdBuffer, 512);
-              for (size_t x = 0; x < 512; x++) {
-                write_wram_byte(base + address + x, sdBuffer[x]);
-              }
-            }
-            write_prg_byte(0x8000, 0x20);                                    // PRG RAM ENABLE
-            write_prg_byte(0xA001, 0xC0);                                    // PRG RAM PROTECT - Enable reading/writing to RAM at $7200-$73FF
-            for (size_t address = 0x1200; address < 0x1400; address += 512) {  // 512B
-              myFile.read(sdBuffer, 512);
-              for (size_t x = 0; x < 512; x++) {
-                write_wram_byte(base + address + x, sdBuffer[x]);
-              }
-            }
-            write_prg_byte(0x8000, 0x6);                                // PRG RAM DISABLE
-          } else {                                                      // MMC3 8K
-            write_prg_byte(0xA001, 0x80);                               // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
-            for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-              myFile.read(sdBuffer, 512);
-              for (size_t x = 0; x < 512; x++) {
-                write_prg_byte(base + address + x, sdBuffer[x]);
-              }
-            }
+        case 4:                                  // 1K/8K (MMC6/MMC3)
+          if (mmc6) {                            // MMC6 1K
+            write_prg_byte(0x8000, 0x20);        // PRG RAM ENABLE
+            write_prg_byte(0xA001, 0x30);        // PRG RAM PROTECT - Enable reading/writing to RAM at $7000-$71FF
+            writeBankWRAM(0x1000, 0x1200, base); // 512B
+
+            write_prg_byte(0x8000, 0x20);        // PRG RAM ENABLE
+            write_prg_byte(0xA001, 0xC0);        // PRG RAM PROTECT - Enable reading/writing to RAM at $7200-$73FF
+            writeBankWRAM(0x1200, 0x1400, base); // 512B
+
+            write_prg_byte(0x8000, 0x6);         // PRG RAM DISABLE
+          } else {                               // MMC3 8K
+            write_prg_byte(0xA001, 0x80);        // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
+            writeBankPRG(0x0, 0x2000, base);     // 8K
             write_prg_byte(0xA001, 0xC0);  // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
           }
           break;
@@ -4227,13 +3862,8 @@ void writeRAM() {
             for (size_t i = 0; i < 64; i++) {   // Init Register
               write_ram_byte(0xF800, 0x40);     // PRG RAM WRITE ENABLE
             }
-            write_ram_byte(0xF800, 0x40);                               // PRG RAM WRITE ENABLE
-            for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-              myFile.read(sdBuffer, 512);
-              for (size_t x = 0; x < 512; x++) {
-                write_prg_byte(base + address + x, sdBuffer[x]);
-              }
-            }
+            write_ram_byte(0xF800, 0x40);       // PRG RAM WRITE ENABLE
+            writeBankPRG(0x0, 0x2000, base);    // 8K
             write_ram_byte(0xF800, 0x0F);  // PRG RAM WRITE PROTECT
           }
           break;
@@ -4286,12 +3916,8 @@ void writeRAM() {
             write_ram_byte(0xE000, 0x80);                             // PRG RAM ENABLE
           else if (mapper == 153)                                     // 8K
             write_prg_byte(0x800D, 0x20);                             // PRG RAM Chip Enable
-          for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-            myFile.read(sdBuffer, 512);
-            for (size_t x = 0; x < 512; x++) {
-              write_prg_byte(base + address + x, sdBuffer[x]);
-            }
-          }
+          writeBankPRG(0x0, 0x2000, base);
+
           if (mapper == 118)               // 8K
             write_prg_byte(0xA001, 0xC0);  // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
           else if (mapper == 26)           // 8K
