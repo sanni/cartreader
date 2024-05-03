@@ -100,20 +100,20 @@ void smsOperations() {
 
   if (system_sms) {
     if (adapter_raphnet) {
-      SMSOperation = question_box(F("SMS/MarkIII raphnet"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem1), menuOptions, 4, 0);
     } else if (adapter_retrode) {
-      SMSOperation = question_box(F("SMS Retrode"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem2), menuOptions, 4, 0);
     } else if (adapter_retron) {
-      SMSOperation = question_box(F("SMS Retron 3in1"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem3), menuOptions, 4, 0);
     }
   } else if (system_gg) {
     if (adapter_retrode) {
-      SMSOperation = question_box(F("GameGear Retrode"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem4), menuOptions, 4, 0);
     } else if (adapter_retron) {
-      SMSOperation = question_box(F("GameGear Retron 3in1"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem5), menuOptions, 4, 0);
     }
   } else if (system_sg1000) {
-    SMSOperation = question_box(F("SG-1000 raphnet"), menuOptions, 1, 0);
+    SMSOperation = question_box(FS(SMSAdapterItem6), menuOptions, 1, 0);
   }
 
   switch (SMSOperation) {
