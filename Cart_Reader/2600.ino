@@ -40,6 +40,7 @@ static const byte PROGMEM a2600mapsize[] = {
   0xF9, 2,  // "TP" Time Pilot 8K
   0x0A, 2,  // "UA" UA Ltd 8K
   0x3E, 5,  // Tigervision 32K with 32K RAM
+  0x07, 6,  // X07 64K ROM
 };
 
 byte a2600mapcount = (sizeof(a2600mapsize) / sizeof(a2600mapsize[0])) / 2;
@@ -555,6 +556,12 @@ void readROM_2600() {
       readData_2600(0x240);
       readSegment_2600(0x1000, 0x2000);
       break;
+
+    case 0x07:  // X07 Mapper 64K
+      for (int x = 0; x < 16; x++) {
+        readData_2600(0x080D | (x << 4));
+        readSegment_2600(0x1000, 0x2000);
+      }
   }
   myFile.close();
 
@@ -590,6 +597,8 @@ void println_Mapper2600(byte mapper) {
     println_Msg(F("DPC"));
   else if (mapper == 0xF9)
     println_Msg(F("TP"));
+  else if (mapper == 0x07)
+    println_Msg(F("X07"));
   else
     println_Msg(mapper, HEX);
 #else
@@ -611,6 +620,8 @@ void println_Mapper2600(byte mapper) {
     Serial.println(F("DPC"));
   else if (mapper == 0xF9)
     Serial.println(F("TP"));
+  else if (mapper == 0x07)
+    Serial.println(F("X07"));
   else
     Serial.println(mapper, HEX);
 #endif
