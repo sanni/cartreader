@@ -2566,7 +2566,7 @@ void display_Clear() {
   display.setCursor(0, 8);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.println(FSTRING_EMPTY);
+  if (!dont_log && loggingEnabled) myLog.println(FS(FSTRING_EMPTY));
 #endif
 }
 

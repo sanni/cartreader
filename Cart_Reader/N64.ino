@@ -3057,7 +3057,7 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   myFile.print(F("Time\t: "));
   myFile.println(timeElapsed);
 
-  myFile.println(FSTRING_SPACE);
+  myFile.println(FS(FSTRING_SPACE));
 
   // Close the file:
   myFile.close();
