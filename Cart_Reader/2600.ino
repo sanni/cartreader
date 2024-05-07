@@ -713,7 +713,8 @@ setmapper:
   Serial.println(F("16 = TP [Time Pilot 8K]"));
   Serial.println(F("17 = UA [UA Ltd]"));
   Serial.println(F("18 = 3E [Tigervision 32K \w RAM]"));
-  Serial.print(F("Enter Mapper [0-17]: "));
+  Serial.println(F("19 = 07 [X07 64K]"));
+  Serial.print(F("Enter Mapper [0-19]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
