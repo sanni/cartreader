@@ -823,7 +823,7 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 }
 
 #if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES))
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD)) || defined(ENABLE_GBX)
 void printInstructions() {
     println_Msg(FS(FSTRING_EMPTY));
 #if defined(ENABLE_OLED)
@@ -832,6 +832,9 @@ void printInstructions() {
 #elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
+#elif defined(SERIAL_MONITOR)
+    println_Msg(F("U/D to Change"));
+    println_Msg(F("Space to Select"));
 #endif
     display_Update();
 }
