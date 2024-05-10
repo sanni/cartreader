@@ -247,24 +247,32 @@ uint8_t readData_C64(uint16_t addr) {
   return ret;
 }
 
-void readSegment_C64(uint32_t startaddr, uint32_t endaddr) {
-  for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
-    for (int w = 0; w < 512; w++) {
+void readSegment_C64(uint16_t startaddr, uint32_t endaddr, uint16_t size = 512) {
+  for (uint32_t addr = startaddr; addr < endaddr; addr += size) {
+    for (uint16_t w = 0; w < size; w++) {
       uint8_t temp = readData_C64(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    myFile.write(sdBuffer, size);
   }
 }
 
-void readSegmentSmall_C64(uint32_t startaddr, uint32_t endaddr) {
-  for (uint32_t addr = startaddr; addr < endaddr; addr += 256) {
-    for (int w = 0; w < 256; w++) {
-      uint8_t temp = readData_C64(addr + w);
-      sdBuffer[w] = temp;
-    }
-    myFile.write(sdBuffer, 256);
+void readSegment16k_C64() {
+  ROML_ENABLE;
+  readSegment_C64(0x8000, 0xA000);  // 8K
+  ROML_DISABLE;
+  ROMH_ENABLE;
+  readSegment_C64(0xA000, 0xC000);  // +8K = 16K
+  ROMH_DISABLE;
+}
+
+void readSegmentBankA0A4_C64(uint16_t bank) {
+  ROML_ENABLE;
+  for (uint16_t x = 0; x < bank; x++) {
+    bankSwitch_C64(0xDE00 + x, 0);    // Switch Bank using address lines
+    readSegment_C64(0x8000, 0xA000);  // 8K per bank
   }
+  ROML_DISABLE;
 }
 
 //******************************************
@@ -395,6 +403,7 @@ void readROM_C64() {
       break;
 
     case 1:          // Action Replay (32K)
+    case 9:          // Atomic Power (32K)
       ROML_ENABLE;
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDE00, x << 3);   // Switch Bank using D3-D4
@@ -405,23 +414,14 @@ void readROM_C64() {
 
     case 2:          // KCS Power Cartridge (16K)
     case 11:         // Westermann Learning (16K)
-      ROML_ENABLE;
-      readSegment_C64(0x8000, 0xA000);  // 8K
-      ROML_DISABLE;
-      ROMH_ENABLE;
-      readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-      ROMH_DISABLE;
+    case 16:         // WarpSpeed (16K)
+      readSegment16k_C64();
       break;
 
     case 3:           // Final Cartridge III (64K)
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDFFF, 0x40 + x);  // Switch Bank using $DFFF
-        ROML_ENABLE;
-        readSegment_C64(0x8000, 0xA000);  // 8K
-        ROML_DISABLE;
-        ROMH_ENABLE;
-        readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-        ROMH_DISABLE;
+        readSegment16k_C64();
       }
       break;
 
@@ -509,31 +509,17 @@ void readROM_C64() {
     case 8:          // Super Games (64K)
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDF00, x);  // Switch Bank
-        ROML_ENABLE;
-        readSegment_C64(0x8000, 0xA000);  // 8K
-        ROML_DISABLE;
-        ROMH_ENABLE;
-        readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-        ROMH_DISABLE;
+        readSegment16k_C64();
       }
-      break;
-
-    case 9:          // Atomic Power (32K)
-      ROML_ENABLE;
-      for (int x = 0; x < 4; x++) {
-        bankSwitch_C64(0xDE00, x << 3);   // Switch Bank using D3-D4
-        readSegment_C64(0x8000, 0xA000);  // 8K
-      }
-      ROML_DISABLE;
       break;
 
     case 10:          // Epyx Fastload (8K)
       ROML_ENABLE;
       bankSwitch_C64(0xDE00, 0);             // Read IO1 - Trigger Access
       readSegment_C64(0x8000, 0x9E00);       // 7680 Bytes
-      readSegmentSmall_C64(0x9E00, 0x9F00);  // +256 Bytes = 7936 Bytes
+      readSegment_C64(0x9E00, 0x9F00, 256);  // +256 Bytes = 7936 Bytes
       bankSwitch_C64(0xDF00, 0);             // Read IO2 - Access Last 256 Bytes
-      readSegmentSmall_C64(0x9F00, 0xA000);  // +256 Bytes = 8K
+      readSegment_C64(0x9F00, 0xA000, 256);  // +256 Bytes = 8K
       ROML_DISABLE;
       break;
 
@@ -546,12 +532,7 @@ void readROM_C64() {
 
     case 13:                      // Final Cartridge I (16K)
       bankSwitch_C64(0xDF00, 0);  // Enable ROM
-      ROML_ENABLE;
-      readSegment_C64(0x8000, 0xA000);  // 8K
-      ROML_DISABLE;
-      ROMH_ENABLE;
-      readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-      ROMH_DISABLE;
+      readSegment16k_C64();
       break;
 
     case 14:         // Magic Formel (64K)
@@ -564,30 +545,11 @@ void readROM_C64() {
       break;
 
     case 15:          // C64 Game System, System 3 (512K)
-      ROML_ENABLE;
-      for (int x = 0; x < 64; x++) {
-        bankSwitch_C64(0xDE00 + x, 0);    // Switch Bank using A0-A4
-        readSegment_C64(0x8000, 0xA000);  // 8K * 64 = 512K
-      }
-      ROML_DISABLE;
-      break;
-
-    case 16:         // WarpSpeed (16K)
-      ROML_ENABLE;
-      readSegment_C64(0x8000, 0xA000);  // 8K
-      ROML_DISABLE;
-      ROMH_ENABLE;
-      readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-      ROMH_DISABLE;
+      readSegmentBankA0A4_C64(64);
       break;
 
     case 17:          // Dinamic (128K)
-      ROML_ENABLE;
-      for (int x = 0; x < 16; x++) {
-        bankSwitch_C64(0xDE00 + x, 0);    // Switch Bank using A0-A4
-        readSegment_C64(0x8000, 0xA000);  // 8K * 16 = 128K
-      }
-      ROML_DISABLE;
+      readSegmentBankA0A4_C64(16);
       break;
 
     case 18:          // Zaxxon, Super Zaxxon (SEGA) (20K)
@@ -618,24 +580,14 @@ void readROM_C64() {
       for (int x = 0; x < 4; x++) {
         int bank = (((x & 2) << 3) | (0 << 3) | ((x & 1) << 2));
         bankSwitch_C64(0xDE00, bank);  // Switch Bank using D2-D4 (D3 == 0 Enable ROM)
-        ROML_ENABLE;
-        readSegment_C64(0x8000, 0xA000);  // 8K
-        ROML_DISABLE;
-        ROMH_ENABLE;
-        readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-        ROMH_DISABLE;
+        readSegment16k_C64();
       }
       break;
 
     case 21:  // Comal-80 (64K)
       for (int x = 0; x < 4; x++) {
         bankSwitch_C64(0xDE00, x + 0x80);  // Switch Bank
-        ROML_ENABLE;
-        readSegment_C64(0x8000, 0xA000);  // 8K
-        ROML_DISABLE;
-        ROMH_ENABLE;
-        readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-        ROMH_DISABLE;
+        readSegment16k_C64();
       }
   }
   myFile.close();
