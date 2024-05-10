@@ -604,8 +604,8 @@ void getCartInfo_GBA() {
     display_Update();
     wait();
   } else {
-    char tempStr2[2];
     char tempStr[5];
+    tempStr[4] = 0;
 
     // cart not in list
     cartSize = 0;
@@ -640,10 +640,8 @@ void getCartInfo_GBA() {
         myFile.seekCur(9);
 
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
-        sprintf(tempStr, "%c", myFile.read());
-        for (byte i = 0; i < 3; i++) {
-          sprintf(tempStr2, "%c", myFile.read());
-          strcat(tempStr, tempStr2);
+        for (byte i = 0; i < 4; i++) {
+          tempStr[i] = char(myFile.read());
         }
 
         // Check if string is a match
@@ -662,23 +660,15 @@ void getCartInfo_GBA() {
             myFile.seekCur(9);
 
             // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
-            sprintf(tempStr, "%c", myFile.read());
-            for (byte i = 0; i < 3; i++) {
-              sprintf(tempStr2, "%c", myFile.read());
-              strcat(tempStr, tempStr2);
+            for (byte i = 0; i < 4; i++) {
+              tempStr[i] = char(myFile.read());
             }
 
             // Skip the , in the file
             myFile.seekCur(1);
 
             // Read the next ascii character and subtract 48 to convert to decimal
-            cartSize = myFile.read() - 48;
-            // Remove leading 0 for single digit cart sizes
-            if (cartSize != 0) {
-              cartSize = cartSize * 10 + myFile.read() - 48;
-            } else {
-              cartSize = myFile.read() - 48;
-            }
+            cartSize = ((myFile.read() - 48) * 10) + (myFile.read() - 48);
 
             // Skip the , in the file
             myFile.seekCur(1);
@@ -699,19 +689,7 @@ void getCartInfo_GBA() {
             print_Msg(F("Save Lib: "));
             println_Msg(saveTypeStr);
 
-#if defined(ENABLE_OLED)
-            print_STR(press_to_change_STR, 1);
-            print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
-            println_Msg(FS(FSTRING_EMPTY));
-            print_STR(rotate_to_change_STR, 1);
-            print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-            println_Msg(FS(FSTRING_EMPTY));
-            println_Msg(F("U/D to Change"));
-            println_Msg(F("Space to Select"));
-#endif
-            display_Update();
+            printInstructions();
 
             uint8_t b = 0;
             while (1) {
