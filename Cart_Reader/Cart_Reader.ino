@@ -1361,6 +1361,10 @@ void mainMenu() {
   Self Test
 *****************************************/
 #ifdef ENABLE_SELFTEST
+// Check if given pin number is one of pins 2-9, 14-17, 22-37, 42-49, 54-69
+bool isPin_2t9_14t17_22t37_42t49_54t69(byte pinNumber) {
+  return ((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69));
+}
 
 void selfTest() {
 #ifdef ENABLE_VSELECT
@@ -1412,14 +1416,14 @@ void selfTest() {
 
   // Set pins 2-9, 14-17, 22-37, 42-49, 54-69 to input and activate internal pull-up resistors
   for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
-    if (((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69))) {
+    if (isPin_2t9_14t17_22t37_42t49_54t69(pinNumber)) {
       pinMode(pinNumber, INPUT_PULLUP);
     }
   }
 
   // Tests pins 2-9, 14-17, 22-37, 42-49, 54-69 for short to GND
   for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
-    if (((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69))) {
+    if (isPin_2t9_14t17_22t37_42t49_54t69(pinNumber)) {
       if (!digitalRead(pinNumber)) {
         setColor_RGB(255, 0, 0);
         errorLvl = 1;
@@ -1445,11 +1449,11 @@ void selfTest() {
 
   // Test for short between pins 2-9, 14-17, 22-37, 42-49, 54-69
   for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
-    if (((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69))) {
+    if (isPin_2t9_14t17_22t37_42t49_54t69(pinNumber)) {
       pinMode(pinNumber, OUTPUT);
       digitalWrite(pinNumber, LOW);
       for (byte pinNumber2 = 2; pinNumber2 <= 69; pinNumber2++) {
-        if ((((2 <= pinNumber2) && (pinNumber2 <= 9)) || ((14 <= pinNumber2) && (pinNumber2 <= 17)) || ((22 <= pinNumber2) && (pinNumber2 <= 37)) || ((42 <= pinNumber2) && (pinNumber2 <= 49)) || ((54 <= pinNumber2) && (pinNumber2 <= 69))) && (pinNumber != pinNumber2)) {
+        if (isPin_2t9_14t17_22t37_42t49_54t69(pinNumber2) && (pinNumber != pinNumber2)) {
           pinMode(pinNumber2, INPUT_PULLUP);
           if (!digitalRead(pinNumber2)) {
             setColor_RGB(255, 0, 0);
