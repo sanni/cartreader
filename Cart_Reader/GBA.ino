@@ -467,7 +467,7 @@ void writeWord_GAB(unsigned long myAddress, word myWord) {
   writeWord_GBA(myAddress, swapBits(myWord, 0, 1));
 }
 
-byte readByte_GBA(unsigned long myAddress) {
+byte readByte_GBA(uint16_t myAddress) {
   // Set address ports to output
   DDRF = 0xFF;
   DDRK = 0xFF;
@@ -504,7 +504,7 @@ byte readByte_GBA(unsigned long myAddress) {
   return tempByte;
 }
 
-void writeByte_GBA(unsigned long myAddress, byte myData) {
+void writeByte_GBA(uint16_t myAddress, byte myData) {
   // Set address ports to output
   DDRF = 0xFF;
   DDRK = 0xFF;
@@ -932,7 +932,7 @@ boolean compare_checksum_GBA() {
 /******************************************
   GBA SRAM SAVE Functions
 *****************************************/
-void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
+void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
     strcpy(fileName, romName);
@@ -963,7 +963,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
   if (pos != 0)
     myFile.seekCur(pos);
 
-  for (unsigned long currAddress = 0; currAddress < sramSize; currAddress += 512) {
+  for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
       // Read byte
       sdBuffer[c] = readByte_GBA(currAddress + c);
@@ -980,7 +980,7 @@ void readSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
   display_Update();
 }
 
-void writeSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
+void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
@@ -997,7 +997,7 @@ void writeSRAM_GBA(boolean browseFile, unsigned long sramSize, uint32_t pos) {
     if (pos != 0)
       myFile.seekCur(pos);
 
-    for (unsigned long currAddress = 0; currAddress < sramSize; currAddress += 512) {
+    for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
 
@@ -1268,8 +1268,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
 /******************************************
   GBA FLASH SAVE Functions
 *****************************************/
-// SST 39VF512 Flashrom
-void idFlash_GBA() {
+void initOutputFlash_GBA() {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
 
@@ -1281,6 +1280,11 @@ void idFlash_GBA() {
 
   // Output a LOW signal on CE_FLASH(PH0)
   PORTH &= ~(1 << 0);
+}
+
+// SST 39VF512 Flashrom
+void idFlash_GBA() {
+  initOutputFlash_GBA();
 
   // ID command sequence
   writeByteFlash_GBA(0x5555, 0xaa);
@@ -1310,17 +1314,7 @@ void idFlash_GBA() {
 
 // Reset FLASH
 void resetFLASH_GBA() {
-  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-
-  // Set address ports to output
-  DDRF = 0xFF;
-  DDRK = 0xFF;
-  // Set data pins to output
-  DDRC = 0xFF;
-
-  // Output a LOW signal on CE_FLASH(PH0)
-  PORTH &= ~(1 << 0);
+  initOutputFlash_GBA();
 
   // Reset command sequence
   writeByteFlash_GBA(0x5555, 0xAA);
@@ -1335,7 +1329,7 @@ void resetFLASH_GBA() {
   delay(100);
 }
 
-byte readByteFlash_GBA(unsigned long myAddress) {
+byte readByteFlash_GBA(uint16_t myAddress) {
   // Set address
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -1358,7 +1352,7 @@ byte readByteFlash_GBA(unsigned long myAddress) {
   return tempByte;
 }
 
-void writeByteFlash_GBA(unsigned long myAddress, byte myData) {
+void writeByteFlash_GBA(uint16_t myAddress, byte myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTC = myData;
@@ -1391,17 +1385,7 @@ void writeByteFlash_GBA(unsigned long myAddress, byte myData) {
 
 // Erase FLASH
 void eraseFLASH_GBA() {
-  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-
-  // Set address ports to output
-  DDRF = 0xFF;
-  DDRK = 0xFF;
-  // Set data pins to output
-  DDRC = 0xFF;
-
-  // Output a LOW signal on CE_FLASH(PH0)
-  PORTH &= ~(1 << 0);
+  initOutputFlash_GBA();
 
   // Erase command sequence
   writeByteFlash_GBA(0x5555, 0xaa);
@@ -1418,7 +1402,7 @@ void eraseFLASH_GBA() {
   delay(500);
 }
 
-boolean blankcheckFLASH_GBA(unsigned long flashSize) {
+boolean blankcheckFLASH_GBA(uint32_t flashSize) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1442,14 +1426,14 @@ boolean blankcheckFLASH_GBA(unsigned long flashSize) {
   // Output a LOW signal on OE_FLASH(PH6)
   PORTH &= ~(1 << 6);
 
-  for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+  for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
     // Fill buffer
     for (int c = 0; c < 512; c++) {
       // Read byte
       sdBuffer[c] = readByteFlash_GBA(currAddress + c);
     }
     // Check buffer
-    for (unsigned long currByte = 0; currByte < 512; currByte++) {
+    for (uint32_t currByte = 0; currByte < 512; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
         print_Error(F("Erase failed"));
         currByte = 512;
@@ -1468,17 +1452,7 @@ boolean blankcheckFLASH_GBA(unsigned long flashSize) {
 // each sector is 4096 bytes, there are 32 sectors total
 // therefore the bank size is 65536 bytes, so we have two banks in total
 void switchBank_GBA(byte bankNum) {
-  // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-
-  // Set address ports to output
-  DDRF = 0xFF;
-  DDRK = 0xFF;
-  // Set data pins to output
-  DDRC = 0xFF;
-
-  // Output a LOW signal on CE_FLASH(PH0)
-  PORTH &= ~(1 << 0);
+  initOutputFlash_GBA();
 
   // Switch bank command sequence
   writeByte_GBA(0x5555, 0xAA);
@@ -1490,7 +1464,7 @@ void switchBank_GBA(byte bankNum) {
   PORTH |= (1 << 0);
 }
 
-void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
+void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1542,7 +1516,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
   // Output a LOW signal on OE_FLASH(PH6)
   PORTH &= ~(1 << 6);
 
-  for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+  for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
       // Read byte
       sdBuffer[c] = readByteFlash_GBA(currAddress + c);
@@ -1560,7 +1534,7 @@ void readFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos) {
   display_Update();
 }
 
-void busyCheck_GBA(int currByte) {
+void busyCheck_GBA(uint16_t currByte) {
   // Set data pins to input
   DDRC = 0x00;
   // Output a LOW signal on OE_FLASH(PH6)
@@ -1573,7 +1547,7 @@ void busyCheck_GBA(int currByte) {
   DDRC = 0xFF;
 }
 
-void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, boolean isAtmel) {
+void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolean isAtmel) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
 
@@ -1606,7 +1580,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
     PORTH &= ~(1 << 0);
 
     if (!isAtmel) {
-      for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
+      for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
         //fill sdBuffer
         myFile.read(sdBuffer, 512);
 
@@ -1623,7 +1597,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
         }
       }
     } else {
-      for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 128) {
+      for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 128) {
         //fill sdBuffer
         myFile.read(sdBuffer, 128);
 
@@ -1652,7 +1626,7 @@ void writeFLASH_GBA(boolean browseFile, unsigned long flashSize, uint32_t pos, b
 }
 
 // Check if the Flashrom was written without any error
-unsigned long verifyFLASH_GBA(unsigned long flashSize, uint32_t pos) {
+unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
