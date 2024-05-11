@@ -725,7 +725,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     println_Msg(F("Finished"));
 
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 
   println_Msg(FS(FSTRING_EMPTY));

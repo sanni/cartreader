@@ -1012,7 +1012,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
     display_Update();
 
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -1199,7 +1199,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
     display_Update();
 
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -1621,7 +1621,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
 
   } else {
     println_Msg(F("Error"));
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -1717,7 +1717,7 @@ void writeEeprom_GBA(word eepSize) {
     display_Update();
   } else {
     println_Msg(F("Error"));
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 

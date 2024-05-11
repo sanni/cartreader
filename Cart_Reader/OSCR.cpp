@@ -62,6 +62,7 @@ constexpr char PROGMEM FSTRING_CURRENT_SETTINGS[] = "CURRENT SETTINGS";
 constexpr char PROGMEM FSTRING_OSCR[] = "OSCR";
 constexpr char PROGMEM FSTRING_MODULE_NOT_ENABLED[] = "Module is not enabled.";
 constexpr char PROGMEM FSTRING_DATABASE_FILE_NOT_FOUND[] = "Database file not found";
+constexpr char PROGMEM FSTRING_FILE_DOESNT_EXIST[] = "File doesn't exist";
 
 // Cart
 constexpr char PROGMEM FSTRING_READ_ROM[] = "Read ROM";

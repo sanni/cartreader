@@ -373,7 +373,7 @@ void writeSRAM_SV() {
     println_Msg(F("SRAM writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -577,7 +577,7 @@ void writeROM_SV(void) {
     wait();
 
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 

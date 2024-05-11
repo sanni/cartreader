@@ -41,7 +41,8 @@ extern const char PROGMEM FSTRING_CURRENT_SETTINGS[];
 // Messages
 extern const char PROGMEM FSTRING_OSCR[];
 extern const char PROGMEM FSTRING_MODULE_NOT_ENABLED[];
-extern const char FSTRING_DATABASE_FILE_NOT_FOUND[];
+extern const char PROGMEM FSTRING_DATABASE_FILE_NOT_FOUND[];
+extern const char PROGMEM FSTRING_FILE_DOESNT_EXIST[];
 
 // Cart
 extern const char PROGMEM FSTRING_READ_ROM[];

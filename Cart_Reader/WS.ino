@@ -654,7 +654,7 @@ static void verifySRAM_WS() {
       print_Error(did_not_verify_STR);
     }
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -700,7 +700,7 @@ static void writeSRAM_WS() {
     println_Msg(F("Writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -808,7 +808,7 @@ static void verifyEEPROM_WS() {
       print_Error(did_not_verify_STR);
     }
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -859,7 +859,7 @@ static void writeEEPROM_WS() {
 
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -948,7 +948,7 @@ static void writeWitchOS_WS() {
 
       print_STR(done_STR, 1);
     } else {
-      print_Error(F("File doesn't exist"));
+      print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     }
   }
 

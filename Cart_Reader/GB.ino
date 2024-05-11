@@ -1458,7 +1458,7 @@ void writeSRAM_GB() {
       display_Update();
 
     } else {
-      print_Error(F("File doesnt exist"));
+      print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     }
   } else {
     print_Error(F("Cart has no SRAM"));
@@ -1744,7 +1744,7 @@ void writeSRAMFLASH_MBC6_GB() {
     println_Msg(F("Save writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -1818,7 +1818,7 @@ void writeEEPROM_MBC7_GB() {
 
   // open file on sd card
   if (!myFile.open(filePath, O_READ))
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
 
   myFile.read(sdBuffer, lastByte);
   myFile.close();

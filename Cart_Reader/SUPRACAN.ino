@@ -232,7 +232,7 @@ static void writeSRAM_Acan() {
   display_Clear();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 
@@ -260,7 +260,7 @@ static void verifySRAM_Acan() {
   display_Update();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 
@@ -328,7 +328,7 @@ static void verifyUM6650() {
   display_Update();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 
@@ -365,7 +365,7 @@ static void writeUM6650() {
   display_Clear();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 
@@ -400,7 +400,7 @@ static void flashCart_Acan() {
   display_Clear();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 

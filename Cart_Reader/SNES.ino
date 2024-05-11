@@ -1648,7 +1648,7 @@ void writeSRAM(boolean browseFile) {
     display_Update();
 
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
