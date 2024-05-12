@@ -947,17 +947,6 @@ static void write_wram_byte(unsigned int address, uint8_t data) {  // Mapper 5 (
   PHI2_HI;
 }
 
-int int_pow(int base, int exp) {  // Power for int
-  int result = 1;
-  while (exp) {
-    if (exp & 1)
-      result *= base;
-    exp /= 2;
-    base *= base;
-  }
-  return result;
-}
-
 /******************************************
    File Functions
  *****************************************/

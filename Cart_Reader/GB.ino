@@ -1008,36 +1008,9 @@ void getCartInfo_GB() {
   sprintf(checksumStr, "%02X%02X", eepbit[6], eepbit[7]);
 
   // ROM banks
-  switch (romSize) {
-    case 0x00:
-      romBanks = 2;
-      break;
-    case 0x01:
-      romBanks = 4;
-      break;
-    case 0x02:
-      romBanks = 8;
-      break;
-    case 0x03:
-      romBanks = 16;
-      break;
-    case 0x04:
-      romBanks = 32;
-      break;
-    case 0x05:
-      romBanks = 64;
-      break;
-    case 0x06:
-      romBanks = 128;
-      break;
-    case 0x07:
-      romBanks = 256;
-      break;
-    case 0x08:
-      romBanks = 512;
-      break;
-    default:
-      romBanks = 2;
+  romBanks = 2;
+  if(romSize >= 0x01 && romSize <= 0x08) {
+    romBanks = int_pow(2, romSize + 1);
   }
 
   // SRAM banks
@@ -1971,33 +1944,9 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     myFile.seekSet(0);
 
     // ROM banks
-    switch (romSize) {
-      case 0x00:
-        romBanks = 2;
-        break;
-      case 0x01:
-        romBanks = 4;
-        break;
-      case 0x02:
-        romBanks = 8;
-        break;
-      case 0x03:
-        romBanks = 16;
-        break;
-      case 0x04:
-        romBanks = 32;
-        break;
-      case 0x05:
-        romBanks = 64;
-        break;
-      case 0x06:
-        romBanks = 128;
-        break;
-      case 0x07:
-        romBanks = 256;
-        break;
-      default:
-        romBanks = 2;
+    romBanks = 2;
+    if(romSize >= 0x01 && romSize <= 0x07) {
+      romBanks = int_pow(2, romSize + 1);
     }
 
     // Set ROM bank hi 0
@@ -2417,33 +2366,9 @@ bool writeCFI_GB() {
     myFile.seekSet(0);
 
     // ROM banks
-    switch (romSize) {
-      case 0x00:
-        romBanks = 2;
-        break;
-      case 0x01:
-        romBanks = 4;
-        break;
-      case 0x02:
-        romBanks = 8;
-        break;
-      case 0x03:
-        romBanks = 16;
-        break;
-      case 0x04:
-        romBanks = 32;
-        break;
-      case 0x05:
-        romBanks = 64;
-        break;
-      case 0x06:
-        romBanks = 128;
-        break;
-      case 0x07:
-        romBanks = 256;
-        break;
-      default:
-        romBanks = 2;
+    romBanks = 2;
+    if(romSize >= 0x01 && romSize <= 0x07) {
+      romBanks = int_pow(2, romSize + 1);
     }
 
     if (romBanks <= flashBanks) {

@@ -652,6 +652,22 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
   return 0;
 }
 
+//******************************************
+// Math Functions
+//******************************************
+#if (defined(ENABLE_NES) || defined(ENABLE_MSX) || defined(ENABLE_GBX))
+int int_pow(int base, int exp) {  // Power for int
+  int result = 1;
+  while (exp) {
+    if (exp & 1)
+      result *= base;
+    exp /= 2;
+    base *= base;
+  }
+  return result;
+}
+#endif
+
 // move file pointer to first game line with matching letter. If no match is found the last database entry is selected
 void seek_first_letter_in_database(FsFile& database, byte myLetter) {
     char gamename_str[3];

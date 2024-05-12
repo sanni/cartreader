@@ -291,23 +291,6 @@ void writeData_MSX(uint16_t addr, uint8_t data) {
 }
 
 //******************************************
-// POWER
-//******************************************
-#ifndef ENABLE_NES
-int int_pow(int base, int exp)  // Power for int
-{
-  int result = 1;
-  while (exp) {
-    if (exp & 1)
-      result *= base;
-    exp /= 2;
-    base *= base;
-  }
-  return result;
-}
-#endif
-
-//******************************************
 // CS CODE
 //******************************************
 void setCS()  // Set CS Line
