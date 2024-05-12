@@ -53,6 +53,32 @@ static const char GameSharkRead[] PROGMEM = "Read GBC GameShark";
 static const char GameSharkWrite[] PROGMEM = "Write GBC GameShark";
 static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWrite, GameSharkRead, GameSharkWrite };
 
+bool gbxFlashCFI() {
+  // Flash CFI
+  display_Clear();
+  display_Update();
+  setup_GB();
+  mode = CORE_GB;
+
+  // Change working dir to root
+  sd.chdir("/");
+  // Launch filebrowser
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select file"));
+  display_Clear();
+  identifyCFI_GB();
+  if (!writeCFI_GB()) {
+    display_Clear();
+    println_Msg(F("Flashing failed, time out!"));
+    // Prints string out of the common strings array either with or without newline
+    print_STR(press_button_STR, 1);
+    display_Update();
+    return false;
+  }
+  return true;
+}
+
 // Start menu for both GB and GBA
 void gbxMenu() {
   // create menu with title and 5 options to choose from
@@ -212,53 +238,14 @@ void gbxMenu() {
 
         case 1:
           // Flash CFI
-          display_Clear();
-          display_Update();
-          setup_GB();
-          mode = CORE_GB;
-
-          // Change working dir to root
-          sd.chdir("/");
-          // Launch filebrowser
-          filePath[0] = '\0';
-          sd.chdir("/");
-          fileBrowser(F("Select file"));
-          display_Clear();
-          identifyCFI_GB();
-          if (!writeCFI_GB()) {
-            display_Clear();
-            println_Msg(F("Flashing failed, time out!"));
-            // Prints string out of the common strings array either with or without newline
-            print_STR(press_button_STR, 1);
-            display_Update();
-            wait();
-          }
-          // Reset
+          gbxFlashCFI();
           wait();
           resetArduino();
           break;
 
         case 2:
-          // Flash CFI and Save
-          display_Clear();
-          display_Update();
-          setup_GB();
-          mode = CORE_GB;
-
-          // Change working dir to root
-          sd.chdir("/");
-          // Launch filebrowser
-          filePath[0] = '\0';
-          sd.chdir("/");
-          fileBrowser(F("Select file"));
-          display_Clear();
-          identifyCFI_GB();
-          if (!writeCFI_GB()) {
-            display_Clear();
-            println_Msg(F("Flashing failed, time out!"));
-            // Prints string out of the common strings array either with or without newline
-            print_STR(press_button_STR, 1);
-            display_Update();
+          // Flash CFI and save
+          if (!gbxFlashCFI()) {
             wait();
             resetArduino();
           }
