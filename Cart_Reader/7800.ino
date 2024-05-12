@@ -185,7 +185,7 @@ void a7800Menu() {
 // READ CODE
 //******************************************
 
-uint8_t readData_7800(uint32_t addr)  // Add Input Pullup
+uint8_t readData_7800(uint16_t addr)  // Add Input Pullup
 {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
@@ -223,7 +223,7 @@ uint8_t readData_7800(uint32_t addr)  // Add Input Pullup
   return ret;
 }
 
-void readSegment_7800(uint32_t startaddr, uint32_t endaddr) {
+void readSegment_7800(uint16_t startaddr, uint32_t endaddr) {
   for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_7800(addr + w);
@@ -233,7 +233,29 @@ void readSegment_7800(uint32_t startaddr, uint32_t endaddr) {
   }
 }
 
-void writeData_7800(uint32_t addr, uint8_t data) {
+void readSegmentBank_7800(uint8_t startbank, uint8_t endbank) {
+  for (uint8_t x = startbank; x < endbank; x++) {
+    writeData_7800(0x8000, x);
+    readSegment_7800(0x8000, 0xC000);
+  }
+}
+
+void readStandard_7800() {
+  if (a7800size > 1)
+    readSegment_7800(0x4000, 0x8000); // +16K = 48K
+  if (a7800size > 0)
+    readSegment_7800(0x8000, 0xC000); // +16K = 32K
+  // Base 16K
+  readSegment_7800(0xC000, 0x10000);  // 16K
+}
+
+void readSupergame_7800() {
+  readSegmentBank_7800(0, 7);         // Bank 0-6 16K * 7 = 112K
+  readSegment_7800(0xC000, 0x10000);  // Bank 7  +16K = 128K
+}
+
+
+void writeData_7800(uint16_t addr, uint8_t data) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
   NOP;
@@ -293,7 +315,7 @@ void writeData_7800(uint32_t addr, uint8_t data) {
 }
 
 // Activision Bankswitch - Double Dragon/Rampage 128K
-void bankSwitch_7800(uint32_t addr) {
+void bankSwitch_7800(uint16_t addr) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
   NOP;
@@ -354,10 +376,7 @@ void readROM_7800() {
 
     case 2:                              // SuperGame - Alien Brigade/Crossbow 144K [78S9]
       readSegment_7800(0x4000, 0x8000);  // 16K
-      for (int x = 0; x < 8; x++) {
-        writeData_7800(0x8000, x);         // Banks 0-7
-        readSegment_7800(0x8000, 0xC000);  // 16K * 8 = +128K = 144K
-      }
+      readSegmentBank_7800(0, 8);        // 16K * 8 = +128K = 144K
       break;
 
     case 3:                                // F-18 Hornet 64K [78AB]
@@ -395,17 +414,11 @@ void readROM_7800() {
       break;
 
     case 5:  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
-      for (int x = 0; x < 4; x++) {
-        writeData_7800(0x8000, x);
-        readSegment_7800(0x8000, 0xC000);  // 16K * 4 = 64K
-      }
+      readSegmentBank_7800(0, 4); // 16K * 4 = 64K
       break;
 
     case 6:  // Karateka (PAL) 64K [78S4 Variant]
-      for (int x = 4; x < 8; x++) {
-        writeData_7800(0x8000, x);
-        readSegment_7800(0x8000, 0xC000);  // 16K * 4 = 64K
-      }
+      readSegmentBank_7800(4, 8); // 16K * 4 = 64K
       break;
 
     case 7: // Bankset switching
@@ -431,23 +444,6 @@ void readROM_7800() {
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
-}
-
-void readStandard_7800() {
-  if (a7800size > 1)
-    readSegment_7800(0x4000, 0x8000);  // +16K = 48K
-  if (a7800size > 0)
-    readSegment_7800(0x8000, 0xC000);  // +16K = 32K
-  // Base 16K
-  readSegment_7800(0xC000, 0x10000);  // 16K
-}
-
-void readSupergame_7800() {
-  for (int x = 0; x < 7; x++) {
-    writeData_7800(0x8000, x);         // Banks 0-6
-    readSegment_7800(0x8000, 0xC000);  // 16K * 7 = 112K
-  }
-  readSegment_7800(0xC000, 0x10000);  // Bank 7 +16 = 128K
 }
 
 void setHalt_7800(byte on) {
