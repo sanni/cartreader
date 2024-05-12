@@ -257,18 +257,30 @@ void readSegment_C64(uint16_t startaddr, uint32_t endaddr, uint16_t size = 512) 
   }
 }
 
-void readSegment16k_C64() {
-  ROML_ENABLE;
-  readSegment_C64(0x8000, 0xA000);  // 8K
-  ROML_DISABLE;
-  ROMH_ENABLE;
-  readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-  ROMH_DISABLE;
+void readSegmentEnableDisable_C64(uint16_t startaddr, uint32_t endaddr, byte romLow, uint16_t size = 512) {
+  PORTL &= ~(1 << romLow); // enable ROML or ROMH
+  readSegment_C64(startaddr, endaddr, size);
+  PORTL |= (1 << romLow); // disable ROML or ROMH
 }
 
-void readSegmentBankA0A4_C64(uint16_t bank) {
+void readSegment16k_C64() {
+  readSegmentEnableDisable_C64(0x8000, 0xA000, 0);  // 8K
+  readSegmentEnableDisable_C64(0xA000, 0xC000, 1);  // +8K = 16K
+}
+
+void readSegmentBankD0D5_C64(uint16_t banks, uint16_t address, byte romLow) {
+  PORTL &= ~(1 << romLow); // enable ROML or ROMH
+  uint32_t endAddress = address + 0x2000;
+  for (uint16_t x = 0; x < banks; x++) {
+    bankSwitch_C64(0xDE00, x);        // Switch Bank using D0-D5
+    readSegment_C64(address, endAddress);  
+  }
+  PORTL |= (1 << romLow); // disable ROML or ROMH
+}
+
+void readSegmentBankA0A4_C64(uint16_t banks) {
   ROML_ENABLE;
-  for (uint16_t x = 0; x < bank; x++) {
+  for (uint16_t x = 0; x < banks; x++) {
     bankSwitch_C64(0xDE00 + x, 0);    // Switch Bank using address lines
     readSegment_C64(0x8000, 0xA000);  // 8K per bank
   }
@@ -381,24 +393,17 @@ void readROM_C64() {
       // ULTIMAX CARTS
       if (c64port == 2) {   // 2 = 10 = EXROM HIGH/GAME LOW
         if (c64size > 1) {  // 16K [NO ROML FOR 8K]
-          ROML_ENABLE;
-          readSegment_C64(0x8000, 0xA000);  // 8K
-          ROML_DISABLE;
+          readSegmentEnableDisable_C64(0x8000, 0xA000, 0); // 8K
         }
-        ROMH_ENABLE;
-        readSegment_C64(0xE000, 0x10000);  // +8K = 8K/16K
-        ROMH_DISABLE;
+        readSegmentEnableDisable_C64(0xE000, 0x10000, 1);  // +8K = 8K/16K
       } else {              // NORMAL CARTS
-        ROML_ENABLE;
-        readSegment_C64(0x8000, 0x9000);  // 4K
-        if (c64size > 0)
-          readSegment_C64(0x9000, 0xA000);  // +4K = 8K
-        ROML_DISABLE;
-        if (c64size > 1) {
-          ROMH_ENABLE;
-          readSegment_C64(0xA000, 0xC000);  // +8K = 16K
-          ROMH_DISABLE;
+        if (c64size > 0) {
+          readSegmentEnableDisable_C64(0x8000, 0xA000, 0);   // 8K
+          if (c64size > 1)
+            readSegmentEnableDisable_C64(0xA000, 0xC000, 1); // +8K = 16K
         }
+        else 
+          readSegmentEnableDisable_C64(0x9000, 0xA000, 0);  // 4K
       }
       break;
 
@@ -426,9 +431,7 @@ void readROM_C64() {
       break;
 
     case 4:          // Simons Basic (16K)
-      ROML_ENABLE;
-      readSegment_C64(0x8000, 0xA000);  // 8K
-      ROML_DISABLE;
+      readSegmentEnableDisable_C64(0x8000, 0xA000, 0);  // 8K
       ROMH_ENABLE;
       bankSwitch_C64(0xDE00, 0x1);      // Switch Bank to ROM
       readSegment_C64(0xA000, 0xC000);  // +8K = 16K
@@ -459,35 +462,18 @@ void readROM_C64() {
         // Robocop 2 + Shadow of the Beast
         println_Msg(F("TWO CHIP"));
         display_Update();
-        ROML_ENABLE;
-        for (int x = 0; x < 16; x++) {
-          bankSwitch_C64(0xDE00, x);        // Switch Bank using D0-D3
-          readSegment_C64(0x8000, 0xA000);  // 8K * 16 = 128K
-        }
-        ROML_DISABLE;
-        ROMH_ENABLE;
-        for (int x = 0; x < 16; x++) {
-          bankSwitch_C64(0xDE00, x);        // Switch Bank using D0-D3
-          readSegment_C64(0xA000, 0xC000);  // 8K * 16 = +128K = 256K
-        }
-        ROMH_DISABLE;
+        readSegmentBankD0D5_C64(16, 0x8000, 0); // 8K * 16 = 128K
+        readSegmentBankD0D5_C64(16, 0xA000, 1); // 8K * 16 = +128K = 256K
       } else {  // Single Chip 128K/256K/512K
         println_Msg(F("SINGLE CHIP"));
         display_Update();
-        ROML_ENABLE;
         c64banks = C64[c64size] / 8;
-        for (int x = 0; x < c64banks; x++) {
-          bankSwitch_C64(0xDE00, x);        // Switch Bank using D0-D5
-          readSegment_C64(0x8000, 0xA000);  // 8K * Banks = 128K/256K/512K
-        }
-        ROML_DISABLE;
+        readSegmentBankD0D5_C64(c64banks, 0x8000, 0); // 8K * Banks = 128K/256K/512K
       }
       break;
     }
     case 6:           // Expert Cartridge (8K)
-      ROML_ENABLE;
-      readSegment_C64(0x8000, 0xA000);  // 8K
-      ROML_DISABLE;
+      readSegmentEnableDisable_C64(0x8000, 0xA000, 0);
       break;
 
     case 7:          // Fun Play, Power Play (128K)
@@ -553,27 +539,16 @@ void readROM_C64() {
       break;
 
     case 18:          // Zaxxon, Super Zaxxon (SEGA) (20K)
-      ROML_ENABLE;
-      readSegment_C64(0x8000, 0x9000);  // 4K
-      ROML_DISABLE;
-      ROMH_ENABLE;
-      readSegment_C64(0xA000, 0xC000);  // +8K = 12K
-      ROMH_DISABLE;
+      readSegmentEnableDisable_C64(0x8000, 0x9000, 0);  // 4K
+      readSegmentEnableDisable_C64(0xA000, 0xC000, 1);  // +8K = 12K
       // Switch Bank
       readData_C64(0x9000);
-      ROMH_ENABLE;
-      readSegment_C64(0xA000, 0xC000);  // +8K = 20K
-      ROMH_DISABLE;
+      readSegmentEnableDisable_C64(0xA000, 0xC000, 1);  // +8K = 20K
       break;
 
     case 19:          // Magic Desk, Domark, HES Australia (32K/64K/128K)
-      ROML_ENABLE;
       c64banks = C64[c64size] / 8;
-      for (int x = 0; x < c64banks; x++) {
-        bankSwitch_C64(0xDE00, x);        // Switch Bank using D0-D3
-        readSegment_C64(0x8000, 0xA000);  // 8K * Banks = 32K/64K/128K
-      }
-      ROML_DISABLE;
+      readSegmentBankD0D5_C64(c64banks, 0x8000, 0);
       break;
 
     case 20:  // Super Snapshot 5 (64K)
