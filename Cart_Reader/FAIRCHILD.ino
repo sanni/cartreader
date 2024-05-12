@@ -395,7 +395,7 @@ void readROM_FAIRCHILD() {
   createFolder("FAIRCHILD", "ROM", romName, "bin");
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -476,7 +476,7 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
   createFolder("FAIRCHILD", "ROM", romName, "bin");
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();

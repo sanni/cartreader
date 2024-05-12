@@ -299,7 +299,7 @@ void readROM_2600() {
   createFolder("ATARI", "ROM", romName, "a26");
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();

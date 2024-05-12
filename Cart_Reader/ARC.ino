@@ -153,7 +153,7 @@ void readROM_ARC() {
   createFolder("ARC", "ROM", romName, "bin");
 
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();

@@ -1848,7 +1848,7 @@ void readFlash() {
   EEPROM_writeAnything(0, foldern);
 
   display_Clear();
-  print_Msg(F("Saving as "));
+  print_STR(saving_to_STR, 0);
   print_Msg(fileName);
   println_Msg(F("..."));
   display_Update();
@@ -2167,7 +2167,7 @@ void readFlash16() {
   EEPROM_writeAnything(0, foldern);
 
   display_Clear();
-  print_Msg(F("Saving as "));
+  print_STR(saving_to_STR, 0);
   print_Msg(fileName);
   println_Msg(F("..."));
   display_Update();
@@ -2466,7 +2466,7 @@ void read_Eprom() {
   EEPROM_writeAnything(0, foldern);
 
   display_Clear();
-  print_Msg(F("Saving as "));
+  print_STR(saving_to_STR, 0);
   print_Msg(fileName);
   println_Msg(F("..."));
   display_Update();
