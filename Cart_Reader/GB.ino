@@ -996,7 +996,7 @@ void getCartInfo_GB() {
 
   // ROM banks
   romBanks = 2;
-  if(romSize >= 0x01 && romSize <= 0x08) {
+  if (romSize >= 0x01 && romSize <= 0x08) {
     romBanks = int_pow(2, romSize + 1);
   }
 
@@ -1107,14 +1107,7 @@ void getCartInfo_GB() {
 // Read ROM
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".GB");
-
-  // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GB", "ROM", romName, "gb");
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -1322,14 +1315,7 @@ void readSRAM_GB() {
   if (lastByte > 0) {
 
     // Get name, add extension and convert to char array for sd lib
-    strcpy(fileName, romName);
-    strcat(fileName, ".sav");
-
-    // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
+    createFolder("GB", "SAVE", romName, "sav");
 
     // write new folder number back to eeprom
     foldern = foldern + 1;
@@ -1476,14 +1462,7 @@ unsigned long verifySRAM_GB() {
 // Read SRAM + FLASH save data of MBC6
 void readSRAMFLASH_MBC6_GB() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".sav");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GB", "SAVE", romName, "sav");
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -1711,14 +1690,7 @@ void writeSRAMFLASH_MBC6_GB() {
 void readEEPROM_MBC7_GB() {
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".sav");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GB", "SAVE", romName, "sav");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -1932,7 +1904,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
     // ROM banks
     romBanks = 2;
-    if(romSize >= 0x01 && romSize <= 0x07) {
+    if (romSize >= 0x01 && romSize <= 0x07) {
       romBanks = int_pow(2, romSize + 1);
     }
 
@@ -2354,7 +2326,7 @@ bool writeCFI_GB() {
 
     // ROM banks
     romBanks = 2;
-    if(romSize >= 0x01 && romSize <= 0x07) {
+    if (romSize >= 0x01 && romSize <= 0x07) {
       romBanks = int_pow(2, romSize + 1);
     }
 
@@ -2568,14 +2540,7 @@ bool writeCFI_GB() {
 // Read Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
 void readPelican_GB() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "Pelican");
-  strcat(fileName, ".GB");
-
-  // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/ROM/Pelican/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GB", "ROM", "Pelican", "GB");
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -3027,14 +2992,7 @@ bool isToggle(byte byte1, byte byte2) {
 // Read Mega Memory Card Rom and Save Backup Data
 void readMegaMem_GB() {
   // Dump the Rom
-  strcpy(fileName, "Rom");
-  strcat(fileName, ".GB");
-
-  // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/ROM/MegaMem/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GB", "ROM", "MegaMem", "GB");
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -3349,10 +3307,6 @@ void writeMegaMem_GB() {
 ***************************************************/
 // Read Datel GBC Gameshark Device
 void readGameshark_GB() {
-  // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "Gameshark");
-  strcat(fileName, ".GB");
-
   word finalAddress = 0x5FFF;
   word startAddress = 0x4000;
   word bankAddress = 0x7FE1;
@@ -3401,11 +3355,8 @@ void readGameshark_GB() {
     mainMenu();
   }
 
-  // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/ROM/Gameshark/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  // Get name, add extension and convert to char array for sd lib
+  createFolder("GB", "ROM", "Gameshark", "GB");
 
   print_STR(saving_to_STR, 0);
   print_Msg(folder);

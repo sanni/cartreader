@@ -550,23 +550,13 @@ void getCartInfo_SMS() {
 //******************************************
 void readROM_SMS() {
   // Get name, add extension depending on the system and convert to char array for sd lib
-  EEPROM_readAnything(0, foldern);
-  strcpy(fileName, romName);
   if (system_sms) {
-    strcat(fileName, ".sms");
-    sprintf(folder, "SMS/ROM/%s/%d", romName, foldern);
+    createFolder("SMS", "ROM", romName, "sms");
   } else if (system_gg) {
-    strcat(fileName, ".gg");
-    sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
+    createFolder("GG", "ROM", romName, "gg");
   } else {
-    strcat(fileName, ".sg");
-    sprintf(folder, "SG1000/ROM/%s/%d", romName, foldern);
+    createFolder("SG1000", "ROM", romName, "sg");
   }
-
-  // Create a new folder
-  sd.chdir("/");
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -658,20 +648,14 @@ void readROM_SMS() {
 ///*****************************************
 void readSRAM_SMS() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".sav");
+  const char* system;
 
-  EEPROM_readAnything(0, foldern);
   if (system_gg) {
-    sprintf(folder, "GG/SAVE/%s/%d", romName, foldern);
+    system = "GG";
   } else {
-    sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
+    system = "SMS";
   }
-
-  // Create a new folder
-  sd.chdir("/");
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder(system, "SAVE", romName, "sav");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

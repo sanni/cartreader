@@ -522,12 +522,7 @@ void getCartInfo_LOOPY() {
 void readROM_LOOPY() {
   dataIn_LOOPY();
 
-  sprintf(fileName, "%s.bin", romName);
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "LOOPY/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("LOOPY", "ROM", romName, "bin");
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -657,12 +652,7 @@ void formatSRAM_LOOPY() {
 void readSRAM_LOOPY() {
   dataIn_LOOPY();
 
-  sprintf(fileName, "%s.sav", romName);
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "LOOPY/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("LOOPY", "SAVE", romName, "sav");
 
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);

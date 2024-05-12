@@ -296,14 +296,7 @@ boolean checkE7(uint16_t bank) {
 }
 
 void readROM_2600() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".a26");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ATARI/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("ATARI", "ROM", romName, "a26");
 
   display_Clear();
   print_Msg(F("Saving to "));

@@ -709,15 +709,8 @@ bool selectMapping(FsFile& database) {
 }
 
 void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersize, const boolean renamerom) {
-    // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, fileSuffix);
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "NES/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  // Get name, add extension and convert to char array for sd lib
+  createFolder("NES", "ROM", romName, fileSuffix);
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -770,11 +763,11 @@ void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersi
 }
 
 void readRom_NES() {
-  read_NES(".nes", iNES_HEADER, 16, true);
+  read_NES("nes", iNES_HEADER, 16, true);
 }
 
 void readRaw_NES() {
-  read_NES(".bin", NULL, 0, false);
+  read_NES("bin", NULL, 0, false);
 }
 
 /******************************************

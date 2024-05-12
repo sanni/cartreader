@@ -342,14 +342,7 @@ void bankSwitch_7800(uint16_t addr) {
 //******************************************
 
 void readROM_7800() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".a78");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "7800/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("7800", "ROM", romName, "a78");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

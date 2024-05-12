@@ -303,14 +303,7 @@ void readSegment_INTV(uint32_t startaddr, uint32_t endaddr) {
 
 // MODIFIED READ ROUTINE FOR ALL 10 MAPPERS
 void readROM_INTV() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".int");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "INTV/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("INTV", "ROM", romName, "int");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

@@ -1424,14 +1424,7 @@ void readROM_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".BIN");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "MD/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("MD", "ROM", romName, "BIN");
 
   display_Clear();
   print_STR(saving_to_STR, 0);
@@ -1853,14 +1846,7 @@ void readSram_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".srm");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "MD/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("MD", "SAVE", romName, "srm");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -2714,15 +2700,7 @@ void readEEP_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".eep");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sd.chdir();
-  sprintf(folder, "MD/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("MD", "SAVE", romName, "eep");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -2814,14 +2792,7 @@ void readBram_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "Cart.brm");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sd.chdir();
-  sprintf(folder, "MD/RAM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("MD", "RAM", "Cart", "brm");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -2909,14 +2880,7 @@ void readRealtec_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".MD");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "MD/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("MD", "ROM", romName, "MD");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

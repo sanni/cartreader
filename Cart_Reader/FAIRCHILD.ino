@@ -392,14 +392,7 @@ uint8_t readData_FAIRCHILD() {
 }
 
 void readROM_FAIRCHILD() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "FAIRCHILD/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("FAIRCHILD", "ROM", romName, "bin");
 
   display_Clear();
   print_Msg(F("Saving to "));
@@ -479,16 +472,8 @@ void readROM_FAIRCHILD() {
   wait();
 }
 
-void read16K_FAIRCHILD()  // Read 16K Bytes
-{
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "FAIRCHILD/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+void read16K_FAIRCHILD() { // Read 16K Bytes
+  createFolder("FAIRCHILD", "ROM", romName, "bin");
 
   display_Clear();
   print_Msg(F("Saving to "));

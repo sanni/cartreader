@@ -196,14 +196,7 @@ void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr) {
 //******************************************
 
 void readROM_VECTREX() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".vec");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "VECTREX/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("VECTREX", "ROM", romName, "vec");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

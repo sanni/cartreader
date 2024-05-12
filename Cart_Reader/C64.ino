@@ -364,14 +364,7 @@ void readPorts_C64() {
 // GAME HIGH/EXROM LOW: ROML = $8000
 
 void readROM_C64() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "C64/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("C64", "ROM", romName, "bin");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

@@ -212,14 +212,7 @@ void bankSwitch_ODY2(uint16_t addr, uint8_t data) {
 }
 
 void readROM_ODY2() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ODY2/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("ODY2", "ROM", romName, "bin");
 
   display_Clear();
   print_Msg(F("Saving to "));

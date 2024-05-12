@@ -561,13 +561,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
 
 static void readSRAM_WS() {
   // generate fullname of rom file
-  snprintf(fileName, FILENAME_LENGTH, "%s.sav", romName);
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "WS/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("WS", "SAVE", romName, "save");
 
   display_Clear();
   print_Msg(F("Saving "));
@@ -706,13 +700,7 @@ static void writeSRAM_WS() {
 
 static void readEEPROM_WS() {
   // generate fullname of eep file
-  snprintf(fileName, FILENAME_LENGTH, "%s.eep", romName);
-
-  // create a new folder for storing eep file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "WS/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("WS", "SAVE", romName, "eep");
 
   display_Clear();
   print_Msg(F("Saving "));

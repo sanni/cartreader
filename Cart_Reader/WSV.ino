@@ -185,15 +185,7 @@ uint8_t readByte_WSV(uint32_t addr) {
 //******************************************
 
 void readROM_WSV() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".sv");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  //sprintf(folder, "WSV/ROM/%s/%d", romName, foldern);
-  sprintf(folder, "WSV/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("WSV", "ROM", romName, "sv");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

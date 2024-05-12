@@ -343,14 +343,7 @@ void readROM_MSX() {
     println_Msg(F("ROM SIZE 0K"));
     display_Update();
   } else {
-    strcpy(fileName, romName);
-    strcat(fileName, ".bin");
-
-    // create a new folder for storing rom file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "MSX/ROM/%d", foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
+    createFolder("MSX", "ROM", romName, "bin");
 
     display_Clear();
     print_STR(saving_to_STR, 0);

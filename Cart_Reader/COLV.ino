@@ -162,15 +162,7 @@ void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
 }
 
 void readROM_COL() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".col");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  //  sprintf(folder, "COL/ROM/%s/%d", romName, foldern);
-  sprintf(folder, "COL/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("COL", "ROM", romName, "col");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

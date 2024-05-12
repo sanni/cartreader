@@ -821,14 +821,7 @@ void getCartInfo_GBA() {
 // Dump ROM
 void readROM_GBA() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".gba");
-
-  // create a new folder for the rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GBA/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GBA", "ROM", romName, "gba");
 
   //clear the screen
   display_Clear();
@@ -935,14 +928,7 @@ boolean compare_checksum_GBA() {
 void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
-    strcpy(fileName, romName);
-    strcat(fileName, ".srm");
-
-    // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
+    createFolder("GBA", "SAVE", romName, "srm");
 
     // Save location
     print_STR(saving_to_STR, 0);
@@ -1076,14 +1062,7 @@ void readFRAM_GBA(unsigned long framSize) {
   PORTH &= ~((1 << 0) | (1 << 6));
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".srm");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GBA", "SAVE", romName, "srm");
 
   // Save location
   print_STR(saving_to_STR, 0);
@@ -1480,15 +1459,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
 
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
-    strcpy(fileName, romName);
-    strcat(fileName, ".fla");
-
-    // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-
-    sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
+    createFolder("GBA", "SAVE", romName, "fla");
 
     // Save location
     print_STR(saving_to_STR, 0);
@@ -1724,15 +1695,7 @@ void writeEeprom_GBA(word eepSize) {
 // Read eeprom to file
 void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".eep");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-
-  sprintf(folder, "GBA/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("GBA", "SAVE", romName, "eep");
 
   // Save location
   print_STR(saving_to_STR, 0);

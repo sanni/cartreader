@@ -2412,21 +2412,16 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
+  const char* suffix;
 
   if (saveType == 4) {
-    strcat(fileName, ".fla");
+    suffix = "fla";
   } else if (saveType == 1) {
-    strcat(fileName, ".sra");
+    suffix = "sra";
   } else {
     print_FatalError(F("Savetype Error"));
   }
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("N64", "SAVE", romName, suffix);
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -2821,14 +2816,7 @@ void getFramType() {
 // dumping rom slow
 void readRom_N64() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".Z64");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("N64", "ROM", romName, "Z64");
 
   // clear the screen
   // display_Clear();
@@ -2876,14 +2864,7 @@ void readRom_N64() {
 // dumping rom fast
 uint32_t readRom_N64() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".Z64");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("N64", "ROM", romName, "Z64");
 
   // clear the screen
   // display_Clear();

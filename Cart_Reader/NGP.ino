@@ -208,13 +208,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
     changeSize_NGP();
 
   // generate fullname of rom file
-  snprintf(fileName, FILENAME_LENGTH, "%s.ngp", romName);
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "NGP/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("NGP", "ROM", romName, "ngp");
 
   // filling output file path to buffer
   if (outPathBuf != NULL && bufferSize > 0)
@@ -263,13 +257,7 @@ void scanChip_NGP() {
   display_Clear();
 
   // generate name of report file
-  snprintf(fileName, FILENAME_LENGTH, "%s.txt", romName);
-
-  // create a new folder to save report file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "NGP/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("NGP", "ROM", romName, "txt");
 
   print_Msg(F("Saving chip report to "));
   print_Msg(folder);

@@ -751,15 +751,7 @@ void read_rom_PCE(void) {
   println_Msg(F("KB"));
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "PCEROM");
-  strcat(fileName, ".pce");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sd.chdir("/");
-  sprintf(folder, "PCE/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("PCE", "ROM", "PCEROM", "pce");
 
   print_Msg(F("Saving ROM to "));
   print_Msg(folder);

@@ -239,14 +239,7 @@ void writeData_POKE(uint32_t addr, uint8_t data) {
 //******************************************
 
 void readROM_POKE() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".min");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "POKE/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("POKE", "ROM", romName, "min");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

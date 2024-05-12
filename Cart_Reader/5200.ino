@@ -216,14 +216,7 @@ void readSegment_5200(uint16_t startaddr, uint16_t endaddr) {
 //******************************************
 
 void readROM_5200() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".a52");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "5200/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("5200", "ROM", romName, "a52");
 
   display_Clear();
   print_STR(saving_to_STR, 0);

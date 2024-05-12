@@ -268,13 +268,7 @@ void readRAM_GPC() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "GPC4M.sfc");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/ROM/%s/%d", "GPC4M", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("SNES", "ROM", "GPC4M", "sfc");
 
   //clear the screen
   display_Clear();

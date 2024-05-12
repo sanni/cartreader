@@ -150,14 +150,7 @@ void readSegment_ARC(uint16_t startaddr, uint16_t endaddr) {
 }
 
 void readROM_ARC() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ARC/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("ARC", "ROM", romName, "bin");
 
   display_Clear();
   print_Msg(F("Saving to "));

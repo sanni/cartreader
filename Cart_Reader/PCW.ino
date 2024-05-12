@@ -425,12 +425,7 @@ void readSingleROM_PCW() {
   println_Msg(FS(FSTRING_EMPTY));
 
   // Create file
-  strcpy(fileName, romName);
-  strcat(fileName, ".pcw");
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "PCW/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("PCW", "ROM", romName, "pcw");
 
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
@@ -564,12 +559,7 @@ void readMultiROM_PCW() {
   println_Msg(FS(FSTRING_EMPTY));
 
   // Create file
-  strcpy(fileName, romName);
-  strcat(fileName, ".pcw");
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "PCW/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("PCW", "ROM", romName, "pcw");
 
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
@@ -633,13 +623,7 @@ void readMultiROM_PCW() {
 //******************************************
 
 void readSRAM_PCW() {  // readSRAM_1A()
-  strcpy(fileName, romName);
-  strcat(fileName, ".srm");
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "PCW/SAVE/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("PCW", "SAVE", romName, "srm");
 
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);

@@ -668,6 +668,16 @@ int int_pow(int base, int exp) {  // Power for int
 }
 #endif
 
+void createFolder(const char* system, const char* subfolder, const char* gameName, const char* fileSuffix) {
+  snprintf(fileName, FILENAME_LENGTH, "%s.%s", gameName, fileSuffix);
+
+  // create a new folder for the rom file
+  EEPROM_readAnything(0, foldern);
+  sprintf(folder, "%s/%s/%s/%d", system, subfolder, gameName, foldern);
+  sd.mkdir(folder, true);
+  sd.chdir(folder);
+}
+
 // move file pointer to first game line with matching letter. If no match is found the last database entry is selected
 void seek_first_letter_in_database(FsFile& database, byte myLetter) {
     char gamename_str[3];
