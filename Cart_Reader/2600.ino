@@ -210,6 +210,14 @@ void readSegmentFx_2600(bool hasRAM, uint16_t size) {
   readDataArray_2600(0x1E00, size);
 }
 
+void readSegmentTigervision_2600(uint8_t banks) {
+  for (uint8_t x = 0; x < banks; x++) {
+    writeData3F_2600(0x3F, x);
+    readSegment_2600(0x1000, 0x1800);
+  }
+  readSegment_2600(0x1800, 0x2000);
+}
+
 void outputFF_2600(uint16_t size) {
   memset(sdBuffer, 0xFF, size * sizeof(sdBuffer[0]));
   myFile.write(sdBuffer, size);
@@ -321,19 +329,11 @@ void readROM_2600() {
       break;
 
     case 0x3F:  // 3F Mapper 8KB
-      for (int x = 0; x < 0x3; x++) {
-        writeData3F_2600(0x3F, x);
-        readSegment_2600(0x1000, 0x1800);
-      }
-      readSegment_2600(0x1800, 0x2000);
+      readSegmentTigervision_2600(3);
       break;
 
     case 0x3E:  // 3E Mapper 32KB ROM 32K RAM
-      for (int x = 0; x < 15; x++) {
-        writeData3F_2600(0x3F, x);
-        readSegment_2600(0x1000, 0x1800);
-      }
-      readSegment_2600(0x1800, 0x2000);
+      readSegmentTigervision_2600(15);
       break;    
 
     case 0x40:  // 4K Default 4KB
