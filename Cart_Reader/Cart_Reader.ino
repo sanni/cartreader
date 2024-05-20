@@ -2884,8 +2884,8 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
 }
 #endif
 
-#if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
 void checkUpdater() {
+#if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
   if (ClockedSerial.available() > 0) {
     String cmd = ClockedSerial.readStringUntil('\n');
     cmd.trim();
@@ -2938,10 +2938,8 @@ void checkUpdater() {
       ClockedSerial.println(F(": Unknown Command"));
     }
   }
-}
-#else
-void checkUpdater() {}
 #endif
+}
 
 /******************************************
   User Control

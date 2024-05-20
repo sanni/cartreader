@@ -1053,6 +1053,30 @@ word readWord_Flash(unsigned long myAddress) {
 #endif
 
 /******************************************
+  write helper functions
+*****************************************/
+bool openFlashFile() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  print_STR(flashing_file_STR, 0);
+  print_Msg(filePath);
+  println_Msg(F("..."));
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize)
+      print_FatalError(file_too_big_STR);
+    return true;
+  }
+  print_STR(open_file_STR, 1);
+  display_Update();
+  return false;
+}
+
+/******************************************
   29F032 flashrom functions
 *****************************************/
 void resetFlash29F032() {
@@ -1115,20 +1139,7 @@ void eraseFlash29F032() {
 }
 
 void writeFlash29F032() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 0);
-  print_Msg(filePath);
-  println_Msg(F("..."));
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut();
 
@@ -1191,9 +1202,6 @@ void writeFlash29F032() {
 
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
@@ -1256,19 +1264,7 @@ void resetFlash29F1610() {
 }
 
 void writeFlash29F1610() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut();
 
@@ -1303,25 +1299,11 @@ void writeFlash29F1610() {
 
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
 void writeFlash29F1601() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
+  if (openFlashFile()) {
 
     // Set data pins to output
     dataOut();
@@ -1362,9 +1344,6 @@ void writeFlash29F1601() {
 
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
@@ -1455,19 +1434,7 @@ void busyCheck29LV640(unsigned long myAddress, byte myData) {
 }
 
 void writeFlash29LV640() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut();
 
@@ -1492,9 +1459,6 @@ void writeFlash29LV640() {
     dataIn8();
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
@@ -1502,19 +1466,7 @@ void writeFlash29LV640() {
   S29GL flashrom functions
 *****************************************/
 void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut();
 
@@ -1559,9 +1511,6 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     dataIn8();
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
@@ -1569,19 +1518,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
   29F800 functions
 *****************************************/
 void writeFlash29F800() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut();
 
@@ -1608,9 +1545,6 @@ void writeFlash29F800() {
 
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
@@ -1662,13 +1596,7 @@ void eraseFlash28FXXX() {
 }
 
 void writeFlash28FXXX() {
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 0);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openFlashFile()) {
     if ((flashid == 0xB088))
       writeFlashLH28F0XX();
     else if ((flashid == 0x8916) || (flashid == 0x8917) || (flashid == 0x8918)) {
@@ -1676,19 +1604,10 @@ void writeFlash28FXXX() {
     }
 
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
 void writeFlashE28FXXXJ3A() {
-  fileSize = myFile.fileSize();
-  if (fileSize > flashSize) {
-    print_Error(file_too_big_STR);
-    return;
-  }
-
   uint32_t block_addr;
   uint32_t block_addr_mask = ~(sectorSize - 1);
 
@@ -1734,11 +1653,6 @@ void writeFlashE28FXXXJ3A() {
 }
 
 void writeFlashLH28F0XX() {
-  fileSize = myFile.fileSize();
-  if (fileSize > flashSize) {
-    print_Error(file_too_big_STR);
-    return;
-  }
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
@@ -1915,18 +1829,7 @@ void resetFlash16() {
 }
 
 void writeFlash16() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
+  if (openFlashFile()) {
 
     // Set data pins to output
     dataOut16();
@@ -1966,26 +1869,11 @@ void writeFlash16() {
 
     // Close the file:
     myFile.close();
-  } else {
-    println_Msg(F("Can't open file on SD."));
-    display_Update();
   }
 }
 
 void writeFlash16_29F1601() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut16();
 
@@ -2029,9 +1917,6 @@ void writeFlash16_29F1601() {
 
     // Close the file:
     myFile.close();
-  } else {
-    println_Msg(F("Can't open file on SD."));
-    display_Update();
   }
 }
 
@@ -2273,19 +2158,7 @@ void busyCheck16_29LV640(unsigned long myAddress, word myData) {
 }
 
 void writeFlash16_29LV640() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Set data pins to output
     dataOut16();
 
@@ -2318,9 +2191,6 @@ void writeFlash16_29LV640() {
 
     // Close the file:
     myFile.close();
-  } else {
-    println_Msg(F("Can't open file on SD."));
-    display_Update();
   }
 }
 
@@ -2500,19 +2370,7 @@ void read_Eprom() {
 }
 
 void write_Eprom() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 1);
-  println_Msg(filePath);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openFlashFile()) {
     // Switch VPP/OE(PH5) to HIGH
     PORTH |= (1 << 5);
     delay(1000);
@@ -2555,9 +2413,6 @@ void write_Eprom() {
     }
     // Close the file:
     myFile.close();
-  } else {
-    println_Msg(F("Can't open file on SD."));
-    display_Update();
   }
 }
 
