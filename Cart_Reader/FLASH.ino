@@ -1055,14 +1055,7 @@ word readWord_Flash(unsigned long myAddress) {
 /******************************************
   write helper functions
 *****************************************/
-bool openFlashFile() {
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 0);
-  print_Msg(filePath);
-  println_Msg(F("..."));
-  display_Update();
-
+bool openFileOnSD() {
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     // Get rom size from file
@@ -1074,6 +1067,24 @@ bool openFlashFile() {
   print_STR(open_file_STR, 1);
   display_Update();
   return false;
+}
+
+bool openFlashFile() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  print_STR(flashing_file_STR, 0);
+  print_Msg(filePath);
+  println_Msg(F("..."));
+  display_Update();
+
+  return openFileOnSD();
+}
+
+bool openVerifyFlashFile() {
+  print_STR(verifying_STR, 1);
+  display_Update();
+
+  return openFileOnSD();
 }
 
 /******************************************
@@ -1710,16 +1721,7 @@ void blankcheck_Flash() {
 }
 
 void verifyFlash() {
-  print_STR(verifying_STR, 1);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
-      print_FatalError(file_too_big_STR);
-
+  if (openVerifyFlashFile()) {
     blank = 0;
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       //fill sdBuffer
@@ -1741,9 +1743,6 @@ void verifyFlash() {
     }
     // Close the file:
     myFile.close();
-  } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
   }
 }
 
@@ -1994,17 +1993,7 @@ void blankcheck16() {
 }
 
 void verifyFlash16() {
-  print_STR(verifying_STR, 1);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize) {
-      print_FatalError(file_too_big_STR);
-    }
-
+  if (openVerifyFlashFile()) {
     blank = 0;
     word d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
@@ -2031,9 +2020,6 @@ void verifyFlash16() {
     }
     // Close the file:
     myFile.close();
-  } else {
-    println_Msg(F("Can't open file on SD."));
-    display_Update();
   }
 }
 
@@ -2417,17 +2403,7 @@ void write_Eprom() {
 }
 
 void verify_Eprom() {
-  print_STR(verifying_STR, 1);
-  display_Update();
-
-  // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
-    // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize) {
-      print_FatalError(file_too_big_STR);
-    }
-
+  if (openVerifyFlashFile()) {
     blank = 0;
     word d = 0;
     for (unsigned long currWord = 0; currWord < (fileSize / 2); currWord += 256) {
@@ -2454,9 +2430,6 @@ void verify_Eprom() {
     }
     // Close the file:
     myFile.close();
-  } else {
-    println_Msg(F("Can't open file on SD."));
-    display_Update();
   }
 }
 
