@@ -20,14 +20,16 @@ byte mapping = 1;
 /******************************************
    Menu
  *****************************************/
+// General Flash menu items
+static const char flashMenuItemBlankcheck[] PROGMEM = "Blankcheck";
+static const char flashMenuItemID[] PROGMEM = "ID";
+static const char flashMenuItemRead[] PROGMEM = "Read";
+static const char flashMenuItemWrite[] PROGMEM = "Write";
+static const char flashMenuItemErase[] PROGMEM = "Erase";
+static const char flashMenuItemPrint[] PROGMEM = "Print";
+
 // 8bit Flash menu items
-static const char flash8MenuItem1[] PROGMEM = "Blankcheck";
-static const char flash8MenuItem2[] PROGMEM = "Erase";
-static const char flash8MenuItem3[] PROGMEM = "Read";
-static const char flash8MenuItem4[] PROGMEM = "Write";
-static const char flash8MenuItem5[] PROGMEM = "ID";
-static const char flash8MenuItem6[] PROGMEM = "Print";
-static const char* const menuOptionsFLASH8[] PROGMEM = { flash8MenuItem1, flash8MenuItem2, flash8MenuItem3, flash8MenuItem4, flash8MenuItem5, flash8MenuItem6, FSTRING_RESET };
+static const char* const menuOptionsFLASH8[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemErase, flashMenuItemRead, flashMenuItemWrite, flashMenuItemID, flashMenuItemPrint, FSTRING_RESET };
 
 #ifdef ENABLE_FLASH16
 // Flash start menu
@@ -37,21 +39,11 @@ static const char flashMenuItem3[] PROGMEM = "16bit Flash adapter";
 static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, FSTRING_RESET };
 
 // 16bit Flash menu items
-static const char flash16MenuItem1[] PROGMEM = "Blankcheck";
-static const char flash16MenuItem2[] PROGMEM = "Erase";
-static const char flash16MenuItem3[] PROGMEM = "Read";
-static const char flash16MenuItem4[] PROGMEM = "Write";
-static const char flash16MenuItem5[] PROGMEM = "ID";
-static const char flash16MenuItem6[] PROGMEM = "Print";
-static const char* const menuOptionsFLASH16[] PROGMEM = { flash16MenuItem1, flash16MenuItem2, flash16MenuItem3, flash16MenuItem4, flash16MenuItem5, flash16MenuItem6, FSTRING_RESET };
+static const char* const menuOptionsFLASH16[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemErase, flashMenuItemRead, flashMenuItemWrite, flashMenuItemID, flashMenuItemPrint, FSTRING_RESET };
 
 // Eprom menu items
-static const char epromMenuItem1[] PROGMEM = "Blankcheck";
-static const char epromMenuItem2[] PROGMEM = "Read";
-static const char epromMenuItem3[] PROGMEM = "Write";
 static const char epromMenuItem4[] PROGMEM = "Verify";
-static const char epromMenuItem5[] PROGMEM = "Print";
-static const char* const menuOptionsEprom[] PROGMEM = { epromMenuItem1, epromMenuItem2, epromMenuItem3, epromMenuItem4, epromMenuItem5, FSTRING_RESET };
+static const char* const menuOptionsEprom[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemRead, flashMenuItemWrite, epromMenuItem4, flashMenuItemPrint, FSTRING_RESET };
 
 constexpr char PROGMEM ATTENTION_3_3V[] = "ATTENTION 3.3V";
 
