@@ -1082,6 +1082,27 @@ bool openVerifyFlashFile() {
 }
 
 /******************************************
+  Command functions
+*****************************************/
+void writeByteCommand_Flash(byte command) {
+  writeByte_Flash(0x555, 0xaa);
+  writeByte_Flash(0x2aa, 0x55);
+  writeByte_Flash(0x555, command);
+}
+
+void writeByteCommandShift_Flash(byte command) {
+  writeByte_Flash(0x5555 << 1, 0xaa);
+  writeByte_Flash(0x2aaa << 1, 0x55);
+  writeByte_Flash(0x5555 << 1, command);
+}
+
+void writeWordCommand_Flash(byte command) {
+  writeWord_Flash(0x5555, 0xaa);
+  writeWord_Flash(0x2aaa, 0x55);
+  writeWord_Flash(0x5555, command);
+}
+
+/******************************************
   29F032 flashrom functions
 *****************************************/
 void resetFlash29F032() {
@@ -1102,9 +1123,7 @@ void idFlash29F032() {
   dataOut();
 
   // ID command sequence
-  writeByte_Flash(0x555, 0xaa);
-  writeByte_Flash(0x2aa, 0x55);
-  writeByte_Flash(0x555, 0x90);
+  writeByteCommand_Flash(0x90);
 
   // Set data pins to input again
   dataIn8();
@@ -1120,12 +1139,8 @@ void eraseFlash29F032() {
   dataOut();
 
   // Erase command sequence
-  writeByte_Flash(0x555, 0xaa);
-  writeByte_Flash(0x2aa, 0x55);
-  writeByte_Flash(0x555, 0x80);
-  writeByte_Flash(0x555, 0xaa);
-  writeByte_Flash(0x2aa, 0x55);
-  writeByte_Flash(0x555, 0x10);
+  writeByteCommand_Flash(0x80);
+  writeByteCommand_Flash(0x10);
 
   // Set data pins to input again
   dataIn8();
@@ -1177,9 +1192,7 @@ void writeFlash29F032() {
           continue;
         }
         // Write command sequence
-        writeByte_Flash(0x555, 0xaa);
-        writeByte_Flash(0x2aa, 0x55);
-        writeByte_Flash(0x555, 0xa0);
+        writeByteCommand_Flash(0xa0);
         // Write current byte
         writeByte_Flash(currByte + c, datum);
         if (busyCheck29F032(currByte + c, datum)) {
@@ -1258,9 +1271,7 @@ void resetFlash29F1610() {
   dataOut();
 
   // Reset command sequence
-  writeByte_Flash(0x5555 << 1, 0xaa);
-  writeByte_Flash(0x2aaa << 1, 0x55);
-  writeByte_Flash(0x5555 << 1, 0xf0);
+  writeByteCommandShift_Flash(0xf0);
 
   // Set data pins to input again
   dataIn8();
@@ -1286,9 +1297,7 @@ void writeFlash29F1610() {
       busyCheck29F1610();
 
       // Write command sequence
-      writeByte_Flash(0x5555 << 1, 0xaa);
-      writeByte_Flash(0x2aaa << 1, 0x55);
-      writeByte_Flash(0x5555 << 1, 0xa0);
+      writeByteCommandShift_Flash(0xa0);
 
       // Write one full page at a time
       for (byte c = 0; c < 128; c++) {
@@ -1326,9 +1335,7 @@ void writeFlash29F1601() {
       busyCheck29F1610();
 
       // Write command sequence
-      writeByte_Flash(0x5555 << 1, 0xaa);
-      writeByte_Flash(0x2aaa << 1, 0x55);
-      writeByte_Flash(0x5555 << 1, 0xa0);
+      writeByteCommandShift_Flash(0xa0);
 
       // Write one full page at a time
       for (byte c = 0; c < 128; c++) {
@@ -1357,9 +1364,7 @@ void idFlash29F1610() {
   dataOut();
 
   // ID command sequence
-  writeByte_Flash(0x5555 << 1, 0xaa);
-  writeByte_Flash(0x2aaa << 1, 0x55);
-  writeByte_Flash(0x5555 << 1, 0x90);
+  writeByteCommandShift_Flash(0x90);
 
   // Set data pins to input again
   dataIn8();
@@ -1375,9 +1380,7 @@ byte readStatusReg() {
   dataOut();
 
   // Status reg command sequence
-  writeByte_Flash(0x5555 << 1, 0xaa);
-  writeByte_Flash(0x2aaa << 1, 0x55);
-  writeByte_Flash(0x5555 << 1, 0x70);
+  writeByteCommandShift_Flash(0x70);
 
   // Set data pins to input again
   dataIn8();
@@ -1392,12 +1395,8 @@ void eraseFlash29F1610() {
   dataOut();
 
   // Erase command sequence
-  writeByte_Flash(0x5555 << 1, 0xaa);
-  writeByte_Flash(0x2aaa << 1, 0x55);
-  writeByte_Flash(0x5555 << 1, 0x80);
-  writeByte_Flash(0x5555 << 1, 0xaa);
-  writeByte_Flash(0x2aaa << 1, 0x55);
-  writeByte_Flash(0x5555 << 1, 0x10);
+  writeByteCommandShift_Flash(0x80);
+  writeByteCommandShift_Flash(0x10);
 
   // Set data pins to input again
   dataIn8();
@@ -1536,9 +1535,7 @@ void writeFlash29F800() {
 
       for (int c = 0; c < 512; c++) {
         // Write command sequence
-        writeByte_Flash(0x5555 << 1, 0xaa);
-        writeByte_Flash(0x2aaa << 1, 0x55);
-        writeByte_Flash(0x5555 << 1, 0xa0);
+        writeByteCommandShift_Flash(0xa0);
         // Write current byte
         writeByte_Flash(currByte + c, sdBuffer[c]);
         busyCheck29F032(currByte + c, sdBuffer[c]);
@@ -1811,9 +1808,7 @@ void resetFlash16() {
   dataOut16();
 
   // Reset command sequence
-  writeWord_Flash(0x5555, 0xaa);
-  writeWord_Flash(0x2aaa, 0x55);
-  writeWord_Flash(0x5555, 0xf0);
+  writeWordCommand_Flash(0xf0);
 
   // Set data pins to input again
   dataIn16();
@@ -1841,9 +1836,7 @@ void writeFlash16() {
       busyCheck16();
 
       // Write command sequence
-      writeWord_Flash(0x5555, 0xaa);
-      writeWord_Flash(0x2aaa, 0x55);
-      writeWord_Flash(0x5555, 0xa0);
+      writeWordCommand_Flash(0xa0);
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
@@ -1884,9 +1877,7 @@ void writeFlash16_29F1601() {
       busyCheck16();
 
       // Write command sequence
-      writeWord_Flash(0x5555, 0xaa);
-      writeWord_Flash(0x2aaa, 0x55);
-      writeWord_Flash(0x5555, 0xa0);
+      writeWordCommand_Flash(0xa0);
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
@@ -1918,9 +1909,7 @@ void idFlash16() {
   dataOut16();
 
   // ID command sequence
-  writeWord_Flash(0x5555, 0xaa);
-  writeWord_Flash(0x2aaa, 0x55);
-  writeWord_Flash(0x5555, 0x90);
+  writeWordCommand_Flash(0x90);
 
   // Set data pins to input again
   dataIn16();
@@ -1936,9 +1925,7 @@ byte readStatusReg16() {
   dataOut16();
 
   // Status reg command sequence
-  writeWord_Flash(0x5555, 0xaa);
-  writeWord_Flash(0x2aaa, 0x55);
-  writeWord_Flash(0x5555, 0x70);
+  writeWordCommand_Flash(0x70);
 
   // Set data pins to input again
   dataIn16();
@@ -1953,12 +1940,8 @@ void eraseFlash16() {
   dataOut16();
 
   // Erase command sequence
-  writeWord_Flash(0x5555, 0xaa);
-  writeWord_Flash(0x2aaa, 0x55);
-  writeWord_Flash(0x5555, 0x80);
-  writeWord_Flash(0x5555, 0xaa);
-  writeWord_Flash(0x2aaa, 0x55);
-  writeWord_Flash(0x5555, 0x10);
+  writeWordCommand_Flash(0x80);
+  writeWordCommand_Flash(0x10);
 
   // Set data pins to input again
   dataIn16();
@@ -2153,9 +2136,7 @@ void writeFlash16_29LV640() {
 
       for (int c = 0; c < 256; c++) {
         // Write command sequence
-        writeWord_Flash(0x5555, 0xaa);
-        writeWord_Flash(0x2aaa, 0x55);
-        writeWord_Flash(0x5555, 0xa0);
+        writeWordCommand_Flash(0xa0);
 
         // Write current word
         word myWord = ((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF);
