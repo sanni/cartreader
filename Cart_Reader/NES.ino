@@ -24,146 +24,157 @@
 //4384 Eeprom Functions
 //4574 NESmaker Flash Cart Functions
 
+struct mapper_NES {
+  uint16_t mapper;
+  uint8_t prglo;
+  uint8_t prghi;
+  uint8_t chrlo;
+  uint8_t chrhi;
+  uint8_t ramlo;
+  uint8_t ramhi;
+};
+
 /******************************************
   Supported Mappers
  *****************************************/
 // Supported Mapper Array (iNES Mapper #s)
 // Format = {mapper,prglo,prghi,chrlo,chrhi,ramlo,ramhi}
-static const uint8_t PROGMEM mapsize[] = {
-  0, 0, 1, 0, 1, 0, 2,   // nrom                                                [sram r/w]
-  1, 1, 5, 0, 5, 0, 3,   // mmc1                                                [sram r/w]
-  2, 2, 4, 0, 0, 0, 0,   // uxrom
-  3, 0, 1, 0, 3, 0, 0,   // cnrom
-  4, 1, 5, 0, 6, 0, 1,   // mmc3/mmc6                                           [sram/prgram r/w]
-  5, 3, 5, 5, 7, 0, 3,   // mmc5                                                [sram r/w]
-  7, 2, 4, 0, 0, 0, 0,   // axrom
-  9, 3, 3, 5, 5, 0, 0,   // mmc2 (punch out)
-  10, 3, 4, 4, 5, 1, 1,  // mmc4                                               [sram r/w]
-  11, 1, 3, 1, 5, 0, 0,  // Color Dreams [UNLICENSED]
-  13, 1, 1, 0, 0, 0, 0,  // cprom (videomation)
-  15, 6, 6, 0, 0, 0, 0,  // K-1029/K-1030P [UNLICENSED]
-  16, 3, 4, 5, 6, 0, 1,  // bandai x24c02                                      [eep r/w]
-  18, 3, 4, 5, 6, 0, 1,  // jaleco ss8806                                      [sram r/w]
-  19, 3, 4, 5, 6, 0, 1,  // namco 106/163                                      [sram/prgram r/w]
+static const struct mapper_NES PROGMEM mapsize[] = {
+  { 0, 0, 1, 0, 1, 0, 2 },   // nrom                                                [sram r/w]
+  { 1, 1, 5, 0, 5, 0, 3 },   // mmc1                                                [sram r/w]
+  { 2, 2, 4, 0, 0, 0, 0 },   // uxrom
+  { 3, 0, 1, 0, 3, 0, 0 },   // cnrom
+  { 4, 1, 5, 0, 6, 0, 1 },   // mmc3/mmc6                                           [sram/prgram r/w]
+  { 5, 3, 5, 5, 7, 0, 3 },   // mmc5                                                [sram r/w]
+  { 7, 2, 4, 0, 0, 0, 0 },   // axrom
+  { 9, 3, 3, 5, 5, 0, 0 },   // mmc2 (punch out)
+  { 10, 3, 4, 4, 5, 1, 1 },  // mmc4                                               [sram r/w]
+  { 11, 1, 3, 1, 5, 0, 0 },  // Color Dreams [UNLICENSED]
+  { 13, 1, 1, 0, 0, 0, 0 },  // cprom (videomation)
+  { 15, 6, 6, 0, 0, 0, 0 },  // K-1029/K-1030P [UNLICENSED]
+  { 16, 3, 4, 5, 6, 0, 1 },  // bandai x24c02                                      [eep r/w]
+  { 18, 3, 4, 5, 6, 0, 1 },  // jaleco ss8806                                      [sram r/w]
+  { 19, 3, 4, 5, 6, 0, 1 },  // namco 106/163                                      [sram/prgram r/w]
   // 20 - bad mapper, not used
-  21, 4, 4, 5, 6, 0, 1,  // vrc4a/vrc4c                                        [sram r/w]
-  22, 3, 3, 5, 5, 0, 0,  // vrc2a
-  23, 3, 3, 5, 6, 0, 0,  // vrc2b/vrc4e
-  24, 4, 4, 5, 5, 0, 0,  // vrc6a (akumajou densetsu)
-  25, 3, 4, 5, 6, 0, 1,  // vrc2c/vrc4b/vrc4d                                  [sram r/w]
-  26, 4, 4, 5, 6, 1, 1,  // vrc6b                                              [sram r/w]
-  28, 5, 7, 0, 0, 0, 0,  // Action 53 [UNLICENSED]
-  30, 4, 5, 0, 0, 0, 0,  // unrom 512 (NESmaker) [UNLICENSED]
-  31, 6, 6, 0, 0, 0, 0,  // NSF music compilations [UNLICENSED]
-  32, 3, 4, 5, 5, 0, 0,  // irem g-101
-  33, 3, 4, 5, 6, 0, 0,  // taito tc0190
-  34, 1, 8, 0, 4, 0, 0,  // BxROM & NINA
-  35, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
-  36, 0, 3, 1, 5, 0, 0,  // TXC 01-22000-400 Board [UNLICENSED]
-  37, 4, 4, 6, 6, 0, 0,  // (super mario bros + tetris + world cup)
-  38, 1, 3, 0, 3, 0, 0,  // Crime Busters [UNLICENSED]
-  42, 0, 3, 0, 5, 0, 0,  // hacked FDS games converted to cartridge [UNLICENSED]
-  45, 3, 6, 0, 8, 0, 0,  // ga23c asic multicart [UNLICENSED]
-  46, 1, 6, 0, 8, 0, 0,  // Rumble Station [UNLICENSED]
-  47, 4, 4, 6, 6, 0, 0,  // (super spike vball + world cup)
-  48, 3, 4, 6, 6, 0, 0,  // taito tc0690
-  52, 0, 3, 0, 3, 0, 0,  // Realtec 8213 [UNLICENSED]
-  56, 0, 7, 0, 6, 0, 0,  // KS202 [UNLICENSED]
-  57, 0, 3, 0, 5, 0, 0,  // BMC-GKA [UNLICENSED]
-  58, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 213 [UNLICENSED]
-  59, 0, 3, 0, 4, 0, 0,  // BMC-T3H53 & BMC-D1038 [UNLICENSED]
-  60, 2, 2, 3, 3, 0, 0,  // Reset-based NROM-128 4-in-1 multicarts [UNLICENSED]
-  62, 7, 7, 8, 8, 0, 0,  // K-1017P [UNLICENSED]
-  63, 8, 8, 0, 0, 0, 0,  // NTDEC "Powerful" multicart, 3072K [UNLICENSED]
-  64, 2, 3, 4, 5, 0, 0,  // tengen rambo-1 [UNLICENSED]
-  65, 3, 4, 5, 6, 0, 0,  // irem h-3001
-  66, 2, 3, 2, 3, 0, 0,  // gxrom/mhrom
-  67, 3, 3, 5, 5, 0, 0,  // sunsoft 3
-  68, 3, 3, 5, 6, 0, 1,  // sunsoft 4                                          [sram r/w]
-  69, 3, 4, 5, 6, 0, 1,  // sunsoft fme-7/5a/5b                                [sram r/w]
-  70, 3, 3, 5, 5, 0, 0,  // bandai
-  71, 2, 4, 0, 0, 0, 0,  // camerica/codemasters [UNLICENSED]
-  72, 3, 3, 5, 5, 0, 0,  // jaleco jf-17
-  73, 3, 3, 0, 0, 0, 0,  // vrc3 (salamander)
-  75, 3, 3, 5, 5, 0, 0,  // vrc1
-  76, 3, 3, 5, 5, 0, 0,  // namco 109 variant (megami tensei: digital devil story)
-  77, 3, 3, 3, 3, 0, 0,  // (napoleon senki)
-  78, 3, 3, 5, 5, 0, 0,  // irem 74hc161/32
-  79, 1, 2, 2, 3, 0, 0,  // NINA-03/06 by AVE [UNLICENSED]
-  80, 3, 3, 5, 6, 0, 1,  // taito x1-005                                       [prgram r/w]
-  82, 3, 3, 5, 6, 0, 1,  // taito x1-017                                       [prgram r/w]
+  { 21, 4, 4, 5, 6, 0, 1 },  // vrc4a/vrc4c                                        [sram r/w]
+  { 22, 3, 3, 5, 5, 0, 0 },  // vrc2a
+  { 23, 3, 3, 5, 6, 0, 0 },  // vrc2b/vrc4e
+  { 24, 4, 4, 5, 5, 0, 0 },  // vrc6a (akumajou densetsu)
+  { 25, 3, 4, 5, 6, 0, 1 },  // vrc2c/vrc4b/vrc4d                                  [sram r/w]
+  { 26, 4, 4, 5, 6, 1, 1 },  // vrc6b                                              [sram r/w]
+  { 28, 5, 7, 0, 0, 0, 0 },  // Action 53 [UNLICENSED]
+  { 30, 4, 5, 0, 0, 0, 0 },  // unrom 512 (NESmaker) [UNLICENSED]
+  { 31, 6, 6, 0, 0, 0, 0 },  // NSF music compilations [UNLICENSED]
+  { 32, 3, 4, 5, 5, 0, 0 },  // irem g-101
+  { 33, 3, 4, 5, 6, 0, 0 },  // taito tc0190
+  { 34, 1, 8, 0, 4, 0, 0 },  // BxROM & NINA
+  { 35, 0, 7, 1, 8, 0, 0 },  // J.Y. Company ASIC [UNLICENSED]
+  { 36, 0, 3, 1, 5, 0, 0 },  // TXC 01-22000-400 Board [UNLICENSED]
+  { 37, 4, 4, 6, 6, 0, 0 },  // (super mario bros + tetris + world cup)
+  { 38, 1, 3, 0, 3, 0, 0 },  // Crime Busters [UNLICENSED]
+  { 42, 0, 3, 0, 5, 0, 0 },  // hacked FDS games converted to cartridge [UNLICENSED]
+  { 45, 3, 6, 0, 8, 0, 0 },  // ga23c asic multicart [UNLICENSED]
+  { 46, 1, 6, 0, 8, 0, 0 },  // Rumble Station [UNLICENSED]
+  { 47, 4, 4, 6, 6, 0, 0 },  // (super spike vball + world cup)
+  { 48, 3, 4, 6, 6, 0, 0 },  // taito tc0690
+  { 52, 0, 3, 0, 3, 0, 0 },  // Realtec 8213 [UNLICENSED]
+  { 56, 0, 7, 0, 6, 0, 0 },  // KS202 [UNLICENSED]
+  { 57, 0, 3, 0, 5, 0, 0 },  // BMC-GKA [UNLICENSED]
+  { 58, 1, 6, 1, 6, 0, 0 },  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 213 [UNLICENSED]
+  { 59, 0, 3, 0, 4, 0, 0 },  // BMC-T3H53 & BMC-D1038 [UNLICENSED]
+  { 60, 2, 2, 3, 3, 0, 0 },  // Reset-based NROM-128 4-in-1 multicarts [UNLICENSED]
+  { 62, 7, 7, 8, 8, 0, 0 },  // K-1017P [UNLICENSED]
+  { 63, 8, 8, 0, 0, 0, 0 },  // NTDEC "Powerful" multicart, 3072K [UNLICENSED]
+  { 64, 2, 3, 4, 5, 0, 0 },  // tengen rambo-1 [UNLICENSED]
+  { 65, 3, 4, 5, 6, 0, 0 },  // irem h-3001
+  { 66, 2, 3, 2, 3, 0, 0 },  // gxrom/mhrom
+  { 67, 3, 3, 5, 5, 0, 0 },  // sunsoft 3
+  { 68, 3, 3, 5, 6, 0, 1 },  // sunsoft 4                                          [sram r/w]
+  { 69, 3, 4, 5, 6, 0, 1 },  // sunsoft fme-7/5a/5b                                [sram r/w]
+  { 70, 3, 3, 5, 5, 0, 0 },  // bandai
+  { 71, 2, 4, 0, 0, 0, 0 },  // camerica/codemasters [UNLICENSED]
+  { 72, 3, 3, 5, 5, 0, 0 },  // jaleco jf-17
+  { 73, 3, 3, 0, 0, 0, 0 },  // vrc3 (salamander)
+  { 75, 3, 3, 5, 5, 0, 0 },  // vrc1
+  { 76, 3, 3, 5, 5, 0, 0 },  // namco 109 variant (megami tensei: digital devil story)
+  { 77, 3, 3, 3, 3, 0, 0 },  // (napoleon senki)
+  { 78, 3, 3, 5, 5, 0, 0 },  // irem 74hc161/32
+  { 79, 1, 2, 2, 3, 0, 0 },  // NINA-03/06 by AVE [UNLICENSED]
+  { 80, 3, 3, 5, 6, 0, 1 },  // taito x1-005                                       [prgram r/w]
+  { 82, 3, 3, 5, 6, 0, 1 },  // taito x1-017                                       [prgram r/w]
   // 84 - bad mapper, not used
-  85, 3, 5, 0, 5, 0, 1,  // vrc7                                               [sram r/w]
-  86, 3, 3, 4, 4, 0, 0,  // jaleco jf-13 (moero pro yakyuu)
-  87, 0, 1, 2, 3, 0, 0,  // Jaleco/Konami CNROM (DIS_74X139X74)
-  88, 3, 3, 5, 5, 0, 0,  // namco (dxrom variant)
-  89, 3, 3, 5, 5, 0, 0,  // sunsoft 2 variant (tenka no goikenban: mito koumon)
-  90, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
-  91, 3, 5, 7, 8, 0, 0,  // JY830623C/YY840238C boards [UNLICENSED]
-  92, 4, 4, 5, 5, 0, 0,  // jaleco jf-19/jf-21
-  93, 3, 3, 0, 0, 0, 0,  // sunsoft 2
-  94, 3, 3, 0, 0, 0, 0,  // hvc-un1rom (senjou no ookami)
-  95, 3, 3, 3, 3, 0, 0,  // namcot-3425 (dragon buster)
-  96, 3, 3, 0, 0, 0, 0,  // (oeka kids)
-  97, 4, 4, 0, 0, 0, 0,  // irem tam-s1 (kaiketsu yanchamaru)
+  { 85, 3, 5, 0, 5, 0, 1 },  // vrc7                                               [sram r/w]
+  { 86, 3, 3, 4, 4, 0, 0 },  // jaleco jf-13 (moero pro yakyuu)
+  { 87, 0, 1, 2, 3, 0, 0 },  // Jaleco/Konami CNROM (DIS_74X139X74)
+  { 88, 3, 3, 5, 5, 0, 0 },  // namco (dxrom variant)
+  { 89, 3, 3, 5, 5, 0, 0 },  // sunsoft 2 variant (tenka no goikenban: mito koumon)
+  { 90, 0, 7, 1, 8, 0, 0 },  // J.Y. Company ASIC [UNLICENSED]
+  { 91, 3, 5, 7, 8, 0, 0 },  // JY830623C/YY840238C boards [UNLICENSED]
+  { 92, 4, 4, 5, 5, 0, 0 },  // jaleco jf-19/jf-21
+  { 93, 3, 3, 0, 0, 0, 0 },  // sunsoft 2
+  { 94, 3, 3, 0, 0, 0, 0 },  // hvc-un1rom (senjou no ookami)
+  { 95, 3, 3, 3, 3, 0, 0 },  // namcot-3425 (dragon buster)
+  { 96, 3, 3, 0, 0, 0, 0 },  // (oeka kids)
+  { 97, 4, 4, 0, 0, 0, 0 },  // irem tam-s1 (kaiketsu yanchamaru)
   // 100 - bad mapper, not used
   // 101 - bad mapper, not used
-  105, 4, 4, 0, 0, 0, 0,  // (nintendo world Championships 1990) [UNTESTED]
-  111, 5, 5, 0, 0, 0, 0,  // GTROM [UNLICENSED]
-  113, 1, 4, 0, 5, 0, 0,  // NINA-03/06 [UNLICENSED]
-  114, 3, 4, 5, 6, 0, 0,  // SuperGame MMC3-clone [UNLICENSED]
-  118, 3, 4, 5, 5, 0, 1,  // txsrom/mmc3                                       [sram r/w]
-  119, 3, 3, 4, 4, 0, 0,  // tqrom/mmc3
-  126, 1, 8, 0, 8, 0, 0,  // MMC3-based multicart (PJ-008, AT-207) [UNLICENSED]
-  134, 1, 8, 0, 8, 0, 0,  // T4A54A, WX-KB4K, or BS-5652 [UNLICENSED]
-  140, 3, 3, 3, 5, 0, 0,  // jaleco jf-11/jf-14
-  142, 1, 3, 0, 0, 0, 0,  // UNL-KS7032 [UNLICENSED]
-  146, 1, 2, 2, 3, 0, 0,  // Sachen 3015 [UNLICENSED]
-  148, 1, 2, 0, 4, 0, 0,  // Sachen SA-0037 & Tengen 800008 [UNLICENSED]
+  { 105, 4, 4, 0, 0, 0, 0 },  // (nintendo world Championships 1990) [UNTESTED]
+  { 111, 5, 5, 0, 0, 0, 0 },  // GTROM [UNLICENSED]
+  { 113, 1, 4, 0, 5, 0, 0 },  // NINA-03/06 [UNLICENSED]
+  { 114, 3, 4, 5, 6, 0, 0 },  // SuperGame MMC3-clone [UNLICENSED]
+  { 118, 3, 4, 5, 5, 0, 1 },  // txsrom/mmc3                                       [sram r/w]
+  { 119, 3, 3, 4, 4, 0, 0 },  // tqrom/mmc3
+  { 126, 1, 8, 0, 8, 0, 0 },  // MMC3-based multicart (PJ-008, AT-207) [UNLICENSED]
+  { 134, 1, 8, 0, 8, 0, 0 },  // T4A54A, WX-KB4K, or BS-5652 [UNLICENSED]
+  { 140, 3, 3, 3, 5, 0, 0 },  // jaleco jf-11/jf-14
+  { 142, 1, 3, 0, 0, 0, 0 },  // UNL-KS7032 [UNLICENSED]
+  { 146, 1, 2, 2, 3, 0, 0 },  // Sachen 3015 [UNLICENSED]
+  { 148, 1, 2, 0, 4, 0, 0 },  // Sachen SA-0037 & Tengen 800008 [UNLICENSED]
   // 151 - bad mapper, not used
-  152, 2, 3, 5, 5, 0, 0,  // BANDAI-74*161/161/32
-  153, 5, 5, 0, 0, 1, 1,  // (famicom jump ii)                                 [sram r/w]
-  154, 3, 3, 5, 5, 0, 0,  // namcot-3453 (devil man)
-  155, 3, 3, 3, 5, 0, 1,  // mmc1 variant                                      [sram r/w]
-  157, 4, 4, 0, 0, 0, 0,  // Datach
-  158, 3, 3, 5, 5, 0, 0,  // tengen rambo-1 variant (alien syndrome (u)) [UNLICENSED]
-  159, 3, 4, 5, 6, 1, 1,  // bandai x24c01                                     [eep r/w]
-  162, 6, 7, 0, 0, 0, 0,  // Waixing FS304 [UNLICENSED]
-  163, 6, 7, 0, 0, 0, 0,  // Nanjing FC-001 [UNLICENSED]
-  174, 3, 3, 4, 4, 0, 0,  // NTDEC 5-in-1 [UNLICENSED]
-  176, 4, 4, 5, 5, 0, 0,  // 8025 enhanced MMC3 [UNLICENSED]
-  177, 1, 7, 0, 0, 0, 0,  // Henggedianzi Super Rich PCB [UNLICENSED]
-  178, 5, 5, 0, 0, 0, 0,  // some Waixing PCBs [UNLICENSED]
-  180, 3, 3, 0, 0, 0, 0,  // unrom variant (crazy climber)
-  184, 1, 1, 2, 3, 0, 0,  // sunsoft 1
-  185, 0, 1, 1, 1, 0, 0,  // cnrom lockout
+  { 152, 2, 3, 5, 5, 0, 0 },  // BANDAI-74*161/161/32
+  { 153, 5, 5, 0, 0, 1, 1 },  // (famicom jump ii)                                 [sram r/w]
+  { 154, 3, 3, 5, 5, 0, 0 },  // namcot-3453 (devil man)
+  { 155, 3, 3, 3, 5, 0, 1 },  // mmc1 variant                                      [sram r/w]
+  { 157, 4, 4, 0, 0, 0, 0 },  // Datach
+  { 158, 3, 3, 5, 5, 0, 0 },  // tengen rambo-1 variant (alien syndrome (u)) [UNLICENSED]
+  { 159, 3, 4, 5, 6, 1, 1 },  // bandai x24c01                                     [eep r/w]
+  { 162, 6, 7, 0, 0, 0, 0 },  // Waixing FS304 [UNLICENSED]
+  { 163, 6, 7, 0, 0, 0, 0 },  // Nanjing FC-001 [UNLICENSED]
+  { 174, 3, 3, 4, 4, 0, 0 },  // NTDEC 5-in-1 [UNLICENSED]
+  { 176, 4, 4, 5, 5, 0, 0 },  // 8025 enhanced MMC3 [UNLICENSED]
+  { 177, 1, 7, 0, 0, 0, 0 },  // Henggedianzi Super Rich PCB [UNLICENSED]
+  { 178, 5, 5, 0, 0, 0, 0 },  // some Waixing PCBs [UNLICENSED]
+  { 180, 3, 3, 0, 0, 0, 0 },  // unrom variant (crazy climber)
+  { 184, 1, 1, 2, 3, 0, 0 },  // sunsoft 1
+  { 185, 0, 1, 1, 1, 0, 0 },  // cnrom lockout
   // 186 - bad mapper, not used
-  200, 1, 4, 1, 4, 0, 0,  // HN-02 multicarts [UNLICENSED]
-  201, 1, 8, 1, 9, 0, 0,  // NROM-256 multicarts [UNLICENSED]
-  202, 0, 3, 1, 4, 0, 0,  // BMC-150IN1 multicarts [UNLICENSED]
-  203, 1, 4, 1, 4, 0, 0,  // various NROM-128 multicarts [UNLICENSED]
-  206, 1, 3, 2, 4, 0, 0,  // dxrom
-  207, 4, 4, 5, 5, 0, 0,  // taito x1-005 variant (fudou myouou den)
-  209, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
-  210, 3, 5, 5, 6, 0, 0,  // namco 175/340
-  211, 0, 7, 1, 8, 0, 0,  // J.Y. Company ASIC [UNLICENSED]
-  212, 0, 3, 0, 4, 0, 0,  // BMC Super HiK 300-in-1 [UNLICENSED]
-  213, 1, 6, 1, 6, 0, 0,  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
-  214, 0, 3, 0, 4, 0, 0,  // BMC-SUPERGUN-20IN1, BMC-190IN1 [UNLICENSED]
-  225, 4, 7, 5, 8, 0, 0,  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
-  226, 6, 7, 0, 0, 0, 0,  // BMC-76IN1, BMC-SUPER42IN1, BMC-GHOSTBUSTERS63IN1 [UNLICENSED]
-  227, 1, 5, 0, 0, 0, 0,  // 810449-C-A1 / FW-01 [UNLICENSED]
-  228, 4, 7, 5, 7, 0, 0,  // Action 52 + Cheetahmen II [UNLICENSED]
-  229, 5, 5, 6, 6, 0, 0,  // BMC 31-IN-1 [UNLICENSED]
-  232, 4, 4, 0, 0, 0, 0,  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
-  235, 6, 8, 0, 0, 0, 0,  // "Golden Game" multicarts [UNLICENSED]
-  236, 0, 6, 0, 5, 0, 0,  // Realtec 8031, 8099, 8106, 8155 [UNLICENSED]
-  240, 1, 5, 1, 5, 0, 3,  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
-  241, 3, 5, 0, 0, 0, 0,  // BxROM with WRAM [UNLICENSED]
-  242, 5, 5, 0, 0, 0, 0,  // ET-113 [UNLICENSED]
-  246, 5, 5, 7, 7, 0, 0,  // C&E Feng Shen Bang [UNLICENSED]
+  { 200, 1, 4, 1, 4, 0, 0 },  // HN-02 multicarts [UNLICENSED]
+  { 201, 1, 8, 1, 9, 0, 0 },  // NROM-256 multicarts [UNLICENSED]
+  { 202, 0, 3, 1, 4, 0, 0 },  // BMC-150IN1 multicarts [UNLICENSED]
+  { 203, 1, 4, 1, 4, 0, 0 },  // various NROM-128 multicarts [UNLICENSED]
+  { 206, 1, 3, 2, 4, 0, 0 },  // dxrom
+  { 207, 4, 4, 5, 5, 0, 0 },  // taito x1-005 variant (fudou myouou den)
+  { 209, 0, 7, 1, 8, 0, 0 },  // J.Y. Company ASIC [UNLICENSED]
+  { 210, 3, 5, 5, 6, 0, 0 },  // namco 175/340
+  { 211, 0, 7, 1, 8, 0, 0 },  // J.Y. Company ASIC [UNLICENSED]
+  { 212, 0, 3, 0, 4, 0, 0 },  // BMC Super HiK 300-in-1 [UNLICENSED]
+  { 213, 1, 6, 1, 6, 0, 0 },  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 58 [UNLICENSED]
+  { 214, 0, 3, 0, 4, 0, 0 },  // BMC-SUPERGUN-20IN1, BMC-190IN1 [UNLICENSED]
+  { 225, 4, 7, 5, 8, 0, 0 },  // ET-4310 (FC) + K-1010 (NES) [UNLICENSED]
+  { 226, 6, 7, 0, 0, 0, 0 },  // BMC-76IN1, BMC-SUPER42IN1, BMC-GHOSTBUSTERS63IN1 [UNLICENSED]
+  { 227, 1, 5, 0, 0, 0, 0 },  // 810449-C-A1 / FW-01 [UNLICENSED]
+  { 228, 4, 7, 5, 7, 0, 0 },  // Action 52 + Cheetahmen II [UNLICENSED]
+  { 229, 5, 5, 6, 6, 0, 0 },  // BMC 31-IN-1 [UNLICENSED]
+  { 232, 4, 4, 0, 0, 0, 0 },  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
+  { 235, 6, 8, 0, 0, 0, 0 },  // "Golden Game" multicarts [UNLICENSED]
+  { 236, 0, 6, 0, 5, 0, 0 },  // Realtec 8031, 8099, 8106, 8155 [UNLICENSED]
+  { 240, 1, 5, 1, 5, 0, 3 },  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
+  { 241, 3, 5, 0, 0, 0, 0 },  // BxROM with WRAM [UNLICENSED]
+  { 242, 5, 5, 0, 0, 0, 0 },  // ET-113 [UNLICENSED]
+  { 246, 5, 5, 7, 7, 0, 0 },  // C&E Feng Shen Bang [UNLICENSED]
   // 248 - bad mapper, not used
-  255, 4, 7, 5, 8, 0, 0,  // 110-in-1 multicart (same as 225) [UNLICENSED]
+  { 255, 4, 7, 5, 8, 0, 0 },  // 110-in-1 multicart (same as 225) [UNLICENSED]
+  { 446, 0, 8, 0, 0, 0, 0 }   // Mindkids SMD172B_FGPA submapper 0 & 1
 };
 
 const char _file_name_no_number_fmt[] PROGMEM = "%s.%s";
@@ -207,8 +218,8 @@ const char _file_name_with_number_fmt[] PROGMEM = "%s.%02d.%s";
   Variables
 *****************************************/
 // Mapper
-uint8_t mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
-uint8_t mapselect;
+uint8_t mapcount = (sizeof(mapsize) / sizeof(mapsize[0]));
+uint16_t mapselect;
 
 const uint16_t PRG[] PROGMEM = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 };
 uint8_t prglo = 0;   // Lowest Entry
@@ -238,7 +249,7 @@ uint8_t firstbyte;
 bool flashfound = false;  // NESmaker 39SF040 Flash Cart
 
 // Cartridge Config
-uint8_t mapper;
+uint16_t mapper;
 uint8_t prgsize;
 uint8_t chrsize;
 uint8_t ramsize;
@@ -526,7 +537,7 @@ void printDataLine_NES(void* entry) {
     input += 2;
   }
 
-  mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | (iNES[8] & 0x0F);
+  mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | ((iNES[8] & 0x0F) << 8);
 
   if ((iNES[9] & 0x0F) != 0x0F) {
     // simple notation
@@ -656,9 +667,9 @@ void getMapping() {
       // anything else: select current record
       // Save Mapper
       EEPROM_writeAnything(7, mapper);
-      EEPROM_writeAnything(8, prgsize);
-      EEPROM_writeAnything(9, chrsize);
-      EEPROM_writeAnything(10, ramsize);
+      EEPROM_writeAnything(9, prgsize);
+      EEPROM_writeAnything(10, chrsize);
+      EEPROM_writeAnything(11, ramsize);
     }
   }
   database.close();
@@ -1019,14 +1030,14 @@ void CreateRAMFileInSD() {
 #if defined(ENABLE_LCD)
 void printMapperSelection_NES(int index) {
   display_Clear();
-  mapselect = pgm_read_byte(mapsize + index * 7);
+  mapselect = pgm_read_word(mapsize + index);
   print_Msg(F("Mapper: "));
   println_Msg(mapselect);
 }
 #endif
 
 void setMapper() {
-  uint8_t newmapper;
+  uint16_t newmapper;
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
   println_Log(F("Set Mapper manually"));
@@ -1156,9 +1167,8 @@ chooseMapper:
 
   // Check if valid
   bool validMapper = 0;
-  uint8_t mapcount = (sizeof(mapsize) / sizeof(mapsize[0])) / 7;
   for (uint8_t currMaplist = 0; currMaplist < mapcount; currMaplist++) {
-    if (pgm_read_byte(mapsize + currMaplist * 7) == newmapper)
+    if (pgm_read_word(mapsize + currMaplist) == newmapper)
       validMapper = 1;
   }
 
@@ -1189,8 +1199,7 @@ setmapper:
   bool mapfound = false;
   Serial.println(F("SUPPORTED MAPPERS:"));
   for (size_t i = 0; i < mapcount; i++) {
-    int index = i * 7;
-    mapselect = pgm_read_byte(mapsize + index);
+    mapselect = pgm_read_word(mapsize + i);
     Serial.print("[");
     Serial.print(mapselect);
     Serial.print("]");
@@ -1208,8 +1217,7 @@ setmapper:
   Serial.println(newmap);
   newmapper = newmap.toInt();
   for (uint8_t i = 0; i < mapcount; i++) {
-    int index = i * 7;
-    mapselect = pgm_read_byte(mapsize + index);
+    mapselect = pgm_read_word(mapsize + i);
     if (newmapper == mapselect)
       mapfound = true;
   }
@@ -1231,16 +1239,16 @@ setmapper:
 }
 
 void checkMapperSize() {
+  mapper_NES v;
   for (uint8_t i = 0; i < mapcount; i++) {
-    int index = i * 7;
-    uint8_t mapcheck = pgm_read_byte(mapsize + index);
-    if (mapcheck == mapper) {
-      prglo = pgm_read_byte(mapsize + index + 1);
-      prghi = pgm_read_byte(mapsize + index + 2);
-      chrlo = pgm_read_byte(mapsize + index + 3);
-      chrhi = pgm_read_byte(mapsize + index + 4);
-      ramlo = pgm_read_byte(mapsize + index + 5);
-      ramhi = pgm_read_byte(mapsize + index + 6);
+    memcpy_P(&v, mapsize + i, sizeof(v));
+    if (mapper == v.mapper) {
+      prglo = v.prglo;
+      prghi = v.prghi;
+      chrlo = v.chrlo;
+      chrhi = v.chrhi;
+      ramlo = v.ramlo;
+      ramhi = v.ramhi;
       break;
     }
   }
@@ -1306,7 +1314,7 @@ setprg:
   Serial.print(pgm_read_word(&(PRG[newprgsize])));
   Serial.println(F("K"));
 #endif
-  EEPROM_writeAnything(8, newprgsize);
+  EEPROM_writeAnything(9, newprgsize);
   prgsize = newprgsize;
 
 #ifdef ENABLE_GLOBAL_LOG
@@ -1374,7 +1382,7 @@ setchr:
   Serial.print(pgm_read_word(&(CHR[newchrsize])));
   Serial.println(F("K"));
 #endif
-  EEPROM_writeAnything(9, newchrsize);
+  EEPROM_writeAnything(10, newchrsize);
   chrsize = newchrsize;
 
 #ifdef ENABLE_GLOBAL_LOG
@@ -1534,7 +1542,7 @@ setram:
     Serial.println(FS(FSTRING_EMPTY));
   }
 #endif
-  EEPROM_writeAnything(10, newramsize);
+  EEPROM_writeAnything(11, newramsize);
   ramsize = newramsize;
 
 #ifdef ENABLE_GLOBAL_LOG
@@ -1559,9 +1567,9 @@ void checkMMC6() {               // Detect MMC6 Carts - read PRG 0x3E00A ("START
 
 void checkStatus_NES() {
   EEPROM_readAnything(7, mapper);
-  EEPROM_readAnything(8, prgsize);
-  EEPROM_readAnything(9, chrsize);
-  EEPROM_readAnything(10, ramsize);
+  EEPROM_readAnything(9, prgsize);
+  EEPROM_readAnything(10, chrsize);
+  EEPROM_readAnything(11, ramsize);
   prg = (int_pow(2, prgsize)) * 16;
   if (chrsize == 0)
     chr = 0;  // 0K
@@ -2681,6 +2689,19 @@ void readPRG(bool readrom) {
           dumpBankPRG(0x0, 0x8000, base);
         }
         break;
+
+      case 446: {
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0x5003, 0);
+        write_prg_byte(0x5005, 0);
+        for (uint8_t i = 0; i < banks; i++) {  // 8192 for 64MiB
+          write_prg_byte(0x5002, i >> 8);      // outer bank LSB
+          write_prg_byte(0x5001, i);           // outer bank MSB
+          write_prg_byte(0x8000, 0);
+          dumpBankPRG(0x0, 0x2000, base);
+        }
+        break;
+      }
     }
     if (!readrom) {
       myFile.flush();
@@ -3951,9 +3972,9 @@ void resetEEPROM() {
   EEPROM_writeAnything(5, 0);   // UNKNOWNCRC
   EEPROM_writeAnything(6, 1);   // LED (RESET TO ON)
   EEPROM_writeAnything(7, 0);   // MAPPER
-  EEPROM_writeAnything(8, 0);   // PRG SIZE
-  EEPROM_writeAnything(9, 0);   // CHR SIZE
-  EEPROM_writeAnything(10, 0);  // RAM SIZE
+  EEPROM_writeAnything(9, 0);   // PRG SIZE
+  EEPROM_writeAnything(10, 0);   // CHR SIZE
+  EEPROM_writeAnything(11, 0);  // RAM SIZE
 }
 
 void EepromStart_NES() {
