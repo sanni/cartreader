@@ -490,18 +490,11 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   // get correct starting rom bank
   uint16_t bank = (256 - (cartSize >> 16));
@@ -564,13 +557,7 @@ static void readSRAM_WS() {
   createFolder("WS", "SAVE", romName, "save");
 
   display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
@@ -703,13 +690,7 @@ static void readEEPROM_WS() {
   createFolder("WS", "SAVE", romName, "eep");
 
   display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);

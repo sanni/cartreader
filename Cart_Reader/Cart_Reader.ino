@@ -678,6 +678,17 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
   sd.chdir(folder);
 }
 
+void printAndIncrementFolder() {
+  // Save location
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(F("/..."));
+  display_Update();
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+}
+
 // move file pointer to first game line with matching letter. If no match is found the last database entry is selected
 void seek_first_letter_in_database(FsFile& database, byte myLetter) {
     char gamename_str[3];

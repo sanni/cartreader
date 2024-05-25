@@ -1427,14 +1427,7 @@ void readROM_MD() {
   createFolder("MD", "ROM", romName, "BIN");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2883,14 +2876,7 @@ void readRealtec_MD() {
   createFolder("MD", "ROM", romName, "MD");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

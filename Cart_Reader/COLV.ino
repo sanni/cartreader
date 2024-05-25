@@ -165,18 +165,11 @@ void readROM_COL() {
   createFolder("COL", "ROM", romName, "col");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   // RESET ALL CS PINS HIGH (DISABLE)
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);

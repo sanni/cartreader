@@ -825,14 +825,7 @@ void readROM_GBA() {
 
   //clear the screen
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -929,15 +922,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
     createFolder("GBA", "SAVE", romName, "srm");
-
-    // Save location
-    print_STR(saving_to_STR, 0);
-    print_Msg(folder);
-    println_Msg(F("/..."));
-    display_Update();
-    // write new folder number back to eeprom
-    foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
+    printAndIncrementFolder();
   }
 
   //open file on sd card
@@ -1064,14 +1049,7 @@ void readFRAM_GBA(unsigned long framSize) {
   // Get name, add extension and convert to char array for sd lib
   createFolder("GBA", "SAVE", romName, "srm");
 
-  // Save location
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1461,15 +1439,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
     // Get name, add extension and convert to char array for sd lib
     createFolder("GBA", "SAVE", romName, "fla");
 
-    // Save location
-    print_STR(saving_to_STR, 0);
-    print_Msg(folder);
-    println_Msg(F("/..."));
-    display_Update();
-
-    // write new folder number back to eeprom
-    foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
+    printAndIncrementFolder();
   }
 
   //open file on sd card
@@ -1697,15 +1667,7 @@ void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
   createFolder("GBA", "SAVE", romName, "eep");
 
-  // Save location
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

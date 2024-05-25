@@ -614,10 +614,9 @@ void getMapping() {
     sprintf(crcStr, "%08lX", oldcrc32);
     print_Msg(crcStr);
     if (oldcrc32 != oldcrc32MMC3) {
-      char crcStrMMC3[9];
       print_Msg(F(" or "));
-      sprintf(crcStrMMC3, "%08lX", oldcrc32MMC3);
-      print_Msg(crcStrMMC3);
+      sprintf(crcStr, "%08lX", oldcrc32MMC3);
+      print_Msg(crcStr);
     }
     println_Msg(F("..."));
     display_Update();
@@ -715,14 +714,7 @@ void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersi
   createFolder("NES", "ROM", romName, fileSuffix);
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

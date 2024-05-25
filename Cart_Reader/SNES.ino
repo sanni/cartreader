@@ -1295,14 +1295,7 @@ void readROM_SNES() {
 
   //clear the screen
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

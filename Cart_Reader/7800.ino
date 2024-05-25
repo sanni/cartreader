@@ -345,18 +345,11 @@ void readROM_7800() {
   createFolder("7800", "ROM", romName, "a78");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(sd_error_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   switch (a7800mapper) {
     case 0:  // Standard 16K/32K/48K [7816/7832/7848]

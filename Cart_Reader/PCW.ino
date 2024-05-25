@@ -427,13 +427,7 @@ void readSingleROM_PCW() {
   // Create file
   createFolder("PCW", "ROM", romName, "pcw");
 
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);
@@ -561,13 +555,7 @@ void readMultiROM_PCW() {
   // Create file
   createFolder("PCW", "ROM", romName, "pcw");
 
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);

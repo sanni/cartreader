@@ -219,18 +219,11 @@ void readROM_5200() {
   createFolder("5200", "ROM", romName, "a52");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(sd_error_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   // 5200 A13-A0 = 10 0000 0000 0000
 

@@ -413,13 +413,7 @@ void readROM_VB() {
   createFolder("VBOY", "ROM", romName, "vb");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);

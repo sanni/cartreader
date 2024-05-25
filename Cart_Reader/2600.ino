@@ -299,18 +299,11 @@ void readROM_2600() {
   createFolder("ATARI", "ROM", romName, "a26");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   // ROM Start 0xF000
   // Address A12-A0 = 0x1000 = 1 0000 0000 0000 = 4KB

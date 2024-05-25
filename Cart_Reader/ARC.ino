@@ -153,18 +153,12 @@ void readROM_ARC() {
   createFolder("ARC", "ROM", romName, "bin");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder();
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(create_file_STR);
   }
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   readSegment_ARC(0x0000, 0x0800);  // 2K
   if (arcsize > 0) {
