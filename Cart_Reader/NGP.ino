@@ -214,8 +214,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
   if (outPathBuf != NULL && bufferSize > 0)
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

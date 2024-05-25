@@ -1109,8 +1109,7 @@ void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("GB", "ROM", romName, "gb");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1457,8 +1456,7 @@ void readSRAMFLASH_MBC6_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("GB", "SAVE", romName, "sav");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2528,8 +2526,7 @@ void readPelican_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("GB", "ROM", "Pelican", "GB");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

@@ -823,9 +823,7 @@ void readROM_GBA() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("GBA", "ROM", romName, "gba");
 
-  //clear the screen
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

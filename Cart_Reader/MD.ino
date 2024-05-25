@@ -1426,8 +1426,7 @@ void readROM_MD() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("MD", "ROM", romName, "BIN");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2875,8 +2874,7 @@ void readRealtec_MD() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("MD", "ROM", romName, "MD");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

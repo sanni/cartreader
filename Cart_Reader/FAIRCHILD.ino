@@ -394,8 +394,7 @@ uint8_t readData_FAIRCHILD() {
 void readROM_FAIRCHILD() {
   createFolder("FAIRCHILD", "ROM", romName, "bin");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

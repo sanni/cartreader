@@ -169,8 +169,7 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // create a new folder to save rom file
   createFolder("ST", "ROM", "SUFAMI_TURBO", "st");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

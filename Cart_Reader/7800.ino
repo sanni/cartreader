@@ -344,8 +344,7 @@ void bankSwitch_7800(uint16_t addr) {
 void readROM_7800() {
   createFolder("7800", "ROM", romName, "a78");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

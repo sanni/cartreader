@@ -489,8 +489,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
   if (outPathBuf != NULL && bufferSize > 0)
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
@@ -556,8 +555,7 @@ static void readSRAM_WS() {
   // generate fullname of rom file
   createFolder("WS", "SAVE", romName, "save");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
@@ -689,8 +687,7 @@ static void readEEPROM_WS() {
   // generate fullname of eep file
   createFolder("WS", "SAVE", romName, "eep");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);

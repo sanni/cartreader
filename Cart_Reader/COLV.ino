@@ -164,8 +164,7 @@ void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
 void readROM_COL() {
   createFolder("COL", "ROM", romName, "col");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

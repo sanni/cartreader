@@ -271,8 +271,7 @@ void readRAM_GPC() {
   createFolder("SNES", "ROM", "GPC4M", "sfc");
 
   //clear the screen
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

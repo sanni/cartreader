@@ -345,8 +345,7 @@ void readROM_MSX() {
   } else {
     createFolder("MSX", "ROM", romName, "bin");
 
-    display_Clear();
-    printAndIncrementFolder();
+    printAndIncrementFolder(true);
 
     // open file on sdcard
     if (!myFile.open(fileName, O_RDWR | O_CREAT))

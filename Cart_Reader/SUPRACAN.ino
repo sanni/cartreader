@@ -151,8 +151,7 @@ static void readROM_Acan() {
   EEPROM_readAnything(0, foldern);
   snprintf(folder, FILEPATH_LENGTH, "/ACAN/ROM/%d", foldern);
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -190,8 +189,7 @@ static void readSRAM_Acan() {
   EEPROM_readAnything(0, foldern);
   snprintf(folder, FILEPATH_LENGTH, "/ACAN/SAVE/%d", foldern);
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -282,8 +280,7 @@ static void readUM6650() {
   EEPROM_readAnything(0, foldern);
   snprintf(folder, sizeof(folder), "/ACAN/UM6650/%d", foldern);
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   sd.mkdir(folder, true);
   sd.chdir(folder);

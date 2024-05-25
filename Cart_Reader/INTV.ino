@@ -305,8 +305,7 @@ void readSegment_INTV(uint32_t startaddr, uint32_t endaddr) {
 void readROM_INTV() {
   createFolder("INTV", "ROM", romName, "int");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

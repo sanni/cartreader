@@ -1293,9 +1293,7 @@ void readROM_SNES() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("SNES", "ROM", romName, "sfc");
 
-  //clear the screen
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

@@ -198,8 +198,7 @@ void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr) {
 void readROM_VECTREX() {
   createFolder("VECTREX", "ROM", romName, "vec");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

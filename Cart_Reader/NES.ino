@@ -713,8 +713,7 @@ void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersi
   // Get name, add extension and convert to char array for sd lib
   createFolder("NES", "ROM", romName, fileSuffix);
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

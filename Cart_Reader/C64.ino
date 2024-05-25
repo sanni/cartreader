@@ -366,8 +366,7 @@ void readPorts_C64() {
 void readROM_C64() {
   createFolder("C64", "ROM", romName, "bin");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

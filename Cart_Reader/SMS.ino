@@ -558,8 +558,7 @@ void readROM_SMS() {
     createFolder("SG1000", "ROM", romName, "sg");
   }
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -650,8 +649,7 @@ void readSRAM_SMS() {
   }
   createFolder(system, "SAVE", romName, "sav");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // Create file on sd card
   if (myFile.open(fileName, O_RDWR | O_CREAT)) {

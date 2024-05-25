@@ -678,8 +678,11 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
   sd.chdir(folder);
 }
 
-void printAndIncrementFolder() {
+void printAndIncrementFolder(bool displayClear = false) {
   // Save location
+  if(displayClear) {
+    display_Clear();
+  }
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
   println_Msg(F("/..."));

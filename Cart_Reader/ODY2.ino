@@ -214,8 +214,7 @@ void bankSwitch_ODY2(uint16_t addr, uint8_t data) {
 void readROM_ODY2() {
   createFolder("ODY2", "ROM", romName, "bin");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

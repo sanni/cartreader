@@ -416,8 +416,7 @@ void readROM_SV() {
   createFolder("SNES", "ROM", "MEMPACK", "bs");
 
   //clear the screen
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

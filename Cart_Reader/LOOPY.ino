@@ -524,8 +524,7 @@ void readROM_LOOPY() {
 
   createFolder("LOOPY", "ROM", romName, "bin");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);

@@ -218,8 +218,7 @@ void readSegment_5200(uint16_t startaddr, uint16_t endaddr) {
 void readROM_5200() {
   createFolder("5200", "ROM", romName, "a52");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))

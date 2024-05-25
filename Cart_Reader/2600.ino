@@ -298,8 +298,7 @@ boolean checkE7(uint16_t bank) {
 void readROM_2600() {
   createFolder("ATARI", "ROM", romName, "a26");
 
-  display_Clear();
-  printAndIncrementFolder();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
