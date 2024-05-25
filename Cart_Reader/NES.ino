@@ -233,19 +233,10 @@ const uint8_t RAM[] PROGMEM = { 0, 8, 16, 32 };
 uint8_t ramlo = 0;  // Lowest Entry
 uint8_t ramhi = 3;  // Highest Entry
 
-uint16_t banks;
 uint16_t prg;
 uint16_t chr;
 uint8_t ram;
-bool vrc4e = false;
-uint8_t prgchk0;
-uint8_t prgchk1;
 bool mmc6 = false;
-uint8_t prgchk2;
-uint8_t prgchk3;
-word eepsize;
-uint8_t bytecheck;
-uint8_t firstbyte;
 bool flashfound = false;  // NESmaker 39SF040 Flash Cart
 
 // Cartridge Config
@@ -1557,10 +1548,10 @@ setram:
 void checkMMC6() {               // Detect MMC6 Carts - read PRG 0x3E00A ("STARTROPICS")
   write_prg_byte(0x8000, 6);     // PRG Bank 0 ($8000-$9FFF)
   write_prg_byte(0x8001, 0x1F);  // 0x3E000
-  prgchk0 = read_prg_byte(0x800A);
-  prgchk1 = read_prg_byte(0x800B);
-  prgchk2 = read_prg_byte(0x800C);
-  prgchk3 = read_prg_byte(0x800D);
+  uint8_t prgchk0 = read_prg_byte(0x800A);
+  uint8_t prgchk1 = read_prg_byte(0x800B);
+  uint8_t prgchk2 = read_prg_byte(0x800C);
+  uint8_t prgchk3 = read_prg_byte(0x800D);
   if ((prgchk0 == 0x53) && (prgchk1 == 0x54) && (prgchk2 == 0x41) && (prgchk3 == 0x52))
     mmc6 = true;  // MMC6 Cart
 }
@@ -1670,6 +1661,7 @@ void dumpMMC5RAM(word base, word address) {  // MMC5 SRAM DUMP - PULSE M2 LO/HI
 }
 
 void writeMMC5RAM(word base, word address) {  // MMC5 SRAM WRITE
+  uint8_t bytecheck;
   myFile.read(sdBuffer, 512);
   for (size_t x = 0; x < 512; x++) {
     do {
@@ -1711,6 +1703,7 @@ void readPRG(bool readrom) {
 
   word base = 0x8000;
   bool busConflict = false;
+  uint16_t banks;
 
   if (myFile) {
     switch (mapper) {
@@ -2724,6 +2717,8 @@ void readCHR(bool readrom) {
     display_Update();
   }
 
+  uint16_t banks;
+
   LED_GREEN_ON;
   set_address(0);
   _delay_us(1);
@@ -2885,12 +2880,13 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 23:  // 128K
+        case 23: { // 128K
           // Detect VRC4e Carts - read PRG 0x1FFF6 (DATE)
           // Boku Dracula-kun = 890810, Tiny Toon = 910809
           // Crisis Force = 910701, Parodius Da! = 900916
           write_prg_byte(0x8000, 15);
-          prgchk0 = read_prg_byte(0x9FF6);
+          bool vrc4e;
+          uint8_t prgchk0 = read_prg_byte(0x9FF6);
           if (prgchk0 == 0x30) {  // Check for "0" in middle of date
             vrc4e = true;         // VRC4e Cart
           }
@@ -2904,7 +2900,7 @@ void readCHR(bool readrom) {
             dumpBankCHR(0x0, 0x400);
           }
           break;
-
+        }
         case 24:  // 128K
           banks = int_pow(2, chrsize) * 4;
           write_prg_byte(0xB003, 0);  // PPU Banking Mode 0
@@ -3562,6 +3558,8 @@ void readCHR(bool readrom) {
 void readRAM() {
   display_Clear();
   display_Update();
+  
+  uint16_t banks;
 
   LED_BLUE_ON;
   LED_GREEN_ON;
@@ -3641,7 +3639,8 @@ void readRAM() {
           break;
 
         case 16:   // 256-byte EEPROM 24C02
-        case 159:  // 128-byte EEPROM 24C01 [Little Endian]
+        case 159: {// 128-byte EEPROM 24C01 [Little Endian]
+          size_t eepsize;
           if (mapper == 159)
             eepsize = 128;
           else
@@ -3652,7 +3651,7 @@ void readRAM() {
           myFile.write(sdBuffer, eepsize);
           //          display_Clear(); // TEST PURPOSES - DISPLAY EEPROM DATA
           break;
-
+        }
         case 19:
           if (ramsize == 2) {  // PRG RAM 128B
             for (size_t x = 0; x < 128; x++) {
@@ -3762,6 +3761,7 @@ void writeRAM() {
   } else {
     fileBrowser(F("Select RAM File"));
     word base = 0x6000;
+    uint16_t banks;
 
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -3839,7 +3839,8 @@ void writeRAM() {
           break;
 
         case 16:   // 256-byte EEPROM 24C02
-        case 159:  // 128-byte EEPROM 24C01 [Little Endian]
+        case 159: {// 128-byte EEPROM 24C01 [Little Endian]
+          size_t eepsize;
           if (mapper == 159)
             eepsize = 128;
           else
@@ -3853,7 +3854,7 @@ void writeRAM() {
             display_Update();
           }
           break;
-
+        }
         case 19:
           if (ramsize == 2) {  // PRG RAM 128B
             myFile.read(sdBuffer, 128);
@@ -3890,7 +3891,7 @@ void writeRAM() {
           write_prg_byte(0x7EF9, 0x84);                                  // PRG RAM ENABLE 2 ($7000-$73FF)
           for (size_t address = 0x0; address < 0x1400; address += 1024) {  // PRG RAM 5K ($6000-$73FF)
             myFile.read(sdBuffer, 512);
-            firstbyte = sdBuffer[0];
+            uint8_t firstbyte = sdBuffer[0];
             for (size_t x = 0; x < 512; x++)
               write_prg_byte(base + address + x, sdBuffer[x]);
             myFile.read(sdBuffer, 512);
@@ -4242,6 +4243,9 @@ void writeFLASH() {
     println_Msg(filePath);
     println_Msg(fileName);
     display_Update();
+
+    uint8_t bytecheck;
+    uint16_t banks;
 
     //open file on sd card
     if (myFile.open(filePath, O_READ)) {
