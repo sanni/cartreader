@@ -4194,22 +4194,8 @@ void resetGameshark_N64() {
 
 // Read rom and save to the SD card
 void backupGameshark_N64() {
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(fileName, "GS%d", foldern);
-  strcat(fileName, ".z64");
-  sd.mkdir("N64/ROM/Gameshark", true);
-  sd.chdir("N64/ROM/Gameshark");
-
-  display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(fileName);
-  println_Msg(F("..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  createFolder("N64", "ROM", "GameShark", "z64");
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -4577,21 +4563,8 @@ void resetXplorer_N64() {
 // Read rom and save to the SD card
 void backupXplorer_N64() {
   // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(fileName, "XP64-%d", foldern);
-  strcat(fileName, ".z64");
-  sd.mkdir("N64/ROM/XPLORER64", true);
-  sd.chdir("N64/ROM/XPLORER64");
-
-  display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(fileName);
-  println_Msg(F("..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  createFolder("N64", "ROM", "XPLORER64", "z64");
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
