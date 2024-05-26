@@ -196,13 +196,7 @@ void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr) {
 //******************************************
 
 void readROM_VECTREX() {
-  createFolder("VECTREX", "ROM", romName, "vec");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
+  createFolderAndOpenFile("VECTREX", "ROM", romName, "vec");
 
   PB6_DISABLE;  // PB6 LOW - Switch Bank
   

@@ -711,14 +711,7 @@ bool selectMapping(FsFile& database) {
 
 void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersize, const boolean renamerom) {
   // Get name, add extension and convert to char array for sd lib
-  createFolder("NES", "ROM", romName, fileSuffix);
-
-  printAndIncrementFolder(true);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("NES", "ROM", romName, fileSuffix);
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;

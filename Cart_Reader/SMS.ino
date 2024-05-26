@@ -647,37 +647,30 @@ void readSRAM_SMS() {
   } else {
     system = "SMS";
   }
-  createFolder(system, "SAVE", romName, "sav");
+  createFolderAndOpenFile(system, "SAVE", romName, "sav");
 
-  printAndIncrementFolder(true);
+  // Write the whole 32KB
+  // When there is only 8KB of SRAM, the contents should be duplicated
+  word bankSize = 16 * 1024UL;
+  for (byte currBank = 0x0; currBank < 2; currBank++) {
+    writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
 
-  // Create file on sd card
-  if (myFile.open(fileName, O_RDWR | O_CREAT)) {
-    // Write the whole 32KB
-    // When there is only 8KB of SRAM, the contents should be duplicated
-    word bankSize = 16 * 1024UL;
-    for (byte currBank = 0x0; currBank < 2; currBank++) {
-      writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
+    // Blink led
+    blinkLED();
 
-      // Blink led
-      blinkLED();
-
-      // Read 16KB from slot 2 which starts at 0x8000
-      for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
-        // Fill SD buffer
-        for (int currByte = 0; currByte < 512; currByte++) {
-          sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
-        }
-        myFile.write(sdBuffer, 512);
+    // Read 16KB from slot 2 which starts at 0x8000
+    for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
+      // Fill SD buffer
+      for (int currByte = 0; currByte < 512; currByte++) {
+        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
       }
+      myFile.write(sdBuffer, 512);
     }
-    // Close file
-    myFile.close();
-    print_STR(press_button_STR, 1);
-    display_Update();
-  } else {
-    print_FatalError(sd_error_STR);
   }
+  // Close file
+  myFile.close();
+  print_STR(press_button_STR, 1);
+  display_Update();
 }
 
 //**********************************************

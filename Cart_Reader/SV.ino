@@ -413,15 +413,7 @@ void readROM_SV() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("SNES", "ROM", "MEMPACK", "bs");
-
-  //clear the screen
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("SNES", "ROM", "MEMPACK", "bs");
 
   // Read Banks
   for (int currBank = 0x40; currBank < 0x50; currBank++) {

@@ -553,12 +553,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
 
 static void readSRAM_WS() {
   // generate fullname of rom file
-  createFolder("WS", "SAVE", romName, "save");
-
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("WS", "SAVE", romName, "save");
 
   uint32_t bank_size = (sramSize << 7);
   uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
@@ -685,12 +680,7 @@ static void writeSRAM_WS() {
 
 static void readEEPROM_WS() {
   // generate fullname of eep file
-  createFolder("WS", "SAVE", romName, "eep");
-
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("WS", "SAVE", romName, "eep");
 
   uint32_t eepromSize = (sramSize << 7);
   uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);

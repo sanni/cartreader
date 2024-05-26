@@ -185,13 +185,7 @@ uint8_t readByte_WSV(uint32_t addr) {
 //******************************************
 
 void readROM_WSV() {
-  createFolder("WSV", "ROM", romName, "sv");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("WSV", "ROM", romName, "sv");
 
   // start reading rom
   dataIn_WSV();

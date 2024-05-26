@@ -212,14 +212,7 @@ void bankSwitch_ODY2(uint16_t addr, uint8_t data) {
 }
 
 void readROM_ODY2() {
-  createFolder("ODY2", "ROM", romName, "bin");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("ODY2", "ROM", romName, "bin");
 
   if (ody2mapper == 1) {  // A10 CONNECTED
     // Videopac 31:  Musician

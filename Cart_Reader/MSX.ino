@@ -343,13 +343,7 @@ void readROM_MSX() {
     println_Msg(F("ROM SIZE 0K"));
     display_Update();
   } else {
-    createFolder("MSX", "ROM", romName, "bin");
-
-    printAndIncrementFolder(true);
-
-    // open file on sdcard
-    if (!myFile.open(fileName, O_RDWR | O_CREAT))
-      print_FatalError(sd_error_STR);
+    createFolderAndOpenFile("MSX", "ROM", romName, "bin");
 
     switch (msxmapper) {
       case 0:  // No Mapper

@@ -410,13 +410,7 @@ void getCartInfo_VB() {
 void readROM_VB() {
   dataIn_VB();
 
-  createFolder("VBOY", "ROM", romName, "vb");
-
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("VBOY", "ROM", romName, "vb");
 
   word d = 0;
   uint32_t progress = 0;

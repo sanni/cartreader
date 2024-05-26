@@ -268,15 +268,7 @@ void readRAM_GPC() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("SNES", "ROM", "GPC4M", "sfc");
-
-  //clear the screen
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("SNES", "ROM", "GPC4M", "sfc");
 
   // Read Banks
   for (int currBank = 0xC0; currBank < 0xC8; currBank++) {

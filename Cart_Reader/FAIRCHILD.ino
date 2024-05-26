@@ -392,14 +392,7 @@ uint8_t readData_FAIRCHILD() {
 }
 
 void readROM_FAIRCHILD() {
-  createFolder("FAIRCHILD", "ROM", romName, "bin");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("FAIRCHILD", "ROM", romName, "bin");
 
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   uint8_t blocks = cartsize / 0x200;

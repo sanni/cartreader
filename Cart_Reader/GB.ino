@@ -1107,14 +1107,7 @@ void getCartInfo_GB() {
 // Read ROM
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GB", "ROM", romName, "gb");
-
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("GB", "ROM", romName, "gb");
 
   word endAddress = 0x7FFF;
   word romAddress = 0;
@@ -1454,14 +1447,7 @@ unsigned long verifySRAM_GB() {
 // Read SRAM + FLASH save data of MBC6
 void readSRAMFLASH_MBC6_GB() {
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GB", "SAVE", romName, "sav");
-
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("GB", "SAVE", romName, "sav");
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2524,14 +2510,7 @@ bool writeCFI_GB() {
 // Read Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
 void readPelican_GB() {
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GB", "ROM", "Pelican", "GB");
-
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("GB", "ROM", "Pelican", "GB");
 
   word finalAddress = 0x3FFF;
   word startAddress = 0x2000;

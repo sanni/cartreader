@@ -296,13 +296,7 @@ boolean checkE7(uint16_t bank) {
 }
 
 void readROM_2600() {
-  createFolder("ATARI", "ROM", romName, "a26");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("ATARI", "ROM", romName, "a26");
 
   // ROM Start 0xF000
   // Address A12-A0 = 0x1000 = 1 0000 0000 0000 = 4KB

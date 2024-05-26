@@ -821,14 +821,7 @@ void getCartInfo_GBA() {
 // Dump ROM
 void readROM_GBA() {
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GBA", "ROM", romName, "gba");
-
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("GBA", "ROM", romName, "gba");
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -1045,14 +1038,8 @@ void readFRAM_GBA(unsigned long framSize) {
   PORTH &= ~((1 << 0) | (1 << 6));
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GBA", "SAVE", romName, "srm");
+  createFolderAndOpenFile("GBA", "SAVE", romName, "srm");
 
-  printAndIncrementFolder();
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
       // Pull OE_SRAM(PH6) HIGH

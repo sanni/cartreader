@@ -4194,13 +4194,7 @@ void resetGameshark_N64() {
 
 // Read rom and save to the SD card
 void backupGameshark_N64() {
-  createFolder("N64", "ROM", "GameShark", "z64");
-  printAndIncrementFolder(true);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("N64", "ROM", "GameShark", "z64");
 
   for (unsigned long currByte = romBase + 0xEC00000; currByte < (romBase + 0xEC00000 + flashSize); currByte += 512) {
     // Blink led
@@ -4563,13 +4557,7 @@ void resetXplorer_N64() {
 // Read rom and save to the SD card
 void backupXplorer_N64() {
   // create a new folder
-  createFolder("N64", "ROM", "XPLORER64", "z64");
-  printAndIncrementFolder(true);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("N64", "ROM", "XPLORER64", "z64");
 
   for (unsigned long currByte = 0x10400000; currByte <= 0x1043FFFF; currByte += 512) {
     // Blink led

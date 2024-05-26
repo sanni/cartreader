@@ -1424,14 +1424,7 @@ void readROM_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("MD", "ROM", romName, "BIN");
-
-  printAndIncrementFolder(true);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("MD", "ROM", romName, "BIN");
 
   byte buffer[1024] = { 0 };
 
@@ -2872,14 +2865,7 @@ void readRealtec_MD() {
   dataIn_MD();
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("MD", "ROM", romName, "MD");
-
-  printAndIncrementFolder(true);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("MD", "ROM", romName, "MD");
 
   // Realtec Registers
   writeWord_MD(0x201000, 4);  // Number of 128K Blocks 0x402000 (0x201000)

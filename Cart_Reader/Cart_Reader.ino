@@ -692,6 +692,15 @@ void printAndIncrementFolder(bool displayClear = false) {
   EEPROM_writeAnything(0, foldern);
 }
 
+void createFolderAndOpenFile(const char* system, const char* subfolder, const char* gameName, const char* fileSuffix) {
+  createFolder(system, subfolder, gameName, fileSuffix);
+  printAndIncrementFolder(true);
+
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(sd_error_STR);
+  }
+}
+
 // move file pointer to first game line with matching letter. If no match is found the last database entry is selected
 void seek_first_letter_in_database(FsFile& database, byte myLetter) {
     char gamename_str[3];

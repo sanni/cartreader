@@ -162,13 +162,7 @@ void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
 }
 
 void readROM_COL() {
-  createFolder("COL", "ROM", romName, "col");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("COL", "ROM", romName, "col");
 
   // RESET ALL CS PINS HIGH (DISABLE)
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);

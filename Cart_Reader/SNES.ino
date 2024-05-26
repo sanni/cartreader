@@ -1291,14 +1291,7 @@ void readROM_SNES() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("SNES", "ROM", romName, "sfc");
-
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("SNES", "ROM", romName, "sfc");
 
   //Dump Derby Stallion '96 (Japan) and Sound Novel Tsukuru (Japan) - Actual Size is 24Mb
   if ((romType == LO) && (numBanks == 96) && ((strcmp("CC86", checksumStr) == 0) || (strcmp("A77B", checksumStr) == 0))) {

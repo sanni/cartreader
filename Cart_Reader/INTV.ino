@@ -303,13 +303,7 @@ void readSegment_INTV(uint32_t startaddr, uint32_t endaddr) {
 
 // MODIFIED READ ROUTINE FOR ALL 10 MAPPERS
 void readROM_INTV() {
-  createFolder("INTV", "ROM", romName, "int");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("INTV", "ROM", romName, "int");
 
   switch (intvmapper) {
     case 0:                              //default mattel up to 32K (8K/12K/16K/24K/32K)

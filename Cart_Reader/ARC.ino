@@ -150,14 +150,7 @@ void readSegment_ARC(uint16_t startaddr, uint16_t endaddr) {
 }
 
 void readROM_ARC() {
-  createFolder("ARC", "ROM", romName, "bin");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("ARC", "ROM", romName, "bin");
 
   readSegment_ARC(0x0000, 0x0800);  // 2K
   if (arcsize > 0) {

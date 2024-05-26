@@ -167,14 +167,7 @@ void readSlot(bool cartSlot) {
 // Read ST rom to SD card
 void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // create a new folder to save rom file
-  createFolder("ST", "ROM", "SUFAMI_TURBO", "st");
-
-  printAndIncrementFolder(true);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("ST", "ROM", "SUFAMI_TURBO", "st");
 
   // Read specified banks
   readLoRomBanks(bankStart + 0x80, bankEnd + 0x80, &myFile);

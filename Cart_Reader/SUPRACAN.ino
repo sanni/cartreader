@@ -148,11 +148,7 @@ void suprAcanMenu() {
 static void readROM_Acan() {
   uint32_t crc32 = 0xffffffff;
 
-  createFolder("/ACAN", "ROM", "rom", "bin");
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("/ACAN", "ROM", "rom", "bin");
 
   draw_progressbar(0, cartSize);
 
@@ -180,11 +176,7 @@ static void readROM_Acan() {
 }
 
 static void readSRAM_Acan() {
-  createFolder("/ACAN", "SAVE", "save", "bin");
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("/ACAN", "SAVE", "save", "bin");
 
   dataIn_MD();
   for (uint32_t i = 0; i < 0x10000; i += 1024) {
@@ -265,11 +257,7 @@ static void verifySRAM_Acan() {
 }
 
 static void readUM6650() {
-  createFolder("/ACAN", "UM6650", "UM6650", "bin");
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("/ACAN", "UM6650", "UM6650", "bin");
 
   for (uint16_t i = 0; i < 256; i++) {
     dataOut_MD();

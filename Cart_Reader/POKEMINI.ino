@@ -239,13 +239,7 @@ void writeData_POKE(uint32_t addr, uint8_t data) {
 //******************************************
 
 void readROM_POKE() {
-  createFolder("POKE", "ROM", romName, "min");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
+  createFolderAndOpenFile("POKE", "ROM", romName, "min");
 
   // read rom
   uint32_t progress = 0;

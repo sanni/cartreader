@@ -216,16 +216,9 @@ void readSegment_5200(uint16_t startaddr, uint16_t endaddr) {
 //******************************************
 
 void readROM_5200() {
-  createFolder("5200", "ROM", romName, "a52");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
+  createFolderAndOpenFile("5200", "ROM", romName, "a52");
 
   // 5200 A13-A0 = 10 0000 0000 0000
-
   switch (a5200mapper) {
     case 0:  // Standard 4KB/8KB/16KB/32KB
       // Lower Half of 32K is at 0x4000

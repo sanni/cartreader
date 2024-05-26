@@ -522,13 +522,7 @@ void getCartInfo_LOOPY() {
 void readROM_LOOPY() {
   dataIn_LOOPY();
 
-  createFolder("LOOPY", "ROM", romName, "bin");
-
-  printAndIncrementFolder(true);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("LOOPY", "ROM", romName, "bin");
 
   draw_progressbar(0, cartSize);
 

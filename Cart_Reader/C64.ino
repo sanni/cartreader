@@ -364,13 +364,7 @@ void readPorts_C64() {
 // GAME HIGH/EXROM LOW: ROML = $8000
 
 void readROM_C64() {
-  createFolder("C64", "ROM", romName, "bin");
-
-  printAndIncrementFolder(true);
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
+  createFolderAndOpenFile("C64", "ROM", romName, "bin");
 
   switch (c64mapper) {
     case 0:  // Normal (4K/8K/16K) & Ultimax (8K/16K)
