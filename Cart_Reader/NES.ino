@@ -194,14 +194,6 @@ const char _file_name_with_number_fmt[] PROGMEM = "%s.%02d.%s";
 #define CHR_WRITE_HI PORTF |= (1 << 2)
 #define CHR_WRITE_LOW PORTF &= ~(1 << 2)
 
-// RGB LED COMMON ANODE
-#define LED_RED_OFF setColor_RGB(0, 0, 0)
-#define LED_RED_ON setColor_RGB(255, 0, 0)
-#define LED_GREEN_OFF setColor_RGB(0, 0, 0)
-#define LED_GREEN_ON setColor_RGB(0, 255, 0)
-#define LED_BLUE_OFF setColor_RGB(0, 0, 0)
-#define LED_BLUE_ON setColor_RGB(0, 0, 255)
-
 #define MODE_READ \
   { \
     PORTK = 0xFF; \
@@ -436,9 +428,7 @@ void setup_NES() {
   DDRK = 0;
 
   set_address(0);
-  LED_RED_OFF;
-  LED_GREEN_OFF;
-  LED_BLUE_OFF;
+  rgbLed(black_color);
 }
 
 /******************************************
@@ -948,7 +938,7 @@ FsFile createNewFile(const char* prefix, const char* extension) {
   // Could not find an available name, recompose the original name and error out.
   snprintf_P(filename, sizeof(filename), _file_name_no_number_fmt, prefix, extension);
 
-  LED_RED_ON;
+  rgbLed(red_color);
 
   display_Clear();
   print_Msg(filename);
@@ -956,7 +946,7 @@ FsFile createNewFile(const char* prefix, const char* extension) {
   display_Update();
   print_FatalError(sd_error_STR);
 
-  LED_RED_OFF;
+  rgbLed(black_color);
 }
 
 void CreatePRGFileInSD() {
@@ -987,14 +977,14 @@ void CreateRAMFileInSD() {
     strcat(fileName, ".bin");
   }
   if (!myFile) {
-    LED_RED_ON;
+    rgbLed(red_color);
 
     display_Clear();
     println_Msg(F("RAM FILE FAILED!"));
     display_Update();
     //print_Error(F("SD Error"), true);
 
-    LED_RED_OFF;
+    rgbLed(black_color);
   }
 }
 
@@ -1676,7 +1666,7 @@ void readPRG(bool readrom) {
     display_Clear();
     display_Update();
 
-    LED_BLUE_ON;
+    rgbLed(blue_color);
     set_address(0);
     _delay_us(1);
     CreatePRGFileInSD();
@@ -2692,7 +2682,7 @@ void readPRG(bool readrom) {
   set_address(0);
   PHI2_HI;
   ROMSEL_HI;
-  LED_BLUE_OFF;
+  rgbLed(black_color);
 }
 
 void readCHR(bool readrom) {
@@ -2703,7 +2693,7 @@ void readCHR(bool readrom) {
 
   uint16_t banks;
 
-  LED_GREEN_ON;
+  rgbLed(green_color);
   set_address(0);
   _delay_us(1);
   if (chrsize == 0) {
@@ -3533,7 +3523,7 @@ void readCHR(bool readrom) {
   set_address(0);
   PHI2_HI;
   ROMSEL_HI;
-  LED_GREEN_OFF;
+  rgbLed(black_color);
 }
 
 /******************************************
@@ -3545,8 +3535,7 @@ void readRAM() {
   
   uint16_t banks;
 
-  LED_BLUE_ON;
-  LED_GREEN_ON;
+  rgbLed(turquoise_color);
   set_address(0);
   _delay_us(1);
   if (ramsize == 0) {
@@ -3715,8 +3704,7 @@ void readRAM() {
   set_address(0);
   PHI2_HI;
   ROMSEL_HI;
-  LED_BLUE_OFF;
-  LED_GREEN_OFF;
+  rgbLed(black_color);
 }
 
 void writeBankPRG(const size_t from, const size_t to, const size_t base) {
@@ -3920,7 +3908,7 @@ void writeRAM() {
           break;
       }
       myFile.close();
-      LED_GREEN_ON;
+      rgbLed(green_color);
 
       println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("RAM FILE WRITTEN!"));
@@ -3931,8 +3919,7 @@ void writeRAM() {
     }
   }
 
-  LED_RED_OFF;
-  LED_GREEN_OFF;
+  rgbLed(black_color);
   sd.chdir();          // root
   filePath[0] = '\0';  // Reset filePath
 }
@@ -4203,7 +4190,7 @@ void NESmaker_ChipErase() {  // Typical 70ms
 void writeFLASH() {
   display_Clear();
   if (!flashfound) {
-    LED_RED_ON;
+    rgbLed(red_color);
     println_Msg(F("FLASH NOT DETECTED"));
     display_Update();
   } else {
@@ -4221,7 +4208,7 @@ void writeFLASH() {
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
-    LED_RED_ON;
+    rgbLed(red_color);
     display_Clear();
     println_Msg(F("Writing File: "));
     println_Msg(filePath);
@@ -4272,20 +4259,19 @@ void writeFLASH() {
 #endif
       }
       myFile.close();
-      LED_GREEN_ON;
+      rgbLed(green_color);
 
       println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("FLASH FILE WRITTEN!"));
       display_Update();
     } else {
-      LED_RED_ON;
+      rgbLed(red_color);
       println_Msg(F("SD ERROR"));
       display_Update();
     }
   }
   display_Clear();
-  LED_RED_OFF;
-  LED_GREEN_OFF;
+  rgbLed(black_color);
   sd.chdir();          // root
   filePath[0] = '\0';  // Reset filePath
 }

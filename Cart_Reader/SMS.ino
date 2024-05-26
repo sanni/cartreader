@@ -391,7 +391,7 @@ void getCartInfo_SMS() {
     default:
       cartSize = 48 * 1024UL;
       // LED Error
-      setColor_RGB(0, 0, 255);
+      rgbLed(blue_color);
       break;
   }
 
@@ -542,7 +542,7 @@ void getCartInfo_SMS() {
 #endif
 
   // Turn off LED
-  setColor_RGB(0, 0, 0);
+  rgbLed(black_color);
 }
 
 //******************************************

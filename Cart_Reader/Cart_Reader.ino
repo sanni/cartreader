@@ -113,6 +113,7 @@ typedef enum COLOR_T {
   turquoise_color,
   yellow_color,
   white_color,
+  black_color,
 } color_t;
 
 // Graphic I2C OLED
@@ -1450,7 +1451,7 @@ void selfTest() {
   display_Update();
 
   if (!digitalRead(7)) {
-    setColor_RGB(255, 0, 0);
+    rgbLed(red_color);
     errorLvl = 1;
     println_Msg(F("Error"));
     println_Msg(FS(FSTRING_EMPTY));
@@ -1474,7 +1475,7 @@ void selfTest() {
   for (byte pinNumber = 2; pinNumber <= 69; pinNumber++) {
     if (isPin_2t9_14t17_22t37_42t49_54t69(pinNumber)) {
       if (!digitalRead(pinNumber)) {
-        setColor_RGB(255, 0, 0);
+        rgbLed(red_color);
         errorLvl = 1;
         print_Msg(F("Error: Pin "));
         if ((54 <= pinNumber) && (pinNumber <= 69)) {
@@ -1505,7 +1506,7 @@ void selfTest() {
         if (isPin_2t9_14t17_22t37_42t49_54t69(pinNumber2) && (pinNumber != pinNumber2)) {
           pinMode(pinNumber2, INPUT_PULLUP);
           if (!digitalRead(pinNumber2)) {
-            setColor_RGB(255, 0, 0);
+            rgbLed(red_color);
             errorLvl = 1;
             print_Msg(F("Error: Pin "));
             if ((54 <= pinNumber) && (pinNumber <= 69)) {
@@ -1538,7 +1539,7 @@ void selfTest() {
   println_Msg(F("Testing Clock Generator"));
   initializeClockOffset();
   if (!i2c_found) {
-    setColor_RGB(255, 0, 0);
+    rgbLed(red_color);
     errorLvl = 1;
     println_Msg(F("Error: Clock Generator"));
     println_Msg(F("not found"));
@@ -2095,7 +2096,7 @@ void setup() {
   Serial.println(F("Cartridge Reader"));
   Serial.println(F("2024 github.com/sanni"));
   // LED Error
-  setColor_RGB(0, 0, 255);
+  rgbLed(blue_color);
 # endif /* ENABLE_SERIAL */
 
   // Init SD card
@@ -2262,7 +2263,7 @@ void convertPgm(const char* const pgmOptions[], byte numArrays) {
 
 void _print_Error(void) {
   errorLvl = 1;
-  setColor_RGB(255, 0, 0);
+  rgbLed(red_color);
   display_Update();
 }
 
@@ -2663,6 +2664,9 @@ void rgbLed(byte Color) {
     case white_color:
       setColor_RGB(255, 255, 255);
       break;
+    case black_color:
+      setColor_RGB(0, 0, 0);
+      break;
   }
 }
 
@@ -2895,7 +2899,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
   }
 
   // pass on user choice
-  setColor_RGB(0, 0, 0);
+  rgbLed(black_color);
 
 #ifdef ENABLE_GLOBAL_LOG
   println_Msg(FS(FSTRING_EMPTY));
@@ -3222,7 +3226,7 @@ uint8_t checkButton() {
       buttonState = reading;
       // Button was pressed down
       if (buttonState == 0) {
-        setColor_RGB(0, 0, 0);
+        rgbLed(black_color);
         unsigned long pushTime = millis();
         // Wait until button was let go again
         while ((PING & (1 << PING2)) >> PING2 == 0) {

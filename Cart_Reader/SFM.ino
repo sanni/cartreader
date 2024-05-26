@@ -723,7 +723,7 @@ void getCartInfo_SFM() {
   if (checkcart_SFM() == 0) {
     // Checksum either corrupt or 0000
     errorLvl = 1;
-    setColor_RGB(255, 0, 0);
+    rgbLed(red_color);
     display_Clear();
     println_Msg(F("ERROR"));
     println_Msg(F("Rom header corrupt"));

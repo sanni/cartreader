@@ -740,7 +740,7 @@ void getCartInfo_SNES() {
     // Checksum either corrupt or 0000
     manualConfig = 1;
     errorLvl = 1;
-    setColor_RGB(255, 0, 0);
+    rgbLed(red_color);
 
     display_Clear();
     println_Msg(F("ERROR"));
