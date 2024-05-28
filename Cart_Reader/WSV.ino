@@ -238,7 +238,7 @@ void setROMSize_WSV() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[newwsvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -287,7 +287,7 @@ void checkStatus_WSV() {
   println_Msg(F("WATARA SUPERVISION"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[wsvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -336,7 +336,7 @@ void readDataLine_WSV(FsFile& database, void* entry) {
 
 void printDataLine_WSV(void* entry) {
   struct database_entry_WSV* castEntry = (database_entry_WSV*)entry;
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   if (castEntry->gameSize == 51)
     print_Msg(F("512"));
   else

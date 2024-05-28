@@ -562,7 +562,7 @@ void readROM_C64() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_C64(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   c64index = index * 3;
   c64mapselect = pgm_read_byte(c64mapsize + c64index);
   println_Msg(c64mapselect);
@@ -645,7 +645,7 @@ void setROMSize_C64() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(C64[newc64size]);
   println_Msg(F("K"));
   display_Update();

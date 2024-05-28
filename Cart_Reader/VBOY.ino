@@ -383,7 +383,7 @@ void getCartInfo_VB() {
   println_Msg(FS(FSTRING_SPACE));
   print_Msg(F("Name: "));
   println_Msg(romName);
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
   print_Msg(F("Sram: "));

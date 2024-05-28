@@ -1306,7 +1306,7 @@ void getCartInfo_MD() {
     print_Msg(F("bramSize(KB): "));
     println_Msg(bramSize >> 10);
   }
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
   switch (SnKmode) {
     case 2:

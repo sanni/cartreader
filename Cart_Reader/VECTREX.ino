@@ -254,7 +254,7 @@ void setROMSize_VECTREX() {
     
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VECTREX[newvectrexsize]);
   println_Msg(F("KB"));
   display_Update();
@@ -303,13 +303,13 @@ void checkStatus_VECTREX() {
   println_Msg(F("VECTREX READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VECTREX[vectrexsize]);
   println_Msg(F("KB"));
   display_Update();
   wait();
 #else
-  Serial.print(F("ROM SIZE: "));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(VECTREX[vectrexsize]);
   Serial.println(F("KB"));
   Serial.println(FS(FSTRING_EMPTY));

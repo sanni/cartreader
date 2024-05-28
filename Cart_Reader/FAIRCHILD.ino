@@ -527,7 +527,7 @@ void setROMSize_FAIRCHILD() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[newfairchildsize]);
   println_Msg(F("K"));
   display_Update();
@@ -576,7 +576,7 @@ void checkStatus_FAIRCHILD() {
   println_Msg(F("CHANNEL F READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[fairchildsize]);
   println_Msg(F("K"));
   display_Update();

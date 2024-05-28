@@ -273,7 +273,7 @@ void setROMSize_ODY2() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[newody2size]);
   println_Msg(F("K"));
   display_Update();
@@ -329,7 +329,7 @@ void checkStatus_ODY2() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(ody2mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[ody2size]);
   println_Msg(F("K"));
   display_Update();

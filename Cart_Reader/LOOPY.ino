@@ -498,7 +498,7 @@ void getCartInfo_LOOPY() {
   println_Msg(loopyRomNameLong);
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
   print_Msg(F("Sram: "));

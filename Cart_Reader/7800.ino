@@ -495,7 +495,7 @@ void setROMSize_7800() {
     new7800size = navigateMenu(a7800lo, a7800hi, &printRomSize_7800);
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[new7800size]);
   println_Msg(F("K"));
   display_Update();
@@ -552,7 +552,7 @@ void checkStatus_7800() {
   print_Msg(F("MAPPER:   "));
   println_Msg(a7800mapper);
   println_Mapper7800(a7800mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[a7800size]);
   println_Msg(F("K"));
   display_Update();
@@ -576,7 +576,7 @@ void checkStatus_7800() {
     Serial.println(F("Karateka (PAL) [78S4 Variant]"));
   else if (a7800mapper == 7)
     Serial.println(F("Bankset"));
-  Serial.print(F("ROM SIZE: "));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(A7800[a7800size]);
   Serial.println(F("K"));
   Serial.println(FS(FSTRING_EMPTY));
@@ -590,7 +590,7 @@ void checkStatus_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_7800(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   a7800index = index * 3;
   a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
   println_Msg(a7800mapselect);

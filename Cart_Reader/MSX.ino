@@ -821,7 +821,7 @@ void writeRAM_MSX() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_MSX(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   msxindex = index * 5;
   msxmapselect = pgm_read_byte(msxmapsize + msxindex);
   println_Msg(msxmapselect);
@@ -950,7 +950,7 @@ void setROMSize_MSX() {
     }
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (msxmapper == 12)  // R-Type
     print_Msg(F("384"));
   else
@@ -1143,7 +1143,7 @@ void checkStatus_MSX() {
   print_Msg(F("MAPPER:   "));
   println_Msg(msxmapper);
   printMapper(msxmapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (msxmapper == 12)  // R-Type
     print_Msg(F("384"));
   else

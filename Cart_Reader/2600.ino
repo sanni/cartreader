@@ -598,7 +598,7 @@ void checkStatus_2600() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (a2600mapper == 0xD0)
     print_Msg(F("10"));
   else
@@ -610,7 +610,7 @@ void checkStatus_2600() {
   Serial.print(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
 
-  Serial.print(F("ROM SIZE: "));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   if (a2600mapper == 0xD0)
     Serial.print(F("10"));
   else
@@ -627,7 +627,7 @@ void checkStatus_2600() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_2600(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   a2600index = index * 2;
   a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
   println_Mapper2600(a2600mapselect);

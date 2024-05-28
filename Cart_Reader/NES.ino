@@ -996,7 +996,7 @@ void CreateRAMFileInSD() {
 void printMapperSelection_NES(int index) {
   display_Clear();
   mapselect = pgm_read_word(mapsize + index);
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   println_Msg(mapselect);
 }
 #endif

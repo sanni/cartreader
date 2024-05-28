@@ -222,7 +222,7 @@ void setROMSize_COL() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[newcolsize])));
   println_Msg(F("K"));
   display_Update();
@@ -271,7 +271,7 @@ void checkStatus_COL() {
   println_Msg(F("COLECOVISION READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[colsize])));
   println_Msg(F("K"));
   println_Msg(FS(FSTRING_EMPTY));
@@ -325,7 +325,7 @@ void readDataLine_COL(FsFile& database, void* entry) {
 void printDataLine_COL(void* entry) {
   struct database_entry_COL* castEntry = (database_entry_COL*)entry;
 
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
 }

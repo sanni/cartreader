@@ -933,7 +933,7 @@ void checkAltConf(char crcStr[9]) {
           if (((romSize != romSize2) || (numBanks != numBanks2)) && ((romSize2 == 10) || (romSize2 == 12) || (romSize2 == 20) || (romSize2 == 24) || (romSize2 == 40) || (romSize2 == 48))) {
             // Correct size
             println_Msg(F("Correcting size"));
-            print_Msg(F("Size: "));
+            print_Msg(FS(FSTRING_SIZE));
             print_Msg(romSize);
             print_Msg(F(" -> "));
             print_Msg(romSize2);

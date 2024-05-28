@@ -52,6 +52,9 @@ extern const char PROGMEM FSTRING_SELECT_CART[];
 extern const char PROGMEM FSTRING_SELECT_CART_TYPE[];
 extern const char PROGMEM FSTRING_SET_SIZE[];
 extern const char PROGMEM FSTRING_REFRESH_CART[];
+extern const char PROGMEM FSTRING_MAPPER[];
+extern const char PROGMEM FSTRING_SIZE[];
+extern const char PROGMEM FSTRING_ROM_SIZE[];
 
 #define FS(pmem_string) (reinterpret_cast<const __FlashStringHelper *>(pmem_string))
 

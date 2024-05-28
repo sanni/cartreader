@@ -195,7 +195,7 @@ void setROMSize_ARC() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[newarcsize]);
   println_Msg(F("K"));
   display_Update();
@@ -244,7 +244,7 @@ void checkStatus_ARC() {
   println_Msg(F("ARCADIA 2001 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[arcsize]);
   println_Msg(F("K"));
   display_Update();

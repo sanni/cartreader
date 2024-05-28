@@ -527,7 +527,7 @@ void getCartInfo_SMS() {
     println_Msg(FS(FSTRING_SPACE));
     print_Msg(F("Name: "));
     println_Msg(romName);
-    print_Msg(F("Size: "));
+    print_Msg(FS(FSTRING_SIZE));
     print_Msg(cartSize / 1024);
     println_Msg(F("KB"));
     println_Msg(FS(FSTRING_SPACE));

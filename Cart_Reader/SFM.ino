@@ -745,7 +745,7 @@ void getCartInfo_SFM() {
   print_Msg(F("Checksum: "));
   println_Msg(checksumStr);
 
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(romSize);
   println_Msg(F("Mbit "));
 

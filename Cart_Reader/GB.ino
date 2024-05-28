@@ -605,7 +605,7 @@ void showCartInfo_GB() {
     print_Msg(F("Revision: "));
     println_Msg(romVersion);
 
-    print_Msg(F("Mapper: "));
+    print_Msg(FS(FSTRING_MAPPER));
     if ((romType == 0) || (romType == 8) || (romType == 9))
       print_Msg(F("none"));
     else if ((romType == 1) || (romType == 2) || (romType == 3))

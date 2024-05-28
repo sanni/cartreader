@@ -365,7 +365,7 @@ void setROMSize_5200() {
     
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[new5200size]);
   println_Msg(F("K"));
   display_Update();
@@ -422,7 +422,7 @@ void checkStatus_5200() {
   print_Msg(F("MAPPER:   "));
   println_Msg(a5200mapper);
   println_Mapper5200(a5200mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[a5200size]);
   println_Msg(F("K"));
   display_Update();
@@ -431,7 +431,7 @@ void checkStatus_5200() {
   Serial.print(F("MAPPER:   "));
   Serial.println(a5200mapper);
   println_Mapper5200(a5200mapper);
-  Serial.print(F("ROM SIZE: "));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(a5200[a5200size]);
   Serial.println(F("K"));
   Serial.println(FS(FSTRING_EMPTY));
@@ -445,7 +445,7 @@ void checkStatus_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_5200(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   a5200index = index * 3;
   a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
   println_Msg(a5200mapselect);

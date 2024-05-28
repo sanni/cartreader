@@ -464,7 +464,7 @@ void ecsBank(uint32_t addr, uint8_t bank) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_INTV(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   intvindex = index * 4;
   intvmapselect = pgm_read_byte(intvmapsize + intvindex);
   println_Msg(intvmapselect);
@@ -540,7 +540,7 @@ void setROMSize_INTV() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[newintvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -596,7 +596,7 @@ void checkStatus_INTV() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[intvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -660,10 +660,10 @@ void readDataLine_INTV(FsFile& database, void* entry) {
 
 void printDataLine_INTV(void* entry) {
   struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   println_Msg(castEntry->gameMapper);
 }
 

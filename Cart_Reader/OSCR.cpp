@@ -72,6 +72,9 @@ constexpr char PROGMEM FSTRING_SELECT_CART[] = "Select Cart";
 constexpr char PROGMEM FSTRING_SELECT_CART_TYPE[] = "Select Cart Type";
 constexpr char PROGMEM FSTRING_SET_SIZE[] = "Set Size";
 constexpr char PROGMEM FSTRING_REFRESH_CART[] = "Refresh Cart";
+constexpr char PROGMEM FSTRING_MAPPER[] = "Mapper: ";
+constexpr char PROGMEM FSTRING_SIZE[] = "Size: ";
+constexpr char PROGMEM FSTRING_ROM_SIZE[] ="ROM SIZE: ";
 
 /*==== /CONSTANTS =================================================*/
 
