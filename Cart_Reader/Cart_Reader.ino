@@ -674,7 +674,11 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
 
   // create a new folder for the rom file
   EEPROM_readAnything(0, foldern);
-  sprintf(folder, "%s/%s/%s/%d", system, subfolder, gameName, foldern);
+  if(subfolder == NULL) {
+    sprintf(folder, "%s/%s/%d", system, gameName, foldern);
+  } else {
+    sprintf(folder, "%s/%s/%s/%d", system, subfolder, gameName, foldern);
+  }
   sd.mkdir(folder, true);
   sd.chdir(folder);
 }
