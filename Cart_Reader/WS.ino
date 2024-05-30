@@ -403,7 +403,7 @@ static void showCartInfo_WS() {
   print_Msg(F("Version: 1."));
   println_Msg(romVersion, HEX);
 
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
 
   // Prints string out of the common strings array either with or without newline

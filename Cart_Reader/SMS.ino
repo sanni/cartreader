@@ -507,7 +507,7 @@ void getCartInfo_SMS() {
     display_Clear();
     println_Msg(F("SMS/GG header not found"));
     println_Msg(FS(FSTRING_SPACE));
-    print_Msg(F("Name: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     print_Msg(F("Selected Size: "));
     print_Msg(cartSize / 1024);
@@ -525,7 +525,7 @@ void getCartInfo_SMS() {
       println_Msg(F("GG header info"));
     }
     println_Msg(FS(FSTRING_SPACE));
-    print_Msg(F("Name: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     print_Msg(FS(FSTRING_SIZE));
     print_Msg(cartSize / 1024);

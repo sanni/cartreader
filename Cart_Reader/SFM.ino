@@ -735,14 +735,14 @@ void getCartInfo_SFM() {
   }
 
   display_Clear();
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
   println_Msg(FS(FSTRING_SPACE));
 
   print_Msg(F("Version: 1."));
   println_Msg(romVersion);
 
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
 
   print_Msg(FS(FSTRING_SIZE));

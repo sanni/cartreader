@@ -55,6 +55,8 @@ extern const char PROGMEM FSTRING_REFRESH_CART[];
 extern const char PROGMEM FSTRING_MAPPER[];
 extern const char PROGMEM FSTRING_SIZE[];
 extern const char PROGMEM FSTRING_ROM_SIZE[];
+extern const char PROGMEM FSTRING_NAME[];
+extern const char PROGMEM FSTRING_CHECKSUM[];
 
 #define FS(pmem_string) (reinterpret_cast<const __FlashStringHelper *>(pmem_string))
 

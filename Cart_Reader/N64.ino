@@ -1926,7 +1926,7 @@ void printCartInfo_N64() {
   // Print start page
   if (cartSize != 0) {
     display_Clear();
-    print_Msg(F("Title: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     print_Msg(F("Serial: "));
     println_Msg(cartID);
@@ -1970,7 +1970,7 @@ void printCartInfo_N64() {
     display_Clear();
     println_Msg(F("GAMEPAK ERROR"));
     println_Msg("");
-    print_Msg(F("Title: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     print_Msg(F("Serial: "));
     println_Msg(cartID);

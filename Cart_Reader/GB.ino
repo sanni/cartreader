@@ -596,7 +596,7 @@ void setup_GB() {
 void showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
-    print_Msg(F("Title: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     if (cartID[0] != 0) {
       print_Msg(F("Serial: "));
@@ -1276,7 +1276,7 @@ void compare_checksums_GB() {
   char calcsumStr[5];
   sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName));
 
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   print_Msg(calcsumStr);
   if (strcmp(calcsumStr, checksumStr) == 0) {
     println_Msg(F(" -> OK"));

@@ -1295,7 +1295,7 @@ void getCartInfo_MD() {
   display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(FS(FSTRING_SPACE));
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
   if (bramCheck != 0x00FF) {
     print_Msg(F("bramCheck: "));

@@ -381,7 +381,7 @@ void getCartInfo_VB() {
   display_Clear();
   println_Msg(F("Cart Info"));
   println_Msg(FS(FSTRING_SPACE));
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
   print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);

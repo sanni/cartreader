@@ -252,7 +252,7 @@ void setup_GBA() {
   display_Clear();
 
   // Print start page
-  print_Msg(F("Title: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
   print_Msg(F("Serial: "));
   println_Msg(cartID);
@@ -865,7 +865,7 @@ void readROM_GBA() {
 
 // Calculate the checksum of the dumped rom
 boolean compare_checksum_GBA() {
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   display_Update();
 
   strcpy(fileName, romName);

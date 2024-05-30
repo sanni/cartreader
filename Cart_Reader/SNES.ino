@@ -758,7 +758,7 @@ void getCartInfo_SNES() {
   }
 
   display_Clear();
-  print_Msg(F("Title: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
 
   print_Msg(F("Revision: "));
@@ -846,7 +846,7 @@ void getCartInfo_SNES() {
   print_Msg(sramSize >> 3);
   println_Msg(F(" KB"));
 
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
   display_Update();
 
@@ -876,7 +876,7 @@ void checkAltConf(char crcStr[9]) {
     // Get cart info
     display_Clear();
     println_Msg(F("Searching database..."));
-    print_Msg(F("Checksum: "));
+    print_Msg(FS(FSTRING_CHECKSUM));
     println_Msg(checksumStr);
     display_Update();
 

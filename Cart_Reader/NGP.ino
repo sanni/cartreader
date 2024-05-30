@@ -171,7 +171,7 @@ void printCartInfo_NGP() {
 
   println_Msg(F("NGP Cart Info"));
 
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
 
   print_Msg(F("App ID: "));
