@@ -4114,44 +4114,29 @@ void EepromWRITE(uint8_t address) {
 /******************************************
    NESmaker Flash Cart [SST 39SF40]
  *****************************************/
-void NESmaker_ResetFlash() {  // Reset Flash
+void NESmaker_Cmd(byte cmd) {
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xAA);
   write_prg_byte(0xC000, 0x00);
   write_prg_byte(0xAAAA, 0x55);
   write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xFF);  // Reset
+  write_prg_byte(0x9555, cmd);
 }
 
 // SST 39SF040 Software ID
 void NESmaker_ID() {  // Read Flash ID
-  NESmaker_ResetFlash();
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0x90);  // Software ID Entry
+  NESmaker_Cmd(0xFF); // Reset
+  NESmaker_Cmd(0x90); // Software ID Entry
   flashid = read_prg_byte(0x8000) << 8;
   flashid |= read_prg_byte(0x8001);
   sprintf(flashid_str, "%04X", flashid);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xF0);  // Software ID Exit
+  NESmaker_Cmd(0xF0); // Software ID Exit
   if (flashid == 0xBFB7)         // SST 39SF040
     flashfound = 1;
 }
 
 void NESmaker_SectorErase(uint8_t bank, word address) {
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0x80);
+  NESmaker_Cmd(0x80);
   write_prg_byte(0xC000, 0x01);
   write_prg_byte(0x9555, 0xAA);
   write_prg_byte(0xC000, 0x00);
@@ -4161,30 +4146,15 @@ void NESmaker_SectorErase(uint8_t bank, word address) {
 }
 
 void NESmaker_ByteProgram(uint8_t bank, word address, uint8_t data) {
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xA0);
+  NESmaker_Cmd(0xA0);
   write_prg_byte(0xC000, bank);   // $00-$1F
   write_prg_byte(address, data);  // $8000-$BFFF
 }
 
 // SST 39SF040 Chip Erase [NOT IMPLEMENTED]
 void NESmaker_ChipErase() {  // Typical 70ms
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0x80);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
-  write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
-  write_prg_byte(0x9555, 0x10);  // Chip Erase
+  NESmaker_Cmd(0x80);
+  NESmaker_Cmd(0x10); // Chip Erase
 }
 
 void writeFLASH() {
