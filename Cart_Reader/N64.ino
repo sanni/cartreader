@@ -4367,6 +4367,12 @@ unsigned long verifyGameshark_N64() {
 /******************************************
    XPLORER 64 Functions
  *****************************************/
+void sendFlashromXplorerCommand_N64(uint16_t cmd) {
+  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
+  evenXPaddrWrite(0x10405555, 0x5555);
+  oddXPaddrWrite(0x1040AAAA, cmd);
+}
+
 void flashXplorer_N64() {
   // Check flashrom ID's
   idXplorer_N64();
@@ -4459,9 +4465,7 @@ void flashXplorer_N64() {
 void idXplorer_N64() {
   flashid = 0x0;
   //Send flashrom ID command
-  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-  evenXPaddrWrite(0x10405555, 0x5555);
-  oddXPaddrWrite(0x1040AAAA, 0x9090);
+  sendFlashromXplorerCommand_N64(0x9090);
 
   setAddress_N64(0x10760000);
   readWord_N64();
@@ -4486,9 +4490,7 @@ void idXplorer_N64() {
 
 void resetXplorer_N64() {
     // Send reset command for SST 29LE010
-    oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-    evenXPaddrWrite(0x10405555, 0x5555);
-    oddXPaddrWrite(0x1040AAAA, 0xF0F0);
+    sendFlashromXplorerCommand_N64(0xF0F0);
     delay(100);
 }
  
@@ -4578,12 +4580,8 @@ void eraseXplorer_N64() {
   display_Update();
 
   // Send chip erase to SST 29LE010
-  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-  evenXPaddrWrite(0x10405555, 0x5555);
-  oddXPaddrWrite(0x1040AAAA, 0x8080);
-  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-  evenXPaddrWrite(0x10405555, 0x5555);
-  oddXPaddrWrite(0x1040AAAA,0x1010);
+  sendFlashromXplorerCommand_N64(0x8080);
+  sendFlashromXplorerCommand_N64(0x1010);
 
   delay(20);
 }
@@ -4629,9 +4627,7 @@ void writeXplorer_N64() {
     }
 
     //Send page write command to both flashroms
-    oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-    evenXPaddrWrite(0x10405555, 0x5555);
-    oddXPaddrWrite(0x1040AAAA, 0xA0A0);
+    sendFlashromXplorerCommand_N64(0xA0A0);
 
     // Write 1 page each, one flashrom gets the low byte, the other the high byte.
     for (unsigned long currByte = 0; currByte < 256; currByte += 2) {
