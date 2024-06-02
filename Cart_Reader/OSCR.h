@@ -19,9 +19,53 @@
 #   error !!! PLEASE CHOOSE HARDWARE VERSION IN CONFIG.H !!!
 # endif
 
+// Let user know unsafe configs are allowed
+# if defined(ALLOW_UNSAFE_CONFIG)
+// Error if defined during GitHub CI tests. This should not happen unless someone accidentally committed their Config.h
+#   if defined(GITHUB_CI)
+#     error !! UNSAFE CONFIGURATIONS ARE ALLOWED !! -- This should not be enabled on the repository!
+#   else /* !defined(GITHUB_CI) */
+#     warning !! UNSAFE CONFIGURATIONS ARE ALLOWED !! -- Unless you are a developer this probably is not something you want set.
+#   endif /* GITHUB_CI */
+# endif /* ALLOW_UNSAFE_CONFIG */
+
 # if defined(ENABLE_3V3FIX) && !defined(ENABLE_VSELECT)
 #   warning Using 3V3FIX is best with VSELECT.
 # endif
+
+# if defined(ENABLE_VSELECT)
+
+// Error if not a supported hardware version
+#   if !(defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using VSELECT with hardware revisions other than 4 or 5 is not supported.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using VSELECT with hardware revisions other than 4 or 5 is not supported. \
+              If you understand what you are doing you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* !(HW4 | HW5 | SERIAL_MONITOR) */
+
+// HW4 might work but needs tested. Make sure they know it's untested.
+#   if defined(HW4)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using VSELECT with HW4 is untested. Verification with a multimeter before use is strongly recommended. Please remember to report back with your findings.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using VSELECT with HW4 is untested. Verification with a multimeter before use is strongly recommended. \
+              Define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling. Please report back with your findings after testing!
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* HW4 */
+
+// SERIAL might work but needs tested. Make sure they know it's untested.
+#   if defined(SERIAL_MONITOR)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using VSELECT with a serial-only OSCR is untested. Verification with a multimeter before use is strongly recommended. Please remember to report back with your findings.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using VSELECT with a serial-only OSCR is untested. Verification with a multimeter before use is strongly recommended. \
+              Define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling. Please report back with your findings after testing!
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* SERIAL_MONITOR */
+
+# endif /* ENABLE_VSELECT */
 
 /*==== CONSTANTS ==================================================*/
 /**

@@ -47,4 +47,4 @@ jobs:
           cd Cart_Reader/
           # Select hardware version by uncommenting it (using regular expression)
           sed -i 's/^\/\/[\t ]*#define ${{ matrix.hwVersion }}/#define ${{ matrix.hwVersion }}/g' Config.h
-          arduino-cli compile --fqbn arduino:avr:mega --warnings all
+          arduino-cli compile --fqbn arduino:avr:mega --warnings all --build-property compiler.cpp.extra_flags="-DGITHUB_CI"
