@@ -876,40 +876,48 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
   return false;
 }
 
-#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES))
-#if (defined(ENABLE_OLED) || defined(ENABLE_LCD)) || defined(ENABLE_GBX)
+# if ( \
+    defined(ENABLE_ODY2)  || defined(ENABLE_ARC)      || defined(ENABLE_FAIRCHILD)  || defined(ENABLE_MSX)  ||  \
+    defined(ENABLE_POKE)  || defined(ENABLE_2600)     || defined(ENABLE_5200)       || defined(ENABLE_7800) ||  \
+    defined(ENABLE_C64)   || defined(ENABLE_VECTREX)  || defined(ENABLE_NES)        || defined(ENABLE_GBX)      \
+  )
 void printInstructions() {
     println_Msg(FS(FSTRING_EMPTY));
-#if defined(ENABLE_OLED)
+
+#   if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 1);
     print_STR(right_to_select_STR, 1);
-#elif defined(ENABLE_LCD)
+#   elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 1);
     print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
+#   elif defined(SERIAL_MONITOR)
     println_Msg(F("U/D to Change"));
     println_Msg(F("Space to Select"));
-#endif
+#   endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
+
     display_Update();
 }
 
+#   if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 int navigateMenu(int min, int max, void (*printSelection)(int)) {
   uint8_t b = 0;
   int i = min;
+
   // Check Button Status
-#if defined(ENABLE_OLED)
+#     if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
+#     elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
+#     endif /* ENABLE_OLED | ENABLE_LCD */
 
   if (buttonVal1 == LOW) {  // Button Pressed
     while (1) {             // Scroll Mapper List
-#if defined(ENABLE_OLED)
+#     if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
+#     elif defined(ENABLE_LCD)
+      buttonVal1 = (PING & (1 << 2));  // PG2
+#     endif /* ENABLE_OLED | ENABLE_LCD */
+
       if (buttonVal1 == HIGH) {  // Button Released
         // Correct Overshoot
         if (i == min)
@@ -959,9 +967,10 @@ int navigateMenu(int min, int max, void (*printSelection)(int)) {
     }
   }
 }
-#endif
-#endif
+#   endif /* (ENABLE_OLED | ENABLE_LCD) */
+# endif /* ENABLE_<CORES> */
 
+# if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void starting_letter__subDraw(byte selection, byte line) {
       display.setDrawColor(0);
       for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);
@@ -969,6 +978,7 @@ void starting_letter__subDraw(byte selection, byte line) {
       display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
       display_Update();
 }
+# endif /* (ENABLE_OLED | ENABLE_LCD) */
 
 byte starting_letter() {
 #ifdef ENABLE_GLOBAL_LOG
@@ -2023,7 +2033,7 @@ void setup() {
    * Set LED Pin PD7 to Output
    **/
   DDRD |= (1 << 7);
-# else /* !defined(HW5) && !defined(HW5) */
+# else /* !defined(HW5) && !defined(ENABLE_VSELECT) */
   /**
    * HW1-3 have button connected to PD7
    * Set pin PD7 to input for button
@@ -2715,7 +2725,7 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 
 #if defined(ENABLE_SERIAL)
 // Serial Monitor
-byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
+byte questionBox_Serial(const __FlashStringHelper* question __attribute__((unused)), char answers[7][20], uint8_t num_answers, uint8_t default_choice __attribute__((unused))) {
   // Print menu to serial monitor
   Serial.println(FS(FSTRING_EMPTY));
   for (byte i = 0; i < num_answers; i++) {
