@@ -79,6 +79,14 @@ bool gbxFlashCFI() {
   return true;
 }
 
+void feedbackPressAndReset() {
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+  resetArduino();
+}
+
 // Start menu for both GB and GBA
 void gbxMenu() {
   // create menu with title and 5 options to choose from
@@ -133,12 +141,7 @@ void gbxMenu() {
               sd.chdir("/");
               //MBC3
               writeFlash29F_GB(3, 1);
-              // Reset
-              // Prints string out of the common strings array either with or without newline
-              print_STR(press_button_STR, 1);
-              display_Update();
-              wait();
-              resetArduino();
+              feedbackPressAndReset();
               break;
 
             case 1:
@@ -152,12 +155,7 @@ void gbxMenu() {
               sd.chdir("/");
               //MBC5
               writeFlash29F_GB(5, 1);
-              // Reset
-              // Prints string out of the common strings array either with or without newline
-              print_STR(press_button_STR, 1);
-              display_Update();
-              wait();
-              resetArduino();
+              feedbackPressAndReset();
               break;
 
             case 2:
@@ -178,12 +176,7 @@ void gbxMenu() {
               sd.chdir("/");
               //MBC5
               writeFlash29F_GB(3, 1);
-              // Reset
-              // Prints string out of the common strings array either with or without newline
-              print_STR(press_button_STR, 1);
-              display_Update();
-              wait();
-              resetArduino();
+              feedbackPressAndReset();
               break;
 
             case 3:
@@ -223,11 +216,7 @@ void gbxMenu() {
 
               // Reset
               println_Msg(FS(FSTRING_EMPTY));
-              // Prints string out of the common strings array either with or without newline
-              print_STR(press_button_STR, 1);
-              display_Update();
-              wait();
-              resetArduino();
+              feedbackPressAndReset();
               break;
 
             case 4:
@@ -359,22 +348,12 @@ void gbxMenu() {
       switch (gbPelican) {
         case 0:
           readPelican_GB();
-          // Reset
-          // Prints string out of the common strings array either with or without newline
-          print_STR(press_button_STR, 1);
-          display_Update();
-          wait();
-          resetArduino();
+          feedbackPressAndReset();
           break;
 
         case 1:
           writePelican_GB();
-          // Reset
-          // Prints string out of the common strings array either with or without newline
-          print_STR(press_button_STR, 1);
-          display_Update();
-          wait();
-          resetArduino();
+          feedbackPressAndReset();
           break;
       }
       break;
@@ -416,42 +395,22 @@ void gbxMenu() {
       switch (gbDatel) {
         case 0:
           readMegaMem_GB();
-          // Reset
-          // Prints string out of the common strings array either with or without newline
-          print_STR(press_button_STR, 1);
-          display_Update();
-          wait();
-          resetArduino();
+          feedbackPressAndReset();
           break;
 
         case 1:
           writeMegaMem_GB();
-          // Reset
-          // Prints string out of the common strings array either with or without newline
-          print_STR(press_button_STR, 1);
-          display_Update();
-          wait();
-          resetArduino();
+          feedbackPressAndReset();
           break;
 
         case 2:
           readGameshark_GB();
-          // Reset
-          // Prints string out of the common strings array either with or without newline
-          print_STR(press_button_STR, 1);
-          display_Update();
-          wait();
-          resetArduino();
+          feedbackPressAndReset();
           break;
 
         case 3:
           writeGameshark_GB();
-          // Reset
-          // Prints string out of the common strings array either with or without newline
-          print_STR(press_button_STR, 1);
-          display_Update();
-          wait();
-          resetArduino();
+          feedbackPressAndReset();
           break;
       }
       break;
@@ -2315,11 +2274,7 @@ bool writeCFI_GB() {
       print_Msg(F("but needs "));
       print_Msg(romBanks);
       println_Msg(F("."));
-      // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
-      resetArduino();
+      feedbackPressAndReset();
     }
 
     // Set ROM bank hi 0
