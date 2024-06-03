@@ -1253,6 +1253,14 @@ void compare_checksums_GB() {
 /******************************************
   SRAM functions
 *****************************************/
+void disableFlashSaveMemory() {
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x00);
+  writeByte_GB(0x1000, 0x00);
+  writeByte_GB(0x2800, 0x00);
+  writeByte_GB(0x3800, 0x00);
+}
+
 // Read RAM
 void readSRAM_GB() {
   // Does cartridge have RAM
@@ -1461,12 +1469,7 @@ void readSRAMFLASH_MBC6_GB() {
     }
   }
 
-  // Disable flash save memory
-  writeByte_GB(0x1000, 0x01);
-  writeByte_GB(0x0C00, 0x00);
-  writeByte_GB(0x1000, 0x00);
-  writeByte_GB(0x2800, 0x00);
-  writeByte_GB(0x3800, 0x00);
+  disableFlashSaveMemory();
 
   // Close the file:
   myFile.close();
@@ -1544,12 +1547,7 @@ void writeSRAMFLASH_MBC6_GB() {
           if (sr == 0x80) break;
           delay(1);
           if (lives-- <= 0) {
-            // Disable flash save memory
-            writeByte_GB(0x1000, 0x01);
-            writeByte_GB(0x0C00, 0x00);
-            writeByte_GB(0x1000, 0x00);
-            writeByte_GB(0x2800, 0x00);
-            writeByte_GB(0x3800, 0x00);
+            disableFlashSaveMemory();
             myFile.close();
             display_Clear();
             print_FatalError(F("Error erasing FLASH sector."));
@@ -1583,12 +1581,7 @@ void writeSRAMFLASH_MBC6_GB() {
           if (sr == 0x80) break;
           delay(1);
           if (lives-- <= 0) {
-            // Disable flash save memory
-            writeByte_GB(0x1000, 0x01);
-            writeByte_GB(0x0C00, 0x00);
-            writeByte_GB(0x1000, 0x00);
-            writeByte_GB(0x2800, 0x00);
-            writeByte_GB(0x3800, 0x00);
+            disableFlashSaveMemory();
             myFile.close();
             display_Clear();
             print_FatalError(F("Error writing to FLASH."));
@@ -1600,12 +1593,7 @@ void writeSRAMFLASH_MBC6_GB() {
       }
     }
 
-    // Disable flash save memory
-    writeByte_GB(0x1000, 0x01);
-    writeByte_GB(0x0C00, 0x00);
-    writeByte_GB(0x1000, 0x00);
-    writeByte_GB(0x2800, 0x00);
-    writeByte_GB(0x3800, 0x00);
+    disableFlashSaveMemory();
 
     // Close the file:
     myFile.close();
@@ -1809,6 +1797,12 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
 /******************************************
   29F016/29F032/29F033 flashrom functions
 *****************************************/
+void sendFlash29FCommand_GB(byte cmd) {
+  writeByte_GB(0x555, 0xaa);
+  writeByte_GB(0x2aa, 0x55);
+  writeByte_GB(0x555, cmd);
+}
+
 // Write 29F032 flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
@@ -1848,9 +1842,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     delay(100);
 
     // ID command sequence
-    writeByte_GB(0x555, 0xaa);
-    writeByte_GB(0x2aa, 0x55);
-    writeByte_GB(0x555, 0x90);
+    sendFlash29FCommand_GB(0x90);
 
     // Read the two id bytes into a string
     flashid = readByte_GB(0) << 8;
@@ -1904,12 +1896,8 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       display_Update();
 
       // Erase flash
-      writeByte_GB(0x555, 0xaa);
-      writeByte_GB(0x2aa, 0x55);
-      writeByte_GB(0x555, 0x80);
-      writeByte_GB(0x555, 0xaa);
-      writeByte_GB(0x2aa, 0x55);
-      writeByte_GB(0x555, 0x10);
+      sendFlash29FCommand_GB(0x80);
+      sendFlash29FCommand_GB(0x10);
 
       // Read the status register
       byte statusReg = readByte_GB(0);
@@ -1981,9 +1969,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
-            writeByte_GB(0x555, 0xaa);
-            writeByte_GB(0x2aa, 0x55);
-            writeByte_GB(0x555, 0xa0);
+            sendFlash29FCommand_GB(0xa0);
             // Write current byte
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
@@ -2046,9 +2032,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
-            writeByte_GB(0x555, 0xaa);
-            writeByte_GB(0x2aa, 0x55);
-            writeByte_GB(0x555, 0xa0);
+            sendFlash29FCommand_GB(0xa0);
             // Write current byte
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
@@ -2129,7 +2113,11 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 /******************************************
   CFU flashrom functions
 *****************************************/
-
+void sendCFICommand_GB(byte cmd) {
+  writeByteCompensated(0xAAA, 0xaa);
+  writeByteCompensated(0x555, 0x55);
+  writeByteCompensated(0xAAA, cmd);
+}
 /*
    Flash chips can either be in x8 mode or x16 mode and sometimes the two
    least significant bits on flash cartridges' data lines are swapped.
@@ -2295,12 +2283,8 @@ bool writeCFI_GB() {
     display_Update();
 
     // Erase flash
-    writeByteCompensated(0xAAA, 0xaa);
-    writeByteCompensated(0x555, 0x55);
-    writeByteCompensated(0xAAA, 0x80);
-    writeByteCompensated(0xAAA, 0xaa);
-    writeByteCompensated(0x555, 0x55);
-    writeByteCompensated(0xAAA, 0x10);
+    sendCFICommand_GB(0x80);
+    sendCFICommand_GB(0x10);
 
     // Read the status register
     byte statusReg = readByte_GB(0);
@@ -2365,9 +2349,7 @@ bool writeCFI_GB() {
 
         for (int currByte = 0; currByte < 512; currByte++) {
           // Write command sequence
-          writeByteCompensated(0xAAA, 0xaa);
-          writeByteCompensated(0x555, 0x55);
-          writeByteCompensated(0xAAA, 0xa0);
+          sendCFICommand_GB(0xa0);
 
           // Write current byte
           writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
@@ -2462,6 +2444,19 @@ bool writeCFI_GB() {
 /**************************************************
   Pelican Gameboy Device Read Function
 **************************************************/
+void sendW29C020Command_GB(byte cmd) {
+  writeByteSRAM_GB(0xA000, 0x2);
+  sendW29C020CommandSufix_GB(cmd);
+}
+
+void sendW29C020CommandSufix_GB(byte cmd) {
+  writeByte_GB(0x3555, 0xAA);
+  writeByteSRAM_GB(0xA000, 0x1);
+  writeByte_GB(0x2AAA, 0x55);
+  writeByteSRAM_GB(0xA000, 0x2);
+  writeByte_GB(0x3555, cmd);
+}
+
 // Read Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
 void readPelican_GB() {
   // Get name, add extension and convert to char array for sd lib
@@ -2475,17 +2470,8 @@ void readPelican_GB() {
   readByte_GB(0x100);
 
   // W29C020 ID command sequence
-  writeByteSRAM_GB(0xA000, 0x2);
-  writeByte_GB(0x3555, 0xAA);
-  writeByteSRAM_GB(0xA000, 0x1);
-  writeByte_GB(0x2AAA, 0x55);
-  writeByteSRAM_GB(0xA000, 0x2);
-  writeByte_GB(0x3555, 0x80);
-  writeByte_GB(0x3555, 0xAA);
-  writeByteSRAM_GB(0xA000, 0x1);
-  writeByte_GB(0x2AAA, 0x55);
-  writeByteSRAM_GB(0xA000, 0x2);
-  writeByte_GB(0x3555, 0x60);
+  sendW29C020Command_GB(0x80);
+  sendW29C020CommandSufix_GB(0x60);
   delay(10);
 
   // Read the two id bytes into a string
@@ -2494,12 +2480,7 @@ void readPelican_GB() {
   flashid |= readByte_GB(1);
 
   // W29C020 Flash ID Mode Exit
-  writeByteSRAM_GB(0xA000, 0x2);
-  writeByte_GB(0x3555, 0xAA);
-  writeByteSRAM_GB(0xA000, 0x1);
-  writeByte_GB(0x2AAA, 0x55);
-  writeByteSRAM_GB(0xA000, 0x2);
-  writeByte_GB(0x3555, 0xF0);
+  sendW29C020Command_GB(0xF0);
   delay(100);
 
   if (flashid == 0xDA45 || flashid == 0xBF10) {
@@ -2568,6 +2549,17 @@ void readPelican_GB() {
 /******************************************
   Pelican Gameboy Device Write Function
 *****************************************/
+void send28LF040Potection_GB(bool enable) {
+  writeByteSRAM_GB(0xA000, 0x0);
+  readByte_GB(0x3823);
+  readByte_GB(0x3820);
+  readByte_GB(0x3822);
+  readByte_GB(0x2418);
+  readByte_GB(0x241B);
+  readByte_GB(0x2419);
+  readByte_GB(enable ? 0x240A : 0x241A);
+}
+
 // Write Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
 void writePelican_GB() {
   // Launch filebrowser
@@ -2587,17 +2579,8 @@ void writePelican_GB() {
     delay(100);
 
     // W29C020 ID command sequence
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0xAA);
-    writeByteSRAM_GB(0xA000, 0x1);
-    writeByte_GB(0x2AAA, 0x55);
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0x80);
-    writeByte_GB(0x3555, 0xAA);
-    writeByteSRAM_GB(0xA000, 0x1);
-    writeByte_GB(0x2AAA, 0x55);
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0x60);
+    sendW29C020Command_GB(0x80);
+    sendW29C020CommandSufix_GB(0x60);
     delay(10);
 
     // Read the two id bytes into a string
@@ -2606,12 +2589,7 @@ void writePelican_GB() {
     flashid |= readByte_GB(1);
 
     // W29C020 Flash ID Mode Exit
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0xAA);
-    writeByteSRAM_GB(0xA000, 0x1);
-    writeByte_GB(0x2AAA, 0x55);
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0xF0);
+    sendW29C020Command_GB(0xF0);
     delay(100);
 
     if (flashid == 0xDA45 || flashid == 0xBF10) {
@@ -2624,34 +2602,16 @@ void writePelican_GB() {
 
       if (flashid == 0xDA45) {
         // Disable BootBlock
-        writeByteSRAM_GB(0xA000, 0x2);
-        writeByte_GB(0x3555, 0xAA);
-        writeByteSRAM_GB(0xA000, 0x1);
-        writeByte_GB(0x2AAA, 0x55);
-        writeByteSRAM_GB(0xA000, 0x2);
-        writeByte_GB(0x3555, 0x80);
-        writeByte_GB(0x3555, 0xAA);
-        writeByteSRAM_GB(0xA000, 0x1);
-        writeByte_GB(0x2AAA, 0x55);
-        writeByteSRAM_GB(0xA000, 0x2);
-        writeByte_GB(0x3555, 0x40);
+        sendW29C020Command_GB(0x80);
+        sendW29C020CommandSufix_GB(0x40);
         writeByteSRAM_GB(0xA000, 0x1);
         writeByte_GB(0x2AAA, 0xAA);
         delay(100);
       }
 
       // Erase flash
-      writeByteSRAM_GB(0xA000, 0x2);
-      writeByte_GB(0x3555, 0xAA);
-      writeByteSRAM_GB(0xA000, 0x1);
-      writeByte_GB(0x2AAA, 0x55);
-      writeByteSRAM_GB(0xA000, 0x2);
-      writeByte_GB(0x3555, 0x80);
-      writeByte_GB(0x3555, 0xAA);
-      writeByteSRAM_GB(0xA000, 0x1);
-      writeByte_GB(0x2AAA, 0x55);
-      writeByteSRAM_GB(0xA000, 0x2);
-      writeByte_GB(0x3555, 0x10);
+      sendW29C020Command_GB(0x80);
+      sendW29C020CommandSufix_GB(0x10);
       delay(1000);
     } else {
       writeByteSRAM_GB(0xA000, 0x2);
@@ -2684,14 +2644,7 @@ void writePelican_GB() {
       display_Update();
 
       //Unprotect flash
-      writeByteSRAM_GB(0xA000, 0x0);
-      readByte_GB(0x3823);
-      readByte_GB(0x3820);
-      readByte_GB(0x3822);
-      readByte_GB(0x2418);
-      readByte_GB(0x241B);
-      readByte_GB(0x2419);
-      readByte_GB(0x241A);
+      send28LF040Potection_GB(false);
       delay(100);
 
       //Erase flash
@@ -2742,14 +2695,7 @@ void writePelican_GB() {
   bool toggle = true;
 
   //Unprotect flash
-  writeByteSRAM_GB(0xA000, 0x0);
-  readByte_GB(0x3823);
-  readByte_GB(0x3820);
-  readByte_GB(0x3822);
-  readByte_GB(0x2418);
-  readByte_GB(0x241B);
-  readByte_GB(0x2419);
-  readByte_GB(0x241A);
+  send28LF040Potection_GB(false);
   delay(100);
 
   //Initialize progress bar
@@ -2767,12 +2713,7 @@ void writePelican_GB() {
         myFile.read(sdBuffer, 128);
 
         // Write command sequence
-        writeByteSRAM_GB(0xA000, 0x2);
-        writeByte_GB(0x3555, 0xAA);
-        writeByteSRAM_GB(0xA000, 0x1);
-        writeByte_GB(0x2AAA, 0x55);
-        writeByteSRAM_GB(0xA000, 0x2);
-        writeByte_GB(0x3555, 0xA0);
+        sendW29C020Command_GB(0xA0);
 
         // Set ROM bank
         writeByteSRAM_GB(0xA000, currBank);
@@ -2828,14 +2769,7 @@ void writePelican_GB() {
 
   if (flashid == 0xBF04) {
     //Protect flash
-    writeByteSRAM_GB(0xA000, 0x0);
-    readByte_GB(0x3823);
-    readByte_GB(0x3820);
-    readByte_GB(0x3822);
-    readByte_GB(0x2418);
-    readByte_GB(0x241B);
-    readByte_GB(0x2419);
-    readByte_GB(0x240A);
+    send28LF040Potection_GB(true);
     delay(100);
   }
 
@@ -3215,11 +3149,19 @@ void writeMegaMem_GB() {
 /***************************************************
   Datel GBC Gameshark Gameboy Device Read Function
 ***************************************************/
+void sendGamesharkCommand_GB(byte cmd) {
+  writeByte_GB(0x7FE1, 0x2);
+  writeByte_GB(0x5555, 0xAA);
+  writeByte_GB(0x7FE1, 0x1);
+  writeByte_GB(0x4AAA, 0x55);
+  writeByte_GB(0x7FE1, 0x2);
+  writeByte_GB(0x5555, cmd);
+}
+
 // Read Datel GBC Gameshark Device
 void readGameshark_GB() {
   word finalAddress = 0x5FFF;
   word startAddress = 0x4000;
-  word bankAddress = 0x7FE1;
   romBanks = 16;
 
   //Enable bank addressing in the CPLD
@@ -3228,26 +3170,16 @@ void readGameshark_GB() {
   readByte_GB(0x101);
 
   // SST 39SF010 ID command sequence
-  writeByte_GB(bankAddress, 0x2);
-  writeByte_GB(0x5555, 0xAA);
-  writeByte_GB(bankAddress, 0x1);
-  writeByte_GB(0x4AAA, 0x55);
-  writeByte_GB(bankAddress, 0x2);
-  writeByte_GB(0x5555, 0x90);
+  sendGamesharkCommand_GB(0x90);
   delay(10);
 
   // Read the two id bytes into a string
-  writeByte_GB(bankAddress, 0x0);
+  writeByte_GB(0x7FE1, 0x0);
   flashid = readByte_GB(0x4000) << 8;
   flashid |= readByte_GB(0x4001);
 
   // SST 39SF010 Flash ID Mode Exit
-  writeByte_GB(bankAddress, 0x2);
-  writeByte_GB(0x5555, 0xAA);
-  writeByte_GB(bankAddress, 0x1);
-  writeByte_GB(0x4AAA, 0x55);
-  writeByte_GB(bankAddress, 0x2);
-  writeByte_GB(0x5555, 0xF0);
+  sendGamesharkCommand_GB(0xF0);
   delay(100);
 
   if (flashid == 0xBFB5) {
@@ -3284,7 +3216,7 @@ void readGameshark_GB() {
 
     startAddress = 0x4000;
 
-    writeByte_GB(bankAddress, (workBank & 0xFF));
+    writeByte_GB(0x7FE1, (workBank & 0xFF));
 
     // Read banks and save to SD
     while (startAddress <= finalAddress) {
@@ -3314,12 +3246,7 @@ void writeGameshark_GB() {
   delay(100);
 
   // SST 39SF010 ID command sequence
-  writeByte_GB(0x7FE1, 0x2);
-  writeByte_GB(0x5555, 0xAA);
-  writeByte_GB(0x7FE1, 0x1);
-  writeByte_GB(0x4AAA, 0x55);
-  writeByte_GB(0x7FE1, 0x2);
-  writeByte_GB(0x5555, 0x90);
+  sendGamesharkCommand_GB(0x90);
   delay(10);
 
   // Read the two id bytes into a string
@@ -3328,12 +3255,7 @@ void writeGameshark_GB() {
   flashid |= readByte_GB(0x4001);
 
   // SST 39SF010 Flash ID Mode Exit
-  writeByte_GB(0x7FE1, 0x2);
-  writeByte_GB(0x5555, 0xAA);
-  writeByte_GB(0x7FE1, 0x1);
-  writeByte_GB(0x4AAA, 0x55);
-  writeByte_GB(0x7FE1, 0x2);
-  writeByte_GB(0x5555, 0xF0);
+  sendGamesharkCommand_GB(0xF0);
 
   if (flashid != 0xBFB5) {
     display_Clear();
@@ -3368,18 +3290,8 @@ void writeGameshark_GB() {
     display_Update();
 
     //Erase flash
-    writeByte_GB(0x7FE1, 0x2);
-    writeByte_GB(0x5555, 0xAA);
-    writeByte_GB(0x7FE1, 0x1);
-    writeByte_GB(0x4AAA, 0x55);
-    writeByte_GB(0x7FE1, 0x2);
-    writeByte_GB(0x5555, 0x80);
-    writeByte_GB(0x7FE1, 0x2);
-    writeByte_GB(0x5555, 0xAA);
-    writeByte_GB(0x7FE1, 0x1);
-    writeByte_GB(0x4AAA, 0x55);
-    writeByte_GB(0x7FE1, 0x2);
-    writeByte_GB(0x5555, 0x10);
+    sendGamesharkCommand_GB(0x80);
+    sendGamesharkCommand_GB(0x10);
     delay(100);
   }
 
@@ -3431,12 +3343,7 @@ void writeGameshark_GB() {
       for (int currByte = 0; currByte < 512; currByte++) {
 
         // Write command sequence
-        writeByte_GB(0x7FE1, 0x2);
-        writeByte_GB(0x5555, 0xAA);
-        writeByte_GB(0x7FE1, 0x1);
-        writeByte_GB(0x4AAA, 0x55);
-        writeByte_GB(0x7FE1, 0x2);
-        writeByte_GB(0x5555, 0xA0);
+        sendGamesharkCommand_GB(0xA0);
 
         // Set ROM bank
         writeByte_GB(0x7FE1, currBank);
