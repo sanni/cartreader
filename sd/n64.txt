@@ -977,10 +977,10 @@ Hoshi no Kirby 64 (Japan) (Rev 1).z64
 A263C1B9,CA1BB86F,32,1
 
 Hoshi no Kirby 64 (Japan) (Rev 2).z64
-F4589AA8,0C581C7A,32,1
+F4589AA8,0C581C7A,32,6
 
 Hoshi no Kirby 64 (Japan) (Rev 3).z64
-6D5E1332,BCB1F89F,32,1
+6D5E1332,BCB1F89F,32,6
 
 Hoshi no Kirby 64 (Japan).z64
 AE7CB69D,C1D702BD,32,1
