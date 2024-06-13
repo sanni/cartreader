@@ -31,6 +31,8 @@ byte eepType;
 // chksum is located in ROM at 0x18E (0xC7)
 // eepType and eepSize are combined to conserve memory
 //*********************************************************
+const byte MDSize[] PROGMEM = { 1, 2, 4, 8, 12, 16, 20, 24, 32, 40 };
+
 static const word PROGMEM eepid[] = {
   // ACCLAIM TYPE 1
   0x5B9F, 0x101,  // NBA Jam (J)
@@ -93,9 +95,9 @@ int segaSram16bit = 0;
 
 #else /* !ENABLED_CONFIG */
 
-# ifndef OPTION_MD_DEFAULT_SAVE_TYPE
-#   define OPTION_MD_DEFAULT_SAVE_TYPE 0
-# endif /* !OPTION_MD_DEFAULT_SAVE_TYPE */
+#ifndef OPTION_MD_DEFAULT_SAVE_TYPE
+#define OPTION_MD_DEFAULT_SAVE_TYPE 0
+#endif /* !OPTION_MD_DEFAULT_SAVE_TYPE */
 
 int segaSram16bit = OPTION_MD_DEFAULT_SAVE_TYPE;
 
@@ -212,9 +214,8 @@ static const char MDMenuItem3[] PROGMEM = "Flash Repro";
 static const char* const menuOptionsMD[] PROGMEM = { MDMenuItem1, MDMenuItem2, MDMenuItem3, FSTRING_RESET };
 
 // Cart menu items
-static const char MDCartMenuItem4[] PROGMEM = "Read EEPROM";
-static const char MDCartMenuItem5[] PROGMEM = "Write EEPROM";
-static const char* const menuOptionsMDCart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, MDCartMenuItem4, MDCartMenuItem5, FSTRING_REFRESH_CART, FSTRING_RESET };
+static const char MDCartMenuItem4[] PROGMEM = "Force ROM size";
+static const char* const menuOptionsMDCart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, MDCartMenuItem4, FSTRING_REFRESH_CART, FSTRING_RESET };
 
 // Sega CD Ram Backup Cartridge menu items
 static const char SCDMenuItem1[] PROGMEM = "Read Backup RAM";
@@ -302,8 +303,8 @@ void mdCartMenu() {
   // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMDCart, 7);
-  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 7, 0);
+  convertPgm(menuOptionsMDCart, 6);
+  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -345,8 +346,10 @@ void mdCartMenu() {
         enableSram_MD(1);
         readSram_MD();
         enableSram_MD(0);
+      } else if (saveType == 4) {
+        readEEP_MD();
       } else {
-        print_Error(F("Cart has no Sram"));
+        print_Error(F("Cart has no Save"));
       }
       break;
 
@@ -372,33 +375,22 @@ void mdCartMenu() {
           print_STR(_bytes_STR, 1);
           print_Error(did_not_verify_STR);
         }
-      } else {
-        print_Error(F("Cart has no Sram"));
-      }
-      break;
-
-    case 3:
-      display_Clear();
-      if (saveType == 4)
-        readEEP_MD();
-      else {
-        print_Error(F("Cart has no EEPROM"));
-      }
-      break;
-
-    case 4:
-      display_Clear();
-      if (saveType == 4) {
+      } else if (saveType == 4) {
         // Launch file browser
         fileBrowser(F("Select eep file"));
         display_Clear();
         writeEEP_MD();
       } else {
-        print_Error(F("Cart has no EEPROM"));
+        print_Error(F("Cart has no Save"));
       }
       break;
 
-    case 5:
+    case 3:
+      display_Clear();
+      force_cartSize_MD();
+      break;
+
+    case 4:
       // For multi-game carts
       // Set reset pin to output (PH0)
       DDRH |= (1 << 0);
@@ -412,7 +404,7 @@ void mdCartMenu() {
       resetArduino();
       break;
 
-    case 6:
+    case 5:
       // Reset
       resetArduino();
       break;
@@ -966,15 +958,15 @@ void getCartInfo_MD() {
   }
 
   // Kromasphere (Aftermarket)
-   if (!strncmp("GM MK-0000 -00", id, 14) && (chksum == 0xC536)) {
+  if (!strncmp("GM MK-0000 -00", id, 14) && (chksum == 0xC536)) {
     chksum = 0xFAB1;
     cartSize = 0x200000;
-   }
+  }
 
   // YM2017 (Aftermarket)
-   if (!strncmp("GM CSET0001-02", id, 14) && (chksum == 0x0000)) {
+  if (!strncmp("GM CSET0001-02", id, 14) && (chksum == 0x0000)) {
     chksum = 0xE3A9;
-   }
+  }
 
   // The Curse of Illmore Bay (Aftermarket)
   if (!strncmp("1774          ", id, 14) && (chksum == 0x0000)) {
@@ -1161,7 +1153,7 @@ void getCartInfo_MD() {
         } else if (sramBase == 0x3FFC00) {
           // Used for some aftermarket carts without sram
           saveType = 0;
-        }else {
+        } else {
           print_Msg(("sramType: "));
           print_Msg_PaddedHex16(sramType);
           println_Msg(FS(FSTRING_EMPTY));
@@ -2892,6 +2884,24 @@ void readRealtec_MD() {
   }
   // Close the file:
   myFile.close();
+}
+
+void printRomSize_MD(int index) {
+  display_Clear();
+  print_Msg(F("ROM Size: "));
+  print_Msg(pgm_read_byte(&(MDSize[index])));
+  println_Msg(F(" Mbit"));
+}
+
+void force_cartSize_MD() {
+  cartSize = navigateMenu(0, 9, &printRomSize_MD);
+  cartSize = pgm_read_byte(&(MDSize[cartSize])) * 131072;
+  display.setCursor(0, 56);  // Display selection at bottom
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  print_Msg(cartSize / 131072);
+  println_Msg(F(" Mbit"));
+  display_Update();
+  delay(1000);
 }
 
 #endif
