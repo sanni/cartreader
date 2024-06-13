@@ -127,7 +127,7 @@
 /* [ Flashrom Programmer for SNES repros -------------------------- ]
 */
 
-//#define ENABLE_FLASH
+#define ENABLE_FLASH
 //#define ENABLE_FLASH16
 
 /****/
@@ -212,7 +212,7 @@
 /* [ Super Famicom SF Memory Cassette ----------------------------- ]
 */
 
-//#define ENABLE_SFM
+#define ENABLE_SFM
 
 /****/
 

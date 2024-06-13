@@ -55,24 +55,60 @@ static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
 static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, FSTRING_RESET };
 
 // Repro menu items
-static const char reproMenuItem1[] PROGMEM = "LoROM (P0)";
-static const char reproMenuItem2[] PROGMEM = "HiROM (P0)";
-static const char reproMenuItem3[] PROGMEM = "ExLoROM (P1)";
-static const char reproMenuItem4[] PROGMEM = "ExHiROM (P1)";
-static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, FSTRING_RESET };
+static const char reproMenuItem1[] PROGMEM = "CFI LoROM";
+static const char reproMenuItem2[] PROGMEM = "CFI HiROM";
+static const char reproMenuItem3[] PROGMEM = "LoROM (P0)";
+static const char reproMenuItem4[] PROGMEM = "HiROM (P0)";
+static const char reproMenuItem5[] PROGMEM = "ExLoROM (P1)";
+static const char reproMenuItem6[] PROGMEM = "ExHiROM (P1)";
+static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5, reproMenuItem6, FSTRING_RESET };
 
 // SNES repro menu
 void reproMenu() {
-  // create menu with title and 6 options to choose from
+  // create menu with title and 7 options to choose from
   unsigned char snsRepro;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsRepro, 5);
-  snsRepro = question_box(F("Select Repro Type"), menuOptions, 5, 0);
+  convertPgm(menuOptionsRepro, 7);
+  snsRepro = question_box(F("Select Repro Type"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsRepro) {
 #ifdef ENABLE_FLASH
     case 0:
+      // CFI LoROM
+      display_Clear();
+      display_Update();
+      mapping = 0;
+      flashSize = 4194304;
+      setup_Flash8();
+      identifyCFI_Flash();
+      writeCFI_Flash();
+      verifyFlash();
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 0);
+      display_Update();
+      wait();
+      resetArduino();
+      break;
+
+    case 1:
+      // CFI HiROM
+      display_Clear();
+      display_Update();
+      mapping = 1;
+      flashSize = 4194304;
+      setup_Flash8();
+      identifyCFI_Flash();
+      writeCFI_Flash();
+      verifyFlash();
+      // Prints string out of the common strings array either with or without newline
+      print_STR(press_button_STR, 0);
+      display_Update();
+      wait();
+      resetArduino();
+      break;
+
+    case 2:
       // LoRom
       display_Clear();
       display_Update();
@@ -83,7 +119,7 @@ void reproMenu() {
       mode = CORE_FLASH8;
       break;
 
-    case 1:
+    case 3:
       // HiRom
       display_Clear();
       display_Update();
@@ -94,7 +130,7 @@ void reproMenu() {
       mode = CORE_FLASH8;
       break;
 
-    case 2:
+    case 4:
       // ExLoRom
       display_Clear();
       display_Update();
@@ -105,7 +141,7 @@ void reproMenu() {
       mode = CORE_FLASH8;
       break;
 
-    case 3:
+    case 5:
       // ExHiRom
       display_Clear();
       display_Update();
@@ -117,7 +153,7 @@ void reproMenu() {
       break;
 #endif
 
-    case 4:
+    case 6:
       resetArduino();
       break;
   }
@@ -198,7 +234,7 @@ void snsMenu() {
       resetArduino();
       break;
 
-      default:
+    default:
       print_MissingModule();  // does not return
   }
 }
@@ -1005,9 +1041,9 @@ boolean checkcart_SNES() {
   } else if (romType == 0x35) {
     romType = EX;  // Check if ExHiROM
   } else if (romType == 0x3A) {
-    romType = HI;  // Check if SPC7110
-  } else if (strcmp("3BB0", checksumStr) == 0) { // invalid romType due to too long ROM name (Yuyu no Quiz de GO!GO!)
-    romType = LO; 
+    romType = HI;                                 // Check if SPC7110
+  } else if (strcmp("3BB0", checksumStr) == 0) {  // invalid romType due to too long ROM name (Yuyu no Quiz de GO!GO!)
+    romType = LO;
   } else {
     romType &= 1;  // Must be LoROM or HiROM
   }

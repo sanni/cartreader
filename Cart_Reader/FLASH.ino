@@ -2363,7 +2363,197 @@ void print_Eprom(int numBytes) {
   }
   display_Update();
 }
+
 #endif
+
+/******************************************
+CFI flashrom functions (copy&paste from GB.ino)
+*****************************************/
+void sendCFICommand_Flash(byte cmd) {
+  writeByteCompensated_Flash(0xAAA, 0xaa);
+  writeByteCompensated_Flash(0x555, 0x55);
+  writeByteCompensated_Flash(0xAAA, cmd);
+}
+
+byte readByteCompensated_Flash(int address) {
+  byte data = readByte_Flash(address >> (flashX16Mode ? 1 : 0));
+  if (flashSwitchLastBits) {
+    return (data & 0b11111100) | ((data << 1) & 0b10) | ((data >> 1) & 0b01);
+  }
+  return data;
+}
+
+void writeByteCompensated_Flash(int address, byte data) {
+  if (flashSwitchLastBits) {
+    data = (data & 0b11111100) | ((data << 1) & 0b10) | ((data >> 1) & 0b01);
+  }
+  writeByte_Flash(address >> (flashX16Mode ? 1 : 0), data);
+}
+
+void startCFIMode_Flash(boolean x16Mode) {
+  if (x16Mode) {
+    writeByte_Flash(0x555, 0xf0);  //x16 mode reset command
+    delay(500);
+    writeByte_Flash(0x555, 0xf0);  //Double reset to get out of possible Autoselect + CFI mode
+    delay(500);
+    writeByte_Flash(0x55, 0x98);  //x16 CFI Query command
+  } else {
+    writeByte_Flash(0xAAA, 0xf0);  //x8  mode reset command
+    delay(100);
+    writeByte_Flash(0xAAA, 0xf0);  //Double reset to get out of possible Autoselect + CFI mode
+    delay(100);
+    writeByte_Flash(0xAA, 0x98);  //x8 CFI Query command
+  }
+}
+
+void identifyCFI_Flash() {
+  display_Clear();
+
+  // Reset flash
+  dataOut();
+  writeByteCompensated_Flash(0xAAA, 0xf0);
+  delay(100);
+
+  // Trying x8 mode first
+  startCFIMode_Flash(false);
+  dataIn8();
+
+  char cfiQRYx8[7];
+  char cfiQRYx16[7];
+  sprintf(cfiQRYx8, "%02X%02X%02X", readByte_Flash(0x20), readByte_Flash(0x22), readByte_Flash(0x24));
+  sprintf(cfiQRYx16, "%02X%02X%02X", readByte_Flash(0x10), readByte_Flash(0x11), readByte_Flash(0x12));
+
+  if (strcmp(cfiQRYx8, "515259") == 0) {
+    println_Msg(F("Normal CFI x8 Mode"));
+    flashX16Mode = false;
+    flashSwitchLastBits = false;
+  } else if (strcmp(cfiQRYx8, "52515A") == 0) {  // QRY in x8 mode with switched last bit
+    println_Msg(F("Switched CFI x8 Mode"));
+    flashX16Mode = false;
+    flashSwitchLastBits = true;
+  } else if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
+    println_Msg(F("Normal CFI x16 Mode"));
+    flashX16Mode = true;
+    flashSwitchLastBits = false;
+  } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
+    println_Msg(F("Switched CFI x16 Mode"));
+    flashX16Mode = true;
+    flashSwitchLastBits = true;
+  } else {
+    // Try x16 mode next
+    startCFIMode(true);
+    sprintf(cfiQRYx16, "%02X%02X%02X", readByte_Flash(0x10), readByte_Flash(0x11), readByte_Flash(0x12));
+    if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
+      println_Msg(F("Normal CFI x16 Mode"));
+      flashX16Mode = true;
+      flashSwitchLastBits = false;
+    } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
+      println_Msg(F("Switched CFI x16 Mode"));
+      flashX16Mode = true;
+      flashSwitchLastBits = true;
+    } else {
+      println_Msg(F("CFI Query failed!"));
+      display_Update();
+      wait();
+      return;
+    }
+  }
+  flashBanks = 1 << (readByteCompensated_Flash(0x4E) - 14);  // - flashX16Mode);
+
+  // Reset flash
+  dataOut();
+  writeByteCompensated_Flash(0xAAA, 0xf0);
+  dataIn8();
+  delay(100);
+  display_Update();
+}
+
+// Write flashrom
+void writeCFI_Flash() {
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select file"));
+  display_Clear();
+
+  if (openFlashFile()) {
+
+    // Reset flash
+    dataOut();
+    writeByteCompensated_Flash(0xAAA, 0xf0);
+    dataIn8();
+    delay(100);
+
+    // Reset flash
+    dataOut();
+    writeByte_Flash(0x555, 0xf0);
+    dataIn8();
+
+    delay(100);
+    println_Msg(F("Erasing..."));
+    display_Update();
+
+    // Erase flash
+    dataOut();
+    sendCFICommand_Flash(0x80);
+    sendCFICommand_Flash(0x10);
+    dataIn8();
+
+    // Read the status register
+    byte statusReg = readByte_Flash(0);
+
+    // After a completed erase D7 will output 1
+    while ((statusReg & 0x80) != 0x80) {
+      // Blink led
+      blinkLED();
+      delay(100);
+      // Update Status
+      statusReg = readByte_Flash(0);
+    }
+
+    println_Msg(F("Writing flash"));
+    display_Update();
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
+    for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += 512) {
+      myFile.read(sdBuffer, 512);
+
+      // Blink led
+      if (currAddr % 4096 == 0)
+        blinkLED();
+
+      for (int currByte = 0; currByte < 512; currByte++) {
+        // Write command sequence
+        dataOut();
+        sendCFICommand_Flash(0xa0);
+
+        // Write current byte
+        writeByte_Flash(currAddr + currByte, sdBuffer[currByte]);
+
+        dataIn8();
+
+        // Read the status register
+        byte statusReg = readByte_Flash(currAddr + currByte);
+        while ((statusReg & 0x80) != (sdBuffer[currByte] & 0x80)) {
+          statusReg = readByte_Flash(currAddr + currByte);
+        }
+      }
+      // update progress bar
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+    // Close the file:
+    myFile.close();
+  }
+  // Reset flash
+  dataOut();
+  writeByteCompensated_Flash(0xAAA, 0xf0);
+  delay(100);
+  dataIn8();
+}
 #endif
 
 //******************************************
