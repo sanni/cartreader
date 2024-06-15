@@ -211,6 +211,31 @@ void readSegment_5200(uint16_t startaddr, uint16_t endaddr) {
   }
 }
 
+void readBankBountyBob_5200(uint16_t startaddr) {
+  for (int w = 0; w < 4; w++) {
+    readData_5200(startaddr + 0xFF6 + w);
+    readSegment_5200(startaddr, startaddr + 0xE00);
+    // Split Read of Last 0x200 bytes
+    for (int x = 0; x < 0x1F6; x++) {
+      sdBuffer[x] = readData_5200(startaddr + 0xE00 + x);
+    }
+    myFile.write(sdBuffer, 502);
+    // Bank Registers 0xFF6-0xFF9
+    for (int y = 0; y < 4; y++) {
+      readData_5200(startaddr + 0xFFF);  // Reset Bank
+      sdBuffer[y] = readData_5200(startaddr + 0xFF6 + y);
+    }
+    // End of Bank 0xFFA-0xFFF
+    readData_5200(startaddr + 0xFFF);      // Reset Bank
+    readData_5200(startaddr + 0xFF6 + w);  // Set Bank
+    for (int z = 4; z < 10; z++) {
+      sdBuffer[z] = readData_5200(startaddr + 0xFF6 + z);  // 0xFFA-0xFFF
+    }
+    myFile.write(sdBuffer, 10);
+  }
+  readData_5200(startaddr + 0xFFF);  // Reset Bank
+}
+
 //******************************************
 // READ ROM
 //******************************************
@@ -250,51 +275,9 @@ void readROM_5200() {
     case 2:  // Bounty Bob Strikes Back 40KB [UNTESTED]
       ENABLE_4000;
       // First 16KB (4KB x 4)
-      for (int w = 0; w < 4; w++) {
-        readData_5200(0x4FF6 + w);
-        readSegment_5200(0x4000, 0x4E00);
-        // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F6; x++) {
-          sdBuffer[x] = readData_5200(0x4E00 + x);
-        }
-        myFile.write(sdBuffer, 502);
-        // Bank Registers 0x4FF6-0x4FF9
-        for (int y = 0; y < 4; y++) {
-          readData_5200(0x4FFF);  // Reset Bank
-          sdBuffer[y] = readData_5200(0x4FF6 + y);
-        }
-        // End of Bank 0x4FFA-0x4FFF
-        readData_5200(0x4FFF);      // Reset Bank
-        readData_5200(0x4FF6 + w);  // Set Bank
-        for (int z = 4; z < 10; z++) {
-          sdBuffer[z] = readData_5200(0x4FF6 + z);  // 0x4FFA-0x4FFF
-        }
-        myFile.write(sdBuffer, 10);
-      }
-      readData_5200(0x4FFF);  // Reset Bank
+      readBankBountyBob_5200(0x4000);
       // Second 16KB (4KB x 4)
-      for (int w = 0; w < 4; w++) {
-        readData_5200(0x5FF6 + w);
-        readSegment_5200(0x5000, 0x5E00);
-        // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F6; x++) {
-          sdBuffer[x] = readData_5200(0x5E00 + x);
-        }
-        myFile.write(sdBuffer, 502);
-        // Bank Registers 0x5FF6-0x5FF9
-        for (int y = 0; y < 4; y++) {
-          readData_5200(0x5FFF);  // Reset Bank
-          sdBuffer[y] = readData_5200(0x5FF6 + y);
-        }
-        // End of Bank 0x5FFA-0x5FFF
-        readData_5200(0x5FFF);      // Reset Bank
-        readData_5200(0x5FF6 + w);  // Set Bank
-        for (int z = 4; z < 10; z++) {
-          sdBuffer[z] = readData_5200(0x5FF6 + z);  // 0x5FFA-0x5FFF
-        }
-        myFile.write(sdBuffer, 10);
-      }
-      readData_5200(0x5FFF);  // Reset Bank
+      readBankBountyBob_5200(0x5000);
       DISABLE_4000;
       ENABLE_8000;
       readSegment_5200(0x8000, 0xA000);  // +8K = 40K
