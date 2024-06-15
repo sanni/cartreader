@@ -1971,7 +1971,7 @@ unsigned long verifySRAM() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
     return 1;
   }
 }

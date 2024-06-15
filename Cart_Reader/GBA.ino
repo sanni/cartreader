@@ -1014,7 +1014,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
 
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
     return 1;
   }
 }
@@ -1202,7 +1202,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
     return 1;
   }
 }

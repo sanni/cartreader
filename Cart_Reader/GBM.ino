@@ -688,7 +688,7 @@ void writeFlash_GBM() {
     myFile.close();
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
   }
 }
 
@@ -902,7 +902,7 @@ void writeMapping_GBM() {
     myFile.close();
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
   }
 }
 

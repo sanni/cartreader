@@ -151,7 +151,7 @@ uint8_t readData_COL(uint32_t addr) {
   return ret;
 }
 
-void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
+void readSegment_COL(uint16_t startaddr, uint32_t endaddr) {
   for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_COL(addr + w);
@@ -166,7 +166,6 @@ void readROM_COL() {
 
   // RESET ALL CS PINS HIGH (DISABLE)
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
   readSegment_COL(0x8000, 0xA000);  // 8K
   if (colsize > 0) {
     readSegment_COL(0xA000, 0xB000);  // +4K = 12K

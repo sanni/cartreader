@@ -3282,7 +3282,7 @@ void flashRepro_N64() {
       print_Error(F("failed"));
     }
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
   }
 
   // Prints string out of the common strings array either with or without newline
@@ -4066,7 +4066,7 @@ void flashGameshark_N64() {
         print_Error(did_not_verify_STR);
       }
     } else {
-      print_Error(F("Can't open file"));
+      print_Error(open_file_STR);
     }
   }
 
@@ -4422,7 +4422,7 @@ void flashXplorer_N64() {
         print_Error(did_not_verify_STR);
       }
     } else {
-      print_Error(F("Can't open file"));
+      print_Error(open_file_STR);
     }
   }
 
