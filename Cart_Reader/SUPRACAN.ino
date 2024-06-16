@@ -44,9 +44,7 @@ void setup_SuprAcan() {
   PORTG |= (1 << 5);
 
   dataOut_MD();
-  writeWord_Acan(0xaaaa, 0xaaaa);
-  writeWord_Acan(0x5555, 0x5555);
-  writeWord_Acan(0xaaaa, 0x9090);
+  writeCommand_Acan(0, 0x9090);
 
   dataIn_MD();
   eepbit[0] = readWord_Acan(0x2);
@@ -145,6 +143,26 @@ void suprAcanMenu() {
   wait();
 }
 
+static void writeCommand_Acan(uint32_t offset, uint16_t command) {
+  writeWord_Acan(offset + 0xaaaa, 0xaaaa);
+  writeWord_Acan(offset + 0x5555, 0x5555);
+  writeWord_Acan(offset + 0xaaaa, command);
+}
+
+static void openFile_Acan() {
+  filePath[0] = 0;
+  sd.chdir();
+  fileBrowser(FS(FSTRING_SELECT_FILE));
+  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
+
+  display_Clear();
+
+  if (!myFile.open(filePath, O_READ)) {
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    return;
+  }
+}
+
 static void readROM_Acan() {
   uint32_t crc32 = 0xffffffff;
 
@@ -191,17 +209,7 @@ static void readSRAM_Acan() {
 }
 
 static void writeSRAM_Acan() {
-  filePath[0] = 0;
-  sd.chdir();
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-
-  if (!myFile.open(filePath, O_READ)) {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
-    return;
-  }
+  openFile_Acan();
 
   print_Msg(F("Writing "));
   print_Msg(filePath);
@@ -307,17 +315,7 @@ static void verifyUM6650() {
 }
 
 static void writeUM6650() {
-  filePath[0] = 0;
-  sd.chdir("/");
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-
-  if (!myFile.open(filePath, O_READ)) {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
-    return;
-  }
+  openFile_Acan();
 
   uint16_t len = myFile.read(sdBuffer, 256);
   myFile.close();
@@ -342,17 +340,7 @@ static void writeUM6650() {
 static void flashCart_Acan() {
   uint32_t *flash_size = (uint32_t *)(eepbit + 4);
 
-  filePath[0] = 0;
-  sd.chdir();
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-
-  if (!myFile.open(filePath, O_READ)) {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
-    return;
-  }
+  openFile_Acan();
 
   print_Msg(F("Writing "));
   print_Msg(filePath + 1);
@@ -370,12 +358,8 @@ static void flashCart_Acan() {
   for (i = 0; i < file_length; i += *flash_size) {
     // erase chip
     dataOut_MD();
-    writeWord_Acan(i + 0xaaaa, 0xaaaa);
-    writeWord_Acan(i + 0x5555, 0x5555);
-    writeWord_Acan(i + 0xaaaa, 0x8080);
-    writeWord_Acan(i + 0xaaaa, 0xaaaa);
-    writeWord_Acan(i + 0x5555, 0x5555);
-    writeWord_Acan(i + 0xaaaa, 0x1010);
+    writeCommand_Acan(i, 0x8080);
+    writeCommand_Acan(i, 0x1010);
 
     dataIn_MD();
     while (readWord_Acan(i) != 0xffff)
@@ -388,9 +372,7 @@ static void flashCart_Acan() {
         data = *((uint16_t *)(sdBuffer + k));
 
         dataOut_MD();
-        writeWord_Acan(i + 0xaaaa, 0xaaaa);
-        writeWord_Acan(i + 0x5555, 0x5555);
-        writeWord_Acan(i + 0xaaaa, 0xa0a0);
+        writeCommand_Acan(i, 0xa0a0);
         writeWord_Acan(i + j + k, data);
 
         dataIn_MD();
