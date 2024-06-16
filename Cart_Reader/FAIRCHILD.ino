@@ -458,22 +458,7 @@ void readROM_FAIRCHILD() {
 }
 
 void read16K_FAIRCHILD() { // Read 16K Bytes
-  createFolder("FAIRCHILD", "ROM", romName, "bin");
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("FAIRCHILD", "ROM", romName, "bin");
 
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   for (uint16_t y = 0; y < 0x20; y++) {
