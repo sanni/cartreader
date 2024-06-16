@@ -193,7 +193,7 @@ static void readSRAM_Acan() {
 static void writeSRAM_Acan() {
   filePath[0] = 0;
   sd.chdir();
-  fileBrowser(F("Select a file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
@@ -309,7 +309,7 @@ static void verifyUM6650() {
 static void writeUM6650() {
   filePath[0] = 0;
   sd.chdir("/");
-  fileBrowser(F("Select a file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
@@ -344,7 +344,7 @@ static void flashCart_Acan() {
 
   filePath[0] = 0;
   sd.chdir();
-  fileBrowser(F("Select a file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();

@@ -65,7 +65,7 @@ bool gbxFlashCFI() {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
   identifyCFI_GB();
   if (!writeCFI_GB()) {
@@ -1810,7 +1810,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
   // Create filepath
@@ -2565,7 +2565,7 @@ void writePelican_GB() {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
   // Create filepath
@@ -2932,7 +2932,7 @@ void writeMegaMem_GB() {
   // Write Datel Mega Memory Card Save Storage Chip SST28LF040
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
   // Create filepath
@@ -3270,7 +3270,7 @@ void writeGameshark_GB() {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select file"));
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
   byte byte1;

@@ -70,6 +70,7 @@ constexpr char PROGMEM FSTRING_READ_SAVE[] = "Read Save";
 constexpr char PROGMEM FSTRING_WRITE_SAVE[] = "Write Save";
 constexpr char PROGMEM FSTRING_SELECT_CART[] = "Select Cart";
 constexpr char PROGMEM FSTRING_SELECT_CART_TYPE[] = "Select Cart Type";
+constexpr char PROGMEM FSTRING_SELECT_FILE[] = "Select file";
 constexpr char PROGMEM FSTRING_SET_SIZE[] = "Set Size";
 constexpr char PROGMEM FSTRING_REFRESH_CART[] = "Refresh Cart";
 constexpr char PROGMEM FSTRING_MAPPER[] = "Mapper: ";

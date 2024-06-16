@@ -255,7 +255,7 @@ void mdMenu() {
       // Change working dir to root
       filePath[0] = '\0';
       sd.chdir("/");
-      fileBrowser(F("Select file"));
+      fileBrowser(FS(FSTRING_SELECT_FILE));
       display_Clear();
       // Setting CS(PH3) LOW
       PORTH &= ~(1 << 3);

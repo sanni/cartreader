@@ -94,6 +94,7 @@ extern const char PROGMEM FSTRING_READ_SAVE[];
 extern const char PROGMEM FSTRING_WRITE_SAVE[];
 extern const char PROGMEM FSTRING_SELECT_CART[];
 extern const char PROGMEM FSTRING_SELECT_CART_TYPE[];
+extern const char PROGMEM FSTRING_SELECT_FILE[];
 extern const char PROGMEM FSTRING_SET_SIZE[];
 extern const char PROGMEM FSTRING_REFRESH_CART[];
 extern const char PROGMEM FSTRING_MAPPER[];
