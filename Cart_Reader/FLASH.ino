@@ -31,15 +31,23 @@ static const char flashMenuItemPrint[] PROGMEM = "Print";
 // 8bit Flash menu items
 static const char* const menuOptionsFLASH8[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemErase, flashMenuItemRead, flashMenuItemWrite, flashMenuItemID, flashMenuItemPrint, FSTRING_RESET };
 
+#ifndef ENABLE_FLASH16
+// Flash mode menu
+static const char modeMenuItem1[] PROGMEM = "CFI Mode";
+static const char modeMenuItem2[] PROGMEM = "Standard Mode";
+static const char* const menuOptionsMode[] PROGMEM = { modeMenuItem1, modeMenuItem2, FSTRING_RESET };
+#endif
+
 // Misc flash strings
 const char PROGMEM ATTENTION_3_3V[] = "ATTENTION 3.3V";
 
 #ifdef ENABLE_FLASH16
 // Flash start menu
-static const char flashMenuItem1[] PROGMEM = "8bit Flash adapter";
-static const char flashMenuItem2[] PROGMEM = "Eprom adapter";
-static const char flashMenuItem3[] PROGMEM = "16bit Flash adapter";
-static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, FSTRING_RESET };
+static const char flashMenuItem1[] PROGMEM = "CFI";
+static const char flashMenuItem2[] PROGMEM = "8bit Flash";
+static const char flashMenuItem3[] PROGMEM = "Eprom";
+static const char flashMenuItem4[] PROGMEM = "16bit Flash";
+static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4, FSTRING_RESET };
 
 // 16bit Flash menu items
 static const char* const menuOptionsFLASH16[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemErase, flashMenuItemRead, flashMenuItemWrite, flashMenuItemID, flashMenuItemPrint, FSTRING_RESET };
@@ -49,15 +57,26 @@ static const char epromMenuItem4[] PROGMEM = "Verify";
 static const char* const menuOptionsEprom[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemRead, flashMenuItemWrite, epromMenuItem4, flashMenuItemPrint, FSTRING_RESET };
 
 void flashMenu() {
-  // create menu with title and 3 options to choose from
+  // create menu with title and 5 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 4);
-  flashSlot = question_box(F("Select adapter PCB"), menuOptions, 4, 0);
+  convertPgm(menuOptionsFlash, 5);
+  flashSlot = question_box(F("Select Mode"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot) {
     case 0:
+      setupCFI();
+      flashSize = 8388608;
+      writeCFI_Flash(0);
+      verifyFlash();
+      print_STR(press_button_STR, 0);
+      display_Update();
+      wait();
+      resetArduino();
+      break;
+
+    case 1:
       display_Clear();
       display_Update();
       mapping = 1;
@@ -67,14 +86,14 @@ void flashMenu() {
       mode = CORE_FLASH8;
       break;
 
-    case 1:
+    case 2:
       display_Clear();
       display_Update();
       setup_Eprom();
       mode = CORE_EPROM;
       break;
 
-    case 2:
+    case 3:
       display_Clear();
       display_Update();
       setup_Flash16();
@@ -83,7 +102,7 @@ void flashMenu() {
       mode = CORE_FLASH16;
       break;
 
-    case 3:
+    case 4:
       resetArduino();
       break;
 
@@ -96,10 +115,33 @@ void flashMenu() {
   display_Clear();
   display_Update();
   mapping = 1;
-  setup_Flash8();
-  id_Flash8();
-  wait();
-  mode = CORE_FLASH8;
+
+  // create menu with title and 3 options to choose from
+  unsigned char flashMode;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsMode, 3);
+  flashMode = question_box(F("Select Flash Mode"), menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (flashMode) {
+    case 0:
+      setupCFI();
+      flashSize = 8388608;
+      writeCFI_Flash(0);
+      verifyFlash();
+      print_STR(press_button_STR, 0);
+      display_Update();
+      wait();
+      resetArduino();
+      break;
+
+    case 1:
+      setup_Flash8();
+      id_Flash8();
+      wait();
+      mode = CORE_FLASH8;
+      break;
+  }
 }
 #endif
 
