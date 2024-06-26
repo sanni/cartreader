@@ -63,6 +63,89 @@ static const char reproMenuItem5[] PROGMEM = "ExLoROM (P1)";
 static const char reproMenuItem6[] PROGMEM = "ExHiROM (P1)";
 static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMenuItem2, reproMenuItem3, reproMenuItem4, reproMenuItem5, reproMenuItem6, FSTRING_RESET };
 
+// CFI ROM config
+static const char reproCFIItem1[] PROGMEM = "1x 2MB";
+static const char reproCFIItem2[] PROGMEM = "2x 2MB";
+static const char reproCFIItem3[] PROGMEM = "1x 4MB";
+static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproCFIItem2, reproCFIItem3, FSTRING_RESET };
+
+void setupCFI() {
+#ifdef ENABLE_FLASH
+  display_Clear();
+  display_Update();
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select file"));
+  display_Clear();
+  setup_Flash8();
+  identifyCFI_Flash();
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  display_Clear();
+#endif
+}
+
+// Setup number of flashroms
+void reproCFIMenu() {
+  // create menu with title and 4 options to choose from
+  unsigned char snsReproCFI;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsReproCFI, 4);
+  snsReproCFI = question_box(F("Select Flash Config"), menuOptions, 4, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (snsReproCFI) {
+#ifdef ENABLE_FLASH
+    case 0:
+      setupCFI();
+      flashSize = 2097152;
+      writeCFI_Flash(0);
+      verifyFlash();
+      break;
+
+    case 1:
+      setupCFI();
+      flashSize = 4194304;
+      // Write first rom chip
+      writeCFI_Flash(1);
+      verifyFlash(0, 2097152);
+      delay(300);
+
+      // Switch to second ROM chip, see flash.ino low level functions line 811
+      // LoROM
+      if (mapping == 0)
+        mapping = 4;
+      // HiROM
+      else if (mapping == 1)
+        mapping = 5;
+
+      // Write second rom chip
+      display_Clear();
+      writeCFI_Flash(2);
+      verifyFlash(2097152, 2097152);
+      break;
+
+    case 2:
+      setupCFI();
+      flashSize = 4194304;
+      writeCFI_Flash(0);
+      verifyFlash();
+      break;
+#endif
+
+    case 3:
+      resetArduino();
+      break;
+  }
+
+#ifdef ENABLE_FLASH
+  // Prints string out of the common strings array either with or without newline
+  print_STR(press_button_STR, 0);
+  display_Update();
+  wait();
+  resetArduino();
+#endif
+}
+
 // SNES repro menu
 void reproMenu() {
   // create menu with title and 7 options to choose from
@@ -76,36 +159,14 @@ void reproMenu() {
 #ifdef ENABLE_FLASH
     case 0:
       // CFI LoROM
-      display_Clear();
-      display_Update();
       mapping = 0;
-      flashSize = 4194304;
-      setup_Flash8();
-      identifyCFI_Flash();
-      writeCFI_Flash();
-      verifyFlash();
-      // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 0);
-      display_Update();
-      wait();
-      resetArduino();
+      reproCFIMenu();
       break;
 
     case 1:
       // CFI HiROM
-      display_Clear();
-      display_Update();
       mapping = 1;
-      flashSize = 4194304;
-      setup_Flash8();
-      identifyCFI_Flash();
-      writeCFI_Flash();
-      verifyFlash();
-      // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 0);
-      display_Update();
-      wait();
-      resetArduino();
+      reproCFIMenu();
       break;
 
     case 2:

@@ -830,7 +830,7 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
   }
-  // for SNES ExLoRom repro
+  // for SNES ExLoRom repro with 2x 4MB
   else if (mapping == 2) {
     // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
@@ -857,6 +857,26 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     }
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
+  }
+  // for SNES LoRom repro with 2x 2MB
+  else if (mapping == 4) {
+    // A8-A14
+    PORTK = (myAddress >> 8) & 0x7F;
+    // Set SNES A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
+    // A15-A22
+    PORTL = (myAddress >> 15) & 0xFF;
+    // Flip BA6(PL6) to address second rom chip
+    PORTL ^= (1 << PL6);
+  }
+  // for SNES HiRom repro with 2x 2MB
+  else if (mapping == 5) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A23
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Flip BA5(PL5) to address second rom chip
+    PORTL ^= (1 << PL5);
   }
 
   // Data
@@ -941,6 +961,26 @@ byte readByte_Flash(unsigned long myAddress) {
     }
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
+  }
+  // for SNES LoRom repro with 2x 2MB
+  else if (mapping == 4) {
+    // A8-A14
+    PORTK = (myAddress >> 8) & 0x7F;
+    // Set SNES A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
+    // A15-A22
+    PORTL = (myAddress >> 15) & 0xFF;
+    // Flip BA6(PL6) to address second rom chip
+    PORTL ^= (1 << PL6);
+  }
+  // for SNES HiRom repro with 2x 2MB
+  else if (mapping == 5) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A23
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Flip BA5(PL5) to address second rom chip
+    PORTL ^= (1 << PL5);
   }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
@@ -1711,8 +1751,18 @@ void blankcheck_Flash() {
 }
 
 void verifyFlash() {
+  verifyFlash(0, 0);
+}
+
+void verifyFlash(unsigned long verifyStart, unsigned long verifyEnd) {
   if (openVerifyFlashFile()) {
     blank = 0;
+
+    if (verifyStart != 0)
+      myFile.seekCur(verifyStart);
+    if (verifyEnd != 0)
+      fileSize = verifyEnd;
+
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
@@ -2367,7 +2417,7 @@ void print_Eprom(int numBytes) {
 #endif
 
 /******************************************
-CFI flashrom functions (copy&paste from GB.ino)
+CFI flashrom functions (modified from GB.ino)
 *****************************************/
 void sendCFICommand_Flash(byte cmd) {
   writeByteCompensated_Flash(0xAAA, 0xaa);
@@ -2453,8 +2503,10 @@ void identifyCFI_Flash() {
       flashSwitchLastBits = true;
     } else {
       println_Msg(F("CFI Query failed!"));
+      print_STR(press_button_STR, 0);
       display_Update();
       wait();
+      resetArduino();
       return;
     }
   }
@@ -2469,13 +2521,13 @@ void identifyCFI_Flash() {
 }
 
 // Write flashrom
-void writeCFI_Flash() {
-  filePath[0] = '\0';
-  sd.chdir("/");
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  display_Clear();
-
-  if (openFlashFile()) {
+void writeCFI_Flash(byte romChips) {
+  if (openFileOnSD()) {
+    // Print filepath
+    print_STR(flashing_file_STR, 0);
+    print_Msg(filePath);
+    println_Msg(F("..."));
+    display_Update();
 
     // Reset flash
     dataOut();
@@ -2510,7 +2562,22 @@ void writeCFI_Flash() {
       statusReg = readByte_Flash(0);
     }
 
-    println_Msg(F("Writing flash"));
+    print_Msg(F("Writing flash"));
+    // If we have two ROM chips only write half the ROM file here and skip to second half of file on second write
+    if (romChips == 0) {
+      println_Msg(F(""));
+    } else if (romChips == 1) {
+      println_Msg(F(" 1/2"));
+      myFile.seekCur(0);
+      // Truncate file to size of 1st flash chip
+      if (fileSize > flashSize / 2) {
+        fileSize = flashSize / 2;
+      }
+    } else if (romChips == 2) {
+      println_Msg(F(" 2/2"));
+      myFile.seekCur(flashSize / 2);
+      fileSize = fileSize - flashSize / 2;
+    }
     display_Update();
 
     //Initialize progress bar
