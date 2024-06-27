@@ -107,7 +107,7 @@ void reproCFIMenu() {
       flashSize = 4194304;
       // Write first rom chip
       writeCFI_Flash(1);
-      verifyFlash(0, 2097152);
+      verifyFlash(1);
       delay(300);
 
       // Switch to second ROM chip, see flash.ino low level functions line 811
@@ -121,7 +121,7 @@ void reproCFIMenu() {
       // Write second rom chip
       display_Clear();
       writeCFI_Flash(2);
-      verifyFlash(2097152, 2097152);
+      verifyFlash(2);
       break;
 
     case 2:

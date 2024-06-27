@@ -1793,17 +1793,26 @@ void blankcheck_Flash() {
 }
 
 void verifyFlash() {
-  verifyFlash(0, 0);
+  verifyFlash(0);
 }
 
-void verifyFlash(unsigned long verifyStart, unsigned long verifyEnd) {
+void verifyFlash(byte romChips) {
   if (openVerifyFlashFile()) {
     blank = 0;
 
-    if (verifyStart != 0)
-      myFile.seekCur(verifyStart);
-    if (verifyEnd != 0)
-      fileSize = verifyEnd;
+    if (romChips == 1) {
+      myFile.seekCur(0);
+      // Truncate file to size of 1st flash chip
+      if (fileSize > flashSize / 2) {
+        fileSize = flashSize / 2;
+      }
+    } else if (romChips == 2) {
+      if (fileSize > flashSize / 2) {
+        myFile.seekCur(flashSize / 2);
+        fileSize = fileSize - (flashSize / 2);
+      } else
+        fileSize = 0;
+    }
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       //fill sdBuffer
@@ -2608,17 +2617,25 @@ void writeCFI_Flash(byte romChips) {
     // If we have two ROM chips only write half the ROM file here and skip to second half of file on second write
     if (romChips == 0) {
       println_Msg(F(""));
-    } else if (romChips == 1) {
+    }
+
+    else if (romChips == 1) {
       println_Msg(F(" 1/2"));
       myFile.seekCur(0);
       // Truncate file to size of 1st flash chip
       if (fileSize > flashSize / 2) {
         fileSize = flashSize / 2;
       }
-    } else if (romChips == 2) {
+    }
+
+    else if (romChips == 2) {
       println_Msg(F(" 2/2"));
-      myFile.seekCur(flashSize / 2);
-      fileSize = fileSize - flashSize / 2;
+      if (fileSize > flashSize / 2) {
+        myFile.seekCur(flashSize / 2);
+        fileSize = fileSize - (flashSize / 2);
+      } else {
+        fileSize = 0;
+      }
     }
     display_Update();
 
