@@ -858,7 +858,7 @@ void getCartInfo_SNES() {
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
 
-  print_Msg(F("Revision: "));
+  print_Msg(FS(FSTRING_REVISION));
   println_Msg(romVersion);
 
   print_Msg(F("Type: "));

@@ -102,6 +102,8 @@ extern const char PROGMEM FSTRING_SIZE[];
 extern const char PROGMEM FSTRING_ROM_SIZE[];
 extern const char PROGMEM FSTRING_NAME[];
 extern const char PROGMEM FSTRING_CHECKSUM[];
+extern const char PROGMEM FSTRING_REVISION[];
+extern const char PROGMEM FSTRING_SERIAL[];
 
 #define FS(pmem_string) (reinterpret_cast<const __FlashStringHelper *>(pmem_string))
 

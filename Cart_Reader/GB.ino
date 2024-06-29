@@ -558,10 +558,10 @@ void showCartInfo_GB() {
     print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     if (cartID[0] != 0) {
-      print_Msg(F("Serial: "));
+      print_Msg(FS(FSTRING_SERIAL));
       println_Msg(cartID);
     }
-    print_Msg(F("Revision: "));
+    print_Msg(FS(FSTRING_REVISION));
     println_Msg(romVersion);
 
     print_Msg(FS(FSTRING_MAPPER));

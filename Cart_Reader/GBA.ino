@@ -254,9 +254,9 @@ void setup_GBA() {
   // Print start page
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
-  print_Msg(F("Serial: "));
+  print_Msg(FS(FSTRING_SERIAL));
   println_Msg(cartID);
-  print_Msg(F("Revision: "));
+  print_Msg(FS(FSTRING_REVISION));
   println_Msg(romVersion);
   print_Msg(FS(FSTRING_ROM_SIZE));
   if (cartSize == 0)
@@ -681,7 +681,7 @@ void getCartInfo_GBA() {
 
             // Print current database entry
             println_Msg(gamename);
-            print_Msg(F("Serial: "));
+            print_Msg(FS(FSTRING_SERIAL));
             println_Msg(tempStr);
             print_Msg(FS(FSTRING_ROM_SIZE));
             print_Msg(cartSize);
