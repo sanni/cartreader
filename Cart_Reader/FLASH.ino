@@ -881,7 +881,7 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
     // Flip A22(PL7) to reverse P0 and P1 roms
-    PORTL ^= (1 << PL7);
+    PORTL ^= (1 << 7);
   }
   // for SNES ExHiRom repro
   else if (mapping == 3) {
@@ -909,7 +909,7 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
     // Flip BA6(PL6) to address second rom chip
-    PORTL ^= (1 << PL6);
+    PORTL ^= (1 << 6);
   }
   // for SNES HiRom repro with 2x 2MB
   else if (mapping == 5) {
@@ -918,7 +918,9 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
     // Flip BA5(PL5) to address second rom chip
-    PORTL ^= (1 << PL5);
+    PORTL ^= (1 << 5);
+    // Switch SNES BA6(PL6) to HIGH to disable SRAM
+    PORTL |= (1 << 6);
   }
 
   // Data
@@ -985,7 +987,7 @@ byte readByte_Flash(unsigned long myAddress) {
     // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
     // Flip A22(PL7) to reverse P0 and P1 roms
-    PORTL ^= (1 << PL7);
+    PORTL ^= (1 << 7);
   }
   // for SNES ExHiRom repro
   else if (mapping == 3) {
@@ -1013,7 +1015,7 @@ byte readByte_Flash(unsigned long myAddress) {
     // A15-A22
     PORTL = (myAddress >> 15) & 0xFF;
     // Flip BA6(PL6) to address second rom chip
-    PORTL ^= (1 << PL6);
+    PORTL ^= (1 << 6);
   }
   // for SNES HiRom repro with 2x 2MB
   else if (mapping == 5) {
@@ -1022,7 +1024,9 @@ byte readByte_Flash(unsigned long myAddress) {
     // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
     // Flip BA5(PL5) to address second rom chip
-    PORTL ^= (1 << PL5);
+    PORTL ^= (1 << 5);
+    // Switch SNES BA6(PL6) to HIGH to disable SRAM
+    PORTL |= (1 << 6);
   }
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
