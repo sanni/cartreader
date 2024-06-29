@@ -18,6 +18,7 @@
 #define HUCARD 0
 #define TURBOCHIP 1
 #define HUCARD_NOSWAP 2
+#define PCE_FLASH 3
 #define DETECTION_SIZE 64
 #define FORCED_SIZE 1024
 #define CHKSUM_SKIP 0
@@ -53,7 +54,8 @@ uint8_t tennokoe_bank_index = 0;
 static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
 static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
 static const char pceMenuItem3[] PROGMEM = "Turbochip";
-static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, FSTRING_RESET };
+static const char pceMenuItem4[] PROGMEM = "Flash Repro (SST)";
+static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, pceMenuItem4, FSTRING_RESET };
 
 // PCE card menu items
 static const char menuOptionspceCart_1[] PROGMEM = "Read RAM Bank %d";
@@ -66,15 +68,18 @@ static const char menuOptionspceCart_5_fmt[] PROGMEM = "ROM size now %dK";
 // Turbochip menu items
 static const char *const menuOptionspceTC[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
-// PCE start menu
-void pcsMenu(void) {
-  // create menu with title and 3 options to choose from
-  unsigned char pceDev;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionspce, 3);
-  pceDev = question_box(F("Select device"), menuOptions, 3, 0);
+#ifdef ENABLE_FLASH
+// Flash repro menu items
+static const char menuOptionspceFlash1[] PROGMEM = "Erase";
+static const char *const menuOptionspceFlash[] PROGMEM = { menuOptionspceFlash1, FSTRING_RESET };
+#endif
 
-  // wait for user choice to come back from the question box menu
+// PCE start menu, first a device type is selected and set in pce_internal_mode
+void pcsMenu(void) {
+  unsigned char pceDev;
+  convertPgm(menuOptionspce, 4);
+  pceDev = question_box(F("Select device"), menuOptions, 4, 0);
+
   switch (pceDev) {
     case 0:
       //Hucard
@@ -103,9 +108,23 @@ void pcsMenu(void) {
       mode = CORE_PCE;
       break;
 
+#ifdef ENABLE_FLASH
     case 3:
+      //Flash Repro
+      display_Clear();
+      display_Update();
+      pce_internal_mode = PCE_FLASH;
+      setup_cart_PCE();
+      mode = CORE_PCE;
+      break;
+#endif
+
+    case 4:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -273,7 +292,7 @@ void write_byte_PCE(uint32_t address, uint8_t data) {
           "nop\n\t");
 
   //Swap bit order for PC Engine HuCARD
-  if (pce_internal_mode == HUCARD) {
+  if (pce_internal_mode == HUCARD || pce_internal_mode == PCE_FLASH) {
     data = ((data & 0x01) << 7) | ((data & 0x02) << 5) | ((data & 0x04) << 3) | ((data & 0x08) << 1) | ((data & 0x10) >> 1) | ((data & 0x20) >> 3) | ((data & 0x40) >> 5) | ((data & 0x80) >> 7);
   }
 
@@ -808,6 +827,28 @@ void read_rom_PCE(void) {
   wait();
 }
 
+void flash_erase_PCE() {
+  display_Clear();
+  pin_read_write_PCE();
+  data_output_PCE();
+  PORTH |= (1 << 3); // RD HIGH
+  write_byte_PCE(0x5555, 0xAA);
+  write_byte_PCE(0x2AAA, 0x55);
+  write_byte_PCE(0x5555, 0x80);
+  write_byte_PCE(0x5555, 0xAA);
+  write_byte_PCE(0x2AAA, 0x55);
+  write_byte_PCE(0x5555, 0x10);
+  // TSCE = 100ms
+  delay(100);
+
+  pin_init_PCE();
+
+  println_Msg(FS(FSTRING_OK));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+}
+
 // PC Engine Menu
 void pceMenu() {
   // create menu with title and 7 options to choose from
@@ -861,7 +902,8 @@ void pceMenu() {
         resetArduino();
         break;
     }
-  } else {
+  }
+  else if (pce_internal_mode == TURBOCHIP) {
     // Copy menuOptions out of progmem
     convertPgm(menuOptionspceTC, 2);
     mainMenu = question_box(F("TG TurboChip menu"), menuOptions, 2, 0);
@@ -876,6 +918,27 @@ void pceMenu() {
         resetArduino();
         break;
     }
+  }
+#ifdef ENABLE_FLASH 
+  else if (pce_internal_mode == PCE_FLASH) {
+    const int max = 2;
+    convertPgm(menuOptionspceFlash, max);
+    mainMenu = question_box(F("Flash Repro menu"), menuOptions, max, 0);
+
+    switch (mainMenu) {
+      case 0:
+        // Format/erase
+        flash_erase_PCE();
+        break;
+      
+      case 1:
+        resetArduino();
+        break;
+    }
+  }
+#endif
+  else {
+    print_MissingModule();  // does not return
   }
 }
 
