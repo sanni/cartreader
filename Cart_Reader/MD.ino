@@ -2888,7 +2888,7 @@ void readRealtec_MD() {
 
 void printRomSize_MD(int index) {
   display_Clear();
-  print_Msg(F("ROM Size: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(MDSize[index])));
   println_Msg(F(" Mbit"));
 }

@@ -496,7 +496,7 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_FAIRCHILD(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(FAIRCHILD[index]);
 }
 #endif

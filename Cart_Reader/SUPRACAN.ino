@@ -416,7 +416,7 @@ static void checkRomExist_Acan() {
   if (cartSize == 0)
     print_Error(F("Unable to find rom signature..."));
   else {
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     print_Msg(romSize);
     println_Msg(F(" Mb"));
   }

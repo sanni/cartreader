@@ -1929,7 +1929,7 @@ void printCartInfo_N64() {
     println_Msg(cartID);
     print_Msg(F("Revision: "));
     println_Msg(romVersion);
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     print_Msg(cartSize);
     println_Msg(F(" MB"));
     print_Msg(F("Save Type: "));

@@ -629,7 +629,7 @@ void checkMapperSize_C64() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_C64(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(C64[index]);
 }
 #endif

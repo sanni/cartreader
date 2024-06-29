@@ -478,7 +478,7 @@ void println_Mapper7800(byte mapper) {
 
 void printRomSize_7800(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(a7800[index]);
 }
 #endif

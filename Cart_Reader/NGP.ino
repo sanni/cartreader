@@ -188,7 +188,7 @@ void printCartInfo_NGP() {
   else
     println_Msg(F("Unknown"));
 
-  print_Msg(F("ROM Size: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (cartSize == 0) {
     println_Msg(F("Unknown"));
   } else {

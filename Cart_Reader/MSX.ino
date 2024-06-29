@@ -889,7 +889,7 @@ void checkMapperSize_MSX() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_MSX(uint8_t index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(MSX[index]);
 }
 #endif

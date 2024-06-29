@@ -376,7 +376,7 @@ static void showCartInfo_WS() {
   print_Msg(F("Game: "));
   println_Msg(romName);
 
-  print_Msg(F("Rom Size: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (cartSize == 0x00)
     println_Msg(romSize, HEX);
   else {

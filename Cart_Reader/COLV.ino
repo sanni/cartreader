@@ -204,7 +204,7 @@ void readROM_COL() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_COL(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(pgm_read_byte(&(COL[index])));
 }
 #endif

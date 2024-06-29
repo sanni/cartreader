@@ -257,7 +257,7 @@ void readROM_ODY2() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_ODY2(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(ODY2[index]);
 }
 #endif

@@ -597,7 +597,7 @@ void showCartInfo_GB() {
       print_Msg(F("M161"));
 
     println_Msg(FS(FSTRING_EMPTY));
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     switch (romSize) {
       case 0:
         print_Msg(F("32 KB"));
@@ -2486,7 +2486,8 @@ void readPelican_GB() {
   if (flashid == 0xDA45 || flashid == 0xBF10) {
     println_Msg(F("29EE020 / W29C020"));
     println_Msg(F("Banks Used: 32/64"));
-    println_Msg(F("Rom Size: 256 KB"));
+    print_Msg(FS(FSTRING_ROM_SIZE));
+    println_Msg(F("256 KB"));
     romBanks = 32;
     display_Update();
   } else {
@@ -2514,7 +2515,8 @@ void readPelican_GB() {
   if (flashid == 0xBF04) {
     println_Msg(F("SST 28LF040"));
     println_Msg(F("Banks Used: 64/64"));
-    println_Msg(F("Rom Size: 512 KB"));
+    print_Msg(FS(FSTRING_ROM_SIZE));
+    println_Msg(F("512 KB"));
     romBanks = 64;
     display_Update();
   }
@@ -3185,7 +3187,8 @@ void readGameshark_GB() {
   if (flashid == 0xBFB5) {
     display_Clear();
     println_Msg(F("SST 39SF010"));
-    println_Msg(F("Rom Size: 128 KB"));
+    print_Msg(FS(FSTRING_ROM_SIZE));
+    println_Msg(F("128 KB"));
     display_Update();
   } else {
     display_Clear();

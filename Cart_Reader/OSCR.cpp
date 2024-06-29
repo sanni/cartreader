@@ -77,7 +77,7 @@ constexpr char PROGMEM FSTRING_MAPPER[] = "Mapper: ";
 constexpr char PROGMEM FSTRING_SIZE[] = "Size: ";
 constexpr char PROGMEM FSTRING_NAME[] = "Name: ";
 constexpr char PROGMEM FSTRING_CHECKSUM[] = "Checksum: ";
-constexpr char PROGMEM FSTRING_ROM_SIZE[] ="ROM SIZE: ";
+constexpr char PROGMEM FSTRING_ROM_SIZE[] ="ROM Size: ";
 
 /*==== /CONSTANTS =================================================*/
 
