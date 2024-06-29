@@ -70,7 +70,7 @@ static const char *const menuOptionspceTC[] PROGMEM = { FSTRING_READ_ROM, FSTRIN
 
 #ifdef ENABLE_FLASH
 // Flash repro menu items
-static const char menuOptionspceFlash1[] PROGMEM = "Erase";
+static const char menuOptionspceFlash1[] PROGMEM = "Flash (PCE)";
 static const char *const menuOptionspceFlash[] PROGMEM = { menuOptionspceFlash1, FSTRING_RESET };
 #endif
 
@@ -827,27 +827,75 @@ void read_rom_PCE(void) {
   wait();
 }
 
-void flash_erase_PCE() {
+#ifdef ENABLE_FLASH 
+// Write flashrom
+void flash_PCE() {
+  // TODO identify size by ID?
+  flashSize = 524288; //4Mbit SST39SF040
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
-  pin_read_write_PCE();
-  data_output_PCE();
-  PORTH |= (1 << 3); // RD HIGH
-  write_byte_PCE(0x5555, 0xAA);
-  write_byte_PCE(0x2AAA, 0x55);
-  write_byte_PCE(0x5555, 0x80);
-  write_byte_PCE(0x5555, 0xAA);
-  write_byte_PCE(0x2AAA, 0x55);
-  write_byte_PCE(0x5555, 0x10);
-  // TSCE = 100ms
-  delay(100);
 
-  pin_init_PCE();
+  if (openFlashFile()) {
 
-  println_Msg(FS(FSTRING_OK));
-  print_STR(press_button_STR, 1);
+    println_Msg(F("Erasing..."));
+    display_Update();
+
+    pin_read_write_PCE();
+    data_output_PCE();
+    PORTH |= (1 << 3); // RD HIGH
+    write_byte_PCE(0x5555, 0xAA);
+    write_byte_PCE(0x2AAA, 0x55);
+    write_byte_PCE(0x5555, 0x80);
+    write_byte_PCE(0x5555, 0xAA);
+    write_byte_PCE(0x2AAA, 0x55);
+    write_byte_PCE(0x5555, 0x10);
+    // TSCE = 100ms
+    delay(100);
+    pin_init_PCE();
+
+    println_Msg(F("Writing flash"));
+    display_Update();
+
+    pin_read_write_PCE();
+    data_output_PCE();
+    PORTH |= (1 << 3); // RD HIGH
+
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
+    for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += 512) {
+      myFile.read(sdBuffer, 512);
+
+      if (currAddr % 4096 == 0) {
+        blinkLED();
+      }
+
+      for (int currByte = 0; currByte < 512; currByte++) {
+        write_byte_PCE(0x5555, 0xAA);
+        write_byte_PCE(0x2AAA, 0x55);
+        write_byte_PCE(0x5555, 0xA0);
+        write_byte_PCE(currAddr + currByte, sdBuffer[currByte]);
+
+        // TODO could use toggle bit or data complement
+        // TBP = 20us
+        delayMicroseconds(20);
+      }
+
+      // update progress bar
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+    myFile.close();
+    pin_init_PCE();
+    println_Msg(FS(FSTRING_OK));
+  }
   display_Update();
   wait();
 }
+#endif
 
 // PC Engine Menu
 void pceMenu() {
@@ -928,7 +976,7 @@ void pceMenu() {
     switch (mainMenu) {
       case 0:
         // Format/erase
-        flash_erase_PCE();
+        flash_PCE();
         break;
       
       case 1:
