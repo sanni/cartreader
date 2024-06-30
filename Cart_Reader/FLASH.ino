@@ -1266,6 +1266,12 @@ void writeFlash29F032() {
     // Retry writing, for when /RESET is not connected (floating)
     int dq5failcnt = 0;
     int noread = 0;
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       // if (currByte >= 0) {
@@ -1314,6 +1320,9 @@ void writeFlash29F032() {
       } else {
         noread = 0;
       }
+      // update progress bar
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Set data pins to input again
     dataIn8();
@@ -1384,6 +1393,11 @@ void writeFlash29F1610() {
     // Set data pins to output
     dataOut();
 
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
       myFile.read(sdBuffer, 128);
@@ -1403,6 +1417,9 @@ void writeFlash29F1610() {
       for (byte c = 0; c < 128; c++) {
         writeByte_Flash(currByte + c, sdBuffer[c]);
       }
+      // update progress bar
+      processedProgressBar += 128;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
 
     // Check if write is complete
@@ -1421,6 +1438,11 @@ void writeFlash29F1601() {
 
     // Set data pins to output
     dataOut();
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
@@ -1446,6 +1468,9 @@ void writeFlash29F1601() {
           writeByte_Flash(currByte + c, sdBuffer[c]);
         }
       }
+      // update progress bar
+      processedProgressBar += 128;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
 
     // Check if write is complete
@@ -1542,6 +1567,11 @@ void writeFlash29LV640() {
     // Set data pins to output
     dataOut();
 
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       // Fill sdBuffer
       myFile.read(sdBuffer, 512);
@@ -1558,6 +1588,9 @@ void writeFlash29LV640() {
         // Check if write is complete
         busyCheck29LV640(currByte + c, sdBuffer[c]);
       }
+      // update progress bar
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Set data pins to input again
     dataIn8();
@@ -1573,6 +1606,11 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
   if (openFlashFile()) {
     // Set data pins to output
     dataOut();
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
       // Blink led
@@ -1610,6 +1648,9 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
           dataOut();
         }
       }
+      // update progress bar
+      processedProgressBar += sectorSize;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Set data pins to input again
     dataIn8();
@@ -1626,6 +1667,11 @@ void writeFlash29F800() {
     // Set data pins to output
     dataOut();
 
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       myFile.read(sdBuffer, 512);
@@ -1640,6 +1686,9 @@ void writeFlash29F800() {
         writeByte_Flash(currByte + c, sdBuffer[c]);
         busyCheck29F032(currByte + c, sdBuffer[c]);
       }
+      // update progress bar
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
 
     // Set data pins to input again
@@ -1713,6 +1762,11 @@ void writeFlashE28FXXXJ3A() {
   uint32_t block_addr;
   uint32_t block_addr_mask = ~(sectorSize - 1);
 
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)fileSize;
+  draw_progressbar(0, totalProgressBar);
+
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
     myFile.read(sdBuffer, 512);
@@ -1749,12 +1803,20 @@ void writeFlashE28FXXXJ3A() {
       while ((readByte_Flash(block_addr) & 0x80) == 0x00)
         ;
     }
+    // update progress bar
+    processedProgressBar += 512;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   dataIn8();
 }
 
 void writeFlashLH28F0XX() {
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)fileSize;
+  draw_progressbar(0, totalProgressBar);
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
@@ -1783,6 +1845,9 @@ void writeFlashLH28F0XX() {
       while ((readByte_Flash(currByte + c) & 0x80) == 0x00)
         ;
     }
+    // update progress bar
+    processedProgressBar += 512;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   dataIn8();
