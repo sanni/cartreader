@@ -124,7 +124,9 @@ enum CORES: uint8_t {
 # endif
 # ifdef ENABLE_SFM
   CORE_SFM,
+#   ifdef ENABLE_FLASH
   CORE_SFM_FLASH,
+#   endif
   CORE_SFM_GAME,
 # endif
 # ifdef ENABLE_GBX
