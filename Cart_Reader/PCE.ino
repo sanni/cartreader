@@ -838,12 +838,11 @@ void flash_mode_PCE() {
 }
 
 // Implements data complement status checking
+// We only look at D7, or the highest bit of expected
 void flash_wait_status_PCE(uint8_t expected) {
   set_cs_rd_low_PCE();
   data_input_PCE();
   
-  // We only look at D7, or the highest bit of expected
-  expected >>= 7;
   uint8_t status;
   do {
     PORTH &= ~(1 << 3);  // RD low
@@ -853,7 +852,7 @@ void flash_wait_status_PCE(uint8_t expected) {
     status = PINC;
     PORTH |= (1 << 3);  // RD high
     // reversed, bit 0 is the MSB
-  } while ((status & 0x1) != expected);
+  } while ((status & 0x1) != (expected >> 7));
 
   data_output_PCE();
   // leave RD high on exit
@@ -946,7 +945,6 @@ void flash_PCE() {
     uint32_t totalProgressBar = (uint32_t)fileSize;
     draw_progressbar(0, totalProgressBar);
 
-    unsigned long startMs = millis();
     flash_mode_PCE();
     const size_t BUFSIZE = 512;
     for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += BUFSIZE) {
@@ -964,11 +962,6 @@ void flash_PCE() {
         write_byte_PCE(0x5555, 0xA0);
         write_byte_PCE(currAddr + currByte, b);
         flash_wait_status_PCE(b);
-        
-        // tBP = 20us
-        // delayMicroseconds(20);
-
-        // status polling = 38s
       }
 
       // update progress bar
@@ -977,7 +970,6 @@ void flash_PCE() {
     }
     myFile.close();
     pin_init_PCE();
-    println_Msg((millis() - startMs) / 1000);
     print_STR(done_STR, true);
   }
   display_Update();
