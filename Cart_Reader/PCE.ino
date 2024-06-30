@@ -2,7 +2,7 @@
 // PC Engine & TurboGrafx dump code by tamanegi_taro
 // April 18th 2018 Revision 1.0.1 Initial version
 // August 12th 2019 Revision 1.0.2 Added Tennokoe Bank support
-// June 29th 2024 Revision 1.0.3 Added ichigobankai repro HuCard writing
+// June 29th 2024 Revision 1.0.3 Added repro HuCard flashing
 //
 // Special thanks
 // sanni - Arduino cart reader
@@ -858,6 +858,9 @@ void flash_wait_status_PCE(uint8_t expected) {
   // leave RD high on exit
 }
 
+// Flashes a reproduction HuCard that's directly wired to a flash chip
+// Supported flash: SST39SF0x0, MX29F0x0 1Mbit-8Mbit
+// Developed against Ichigobankai's design https://github.com/partlyhuman/HuCARD-repro
 void flash_PCE() {
   println_Msg(F("Detecting..."));
   display_Update();
@@ -882,11 +885,11 @@ void flash_PCE() {
   flashSize = 0;
   switch (deviceId) {
     case 0xBFB5:
-      // SST39SF010A = 1Mbit
+      // SST39SF010 = 1Mbit
       flashSize = 131072UL;
       break;
     case 0xBFB6:
-      // SST39SF020A = 2Mbit
+      // SST39SF020 = 2Mbit
       flashSize = 262144UL;
       break;
     case 0xBFB7:
