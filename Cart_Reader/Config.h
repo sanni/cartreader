@@ -124,7 +124,7 @@
 
 /****/
 
-/* [ Flashrom Programmer for SNES repros -------------------------- ]
+/* [ Flashrom Programmer for repro carts -------------------------- ]
 */
 
 #define ENABLE_FLASH

@@ -58,13 +58,18 @@ void sfmMenu() {
     case 0:
       sfmGameMenu();
       break;
+#ifdef CORE_SFM_FLASH
     // Flash menu
     case 1:
       mode = CORE_SFM_FLASH;
       break;
+#endif
     // Reset
     case 2:
       resetArduino();
+      break;
+    default:
+      print_MissingModule();
       break;
   }
 }
