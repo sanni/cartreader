@@ -442,46 +442,46 @@
 */
 
 #if defined(ENABLE_CONFIG)
-# define CONFIG_FILE       "config.txt"
+#define CONFIG_FILE "config.txt"
 // Define the max length of the key=value pairs
 // Do your best not to have to increase these.
-# define CONFIG_KEY_MAX    32
-# define CONFIG_VALUE_MAX  32
+#define CONFIG_KEY_MAX 32
+#define CONFIG_VALUE_MAX 32
 #endif
 
 #if (defined(HW4) || defined(HW5))
-# define ENABLE_LCD
-# define ENABLE_NEOPIXEL
-# define ENABLE_ROTARY
+#define ENABLE_LCD
+#define ENABLE_NEOPIXEL
+#define ENABLE_ROTARY
 //# define rotate_counter_clockwise
-# define ENABLE_CLOCKGEN
-# define OPTION_N64_FASTCRC
-# define OPTION_WS_ADAPTER_V2
+#define ENABLE_CLOCKGEN
+#define OPTION_N64_FASTCRC
+#define OPTION_WS_ADAPTER_V2
 #endif
 
 #if (defined(HW2) || defined(HW3))
-# define ENABLE_OLED
-# define ENABLE_BUTTON2
-# define ENABLE_CLOCKGEN
-# define ENABLE_CA_LED
-# define OPTION_N64_FASTCRC
+#define ENABLE_OLED
+#define ENABLE_BUTTON2
+#define ENABLE_CLOCKGEN
+#define ENABLE_CA_LED
+#define OPTION_N64_FASTCRC
 #endif
 
 #if defined(HW1)
-# define ENABLE_OLED
+#define ENABLE_OLED
 //#define ENABLE_CLOCKGEN
 //#define OPTION_N64_FASTCRC
 #endif
 
 #if defined(SERIAL_MONITOR)
-# define ENABLE_SERIAL
+#define ENABLE_SERIAL
 //#define ENABLE_CLOCKGEN
 //#define OPTION_N64_FASTCRC
 #endif
 
 /* Firmware updater only works with HW3 and HW5 */
 #if !(defined(HW5) || defined(HW3))
-# undef ENABLE_UPDATER
+#undef ENABLE_UPDATER
 #endif
 
 /* End of settings */

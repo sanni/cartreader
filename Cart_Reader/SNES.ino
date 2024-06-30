@@ -112,11 +112,11 @@ void reproCFIMenu() {
 
       // Switch to second ROM chip, see flash.ino low level functions line 811
       // LoROM
-      if (mapping == 0)
-        mapping = 4;
+      if (mapping == 1)
+        mapping = 11;
       // HiROM
-      else if (mapping == 1)
-        mapping = 5;
+      else if (mapping == 2)
+        mapping = 22;
 
       // Write second rom chip
       display_Clear();
@@ -159,13 +159,13 @@ void reproMenu() {
 #ifdef ENABLE_FLASH
     case 0:
       // CFI LoROM
-      mapping = 0;
+      mapping = 1;
       reproCFIMenu();
       break;
 
     case 1:
       // CFI HiROM
-      mapping = 1;
+      mapping = 2;
       reproCFIMenu();
       break;
 
@@ -173,7 +173,7 @@ void reproMenu() {
       // LoRom
       display_Clear();
       display_Update();
-      mapping = 0;
+      mapping = 1;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -184,7 +184,7 @@ void reproMenu() {
       // HiRom
       display_Clear();
       display_Update();
-      mapping = 1;
+      mapping = 2;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -195,7 +195,7 @@ void reproMenu() {
       // ExLoRom
       display_Clear();
       display_Update();
-      mapping = 2;
+      mapping = 111;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -206,7 +206,7 @@ void reproMenu() {
       // ExHiRom
       display_Clear();
       display_Update();
-      mapping = 3;
+      mapping = 222;
       setup_Flash8();
       id_Flash8();
       wait();
