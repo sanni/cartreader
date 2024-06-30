@@ -837,7 +837,32 @@ void flash_mode_PCE() {
   // write_byte_PCE sets WR
 }
 
+// Implements data complement status checking
+void flash_wait_status_PCE(uint8_t expected) {
+  set_cs_rd_low_PCE();
+  data_input_PCE();
+  
+  // We only look at D7, or the highest bit of expected
+  expected >>= 7;
+  uint8_t status;
+  do {
+    PORTH &= ~(1 << 3);  // RD low
+    // one nop = 62.5ns
+    // tOE = 30-50ns depending on flash
+    NOP;
+    status = PINC;
+    PORTH |= (1 << 3);  // RD high
+    // reversed, bit 0 is the MSB
+  } while ((status & 0x1) != expected);
+
+  data_output_PCE();
+  // leave RD high on exit
+}
+
 void flash_PCE() {
+  println_Msg(F("Detecting..."));
+  display_Update();
+
   // SOFTWARE ID PROGRAM
   flash_mode_PCE();
   write_byte_PCE(0x5555, 0xAA);
@@ -845,7 +870,7 @@ void flash_PCE() {
   write_byte_PCE(0x5555, 0x90);
   data_input_PCE();
   // tIDA = 150ns
-  delayMicroseconds(1);
+  NOP;NOP;NOP;
   // MFG,DEVICE
   uint16_t deviceId = (read_byte_PCE(0x0) << 8) | read_byte_PCE(0x1);
 
@@ -869,10 +894,19 @@ void flash_PCE() {
       // SST39SF040 = 4Mbit
       flashSize = 524288UL;
       break;
+    case 0xC2A4:
+      // MX29F040 = 4Mbit
+      flashSize = 524288UL;
+      break;
+    case 0xC2D5:
+      // MX29F080 = 8Mbit
+      flashSize = 1048576UL;
+      break;
   }
 
   if (flashSize <= 0) {
-    println_Msg(F("FLASH NOT DETECTED"));
+    print_Msg(F("UNKNOWN "));
+    println_Msg(deviceId);
     display_Update();
     wait();
     resetArduino();
@@ -892,7 +926,7 @@ void flash_PCE() {
 
   if (openFlashFile()) {
 
-    print_STR(flashing_file_STR, true);
+    println_Msg(F("Erasing..."));
     display_Update();
 
     // CHIP ERASE PROGRAM
@@ -903,14 +937,16 @@ void flash_PCE() {
     write_byte_PCE(0x5555, 0xAA);
     write_byte_PCE(0x2AAA, 0x55);
     write_byte_PCE(0x5555, 0x10);
-    // tSCE = 100ms
-    delay(100);
-    pin_init_PCE();
+    // Data complement polling, wait until highest bit is 1
+    flash_wait_status_PCE(0xFF);
 
+    print_STR(flashing_file_STR, true);
+    display_Update();
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
     draw_progressbar(0, totalProgressBar);
 
+    unsigned long startMs = millis();
     flash_mode_PCE();
     const size_t BUFSIZE = 512;
     for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += BUFSIZE) {
@@ -922,14 +958,17 @@ void flash_PCE() {
 
       for (int currByte = 0; currByte < BUFSIZE; currByte++) {
         // BYTE PROGRAM
+        byte b = sdBuffer[currByte];
         write_byte_PCE(0x5555, 0xAA);
         write_byte_PCE(0x2AAA, 0x55);
         write_byte_PCE(0x5555, 0xA0);
-        write_byte_PCE(currAddr + currByte, sdBuffer[currByte]);
-
-        // Could detect status with toggle bit or data complement, but already quite fast
+        write_byte_PCE(currAddr + currByte, b);
+        flash_wait_status_PCE(b);
+        
         // tBP = 20us
-        delayMicroseconds(20);
+        // delayMicroseconds(20);
+
+        // status polling = 38s
       }
 
       // update progress bar
@@ -938,6 +977,7 @@ void flash_PCE() {
     }
     myFile.close();
     pin_init_PCE();
+    println_Msg((millis() - startMs) / 1000);
     print_STR(done_STR, true);
   }
   display_Update();
