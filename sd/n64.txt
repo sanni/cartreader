@@ -530,7 +530,7 @@ Destruction Derby 64 (USA).z64
 38F1B5D9,DEE584A2,16,0
 
 Dezaemon 3D (Japan).z64
-9E978488,8979169C,16,0
+9E978488,8979169C,16,2
 
 Diddy Kong Racing (Europe) (En,Fr,De) (Rev 1).z64
 B1E87639,596E145B,12,5
