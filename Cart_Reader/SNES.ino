@@ -23,7 +23,6 @@ byte romSizeExp = 0;  // ROM-Size Exponent
 boolean NP = false;
 byte cx4Type = 0;
 byte cx4Map = 0;
-boolean altconf = 0;
 
 /******************************************
   Menu
@@ -921,10 +920,7 @@ void getCartInfo_SNES() {
     println_Msg(FS(FSTRING_EMPTY));
 
 
-  if (altconf)
-    print_Msg(F("Rom Size: "));
-  else
-    print_Msg(F("ROM Size: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if ((romSize >> 3) < 1) {
     print_Msg(1024 * romSize >> 3);
     print_Msg(F(" KB"));
@@ -967,7 +963,6 @@ void getCartInfo_SNES() {
 void checkAltConf(char crcStr[9]) {
   char tempStr2[5];
   char tempStr3[9];
-  altconf = 0;
 
   if (myFile.open("snes.txt", O_READ)) {
     // Get cart info
@@ -1043,7 +1038,6 @@ void checkAltConf(char crcStr[9]) {
             delay(1000);
             romSize = romSize2;
             numBanks = numBanks2;
-            altconf = 1;
           }
           break;
         }
