@@ -101,7 +101,8 @@ byte bank1;
 // SETUP
 //******************************************
 
-void setup_PCW() {
+void setup_PCW()
+{
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
@@ -138,7 +139,8 @@ void setup_PCW() {
 //******************************************
 static const char* const menuOptionsPCW[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
-void pcwMenu() {
+void pcwMenu()
+{
   convertPgm(menuOptionsPCW, 4);
   uint8_t mainMenu = question_box(F(" POCKET CHALLENGE W"), menuOptions, 4, 0);
 
@@ -201,7 +203,8 @@ void pcwMenu() {
 
 // Max ROM Size 0x400000 (Highest Address = 0x3FFFFF) - 3F FFFF
 // NAND 1A + 1B HIGH = LOW = ROM Output Enabled
-void read_setup_PCW() {
+void read_setup_PCW()
+{
   NAND_1A_HIGH;
   NAND_1B_HIGH;
   OE_HIGH;
@@ -211,7 +214,8 @@ void read_setup_PCW() {
 
 // READ ROM BYTE WITH ADDITIONAL DELAY
 // NEEDED FOR PROBLEM CARTS TO SWITCH FROM ADDRESS TO DATA
-unsigned char read_rom_byte_PCW(unsigned long address) {
+unsigned char read_rom_byte_PCW(unsigned long address)
+{
   PORTL = (address >> 16) & 0xFF;
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
@@ -233,7 +237,8 @@ unsigned char read_rom_byte_PCW(unsigned long address) {
 
 // SRAM Size 0x8000 (Highest Address = 0x7FFF)
 // NAND 1A LOW = SRAM Enabled [ROM DISABLED]
-unsigned char read_ram_byte_1A_PCW(unsigned long address) {
+unsigned char read_ram_byte_1A_PCW(unsigned long address)
+{
   NAND_1A_LOW;
   PORTL = (address >> 16) & 0xFF;
   PORTK = (address >> 8) & 0xFF;
@@ -278,7 +283,8 @@ unsigned char read_ram_byte_1A_PCW(unsigned long address) {
 
 // TEST CODE TO READ THE CPU BUILT-IN RAM + I/O
 // NAND 1B LOW = Built-In RAM + I/O Enabled [ROM DISABLED]
-unsigned char read_ram_byte_1B_PCW(unsigned long address) {
+unsigned char read_ram_byte_1B_PCW(unsigned long address)
+{
   NAND_1B_LOW;
   PORTL = (address >> 16) & 0xFF;
   PORTK = (address >> 8) & 0xFF;
@@ -316,7 +322,8 @@ unsigned char read_ram_byte_1B_PCW(unsigned long address) {
 }
 
 // WRITE SRAM 32K
-void write_ram_byte_1A_PCW(unsigned long address, unsigned char data) {
+void write_ram_byte_1A_PCW(unsigned long address, unsigned char data)
+{
   NAND_1A_LOW;
   PORTL = (address >> 16) & 0xFF;
   PORTK = (address >> 8) & 0xFF;
@@ -338,7 +345,8 @@ void write_ram_byte_1A_PCW(unsigned long address, unsigned char data) {
 
 // WRITE CPU BUILT-IN RAM + I/O AREA
 // MODIFIED TO MATCH WORKING BANK SWITCH ROUTINE
-void write_ram_byte_1B_PCW(unsigned long address, unsigned char data) {
+void write_ram_byte_1B_PCW(unsigned long address, unsigned char data)
+{
   NAND_1A_LOW;
   NAND_1A_HIGH;
   NAND_1B_LOW;
@@ -370,7 +378,8 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data) {
 //  SINGLE-PACK FUNCTIONS
 //******************************************
 
-uint32_t detect_rom_size_PCW(void) {
+uint32_t detect_rom_size_PCW(void)
+{
   uint8_t read_byte;
   uint8_t current_byte;
   uint8_t detect_1m, detect_2m;
@@ -412,7 +421,8 @@ uint32_t detect_rom_size_PCW(void) {
   return rom_size;
 }
 
-void readSingleROM_PCW() {
+void readSingleROM_PCW()
+{
   // Setup read mode
   read_setup_PCW();
 
@@ -470,7 +480,7 @@ void readSingleROM_PCW() {
 // 1BF400 [PZ]
 // 8BD400 [CR]
 // 8BF400 [LP]
-// 9BF400 [SLP] (Undumped)
+// 9BF400 [SLP]
 
 // Per Overload, identify multi-pack cart by reading 0x3FFA-0x3FFE. Multi-Pack carts are non-zero.
 // 0x3FFA - Current Cartridge Bank
@@ -486,7 +496,8 @@ void readSingleROM_PCW() {
 // Write 0x20 to 0xFFFF to read 1st half of ROM
 // Write 0x31 to 0xFFFF to read 2nd half of ROM
 
-void check_multi_PCW() {
+void check_multi_PCW()
+{
   // init variables
   read_setup_PCW();
   multipack = 0;
@@ -515,7 +526,8 @@ void check_multi_PCW() {
   }
 }
 
-void write_bank_byte_PCW(unsigned char data) {
+void write_bank_byte_PCW(unsigned char data)
+{
   NAND_1A_LOW;
   NAND_1A_HIGH;
   NAND_1B_LOW;
@@ -538,7 +550,8 @@ void write_bank_byte_PCW(unsigned char data) {
   NAND_1B_HIGH;
 }
 
-void switchBank_PCW(int bank) {
+void switchBank_PCW(int bank)
+{
   if (bank == 1) {  // Upper Half
     write_bank_byte_PCW(bank1);
   } else {  // Lower Half (default)
@@ -546,7 +559,8 @@ void switchBank_PCW(int bank) {
   }
 }
 
-void readMultiROM_PCW() {
+void readMultiROM_PCW()
+{
   print_Msg(F("READING "));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB MULTI-PACK");
@@ -610,7 +624,8 @@ void readMultiROM_PCW() {
 // SRAM FUNCTIONS
 //******************************************
 
-void readSRAM_PCW() {  // readSRAM_1A()
+void readSRAM_PCW()
+{  // readSRAM_1A()
   createFolder("PCW", "SAVE", romName, "srm");
 
   foldern = foldern + 1;
@@ -637,7 +652,8 @@ void readSRAM_PCW() {  // readSRAM_1A()
 }
 
 // SRAM
-void writeSRAM_PCW() {
+void writeSRAM_PCW()
+{
   sprintf(filePath, "%s/%s", filePath, fileName);
   println_Msg(F("Writing..."));
   println_Msg(filePath);
@@ -672,7 +688,8 @@ void writeSRAM_PCW() {
   display_Clear();
 }
 
-unsigned long verifySRAM_PCW() {
+unsigned long verifySRAM_PCW()
+{
   writeErrors = 0;
 
   if (myFile.open(filePath, O_READ)) {
