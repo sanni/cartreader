@@ -48,13 +48,16 @@
 // R/W(PH6)   - SNES /RD
 
 //******************************************
-//  Defines
+// DEFINES
 //******************************************
 #define CLK_ENABLE PORTH |= (1 << 1)    // /E HIGH
 #define CLK_DISABLE PORTH &= ~(1 << 1)  // /E LOW
 #define PB6_ENABLE PORTH |= (1 << 5)    // PB6 HIGH
 #define PB6_DISABLE PORTH &= ~(1 << 5)  // PB6 LOW
 
+//******************************************
+// VARIABLES
+//******************************************
 byte VECTREX[] = { 4, 8, 12, 16, 32, 64 };
 byte vectrexlo = 0;  // Lowest Entry
 byte vectrexhi = 5;  // Highest Entry
@@ -64,12 +67,48 @@ byte vectrexsize;
 // 08 ROM SIZE
 
 //******************************************
-//  Menu
+// MENU
 //******************************************
 // Base Menu
 static const char* const menuOptionsVECTREX[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
-void setup_VECTREX() {
+void vectrexMenu()
+{
+  convertPgm(menuOptionsVECTREX, 4);
+  uint8_t mainMenu = question_box(F("VECTREX MENU"), menuOptions, 4, 0);
+
+  switch (mainMenu) {
+    case 0:
+      // Select Cart
+      setCart_VECTREX();
+      setup_VECTREX();
+      break;
+
+    case 1:
+      // Read ROM
+      sd.chdir("/");
+      readROM_VECTREX();
+      sd.chdir("/");
+      break;
+
+    case 2:
+      // Set Size
+      setROMSize_VECTREX();
+      break;
+
+    case 3:
+      // reset
+      resetArduino();
+      break;
+  }
+}
+
+//******************************************
+// SETUP
+//******************************************
+
+void setup_VECTREX()
+{
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
@@ -115,41 +154,11 @@ void setup_VECTREX() {
   mode = CORE_VECTREX;
 }
 
-void vectrexMenu() {
-  convertPgm(menuOptionsVECTREX, 4);
-  uint8_t mainMenu = question_box(F("VECTREX MENU"), menuOptions, 4, 0);
-
-  switch (mainMenu) {
-    case 0:
-      // Select Cart
-      setCart_VECTREX();
-      setup_VECTREX();
-      break;
-
-    case 1:
-      // Read ROM
-      sd.chdir("/");
-      readROM_VECTREX();
-      sd.chdir("/");
-      break;
-
-    case 2:
-      // Set Size
-      setROMSize_VECTREX();
-      break;
-
-    case 3:
-      // reset
-      resetArduino();
-      break;
-  }
-}
-
 //******************************************
 // READ CODE
 //******************************************
 
-uint8_t readData_VECTREX(uint16_t addr)  // Add Input Pullup
+uint8_t readData_VECTREX(uint16_t addr) // Add Input Pullup
 {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
@@ -181,7 +190,8 @@ uint8_t readData_VECTREX(uint16_t addr)  // Add Input Pullup
   return ret;
 }
 
-void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr) {
+void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr)
+{
   for (uint16_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_VECTREX(addr + w);
@@ -195,7 +205,8 @@ void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr) {
 // READ ROM
 //******************************************
 
-void readROM_VECTREX() {
+void readROM_VECTREX()
+{
   createFolderAndOpenFile("VECTREX", "ROM", romName, "vec");
 
   PB6_DISABLE;  // PB6 LOW - Switch Bank
@@ -236,14 +247,16 @@ void readROM_VECTREX() {
 //******************************************
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void printRomSize_VECTREX(int index) {
+void printRomSize_VECTREX(int index)
+{
     display_Clear();
     print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(VECTREX[index]);
 }
 #endif
 
-void setROMSize_VECTREX() {
+void setROMSize_VECTREX()
+{
   byte newvectrexsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
@@ -291,9 +304,10 @@ setrom:
   vectrexsize = newvectrexsize;
 }
 
-void checkStatus_VECTREX() {
+void checkStatus_VECTREX()
+{
   EEPROM_readAnything(8, vectrexsize);
-  if (vectrexsize > 2) {
+  if (vectrexsize > vectrexhi) {
     vectrexsize = 0;  // default 4KB
     EEPROM_writeAnything(8, vectrexsize);
   }
@@ -319,7 +333,8 @@ void checkStatus_VECTREX() {
 //******************************************
 // CART SELECT CODE
 //******************************************
-void setCart_VECTREX() {
+void setCart_VECTREX()
+{
   //go to root
   sd.chdir();
 
