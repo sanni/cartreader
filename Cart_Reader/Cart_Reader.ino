@@ -2814,7 +2814,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
     // Attract Mode
     if (millis() - idleTime > 300000) {
       if ((millis() - idleTime) % 4000 == 0) {
-        if (currentColor < 7) {
+        if (currentColor < 5) {
           currentColor++;
           if (currentColor == 1) {
             currentColor = 2;  // skip red as that signifies an error to the user
@@ -2822,8 +2822,8 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
         } else {
           currentColor = 0;
         }
+        rgbLed(currentColor);
       }
-      rgbLed(currentColor);
     }
 
     /* Check Button/rotary encoder
