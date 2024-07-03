@@ -34,7 +34,8 @@
    RobinTheHood - GameboyAdvanceRomDumper
    Gens-gs - Megadrive checksum
    fceux - iNes header
-   LuigiBlood - SNES Game Processor RAM Cassette
+   PsyK0p4T - Sufami Turbo module
+   LuigiBlood - SNES Game Processor RAM Cassette module
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
