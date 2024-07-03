@@ -34,14 +34,15 @@
    RobinTheHood - GameboyAdvanceRomDumper
    Gens-gs - Megadrive checksum
    fceux - iNes header
+   LuigiBlood - SNES Game Processor RAM Cassette
 
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
-   Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman,
-   philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage,
-   vpelletier, Ancyker, mattiacci, RWeick, joshman196, partlyhuman, ButThouMust, hxlnt,
-   breyell, qufb
-
+   Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman, Chomemel, 
+   philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage, qufb,
+   vpelletier, Ancyker, mattiacci, RWeick, ButThouMust, partlyhuman, fakkuyuu, hxlnt, breyell,
+   smesgr9000, joshman196, PsychoFox11, plaidpants, LuigiBlood, InvalidInterrupt
+   
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
    This program is free software: you can redistribute it and/or modify
