@@ -58,7 +58,7 @@ void sfmMenu() {
     case 0:
       sfmGameMenu();
       break;
-#ifdef CORE_SFM_FLASH
+#ifdef ENABLE_FLASH
     // Flash menu
     case 1:
       mode = CORE_SFM_FLASH;
