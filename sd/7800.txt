@@ -46,6 +46,9 @@ Crack'ed
 Crossbow
 2,5
 
+Danger Zone
+0,2
+
 Dark Chambers
 1,4
 
