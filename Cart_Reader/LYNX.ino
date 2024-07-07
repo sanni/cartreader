@@ -117,8 +117,6 @@ static uint8_t readByte_LYNX(uint32_t addr, uint8_t audin = 0) {
 
 #pragma region HIGHLEVEL
 
-static bool detectBlockSize_LYNX() {}
-
 static bool detectCart_LYNX() {
   // Could omit logging to save a few bytes
   display_Clear();
