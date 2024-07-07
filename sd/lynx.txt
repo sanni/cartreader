@@ -1,0 +1,1140 @@
+[BIOS] Atari Lynx (World).lnx
+0D973C9D
+
+2048 (World) (Aftermarket) (Unl).lnx
+A73938F5
+
+4Ttude (World) (v1.2) (Aftermarket) (Unl).lnx
+3941A51D
+
+4Ttude (World) (v1.1) (Aftermarket) (Unl).lnx
+11F62511
+
+4Ttude (World) (v1.0) (Atari Lynx 30th Birthday) (Aftermarket) (Unl).lnx
+04444023
+
+8bit-Dungeon (World) (Demo) (Aftermarket) (Unl).lnx
+4130BB85
+
+8bit-Slicks (World) (Demo) (Aftermarket) (Unl).lnx
+7C3B36B6
+
+A.P.B. (USA, Europe).lnx
+F6FB48FB
+
+Alien (World) (v1.06) (Aftermarket) (Unl).lnx
+A7B2C685
+
+Alien (World) (v1.04) (Aftermarket) (Unl).lnx
+447A8386
+
+Alien (World) (v1.03) (Aftermarket) (Unl).lnx
+4F46E18B
+
+Alien (World) (v1.02) (Aftermarket) (Unl).lnx
+0F5C46C3
+
+Alien vs Predator (USA) (Proto) (1993-12-17).lnx
+540E9BB7
+
+Allein (World) (De) (Aftermarket) (Unl).lnx
+D5376D02
+
+Always Winter, Never Christmas (World) (Aftermarket) (Unl).lnx
+D4ECEF80
+
+Angry Motes (World) (Aftermarket) (Unl).lnx
+D6220C93
+
+Anti A-Bomb Aircraft Artillery (World) (v1.0) (Aftermarket) (Unl).lnx
+6FFABBFB
+
+Anti A-Bomb Aircraft Artillery (World) (v1.1) (Aftermarket) (Unl).lnx
+004EA85A
+
+Assembloids (World) (v1.00) (Digital) (Atari Lynx 30th Birthday) (Aftermarket) (Unl).lnx
+2A545F5A
+
+Assembloids (World) (v1.04) (Digital) (Aftermarket) (Unl).lnx
+9762FA55
+
+Asteroids Chasers (World) (2020-08-16) (Proto) (Aftermarket) (Unl).lnx
+EF51810F
+
+Asteroids Chasers (World) (2020-08-14) (Proto) (Aftermarket) (Unl).lnx
+5D3CD51D
+
+Atari Lynx Pong (World) (Demo) (Aftermarket) (Unl).lnx
+17BD3083
+
+Atari Tabletops Collection (World) (v1.1) (Aftermarket) (Unl).lnx
+530B0553
+
+Atari Tabletops Collection (World) (v1.0) (Aftermarket) (Unl).lnx
+E1BB8C92
+
+Atomix (World) (Proto) (Aftermarket) (Unl).lnx
+A4570EF5
+
+Awesome Golf (USA, Europe).lnx
+0483CD2A
+
+Banana Ghost (World) (v0.2) (Proto) (Aftermarket) (Unl).lnx
+CD8D53F1
+
+Banana Ghost (World) (v0.1) (Proto) (Aftermarket) (Unl).lnx
+70C345F8
+
+Bars (World) (Proto) (Aftermarket) (Unl).lnx
+87AC2E76
+
+Baseball Heroes (USA, Europe).lnx
+3943C116
+
+Basketbrawl (USA, Europe).lnx
+4161BB4A
+
+Bastion (World) (Demo) (Aftermarket) (Unl).lnx
+023451A9
+
+Bathman (World) (Aftermarket) (Unl).lnx
+2B842BFF
+
+Batman Returns (USA, Europe).lnx
+277F82C2
+
+Battle Wheels (USA, Europe).lnx
+779FAECE
+
+Battlespace (World) (Demo) (Aftermarket) (Unl).lnx
+9CF351E3
+
+Battlezone 2000 (USA, Europe).lnx
+30FEE726
+
+Befok (World) (Proto) (Aftermarket) (Unl).lnx
+AFE60481
+
+Bezerkoids (World) (Proto 3) (Aftermarket) (Unl).lnx
+728EEB4E
+
+Bezerkoids (World) (Proto 2) (Aftermarket) (Unl).lnx
+E2E11B2D
+
+Bezerkoids (World) (Proto 1) (Aftermarket) (Unl).lnx
+6BDF6D54
+
+Bill &amp; Ted's Excellent Adventure (USA, Europe).lnx
+143A313E
+
+Biniax (World) (v1.0) (Aftermarket) (Unl).lnx
+FDCA4017
+
+Biniax (World) (v0.1) (Beta) (Aftermarket) (Unl).lnx
+613658AB
+
+Biniax (World) (v0.2) (Beta) (Aftermarket) (Unl).lnx
+D65DDBC3
+
+Biniax (World) (v0.3) (Beta) (Aftermarket) (Unl).lnx
+5A3F90A0
+
+Bitchy (World) (Digital) (Aftermarket) (Unl).lnx
+21968CB7
+
+Black Pit (World) (Proto) (Aftermarket) (Unl).lnx
+029DC551
+
+Block Out (USA, Europe).lnx
+3CD75DF3
+
+Blue Lightning (World) (Demo).lnx
+BFE36525
+
+Blue Lightning (World).lnx
+DAF587B1
+
+Bobo (World) (Proto) (Aftermarket) (Unl).lnx
+73D93B13
+
+Booster (World) (v0.3) (Demo) (Aftermarket) (Unl).lnx
+260729F1
+
+Booster - Xmas Edition (World) (Demo) (Aftermarket) (Unl).lnx
+56A1FD2A
+
+Bowling Area (World) (Proto) (Aftermarket) (Unl).lnx
+CEDFAFEF
+
+Bowling Beast (World) (Demo) (Aftermarket) (Unl).lnx
+C1DF36BA
+
+Bubble Trouble (USA, Europe).lnx
+333DAECE
+
+Bug Hunt (World) (Proto) (Aftermarket) (Unl).lnx
+5216089A
+
+Bug's Lynx, A (World) (2020-04-03) (Demo) (Aftermarket) (Unl).lnx
+393E6366
+
+Bug's Lynx, A (World) (2018-11-02) (Demo) (eJagFest 2018) (Aftermarket) (Unl).lnx
+2D39E747
+
+Bug's Lynx, A (World) (2009-04-20) (Demo) (AC2k9) (Aftermarket) (Unl).lnx
+9C6944FC
+
+Bug's Trip Redux, A (World) (Demo) (Aftermarket) (Unl).lnx
+36D352BE
+
+C-Gull (World) (Aftermarket) (Unl).lnx
+6A0C7417
+
+Cabal (USA) (Demo).lnx
+F8158766
+
+California Games (World).lnx
+A08F0B59
+
+Captain Harlynx (World) (Demo) (Aftermarket) (Unl).lnx
+E7F77035
+
+Cardtest (World) (Beta) (Aftermarket) (Unl).lnx
+FEEE8121
+
+Castle of Khon-gis, The (World) (Demo) (Aftermarket) (Unl).lnx
+7AB12A28
+
+Catkanoid (World) (Aftermarket) (Unl).lnx
+8327AC2F
+
+Centipede (USA) (Proto).lnx
+97501709
+
+Chase (World) (Aftermarket) (Unl).lnx
+19F69733
+
+Chasm Warden (World) (Proto) (Aftermarket) (Unl).lnx
+B665AE38
+
+Checkered Flag (USA, Europe).lnx
+19C5A7A5
+
+Chip's Challenge (World).lnx
+6A5F53ED
+
+Choplifter (World) (Demo) (Aftermarket) (Unl).lnx
+BCC7A948
+
+Choplifter X (World) (Aftermarket) (Unl).lnx
+B0DFD9D7
+
+Circuit Dude (World) (Proto) (Aftermarket) (Unl).lnx
+E205D7CA
+
+Clicks! (World) (Aftermarket) (Unl).lnx
+7BDADD44
+
+Columns (World) (Proto) (Aftermarket) (Unl).lnx
+324DF7C6
+
+Conquest of Zow (World) (Demo) (Unl).lnx
+B02821FA
+
+Conquistador (World) (v1.1) (Aftermarket) (Unl).lnx
+CACC4C9B
+
+Conquistador (World) (v1.0) (Aftermarket) (Unl).lnx
+B96A8E67
+
+Crate Challenge (World) (v1.1) (Aftermarket) (Unl).lnx
+B0399E76
+
+Critter Championship (World) (Demo) (Aftermarket) (Unl).lnx
+E6411C5B
+
+Cross Bomber (World) (Aftermarket) (Unl).lnx
+DFED165D
+
+Cross Chase (World) (v1.2) (Aftermarket) (Unl).lnx
+6CC58515
+
+Cross Chase (World) (v1.1) (Aftermarket) (Unl).lnx
+7201F4BA
+
+Cross Chase (World) (v1.0) (Aftermarket) (Unl).lnx
+9658B6ED
+
+Cross Horde (World) (Aftermarket) (Unl).lnx
+140C018F
+
+Cross Shoot (World) (Aftermarket) (Unl).lnx
+0025F4B5
+
+Cross Snake (World) (Aftermarket) (Unl).lnx
+5487A1FE
+
+Crystal Mines II (USA, Europe).lnx
+AEC474C8
+
+Crystal Mines II - Buried Treasure (World) (Aftermarket) (Unl).lnx
+122EC861
+
+CSS - Traffic Regulation (World) (Demo) (Aftermarket) (Unl).lnx
+66178262
+
+Cyberpunk Experiment 2037 (World) (2020-06-01) (Proto) (Aftermarket) (Unl).lnx
+69E35D01
+
+Cyberpunk Experiment 2037 (World) (2020-04-21) (Proto) (Aftermarket) (Unl).lnx
+5440E425
+
+Cyberpunk Experiment 2037 (World) (2020-04-14) (Proto) (Aftermarket) (Unl).lnx
+8D320CBB
+
+Cyberpunk Experiment 2037 (World) (2020-04-13) (Proto) (Aftermarket) (Unl).lnx
+DC547198
+
+Daemon's Gate (USA) (Proto 1).lnx
+99729395
+
+Daemon's Gate (USA) (Proto 2).lnx
+EF529ED4
+
+Dance, Bro! (World) (Aftermarket) (Unl).lnx
+76195D5B
+
+Desert Strike - Return to the Gulf (USA, Europe).lnx
+B9AC1FE5
+
+Devil's Show, The (World) (Demo) (Aftermarket) (Unl).lnx
+900ABC85
+
+Dice - Board Game (World) (Demo) (Aftermarket) (Unl).lnx
+B7BCAE2E
+
+Dinolympics (USA, Europe).lnx
+50386CFA
+
+Dirty Larry - Renegade Cop (USA, Europe).lnx
+D565FBB7
+
+Doom (World) (Demo) (Aftermarket) (Unl).lnx
+55312DB7
+
+Double Dragon (USA, Europe).lnx
+FBFC0F05
+
+Dracula - The Undead (USA, Europe).lnx
+33BB74C7
+
+DrunkWitch (World) (Aftermarket) (Unl).lnx
+061D9270
+
+Dungeddon (World) (v1.1) (Aftermarket) (Unl).lnx
+6A9BD2A8
+
+Dungeddon (World) (Beta) (Aftermarket) (Unl).lnx
+4C62B125
+
+Dynalynx (World) (v0.4) (Demo) (Aftermarket) (Unl).lnx
+E5D57A21
+
+Eggsavier's Cackleberry Rescue (World) (v1.1) (Aftermarket) (Unl).lnx
+3240E8C4
+
+Eggsavier's Cackleberry Rescue (World) (v1.0) (Aftermarket) (Unl).lnx
+67FBF545
+
+Electrocop (World).lnx
+BD97116B
+
+Escape from Dungeon of Deja Vu (World) (Proto) (Aftermarket) (Unl).lnx
+C294B0E8
+
+European Soccer Challenge (USA, Europe).lnx
+F83397F9
+
+Eye of the Beholder (USA) (Proto 1).lnx
+6BCEAA9C
+
+Eye of the Beholder (World) (Unl).lnx
+F1B307CB
+
+Eye of the Beholder (USA) (Proto 2) (Aftermarket) (Unl).lnx
+AE8C70F0
+
+Fat Bobby (USA, Europe).lnx
+9034EE27
+
+Fidelity Ultimate Chess Challenge, The (USA, Europe).lnx
+7E4B5945
+
+Final Melee (World) (Aftermarket) (Unl).lnx
+E5E9C13E
+
+Find a Way to My Heart (World) (Aftermarket) (Unl).lnx
+F047AA45
+
+Find a Way to My Heart (World) (Atari Lynx 30th Birthday) (Aftermarket) (Unl).lnx
+9B688FE5
+
+Fishing for Atari (World) (Aftermarket) (Unl).lnx
+6F0DD4D6
+
+Fission (World) (v0.6) (Proto) (Aftermarket) (Unl).lnx
+12E434F4
+
+Fortress Fighter (World) (Proto) (Aftermarket) (Unl).lnx
+51049932
+
+Friendly (World) (Demo) (Unl).lnx
+68B0A428
+
+Full Court Press (USA) (Proto).lnx
+FF9E0126
+
+Game of Life (World) (Demo) (Aftermarket) (Unl).lnx
+0C356595
+
+Garci (World) (Proto) (Aftermarket) (Unl).lnx
+170DCF2D
+
+Gates of Zendocon (World).lnx
+494CC568
+
+Gauntlet - The Third Encounter (World).lnx
+7F0EC7AD
+
+Gauntlet - The Third Encounter (World) (Beta) (1990-06-04).lnx
+DCD723E3
+
+Geoduel (USA) (Demo).lnx
+BD4BF2B0
+
+Gift Catcher (World) (Aftermarket) (Unl).lnx
+8C6A089A
+
+Glob Shoot (World) (v0.62) (Proto) (Aftermarket) (Unl).lnx
+D818CA70
+
+Gnop! (World) (v0.6) (Proto) (Aftermarket) (Unl).lnx
+1001374B
+
+Gnop! (World) (v0.4) (Proto) (Aftermarket) (Unl).lnx
+D41A9D04
+
+Gomoku (World) (Aftermarket) (Unl).lnx
+A19DB957
+
+Gordo 106 (USA, Europe).lnx
+D20A85FC
+
+Grail of the Lava Kingdom, The (World) (Proto) (Aftermarket) (Unl).lnx
+B639A6A6
+
+Griel's Quest for the Sangraal (World) (v0.4) (Proto) (Aftermarket) (Unl).lnx
+8A2ADADD
+
+Griel's Quest for the Sangraal (World) (v0.3) (Proto) (Aftermarket) (Unl).lnx
+731BB543
+
+Griel's Quest for the Sangraal (World) (v0.2) (Proto) (Aftermarket) (Unl).lnx
+6DDB5C69
+
+Griel's Quest for the Sangraal (World) (v0.1) (Proto) (Aftermarket) (Unl).lnx
+79B96056
+
+Grime 6502 (World) (Demo) (Aftermarket) (Unl).lnx
+E5435DB5
+
+Grogger (World) (Aftermarket) (Unl).lnx
+79AEC28E
+
+Growing Ties (World) (Aftermarket) (Unl).lnx
+2CA3C6DB
+
+Guardians, The - Storm Over Doria (USA) (Proto 2).lnx
+8F0E72C6
+
+Guardians, The - Storm Over Doria (USA) (Proto 1).lnx
+0E335AA8
+
+Hard Drivin' (USA, Europe).lnx
+6DF63834
+
+Hero Dust (World) (Proto) (Aftermarket) (Unl).lnx
+2CAFA643
+
+Hockey (USA, Europe).lnx
+E8B45707
+
+Hotdog (World) (Demo) (Aftermarket) (Unl).lnx
+CB4CD341
+
+Hungry Monsters (World) (v1.1) (Aftermarket) (Unl).lnx
+501935C4
+
+Hungry Monsters (World) (v1.0) (Retro Platform Jam #4) (Aftermarket) (Unl).lnx
+8B30B6EB
+
+Hydra (USA, Europe).lnx
+E3041C6C
+
+Inside World, The (World) (Demo) (Aftermarket) (Unl).lnx
+8174AFE6
+
+Invaders (World) (Demo) (Aftermarket) (Unl).lnx
+6445224A
+
+Ishido - The Way of Stones (USA, Europe).lnx
+5CF8BBF0
+
+Jelly Beans (World) (Demo) (Aftermarket) (Unl).lnx
+E798DEBC
+
+JetPack Hero (World) (Proto) (Aftermarket) (Unl).lnx
+1FE4D98C
+
+Jimmy Connors' Tennis (USA, Europe).lnx
+2455B6CF
+
+Joust (USA, Europe).lnx
+5DBA792A
+
+Jungle Jack (World) (Aftermarket) (Unl).lnx
+6C7E8360
+
+Jungle Jack (World) (Beta) (Aftermarket) (Unl).lnx
+9C4C4B47
+
+Karateboy (World) (v1.1) (Demo) (Aftermarket) (Unl).lnx
+DFDF6B07
+
+Karateboy (World) (v1.0) (Demo) (Aftermarket) (Unl).lnx
+73F4CDFB
+
+Kistenschieben (World) (v0.2) (Demo) (Aftermarket) (Unl).lnx
+6A56A0B2
+
+Klax (World).lnx
+A53649F1
+
+Klax (World) (Beta).lnx
+4D5D94F4
+
+Klondike (World) (Beta 2) (Aftermarket) (Unl).lnx
+45822E44
+
+Klondike (World) (Beta 1) (Aftermarket) (Unl).lnx
+0CB83FEC
+
+Knight Moves (World) (Aftermarket) (Unl).lnx
+4CA0654D
+
+Knightmare (World) (v1.1) (Aftermarket) (Unl).lnx
+C8610FCB
+
+Knightmare (World) (v1.0) (Aftermarket) (Unl).lnx
+C40D52AB
+
+Krazy Ace - Miniature Golf (USA, Europe).lnx
+BED5BA2B
+
+Krow (World) (v1.01) (Demo) (Aftermarket) (Unl).lnx
+03FC9FFD
+
+Kung Food (USA, Europe).lnx
+CD1BD405
+
+Lawnmower (World) (v1.1) (Aftermarket) (Unl).lnx
+3E472554
+
+Lemmings (USA, Europe).lnx
+39B9B8CC
+
+Lexis (World) (Aftermarket) (Unl).lnx
+0271B6E9
+
+Limny (World) (Demo) (Aftermarket) (Unl).lnx
+E419F250
+
+Lode Runner (World) (Proto 1) (Aftermarket) (Unl).lnx
+0E702444
+
+Lode Runner (World) (Proto 2) (Aftermarket) (Unl).lnx
+AE5AC8A9
+
+Loopz (USA) (v0.06) (Proto) (1992-11-05).lnx
+B1C25EF1
+
+Loopz (USA) (v0.04) (Proto) (1992-09-16).lnx
+D2B07D4D
+
+Luchsenstein 3D (World) (Demo) (Aftermarket) (Unl).lnx
+3D3B2824
+
+Lynx Blast (World) (Demo) (Aftermarket) (Unl).lnx
+BB06A203
+
+Lynx Casino (USA, Europe).lnx
+1091A268
+
+Lynx II Production Test Program (USA).lnx
+28ADA019
+
+Lynx Ops (World) (v0.2) (Proto) (Aftermarket) (Unl).lnx
+A9F5EE4D
+
+Lynx Ops (World) (v0.1) (Proto) (Aftermarket) (Unl).lnx
+4764673C
+
+Lynx Othello (World) (Aftermarket) (Unl).lnx
+D659ADF8
+
+Lynx Quest (World) (v1.04) (Aftermarket) (Unl).lnx
+EE19D1AE
+
+Lynx Quest (World) (v1.00) (Atari Lynx 30th Birthday) (Aftermarket) (Unl).lnx
+83080F5E
+
+Lynx Sketch (World) (Demo) (Aftermarket) (Unl).lnx
+85DDFC28
+
+Lynx Tris (World) (Aftermarket) (Unl).lnx
+09A5D4E2
+
+Lynx Tris (World) (Beta) (Aftermarket) (Unl).lnx
+D8128C49
+
+Lynxopoly (World) (Aftermarket) (Unl).lnx
+CA075B54
+
+Maldetetemagic Vol.1 (World) (Aftermarket) (Unl).lnx
+04697ABA
+
+Maldetetemagic Vol.2 (World) (Aftermarket) (Unl).lnx
+149416AB
+
+Malibu Bikini Volleyball (USA, Europe).lnx
+ABA6DA3D
+
+Malibu Bikini Volleyball (USA, Europe) (Beta) (1993-05-11).lnx
+4329084A
+
+Marble Madness (World) (Aftermarket) (Unl).lnx
+323AF126
+
+Marble Madness (World) (Beta) (Aftermarket) (Unl).lnx
+C7019B83
+
+Marlboro Go! (Europe) (Proto 2).lnx
+C3FA0D4D
+
+Marlboro Go! (Europe) (Proto 1).lnx
+B17A36AD
+
+MegaPak Vol.1 (World) (Aftermarket) (Unl).lnx
+CA7CF30B
+
+Microvaders (World) (Proto) (Aftermarket) (Unl).lnx
+EF918269
+
+Mines 2 (World) (Demo) (Unl).lnx
+90C28F57
+
+Minimal (World) (Proto) (Aftermarket) (Unl).lnx
+E6FC3FCD
+
+Moon Runner (World) (Proto) (Aftermarket) (Unl).lnx
+4D2D4200
+
+Mortal Kombat (World) (Aftermarket) (Unl).lnx
+96729B18
+
+Ms. Pac-Man (World).lnx
+7DE3783A
+
+MultiPong 1k (World) (Aftermarket) (Unl).lnx
+EB8FF024
+
+Naughty (World) (Demo) (Aftermarket) (Unl).lnx
+F40F460A
+
+Nezumi-kun to Poker Shiyouyo (World) (Ja) (v1.2) (Aftermarket) (Unl).lnx
+B5022B5D
+
+Nezumi-kun to Poker Shiyouyo (World) (Ja) (v1.0) (Aftermarket) (Unl).lnx
+091F2141
+
+Nezumi-kun to Poker Shiyouyo (World) (Ja) (v1.1) (Aftermarket) (Unl).lnx
+C8B6B95C
+
+NFL Football (USA, Europe).lnx
+006FD398
+
+Ninja Gaiden (USA, Europe).lnx
+22D47D51
+
+Ninja Gaiden III - The Ancient Ship of Doom (USA, Europe).lnx
+F3E3F811
+
+Ninja Nerd (USA) (Demo).lnx
+F428008D
+
+No Time (World) (Demo) (Aftermarket) (Unl).lnx
+33529D7C
+
+Nomad Rally 2018 (World) (Demo) (Aftermarket) (Unl).lnx
+84BBA7E2
+
+Nutmeg (World) (Aftermarket) (Unl).lnx
+206B2E55
+
+Nyan Cat (World) (Demo) (Aftermarket) (Unl).lnx
+B99C78D2
+
+Odynexus - Journey to Ithaca (World) (v0.98) (Demo) (Aftermarket) (Unl).lnx
+24872C11
+
+Odynexus - Journey to Ithaca (World) (Demo) (Silly Venture 2019) (Aftermarket) (Unl).lnx
+AAD8A554
+
+On Duty (World) (Aftermarket) (Unl).lnx
+D51B08DA
+
+On Duty (World) (Beta) (Aftermarket) (Unl).lnx
+351A8834
+
+Othello (World) (Aftermarket) (Unl).lnx
+294065DF
+
+Ouragan (World) (Demo 2) (Aftermarket) (Unl).lnx
+B6B97F31
+
+Ouragan (World) (Demo 1) (Aftermarket) (Unl).lnx
+81C9B099
+
+Oxymore (World) (Proto) (Aftermarket) (Unl).lnx
+C01DCAFE
+
+Pac-Land (USA, Europe).lnx
+AA50DD22
+
+Paperboy (World).lnx
+4CDFBD57
+
+Paraply (World) (Demo) (Aftermarket) (Unl).lnx
+24538B39
+
+Peg Solitaire (World) (v1.3) (Aftermarket) (Unl).lnx
+2E71412A
+
+Peg Solitaire (World) (v1.2) (512k) (Aftermarket) (Unl).lnx
+A19B9319
+
+Peg Solitaire (World) (v1.2) (256k) (Aftermarket) (Unl).lnx
+3126484C
+
+Peg Solitaire (World) (v1.1) (Aftermarket) (Unl).lnx
+E6800182
+
+Peg Solitaire (World) (v1.0) (Aftermarket) (Unl).lnx
+75D7DA12
+
+Pinball Jam (USA, Europe).lnx
+14D38CA7
+
+Pit-Fighter (USA, Europe).lnx
+2393135F
+
+Pit-Fighter (USA, Europe) (Beta) (1992-10-13).lnx
+E7A5A4D0
+
+Poachin' Jeff (World) (Proto) (Aftermarket) (Unl).lnx
+D711FF77
+
+Poker (Europe) (Fr) (Proto).lnx
+C45BCD62
+
+Pong (World) (Demo 2) (Aftermarket) (Unl).lnx
+8AE0062A
+
+Pong (World) (Demo 1) (Aftermarket) (Unl).lnx
+9710A29F
+
+Pong-4-Fun (World) (Proto) (Aftermarket) (Unl).lnx
+45EAC2BA
+
+Pounce! (USA) (Proto).lnx
+5D1ABFE7
+
+Power Factor (USA, Europe).lnx
+99C42034
+
+Push Around the World (World) (Demo) (Aftermarket) (Unl).lnx
+569018D9
+
+Puyo Puyo (World) (Demo 2) (Aftermarket) (Unl).lnx
+F5FEE7F8
+
+Puyo Puyo (World) (Demo 1) (Aftermarket) (Unl).lnx
+82175988
+
+Puzzler 2000 (World) (Proto) (Unl).lnx
+F6F43C87
+
+QIX (USA, Europe).lnx
+B9881423
+
+RabbiLynx EggCatcher (World) (Demo) (Aftermarket) (Unl).lnx
+3021F7D9
+
+Raid on TriCity (World) (Beta) (Aftermarket) (Unl).lnx
+F68B82C5
+
+Raid on TriCity - First Impact (World) (v1.01) (Aftermarket) (Unl).lnx
+0FA40782
+
+Raid on TriCity - Second Wave (World) (Digital) (Aftermarket) (Unl).lnx
+0B737767
+
+Raiden (USA) (Beta).lnx
+BCD10C3A
+
+Raiden (World) (Aftermarket) (Unl).lnx
+689F31A4
+
+Rainbow (World) (Proto) (Aftermarket) (Unl).lnx
+589B1DD1
+
+RAM cart (USA) (Proto) (Program).lnx
+74EC2B2B
+
+Rampage (World).lnx
+B10B7C8E
+
+Rampart (USA, Europe).lnx
+139F301D
+
+Rapid Racer (World) (Demo) (Aftermarket) (Unl).lnx
+22AE9CE0
+
+RED Against the Machines (World) (v1.11) (Demo) (Aftermarket) (Unl).lnx
+8985A544
+
+RED Against the Machines (World) (v1.01) (Demo) (LynXmas 2020) (Aftermarket) (Unl).lnx
+EAB37590
+
+Red Square (World) (v1.1) (Aftermarket) (Unl).lnx
+7E56D55A
+
+Red Square (World) (v1.0) (Aftermarket) (Unl).lnx
+A7BF34E9
+
+Remnant - Planar Wars 3D (World) (2000-05-24) (Proto) (Aftermarket) (Unl).lnx
+92C8F0FA
+
+Return of the Space Coyote (World) (Demo) (Aftermarket) (Unl).lnx
+5223314C
+
+Reussite (World) (Demo) (Aftermarket) (Unl).lnx
+5F1D1DB5
+
+Road Riot 4WD (USA) (Proto 4).lnx
+69959A3B
+
+Road Riot 4WD (USA) (Proto 3).lnx
+82555EEB
+
+Road Riot 4WD (USA) (Proto 2).lnx
+ECCEA0D5
+
+Road Riot 4WD (USA) (Proto 1).lnx
+BFECEFC3
+
+RoadBlasters (World).lnx
+6867E80C
+
+Robo-Squash (World).lnx
+D1DFF2B2
+
+Robotron 2084 (USA, Europe).lnx
+7A6049B5
+
+Rolling Thunder (USA) (Proto).lnx
+467F8FD9
+
+Running Knight (World) (Aftermarket) (Unl).lnx
+86A4604B
+
+Rygar (World).lnx
+67E5BDBA
+
+S.T.U.N. Runner (USA, Europe).lnx
+8595C40B
+
+Santa Factory (World) (Aftermarket) (Unl).lnx
+23A6C3FA
+
+Santa's Empty Sack (World) (Aftermarket) (Unl).lnx
+6F412521
+
+Saving Santa Tree (World) (Aftermarket) (Unl).lnx
+E1620994
+
+Scooternia (World) (Demo) (Aftermarket) (Unl).lnx
+7606DCAC
+
+Scrapyard Dog (USA, Europe).lnx
+BE166F3B
+
+Scroll of theTime Lords - Lovejoy Prologue (World) (Aftermarket) (Unl).lnx
+3ABC850B
+
+Shadow of the Beast (USA, Europe).lnx
+EB78BAA3
+
+Shaken, Not Stirred (World) (v1.3) (Aftermarket) (Unl).lnx
+28CAA192
+
+Shaken, Not Stirred (World) (v1.2) (Aftermarket) (Unl).lnx
+63A533EF
+
+Shaken, Not Stirred (World) (v1.1) (Aftermarket) (Unl).lnx
+DA992C87
+
+Shaken, Not Stirred (World) (v1.0) (Aftermarket) (Unl).lnx
+F2F26C63
+
+Shanghai (World).lnx
+192BCD04
+
+Shuriken (World) (Aftermarket) (Unl).lnx
+0480CF82
+
+Silas Adventure (World) (Aftermarket) (Unl).lnx
+96861002
+
+Silly Archery (World) (Aftermarket) (Unl).lnx
+25ADD72D
+
+Silly Blaster (World) (Aftermarket) (Unl).lnx
+5DD26C8D
+
+SillySis (World) (Aftermarket) (Unl).lnx
+4AE7BA59
+
+Sky Raider (World) (Demo) (Aftermarket) (Unl).lnx
+D3DF927F
+
+Snake (World) (Proto) (Aftermarket) (Unl).lnx
+1D695480
+
+Snow Ball (World) (Aftermarket) (Unl).lnx
+9E43E62B
+
+Solitaire (World) (2009-09-28) (karri) (Aftermarket) (Unl).lnx
+31E6A372
+
+Solitaire (World) (2009-08-31) (karri) (Aftermarket) (Unl).lnx
+3C4CD1D2
+
+Solitaire (World) (2009-08-28) (karri) (Aftermarket) (Unl).lnx
+7FF033CE
+
+Solitaire (World) (2009-08-27) (karri) (Aftermarket) (Unl).lnx
+B0605319
+
+Solitaire (World) (Demo) (Inga) (Aftermarket) (Unl).lnx
+0E500B32
+
+Sorrow (World) (Proto) (Aftermarket) (Unl).lnx
+8AA245D0
+
+Space Domino (World) (Aftermarket) (Unl).lnx
+1FA8F631
+
+Space Lock &amp; Space Shoot (World) (2005-05-16) (Proto) (Aftermarket) (Unl).lnx
+DC62DF2D
+
+Space Lock &amp; Space Shoot (World) (2005-04-25) (Proto) (Aftermarket) (Unl).lnx
+A319FE86
+
+Spacewar (USA) (Demo).lnx
+59510CB3
+
+Springtime Is Here (World) (Demo) (Aftermarket) (Unl).lnx
+DEBF296D
+
+Star Blader (World) (Proto) (Aftermarket) (Unl).lnx
+9E6B0448
+
+Star Raiders (World) (Demo 2) (Aftermarket) (Unl).lnx
+172A4801
+
+Star Raiders (World) (Demo 1) (Aftermarket) (Unl).lnx
+4B8DA90F
+
+Stardreamer (World) (Demo) (Aftermarket) (Unl).lnx
+EB627DF8
+
+Steel Talons (USA, Europe).lnx
+5B2308ED
+
+Stinger (World) (Aftermarket) (Unl).lnx
+AE4BE313
+
+Sudoku (World) (Proto) (Aftermarket) (Unl).lnx
+89DAA534
+
+Super Asteroids, Missile Command (USA, Europe).lnx
+2DA7E2A8
+
+Super Off-Road (USA, Europe).lnx
+690CAEB0
+
+Super Skweek (USA, Europe).lnx
+DFA61571
+
+Swaping Tiles (World) (Proto) (Aftermarket) (Unl).lnx
+B7A11711
+
+Switchblade II (USA, Europe).lnx
+13657705
+
+Sybil's Nightmare Run (World) (Proto) (Aftermarket) (Unl).lnx
+C81D2F44
+
+Teen Dance (World) (Aftermarket) (Unl).lnx
+C6D2879D
+
+Tetris Raiden (World) (Beta) (Aftermarket) (Unl).lnx
+A17A420C
+
+Tetrisnoid (World) (Proto) (Aftermarket) (Unl).lnx
+B563C066
+
+Timeloop (World) (Aftermarket) (Unl).lnx
+B8443CF3
+
+Tiny Lynx Adventure (World) (Aftermarket) (Unl).lnx
+A0A0FACB
+
+Titan (World) (Proto) (Aftermarket) (Unl).lnx
+EB961C76
+
+Todd's Adventures in Slime World (World).lnx
+AE267E29
+
+Toki (USA, Europe).lnx
+156A4A4C
+
+Tournament Cyberball (USA, Europe).lnx
+0590A9E3
+
+Traffic Jam (World) (Demo) (Aftermarket) (Unl).lnx
+A25FFA4A
+
+Tron-6-Fun (World) (Proto) (Aftermarket) (Unl).lnx
+DE12024B
+
+Tropsy (World) (Proto) (Aftermarket) (Unl).lnx
+39A94CF1
+
+Turbo Sub (USA, Europe).lnx
+A4B924D6
+
+Turkey Puncher 3 - Hyper Punching (World) (Demo) (Aftermarket) (Unl).lnx
+4A31546F
+
+Twitter Panic (World) (Proto) (Aftermarket) (Unl).lnx
+98964EE8
+
+Undergrounders (World) (Demo) (Aftermarket) (Unl).lnx
+E16E1FBF
+
+Verbix (World) (Aftermarket) (Unl).lnx
+4AA8CD45
+
+Viking Child (USA, Europe).lnx
+8D56828B
+
+Vindicators (USA) (Proto).lnx
+6E084B3A
+
+Warbirds (USA, Europe).lnx
+B946BA49
+
+Weltenschlacht (World) (v0.41) (Demo) (Aftermarket) (Unl).lnx
+A0C59271
+
+Wizzy (World) (Proto) (Aftermarket) (Unl).lnx
+74CEA6A3
+
+Wolfenstein 3D (World) (Demo 2) (Aftermarket) (Unl).lnx
+A1E7840F
+
+Wolfenstein 3D (World) (Demo 1) (Aftermarket) (Unl).lnx
+101F072B
+
+Wolfman (USA) (Demo) (Kiosk).lnx
+C5EBD679
+
+World Class Soccer (USA, Europe).lnx
+91233794
+
+Xenophobe (World).lnx
+9BED736D
+
+Xump - The Final Run (World) (v1.20) (Aftermarket) (Unl).lnx
+577D7E7B
+
+Xump - The Final Run (World) (v1.00) (Aftermarket) (Unl).lnx
+6A71421A
+
+Xump 2 - Back to Space (World) (Proto) (Aftermarket) (Unl).lnx
+AED70CF1
+
+Xybots (USA, Europe).lnx
+89E2A595
+
+Yastuna Volume 1 - The Alchemy of Cubes (World) (v1.01) (Digital) (Aftermarket) (Unl).lnx
+6CF9CE19
+
+Yastuna Volume 1 - The Alchemy of Cubes (World) (v1.00) (Digital) (Aftermarket) (Unl).lnx
+A6FE24AF
+
+Yastuna Volume 2 - The Space Incident (World) (v1.01) (Digital) (Aftermarket) (Unl).lnx
+21975E97
+
+Yastuna Volume 2 - The Space Incident (World) (v1.00) (Digital) (Aftermarket) (Unl).lnx
+6B09D810
+
+YNXA (World) (Game Jam Edition) (Digital) (Aftermarket) (Unl).lnx
+DC8713EE
+
+YNXA - Leaf and the Guardians of Time (World) (Proto 2) (LynxJam23) (Aftermarket) (Unl).lnx
+D9259C78
+
+YNXA - Leaf and the Guardians of Time (World) (Proto 1) (Aftermarket) (Unl).lnx
+AFCC0558
+
+Z.A.P. (World) (Aftermarket) (Unl).lnx
+56E49935
+
+Zaku (World) (Unl).lnx
+4EA845DA
+
+Zaku (World) (Beta) (Unl).lnx
+B3747C71
+
+Zaku Puzzle (World) (Demo) (Aftermarket) (Unl).lnx
+F0177330
+
+Zap (World) (Demo) (Aftermarket) (Unl).lnx
+7A3FFB22
+
+Zarlor Mercenary (World).lnx
+CB27199D
+
