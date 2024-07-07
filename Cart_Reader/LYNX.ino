@@ -117,7 +117,13 @@ static uint8_t readByte_LYNX(uint32_t addr, uint8_t audin = 0) {
 
 #pragma region HIGHLEVEL
 
-static bool detectBlockSize_LYNX() {
+static bool detectBlockSize_LYNX() {}
+
+static bool detectCart_LYNX() {
+  // Could omit logging to save a few bytes
+  display_Clear();
+  println_Msg(F("Identifying..."));
+
   lynxUseAudin = false;
   lynxBlockSize = 0;
 
@@ -126,23 +132,17 @@ static bool detectBlockSize_LYNX() {
   const size_t DETECT_BYTES = 128;
 
   for (int i = 0; i < DETECT_BYTES; i++) {
-    // If any differences are detected when AUDIN=1,
-    // AUDIN is used to bankswitch
+    uint8_t b = readByte_LYNX(i);
+    // If any differences are detected when AUDIN=1, AUDIN is used to bankswitch
     // meaning we also use the maximum block size
-    // (1024kb cart / 256 blocks = 4kb block bank switched between two
-    // lower/upper 2kb blocks)
-    if (readByte_LYNX(i, 0) != readByte_LYNX(i, 1)) {
+    // (1024kb cart / 256 blocks = 4kb block bank switched between lower/upper 2kb blocks)
+    if (b != readByte_LYNX(i, 1)) {
       lynxUseAudin = true;
       lynxBlockSize = 2048;
-      return true;
+      break;
     }
-  }
-
-  // Use the already-dumped 2KB to detect mirroring in a small sample
-  // Valid cart sizes of 128kb, 256kb, 512kb / 256 blocks
-  // = block sizes of 512b, 1024b, 2048b
-  for (int i = 0; i < DETECT_BYTES; i++) {
-    uint8_t b = readByte_LYNX(i);
+    // Identify mirroring of largest stride
+    // Valid cart sizes of 128kb, 256kb, 512kb / 256 blocks = block sizes of 512b, 1024b, 2048b
     if (b != readByte_LYNX(i + 1024)) {
       lynxBlockSize = max(lynxBlockSize, 2048);
     } else if (b != readByte_LYNX(i + 512)) {
@@ -152,14 +152,7 @@ static bool detectBlockSize_LYNX() {
     }
   }
 
-  return (lynxBlockSize > 0);
-}
-
-static bool detectCart_LYNX() {
-  // Could omit logging to save a few bytes
-  display_Clear();
-  println_Msg(F("Identifying..."));
-  if (!detectBlockSize_LYNX()) {
+  if (lynxBlockSize == 0) {
     print_STR(error_STR, false);
     display_Update();
     wait();
