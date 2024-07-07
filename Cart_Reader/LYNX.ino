@@ -121,19 +121,17 @@ static bool detectBlockSize_LYNX() {
   lynxUseAudin = false;
   lynxBlockSize = 0;
 
-  int i;
-  uint8_t block[LYNX_BLOCKADDR];
-  for (i = 0; i < LYNX_BLOCKADDR; i++) {
-    block[i] = readByte_LYNX(i, 0);
-  }
+  // Somewhat arbitrary, however many bytes would be unlikely to be
+  // coincidentally mirrored
+  const size_t DETECT_BYTES = 128;
 
-  for (i = 0; i < LYNX_BLOCKADDR; i++) {
+  for (int i = 0; i < DETECT_BYTES; i++) {
     // If any differences are detected when AUDIN=1,
     // AUDIN is used to bankswitch
     // meaning we also use the maximum block size
     // (1024kb cart / 256 blocks = 4kb block bank switched between two
     // lower/upper 2kb blocks)
-    if (block[i] != readByte_LYNX(i, 1)) {
+    if (readByte_LYNX(i, 0) != readByte_LYNX(i, 1)) {
       lynxUseAudin = true;
       lynxBlockSize = 2048;
       return true;
@@ -143,16 +141,14 @@ static bool detectBlockSize_LYNX() {
   // Use the already-dumped 2KB to detect mirroring in a small sample
   // Valid cart sizes of 128kb, 256kb, 512kb / 256 blocks
   // = block sizes of 512b, 1024b, 2048b
-  const size_t DETECT_BYTES = 128;
-  for (i = 0; i < DETECT_BYTES; i++) {
-    if (block[i] != block[i + 256]) {
-      lynxBlockSize = max(lynxBlockSize, 512);
-    }
-    if (block[i] != block[i + 512]) {
-      lynxBlockSize = max(lynxBlockSize, 1024);
-    }
-    if (block[i] != block[i + 1024]) {
+  for (int i = 0; i < DETECT_BYTES; i++) {
+    uint8_t b = readByte_LYNX(i);
+    if (b != readByte_LYNX(i + 1024)) {
       lynxBlockSize = max(lynxBlockSize, 2048);
+    } else if (b != readByte_LYNX(i + 512)) {
+      lynxBlockSize = max(lynxBlockSize, 1024);
+    } else if (b != readByte_LYNX(i + 256)) {
+      lynxBlockSize = max(lynxBlockSize, 512);
     }
   }
 
@@ -197,16 +193,24 @@ static void writeHeader_LYNX() {
   myFile.write(header, LYNX_HEADER_SIZE);
 }
 
-static void readROM_LYNX() {
-  uint8_t block[lynxBlockSize];
-  uint32_t i;
+// Saves memory by using existing sd buffer instead of a second block-sized buffer (which could be up to 2KB)
+// Minimum block size is 512b, size of sdBuffer is 512b, all block sizes multiples of 512b,
+// so we shouldn't need to check for leftovers...
+static inline void ringBufferWrite_LYNX(uint32_t blocki, uint8_t byte) {
+  sdBuffer[blocki % 512] = byte;
+  if ((blocki + 1) % 512 == 0) {
+    myFile.write(sdBuffer, 512);
+  }
+}
 
+static void readROM_LYNX() {
   dataDir_LYNX(INPUT);
 
   // The upper part of the address is used as a block address
   // There are always 256 blocks, but the size of the block can vary
   // So outer loop always steps through block addresses
 
+  uint32_t i;
   const uint32_t upto = LYNX_BLOCKCOUNT * LYNX_BLOCKADDR;
   for (uint32_t blockAddr = 0; blockAddr < upto; blockAddr += LYNX_BLOCKADDR) {
     draw_progressbar(blockAddr, upto);
@@ -215,26 +219,23 @@ static void readROM_LYNX() {
     if (lynxUseAudin) {
       // AUDIN bank switching uses a 4kb block split to 2 banks
       for (i = 0; i < lynxBlockSize / 2; i++) {
-        block[i] = readByte_LYNX(blockAddr + i, 0);
+        ringBufferWrite_LYNX(i, readByte_LYNX(blockAddr + i, 0));
       }
       for (; i < lynxBlockSize; i++) {
-        block[i] = readByte_LYNX(blockAddr + i - (lynxBlockSize / 2), 1);
+        ringBufferWrite_LYNX(i, readByte_LYNX(blockAddr + i - (lynxBlockSize / 2), 1));
       }
     } else {
       for (i = 0; i < lynxBlockSize; i++) {
-        block[i] = readByte_LYNX(i + blockAddr);
+        ringBufferWrite_LYNX(i, readByte_LYNX(i + blockAddr));
       }
     }
-
-    myFile.write(block, lynxBlockSize);
   }
   draw_progressbar(upto, upto);
 }
 
 #pragma region MENU
 
-static const char* const menuOptionsLYNX[] PROGMEM = {FSTRING_READ_ROM,
-                                                      FSTRING_RESET};
+static const char* const menuOptionsLYNX[] PROGMEM = {FSTRING_READ_ROM, FSTRING_RESET};
 
 void lynxMenu() {
   size_t menuCount = sizeof(menuOptionsLYNX) / sizeof(menuOptionsLYNX[0]);
