@@ -1940,6 +1940,11 @@ void resetIntel_GBA(unsigned long partitionSize) {
   }
 }
 
+void resetF0088H0_GBA() {
+  writeWord_GBA(0, 0x50);
+  writeWord_GBA(0, 0xFF);
+}
+
 void resetMX29GL128E_GBA() {
   writeWord_GAB(0, 0xF0);
 }
@@ -1977,6 +1982,10 @@ void idFlashrom_GBA() {
   // Intel Strataflash
   if (flashid == 0x8802 || (flashid == 0x8816)) {
     cartSize = 0x2000000;
+  }
+  // F0088H0
+  else if (flashid == 0x8812) {
+    cartSize = 0x1000000;
   } else {
     // Send swapped MX29GL128E/MSP55LV128 ID command to flashrom
     writeWord_GAB(0xAAA, 0xAA);
@@ -2195,6 +2204,31 @@ void eraseIntel4400_GBA() {
     }*/
 }
 
+void eraseF0088H0_GBA() {
+  // If the game is smaller than 16Mbit only erase the needed blocks
+  unsigned long lastBlock = 0xFFFFFF;
+  if (fileSize < 0xFFFFFF)
+    lastBlock = fileSize;
+
+  for (unsigned long currBlock = 0; currBlock < lastBlock; currBlock += 0x40000) {
+    // Unlock Block
+    writeWord_GBA(currBlock, 0x60);
+    writeWord_GBA(currBlock, 0xD0);
+
+    // Erase Command
+    writeWord_GBA(currBlock, 0x20);
+    writeWord_GBA(currBlock, 0xD0);
+
+    // Read the status register
+    word statusReg = readWord_GBA(currBlock);
+    while ((statusReg | 0xFF7F) != 0xFFFF) {
+      statusReg = readWord_GBA(currBlock);
+    }
+    // Blink led
+    blinkLED();
+  }
+}
+
 void sectorEraseMSP55LV128_GBA() {
   unsigned long lastSector = 0xFFFFFF;
 
@@ -2286,6 +2320,49 @@ void writeIntel4000_GBA() {
         }
       }
     }
+  }
+}
+
+void writeF0088H0_GBA() {
+  byte sdBuffer[1024];
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = fileSize;
+  draw_progressbar(0, totalProgressBar);
+
+  for (unsigned long currBlock = 0; currBlock < fileSize; currBlock += 0x40000) {
+    // Blink led
+    blinkLED();
+
+    // Write to flashrom
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 0x40000; currSdBuffer += 1024) {
+      // Fill SD buffer
+      myFile.read(sdBuffer, 1024);
+
+      // Buffered program command
+      writeWord_GBA(currBlock + currSdBuffer, 0xEA);
+      // Write word count (minus 1)
+      writeWord_GBA(currBlock + currSdBuffer, 0x1FF);
+
+      // Write buffer
+      for (word currByte = 0; currByte < 1024; currByte += 2) {
+        // Join two bytes into one word
+        word currWord = ((sdBuffer[currByte + 1] & 0xFF) << 8) | (sdBuffer[currByte] & 0xFF);
+        writeWord_GBA(currBlock + currSdBuffer + currByte, currWord);
+      }
+
+      // Write buffer to flash
+      writeWord_GBA(currBlock + currSdBuffer + 1022, 0xD0);
+
+      // Read the status register at last written address
+      word statusReg = readWord_GBA(currBlock + currSdBuffer + 1022);
+      while ((statusReg | 0xFF7F) != 0xFFFF) {
+        statusReg = readWord_GBA(currBlock + currSdBuffer + 1022);
+      }
+    }
+    processedProgressBar += 0x40000;
+    draw_progressbar(processedProgressBar, totalProgressBar);
   }
 }
 
@@ -2415,7 +2492,7 @@ void flashRepro_GBA() {
   // Check flashrom ID's
   idFlashrom_GBA();
 
-  if ((flashid == 0x8802) || (flashid == 0x8816) || (flashid == 0x227E)) {
+  if ((flashid == 0x8802) || (flashid == 0x8816) || (flashid == 0x227E) || (flashid == 0x8812)) {
     print_Msg(F("ID: "));
     print_Msg(flashid_str);
     print_Msg(F(" Size: "));
@@ -2445,6 +2522,10 @@ void flashRepro_GBA() {
     // Intel 4400L0ZDQ0
     else if (flashid == 0x8816) {
       println_Msg(F("Intel 4400L0ZDQ0"));
+    }
+    // F0088H0
+    else if (flashid == 0x8812) {
+      println_Msg(F("F0088H0"));
     }
     println_Msg("");
     println_Msg(F("This will erase your"));
@@ -2486,6 +2567,11 @@ void flashRepro_GBA() {
         display_Update();
         eraseIntel4400_GBA();
         resetIntel_GBA(0x200000);
+      } else if (flashid == 0x8812) {
+        println_Msg(F("Erasing..."));
+        display_Update();
+        eraseF0088H0_GBA();
+        resetF0088H0_GBA();
       } else if (flashid == 0x227E) {
         //if (sectorCheckMX29GL128E_GBA()) {
         //print_FatalError(F("Sector Protected"));
@@ -2516,6 +2602,8 @@ void flashRepro_GBA() {
       display_Update();
       if ((flashid == 0x8802) || (flashid == 0x8816)) {
         writeIntel4000_GBA();
+      } else if (flashid == 0x8812) {
+        writeF0088H0_GBA();
       } else if (flashid == 0x227E) {
         if ((romType == 0xC2) || (romType == 0x89) || (romType == 0x20)) {
           //MX29GL128E (0xC2)
@@ -2544,9 +2632,10 @@ void flashRepro_GBA() {
       } else if (flashid == 0x8816) {
         resetIntel_GBA(0x200000);
         delay(1000);
-      }
-
-      else if (flashid == 0x227E) {
+      } else if (flashid == 0x8812) {
+        resetF0088H0_GBA();
+        delay(1000);
+      } else if (flashid == 0x227E) {
         resetMX29GL128E_GBA();
         delay(1000);
       }
