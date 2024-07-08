@@ -56,6 +56,18 @@ Happy making. 🔧🔨😊
 - Casio Loopy
 - Commodore 64
 - Vectrex
+- Atari 8-bit
+- Bally Astrocade
+- Bandai Little Jammer
+- Bandai Little Jammer Pro
+- Casio PV-1000
+- Commodore VIC-20
+- LeapFrog Leapster
+- RCA Studio II
+- Texas Instruments TI-99
+- Tomy Pyuuta
+- TRS-80 Color Computer
+- Vtech V.Smile
 
 #### Open Source Licenses:
 - Software(everything in Cart_Reader folder) = GPL v3
