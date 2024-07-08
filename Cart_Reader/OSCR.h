@@ -216,6 +216,9 @@ enum CORES: uint8_t {
 # ifdef ENABLE_7800
   CORE_7800,
 # endif
+# ifdef ENABLE_LYNX
+  CORE_LYNX,
+# endif
 # ifdef ENABLE_VECTREX
   CORE_VECTREX,
 # endif
@@ -303,6 +306,9 @@ enum SYSTEM_MENU: uint8_t {
 # endif
 # if defined(ENABLE_7800)
   SYSTEM_MENU_7800,
+# endif
+# if defined(ENABLE_LYNX)
+  SYSTEM_MENU_LYNX,
 # endif
 # if defined(ENABLE_VECTREX)
   SYSTEM_MENU_VECTREX,

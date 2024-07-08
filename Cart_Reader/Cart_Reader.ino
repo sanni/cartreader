@@ -185,7 +185,7 @@ template<class T> int EEPROM_readAnything(int ee, T& value) {
 #define rotate_to_change_STR 15
 #define press_to_select_STR 16
 
-// This arrays holds the most often uses strings
+// This array holds the most often used strings
 constexpr char string_press_button0[] PROGMEM = "Press Button...";
 constexpr char string_sd_error1[] PROGMEM = "SD Error";
 constexpr char string_did_not_verify3[] PROGMEM = "did not verify";
@@ -290,7 +290,7 @@ boolean root = 0;
 boolean filebrowse = 0;
 
 // Common
-// 21 chars for SNES ROM name, one char for termination
+// 21 chars for ROM name, one char for termination
 char romName[22];
 unsigned long sramSize = 0;
 int romType = 0;
@@ -458,7 +458,7 @@ uint32_t calculateCRC(char* fileName, char* folder, unsigned long offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc, etc. modules
  *****************************************/
-#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES))
+#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_LYNX))
 
 void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
   uint32_t crc = calculateCRC(checkFile, folder, offset);
@@ -1093,10 +1093,11 @@ constexpr char modeItem22[] PROGMEM = "Casio Loopy";
 constexpr char modeItem23[] PROGMEM = "Commodore 64";
 constexpr char modeItem24[] PROGMEM = "Atari 5200";
 constexpr char modeItem25[] PROGMEM = "Atari 7800";
-constexpr char modeItem26[] PROGMEM = "Vectrex";
-constexpr char modeItem27[] PROGMEM = "Flashrom Programmer";
-constexpr char modeItem28[] PROGMEM = "Self Test (3V)";
-constexpr char modeItem29[] PROGMEM = "About";
+constexpr char modeItem26[] PROGMEM = "Atari Lynx";
+constexpr char modeItem27[] PROGMEM = "Vectrex";
+constexpr char modeItem28[] PROGMEM = "Flashrom Programmer";
+constexpr char modeItem29[] PROGMEM = "Self Test (3V)";
+constexpr char modeItem30[] PROGMEM = "About";
 
 static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_GBX
@@ -1174,16 +1175,20 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_7800
   modeItem25,
 #endif
-#ifdef ENABLE_VECTREX
+#ifdef ENABLE_LYNX
   modeItem26,
 #endif
-#ifdef ENABLE_FLASH
+#ifdef ENABLE_VECTREX
   modeItem27,
 #endif
-#ifdef ENABLE_SELFTEST
+#ifdef ENABLE_FLASH
   modeItem28,
 #endif
-  modeItem29, FSTRING_RESET
+#ifdef ENABLE_SELFTEST
+  modeItem29,
+#endif
+  modeItem30,
+  FSTRING_RESET
 };
 
 uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStrings, uint8_t entryCount, uint8_t default_choice = 0) {
@@ -1386,6 +1391,13 @@ void mainMenu() {
       return a7800Menu();
       break;
 #endif
+
+#ifdef ENABLE_LYNX
+    case SYSTEM_MENU_LYNX:
+      setup_LYNX();
+      return lynxMenu();
+      break;
+#endif    
 
 #ifdef ENABLE_VECTREX
     case SYSTEM_MENU_VECTREX:
@@ -3584,6 +3596,9 @@ void loop() {
 #endif
 #ifdef ENABLE_7800
   case CORE_7800: return a7800Menu();
+#endif
+#ifdef ENABLE_LYNX
+  case CORE_LYNX: return lynxMenu();
 #endif
 #ifdef ENABLE_VECTREX
   case CORE_VECTREX: return vectrexMenu();
