@@ -4,7 +4,7 @@
 Asahi PRIME TIME Selection
 0
 
-Ballad Selection Vol 3
+Ballad Selection Vol. 3
 1
 
 Basic Selection
@@ -28,7 +28,7 @@ Cinema Selection Olive Package Vol. 8
 Classical Jazz Selection Emerald Package Vol. 12
 1
 
-Classical Jazz Selection Sapphire Package vol. 13
+Classical Jazz Selection Sapphire Package Vol. 13
 1
 
 DESKTOP JAM Basic Selection
