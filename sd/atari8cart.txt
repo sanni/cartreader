@@ -1,0 +1,946 @@
+1400 Super SALT
+0,1
+
+3-D Tic-Tac-Toe
+0,0
+
+400/800 SALT
+0,0
+
+600xl/800xl SALT
+0,1
+
+810 Diagnostic Cartridge
+0,0
+
+Abracadabra
+0,1
+
+ACE-80XL
+1,1
+
+Ace of Aces
+0,5
+
+Action!
+0,1
+
+Adventure Creator
+0,1
+
+Airball
+0,5
+
+Alf in the Color Caves
+0,1
+
+Alien Ambush
+0,0
+
+Alien Garden
+0,0
+
+Alpha Shield
+0,0
+
+Alphabet Zoo
+0,0
+
+Ant Eater
+0,0
+
+Archon
+0,2
+
+Assembler Editor
+0,0
+
+AST
+0,0
+
+AST 2000
+0,1
+
+Asteroids
+0,0
+
+Astro Chase
+0,1
+
+Astro Grover
+0,1
+
+Atari BASIC
+0,0
+
+Atari LOGO
+0,1
+
+AtariArtist
+0,1
+
+AtariGraphics
+0,1
+
+AtariLab Light Module
+0,1
+
+Atarilab Temperature Module
+0,1
+
+AtariSchreiber
+0,1
+
+AtariTexte
+0,1
+
+AtariWriter
+0,1
+
+Atlantis
+0,0
+
+Attack at EP-CYG-4
+0,1
+
+Attack of the Mutant Camels
+0,0
+
+Ballblazer
+0,4
+
+Barnyard Blaster
+0,5
+
+Baseball
+0,1
+
+BASIC
+0,0
+
+Basic XE
+0,1
+
+Basic XL
+0,1
+
+Basketball
+0,0
+
+BattleZone
+0,4
+
+BC's Quest for Tires
+0,1
+
+Beamrider
+0,1
+
+BearJam
+0,0
+
+Big Bird's Funhouse
+0,1
+
+Big Bird's Special Delivery
+0,1
+
+Blue Max
+0,2
+
+Boulder Dash
+0,1
+
+Boulders and Bombs
+0,0
+
+Bounty Bob Strikes Back!
+0,3
+
+Bristles
+0,1
+
+Buck Rogers
+0,1
+
+Bug Hunt
+0,4
+
+Captain Beeble
+0,1
+
+Carnival Massacre
+0,1
+
+Castle Hassle
+0,1
+
+Castles and Keys
+0,1
+
+Caverns of Mars
+0,1
+
+Centipede
+0,0
+
+Chess
+0,0
+
+Chicken
+0,0
+
+Chiffres et des Lettres
+0,1
+
+Choplifter!
+0,1
+
+Choplifter! (XE)
+0,4
+
+Claim Jumper
+0,1
+
+Cloudburst
+0,0
+
+CocoNotes
+0,1
+
+Compu=Prompt
+0,0
+
+Computer Chess
+0,0
+
+Computer War
+0,1
+
+Computrac 4000-8000
+0,1
+
+Congo Bongo
+0,1
+
+Conquest of the Crown
+0,1
+
+Cosmic Life
+0,0
+
+CPS Super SALT 400/800/XL
+0,1
+
+Crime Buster
+0,5
+
+Crossbow
+0,5
+
+CrossFire
+0,0
+
+Crystal Castles
+0,2
+
+Da' Fuzz
+0,0
+
+Dance Fantasy
+0,0
+
+Dark Chambers
+0,4
+
+David's Midnight Magic
+0,4
+
+Decathlon
+0,1
+
+Defender
+0,1
+
+Delta Drawing
+0,0
+
+Deluxe Invaders
+0,0
+
+Demon Attack
+0,0
+
+Desert Falcon
+0,4
+
+Designer's Pencil
+0,1
+
+Diamond Graphic OS
+0,4
+
+Diamond Mine
+0,1
+
+Dig Dug
+0,1
+
+Direct Access
+0,1
+
+Donkey Kong
+0,1
+
+Donkey Kong Jr.
+0,1
+
+Dreadnaught Factor
+0,0
+
+Droids
+0,0
+
+DT-80
+1,0
+
+Ducks Ahoy!
+0,1
+
+E.T. Phone Home!
+0,1
+
+Eastern Front 1941
+0,1
+
+Edit 6502
+0,0
+
+Editor Assembler
+0,0
+
+Educational System
+0,0
+
+Embargo
+0,0
+
+Ernie's Magic Shapes
+0,1
+
+Espial
+0,1
+
+Expando-Vision
+0,0
+
+Express!
+0,4
+
+FaceMaker
+0,0
+
+Fantastic Voyage
+0,0
+
+Fast Eddie
+0,0
+
+Fight Night
+0,5
+
+Final Legacy
+0,1
+
+Final Orbit
+0,0
+
+Firebird
+0,0
+
+Flapper
+0,1
+
+Flight Simulator II
+0,5
+
+Flip and Flop
+0,1
+
+Food Fight
+0,2
+
+Fort Apocalypse
+0,1
+
+Fortune Hunter
+0,0
+
+Fraction Fever
+0,0
+
+Frogger
+0,0
+
+Frogger II
+0,1
+
+Fun with Art
+0,1
+
+Galaxian
+0,0
+
+Gateway To Apshai
+0,1
+
+GATO Submarine Simulation
+0,5
+
+Gold Mine
+0,0
+
+Gorf
+0,0
+
+Gridrunner
+0,0
+
+Gyruss
+0,1
+
+H.E.R.O.
+0,1
+
+Halftime Battlin' Bands
+0,1
+
+Ham Text
+0,0
+
+Hamsoft / Amtor
+0,0
+
+Hard Hat Willy
+0,1
+
+Hardball!
+0,4
+
+Homebase Electronic Banking
+0,0
+
+Hypnotic Land
+0,1
+
+In-Store Demonstration
+0,1
+
+INFO-soft
+0,1
+
+Info/Gen
+0,0
+
+Into the Eagle's Nest
+0,2
+
+James Bond 007
+0,1
+
+Jawbreaker II
+0,0
+
+Journey to the Planets
+0,1
+
+Joust
+0,1
+
+Jumbo Jet Pilot
+0,1
+
+Jumpman Junior
+0,1
+
+Jungle Hunt
+0,1
+
+K-Razy Antiks
+0,0
+
+K-Razy Kritters
+0,0
+
+K-Razy Shoot Out
+0,0
+
+K-Star Patrol
+0,0
+
+Kaboom!
+0,0
+
+Karateka
+0,5
+
+Keystone Kapers
+0,0
+
+Kickback
+0,0
+
+Kids on Keys
+0,0
+
+KinderComp
+0,0
+
+Koala Painter
+0,1
+
+Learning Phone
+0,0
+
+Learning with Leeper
+0,1
+
+Leo's 'Lectric Paintbrush
+0,0
+
+Letter Perfect
+0,0
+
+Linking Logic
+0,0
+
+Lode Runner
+0,4
+
+Logic Levels
+0,0
+
+LogicMaster
+0,0
+
+M*A*S*H
+0,0
+
+MAC-65
+0,1
+
+Magic Dump II
+1,0
+
+Major League Hockey
+0,0
+
+Mario Bros.
+0,4
+
+Master Type
+0,1
+
+Math Encounter
+0,0
+
+Math Mileage
+0,0
+
+Math Works
+0,0
+
+Matterhorn
+0,1
+
+MegaMania
+0,0
+
+Memory Manor
+0,0
+
+Microcalc XE
+0,2
+
+Microfiler
+0,0
+
+MicroIllustrator
+0,1
+
+MicroMaestro
+0,0
+
+Microprinter System
+0,0
+
+Microsoft BASIC II
+0,1
+
+Millipede
+0,1
+
+Miner 2049er
+0,1
+
+Missile Command
+0,0
+
+Mogul Maniac
+0,1
+
+Monkey Wrench
+1,0
+
+Monkey Wrench II
+1,0
+
+Monster Maze
+0,0
+
+Moon Patrol
+0,1
+
+Mountain King
+0,0
+
+Movie Musical Madness
+0,1
+
+Mr. Cool
+0,0
+
+Mr. TNT
+0,0
+
+Ms. Pac-Man
+0,1
+
+Multi Fischa
+0,0
+
+Music Composer
+0,0
+
+Necromancer
+0,1
+
+Night Strike!
+0,0
+
+Oil's Well
+0,1
+
+One-on-One
+0,2
+
+Orc Attack
+0,1
+
+Ozzy's Orchard
+0,1
+
+Pac-Man
+0,0
+
+Paddle Jitter Test
+0,1
+
+Pastfinder
+0,1
+
+Peanut Butter Panic
+0,0
+
+Pengo
+0,1
+
+Picnic Paranoia
+0,1
+
+PILOT
+0,0
+
+Pitfall!
+0,0
+
+Pitfall II
+0,1
+
+Pitstop
+0,1
+
+PLATO
+0,0
+
+PlatterMania
+0,0
+
+Pocket Modem Software
+0,0
+
+Pole Position
+0,1
+
+Pool 400
+0,0
+
+Popeye
+0,1
+
+Porky's
+0,1
+
+Powerstar
+0,1
+
+Princess and the Frog
+0,0
+
+Pronto
+0,1
+
+Protector II
+0,1
+
+Q*bert
+0,0
+
+Qix
+0,0
+
+Rack 'em Up!
+0,1
+
+Rally Speedway
+0,1
+
+RealSports Football
+0,1
+
+Rescue on Fractalus!
+0,4
+
+River Raid
+0,0
+
+River Rescue
+0,1
+
+Robotron 2084
+0,1
+
+Sea Chase
+0,0
+
+Sea Horse Hide 'n Seek
+0,1
+
+Seafox
+0,1
+
+Serpentine
+0,0
+
+Sesame Street Letter-Go-Round
+0,1
+
+Shamus
+0,1
+
+Silicon Warrior
+0,1
+
+Sky Writer
+0,1
+
+Slime
+0,1
+
+Smart Terminal
+0,0
+
+Soccer
+0,0
+
+Space Invaders
+0,0
+
+Space Journey
+0,1
+
+Space Shuttle
+0,1
+
+Spark Bugs
+0,0
+
+Sparta DOS X
+0,4
+
+Spectraview II
+0,1
+
+Speedway Blast
+0,0
+
+Spider City
+0,0
+
+Springer
+0,1
+
+Spy Hunter
+0,1
+
+Star Maze
+0,1
+
+Star Raiders
+0,0
+
+Star Raiders II
+0,2
+
+Star Trek
+0,1
+
+Star Wars The Arcade Game
+0,1
+
+Star Wars Return of the Jedi
+0,0
+
+Starion
+0,1
+
+Story Machine
+0,1
+
+Submarine Commander
+0,1
+
+Summer Games
+0,5
+
+Super Breakout
+0,0
+
+Super Cobra
+0,0
+
+Super E-Burner
+0,0
+
+Super Sketch Graphics Master
+0,0
+
+Super Zaxxon
+0,1
+
+Survival of the Fittest
+0,0
+
+Synassembler
+0,0
+
+Tamlilan
+0,1
+
+Target
+0,1
+
+Telelink I
+0,0
+
+Telelink II
+0,0
+
+Tennis
+0,1
+
+Test Atari 65-130XE
+0,0
+
+Thera-Med Zahnschutz-Spiel
+0,0
+
+Thunderfox
+0,4
+
+Timebound
+0,1
+
+Topper
+0,1
+
+Track & Field
+0,1
+
+Trion
+0,1
+
+Turbo System
+0,0
+
+Turmoil
+0,0
+
+Twin Pack
+0,0
+
+Typo Attack
+0,0
+
+Typo
+0,0
+
+Up 'n Down
+0,1
+
+Up for Grabs
+0,0
+
+Video Easel
+0,0
+
+Video Poker Card Game
+0,1
+
+VisiCopy III
+0,0
+
+Webster
+0,0
+
+Weltraumkolonie
+0,0
+
+Whiz Kid
+0,0
+
+Wilcox Message Display
+0,0
+
+Wizard of Wor
+0,1
+
+Worm War 1
+0,0
+
+Writer's Tool
+0,0
+
+Zaxxon
+0,1
+
+Zenji
+0,0
+
+Zone Ranger
+0,1
+
+Zybex
+0,4
+
+

@@ -228,6 +228,42 @@ enum CORES: uint8_t {
 # ifdef ENABLE_GPC
   CORE_GPC,
 # endif
+# ifdef ENABLE_ATARI8
+  CORE_ATARI8,
+# endif
+# ifdef ENABLE_BALLY
+  CORE_BALLY,
+# endif
+# ifdef ENABLE_LJ
+  CORE_LJ,
+# endif
+# ifdef ENABLE_LJPRO
+  CORE_LJPRO,
+# endif
+# ifdef ENABLE_PV1000
+  CORE_PV1000,
+# endif
+# ifdef ENABLE_VIC20
+  CORE_VIC20,
+# endif
+# ifdef ENABLE_LEAP
+  CORE_LEAP,
+# endif
+# ifdef ENABLE_RCA
+  CORE_RCA,
+# endif
+# ifdef ENABLE_TI99
+  CORE_TI99,
+# endif
+# ifdef ENABLE_PYUUTA
+  CORE_PYUUTA,
+# endif
+# ifdef ENABLE_TRS80
+  CORE_TRS80,
+# endif
+# ifdef ENABLE_VSMILE
+  CORE_VSMILE,
+# endif
   CORE_MAX // Always last
 };
 
@@ -312,6 +348,42 @@ enum SYSTEM_MENU: uint8_t {
 # endif
 # if defined(ENABLE_VECTREX)
   SYSTEM_MENU_VECTREX,
+# endif
+# if defined(ENABLE_ATARI8)
+  SYSTEM_MENU_ATARI8,
+# endif
+# if defined(ENABLE_BALLY)
+  SYSTEM_MENU_BALLY,
+# endif
+# if defined(ENABLE_LJ)
+  SYSTEM_MENU_LJ,
+# endif
+# if defined(ENABLE_LJPRO)
+  SYSTEM_MENU_LJPRO,
+# endif
+# if defined(ENABLE_PV1000)
+  SYSTEM_MENU_PV1000,
+# endif
+# if defined(ENABLE_VIC20)
+  SYSTEM_MENU_VIC20,
+# endif
+# if defined(ENABLE_LEAP)
+  SYSTEM_MENU_LEAP,
+# endif
+# if defined(ENABLE_RCA)
+  SYSTEM_MENU_RCA,
+# endif
+# if defined(ENABLE_TI99)
+  SYSTEM_MENU_TI99,
+# endif
+# if defined(ENABLE_PYUUTA)
+  SYSTEM_MENU_PYUUTA,
+# endif
+# if defined(ENABLE_TRS80)
+  SYSTEM_MENU_TRS80,
+# endif
+# if defined(ENABLE_VSMILE)
+  SYSTEM_MENU_VSMILE,
 # endif
 # if defined(ENABLE_FLASH)
   SYSTEM_MENU_FLASH,

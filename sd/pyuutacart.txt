@@ -1,0 +1,97 @@
+4-nin Mahjong
+1
+0
+Baseball [3D]
+2
+19
+Battle Fighter [3D]
+2
+20
+Bermuda Triangle
+0
+26
+Bombman
+0
+23
+Car-azy Racer
+1
+
+Cave Crawlers
+0
+
+Deep Six
+0
+
+Don Pan
+0
+
+Frogger
+0
+
+Guttang Gottong
+0
+
+Hyperspace
+0
+
+Jungler
+0
+
+Loco-Motion
+0
+
+Marine Adventure
+0
+
+Maze Patrol
+0
+
+Mickey Athletic Land
+0
+
+Mission Attack
+0
+
+Monster Inn
+0
+
+Mystery Gold
+0
+
+Mr. Do!
+1
+
+Night Flight
+0
+
+Pooyan
+0
+
+Rescue Copter [3D]
+2
+
+Saurusland
+0
+
+Scramble
+0
+
+Super Bike
+1
+
+Torpedo Terror
+0
+
+Traffic Jam
+0
+
+Triple Command
+0
+
+TRON
+0
+
+Turpin
+0
+
+

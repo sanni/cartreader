@@ -1,0 +1,835 @@
+4A DOS
+0,0,000,2
+
+4A Flyer
+0,0,000,2
+
+99 Home Sentry
+0,0,000,2
+
+Accounting Assistant
+0,5,248,0
+
+Activity Accountant
+0,3,056,0
+
+Addition
+0,2,040,0
+
+Addition and Subtraction 1
+0,3,056,0
+
+Addition and Subtraction 2
+0,3,056,0
+
+Addition and Subtraction 3
+0,4,120,0
+
+Adventure
+0,1,008,0
+
+Alien Addition
+0,2,024,0
+
+Alligator Mix
+0,2,024,0
+
+Alpiner
+0,4,120,1
+
+A-Maze-Ing
+0,1,008,0
+
+Ambulance
+0,0,000,2
+
+Ant Colony
+0,0,000,2
+
+Ant-Eater
+0,0,000,2
+
+Attendance Recorder
+0,5,248,0
+
+Barrage
+0,0,000,4
+
+Beginning Grammar
+0,2,024,0
+
+Beyond Parsec
+0,0,000,2
+
+Beyond Space
+0,0,000,2
+
+Bigfoot
+1,1,008,4
+
+Black Hole
+0,0,000,2
+
+Blackjack and Poker
+0,1,008,0
+
+Blasto
+0,1,008,0
+
+Boxer
+0,0,000,2
+
+Break Thru
+0,0,000,2
+
+Buck Rogers
+0,2,024,2
+
+Burger Builder
+0,0,000,2
+
+Burgertime
+0,2,024,2
+
+Car Wars
+0,1,008,0
+
+Card Sharp
+0,1,008,0
+
+Centipede
+0,0,000,2
+
+Championship Baseball
+1,3,056,4
+
+Chicken Coop
+0,0,000,2
+
+Chisholm Trail
+0,1,008,2
+
+Class Data Recorder
+0,5,248,0
+
+Computer Math Games I
+0,4,120,2
+
+Computer Math Games II
+0,3,056,0
+
+Computer Math Games III
+0,4,120,0
+
+Computer Math Games IV
+0,4,120,0
+
+Computer Math Games VI
+0,2,024,0
+
+Computer War
+0,0,000,4
+
+Congo Bongo
+0,2,024,2
+
+Connect Four
+0,1,016,0
+
+Console Writer
+0,0,000,2
+
+Course Manager
+0,5,248,0
+
+Crossfire
+0,1,008,2
+
+Data Base Management System v2.0
+0,0,000,2
+
+Decimal Deli 2
+0,4,120,0
+
+Decimals
+0,3,056,0
+
+Defender
+0,0,000,2
+
+Demolition Division
+0,2,024,0
+
+Demonstration
+0,4,120,0
+
+Diagnostic
+0,1,008,0
+
+Diagnostic (FRA)
+0,2,024,0
+
+Dig Dug
+0,0,000,4
+
+Disk Fixer
+0,0,000,2
+
+Disk Fixer v2.0
+0,0,000,2
+
+Disk Manager
+0,2,024,0
+
+Disk Manager 1
+0,2,024,0
+
+Disk Manager 2
+0,2,024,0
+
+Disk Manager 3
+0,2,024,0
+
+Division
+0,2,024,0
+
+Donkey Kong
+0,0,000,4
+
+Dragon Mix
+0,2,024,1
+
+Driving Demon
+0,0,000,2
+
+D-Station I
+0,0,000,2
+
+D-Station II
+0,0,000,2
+
+E.T.
+0,2,024,4
+
+E.T. In His Adventure at Sea
+0,5,248,2
+
+Early Learning Fun
+0,2,024,0
+
+Early LOGO Learning Fun
+0,1,008,2
+
+Early Reading
+0,5,248,0
+
+Editor/Assembler
+0,1,008,0
+
+Edu-Pack
+0,0,000,2
+
+Electrifying Fractions 2
+0,4,120,0
+
+Equations
+0,2,024,0
+
+Escape
+0,0,000,2
+
+Extended Basic
+0,4,120,3
+
+Face Chase
+0,0,000,2
+
+Facemaker
+0,2,024,2
+
+Fantastic Fractions 1
+0,3,112,0
+
+Fantasy
+0,5,248,2
+
+Fathom
+0,3,056,2
+
+fig FORTH
+0,0,000,2
+
+Football
+0,2,024,0
+
+Fractional Numbers
+0,3,104,0
+
+Frog Jump
+0,2,024,0
+
+Frog Stickers
+0,0,000,2
+
+Frogger
+0,1,128,2
+
+Germ Patrol
+0,5,248,2
+
+Gestion Privee
+0,3,056,0
+
+Hangman
+0,1,032,0
+
+Hen Pecked
+0,0,000,2
+
+Henhouse
+0,0,000,2
+
+Home Financial Decisions
+0,2,024,0
+
+Homework Helper+
+0,0,000,2
+
+Honey Hunt
+1,3,056,4
+
+Hopper
+0,1,008,2
+
+Household Budget Management
+0,2,024,0
+
+Hunt The Wumpus
+0,1,008,0
+
+Hustle
+0,1,008,0
+
+I'm hiding
+1,2,024,4
+
+Integers
+0,2,024,0
+
+Introduction to Plant Genetics
+0,4,120,2
+
+Jawbreaker II
+0,1,008,2
+
+Jeu d'Echecs
+0,4,120,1
+
+Jumpy
+0,0,000,4
+
+Jungle Hunt
+0,0,000,4
+
+Junkman Junior
+0,0,000,4
+
+Key to Spanish 1/2
+0,5,248,2
+
+Key to Spanish 3/4
+0,5,248,2
+
+Key to Spanish 5/6
+0,5,248,2
+
+King of the Castle
+0,0,000,2
+
+Laws of Arithmetic
+0,2,040,0
+
+Link v0.99
+0,0,000,2
+
+M.A.S.H
+0,3,056,2
+
+Mancala
+0,5,248,2
+
+Measurement Formulas
+0,5,248,4
+
+Meteor Belt
+1,1,008,4
+
+Meteor Multiplication
+0,2,024,0
+
+Micro Pinball 2
+0,0,000,4
+
+Micro Tennis
+0,0,000,4
+
+Microsoft Multiplan
+0,5,248,0
+
+Microsurgeon
+0,3,056,2
+
+Midnite Mason
+0,0,000,2
+
+Milliken Manager
+0,5,248,0
+
+Milton Bradley Gamevision
+0,5,248,0
+
+Mini Memory
+0,1,008,1
+
+Miniwriter II
+0,0,000,2
+
+Minus Mission
+0,2,024,0
+
+Moon Mine
+0,5,248,2
+
+Moon Patrol
+0,0,000,4
+
+Moonsweeper
+0,3,056,2
+
+Mousk-Attack
+0,4,120,2
+
+Ms. Pac-Man
+0,0,000,4
+
+Multiplication
+0,2,040,0
+
+Munch Man
+0,1,008,1
+
+Munch Man II
+0,0,000,2
+
+Munchmobile
+0,3,056,2
+
+Music Maker
+0,3,056,0
+
+Music SDA
+0,3,056,0
+
+Nature's Way
+0,0,000,2
+
+Number Bowling
+0,2,024,0
+
+Number Magic
+0,1,008,0
+
+Number Magic (MULTI)
+0,2,024,0
+
+Number Readiness
+0,2,024,0
+
+Numeration 1
+0,4,120,0
+
+Numeration 2
+0,3,056,0
+
+Othello
+0,1,008,1
+
+Pac-Man
+0,0,000,4
+
+Paint 'N Print A
+0,0,000,2
+
+Paint 'N Print C
+0,0,000,2
+
+Parsec
+0,3,056,2
+
+Payroll Assistant
+0,5,248,0
+
+Percents
+0,5,248,0
+
+Peripheral Diagnostic Module
+0,0,000,2
+
+Personal Real Estate
+0,4,120,0
+
+Personal Record Keeping
+0,4,120,0
+
+Personal Record Keeping (GER/ITA)
+0,5,248,0
+
+Personal Report Generator (ENG/GER)
+0,2,024,0
+
+Peter Pan's Space Odyssey
+0,5,248,2
+
+Physical Fitness
+0,2,024,0
+
+Picnic Paranoia
+0,0,000,4
+
+Picture Parts
+0,2,096,0
+
+Pinocchio's Great Escape
+0,5,248,2
+
+Plato Interpreter
+0,4,120,2
+
+Pole Position
+0,0,000,4
+
+Popeye
+0,2,192,2
+
+Princess and Frog
+0,0,000,2
+
+Pro Typer
+0,0,000,2
+
+Protector II
+0,0,000,4
+
+Pyramid Puzzler
+0,2,096,0
+
+Q-Bert
+0,1,128,2
+
+Rabbit Trail
+0,0,000,2
+
+Reading Adventures
+0,5,248,0
+
+Reading Cheers
+0,5,248,0
+
+Reading Fun
+0,5,248,0
+
+Reading On
+0,5,248,0
+
+Reading Power
+0,5,248,0
+
+Reading Rainbows
+0,5,248,0
+
+Reading Trail
+0,5,248,0
+
+Reading Wonders
+0,5,248,0
+
+Return to Pirate's Isle
+0,5,248,2
+
+Robotron:2084
+0,0,000,4
+
+Romox Demo
+0,0,000,2
+
+Rotor Raiders
+0,0,000,2
+
+Salary Planner
+0,4,120,0
+
+Schachmeister
+0,4,120,1
+
+Schnoz-ola
+0,0,000,2
+
+Scholastic Spelling Level 3
+0,5,248,1
+
+Scholastic Spelling Level 4
+0,5,248,1
+
+Scholastic Spelling Level 5
+0,5,248,4
+
+Scholastic Spelling Level 6
+0,5,248,4
+
+School Mailer
+0,4,120,0
+
+Securities Analysis
+0,4,120,0
+
+Sewermania
+1,2,024,4
+
+Shamus
+0,0,000,4
+
+Shanghai
+0,0,000,2
+
+Simon Says
+0,1,008,0
+
+Slymoids
+0,1,008,2
+
+SMU Electrical Engineering Library
+0,2,024,0
+
+Sneggit
+0,1,008,2
+
+Soccer
+0,2,024,0
+
+Sorgan II
+0,0,000,4
+
+Soundtrack Trolley
+1,1,008,4
+
+Space Bandits
+1,2,024,4
+
+Space Journey
+0,2,096,0
+
+Space Patrol
+0,0,000,2
+
+Speech Editor
+0,1,008,0
+
+Speed Reading A
+0,0,000,2
+
+Speed Reading B
+0,0,000,2
+
+Spy's Demise
+0,0,000,2
+
+St. Nick
+0,1,008,2
+
+Star Gazer I
+0,0,000,2
+
+Star Gazer II
+0,0,000,2
+
+Star Gazer III
+0,0,000,2
+
+Star Maze
+0,2,024,0
+
+Star Runner
+0,0,000,4
+
+Star Trek
+0,2,024,2
+
+Star Wars
+0,0,000,2
+
+Statistics
+0,5,248,0
+
+Statistik
+0,5,248,0
+
+Story Machine v1.4
+0,2,048,2
+
+Strike Three!
+0,0,000,4
+
+Subtraction
+0,2,024,0
+
+Sudoku
+0,0,000,2
+
+Super Demon Attack
+0,3,056,2
+
+Super Duper v1.1
+0,0,000,2
+
+Super Sketch Model G2400
+0,0,000,2
+
+Super Sort
+0,0,000,2
+
+Super Storm
+0,0,000,4
+
+Superfly
+1,2,024,4
+
+SuperSpace II
+0,1,008,0
+
+T.I. Toad
+0,0,000,2
+
+Tax Investment Record Keeping
+0,4,120,2
+
+Tennis
+0,0,000,4
+
+Terminal Emulator I
+0,2,024,0
+
+Terminal Emulator II
+0,4,216,1
+
+Terry Turtle's Adventure
+1,3,056,4
+
+Testtrainer 1
+0,2,024,0
+
+The Attack
+0,1,008,0
+
+The Castle (Preview)
+0,0,000,2
+
+TI Invaders
+0,1,008,1
+
+TI LOGO
+0,4,120,0
+
+TI LOGO II
+0,3,056,2
+
+TI LOGO II (GER)
+0,4,120,2
+
+TI LOGO II (ITA)
+0,4,184,2
+
+TI Planner
+0,0,000,2
+
+TI-CALC
+2,1,008,4
+
+TI-IBM Copier
+0,0,000,2
+
+Tile Breaker
+0,0,000,2
+
+TI-Writer
+0,1,008,0
+
+Tombstone City
+0,1,008,1
+
+Topper
+0,0,000,2
+
+Touch Typing Tutor
+0,3,056,0
+
+Treasure Island
+0,3,056,2
+
+Tunnels of Doom
+0,5,248,0
+
+Typo II
+0,0,000,2
+
+Typoman
+0,0,000,2
+
+UCSD Pascal Development System
+0,1,008,2
+
+VAT Accounting
+0,4,120,0
+
+Verb Viper
+0,2,024,0
+
+Video Chess
+0,4,120,1
+
+Video Games 1
+0,2,024,0
+
+Video Games 2
+0,1,008,0
+
+Video Vegas
+0,0,000,2
+
+Video-Graphs
+0,1,008,0
+
+Von Drake's Molecular Mission
+0,5,248,2
+
+Weight Control and Nutrition
+0,5,248,1
+
+Win with Decimals 1
+0,4,120,0
+
+Wing War
+0,3,056,2
+
+Word Invasion
+0,2,024,0
+
+Word Radar
+0,1,008,1
+
+Yahtzee
+0,1,008,0
+
+Zero Zap
+0,1,128,0
+
+

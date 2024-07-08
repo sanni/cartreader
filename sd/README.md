@@ -339,3 +339,135 @@ cart size:
 3 = 16K   
 4 = 32K   
 5 = 64K   
+
+## ballycart.txt
+romsize
+0 = 2K
+1 = 4K
+2 = 8K
+
+## pv1000cart.txt
+romsize
+0 = 8K
+1 = 16K
+
+## pyuutacart.txt
+romsize
+0 = 8K
+1 = 16K
+2 = 32K
+
+## rcacart.txt
+romsize
+0 = 512B
+1 = 1024B (1K)
+
+## trs80cart.txt
+romsize
+0 = 2K
+1 = 4K
+2 = 8K
+3 = 10K
+4 = 16K
+5 = 32K
+6 = 64K
+7 = 128K
+
+## vic20cart.txt (rommap,romsize)
+
+rommap
+upper nibble = ROM0 {0x20,0x40,0x60,0x70,0xA0,0xB0}
+lower nibble = ROM1 {0x40,0x60,0xA0}
+0 = 0x20 = 0x2000
+1 = 0x24 = 0x2000/0x4000
+2 = 0x2A = 0x2000/0xA000
+3 = 0x46 = 0x4000/0x6000
+4 = 0x60 = 0x6000
+5 = 0x6A = 0x6000/0xA000
+6 = 0x70 = 0x7000
+7 = 0xA0 = 0xA000
+8 = 0xB0 = 0xB000
+
+romsize
+upper nibble = ROM0 {2,4,8}
+lower nibble = ROM1 {0,4,8}
+0 = 0x20 = 2K/0K 0x800
+1 = 0x40 = 4K/0K 0x1000
+2 = 0x80 = 8K/0K 0x2000
+3 = 0x44 = 4K/4K 0x1000/0x1000
+4 = 0x48 = 4K/8K 0x1000/0x2000
+5 = 0x84 = 8K/4K 0x2000/0x1000
+6 = 0x88 = 8K/8K 0x2000/0x2000
+
+## ti99cart.txt (mapper,gromsize,grommap,romsize)
+mapper
+0 = Normal Carts
+1 = MBX
+2 = TI-CALC [UNTESTED]
+
+gromsize
+0 = 0K
+1 = 6K
+2 = 12K
+3 = 18K
+4 = 24K
+5 = 30K
+
+grommap
+Map corresponding bits
+GROM#    BITMAP    HEX   DEC 
+3     = 0000 1000 = 08 = 8
+4     = 0001 0000 = 10 = 16
+5     = 0010 0000 = 20 = 32
+7     = 1000 0000 = 80 = 128
+34    = 0001 1000 = 18 = 24
+35    = 0010 1000 = 28 = 40
+45    = 0011 0000 = 30 = 48
+56    = 0110 0000 = 60 = 96
+67    = 1100 0000 = C0 = 192
+345   = 0011 1000 = 38 = 56
+356   = 0110 1000 = 68 = 104
+456   = 0111 0000 = 70 = 112
+3456  = 0111 1000 = 78 = 120
+3457  = 1011 1000 = B8 = 184
+3467  = 1101 1000 = D8 = 216
+34567 = 1111 1000 = F8 = 248
+
+romsize
+0 = 0K
+1 = 4K
+2 = 8K
+3 = 12K
+4 = 16K
+
+## leapster.txt
+romsize
+0 = 4K
+1 = 8K
+2 = 16K
+
+## vsmilecart.txt
+romsize
+0 = 4K
+1 = 6K
+2 = 8K
+3 = 16K
+
+## ljcart.txt
+romsize
+0 = 1M
+1 = 2M
+2 = 4M
+
+## atari8cart.txt (slot,romsize)
+slot
+0 = left slot
+1 = right slot
+
+romsize
+0 = 8K
+1 = 16K
+2 = 32K
+3 = 40K
+4 = 64K
+5 = 128K

@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2024-07-05
-   Version:          13.5
+   Date:             2024-07-08
+   Version:          14.0
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -21,10 +21,11 @@
    MichlK - ROM Reader for Super Nintendo
    Jeff Saltzman - 4-Way Button
    Wayne and Layne - Video Game Shield menu
-   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, Coleco-, Intellivision, Virtual Boy, WSV, PCW, ARC, Atari 2600/5200/7800, ODY2, Fairchild, MSX, Pokemon Mini, C64, Vectrex modules
+   skaman - Cart ROM READER SNES ENHANCED, Famicom Cart Dumper, 2600, 5200, 7800, ARC, ATARI8, BALLY, C64, COLV, FAIRCHILD, 
+   INTV, LEAP, LJ, LJPRO, MSX, ODY2, PCW, POKEMINI, PV1000, PYUUTA, RCA, TI99, TRS80, VBOY, VECTREX, WSV, VIC20, VSMILE modules
    Tamanegi_taro - PCE and Satellaview modules
    splash5 - GBSmart, Wonderswan, NGP and Super A'can modules
-   partlyhuman - Casio Loopy module
+   partlyhuman - Casio Loopy & Atari Lynx module
    hkz & themanbehindthecurtain - N64 flashram commands
    Andrew Brown & Peter Den Hartog - N64 controller protocol
    libdragon - N64 controller checksum functions
@@ -43,7 +44,7 @@
    philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage, qufb,
    vpelletier, Ancyker, mattiacci, RWeick, ButThouMust, partlyhuman, fakkuyuu, hxlnt, breyell,
    smesgr9000, joshman196, PsychoFox11, plaidpants, LuigiBlood, InvalidInterrupt
-   
+
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
    This program is free software: you can redistribute it and/or modify
@@ -458,7 +459,7 @@ uint32_t calculateCRC(char* fileName, char* folder, unsigned long offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc, etc. modules
  *****************************************/
-#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_LYNX))
+#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_LYNX) || defined(ENABLE_ATARI8) || defined(ENABLE_BALLY) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_LJPRO) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TI99) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_VSMILE))
 
 void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
   uint32_t crc = calculateCRC(checkFile, folder, offset);
@@ -658,7 +659,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
 //******************************************
 // Math Functions
 //******************************************
-#if (defined(ENABLE_NES) || defined(ENABLE_MSX) || defined(ENABLE_GBX))
+#if (defined(ENABLE_NES) || defined(ENABLE_MSX) || defined(ENABLE_GBX) || defined(ENABLE_TRS80))
 int int_pow(int base, int exp) {  // Power for int
   int result = 1;
   while (exp) {
@@ -737,7 +738,11 @@ void seek_first_letter_in_database(FsFile& database, byte myLetter) {
 #endif
 }
 
-#if (defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_VECTREX))
+#if ( \
+   defined(ENABLE_ARC)    || defined(ENABLE_FAIRCHILD) || defined(ENABLE_VECTREX) || defined(ENABLE_BALLY) || \
+   defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA)    || defined(ENABLE_RCA)     || defined(ENABLE_TRS80) || \
+   defined(ENABLE_LEAP)   || defined(ENABLE_LJ)        || defined(ENABLE_VSMILE)\
+ )
 // read single digit data line as byte
 void readDataLineSingleDigit(FsFile& database, void* byteData) {
   // Read rom size
@@ -748,7 +753,10 @@ void readDataLineSingleDigit(FsFile& database, void* byteData) {
 }
 #endif
 
-#if (defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64))
+#if ( \
+   defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || \
+   defined(ENABLE_VIC20)|| defined(ENABLE_ATARI8)\
+ )
 struct database_entry_mapper_size {
   byte gameMapper;
   byte gameSize;
@@ -881,7 +889,10 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 # if ( \
     defined(ENABLE_ODY2)  || defined(ENABLE_ARC)      || defined(ENABLE_FAIRCHILD)  || defined(ENABLE_MSX)  ||  \
     defined(ENABLE_POKE)  || defined(ENABLE_2600)     || defined(ENABLE_5200)       || defined(ENABLE_7800) ||  \
-    defined(ENABLE_C64)   || defined(ENABLE_VECTREX)  || defined(ENABLE_NES)        || defined(ENABLE_GBX)      \
+    defined(ENABLE_C64)   || defined(ENABLE_VECTREX)  || defined(ENABLE_NES)        || defined(ENABLE_GBX)  ||  \
+    defined(ENABLE_BALLY) || defined(ENABLE_PV1000)   || defined(ENABLE_PYUUTA)     || defined(ENABLE_RCA)  ||  \
+    defined(ENABLE_TRS80) || defined(ENABLE_VIC20)    || defined(ENABLE_LEAP)       || defined(ENABLE_LJ)   ||  \
+    defined(ENABLE_VSMILE)|| defined(ENABLE_TI99)     || defined(ENABLE_ATARI8)\
   )
 void printInstructions() {
     println_Msg(FS(FSTRING_EMPTY));
@@ -1095,9 +1106,21 @@ constexpr char modeItem24[] PROGMEM = "Atari 5200";
 constexpr char modeItem25[] PROGMEM = "Atari 7800";
 constexpr char modeItem26[] PROGMEM = "Atari Lynx";
 constexpr char modeItem27[] PROGMEM = "Vectrex";
-constexpr char modeItem28[] PROGMEM = "Flashrom Programmer";
-constexpr char modeItem29[] PROGMEM = "Self Test (3V)";
-constexpr char modeItem30[] PROGMEM = "About";
+constexpr char modeItem28[] PROGMEM = "Atari 8-bit";
+constexpr char modeItem29[] PROGMEM = "Bally Astrocade";
+constexpr char modeItem30[] PROGMEM = "Bandai LJ";
+constexpr char modeItem31[] PROGMEM = "Bandai LJ Pro";
+constexpr char modeItem32[] PROGMEM = "Casio PV-1000";
+constexpr char modeItem33[] PROGMEM = "Commodore VIC-20";
+constexpr char modeItem34[] PROGMEM = "LF Leapster (3V)";
+constexpr char modeItem35[] PROGMEM = "RCA Studio II";
+constexpr char modeItem36[] PROGMEM = "TI-99";
+constexpr char modeItem37[] PROGMEM = "Tomy Pyuuta";
+constexpr char modeItem38[] PROGMEM = "TRS-80";
+constexpr char modeItem39[] PROGMEM = "Vtech V.Smile (3V)";
+constexpr char modeItem40[] PROGMEM = "Flashrom Programmer";
+constexpr char modeItem41[] PROGMEM = "Self Test (3V)";
+constexpr char modeItem42[] PROGMEM = "About";
 
 static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_GBX
@@ -1181,14 +1204,49 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_VECTREX
   modeItem27,
 #endif
-#ifdef ENABLE_FLASH
+#ifdef ENABLE_ATARI8
   modeItem28,
 #endif
-#ifdef ENABLE_SELFTEST
+#ifdef ENABLE_BALLY
   modeItem29,
 #endif
+#ifdef ENABLE_LJ
   modeItem30,
-  FSTRING_RESET
+#endif
+#ifdef ENABLE_LJPRO
+  modeItem31,
+#endif
+#ifdef ENABLE_PV1000
+  modeItem32,
+#endif
+#ifdef ENABLE_VIC20
+  modeItem33,
+#endif
+#ifdef ENABLE_LEAP
+  modeItem34,
+#endif
+#ifdef ENABLE_RCA
+  modeItem35,
+#endif
+#ifdef ENABLE_TI99
+  modeItem36,
+#endif
+#ifdef ENABLE_PYUUTA
+  modeItem37,
+#endif
+#ifdef ENABLE_TRS80
+  modeItem38,
+#endif
+#ifdef ENABLE_VSMILE
+  modeItem39,
+#endif
+#ifdef ENABLE_FLASH
+  modeItem40,
+#endif
+#ifdef ENABLE_SELFTEST
+  modeItem41,
+#endif
+  modeItem42, FSTRING_RESET
 };
 
 uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStrings, uint8_t entryCount, uint8_t default_choice = 0) {
@@ -1397,12 +1455,96 @@ void mainMenu() {
       setup_LYNX();
       return lynxMenu();
       break;
-#endif    
+#endif   
 
 #ifdef ENABLE_VECTREX
     case SYSTEM_MENU_VECTREX:
       setup_VECTREX();
       return vectrexMenu();
+      break;
+#endif
+
+#ifdef ENABLE_ATARI8
+    case SYSTEM_MENU_ATARI8:
+      setup_ATARI8();
+      return atari8Menu();
+      break;
+#endif
+
+#ifdef ENABLE_BALLY
+    case SYSTEM_MENU_BALLY:
+      setup_BALLY();
+      return ballyMenu();
+      break;
+#endif
+
+#ifdef ENABLE_LJ
+    case SYSTEM_MENU_LJ:
+      setup_LJ();
+      return ljMenu();
+      break;
+#endif
+
+#ifdef ENABLE_LJPRO
+    case SYSTEM_MENU_LJPRO:
+      setup_LJPRO();
+      return ljproMenu();
+      break;
+#endif
+
+#ifdef ENABLE_PV1000
+    case SYSTEM_MENU_PV1000:
+      setup_PV1000();
+      return pv1000Menu();
+      break;
+#endif
+
+#ifdef ENABLE_VIC20
+    case SYSTEM_MENU_VIC20:
+      setup_VIC20();
+      return vic20Menu();
+      break;
+#endif
+
+#ifdef ENABLE_LEAP
+    case SYSTEM_MENU_LEAP:
+      setup_LEAP();
+      return leapMenu();
+      break;
+#endif
+
+#ifdef ENABLE_RCA
+    case SYSTEM_MENU_RCA:
+      setup_RCA();
+      return rcaMenu();
+      break;
+#endif
+
+#ifdef ENABLE_TI99
+    case SYSTEM_MENU_TI99:
+      setup_TI99();
+      return ti99Menu();
+      break;
+#endif
+
+#ifdef ENABLE_PYUUTA
+    case SYSTEM_MENU_PYUUTA:
+      setup_PYUUTA();
+      return pyuutaMenu();
+      break;
+#endif
+
+#ifdef ENABLE_TRS80
+    case SYSTEM_MENU_TRS80:
+      setup_TRS80();
+      return trs80Menu();
+      break;
+#endif
+
+#ifdef ENABLE_VSMILE
+    case SYSTEM_MENU_VSMILE:
+      setup_VSMILE();
+      return vsmileMenu();
       break;
 #endif
 
@@ -3608,6 +3750,42 @@ void loop() {
 #endif
 #ifdef ENABLE_GPC
   case CORE_GPC: return gpcMenu();
+#endif
+#ifdef ENABLE_ATARI8
+  case CORE_ATARI8: return atari8Menu();
+#endif
+#ifdef ENABLE_BALLY
+  case CORE_BALLY: return ballyMenu();
+#endif
+#ifdef ENABLE_LJ
+  case CORE_LJ: return ljMenu();
+#endif
+#ifdef ENABLE_LJPRO
+  case CORE_LJPRO: return ljproMenu();
+#endif
+#ifdef ENABLE_PV1000
+  case CORE_PV1000: return pv1000Menu();
+#endif
+#ifdef ENABLE_VIC20
+  case CORE_VIC20: return vic20Menu();
+#endif
+#ifdef ENABLE_LEAP
+  case CORE_LEAP: return leapMenu();
+#endif
+#ifdef ENABLE_RCA
+  case CORE_RCA: return rcaMenu();
+#endif
+#ifdef ENABLE_TI99
+  case CORE_TI99: return ti99Menu();
+#endif
+#ifdef ENABLE_PYUUTA
+  case CORE_PYUUTA: return pyuutaMenu();
+#endif
+#ifdef ENABLE_TRS80
+  case CORE_TRS80: return trs80Menu();
+#endif
+#ifdef ENABLE_VSMILE
+  case CORE_VSMILE: return vsmileMenu();
 #endif
   case CORE_MAX: return resetArduino();
   }
