@@ -151,15 +151,15 @@ cart size:
 3 = 32K   
 4 = 40K   
 
-## 7800.txt
-This file stores known Atari 7800 games with the required mapping value and cart size.
+## 7800.txt   
+This file stores known Atari 7800 games with the required mapping value and cart size.   
 
 Example:   
 Rampage   
-4,4
+4,4   
 
 Name   
-mapper, cart size
+mapper, cart size   
 
 mapper:   
 0 = Standard 16K/32K/48K [7816/7832/7848]   
@@ -179,15 +179,15 @@ cart size:
 4 = 128K   
 5 = 144K   
 
-## arccart.txt
-This file stores known Emerson Arcadia 2001 games with the required cart size.
+## arccart.txt   
+This file stores known Emerson Arcadia 2001 games with the required cart size.   
 
 Example:   
 American Football   
-2
+2   
 
 Name   
-cart size
+cart size   
 
 cart size:   
 0 = 2K   
@@ -195,15 +195,15 @@ cart size:
 2 = 6K   
 3 = 8K   
 
-## c64cart.txt
-This file stores known Commodore 64 games with the required mapping value and cart size.
+## c64cart.txt   
+This file stores known Commodore 64 games with the required mapping value and cart size.   
 
 Example:   
 Donkey Kong   
-00,3
+00,3   
 
 Name   
-mapper, cart size
+mapper, cart size   
 
 mapper:   
 00 = Normal 4K/8K/16K + Ultimax 8K/16K   
@@ -241,8 +241,8 @@ cart size:
 8 = 256K   
 9 = 512K   
 
-## fairchildcart.txt
-This file stores known Fairchild Channel F games with the required cart size.
+## fairchildcart.txt   
+This file stores known Fairchild Channel F games with the required cart size.   
 
 Example:   
 Hangman   
@@ -257,8 +257,8 @@ cart size:
 2 = 4K   
 3 = 6K   
 
-## msxcart.txt
-This file stores known MSX games with the required mapper, cart size and ram size.
+## msxcart.txt   
+This file stores known MSX games with the required mapper, cart size and ram size.   
 
 Example:   
 Aoki Ookami - Genchou Hishi   
@@ -301,8 +301,8 @@ ram size:
 3 = 16K   
 4 = 32K   
 
-## ody2cart.txt
-This file stores known Magnavox Odyssey 2 games with the required mapper and cart size.
+## ody2cart.txt   
+This file stores known Magnavox Odyssey 2 games with the required mapper and cart size.   
 
 Example:   
 Baseball   
@@ -322,8 +322,8 @@ cart size:
 3 = 12K   
 4 = 16K   
 
-## vectrexcart.txt
-This file stores known Vectrex games with the required cart size.
+## vectrexcart.txt   
+This file stores known Vectrex games with the required cart size.   
 
 Example:   
 Mine Storm II   
@@ -340,134 +340,133 @@ cart size:
 4 = 32K   
 5 = 64K   
 
-## ballycart.txt
-romsize
-0 = 2K
-1 = 4K
-2 = 8K
+## ballycart.txt   
+romsize   
+0 = 2K   
+1 = 4K   
+2 = 8K   
 
-## pv1000cart.txt
-romsize
-0 = 8K
-1 = 16K
+## pv1000cart.txt   
+romsize   
+0 = 8K   
+1 = 16K   
 
-## pyuutacart.txt
-romsize
-0 = 8K
-1 = 16K
-2 = 32K
+## pyuutacart.txt   
+romsize   
+0 = 8K   
+1 = 16K   
+2 = 32K   
 
-## rcacart.txt
-romsize
-0 = 512B
-1 = 1024B (1K)
+## rcacart.txt   
+romsize   
+0 = 512B   
+1 = 1024B (1K)   
 
-## trs80cart.txt
-romsize
-0 = 2K
-1 = 4K
-2 = 8K
-3 = 10K
-4 = 16K
-5 = 32K
-6 = 64K
-7 = 128K
+## trs80cart.txt   
+romsize   
+0 = 2K   
+1 = 4K   
+2 = 8K   
+3 = 10K   
+4 = 16K   
+5 = 32K   
+6 = 64K   
+7 = 128K   
 
-## vic20cart.txt (rommap,romsize)
+## vic20cart.txt (rommap,romsize)   
+rommap   
+upper nibble = ROM0 {0x20,0x40,0x60,0x70,0xA0,0xB0}   
+lower nibble = ROM1 {0x40,0x60,0xA0}   
+0 = 0x20 = 0x2000   
+1 = 0x24 = 0x2000/0x4000   
+2 = 0x2A = 0x2000/0xA000   
+3 = 0x46 = 0x4000/0x6000   
+4 = 0x60 = 0x6000   
+5 = 0x6A = 0x6000/0xA000   
+6 = 0x70 = 0x7000   
+7 = 0xA0 = 0xA000   
+8 = 0xB0 = 0xB000   
 
-rommap
-upper nibble = ROM0 {0x20,0x40,0x60,0x70,0xA0,0xB0}
-lower nibble = ROM1 {0x40,0x60,0xA0}
-0 = 0x20 = 0x2000
-1 = 0x24 = 0x2000/0x4000
-2 = 0x2A = 0x2000/0xA000
-3 = 0x46 = 0x4000/0x6000
-4 = 0x60 = 0x6000
-5 = 0x6A = 0x6000/0xA000
-6 = 0x70 = 0x7000
-7 = 0xA0 = 0xA000
-8 = 0xB0 = 0xB000
+romsize   
+upper nibble = ROM0 {2,4,8}   
+lower nibble = ROM1 {0,4,8}   
+0 = 0x20 = 2K/0K 0x800   
+1 = 0x40 = 4K/0K 0x1000   
+2 = 0x80 = 8K/0K 0x2000   
+3 = 0x44 = 4K/4K 0x1000/0x1000   
+4 = 0x48 = 4K/8K 0x1000/0x2000   
+5 = 0x84 = 8K/4K 0x2000/0x1000   
+6 = 0x88 = 8K/8K 0x2000/0x2000   
 
-romsize
-upper nibble = ROM0 {2,4,8}
-lower nibble = ROM1 {0,4,8}
-0 = 0x20 = 2K/0K 0x800
-1 = 0x40 = 4K/0K 0x1000
-2 = 0x80 = 8K/0K 0x2000
-3 = 0x44 = 4K/4K 0x1000/0x1000
-4 = 0x48 = 4K/8K 0x1000/0x2000
-5 = 0x84 = 8K/4K 0x2000/0x1000
-6 = 0x88 = 8K/8K 0x2000/0x2000
+## ti99cart.txt (mapper,gromsize,grommap,romsize)   
+mapper   
+0 = Normal Carts   
+1 = MBX   
+2 = TI-CALC [UNTESTED]   
 
-## ti99cart.txt (mapper,gromsize,grommap,romsize)
-mapper
-0 = Normal Carts
-1 = MBX
-2 = TI-CALC [UNTESTED]
+gromsize   
+0 = 0K   
+1 = 6K   
+2 = 12K   
+3 = 18K   
+4 = 24K   
+5 = 30K   
 
-gromsize
-0 = 0K
-1 = 6K
-2 = 12K
-3 = 18K
-4 = 24K
-5 = 30K
+grommap   
+Map corresponding bits   
+GROM#    BITMAP    HEX   DEC    
+3     = 0000 1000 = 08 = 8   
+4     = 0001 0000 = 10 = 16   
+5     = 0010 0000 = 20 = 32   
+7     = 1000 0000 = 80 = 128   
+34    = 0001 1000 = 18 = 24   
+35    = 0010 1000 = 28 = 40   
+45    = 0011 0000 = 30 = 48   
+56    = 0110 0000 = 60 = 96   
+67    = 1100 0000 = C0 = 192   
+345   = 0011 1000 = 38 = 56   
+356   = 0110 1000 = 68 = 104   
+456   = 0111 0000 = 70 = 112   
+3456  = 0111 1000 = 78 = 120   
+3457  = 1011 1000 = B8 = 184   
+3467  = 1101 1000 = D8 = 216   
+34567 = 1111 1000 = F8 = 248   
 
-grommap
-Map corresponding bits
-GROM#    BITMAP    HEX   DEC 
-3     = 0000 1000 = 08 = 8
-4     = 0001 0000 = 10 = 16
-5     = 0010 0000 = 20 = 32
-7     = 1000 0000 = 80 = 128
-34    = 0001 1000 = 18 = 24
-35    = 0010 1000 = 28 = 40
-45    = 0011 0000 = 30 = 48
-56    = 0110 0000 = 60 = 96
-67    = 1100 0000 = C0 = 192
-345   = 0011 1000 = 38 = 56
-356   = 0110 1000 = 68 = 104
-456   = 0111 0000 = 70 = 112
-3456  = 0111 1000 = 78 = 120
-3457  = 1011 1000 = B8 = 184
-3467  = 1101 1000 = D8 = 216
-34567 = 1111 1000 = F8 = 248
+romsize   
+0 = 0K   
+1 = 4K   
+2 = 8K   
+3 = 12K   
+4 = 16K   
 
-romsize
-0 = 0K
-1 = 4K
-2 = 8K
-3 = 12K
-4 = 16K
+## leapster.txt   
+romsize   
+0 = 4K   
+1 = 8K   
+2 = 16K   
 
-## leapster.txt
-romsize
-0 = 4K
-1 = 8K
-2 = 16K
+## vsmilecart.txt   
+romsize   
+0 = 4K   
+1 = 6K   
+2 = 8K   
+3 = 16K   
 
-## vsmilecart.txt
-romsize
-0 = 4K
-1 = 6K
-2 = 8K
-3 = 16K
+## ljcart.txt   
+romsize   
+0 = 1M   
+1 = 2M   
+2 = 4M   
 
-## ljcart.txt
-romsize
-0 = 1M
-1 = 2M
-2 = 4M
+## atari8cart.txt (slot,romsize)   
+slot   
+0 = left slot   
+1 = right slot   
 
-## atari8cart.txt (slot,romsize)
-slot
-0 = left slot
-1 = right slot
-
-romsize
-0 = 8K
-1 = 16K
-2 = 32K
-3 = 40K
-4 = 64K
-5 = 128K
+romsize   
+0 = 8K   
+1 = 16K   
+2 = 32K   
+3 = 40K   
+4 = 64K   
+5 = 128K   
