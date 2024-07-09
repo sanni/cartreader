@@ -1941,7 +1941,6 @@ void resetIntel_GBA(unsigned long partitionSize) {
 }
 
 void resetF0088H0_GBA() {
-  writeWord_GBA(0, 0x50);
   writeWord_GBA(0, 0xFF);
 }
 
@@ -2329,17 +2328,21 @@ void writeF0088H0_GBA() {
   uint32_t totalProgressBar = fileSize;
   draw_progressbar(0, totalProgressBar);
 
+  unsigned long lastBlock = 0x2000000;
+  if (fileSize < lastBlock)
+    lastBlock = fileSize;
+
   // 32MB max GBA bank size
   for (unsigned long currBank = 0; currBank < fileSize; currBank += 0x2000000) {
 
     // 4MB minimum repro block size
-    for (unsigned long currBlock = 0; currBlock < 0x2000000; currBlock += 0x400000) {
+    for (unsigned long currBlock = 0; currBlock < lastBlock; currBlock += 0x400000) {
 
       // 256KB flashrom sector size
       for (unsigned long currSector = 0; currSector < 0x400000; currSector += 0x40000) {
         // Unlock Sector
-        writeWord_GBA(currBlock + currSector, 0x60);
-        writeWord_GBA(currBlock + currSector, 0xD0);
+        //writeWord_GBA(currBlock + currSector, 0x60);
+        //writeWord_GBA(currBlock + currSector, 0xD0);
 
         // Blink led
         blinkLED();
