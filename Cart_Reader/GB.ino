@@ -18,7 +18,7 @@ boolean audioWE = 0;
 // GBx start menu
 static const char gbxMenuItem1[] PROGMEM = "Game Boy (Color)";
 static const char gbxMenuItem2[] PROGMEM = "GB Advance (3V)";
-static const char gbxMenuItem3[] PROGMEM = "Flash GBC Cart";
+static const char gbxMenuItem3[] PROGMEM = "Flash Repro";
 static const char gbxMenuItem4[] PROGMEM = "NPower GB Memory";
 static const char gbxMenuItem5[] PROGMEM = "Flash Codebreaker";
 static const char gbxMenuItem6[] PROGMEM = "Flash Datel Device";
@@ -28,11 +28,13 @@ static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2
 static const char* const menuOptionsGB[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
 // GB Flash items
-static const char GBFlashItem1[] PROGMEM = "29F016/32/33 Cart";
-static const char GBFlashItem2[] PROGMEM = "CFI Cart";
-static const char GBFlashItem3[] PROGMEM = "CFI Cart and Save";
+static const char GBFlashItem1[] PROGMEM = "GB 29F Repro";
+static const char GBFlashItem2[] PROGMEM = "GB CFI Repro";
+static const char GBFlashItem3[] PROGMEM = "GB CFI and Save";
 static const char GBFlashItem4[] PROGMEM = "GB Smart";
-static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, FSTRING_RESET };
+static const char GBFlashItem5[] PROGMEM = "GBA Repro (3V)";
+static const char GBFlashItem6[] PROGMEM = "GBA 369-in-1 (3V)";
+static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, FSTRING_RESET };
 
 // 29F Flash items
 static const char GBFlash29Item1[] PROGMEM = "DIY MBC3 (WR)";
@@ -112,11 +114,11 @@ void gbxMenu() {
       break;
 
     case 2:
-      // create submenu with title and 5 options to choose from
+      // create submenu with title and 7 options to choose from
       unsigned char gbFlash;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsGBFlash, 5);
-      gbFlash = question_box(F("Select type"), menuOptions, 5, 0);
+      convertPgm(menuOptionsGBFlash, 7);
+      gbFlash = question_box(F("Select type"), menuOptions, 7, 0);
 
       // wait for user choice to come back from the question box menu
       switch (gbFlash) {
@@ -298,6 +300,16 @@ void gbxMenu() {
           break;
 
         case 4:
+          // Flash GBA Repro
+          GBAReproMenu();
+          break;
+
+        case 5:
+          // Read/Write GBA 369-in-1 Repro
+          repro369in1Menu();
+          break;
+
+        case 6:
           resetArduino();
           break;
       }
