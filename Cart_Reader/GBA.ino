@@ -263,8 +263,8 @@ void repro369in1Menu() {
   // create menu with title and 5 options to choose from
   unsigned char menu369;
   // Copy menuOptions out of progmem
-  convertPgm(Options369GBA, 2);
-  menu369 = question_box(F("369-in-1 Multicart"), menuOptions, 2, 0);
+  convertPgm(Options369GBA, 5);
+  menu369 = question_box(F("369-in-1 Multicart"), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (menu369) {
@@ -2542,12 +2542,12 @@ byte selectBlockNumber(boolean option) {
     println_Msg(F("MB"));
   }
   display_Update();
-  delay(500);
+  delay(200);
   return blockNumber;
 }
 
 // Read 369-in-1 repro
-void read369in1(byte blockNumber, unsigned long fileSize) {
+void read369in1(byte blockNumber, byte fileSizeByte) {
   byte readBuffer[1024];
   strcpy(romName, "369in1");
 
@@ -2558,14 +2558,17 @@ void read369in1(byte blockNumber, unsigned long fileSize) {
   } else
     createFolderAndOpenFile("GBA", "ROM", romName, "gba");
 
-  if (fileSize == 0)
+  if (fileSizeByte == 0)
     fileSize = 0x10000000;
   else
-    fileSize = fileSize * 1024 * 1024;
+    fileSize = (unsigned long)fileSizeByte * 1024 * 1024;
 
   // 64 blocks at 4MB each
   unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
   unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
+  unsigned long lastBlock = 0x2000000;
+  if (fileSize < lastBlock)
+    lastBlock = startBlock + fileSize;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2575,7 +2578,7 @@ void read369in1(byte blockNumber, unsigned long fileSize) {
   // 256MB repro size
   for (unsigned long currBank = startBank; currBank < startBank + fileSize; currBank += 0x2000000) {
     // 32MB bank
-    for (unsigned long currBlock = startBlock; currBlock < 0x2000000; currBlock += 0x400000) {
+    for (unsigned long currBlock = startBlock; currBlock < lastBlock; currBlock += 0x400000) {
       // Set-up 369-in-1 mapper
       mapBlock369in1((currBank + currBlock) / 1024 / 1024);
       // 4MB Block
@@ -2588,9 +2591,9 @@ void read369in1(byte blockNumber, unsigned long fileSize) {
         }
         // Write to SD
         myFile.write(readBuffer, 1024);
+        processedProgressBar += 1024;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
-      processedProgressBar += 0x400000;
-      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
   // Close the file:
@@ -2602,6 +2605,9 @@ void erase369in1(byte blockNumber) {
   // 64 blocks at 4MB each
   unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
   unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
+  unsigned long lastBlock = 0x2000000;
+  if (fileSize < lastBlock)
+    lastBlock = startBlock + fileSize;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2611,7 +2617,7 @@ void erase369in1(byte blockNumber) {
   // 256MB repro size
   for (unsigned long currBank = startBank; currBank < startBank + fileSize; currBank += 0x2000000) {
     // 32MB bank
-    for (unsigned long currBlock = startBlock; currBlock < 0x2000000; currBlock += 0x400000) {
+    for (unsigned long currBlock = startBlock; currBlock < lastBlock; currBlock += 0x400000) {
       // Set-up 369-in-1 mapper
       mapBlock369in1((currBank + currBlock) / 1024 / 1024);
       // 256KB flashrom sector size
@@ -2647,7 +2653,7 @@ void write369in1(byte blockNumber) {
   unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
-    lastBlock = fileSize;
+    lastBlock = startBlock + fileSize;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2717,6 +2723,7 @@ void write369in1(byte blockNumber) {
 void flashRepro_GBA(boolean option) {
   // Check flashrom ID's
   idFlashrom_GBA();
+  byte blockNum;
 
   if ((flashid == 0x8802) || (flashid == 0x8816) || (flashid == 0x227E) || (flashid == 0x8812)) {
     print_Msg(F("ID: "));
@@ -2794,12 +2801,17 @@ void flashRepro_GBA(boolean option) {
         eraseIntel4400_GBA();
         resetIntel_GBA(0x200000);
       } else if (flashid == 0x8812) {
-        println_Msg(F("Erasing..."));
-        display_Update();
-        if (option)
-          erase369in1(selectBlockNumber(1));
-        else
+        if (option) {
+          blockNum = selectBlockNumber(1);
+          display_Clear();
+          println_Msg(F("Erasing..."));
+          display_Update();
+          erase369in1(blockNum);
+        } else {
+          println_Msg(F("Erasing..."));
+          display_Update();
           erase369in1(0);
+        }
         // Reset or blankcheck will fail
         reset369in1();
       } else if (flashid == 0x227E) {
@@ -2833,7 +2845,8 @@ void flashRepro_GBA(boolean option) {
         writeIntel4000_GBA();
       } else if (flashid == 0x8812) {
         if (option) {
-          write369in1(selectBlockNumber(1));
+          write369in1(blockNum);
+          reset369in1();
         } else {
           write369in1(0);
           reset369in1();
