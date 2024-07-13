@@ -2896,7 +2896,9 @@ void printRomSize_MD(int index) {
 void force_cartSize_MD() {
   cartSize = navigateMenu(0, 9, &printRomSize_MD);
   cartSize = pgm_read_byte(&(MDSize[cartSize])) * 131072;
+  #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
+  #endif
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(cartSize / 131072);
   println_Msg(F(" Mbit"));

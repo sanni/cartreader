@@ -830,7 +830,7 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
     print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
     println_Msg(F("U/D to Change"));
-    println_Msg(F("Space to Select"));
+    println_Msg(F("Space/Zero to Select"));
 #endif
     display_Update();
 
@@ -905,7 +905,7 @@ void printInstructions() {
     print_STR(press_to_select_STR, 1);
 #   elif defined(SERIAL_MONITOR)
     println_Msg(F("U/D to Change"));
-    println_Msg(F("Space to Select"));
+    println_Msg(F("Space/Zero to Select"));
 #   endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
 
     display_Update();
@@ -979,6 +979,15 @@ int navigateMenu(int min, int max, void (*printSelection)(int)) {
       return i;
     }
   }
+}
+#elif defined(SERIAL_MONITOR)
+int navigateMenu(__attribute__((unused)) int min,__attribute__((unused)) int max, void (*printSelection)(int)) {
+    printSelection(0);
+    Serial.println(F("Enter number to change:_"));
+    while (Serial.available() == 0) {}
+    int selectedNumber = Serial.parseInt();
+    delay(200);
+    return selectedNumber;
 }
 #   endif /* (ENABLE_OLED | ENABLE_LCD) */
 # endif /* ENABLE_<CORES> */
@@ -2844,18 +2853,24 @@ void blinkLED() {
 #if defined(ENABLE_VSELECT)
   // Nothing
 #elif defined(HW5)
+  // 3mm LED on D38, front of PCB
   PORTD ^= (1 << 7);
 #elif defined(ENABLE_OLED)
+  // 5mm LED on D10, above SD slot
   PORTB ^= (1 << 4);
-#elif defined(ENABLE_LCD)
+#elif defined(ENABLE_LCD) // HW4 
+  // TX LED on D1, build-in
   PORTE ^= (1 << 1);
 #elif defined(ENABLE_SERIAL)
-  PORTB ^= (1 << 4);
+  // 5mm LED on D10, above SD slot (HW3)
+  PORTB ^= (1 << 4); //HW4/HW5 LCD RST connects there now too
+  // 3mm LED on D38, front of PCB (HW5)
   PORTB ^= (1 << 7);
 #endif
 }
 
 #if defined(HW5) && !defined(ENABLE_VSELECT)
+// 3mm LED on D38, front of PCB
 void statusLED(boolean on) {
   if (!on)
     PORTD |= (1 << 7);
@@ -3159,7 +3174,7 @@ uint8_t checkButton() {
   }
 
   //Selection
-  else if (incomingByte == 240) {
+  else if ((incomingByte == 240) || (incomingByte == -16) || (incomingByte == 0)) {
     return 3;
   }
 

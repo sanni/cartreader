@@ -2532,7 +2532,9 @@ byte selectBlockNumber(boolean option) {
     blockNumber = navigateMenu(0, 63, &printblockNumber);
   else
     blockNumber = navigateMenu(0, 32, &printFileSize);
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
+#endif
   if (option) {
     print_Msg(F("Block Number: "));
     println_Msg(blockNumber);
@@ -2569,6 +2571,9 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
     lastBlock = startBlock + fileSize;
+  unsigned long lastBuffer = 0x400000;
+  if (fileSize < lastBuffer)
+    lastBuffer = fileSize;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2582,7 +2587,7 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
       // Set-up 369-in-1 mapper
       mapBlock369in1((currBank + currBlock) / 1024 / 1024);
       // 4MB Block
-      for (unsigned long currBuffer = 0; currBuffer < 0x400000; currBuffer += 1024) {
+      for (unsigned long currBuffer = 0; currBuffer < lastBuffer; currBuffer += 1024) {
         // 1024 byte readBuffer
         for (int currWord = 0; currWord < 1024; currWord += 2) {
           word tempWord = readWord_GBA(currBlock + currBuffer + currWord);
@@ -2723,9 +2728,9 @@ void write369in1(byte blockNumber) {
 void flashRepro_GBA(boolean option) {
   // Check flashrom ID's
   idFlashrom_GBA();
-  byte blockNum;
 
   if ((flashid == 0x8802) || (flashid == 0x8816) || (flashid == 0x227E) || (flashid == 0x8812)) {
+    byte blockNum = 0;
     print_Msg(F("ID: "));
     print_Msg(flashid_str);
     print_Msg(F(" Size: "));

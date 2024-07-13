@@ -1163,7 +1163,7 @@ setmapper:
   String newmap;
   bool mapfound = false;
   Serial.println(F("SUPPORTED MAPPERS:"));
-  for (size_t i = 0; i < mapcount; i++) {
+  for (int i = 0; i < mapcount; i++) {
     mapselect = pgm_read_word(mapsize + i);
     Serial.print("[");
     Serial.print(mapselect);
@@ -1257,7 +1257,7 @@ void setPRGSize() {
   else {
 setprg:
     String sizePRG;
-    for (size_t i = 0; i < (prghi - prglo + 1); i++) {
+    for (int i = 0; i < (prghi - prglo + 1); i++) {
       Serial.print(F("Select PRG Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
@@ -1325,7 +1325,7 @@ void setCHRSize() {
   else {
 setchr:
     String sizeCHR;
-    for (size_t i = 0; i < (chrhi - chrlo + 1); i++) {
+    for (int i = 0; i < (chrhi - chrlo + 1); i++) {
       Serial.print(F("Select CHR Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
@@ -1435,7 +1435,7 @@ void setRAMSize() {
   else {
 setram:
     String sizeRAM;
-    for (size_t i = 0; i < (ramhi - ramlo + 1); i++) {
+    for (int i = 0; i < (ramhi - ramlo + 1); i++) {
       Serial.print(F("Select RAM Size:  "));
       Serial.print(i);
       Serial.print(F(" = "));
