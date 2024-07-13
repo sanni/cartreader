@@ -55,7 +55,7 @@
 //
 // * Blank pins have various uses depending on cartridge but are not necessary for dumping.
 // IMPORTANT: All data are stored as BIG-ENDIAN. Many ROM dumps online are little endian.
-// See https://github.com/kasamikona/Loopy-Tools/blob/master/ROM%20Structure.md
+// See https://github.com/kasamikona/Loopy-Tools/blob/master/Documentation/ROM%20Structure.md
 //
 // By @partlyhuman
 // Special thanks to @kasamikona
