@@ -2613,6 +2613,9 @@ void erase369in1(byte blockNumber) {
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
     lastBlock = startBlock + fileSize;
+  unsigned long lastSector = 0x400000;
+  if (fileSize < lastSector)
+    lastSector = fileSize;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2626,7 +2629,7 @@ void erase369in1(byte blockNumber) {
       // Set-up 369-in-1 mapper
       mapBlock369in1((currBank + currBlock) / 1024 / 1024);
       // 256KB flashrom sector size
-      for (unsigned long currSector = 0; currSector < 0x400000; currSector += 0x40000) {
+      for (unsigned long currSector = 0; currSector < lastSector; currSector += 0x40000) {
         // Unlock Sector
         writeWord_GBA(currBlock + currSector, 0x60);
         writeWord_GBA(currBlock + currSector, 0xD0);
@@ -2659,6 +2662,9 @@ void write369in1(byte blockNumber) {
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
     lastBlock = startBlock + fileSize;
+  unsigned long lastSector = 0x400000;
+  if (fileSize < lastSector)
+    lastSector = fileSize;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -2674,7 +2680,7 @@ void write369in1(byte blockNumber) {
       mapBlock369in1((currBank + currBlock) / 1024 / 1024);
 
       // 256KB flashrom sector size
-      for (unsigned long currSector = 0; currSector < 0x400000; currSector += 0x40000) {
+      for (unsigned long currSector = 0; currSector < lastSector; currSector += 0x40000) {
         // Unlock Sector
         //writeWord_GBA(currBlock + currSector, 0x60);
         //writeWord_GBA(currBlock + currSector, 0xD0);
