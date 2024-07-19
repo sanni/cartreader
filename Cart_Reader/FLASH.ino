@@ -162,7 +162,12 @@ void flashromMenu8() {
 
     case 1:
       display_Clear();
-      println_Msg(F("Erasing Flashrom"));
+      println_Msg(F("Warning: This will erase"));
+      println_Msg(F("your flashrom/repro"));
+      print_STR(press_button_STR, 1);
+      display_Update();
+      wait();
+      println_Msg(FS(FSTRING_EMPTY));
       println_Msg(F("Please wait..."));
       display_Update();
       time = millis();
