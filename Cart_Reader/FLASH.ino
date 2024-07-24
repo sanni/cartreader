@@ -648,6 +648,8 @@ void id_Flash16() {
   idFlash16();
   resetFlash16();
 
+  display_Clear();
+  display_Update();
   println_Msg(F("Flashrom Writer 16bit"));
   println_Msg("");
   print_Msg(F("Flash ID: "));
