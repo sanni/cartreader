@@ -53,10 +53,10 @@ uint8_t tennokoe_bank_index = 0;
   Menu
 *****************************************/
 // PCE start menu
-static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
+static const char pceMenuItem1[] PROGMEM = "HuCARD(swapped)";
 static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
 static const char pceMenuItem3[] PROGMEM = "Turbochip";
-static const char pceMenuItem4[] PROGMEM = "HuCARD Flash Repro";
+static const char pceMenuItem4[] PROGMEM = "Flash Repro HuCARD";
 static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, pceMenuItem4, FSTRING_RESET };
 
 // PCE card menu items
@@ -79,8 +79,8 @@ static const char *const menuOptionspceFlash[] PROGMEM = { flashMenuItemWrite, F
 // PCE start menu, first a device type is selected and set in pce_internal_mode
 void pcsMenu(void) {
   unsigned char pceDev;
-  convertPgm(menuOptionspce, 4);
-  pceDev = question_box(F("Select device"), menuOptions, 4, 0);
+  convertPgm(menuOptionspce, 5);
+  pceDev = question_box(F("Select device"), menuOptions, 5, 0);
 
   switch (pceDev) {
     case 0:
@@ -761,6 +761,7 @@ void read_rom_PCE(void) {
 
   //clear the screen
   display_Clear();
+  
   rom_size = detect_rom_size_PCE();
   if (pce_force_rom_size > 0) {
     rom_size = pce_force_rom_size;
@@ -772,8 +773,8 @@ void read_rom_PCE(void) {
   println_Msg(F("KB"));
 
   // Get name, add extension and convert to char array for sd lib
+  sd.chdir("/");
   createFolder("PCE", "ROM", "PCEROM", "pce");
-
   printAndIncrementFolder();
 
   //open file on sd card
@@ -821,7 +822,7 @@ void read_rom_PCE(void) {
   myFile.close();
 
   //CRC search and rename ROM
-  crc_search(fileName, folder, rom_size, crc);
+  compareCRC("pce.txt", 0, 1, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, true);
