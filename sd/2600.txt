@@ -208,6 +208,9 @@ Chase the Chuckwagon
 Checkers
 032
 
+Chess
+064
+
 China Syndrome
 064
 
