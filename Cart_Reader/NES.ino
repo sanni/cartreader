@@ -2855,23 +2855,42 @@ void readCHR(bool readrom) {
           break;
 
         case 23: { // 128K
+          banks = int_pow(2, chrsize) * 4;
+
           // Detect VRC4e Carts - read PRG 0x1FFF6 (DATE)
           // Boku Dracula-kun = 890810, Tiny Toon = 910809
           // Crisis Force = 910701, Parodius Da! = 900916
           write_prg_byte(0x8000, 15);
-          bool vrc4e;
           uint8_t prgchk0 = read_prg_byte(0x9FF6);
-          if (prgchk0 == 0x30) {  // Check for "0" in middle of date
-            vrc4e = true;         // VRC4e Cart
-          }
-          banks = int_pow(2, chrsize) * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0xF);  // CHR Bank Lower 4 bits
-            if (vrc4e == true)
+          if (prgchk0 == 0x30) {  // Check for "0" in middle of date. If true, assume VRC4e Cart
+            for (size_t i = 0; i < banks; i++) {
+              write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
               write_prg_byte(0xB004, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4e
-            else
-              write_prg_byte(0xB001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC2b/VRC4f
-            dumpBankCHR(0x0, 0x400);
+              dumpBankCHR(0x0, 0x400);
+            }
+
+            break;
+          }
+
+          // VRC2b/VRC4f - See https://www.nesdev.org/wiki/VRC2_and_VRC4
+          for (size_t i = 0; i < banks; i += 8) {
+            write_prg_byte(0xB000, i & 0xF);               // CHR Bank 0: Lower 4 bits
+            write_prg_byte(0xB001, (i >> 4) & 0xF);        // CHR Bank 0: Upper 4 bits
+            write_prg_byte(0xB002, (i + 1) & 0xF);         // CHR Bank 1: Lower 4 bits
+            write_prg_byte(0xB003, ((i + 1) >> 4) & 0xF);  // CHR Bank 1: Upper 4 bits
+            write_prg_byte(0xC000, (i + 2) & 0xF);         // CHR Bank 2: Lower 4 bits
+            write_prg_byte(0xC001, ((i + 2) >> 4) & 0xF);  // CHR Bank 2: Upper 4 bits
+            write_prg_byte(0xC002, (i + 3) & 0xF);         // CHR Bank 3: Lower 4 bits
+            write_prg_byte(0xC003, ((i + 3) >> 4) & 0xF);  // CHR Bank 3: Upper 4 bits
+            write_prg_byte(0xD000, (i + 4) & 0xF);         // CHR Bank 4: Lower 4 bits
+            write_prg_byte(0xD001, ((i + 4) >> 4) & 0xF);  // CHR Bank 4: Upper 4 bits
+            write_prg_byte(0xD002, (i + 5) & 0xF);         // CHR Bank 5: Lower 4 bits
+            write_prg_byte(0xD003, ((i + 5) >> 4) & 0xF);  // CHR Bank 5: Upper 4 bits
+            write_prg_byte(0xE000, (i + 6) & 0xF);         // CHR Bank 6: Lower 4 bits
+            write_prg_byte(0xE001, ((i + 6) >> 4) & 0xF);  // CHR Bank 6: Upper 4 bits
+            write_prg_byte(0xE002, (i + 7) & 0xF);         // CHR Bank 7: Lower 4 bits
+            write_prg_byte(0xE003, ((i + 7) >> 4) & 0xF);  // CHR Bank 7: Upper 4 bits
+            dumpBankCHR(0x0, 0x2000);                      // 8 Banks for a total of 8 KiB
           }
           break;
         }
