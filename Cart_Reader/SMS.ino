@@ -16,7 +16,11 @@ static const char SMSAdapterItem6[] PROGMEM = "SG-1000 raphnet";
 static const char* const SMSAdapterMenu[] PROGMEM = { SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5, SMSAdapterItem6 };
 
 // Operations menu
-static const char* const SMSOperationMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
+static const char SMSOperationMenuItem4[] PROGMEM = "Set ROM Size";
+static const char* const SMSOperationMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, SMSOperationMenuItem4, FSTRING_RESET };
+
+// SG Operations menu
+static const char* const SGOperationsMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
 // Rom sizes menu
 static const char SMSRomSizeItem1[] PROGMEM = "8 KB";
@@ -43,6 +47,9 @@ static bool adapter_raphnet = false;  // raphet adapater (SMS-to-MD or MIII-to-M
 static bool adapter_retrode = false;  // Retrode adapter (SMS-to-MD or GG-to-MD)
 static bool adapter_retron = false;   // Retron 3in1 adapter (SMS-to-MD or GG-to-MD)
 
+// Manual ROM Size Selection Flag
+bool manRomSizeSelected = false;
+
 //*********************************************************
 //  Main menu with systems/adapters setups to choose from
 //*********************************************************
@@ -57,91 +64,99 @@ void smsMenu() {
       system_sms = true;
       adapter_raphnet = true;
       break;
-
     case 1:
       // SMS with Retrode adapter
       system_sms = true;
       adapter_retrode = true;
       break;
-
     case 2:
       // SMS with Retron 3in1 adapter
       system_sms = true;
       adapter_retron = true;
       break;
-
     case 3:
       // GameGear with Retrode adapter
       system_gg = true;
       adapter_retrode = true;
       break;
-
     case 4:
       // GameGear with Retron 3in1 adapter
       system_gg = true;
       adapter_retron = true;
       break;
-
     case 5:
       // SG-1000 with raphnet adapter
       system_sg1000 = true;
       adapter_raphnet = true;
       break;
   }
-  for (;;) smsOperations();
+  for (;;) operationsMenu();
 }
 
 //****************************************************
 //  Create custom menu depending on selected setup
 //****************************************************
-void smsOperations() {
+void operationsMenu() {
   unsigned char SMSOperation = '3';
-  convertPgm(SMSOperationMenu, 4);
 
-  if (system_sms) {
-    if (adapter_raphnet) {
-      SMSOperation = question_box(FS(SMSAdapterItem1), menuOptions, 4, 0);
-    } else if (adapter_retrode) {
-      SMSOperation = question_box(FS(SMSAdapterItem2), menuOptions, 4, 0);
-    } else if (adapter_retron) {
-      SMSOperation = question_box(FS(SMSAdapterItem3), menuOptions, 4, 0);
+  if (system_sg1000) {
+    convertPgm(SGOperationsMenu, 2);
+    SMSOperation = question_box(FS(SMSAdapterItem6), menuOptions, 2, 0);
+    switch (SMSOperation) {
+      case 0: // Read ROM
+        mode = CORE_SMS;
+        setup_SMS();
+        readROM_SMS();
+        break;
+      default:
+      case 1:
+        // Reset
+        resetArduino();
+        break;
     }
-  } else if (system_gg) {
-    if (adapter_retrode) {
-      SMSOperation = question_box(FS(SMSAdapterItem4), menuOptions, 4, 0);
-    } else if (adapter_retron) {
-      SMSOperation = question_box(FS(SMSAdapterItem5), menuOptions, 4, 0);
+  } else {
+    convertPgm(SMSOperationMenu, 5);
+    if (system_sms) {
+      if (adapter_raphnet) {
+        SMSOperation = question_box(FS(SMSAdapterItem1), menuOptions, 5, 0);
+      } else if (adapter_retrode) {
+        SMSOperation = question_box(FS(SMSAdapterItem2), menuOptions, 5, 0);
+      } else if (adapter_retron) {
+        SMSOperation = question_box(FS(SMSAdapterItem3), menuOptions, 5, 0);
+      }
+    } else if (system_gg) {
+      if (adapter_retrode) {
+        SMSOperation = question_box(FS(SMSAdapterItem4), menuOptions, 5, 0);
+      } else if (adapter_retron) {
+        SMSOperation = question_box(FS(SMSAdapterItem5), menuOptions, 5, 0);
+      }
     }
-  } else if (system_sg1000) {
-    SMSOperation = question_box(FS(SMSAdapterItem6), menuOptions, 1, 0);
-  }
 
-  switch (SMSOperation) {
-    case 0:
-      // Read ROM
-      mode = CORE_SMS;
-      setup_SMS();
-      readROM_SMS();
-      break;
-
-    case 1:
-      // Read SRAM
-      mode = CORE_SMS;
-      setup_SMS();
-      readSRAM_SMS();
-      break;
-
-    case 2:
-      // Write SRAM
-      mode = CORE_SMS;
-      setup_SMS();
-      writeSRAM_SMS();
-      break;
-
-    case 3:
-      // Reset
-      resetArduino();
-      break;
+    switch (SMSOperation) {
+      case 0: // Read ROM
+        mode = CORE_SMS;
+        setup_SMS();
+        readROM_SMS();
+        break;
+      case 1: // Read SRAM
+        mode = CORE_SMS;
+        setup_SMS();
+        readSRAM_SMS();
+        break;
+      case 2: // Write SRAM
+        mode = CORE_SMS;
+        setup_SMS();
+        writeSRAM_SMS();
+        break;
+      case 3: // Select ROM Size
+        manual_selectRomSize();
+        break;
+      default:
+      case 4:
+        // Reset
+        resetArduino();
+        break;
+    }
   }
 
   display_Update();
@@ -209,8 +224,10 @@ void setup_SMS() {
 
   delay(400);
 
-  // Read and print cart info
-  getCartInfo_SMS();
+  // Read and print cart info only if ROM size not manually selected
+  if (manRomSizeSelected == false) {
+    getCartInfo_SMS();
+  }
 }
 
 //*****************************************
@@ -354,42 +371,43 @@ byte readNibble(byte data, byte number) {
 //  Cartridges functions
 //*****************************************
 void getCartInfo_SMS() {
-  // Get rom size
-  switch (readNibble(readByte_SMS(0x7FFF), 0)) {
-    // Adding UL gets rid of integer overflow compiler warning
+  byte cartNib = readNibble(readByte_SMS(0x7FFF), 0);
+
+  // Get rom size from header
+  //    Note: Common for this value to be smaller than the actual value.
+  //          Normally used for BIOS checksum calculations on export hardware (non JP).
+  switch (cartNib) {
     case 0xa:
-      cartSize = 8 * 1024UL;
+      cartSize = 8192; // 8 KiB
       break;
     case 0xb:
-      cartSize = 16 * 1024UL;
+      cartSize = 16384; // 16 KiB
       break;
     case 0xc:
-      cartSize = 32 * 1024UL;
+      cartSize = 32768; // 32 KiB
       break;
     case 0xd:
-      cartSize = 48 * 1024UL;
+      cartSize = 49152; // 48 KiB
       break;
     case 0xe:
-      cartSize = 64 * 1024UL;
+      cartSize = 65536; // 64 KiB
       break;
     case 0xf:
-      cartSize = 128 * 1024UL;
+      cartSize = 131072; // 128 KiB
       break;
     case 0x0:
-      cartSize = 256 * 1024UL;
+      cartSize = 262144; // 256 KiB
       break;
     case 0x1:
-      cartSize = 512 * 1024UL;
-      break;
     case 0x2:
-      cartSize = 512 * 1024UL;
+      cartSize = 524288; // 512 KiB
       break;
     case 0x3:
       // 0x3 is (only?) used in The Pro Yakyuu '91 (Game Gear)
-      cartSize = 128 * 1024UL;
+      cartSize = 131072; // 128 KiB
       break;
     default:
-      cartSize = 48 * 1024UL;
+      cartSize = 49152; // 48 KiB
       // LED Error
       rgbLed(blue_color);
       break;
@@ -402,136 +420,77 @@ void getCartInfo_SMS() {
   romName[8] = '\0';
 
   // Attempt to detect cart size by checking if "TMR SEGA" is mirrored
-  unsigned long mirror_offset = cartSize;
-  char romName2[9];
-  while (mirror_offset < 1024 * 1024UL) {
-    byte bank = 1 + (mirror_offset / (16 * 1024UL));
-    writeByte_SMS(0xfffe, bank);
-    for (byte i = 0; i < 8; i++) {
-      romName2[i] = char(readByte_SMS(0x7FF0 + i));
-    }
-    romName2[8] = '\0';
-
-    // print_Msg(F("Name2: "));
-    // println_Msg(romName2);
-    // print_Msg(F("from bank "));
-    // print_Msg(bank);
-    // print_Msg(F(" offset "));
-    // print_Msg_PaddedHex32(mirror_offset + 0x7FF0);
-    // println_Msg(FS(FSTRING_EMPTY));
-
-    if (strcmp(romName2, romName) == 0) {
-      break;
-    }
-
-    if (cartSize == 48 * 1024UL) {
-      cartSize = 64 * 1024UL;
-    } else {
-      cartSize *= 2;
-    }
-    mirror_offset = cartSize;
-  }
-
-  writeByte_SMS(0xFFFE, 1);
-
-  // Fix for "Fantasy Zone (J) (V1.0)" that has not the normal header, but "COPYRIGHT SEGAPRG. BY T.ASAI".
-  char headerFZ[29];
-  if (strcmp(romName, "G. BY T.A") != 0) {
-    for (byte i = 0; i < 28; i++) {
-      headerFZ[i] = char(readByte_SMS(0x7FE0 + i));
-    }
-    headerFZ[28] = '\0';
-
-    if (strcmp(headerFZ, "COPYRIGHT SEGAPRG. BY T.ASAI") == 0) {
-      strcpy(romName, "TMR SEGA");
-      cartSize = 128 * 1024UL;
-    }
-  }
-
-  // If "TMR SEGA" header is not found
-  if (strcmp(romName, "TMR SEGA") != 0) {
-    // Set rom size manually
-    unsigned char SMSRomSize;
-
-    if (system_sg1000) {
-      // Rom sizes for SG-1000
-      convertPgm(SG1RomSizeMenu, 4);
-      SMSRomSize = question_box(F("Select ROM size"), menuOptions, 4, 0);
-      switch (SMSRomSize) {
-        case 0:
-          cartSize = 8 * 1024UL;  // 8KB
-          break;
-        case 1:
-          cartSize = 16 * 1024UL;  // 16KB
-          break;
-        case 2:
-          cartSize = 24 * 1024UL;  // 24KB
-          break;
-        case 3:
-          cartSize = 32 * 1024UL;  // 32KB
-          break;
-          //case 4:
-          //  cartSize = 40 * 1024UL; // 40KB
-          //  break;
-          //case 5:
-          //  cartSize = 48 * 1024UL; // 48KB
-          //  break;
+  // Based on https://www.raphnet.net/electronique/sms_cartridge_programmer/index_en.php#6
+  // Note: Logic does not work on US CloudMaster (256K) and Penquin Land (128K) SMS carts.
+  //       Both detect as 512 KB based on the logic below.
+  if (strcmp(romName, "TMR SEGA") == 0) {
+    byte bank = 1;
+    char romNameBuf[9];
+    while (bank < 64) { // Total number of possible banks: 1 MiB / 16 (KiB/Bank)
+      bank++; // Increment the bank
+      writeByte_SMS(0xfffe, bank); // Load bank into slot 1
+      for (byte i = 0; i < 8; i++) {
+        romNameBuf[i] = char(readByte_SMS(0x7FF0 + i));
       }
-    } else {
-      // Rom sizes for SMS and GG
-      convertPgm(SMSRomSizeMenu, 6);
-      SMSRomSize = question_box(F("Select ROM size"), menuOptions, 6, 0);
-      switch (SMSRomSize) {
-        case 0:
-          cartSize = 32 * 1024UL;  // 32KB
-          break;
-        case 1:
-          cartSize = 64 * 1024UL;  // 64KB
-          break;
-        case 2:
-          cartSize = 128 * 1024UL;  // 128KB
-          break;
-        case 3:
-          cartSize = 256 * 1024UL;  // 256KB
-          break;
-        case 4:
-          cartSize = 512 * 1024UL;  // 512KB
-          break;
-        case 5:
-          cartSize = 1024 * 1024UL;  // 1MB
-          break;
+      romNameBuf[8] = '\0';
+
+      // Debug info:
+      // print_Msg(F("Bank: "));
+      // println_Msg(bank);
+      // print_Msg(F("Parsed ROM name: "));
+      // println_Msg(romNameBuf);
+      // println_Msg(FS(FSTRING_EMPTY));
+
+      if (strcmp(romNameBuf, romName) == 0) {
+        break;
       }
     }
+    if (bank > 2) { // 32 KiB is the smallest SMS/GG ROM size
+      cartSize = (bank - 1) * 16384UL;
+    }
+
+    // Debug info:
+    // print_Msg(F("Calculated ROM Size: "));
+    // println_Msg(cartSize);
+
+    // Reset Bank Slot 1
+    writeByte_SMS(0xFFFE, 1);
+
+    // Display header info
+    display_Clear();
+    if (system_sms) {
+      println_Msg(F("SMS Header:"));
+    } else {
+      println_Msg(F("GG Header:"));
+    }
+  } else { // romName != "TMR SEGA"
+    // Fix for "Fantasy Zone (J) (V1.0)" that has not the normal header, but "COPYRIGHT SEGAPRG. BY T.ASAI".
+    char headerFZ[29];
+    if (strcmp(romName, "G. BY T.A") != 0) {
+      for (byte i = 0; i < 28; i++) {
+        headerFZ[i] = char(readByte_SMS(0x7FE0 + i));
+      }
+      headerFZ[28] = '\0';
+
+      if (strcmp(headerFZ, "COPYRIGHT SEGAPRG. BY T.ASAI") == 0) {
+        strcpy(romName, "TMR SEGA");
+        cartSize = 131072; // 128 KiB
+      }
+    }
+
+    manual_selectRomSize();
 
     // Display cart info
     display_Clear();
     println_Msg(F("SMS/GG header not found"));
-    println_Msg(FS(FSTRING_SPACE));
-    print_Msg(FS(FSTRING_NAME));
-    println_Msg(romName);
-    print_Msg(F("Selected Size: "));
-    print_Msg(cartSize / 1024);
-    println_Msg(F("KB"));
-    println_Msg(FS(FSTRING_SPACE));
-    sprintf(romName, "UNKNOWN");
   }
 
-  // If "TMR SEGA" header is found
-  else {
-    display_Clear();
-    if (system_sms) {
-      println_Msg(F("SMS header info"));
-    } else {
-      println_Msg(F("GG header info"));
-    }
-    println_Msg(FS(FSTRING_SPACE));
-    print_Msg(FS(FSTRING_NAME));
-    println_Msg(romName);
-    print_Msg(FS(FSTRING_SIZE));
-    print_Msg(cartSize / 1024);
-    println_Msg(F("KB"));
-    println_Msg(FS(FSTRING_SPACE));
-  }
+  println_Msg(FS(FSTRING_SPACE));
+  print_Msg(FS(FSTRING_NAME));
+  println_Msg(romName);
+  print_Msg(cartSize / 1024);
+  println_Msg(F("KB"));
+  println_Msg(FS(FSTRING_SPACE));
 
 // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
@@ -543,6 +502,71 @@ void getCartInfo_SMS() {
 
   // Turn off LED
   rgbLed(black_color);
+}
+
+void manual_selectRomSize() {
+  // Set rom size manually
+  unsigned char SMSRomSize;
+
+  if (system_sg1000) {
+    // Rom sizes for SG-1000
+    convertPgm(SG1RomSizeMenu, 4);
+    SMSRomSize = question_box(F("Select ROM size"), menuOptions, 4, 0);
+    switch (SMSRomSize) {
+      case 0:
+        cartSize = 8192;   // 8 KiB
+        break;
+      case 1:
+        cartSize = 16384;  // 16 KiB
+        break;
+      case 2:
+        cartSize = 24576;  // 24 KiB
+        break;
+      case 3:
+        cartSize = 32768;  // 32 KiB
+        break;
+        //case 4:
+        //  cartSize = 40960; // 40KB
+        //  break;
+        //case 5:
+        //  cartSize = 49152; // 48KB
+        //  break;
+    }
+  } else {
+    // Rom sizes for SMS and GG
+    convertPgm(SMSRomSizeMenu, 6);
+    SMSRomSize = question_box(F("Select ROM size"), menuOptions, 6, 0);
+    switch (SMSRomSize) {
+      case 0:
+        cartSize = 32768;    // 32 KiB
+        break;
+      case 1:
+        cartSize = 65536;    // 64 KiB
+        break;
+      case 2:
+        cartSize = 131072;   // 128 KiB
+        break;
+      case 3:
+        cartSize = 262144;   // 256 KiB
+        break;
+      case 4:
+        cartSize = 524288;   // 512 KiB
+        break;
+      case 5:
+        cartSize = 1048576;  // 1 MiB
+        break;
+    }
+  }
+  strcpy(romName, "UNKNOWN"); // Use default UNKNOWN rom name upon manual selection
+  manRomSizeSelected = true; // This ensures manually selected value is used upon read from the menu
+
+  // Display info
+  display_Clear();
+  print_Msg(F("Selected Size: "));
+  print_Msg(cartSize / 1024);
+  println_Msg(F("KB"));
+
+  print_STR(press_button_STR, 1);
 }
 
 //******************************************
@@ -560,16 +584,20 @@ void readROM_SMS() {
 
   printAndIncrementFolder(true);
 
+  print_Msg(F("ROM Size: "));
+  print_Msg(cartSize / 1024);
+  println_Msg(F("KB"));
+
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);
   }
 
-  // Set default bank size to 16KB
-  word bankSize = 16 * 1024UL;
+  // Set default bank size to 16 KiB
+  word bankSize = 16384;
 
-  // For carts not using mappers (SG1000 or SMS/GG 32KB)
-  if ((system_sg1000) || (cartSize == 32 * 1024UL)) {
+  // For carts not using mappers (SG1000 or SMS/GG 32 KiB)
+  if ((system_sg1000) || (cartSize == 32768)) {
     bankSize = cartSize;
   }
 
@@ -591,7 +619,7 @@ void readROM_SMS() {
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS(((system_sg1000) || (cartSize == 32 * 1024UL) ? 0 : 0x8000) + currBuffer + currByte);
+        sdBuffer[currByte] = readByte_SMS(((system_sg1000) || (cartSize == 32768) ? 0 : 0x8000) + currBuffer + currByte);
       }
       // hexdump for debugging:
       // if (currBank == 0 && currBuffer == 0) {
@@ -649,16 +677,16 @@ void readSRAM_SMS() {
   }
   createFolderAndOpenFile(system, "SAVE", romName, "sav");
 
-  // Write the whole 32KB
-  // When there is only 8KB of SRAM, the contents should be duplicated
-  word bankSize = 16 * 1024UL;
+  // Write the whole 32 KiB
+  // When there is only 8 KiB of SRAM, the contents should be duplicated
+  word bankSize = 16384;
   for (byte currBank = 0x0; currBank < 2; currBank++) {
     writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
 
     // Blink led
     blinkLED();
 
-    // Read 16KB from slot 2 which starts at 0x8000
+    // Read 16 KiB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
       // Fill SD buffer
       for (int currByte = 0; currByte < 512; currByte++) {
@@ -699,7 +727,7 @@ void writeSRAM_SMS() {
       print_Msg(F("sramSize: "));
       print_Msg(sramSize);
       println_Msg(FS(FSTRING_EMPTY));
-      word bankSize = 16 * 1024;
+      word bankSize = 16384;
       for (word address = 0x0; address < sramSize; address += 512) {
         byte currBank = address >= bankSize ? 1 : 0;
         word page_address = address - (currBank * bankSize);
