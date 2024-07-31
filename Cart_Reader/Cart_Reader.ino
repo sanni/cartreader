@@ -659,7 +659,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
 //******************************************
 // Math Functions
 //******************************************
-#if (defined(ENABLE_NES) || defined(ENABLE_MSX) || defined(ENABLE_GBX) || defined(ENABLE_TRS80))
+#if (defined(ENABLE_NES) || defined(ENABLE_MSX) || defined(ENABLE_GBX) || defined(ENABLE_TRS80) || defined(ENABLE_JAGUAR))
 int int_pow(int base, int exp) {  // Power for int
   int result = 1;
   while (exp) {
@@ -751,7 +751,9 @@ void readDataLineSingleDigit(FsFile& database, void* byteData) {
 #endif
 
 #if ( \
-  defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VIC20) || defined(ENABLE_ATARI8))
+   defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_JAGUAR) || \
+   defined(ENABLE_VIC20)|| defined(ENABLE_ATARI8)\
+ )
 struct database_entry_mapper_size {
   byte gameMapper;
   byte gameSize;
@@ -1100,23 +1102,24 @@ constexpr char modeItem22[] PROGMEM = "Casio Loopy";
 constexpr char modeItem23[] PROGMEM = "Commodore 64";
 constexpr char modeItem24[] PROGMEM = "Atari 5200";
 constexpr char modeItem25[] PROGMEM = "Atari 7800";
-constexpr char modeItem26[] PROGMEM = "Atari Lynx";
-constexpr char modeItem27[] PROGMEM = "Vectrex";
-constexpr char modeItem28[] PROGMEM = "Atari 8-bit";
-constexpr char modeItem29[] PROGMEM = "Bally Astrocade";
-constexpr char modeItem30[] PROGMEM = "Bandai LJ";
-constexpr char modeItem31[] PROGMEM = "Bandai LJ Pro";
-constexpr char modeItem32[] PROGMEM = "Casio PV-1000";
-constexpr char modeItem33[] PROGMEM = "Commodore VIC-20";
-constexpr char modeItem34[] PROGMEM = "LF Leapster (3V)";
-constexpr char modeItem35[] PROGMEM = "RCA Studio II";
-constexpr char modeItem36[] PROGMEM = "TI-99";
-constexpr char modeItem37[] PROGMEM = "Tomy Pyuuta";
-constexpr char modeItem38[] PROGMEM = "TRS-80";
-constexpr char modeItem39[] PROGMEM = "Vtech V.Smile (3V)";
-constexpr char modeItem40[] PROGMEM = "Flashrom Programmer";
-constexpr char modeItem41[] PROGMEM = "Self Test (3V)";
-constexpr char modeItem42[] PROGMEM = "About";
+constexpr char modeItem26[] PROGMEM = "Atari Jaguar";
+constexpr char modeItem27[] PROGMEM = "Atari Lynx";
+constexpr char modeItem28[] PROGMEM = "Vectrex";
+constexpr char modeItem29[] PROGMEM = "Atari 8-bit";
+constexpr char modeItem30[] PROGMEM = "Bally Astrocade";
+constexpr char modeItem31[] PROGMEM = "Bandai LJ";
+constexpr char modeItem32[] PROGMEM = "Bandai LJ Pro";
+constexpr char modeItem33[] PROGMEM = "Casio PV-1000";
+constexpr char modeItem34[] PROGMEM = "Commodore VIC-20";
+constexpr char modeItem35[] PROGMEM = "LF Leapster (3V)";
+constexpr char modeItem36[] PROGMEM = "RCA Studio II";
+constexpr char modeItem37[] PROGMEM = "TI-99";
+constexpr char modeItem38[] PROGMEM = "Tomy Pyuuta";
+constexpr char modeItem39[] PROGMEM = "TRS-80";
+constexpr char modeItem40[] PROGMEM = "Vtech V.Smile (3V)";
+constexpr char modeItem41[] PROGMEM = "Flashrom Programmer";
+constexpr char modeItem42[] PROGMEM = "Self Test (3V)";
+constexpr char modeItem43[] PROGMEM = "About";
 
 static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_GBX
@@ -1194,55 +1197,59 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_7800
   modeItem25,
 #endif
-#ifdef ENABLE_LYNX
+#ifdef ENABLE_JAGUAR
   modeItem26,
 #endif
-#ifdef ENABLE_VECTREX
+#ifdef ENABLE_LYNX
   modeItem27,
 #endif
-#ifdef ENABLE_ATARI8
+#ifdef ENABLE_VECTREX
   modeItem28,
 #endif
-#ifdef ENABLE_BALLY
+#ifdef ENABLE_ATARI8
   modeItem29,
 #endif
-#ifdef ENABLE_LJ
+#ifdef ENABLE_BALLY
   modeItem30,
 #endif
-#ifdef ENABLE_LJPRO
+#ifdef ENABLE_LJ
   modeItem31,
 #endif
-#ifdef ENABLE_PV1000
+#ifdef ENABLE_LJPRO
   modeItem32,
 #endif
-#ifdef ENABLE_VIC20
+#ifdef ENABLE_PV1000
   modeItem33,
 #endif
-#ifdef ENABLE_LEAP
+#ifdef ENABLE_VIC20
   modeItem34,
 #endif
-#ifdef ENABLE_RCA
+#ifdef ENABLE_LEAP
   modeItem35,
 #endif
-#ifdef ENABLE_TI99
+#ifdef ENABLE_RCA
   modeItem36,
 #endif
-#ifdef ENABLE_PYUUTA
+#ifdef ENABLE_TI99
   modeItem37,
 #endif
-#ifdef ENABLE_TRS80
+#ifdef ENABLE_PYUUTA
   modeItem38,
 #endif
-#ifdef ENABLE_VSMILE
+#ifdef ENABLE_TRS80
   modeItem39,
 #endif
-#ifdef ENABLE_FLASH
+#ifdef ENABLE_VSMILE
   modeItem40,
 #endif
-#ifdef ENABLE_SELFTEST
+#ifdef ENABLE_FLASH
   modeItem41,
 #endif
-  modeItem42, FSTRING_RESET
+#ifdef ENABLE_SELFTEST
+  modeItem42,
+#endif
+  modeItem43, FSTRING_RESET
+
 };
 
 uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStrings, uint8_t entryCount, uint8_t default_choice = 0) {
@@ -1443,6 +1450,12 @@ void mainMenu() {
     case SYSTEM_MENU_7800:
       setup_7800();
       return a7800Menu();
+      break;
+#endif
+#ifdef ENABLE_JAGUAR
+    case SYSTEM_MENU_JAGUAR:
+      setup_Jag();
+      return jagMenu();
       break;
 #endif
 
@@ -3752,7 +3765,10 @@ void loop() {
     case CORE_LYNX: return lynxMenu();
 #endif
 #ifdef ENABLE_VECTREX
-    case CORE_VECTREX: return vectrexMenu();
+  	case CORE_VECTREX: return vectrexMenu();
+#endif
+#ifdef ENABLE_JAGUAR
+  	case CORE_JAGUAR: return jagMenu();
 #endif
 #ifdef ENABLE_ST
     case CORE_ST: return stMenu();
