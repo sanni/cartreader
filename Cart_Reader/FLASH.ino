@@ -142,6 +142,16 @@ void flashMenu() {
 }
 #endif
 
+void readOnlyMode() {
+  display_Clear();
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(F("Read-only Mode!"));
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
+  display_Update();
+}
+
 void flashromMenu8() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
@@ -161,26 +171,30 @@ void flashromMenu8() {
       break;
 
     case 1:
-      display_Clear();
-      println_Msg(F("Warning: This will erase"));
-      println_Msg(F("your flashrom/repro"));
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(F("Please wait..."));
-      display_Update();
-      time = millis();
+      if (flashromType != 0) {
+        display_Clear();
+        println_Msg(F("Warning: This will erase"));
+        println_Msg(F("your flashrom/repro"));
+        print_STR(press_button_STR, 1);
+        display_Update();
+        wait();
+        println_Msg(FS(FSTRING_EMPTY));
+        println_Msg(F("Please wait..."));
+        display_Update();
+        time = millis();
 
-      switch (flashromType) {
-        case 1: eraseFlash29F032(); break;
-        case 2: eraseFlash29F1610(); break;
-        case 3: eraseFlash28FXXX(); break;
+        switch (flashromType) {
+          case 1: eraseFlash29F032(); break;
+          case 2: eraseFlash29F1610(); break;
+          case 3: eraseFlash28FXXX(); break;
+        }
+
+        println_Msg(F("Flashrom erased"));
+        display_Update();
+        resetFlash8();
+      } else {
+        readOnlyMode();
       }
-
-      println_Msg(F("Flashrom erased"));
-      display_Update();
-      resetFlash8();
       break;
 
     case 2:
@@ -190,42 +204,46 @@ void flashromMenu8() {
       break;
 
     case 3:
-      filePath[0] = '\0';
-      sd.chdir("/");
-      fileBrowser(FS(FSTRING_SELECT_FILE));
-      display_Clear();
-      time = millis();
+      if (flashromType != 0) {
+        filePath[0] = '\0';
+        sd.chdir("/");
+        fileBrowser(FS(FSTRING_SELECT_FILE));
+        display_Clear();
+        time = millis();
 
-      switch (flashromType) {
-        case 1:
-          writeFlash29F032();
-          break;
-        case 2:
-          if (flashid == 0xC2F3)
-            writeFlash29F1601();
-          else if ((flashid == 0xC2F1) || (flashid == 0xC2F9))
-            writeFlash29F1610();
-          else if ((flashid == 0xC2C4) || (flashid == 0xC249) || (flashid == 0xC2A7) || (flashid == 0xC2A8) || (flashid == 0xC2C9) || (flashid == 0xC2CB) || (flashid == 0x0149) || (flashid == 0x01C4) || (flashid == 0x01F9) || (flashid == 0x01F6) || (flashid == 0x01D7))
-            writeFlash29LV640();
-          else if (flashid == 0x017E) {
-            // sector size, write buffer size
-            writeFlash29GL(sectorSize, bufferSize);
-          } else if ((flashid == 0x0458) || (flashid == 0x0158) || (flashid == 0x01AB))
-            writeFlash29F800();
+        switch (flashromType) {
+          case 1:
+            writeFlash29F032();
+            break;
+          case 2:
+            if (flashid == 0xC2F3)
+              writeFlash29F1601();
+            else if ((flashid == 0xC2F1) || (flashid == 0xC2F9))
+              writeFlash29F1610();
+            else if ((flashid == 0xC2C4) || (flashid == 0xC249) || (flashid == 0xC2A7) || (flashid == 0xC2A8) || (flashid == 0xC2C9) || (flashid == 0xC2CB) || (flashid == 0x0149) || (flashid == 0x01C4) || (flashid == 0x01F9) || (flashid == 0x01F6) || (flashid == 0x01D7))
+              writeFlash29LV640();
+            else if (flashid == 0x017E)
+              writeFlash29GL(sectorSize, bufferSize);
+            else if ((flashid == 0x0458) || (flashid == 0x0158) || (flashid == 0x01AB))
+              writeFlash29F800();
+            else if (flashid == 0x0)  // Manual flash config, pick most common type
+              writeFlash29LV640();
+            break;
+          case 3:
+            writeFlash28FXXX();
+            break;
+        }
 
-          break;
-        case 3:
-          writeFlash28FXXX();
-          break;
+        delay(100);
+
+        // Reset twice just to be sure
+        resetFlash8();
+        resetFlash8();
+
+        verifyFlash();
+      } else {
+        readOnlyMode();
       }
-
-      delay(100);
-
-      // Reset twice just to be sure
-      resetFlash8();
-      resetFlash8();
-
-      verifyFlash();
       break;
 
     case 4:
@@ -234,16 +252,15 @@ void flashromMenu8() {
       resetFlash8();
       println_Msg(F("ID Flashrom"));
       switch (flashromType) {
+        case 0: break;
         case 1: idFlash29F032(); break;
         case 2: idFlash29F1610(); break;
         case 3: idFlash28FXXX(); break;
       }
-
       println_Msg(FS(FSTRING_EMPTY));
       printFlash(40);
       println_Msg(FS(FSTRING_EMPTY));
       display_Update();
-
       resetFlash8();
       break;
 
@@ -438,8 +455,43 @@ void epromMenu() {
 #endif
 
 /******************************************
-   Flash IDs
+   Flash ID
  *****************************************/
+void printFlashSize(int index) {
+  display_Clear();
+  print_Msg(F("Flashsize: "));
+  print_Msg(index);
+  println_Msg(F("MB"));
+}
+
+void printFlashType(int index) {
+  display_Clear();
+  print_Msg(F("Flashtype: "));
+  println_Msg(index);
+}
+
+byte selectFlashtype(boolean option) {
+  byte selectionByte;
+  if (option)
+    selectionByte = navigateMenu(0, 3, &printFlashType);
+  else
+    selectionByte = navigateMenu(1, 8, &printFlashSize);
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  display.setCursor(0, 56);  // Display selection at bottom
+#endif
+  if (option) {
+    print_Msg(F("Flash Type: "));
+    println_Msg(selectionByte);
+  } else {
+    print_Msg(F("Flash Size: "));
+    print_Msg(selectionByte);
+    println_Msg(F("MB"));
+  }
+  display_Update();
+  delay(200);
+  return selectionByte;
+}
+
 void id_Flash8() {
   // Test if 28FXXX series flash (type 3 flashrom)
   idFlash28FXXX();
@@ -624,12 +676,17 @@ idtheflash:
     display_Update();
     wait();
 
+    // Select flashrom config manually
+    flashSize = selectFlashtype(0) * 1024UL * 1024UL;
+    flashromType = selectFlashtype(1);
+    flashid = 0;
+    sprintf(flashid_str, "%04X", 0);
+
     // print first 40 bytes of flash
     display_Clear();
     println_Msg(F("First 40 bytes:"));
     println_Msg(FS(FSTRING_EMPTY));
     printFlash(40);
-    display_Update();
     resetFlash8();
   }
   println_Msg(FS(FSTRING_EMPTY));
@@ -1901,6 +1958,7 @@ void blankcheck_Flash() {
     println_Msg(F("Flashrom is empty"));
     display_Update();
   } else {
+    println_Msg(FS(FSTRING_EMPTY));
     print_Error(F("Error: Not blank"));
   }
 }
