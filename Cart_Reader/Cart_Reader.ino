@@ -357,49 +357,49 @@ byte iNES_HEADER[16];
 //******************************************
 // CRC32 lookup table // 256 entries
 constexpr uint32_t crc_32_tab[] PROGMEM = { /* CRC polynomial 0xedb88320 */
-  0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
-  0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
-  0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
-  0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
-  0x136c9856, 0x646ba8c0, 0xfd62f97a, 0x8a65c9ec, 0x14015c4f, 0x63066cd9,
-  0xfa0f3d63, 0x8d080df5, 0x3b6e20c8, 0x4c69105e, 0xd56041e4, 0xa2677172,
-  0x3c03e4d1, 0x4b04d447, 0xd20d85fd, 0xa50ab56b, 0x35b5a8fa, 0x42b2986c,
-  0xdbbbc9d6, 0xacbcf940, 0x32d86ce3, 0x45df5c75, 0xdcd60dcf, 0xabd13d59,
-  0x26d930ac, 0x51de003a, 0xc8d75180, 0xbfd06116, 0x21b4f4b5, 0x56b3c423,
-  0xcfba9599, 0xb8bda50f, 0x2802b89e, 0x5f058808, 0xc60cd9b2, 0xb10be924,
-  0x2f6f7c87, 0x58684c11, 0xc1611dab, 0xb6662d3d, 0x76dc4190, 0x01db7106,
-  0x98d220bc, 0xefd5102a, 0x71b18589, 0x06b6b51f, 0x9fbfe4a5, 0xe8b8d433,
-  0x7807c9a2, 0x0f00f934, 0x9609a88e, 0xe10e9818, 0x7f6a0dbb, 0x086d3d2d,
-  0x91646c97, 0xe6635c01, 0x6b6b51f4, 0x1c6c6162, 0x856530d8, 0xf262004e,
-  0x6c0695ed, 0x1b01a57b, 0x8208f4c1, 0xf50fc457, 0x65b0d9c6, 0x12b7e950,
-  0x8bbeb8ea, 0xfcb9887c, 0x62dd1ddf, 0x15da2d49, 0x8cd37cf3, 0xfbd44c65,
-  0x4db26158, 0x3ab551ce, 0xa3bc0074, 0xd4bb30e2, 0x4adfa541, 0x3dd895d7,
-  0xa4d1c46d, 0xd3d6f4fb, 0x4369e96a, 0x346ed9fc, 0xad678846, 0xda60b8d0,
-  0x44042d73, 0x33031de5, 0xaa0a4c5f, 0xdd0d7cc9, 0x5005713c, 0x270241aa,
-  0xbe0b1010, 0xc90c2086, 0x5768b525, 0x206f85b3, 0xb966d409, 0xce61e49f,
-  0x5edef90e, 0x29d9c998, 0xb0d09822, 0xc7d7a8b4, 0x59b33d17, 0x2eb40d81,
-  0xb7bd5c3b, 0xc0ba6cad, 0xedb88320, 0x9abfb3b6, 0x03b6e20c, 0x74b1d29a,
-  0xead54739, 0x9dd277af, 0x04db2615, 0x73dc1683, 0xe3630b12, 0x94643b84,
-  0x0d6d6a3e, 0x7a6a5aa8, 0xe40ecf0b, 0x9309ff9d, 0x0a00ae27, 0x7d079eb1,
-  0xf00f9344, 0x8708a3d2, 0x1e01f268, 0x6906c2fe, 0xf762575d, 0x806567cb,
-  0x196c3671, 0x6e6b06e7, 0xfed41b76, 0x89d32be0, 0x10da7a5a, 0x67dd4acc,
-  0xf9b9df6f, 0x8ebeeff9, 0x17b7be43, 0x60b08ed5, 0xd6d6a3e8, 0xa1d1937e,
-  0x38d8c2c4, 0x4fdff252, 0xd1bb67f1, 0xa6bc5767, 0x3fb506dd, 0x48b2364b,
-  0xd80d2bda, 0xaf0a1b4c, 0x36034af6, 0x41047a60, 0xdf60efc3, 0xa867df55,
-  0x316e8eef, 0x4669be79, 0xcb61b38c, 0xbc66831a, 0x256fd2a0, 0x5268e236,
-  0xcc0c7795, 0xbb0b4703, 0x220216b9, 0x5505262f, 0xc5ba3bbe, 0xb2bd0b28,
-  0x2bb45a92, 0x5cb36a04, 0xc2d7ffa7, 0xb5d0cf31, 0x2cd99e8b, 0x5bdeae1d,
-  0x9b64c2b0, 0xec63f226, 0x756aa39c, 0x026d930a, 0x9c0906a9, 0xeb0e363f,
-  0x72076785, 0x05005713, 0x95bf4a82, 0xe2b87a14, 0x7bb12bae, 0x0cb61b38,
-  0x92d28e9b, 0xe5d5be0d, 0x7cdcefb7, 0x0bdbdf21, 0x86d3d2d4, 0xf1d4e242,
-  0x68ddb3f8, 0x1fda836e, 0x81be16cd, 0xf6b9265b, 0x6fb077e1, 0x18b74777,
-  0x88085ae6, 0xff0f6a70, 0x66063bca, 0x11010b5c, 0x8f659eff, 0xf862ae69,
-  0x616bffd3, 0x166ccf45, 0xa00ae278, 0xd70dd2ee, 0x4e048354, 0x3903b3c2,
-  0xa7672661, 0xd06016f7, 0x4969474d, 0x3e6e77db, 0xaed16a4a, 0xd9d65adc,
-  0x40df0b66, 0x37d83bf0, 0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,
-  0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693,
-  0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
-  0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
+                                            0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
+                                            0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
+                                            0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
+                                            0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
+                                            0x136c9856, 0x646ba8c0, 0xfd62f97a, 0x8a65c9ec, 0x14015c4f, 0x63066cd9,
+                                            0xfa0f3d63, 0x8d080df5, 0x3b6e20c8, 0x4c69105e, 0xd56041e4, 0xa2677172,
+                                            0x3c03e4d1, 0x4b04d447, 0xd20d85fd, 0xa50ab56b, 0x35b5a8fa, 0x42b2986c,
+                                            0xdbbbc9d6, 0xacbcf940, 0x32d86ce3, 0x45df5c75, 0xdcd60dcf, 0xabd13d59,
+                                            0x26d930ac, 0x51de003a, 0xc8d75180, 0xbfd06116, 0x21b4f4b5, 0x56b3c423,
+                                            0xcfba9599, 0xb8bda50f, 0x2802b89e, 0x5f058808, 0xc60cd9b2, 0xb10be924,
+                                            0x2f6f7c87, 0x58684c11, 0xc1611dab, 0xb6662d3d, 0x76dc4190, 0x01db7106,
+                                            0x98d220bc, 0xefd5102a, 0x71b18589, 0x06b6b51f, 0x9fbfe4a5, 0xe8b8d433,
+                                            0x7807c9a2, 0x0f00f934, 0x9609a88e, 0xe10e9818, 0x7f6a0dbb, 0x086d3d2d,
+                                            0x91646c97, 0xe6635c01, 0x6b6b51f4, 0x1c6c6162, 0x856530d8, 0xf262004e,
+                                            0x6c0695ed, 0x1b01a57b, 0x8208f4c1, 0xf50fc457, 0x65b0d9c6, 0x12b7e950,
+                                            0x8bbeb8ea, 0xfcb9887c, 0x62dd1ddf, 0x15da2d49, 0x8cd37cf3, 0xfbd44c65,
+                                            0x4db26158, 0x3ab551ce, 0xa3bc0074, 0xd4bb30e2, 0x4adfa541, 0x3dd895d7,
+                                            0xa4d1c46d, 0xd3d6f4fb, 0x4369e96a, 0x346ed9fc, 0xad678846, 0xda60b8d0,
+                                            0x44042d73, 0x33031de5, 0xaa0a4c5f, 0xdd0d7cc9, 0x5005713c, 0x270241aa,
+                                            0xbe0b1010, 0xc90c2086, 0x5768b525, 0x206f85b3, 0xb966d409, 0xce61e49f,
+                                            0x5edef90e, 0x29d9c998, 0xb0d09822, 0xc7d7a8b4, 0x59b33d17, 0x2eb40d81,
+                                            0xb7bd5c3b, 0xc0ba6cad, 0xedb88320, 0x9abfb3b6, 0x03b6e20c, 0x74b1d29a,
+                                            0xead54739, 0x9dd277af, 0x04db2615, 0x73dc1683, 0xe3630b12, 0x94643b84,
+                                            0x0d6d6a3e, 0x7a6a5aa8, 0xe40ecf0b, 0x9309ff9d, 0x0a00ae27, 0x7d079eb1,
+                                            0xf00f9344, 0x8708a3d2, 0x1e01f268, 0x6906c2fe, 0xf762575d, 0x806567cb,
+                                            0x196c3671, 0x6e6b06e7, 0xfed41b76, 0x89d32be0, 0x10da7a5a, 0x67dd4acc,
+                                            0xf9b9df6f, 0x8ebeeff9, 0x17b7be43, 0x60b08ed5, 0xd6d6a3e8, 0xa1d1937e,
+                                            0x38d8c2c4, 0x4fdff252, 0xd1bb67f1, 0xa6bc5767, 0x3fb506dd, 0x48b2364b,
+                                            0xd80d2bda, 0xaf0a1b4c, 0x36034af6, 0x41047a60, 0xdf60efc3, 0xa867df55,
+                                            0x316e8eef, 0x4669be79, 0xcb61b38c, 0xbc66831a, 0x256fd2a0, 0x5268e236,
+                                            0xcc0c7795, 0xbb0b4703, 0x220216b9, 0x5505262f, 0xc5ba3bbe, 0xb2bd0b28,
+                                            0x2bb45a92, 0x5cb36a04, 0xc2d7ffa7, 0xb5d0cf31, 0x2cd99e8b, 0x5bdeae1d,
+                                            0x9b64c2b0, 0xec63f226, 0x756aa39c, 0x026d930a, 0x9c0906a9, 0xeb0e363f,
+                                            0x72076785, 0x05005713, 0x95bf4a82, 0xe2b87a14, 0x7bb12bae, 0x0cb61b38,
+                                            0x92d28e9b, 0xe5d5be0d, 0x7cdcefb7, 0x0bdbdf21, 0x86d3d2d4, 0xf1d4e242,
+                                            0x68ddb3f8, 0x1fda836e, 0x81be16cd, 0xf6b9265b, 0x6fb077e1, 0x18b74777,
+                                            0x88085ae6, 0xff0f6a70, 0x66063bca, 0x11010b5c, 0x8f659eff, 0xf862ae69,
+                                            0x616bffd3, 0x166ccf45, 0xa00ae278, 0xd70dd2ee, 0x4e048354, 0x3903b3c2,
+                                            0xa7672661, 0xd06016f7, 0x4969474d, 0x3e6e77db, 0xaed16a4a, 0xd9d65adc,
+                                            0x40df0b66, 0x37d83bf0, 0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,
+                                            0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693,
+                                            0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
+                                            0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
 // Defined as a macros, as compiler disregards inlining requests and these are
@@ -677,7 +677,7 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
 
   // create a new folder for the rom file
   EEPROM_readAnything(0, foldern);
-  if(subfolder == NULL) {
+  if (subfolder == NULL) {
     sprintf(folder, "%s/%s/%d", system, gameName, foldern);
   } else {
     sprintf(folder, "%s/%s/%s/%d", system, subfolder, gameName, foldern);
@@ -688,7 +688,7 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
 
 void printAndIncrementFolder(bool displayClear = false) {
   // Save location
-  if(displayClear) {
+  if (displayClear) {
     display_Clear();
   }
   print_STR(saving_to_STR, 0);
@@ -711,38 +711,35 @@ void createFolderAndOpenFile(const char* system, const char* subfolder, const ch
 
 // move file pointer to first game line with matching letter. If no match is found the last database entry is selected
 void seek_first_letter_in_database(FsFile& database, byte myLetter) {
-    char gamename_str[3];
+  char gamename_str[3];
 #ifdef ENABLE_GLOBAL_LOG
-    // Disable log to prevent unnecessary logging
-    println_Log(F("Select Mapping from List"));
-    dont_log = true;
+  // Disable log to prevent unnecessary logging
+  println_Log(F("Select Mapping from List"));
+  dont_log = true;
 #endif
-    database.rewind();
-    // Skip ahead to selected starting letter
-    if ((myLetter > 0) && (myLetter <= 26)) {
-      myLetter += 'A' - 1;
-      do {
-        // Read current name
-        get_line(gamename_str, &database, 2);
-        // Skip data line
-        skip_line(&database);
-        // Skip empty line
-        skip_line(&database);
+  database.rewind();
+  // Skip ahead to selected starting letter
+  if ((myLetter > 0) && (myLetter <= 26)) {
+    myLetter += 'A' - 1;
+    do {
+      // Read current name
+      get_line(gamename_str, &database, 2);
+      // Skip data line
+      skip_line(&database);
+      // Skip empty line
+      skip_line(&database);
 
-      } while (database.available() && gamename_str[0] != myLetter);
-      rewind_line(database, 3);
-    }
+    } while (database.available() && gamename_str[0] != myLetter);
+    rewind_line(database, 3);
+  }
 #ifdef ENABLE_GLOBAL_LOG
-    // Enable log again
-    dont_log = false;
+  // Enable log again
+  dont_log = false;
 #endif
 }
 
 #if ( \
-   defined(ENABLE_ARC)    || defined(ENABLE_FAIRCHILD) || defined(ENABLE_VECTREX) || defined(ENABLE_BALLY) || \
-   defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA)    || defined(ENABLE_RCA)     || defined(ENABLE_TRS80) || \
-   defined(ENABLE_LEAP)   || defined(ENABLE_LJ)        || defined(ENABLE_VSMILE)\
- )
+  defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_VECTREX) || defined(ENABLE_BALLY) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TRS80) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_VSMILE))
 // read single digit data line as byte
 void readDataLineSingleDigit(FsFile& database, void* byteData) {
   // Read rom size
@@ -754,9 +751,7 @@ void readDataLineSingleDigit(FsFile& database, void* byteData) {
 #endif
 
 #if ( \
-   defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || \
-   defined(ENABLE_VIC20)|| defined(ENABLE_ATARI8)\
- )
+  defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VIC20) || defined(ENABLE_ATARI8))
 struct database_entry_mapper_size {
   byte gameMapper;
   byte gameSize;
@@ -770,7 +765,7 @@ void readDataLineMapperSize(FsFile& database, void* entry) {
 
   // if next char is not a semicolon expect an additional digit
   char temp = database.read();
-  if(temp != ',') {
+  if (temp != ',') {
     castEntry->gameMapper = (castEntry->gameMapper * 10) + (temp - 48);
     // Skip over semicolon
     database.seekCur(1);
@@ -800,17 +795,17 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 #endif
     display_Clear();
 
-    get_line(gamename, &database, sizeof(gamename));   
+    get_line(gamename, &database, sizeof(gamename));
 
     readData(database, data);
 
-    skip_line(&database); 
+    skip_line(&database);
 
     println_Msg(F("Select your cartridge"));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(gamename);
 
-    if(printDataLine) {
+    if (printDataLine) {
       printDataLine(data);
     }
     println_Msg(FS(FSTRING_EMPTY));
@@ -835,8 +830,8 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
     display_Update();
 
 #ifdef ENABLE_GLOBAL_LOG
-      // Enable log again
-      dont_log = false;
+    // Enable log again
+    dont_log = false;
 #endif
     uint8_t b = 0;
     while (1) {
@@ -866,7 +861,7 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 
       // Selection
       else if (b == 3) {
-        if(setRomName) {
+        if (setRomName) {
           setRomName(gamename);
         }
         database.close();
@@ -886,50 +881,44 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
   return false;
 }
 
-# if ( \
-    defined(ENABLE_ODY2)  || defined(ENABLE_ARC)      || defined(ENABLE_FAIRCHILD)  || defined(ENABLE_MSX)  ||  \
-    defined(ENABLE_POKE)  || defined(ENABLE_2600)     || defined(ENABLE_5200)       || defined(ENABLE_7800) ||  \
-    defined(ENABLE_C64)   || defined(ENABLE_VECTREX)  || defined(ENABLE_NES)        || defined(ENABLE_GBX)  ||  \
-    defined(ENABLE_BALLY) || defined(ENABLE_PV1000)   || defined(ENABLE_PYUUTA)     || defined(ENABLE_RCA)  ||  \
-    defined(ENABLE_TRS80) || defined(ENABLE_VIC20)    || defined(ENABLE_LEAP)       || defined(ENABLE_LJ)   ||  \
-    defined(ENABLE_VSMILE)|| defined(ENABLE_TI99)     || defined(ENABLE_ATARI8)\
-  )
+#if ( \
+  defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_GBX) || defined(ENABLE_BALLY) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_VSMILE) || defined(ENABLE_TI99) || defined(ENABLE_ATARI8))
 void printInstructions() {
-    println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
 
-#   if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#   elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#   elif defined(SERIAL_MONITOR)
-    println_Msg(F("U/D to Change"));
-    println_Msg(F("Space/Zero to Select"));
-#   endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
+#if defined(ENABLE_OLED)
+  print_STR(press_to_change_STR, 1);
+  print_STR(right_to_select_STR, 1);
+#elif defined(ENABLE_LCD)
+  print_STR(rotate_to_change_STR, 1);
+  print_STR(press_to_select_STR, 1);
+#elif defined(SERIAL_MONITOR)
+  println_Msg(F("U/D to Change"));
+  println_Msg(F("Space/Zero to Select"));
+#endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
 
-    display_Update();
+  display_Update();
 }
 
-#   if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 int navigateMenu(int min, int max, void (*printSelection)(int)) {
   uint8_t b = 0;
   int i = min;
 
   // Check Button Status
-#     if defined(ENABLE_OLED)
+#if defined(ENABLE_OLED)
   buttonVal1 = (PIND & (1 << 7));  // PD7
-#     elif defined(ENABLE_LCD)
+#elif defined(ENABLE_LCD)
   boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#     endif /* ENABLE_OLED | ENABLE_LCD */
+#endif /* ENABLE_OLED | ENABLE_LCD */
 
   if (buttonVal1 == LOW) {  // Button Pressed
     while (1) {             // Scroll Mapper List
-#     if defined(ENABLE_OLED)
+#if defined(ENABLE_OLED)
       buttonVal1 = (PIND & (1 << 7));  // PD7
-#     elif defined(ENABLE_LCD)
-      buttonVal1 = (PING & (1 << 2));  // PG2
-#     endif /* ENABLE_OLED | ENABLE_LCD */
+#elif defined(ENABLE_LCD)
+      buttonVal1 = (PING & (1 << 2));      // PG2
+#endif /* ENABLE_OLED | ENABLE_LCD */
 
       if (buttonVal1 == HIGH) {  // Button Released
         // Correct Overshoot
@@ -981,26 +970,26 @@ int navigateMenu(int min, int max, void (*printSelection)(int)) {
   }
 }
 #elif defined(SERIAL_MONITOR)
-int navigateMenu(__attribute__((unused)) int min,__attribute__((unused)) int max, void (*printSelection)(int)) {
-    printSelection(0);
-    Serial.println(F("Enter number to change:_"));
-    while (Serial.available() == 0) {}
-    int selectedNumber = Serial.parseInt();
-    delay(200);
-    return selectedNumber;
+int navigateMenu(__attribute__((unused)) int min, __attribute__((unused)) int max, void (*printSelection)(int)) {
+  printSelection(0);
+  Serial.println(F("Enter number to change:_"));
+  while (Serial.available() == 0) {}
+  int selectedNumber = Serial.parseInt();
+  delay(200);
+  return selectedNumber;
 }
-#   endif /* (ENABLE_OLED | ENABLE_LCD) */
-# endif /* ENABLE_<CORES> */
+#endif /* (ENABLE_OLED | ENABLE_LCD) */
+#endif /* ENABLE_<CORES> */
 
-# if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void starting_letter__subDraw(byte selection, byte line) {
-      display.setDrawColor(0);
-      for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);
-      display.setDrawColor(1);
-      display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
-      display_Update();
+  display.setDrawColor(0);
+  for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);
+  display.setDrawColor(1);
+  display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
+  display_Update();
 }
-# endif /* (ENABLE_OLED | ENABLE_LCD) */
+#endif /* (ENABLE_OLED | ENABLE_LCD) */
 
 byte starting_letter() {
 #ifdef ENABLE_GLOBAL_LOG
@@ -1040,8 +1029,7 @@ byte starting_letter() {
         selection--;
       }
       starting_letter__subDraw(selection, line);
-    }
-    else if (b == 1) {  // Next
+    } else if (b == 1) {  // Next
       if ((selection == 6) && (line < 3)) {
         line++;
         selection = 0;
@@ -1052,8 +1040,7 @@ byte starting_letter() {
         selection++;
       }
       starting_letter__subDraw(selection, line);
-    }
-    else if (b == 3) {  // Long Press - Execute
+    } else if (b == 3) {  // Long Press - Execute
       if ((selection + line * 7) != 27) {
         display_Clear();
         println_Msg(F("Please wait..."));
@@ -1268,11 +1255,11 @@ uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStr
   currPage = 1;
   lastPage = 1;
 
-  numPages = (entryCount / 7) + ( (entryCount % 7) != 0 );
+  numPages = (entryCount / 7) + ((entryCount % 7) != 0);
 
   do {
     option_offset = (currPage - 1) * 7;
-    num_answers = ( (entryCount < (option_offset + 7)) ? entryCount - option_offset : 7);
+    num_answers = ((entryCount < (option_offset + 7)) ? entryCount - option_offset : 7);
 
     // Copy menuOptions out of progmem
     convertPgm(menuStrings + option_offset, num_answers);
@@ -1464,7 +1451,7 @@ void mainMenu() {
       setup_LYNX();
       return lynxMenu();
       break;
-#endif   
+#endif
 
 #ifdef ENABLE_VECTREX
     case SYSTEM_MENU_VECTREX:
@@ -1559,9 +1546,9 @@ void mainMenu() {
 
 #ifdef ENABLE_FLASH
     case SYSTEM_MENU_FLASH:
-# ifdef ENABLE_VSELECT
+#ifdef ENABLE_VSELECT
       setup_FlashVoltage();
-# endif
+#endif
       return flashMenu();
       break;
 #endif
@@ -1605,24 +1592,18 @@ void selfTest() {
   println_Msg(F("Self Test"));
   println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("Remove all Cartridges"));
-  println_Msg(F("before continuing!!!"));
+  println_Msg(F("before continuing!"));
+#if (defined(HW3) || defined(HW2))
+  println_Msg(F("And turn the EEP switch on."));
+#else
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
-  display_Clear();
-
-#if defined(HW3)
-  println_Msg(F("Self Test"));
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(F("Turn the EEP switch on."));
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
-  display_Clear();
 #endif
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(FSTRING_EMPTY));
+  print_STR(press_button_STR, 1);
+  display_Update();
+  wait();
+  display_Clear();
 
   // Test if pin 7 is held high by 1K resistor
   pinMode(7, INPUT);
@@ -1636,8 +1617,8 @@ void selfTest() {
     println_Msg(FS(FSTRING_EMPTY));
     print_STR(press_button_STR, 1);
     display_Update();
-    //wait();
-    //resetArduino();
+    wait();
+    resetArduino();
   }
 
   println_Msg(F("Testing short to GND"));
@@ -1727,8 +1708,22 @@ void selfTest() {
     display_Update();
     wait();
     resetArduino();
+  } else {
+    //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
+    clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
+    clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
+    //clockgen.pll_reset(SI5351_PLLA);
+    //clockgen.pll_reset(SI5351_PLLB);
+    clockgen.set_freq(400000000ULL, SI5351_CLK0);
+    clockgen.set_freq(100000000ULL, SI5351_CLK1);
+    clockgen.set_freq(307200000ULL, SI5351_CLK2);
+    clockgen.output_enable(SI5351_CLK1, 1);
+    clockgen.output_enable(SI5351_CLK2, 1);
+    clockgen.output_enable(SI5351_CLK0, 1);
   }
 
+  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(F("All tests passed."));
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
@@ -2185,90 +2180,90 @@ int32_t initializeClockOffset() {
 void setup() {
   // Set Button Pin PG2 to Input
   DDRG &= ~(1 << 2);
-# if defined(HW5) && !defined(ENABLE_VSELECT)
+#if defined(HW5) && !defined(ENABLE_VSELECT)
   /**
    * HW5 has status LED connected to PD7
    * Set LED Pin PD7 to Output
    **/
   DDRD |= (1 << 7);
   PORTD |= (1 << 7);
-# elif defined(ENABLE_VSELECT)
+#elif defined(ENABLE_VSELECT)
   /**
    * VSELECT uses pin PD7
    * Set LED Pin PD7 to Output
    **/
   DDRD |= (1 << 7);
-# else /* !defined(HW5) && !defined(ENABLE_VSELECT) */
+#else  /* !defined(HW5) && !defined(ENABLE_VSELECT) */
   /**
    * HW1-3 have button connected to PD7
    * Set pin PD7 to input for button
    **/
   DDRD &= ~(1 << 7);
-# endif /* HW5 &| ENABLE_VSELECT */
+#endif /* HW5 &| ENABLE_VSELECT */
 
   // Set power to low to protect carts
   setVoltage(VOLTS_SET_3V3);
 
-# if defined(ENABLE_3V3FIX)
+#if defined(ENABLE_3V3FIX)
   // Set clock high during setup
   setClockScale(CLKSCALE_16MHZ);
   delay(10);
-# endif /* ENABLE_3V3FIX */
+#endif /* ENABLE_3V3FIX */
 
-# if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
+#if !defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
   ClockedSerial.begin(UPD_BAUD);
   printVersionToSerial();
   ClockedSerial.flush();
-# endif /* ENABLE_UPDATER */
+#endif /* ENABLE_UPDATER */
 
   // Read current folder number out of the EEPROM
   EEPROM_readAnything(0, foldern);
   if (foldern < 0) foldern = 0;
 
-# ifdef ENABLE_LCD
+#ifdef ENABLE_LCD
   display.begin();
   display.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
-# endif /* ENABLE_LCD */
+#endif /* ENABLE_LCD */
 
-# ifdef ENABLE_NEOPIXEL
+#ifdef ENABLE_NEOPIXEL
   pixels.begin();
   setColor_RGB(0, 0, 100);
 
   // Set TX0 LED Pin(PE1) to Output for status indication during flashing for HW4
-#   if !(defined(ENABLE_SERIAL) || defined(HW5))
+#if !(defined(ENABLE_SERIAL) || defined(HW5))
   DDRE |= (1 << 1);
-#   endif /* ENABLE_SERIAL */
-# else /* !ENABLE_NEOPIXEL */
-#   ifndef ENABLE_LCD
-#     ifdef ENABLE_CA_LED
+#endif /* ENABLE_SERIAL */
+#else  /* !ENABLE_NEOPIXEL */
+#ifndef ENABLE_LCD
+#ifdef ENABLE_CA_LED
   // Turn LED off
   digitalWrite(12, 1);
   digitalWrite(11, 1);
   digitalWrite(10, 1);
-#     endif /* ENABLE_CA_LED */
+#endif /* ENABLE_CA_LED */
   // Configure 4 Pin RGB LED pins as output
   DDRB |= (1 << DDB6);  // Red LED (pin 12)
   DDRB |= (1 << DDB5);  // Green LED (pin 11)
   DDRB |= (1 << DDB4);  // Blue LED (pin 10)
-#   endif /* ENABLE_LCD */
-# endif /* ENABLE_NEOPIXEL */
+#endif /* ENABLE_LCD */
+#endif /* ENABLE_NEOPIXEL */
 
-# ifdef ENABLE_RTC
+#ifdef ENABLE_RTC
   // Start RTC
   RTCStart();
 
   // Set Date/Time Callback Funtion
   SdFile::dateTimeCallback(dateTime);
-# endif /* ENABLE_RTC */
+#endif /* ENABLE_RTC */
 
-# ifdef ENABLE_OLED
+#ifdef ENABLE_OLED
   display.begin();
   //isplay.setContrast(40);
   display.setFont(u8g2_font_haxrcorp4089_tr);
-# endif /* ENABLE_OLED */
+#endif /* ENABLE_OLED */
 
-# ifdef ENABLE_SERIAL
+#ifdef ENABLE_SERIAL
   // Serial Begin
   Serial.begin(9600);
   Serial.println(FS(FSTRING_EMPTY));
@@ -2276,12 +2271,12 @@ void setup() {
   Serial.println(F("2024 github.com/sanni"));
   // LED Error
   rgbLed(blue_color);
-# endif /* ENABLE_SERIAL */
+#endif /* ENABLE_SERIAL */
 
   // Init SD card
   if (!sd.begin(SS)) {
     display_Clear();
-# ifdef ENABLE_VSELECT
+#ifdef ENABLE_VSELECT
     print_STR(sd_error_STR, 1);
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press button to enable 5V for"));
@@ -2289,7 +2284,7 @@ void setup() {
     display_Update();
     wait();
     display_Clear();
-    setVoltage(VOLTS_SET_5V); // Set voltage high for flashing
+    setVoltage(VOLTS_SET_5V);  // Set voltage high for flashing
     println_Msg(F(" ======== UPDATE MODE ======== "));
     println_Msg(F("Waiting for update..."));
     println_Msg(FS(FSTRING_EMPTY));
@@ -2297,51 +2292,51 @@ void setup() {
     display_Update();
     wait();
     resetArduino();
-# else /* !ENABLE_VSELECT */
+#else  /* !ENABLE_VSELECT */
     print_FatalError(sd_error_STR);
-# endif /* ENABLE_VSELECT */
+#endif /* ENABLE_VSELECT */
   }
 
-# if defined(ENABLE_CONFIG)
+#if defined(ENABLE_CONFIG)
   configInit();
-#   if defined(ENABLE_GLOBAL_LOG)
+#if defined(ENABLE_GLOBAL_LOG)
   loggingEnabled = !!configGetLong(F("oscr.logging"), 1);
-#   endif /*ENABLE_CONFIG*/
+#endif /*ENABLE_CONFIG*/
 
   // Change LCD background if config specified
-#   ifdef ENABLE_NEOPIXEL
+#ifdef ENABLE_NEOPIXEL
   setColor_RGB(0, 0, 100);
-#   endif /* ENABLE_NEOPIXEL */
-# endif /* ENABLE_CONFIG */
+#endif /* ENABLE_NEOPIXEL */
+#endif /* ENABLE_CONFIG */
 
-# ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
     print_FatalError(sd_error_STR);
   }
   println_Msg(FS(FSTRING_EMPTY));
-#   if defined(HW1)
+#if defined(HW1)
   print_Msg(F("OSCR HW1"));
-#   elif defined(HW2)
+#elif defined(HW2)
   print_Msg(F("OSCR HW2"));
-#   elif defined(HW3)
+#elif defined(HW3)
   print_Msg(F("OSCR HW3"));
-#   elif defined(HW4)
+#elif defined(HW4)
   print_Msg(F("OSCR HW4"));
-#   elif defined(HW5)
+#elif defined(HW5)
   print_Msg(F("OSCR HW5"));
-#   elif defined(SERIAL_MONITOR)
+#elif defined(SERIAL_MONITOR)
   print_Msg(F("OSCR Serial"));
-#   endif /* HWn */
+#endif /* HWn */
   print_Msg(FS(FSTRING_SPACE));
   println_Msg(FS(FSTRING_VERSION));
-# endif /* ENABLE_GLOBAL_LOG */
+#endif /* ENABLE_GLOBAL_LOG */
 
   // Turn status LED on
   statusLED(true);
 
-#   if defined(ENABLE_3V3FIX)
-  setClockScale(CLKSCALE_8MHZ); // Set clock back to low after setup
-#   endif /* ENABLE_3V3FIX */
+#if defined(ENABLE_3V3FIX)
+  setClockScale(CLKSCALE_8MHZ);  // Set clock back to low after setup
+#endif                           /* ENABLE_3V3FIX */
 
   // Start menu system
   mainMenu();
@@ -2369,9 +2364,9 @@ void dataIn() {
 // Set RGB color
 void setColor_RGB(byte r, byte g, byte b) {
 #if defined(ENABLE_NEOPIXEL)
-# if defined(ENABLE_3V3FIX)
+#if defined(ENABLE_3V3FIX)
   if (clock == CS_8MHZ) return;
-# endif
+#endif
   // Dim Neopixel LEDs
   if (r >= 100) r = 100;
   if (g >= 100) g = 100;
@@ -2379,7 +2374,7 @@ void setColor_RGB(byte r, byte g, byte b) {
 
   pixels.clear();
 
-# if defined(ENABLE_CONFIG)
+#if defined(ENABLE_CONFIG)
   uint8_t lcdConfColor = configGetLong(F("lcd.confColor"));
 
   if (lcdConfColor > 0) {
@@ -2391,9 +2386,9 @@ void setColor_RGB(byte r, byte g, byte b) {
   } else {
     pixels.setPixelColor(0, pixels.Color(OPTION_LCD_BG_COLOR));
   }
-# else /* !ENABLE_CONFIG */
+#else  /* !ENABLE_CONFIG */
   pixels.setPixelColor(0, pixels.Color(OPTION_LCD_BG_COLOR));
-# endif /* ENABLE_CONFIG */
+#endif /* ENABLE_CONFIG */
   pixels.setPixelColor(1, pixels.Color(g, r, b));
   pixels.setPixelColor(2, pixels.Color(g, r, b));
   pixels.show();
@@ -2863,12 +2858,12 @@ void blinkLED() {
 #elif defined(ENABLE_OLED)
   // 5mm LED on D10, above SD slot
   PORTB ^= (1 << 4);
-#elif defined(ENABLE_LCD) // HW4 
+#elif defined(ENABLE_LCD)  // HW4
   // TX LED on D1, build-in
   PORTE ^= (1 << 1);
 #elif defined(ENABLE_SERIAL)
   // 5mm LED on D10, above SD slot (HW3)
-  PORTB ^= (1 << 4); //HW4/HW5 LCD RST connects there now too
+  PORTB ^= (1 << 4);  //HW4/HW5 LCD RST connects there now too
   // 3mm LED on D38, front of PCB (HW5)
   PORTB ^= (1 << 7);
 #endif
@@ -3106,26 +3101,21 @@ void checkUpdater() {
   if (ClockedSerial.available() > 0) {
     String cmd = ClockedSerial.readStringUntil('\n');
     cmd.trim();
-    if (cmd == "VERCHK")
-    { // VERCHK: Gets OSCR version and features
+    if (cmd == "VERCHK") {  // VERCHK: Gets OSCR version and features
       delay(500);
       printVersionToSerial();
-    }
-    else if (cmd == "GETCLOCK")
-    { // GETCLOCK: Gets the MEGA's current clock speed.
-# if defined(ENABLE_3V3FIX)
+    } else if (cmd == "GETCLOCK") {  // GETCLOCK: Gets the MEGA's current clock speed.
+#if defined(ENABLE_3V3FIX)
       ClockedSerial.print(F("Clock is running at "));
       ClockedSerial.print((clock == CS_16MHZ) ? 16UL : 8UL);
       ClockedSerial.println(F("MHz"));
-# else /* !ENABLE_3V3FIX */
+#else                                               /* !ENABLE_3V3FIX */
       ClockedSerial.println(FS(FSTRING_MODULE_NOT_ENABLED));
-# endif /* ENABLE_3V3FIX */
-    }
-    else if (cmd.substring(1, 8) == "ETVOLTS")
-    { // (G/S)ETVOLTS: Get and set the voltage.
-# if defined(ENABLE_VSELECT)
+#endif                                              /* ENABLE_3V3FIX */
+    } else if (cmd.substring(1, 8) == "ETVOLTS") {  // (G/S)ETVOLTS: Get and set the voltage.
+#if defined(ENABLE_VSELECT)
       if (cmd != "GETVOLTS") {
-        switch(cmd.substring(9, 10).toInt()) {
+        switch (cmd.substring(9, 10).toInt()) {
           case 3: setVoltage(VOLTS_SET_3V3); break;
           case 5: setVoltage(VOLTS_SET_5V); break;
         }
@@ -3133,23 +3123,22 @@ void checkUpdater() {
       ClockedSerial.print(F("Voltage is set to "));
       ClockedSerial.print((voltage == VOLTS_SET_5V) ? 5 : 3.3);
       ClockedSerial.println(F("V"));
-# else /* !ENABLE_VSELECT */
+#else  /* !ENABLE_VSELECT */
       ClockedSerial.println(FS(FSTRING_MODULE_NOT_ENABLED));
-# endif /* ENABLE_VSELECT */
+#endif /* ENABLE_VSELECT */
     }
     // RTC commands
-    else if (cmd.substring(1, 7) == "ETTIME")
-    { // (G/S)ETTIME: Get and set the date/time.
-# if defined(ENABLE_RTC)
+    else if (cmd.substring(1, 7) == "ETTIME") {  // (G/S)ETTIME: Get and set the date/time.
+#if defined(ENABLE_RTC)
       if (cmd != "GETTIME") {
         ClockedSerial.println(F("Setting Time..."));
         rtc.adjust(DateTime(cmd.substring(8).toInt()));
       }
       ClockedSerial.print(F("Current Time: "));
       ClockedSerial.println(RTCStamp());
-# else /* !ENABLE_RTC */
+#else  /* !ENABLE_RTC */
       ClockedSerial.println(FS(FSTRING_MODULE_NOT_ENABLED));
-# endif /* ENABLE_RTC */
+#endif /* ENABLE_RTC */
     } else {
       ClockedSerial.print(FS(FSTRING_OSCR));
       ClockedSerial.println(F(": Unknown Command"));
@@ -3661,153 +3650,153 @@ page:
 void loop() {
   switch (mode) {
 #ifdef ENABLE_N64
-  case CORE_N64_CART: return n64CartMenu();
-  case CORE_N64_CONTROLLER: return n64ControllerMenu();
+    case CORE_N64_CART: return n64CartMenu();
+    case CORE_N64_CONTROLLER: return n64ControllerMenu();
 #endif
 #ifdef ENABLE_SNES
-  case CORE_SNES: return snesMenu();
+    case CORE_SNES: return snesMenu();
 #endif
 #ifdef ENABLE_SFM
-  case CORE_SFM: return sfmMenu();
-# ifdef ENABLE_FLASH
-  case CORE_SFM_FLASH: return sfmFlashMenu();
-# endif
-  case CORE_SFM_GAME: return sfmGameOptions();
+    case CORE_SFM: return sfmMenu();
+#ifdef ENABLE_FLASH
+    case CORE_SFM_FLASH: return sfmFlashMenu();
+#endif
+    case CORE_SFM_GAME: return sfmGameOptions();
 #endif
 #ifdef ENABLE_GBX
-  case CORE_GB: return gbMenu();
-  case CORE_GBA: return gbaMenu();
-  case CORE_GBM: return gbmMenu();
-  case CORE_GB_GBSMART: return gbSmartMenu();
-  case CORE_GB_GBSMART_FLASH: return gbSmartFlashMenu();
-  case CORE_GB_GBSMART_GAME: return gbSmartGameOptions();
+    case CORE_GB: return gbMenu();
+    case CORE_GBA: return gbaMenu();
+    case CORE_GBM: return gbmMenu();
+    case CORE_GB_GBSMART: return gbSmartMenu();
+    case CORE_GB_GBSMART_FLASH: return gbSmartFlashMenu();
+    case CORE_GB_GBSMART_GAME: return gbSmartGameOptions();
 #endif
 #ifdef ENABLE_FLASH
-  case CORE_FLASH8: return flashromMenu8();
-# ifdef ENABLE_FLASH16
-  case CORE_FLASH16: return flashromMenu16();
-  case CORE_EPROM: return epromMenu();
-# endif
+    case CORE_FLASH8: return flashromMenu8();
+#ifdef ENABLE_FLASH16
+    case CORE_FLASH16: return flashromMenu16();
+    case CORE_EPROM: return epromMenu();
+#endif
 #endif
 #ifdef ENABLE_MD
-  case CORE_MD_CART: return mdCartMenu();
-  case CORE_SEGA_CD: return segaCDMenu();
+    case CORE_MD_CART: return mdCartMenu();
+    case CORE_SEGA_CD: return segaCDMenu();
 #endif
 #ifdef ENABLE_PCE
-  case CORE_PCE: return pceMenu();
+    case CORE_PCE: return pceMenu();
 #endif
 #ifdef ENABLE_SV
-  case CORE_SV: return svMenu();
+    case CORE_SV: return svMenu();
 #endif
 #ifdef ENABLE_NES
-  case CORE_NES: return nesMenu();
+    case CORE_NES: return nesMenu();
 #endif
 #ifdef ENABLE_SMS
-  case CORE_SMS: return smsMenu();
+    case CORE_SMS: return smsMenu();
 #endif
 #ifdef ENABLE_WS
-  case CORE_WS: return wsMenu();
+    case CORE_WS: return wsMenu();
 #endif
 #ifdef ENABLE_NGP
-  case CORE_NGP: return ngpMenu();
+    case CORE_NGP: return ngpMenu();
 #endif
 #ifdef ENABLE_INTV
-  case CORE_INTV: return intvMenu();
+    case CORE_INTV: return intvMenu();
 #endif
 #ifdef ENABLE_COLV
-  case CORE_COL: return colMenu();
+    case CORE_COL: return colMenu();
 #endif
 #ifdef ENABLE_VBOY
-  case CORE_VBOY: return vboyMenu();
+    case CORE_VBOY: return vboyMenu();
 #endif
 #ifdef ENABLE_WSV
-  case CORE_WSV: return wsvMenu();
+    case CORE_WSV: return wsvMenu();
 #endif
 #ifdef ENABLE_PCW
-  case CORE_PCW: return pcwMenu();
+    case CORE_PCW: return pcwMenu();
 #endif
 #ifdef ENABLE_ODY2
-  case CORE_ODY2: return ody2Menu();
+    case CORE_ODY2: return ody2Menu();
 #endif
 #ifdef ENABLE_ARC
-  case CORE_ARC: return arcMenu();
+    case CORE_ARC: return arcMenu();
 #endif
 #ifdef ENABLE_FAIRCHILD
-  case CORE_FAIRCHILD: return fairchildMenu();
+    case CORE_FAIRCHILD: return fairchildMenu();
 #endif
 #ifdef ENABLE_SUPRACAN
-  case CORE_SUPRACAN: return suprAcanMenu();
+    case CORE_SUPRACAN: return suprAcanMenu();
 #endif
 #ifdef ENABLE_MSX
-  case CORE_MSX: return msxMenu();
+    case CORE_MSX: return msxMenu();
 #endif
 #ifdef ENABLE_POKE
-  case CORE_POKE: return pokeMenu();
+    case CORE_POKE: return pokeMenu();
 #endif
 #ifdef ENABLE_LOOPY
-  case CORE_LOOPY: return loopyMenu();
+    case CORE_LOOPY: return loopyMenu();
 #endif
 #ifdef ENABLE_C64
-  case CORE_C64: return c64Menu();
+    case CORE_C64: return c64Menu();
 #endif
 #ifdef ENABLE_2600
-  case CORE_2600: return a2600Menu();
+    case CORE_2600: return a2600Menu();
 #endif
 #ifdef ENABLE_5200
-  case CORE_5200: return a5200Menu();
+    case CORE_5200: return a5200Menu();
 #endif
 #ifdef ENABLE_7800
-  case CORE_7800: return a7800Menu();
+    case CORE_7800: return a7800Menu();
 #endif
 #ifdef ENABLE_LYNX
-  case CORE_LYNX: return lynxMenu();
+    case CORE_LYNX: return lynxMenu();
 #endif
 #ifdef ENABLE_VECTREX
-  case CORE_VECTREX: return vectrexMenu();
+    case CORE_VECTREX: return vectrexMenu();
 #endif
 #ifdef ENABLE_ST
-  case CORE_ST: return stMenu();
+    case CORE_ST: return stMenu();
 #endif
 #ifdef ENABLE_GPC
-  case CORE_GPC: return gpcMenu();
+    case CORE_GPC: return gpcMenu();
 #endif
 #ifdef ENABLE_ATARI8
-  case CORE_ATARI8: return atari8Menu();
+    case CORE_ATARI8: return atari8Menu();
 #endif
 #ifdef ENABLE_BALLY
-  case CORE_BALLY: return ballyMenu();
+    case CORE_BALLY: return ballyMenu();
 #endif
 #ifdef ENABLE_LJ
-  case CORE_LJ: return ljMenu();
+    case CORE_LJ: return ljMenu();
 #endif
 #ifdef ENABLE_LJPRO
-  case CORE_LJPRO: return ljproMenu();
+    case CORE_LJPRO: return ljproMenu();
 #endif
 #ifdef ENABLE_PV1000
-  case CORE_PV1000: return pv1000Menu();
+    case CORE_PV1000: return pv1000Menu();
 #endif
 #ifdef ENABLE_VIC20
-  case CORE_VIC20: return vic20Menu();
+    case CORE_VIC20: return vic20Menu();
 #endif
 #ifdef ENABLE_LEAP
-  case CORE_LEAP: return leapMenu();
+    case CORE_LEAP: return leapMenu();
 #endif
 #ifdef ENABLE_RCA
-  case CORE_RCA: return rcaMenu();
+    case CORE_RCA: return rcaMenu();
 #endif
 #ifdef ENABLE_TI99
-  case CORE_TI99: return ti99Menu();
+    case CORE_TI99: return ti99Menu();
 #endif
 #ifdef ENABLE_PYUUTA
-  case CORE_PYUUTA: return pyuutaMenu();
+    case CORE_PYUUTA: return pyuutaMenu();
 #endif
 #ifdef ENABLE_TRS80
-  case CORE_TRS80: return trs80Menu();
+    case CORE_TRS80: return trs80Menu();
 #endif
 #ifdef ENABLE_VSMILE
-  case CORE_VSMILE: return vsmileMenu();
+    case CORE_VSMILE: return vsmileMenu();
 #endif
-  case CORE_MAX: return resetArduino();
+    case CORE_MAX: return resetArduino();
   }
 }
 
