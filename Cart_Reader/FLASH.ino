@@ -620,7 +620,7 @@ idtheflash:
     println_Msg(F("UNKNOWN FLASHROM"));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    print_Error(press_button_STR);
     display_Update();
     wait();
 
@@ -629,16 +629,13 @@ idtheflash:
     println_Msg(F("First 40 bytes:"));
     println_Msg(FS(FSTRING_EMPTY));
     printFlash(40);
-    println_Msg(FS(FSTRING_EMPTY));
     display_Update();
     resetFlash8();
-    print_FatalError(F("Press Button to reset"));
   }
-  println_Msg("");
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
-
   resetFlash8();
 }
 

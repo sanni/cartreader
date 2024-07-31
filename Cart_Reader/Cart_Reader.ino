@@ -2456,6 +2456,11 @@ void print_Error(byte errorMessage) {
   _print_Error();
 }
 
+void print_Error(int errorMessage) {
+  print_STR(errorMessage, 1);
+  _print_Error();
+}
+
 void _print_FatalError(void) {
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
