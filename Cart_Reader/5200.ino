@@ -54,6 +54,12 @@
 #define DISABLE_8000 PORTH |= (1 << 6)  // ROM SELECT 8000-BFFF
 #define ENABLE_8000 PORTH &= ~(1 << 6)
 
+struct a5200_DB_entry {
+  char crc32[9];
+  byte gameMapper;
+  byte gameSize;
+};
+
 //******************************************
 //  Supported Mappers
 //******************************************
@@ -166,37 +172,14 @@ uint8_t readData_5200(uint16_t addr)  // Add Input Pullup
 {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A13
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
+  cycleDelay(5);
 
   // DDRC = 0x00; // Set to Input
   PORTC = 0xFF;  // Input Pullup
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  // Extended Delay for Vanguard
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
+  cycleDelay(15); // Standard + extended delay for Vanguard
 
   uint8_t ret = PINC;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
+  cycleDelay(5);
 
   return ret;
 }
@@ -249,11 +232,14 @@ void readROM_5200() {
       // Lower Half of 32K is at 0x4000
       if (a5200size == 3) {  // 32K
         ENABLE_4000;
+        cycleDelay(15);
         readSegment_5200(0x4000, 0x8000);  // +16K = 32K
         DISABLE_4000;
+        cycleDelay(15);
       }
       // 4K/8K/16K + Upper Half of 32K
       ENABLE_8000;
+      cycleDelay(15);
       if (a5200size > 1)
         readSegment_5200(0x8000, 0xA000);  // +8K = 16K
       if (a5200size > 0)
@@ -261,32 +247,41 @@ void readROM_5200() {
       // Base 4K
       readSegment_5200(0xB000, 0xC000);  // 4K
       DISABLE_8000;
+      cycleDelay(15);
       break;
 
     case 1:  // Two Chip 16KB
       ENABLE_4000;
+      cycleDelay(15);
       readSegment_5200(0x4000, 0x6000);  // 8K
       DISABLE_4000;
+      cycleDelay(15);
       ENABLE_8000;
+      cycleDelay(15);
       readSegment_5200(0x8000, 0xA000);  // +8K = 16K
       DISABLE_8000;
+      cycleDelay(15);
       break;
 
     case 2:  // Bounty Bob Strikes Back 40KB [UNTESTED]
       ENABLE_4000;
+      cycleDelay(15);
       // First 16KB (4KB x 4)
       readBankBountyBob_5200(0x4000);
       // Second 16KB (4KB x 4)
       readBankBountyBob_5200(0x5000);
       DISABLE_4000;
+      cycleDelay(15);
       ENABLE_8000;
+      cycleDelay(15);
       readSegment_5200(0x8000, 0xA000);  // +8K = 40K
       DISABLE_8000;
+      cycleDelay(15);
       break;
   }
   myFile.close();
 
-  printCRC(fileName, NULL, 0);
+  compareCRC("5200.txt", 0, 1, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
@@ -422,6 +417,35 @@ void checkStatus_5200() {
 }
 
 //******************************************
+// READ MAPPER
+//******************************************
+
+void readDbEntry(FsFile& database, void* entry) {
+  struct a5200_DB_entry* castEntry = (a5200_DB_entry*)entry;
+
+  // Read expected CRC32 as a string
+  for (int i = 0; i < 8; ++i) {
+    castEntry->crc32[i] = database.read();
+  }
+  castEntry->crc32[8] = '\0';
+  database.seekCur(1); // Skip comma delimiter
+
+  // Read mapper
+  castEntry->gameMapper = database.read() - 48;
+
+  // if next char is not a comma, expect an additional digit
+  char temp = database.read();
+  if (temp != ',') {
+    castEntry->gameMapper = (castEntry->gameMapper * 10) + (temp - 48);
+    database.seekCur(1); // Skip over comma
+  }
+
+  // Read rom size
+  castEntry->gameSize = database.read() - 48;
+  database.seekCur(2); // Skip rest of line
+}
+
+//******************************************
 // SET MAPPER
 //******************************************
 
@@ -473,7 +497,7 @@ void setCart_5200() {
   //go to root
   sd.chdir();
 
-  struct database_entry_mapper_size entry;
+  struct a5200_DB_entry entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -482,12 +506,20 @@ void setCart_5200() {
   if (myFile.open("5200.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
+    if(checkCartSelection(myFile, &readDbEntry, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
     print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+  }
+}
+
+// While not precise in terms of exact cycles for NOP due to the for-loop
+// overhead, it simplifies the code while still achieving a similar result. 
+void cycleDelay(byte cycleCount) {
+  for (byte i = 0; i < cycleCount; ++i) {
+    NOP;
   }
 }
 #endif

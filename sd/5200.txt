@@ -1,225 +1,258 @@
-Activision Decathlon
-0,2
+Activision Decathlon, The (USA).a52
+F43E7CD0,0,2
 
-Astro Chase
-1,2
+Astro Chase (USA).a52
+4019ECEC,1,2
 
-Atari PAM - Pete's Test
-0,1
+Atari PAM - Pete's Test (USA).a52
+28278CD6,0,1
 
-Atari PAM Diagnostics
-1,2
+Atari PAM Diagnostics (USA) (v2.0).a52
+E8B130C4,1,2
 
-Atari PAM System Test
-0,1
+Atari PAM Diagnostics (USA) (v2.3).a52
+CE07D9AD,1,2
 
-Ballblazer
-0,3
+Atari PAM System Test (USA) (v1.02).a52
+7EA86E87,0,1
 
-Beamrider
-0,2
+Ballblazer (USA).a52
+DEF2A207,0,3
 
-BerZerk
-0,2
+Beamrider (USA).a52
+9BAE58DC,0,2
 
-Blue Print
-0,2
+BerZerk (USA).a52
+BE3CD348,0,2
 
-Boogie
-0,0
+Blue Print (USA).a52
+0624E6E7,0,2
 
-Bounty Bob Strikes Back!
-2,4
+Boogie (USA) (Demo).a52
+3BD5FDD6,0,0
 
-Buck Rogers
-1,2
+Bounty Bob Strikes Back! (USA).a52
+7873C6DD,2,4
 
-Centipede
-1,2
+Buck Rogers - Planet of Zoom (USA) (Alt).a52
+20DF4927,1,2
 
-Choplifter!
-0,2
+Buck Rogers - Planet of Zoom (USA).a52
+04807705,1,2
 
-Congo Bongo
-1,2
+Carol Shaw's River Raid (USA).a52
+09FC7648,0,1
 
-Countermeasure
-1,2
+Castle Blast (USA) (Unl).a52
+7C988054,0,3
 
-Defender
-1,2
+Castle Crisis (USA) (Unl).a52
+D50E4061,0,3
 
-Dig Dug
-1,2
+Centipede (USA).a52
+536A70FE,1,2
 
-Dreadnaught Factor
-0,1
+Choplifter! (USA).a52
+9AD53BBC,0,2
 
-Frogger
-0,1
+Congo Bongo (USA).a52
+F1F42BBD,1,2
 
-Frogger II
-1,2
+Countermeasure (USA).a52
+FD541C80,1,2
 
-Galaxian
-0,1
+David Crane's Pitfall II - Lost Caverns (USA).a52
+4B910461,0,2
 
-Gorf
-0,1
+Defender (USA).a52
+BD52623B,1,2
 
-Gremlins
-0,3
+Dig Dug (USA).a52
+6A687F9C,1,2
 
-Gyruss
-1,2
+Dreadnaught Factor, The (USA).a52
+460DEF2D,0,1
 
-H.E.R.O.
-0,2
+Frogger (USA).a52
+AE7E3444,0,1
 
-James Bond 007
-1,2
+Frogger II - Threeedeep! (USA).a52
+0AF19345,1,2
 
-Joust
-1,2
+Galaxian (USA) (Alt).a52
+3A6E6133,0,1
 
-Jungle Hunt
-1,2
+Galaxian (USA).a52
+3EF4A23F,0,1
 
-Kaboom!
-0,0
+Gorf (USA).a52
+E955DB74,0,1
 
-Kangaroo
-1,2
+Gremlins (USA).a52
+063EC2C4,0,3
 
-Keystone Kapers
-0,1
+Gyruss (USA) (Alt).a52
+4241582D,1,2
 
-K-Razy Shoot-Out
-0,1
+Gyruss.a52
+CFD4A7F9,1,2
 
-Mario Bros.
-0,3
+H.E.R.O. (USA).a52
+18A73AF3,0,2
 
-MegaMania
-0,1
+James Bond 007 (USA).a52
+D9AE4518,1,2
 
-Meteorites
-0,2
+Joust (USA).a52
+BFD30C01,1,2
 
-Miner 2049er
-0,2
+Jungle Hunt (USA).a52
+2C676662,1,2
 
-Missile Command
-0,1
+Kaboom! (USA).a52
+420F5D0B,0,0
 
-Montezuma's Revenge
-1,2
+Kangaroo (USA).a52
+ECFA624F,1,2
 
-Moon Patrol
-0,2
+Keystone Kapers (USA).a52
+8FE3BB2C,0,1
 
-Mountain King
-0,1
+Koffi - Yellow Kopter (USA) (Unl).a52
+917BE656,0,3
 
-Mr. Do!'s Castle
-0,1
+K-Razy Shoot-Out (USA).a52
+EE702214,0,1
 
-Ms. Pac-Man
-1,2
+Mario Bros. (USA) (Alt).a52
+6B3F1179,0,3
 
-Pac-Man
-1,2
+Mario Bros. (USA).a52
+873742F1,0,3
 
-Pengo
-0,3
+MegaMania (USA).a52
+240A1E1A,0,1
 
-Pitfall II
-0,2
+Meteorites (USA).a52
+AB8E035B,0,2
 
-Pitfall!
-0,1
+Miner 2049er Starring Bounty Bob (USA).a52
+7DF1ADFB,0,2
 
-Pole Position
-1,2
+Missile Command (USA).a52
+44D3FF6F,0,1
 
-Popeye
-1,2
+Montezuma's Revenge - Featuring Panama Joe (USA).a52
+2A640143,1,2
 
-Q-bert
-0,1
+Moon Patrol (USA).a52
+D0B2F285,0,2
 
-QIX
-1,2
+Mountain King (USA).a52
+0F24243C,0,1
 
-Quest for Quintana Roo
-0,2
+Mr. Do!'s Castle (USA).a52
+AA55F9BE,0,1
 
-RealSports Baseball
-0,3
+Ms. Pac-Man (USA).a52
+752F5EFD,1,2
 
-RealSports Basketball
-0,3
+Pac-Man (USA).a52
+8873EF51,1,2
 
-RealSports Football
-1,2
+Pengo (USA).a52
+E4F8BA8C,0,3
 
-RealSports Soccer
-1,2
+Pitfall! (USA).a52
+B2887833,0,1
 
-RealSports Tennis
-1,2
+Pole Position (USA).a52
+ABC2D1E4,1,2
 
-Rescue on Fractalus!
-0,3
+Popeye (USA).a52
+A18A9A40,1,2
 
-River Raid
-0,1
+Q-bert (USA).a52
+3FE4A401,0,1
 
-Robotron 2084
-0,2
+QIX (USA).a52
+AEA6D2C2,1,2
 
-Space Dungeon
-1,2
+Quest for Quintana Roo (USA).a52
+B5F3402B,0,2
 
-Space Invaders
-0,1
+RealSports Baseball (USA).a52
+44166592,0,3
 
-Space Shuttle
-0,2
+RealSports Basketball (USA).a52
+DD217276,0,3
 
-Star Raiders
-1,2
+RealSports Football (USA).a52
+4336C2CC,1,2
 
-Star Trek
-1,2
+RealSports Soccer (USA).a52
+ECBD1853,1,2
 
-Star Wars - Return of the Jedi
-0,1
+RealSports Tennis (USA).a52
+10F33C90,1,2
 
-Star Wars - The Arcade Game
-1,2
+Rescue on Fractalus! (USA).a52
+762C591B,0,3
 
-Super Breakout
-0,0
+Robotron 2084 (USA).a52
+4252ABD9,0,2
 
-Super Cobra
-0,1
+Space Dungeon (USA).a52
+B68D61E8,1,2
 
-Vanguard
-0,3
+Space Invaders (USA).a52
+DE5C354A,0,1
 
-Wizard of Wor
-0,2
+Space Shuttle - A Journey Into Space (USA).a52
+387365DC,0,2
 
-Yellow Submarine
-0,0
+Star Raiders (USA) (Alt).a52
+4BAC5DD9,1,2
 
-Zaxxon
-0,3
+Star Raiders (USA).a52
+7D819A9F,1,2
 
-Zenji
-0,1
+Star Trek - Strategic Operations Simulator (USA) (Alt).a52
+33B70206,0,2
 
-Zone Ranger
-0,2
+Star Trek - Strategic Operations Simulator (USA).a52
+69F23548,0,2
+
+Star Wars - Return of the Jedi - Death Star Battle (USA).a52
+0675F0A5,0,1
+
+Star Wars - The Arcade Game (USA).a52
+75F566DF,1,2
+
+Super Breakout (USA).a52
+A0642110,0,0
+
+Super Cobra (USA).a52
+97DEBCD2,0,1
+
+Tempest (USA) (AtariAge).a52
+A6400E17,0,3
+
+Vanguard (USA).a52
+CAAEA0A4,0,3
+
+Wizard of Wor (USA).a52
+D6F7DDFD,0,2
+
+Yellow Submarine (USA) (Demo).a52
+F47BC091,0,0
+
+Zaxxon (USA).a52
+741746D1,0,3
+
+Zenji (USA).a52
+DA228530,0,1
+
+Zone Ranger (USA).a52
+2959D827,0,2
 

@@ -459,7 +459,7 @@ uint32_t calculateCRC(char* fileName, char* folder, unsigned long offset) {
 /******************************************
    CRC Functions for Atari, Fairchild, Ody2, Arc, etc. modules
  *****************************************/
-#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_LYNX) || defined(ENABLE_ATARI8) || defined(ENABLE_BALLY) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_LJPRO) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TI99) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_VSMILE))
+#if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_LYNX) || defined(ENABLE_ATARI8) || defined(ENABLE_BALLY) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_LJPRO) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TI99) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_VSMILE))
 
 void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
   uint32_t crc = calculateCRC(checkFile, folder, offset);
@@ -751,7 +751,7 @@ void readDataLineSingleDigit(FsFile& database, void* byteData) {
 #endif
 
 #if ( \
-   defined(ENABLE_ODY2) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_JAGUAR) || \
+   defined(ENABLE_ODY2) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_JAGUAR) || \
    defined(ENABLE_VIC20)|| defined(ENABLE_ATARI8)\
  )
 struct database_entry_mapper_size {
