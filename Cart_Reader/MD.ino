@@ -697,6 +697,9 @@ void dataOut_MD() {
 void dataIn_MD() {
   DDRC = 0x00;
   DDRA = 0x00;
+  // Enable Internal Pullups (needed for games like Batman Forever that are open bus with random bytes on the last 1MB, so we get a clean 0xFF padding)
+  PORTC = 0xFF;
+  PORTA = 0xFF;
 }
 
 /******************************************
