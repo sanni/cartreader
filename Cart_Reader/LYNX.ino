@@ -40,6 +40,7 @@
 // | 34 |- SWVCC
 // +----+
 //
+// Version 1.1
 // By @partlyhuman
 // This implementation would not be possible without the invaluable
 // documentation on
@@ -50,11 +51,6 @@
 // by Karri Kaksonen (whitelynx.fi) and Igor as well as countless contributions
 // by the Atari Lynx community
 //
-// Version 1.0
-// Future enhancements
-// 1. EEPROM read/write
-// 2. Homebrew flash cart programming
-//
 #ifdef ENABLE_LYNX
 
 #pragma region DEFS
@@ -62,9 +58,9 @@
 #define LYNX_HEADER_SIZE 64
 #define LYNX_WE 8
 #define LYNX_OE 9
-#define LYNX_AUDIN 46
+#define LYNX_AUDIN_ON 0x80000
 #define LYNX_BLOCKADDR 2048UL
-#define LYNX_BLOCKCOUNT 256UL
+#define LYNX_BLOCKCOUNT 256
 // Includes \0
 static const char LYNX[5] = "LYNX";
 
@@ -90,10 +86,8 @@ void setup_LYNX() {
   // CE is tied low, not accessible
   pinMode(LYNX_WE, OUTPUT);
   pinMode(LYNX_OE, OUTPUT);
-  pinMode(LYNX_AUDIN, OUTPUT);
   digitalWrite(LYNX_WE, HIGH);
   digitalWrite(LYNX_OE, HIGH);
-  digitalWrite(LYNX_AUDIN, HIGH);
 
   strcpy(romName, LYNX);
   mode = CORE_LYNX;
@@ -103,11 +97,16 @@ static void dataDir_LYNX(byte direction) {
   DDRC = (direction == OUTPUT) ? 0xff : 0x00;
 }
 
-static uint8_t readByte_LYNX(uint32_t addr, uint8_t audin = 0) {
-  digitalWrite(LYNX_OE, HIGH);
+static void setAddr_LYNX(uint32_t addr) {
   PORTF = addr & 0xff;
   PORTK = (addr >> 8) & 0xff;
-  PORTL = ((addr >> 16) & 0b111) | (audin << 3);
+  // AUDIN connected to L3
+  PORTL = ((addr >> 16) & 0b1111);
+}
+
+static uint8_t readByte_LYNX(uint32_t addr) {
+  digitalWrite(LYNX_OE, HIGH);
+  setAddr_LYNX(addr);
   digitalWrite(LYNX_OE, LOW);
   delayMicroseconds(20);
   uint8_t data = PINC;
@@ -115,7 +114,27 @@ static uint8_t readByte_LYNX(uint32_t addr, uint8_t audin = 0) {
   return data;
 }
 
+static bool waitPressButton_LYNX(bool ret = false) {
+  print_STR(press_button_STR, true);
+  display_Update();
+  wait();
+  return ret;
+}
+
 #pragma region HIGHLEVEL
+
+static void compareStride_LYNX(uint8_t b, int i, int stride) {
+  uint8_t other = readByte_LYNX(i + stride);
+  if (other == 0xff) {
+    // If this is a flash cart, these in-between spaces should be formatted to all 1's
+    // in which case, we DON'T report this as an unmirrored area
+    return;
+  }
+  if (b != other) {
+    // if these bytes differ, they're likely in the same block, which means the block size contains both addresses (next POT beyond the stride)
+    lynxBlockSize = max(lynxBlockSize, stride << 1);
+  }
+}
 
 static bool detectCart_LYNX() {
   // Could omit logging to save a few bytes
@@ -128,26 +147,21 @@ static bool detectCart_LYNX() {
   // Somewhat arbitrary, however many bytes would be unlikely to be
   // coincidentally mirrored
   const size_t DETECT_BYTES = 128;
-
-  for (int i = 0; i < DETECT_BYTES; i++) {
+  for (int i = 0; i < DETECT_BYTES && lynxBlockSize < LYNX_BLOCKADDR; i++) {
     uint8_t b = readByte_LYNX(i);
     // If any differences are detected when AUDIN=1, AUDIN is used to bankswitch
     // meaning we also use the maximum block size
     // (1024kb cart / 256 blocks = 4kb block bank switched between lower/upper 2kb blocks)
-    if (b != readByte_LYNX(i, 1)) {
+    if (b != readByte_LYNX(i + LYNX_AUDIN_ON)) {
       lynxUseAudin = true;
       lynxBlockSize = 2048;
       break;
     }
     // Identify mirroring of largest stride
     // Valid cart sizes of 128kb, 256kb, 512kb / 256 blocks = block sizes of 512b, 1024b, 2048b
-    if (b != readByte_LYNX(i + 1024)) {
-      lynxBlockSize = max(lynxBlockSize, 2048);
-    } else if (b != readByte_LYNX(i + 512)) {
-      lynxBlockSize = max(lynxBlockSize, 1024);
-    } else if (b != readByte_LYNX(i + 256)) {
-      lynxBlockSize = max(lynxBlockSize, 512);
-    }
+    compareStride_LYNX(b, i, 256);
+    compareStride_LYNX(b, i, 512);
+    compareStride_LYNX(b, i, 1024);
   }
 
   if (lynxBlockSize == 0) {
@@ -184,49 +198,269 @@ static void writeHeader_LYNX() {
   myFile.write(header, LYNX_HEADER_SIZE);
 }
 
-// Saves memory by using existing sd buffer instead of a second block-sized buffer (which could be up to 2KB)
-// Minimum block size is 512b, size of sdBuffer is 512b, all block sizes multiples of 512b,
-// so we shouldn't need to check for leftovers...
-static inline void ringBufferWrite_LYNX(uint32_t blocki, uint8_t byte) {
-  sdBuffer[blocki % 512] = byte;
-  if ((blocki + 1) % 512 == 0) {
-    myFile.write(sdBuffer, 512);
-  }
-}
-
 static void readROM_LYNX() {
   dataDir_LYNX(INPUT);
 
   // The upper part of the address is used as a block address
   // There are always 256 blocks, but the size of the block can vary
   // So outer loop always steps through block addresses
-
-  uint32_t i;
   const uint32_t upto = LYNX_BLOCKCOUNT * LYNX_BLOCKADDR;
   for (uint32_t blockAddr = 0; blockAddr < upto; blockAddr += LYNX_BLOCKADDR) {
     draw_progressbar(blockAddr, upto);
     blinkLED();
 
-    if (lynxUseAudin) {
-      // AUDIN bank switching uses a 4kb block split to 2 banks
-      for (i = 0; i < lynxBlockSize / 2; i++) {
-        ringBufferWrite_LYNX(i, readByte_LYNX(blockAddr + i, 0));
+    for (uint32_t i = 0; i < lynxBlockSize; i++) {
+      uint32_t addr = blockAddr + i;
+      if (lynxUseAudin && i >= lynxBlockSize / 2) {
+        addr += LYNX_AUDIN_ON - lynxBlockSize / 2;
       }
-      for (; i < lynxBlockSize; i++) {
-        ringBufferWrite_LYNX(i, readByte_LYNX(blockAddr + i - (lynxBlockSize / 2), 1));
-      }
-    } else {
-      for (i = 0; i < lynxBlockSize; i++) {
-        ringBufferWrite_LYNX(i, readByte_LYNX(i + blockAddr));
+      uint8_t byte = readByte_LYNX(addr);
+      sdBuffer[i % 512] = byte;
+      if ((i + 1) % 512 == 0) {
+        myFile.write(sdBuffer, 512);
       }
     }
   }
   draw_progressbar(upto, upto);
 }
 
+#pragma region FLASH
+
+#ifdef ENABLE_FLASH
+
+static void writeByte_LYNX(uint32_t addr, uint8_t data) {
+  digitalWrite(LYNX_OE, HIGH);
+  digitalWrite(LYNX_WE, HIGH);
+  setAddr_LYNX(addr);
+  PORTC = data;
+  digitalWrite(LYNX_WE, LOW);
+  delayMicroseconds(20);
+  digitalWrite(LYNX_WE, HIGH);
+}
+
+// Implements data complement status checking
+// We only look at D7, or the highest bit of expected
+void waitForDataComplement_LYNX(uint8_t expected) {
+  dataDir_LYNX(INPUT);
+  uint8_t status;
+  do {
+    digitalWrite(LYNX_OE, LOW);
+    // one nop = 62.5ns
+    // tOE = 30-50ns depending on flash
+    NOP;
+    status = PINC;
+    digitalWrite(LYNX_OE, HIGH);
+    // test highest bit
+  } while ((status ^ expected) >> 7);
+
+  dataDir_LYNX(OUTPUT);
+}
+
+static bool readHeader_LYNX() {
+  uint32_t romSize = fileSize;
+
+  print_Msg(F("Checking ROM..."));
+  display_Update();
+
+  char header[LYNX_HEADER_SIZE];
+  myFile.read(header, LYNX_HEADER_SIZE);
+
+  // Check for header to start with LYNX, assume valid .LNX header
+  if (strncmp(header, LYNX, 4) == 0) {
+    // Pull values from header
+    lynxBlockSize = (header[5] << 8) | header[4];
+    lynxUseAudin = header[59];
+    romSize = fileSize - LYNX_HEADER_SIZE;
+    println_Msg(FS(FSTRING_EMPTY));
+  } else {
+    // Header not valid, assume unheadered, rewind so we don't skip valid data
+    println_Msg(F("[NO HEADER]"));
+    myFile.seek(0);
+
+    // Get block size from file size
+    lynxBlockSize = fileSize / LYNX_BLOCKCOUNT;
+    lynxUseAudin = lynxBlockSize >= 2048;
+    romSize = fileSize;
+  }
+
+  print_Msg(F("AUDIN="));
+  print_Msg(lynxUseAudin);
+  print_Msg(F(" BLOCK="));
+  println_Msg(lynxBlockSize);
+
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  print_Msg(romSize / 1024);
+  println_Msg(F("KB"));
+
+  // Ensure valid block size, file size, and file fits in flash
+  uint32_t expectedSize = (uint32_t)LYNX_BLOCKCOUNT * lynxBlockSize;
+  if (lynxBlockSize % 256 != 0 || lynxBlockSize > LYNX_BLOCKADDR || lynxBlockSize <= 0) {
+    println_Msg(FS(FSTRING_EMPTY));
+    print_STR(error_STR, false);
+    println_Msg(F("Invalid block size"));
+    return waitPressButton_LYNX();
+  }
+  if (romSize != expectedSize) {
+    println_Msg(FS(FSTRING_EMPTY));
+    print_STR(error_STR, false);
+    println_Msg(F("Invalid file size"));
+    return waitPressButton_LYNX();
+  }
+  if (expectedSize > flashSize) {
+    println_Msg(FS(FSTRING_EMPTY));
+    print_STR(error_STR, false);
+    print_STR(file_too_big_STR, true);
+    return waitPressButton_LYNX();
+  }
+
+  println_Msg(FS(FSTRING_OK));
+  display_Update();
+  return true;
+}
+
+static bool detectFlash_LYNX() {
+  print_Msg(F("Detecting flash..."));
+
+  // SOFTWARE ID PROGRAM
+  dataDir_LYNX(OUTPUT);
+  writeByte_LYNX(0x5555, 0xAA);
+  writeByte_LYNX(0x2AAA, 0x55);
+  writeByte_LYNX(0x5555, 0x90);
+  dataDir_LYNX(INPUT);
+  // tIDA = 150ns
+  NOP;
+  NOP;
+  NOP;
+  // MFG,DEVICE
+  uint16_t deviceId = (readByte_LYNX(0x0) << 8) | readByte_LYNX(0x1);
+
+  // EXIT SOFTWARE ID PROGRAM
+  dataDir_LYNX(OUTPUT);
+  writeByte_LYNX(0x5555, 0xAA);
+  writeByte_LYNX(0x2AAA, 0x55);
+  writeByte_LYNX(0x5555, 0xF0);
+
+  flashSize = 0;
+  switch (deviceId) {
+    case 0xBFB5:
+      // SST39SF010 = 1Mbit
+      flashSize = 131072UL;
+      break;
+    case 0xBFB6:
+      // SST39SF020 = 2Mbit
+      flashSize = 262144UL;
+      break;
+    case 0xBFB7:
+      // SST39SF040 = 4Mbit
+      flashSize = 524288UL;
+      break;
+      // case 0xC2A4:
+      //   // MX29F040 = 4Mbit
+      //   flashSize = 524288UL;
+      //   break;
+      // case 0xC2D5:
+      //   // MX29F080 = 8Mbit
+      //   flashSize = 1048576UL;
+      //   break;
+  }
+
+  if (flashSize <= 0) {
+    println_Msg(FS(FSTRING_EMPTY));
+    print_STR(error_STR, false);
+    println_Msg(F("Not recognized"));
+    return waitPressButton_LYNX();
+  }
+
+  print_Msg(flashSize / 1024);
+  println_Msg(F("KB"));
+  display_Update();
+  return true;
+}
+
+static void eraseFlash_LYNX() {
+  print_Msg(F("Erasing..."));
+  display_Update();
+
+  // CHIP ERASE PROGRAM
+  dataDir_LYNX(OUTPUT);
+  writeByte_LYNX(0x5555, 0xAA);
+  writeByte_LYNX(0x2AAA, 0x55);
+  writeByte_LYNX(0x5555, 0x80);
+  writeByte_LYNX(0x5555, 0xAA);
+  writeByte_LYNX(0x2AAA, 0x55);
+  writeByte_LYNX(0x5555, 0x10);
+  waitForDataComplement_LYNX(0xFF);
+
+  println_Msg(FS(FSTRING_OK));
+  display_Update();
+}
+
+static void writeROM_LYNX() {
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(FS(FSTRING_SELECT_FILE));
+  display_Clear();
+
+  // HACK: openFlashFile() checks fileSize against flashSize for you, but this disregards header size:
+  // if size(rom) == size(flash) but size(rom + header) > size(flash) we'd get a false negative
+  // Pretend we have infinite flash size, allow openFlashFile() to pass this test, then do our own test in readHeader_LYNX()
+  flashSize = ULONG_MAX;
+
+  if (!openFlashFile()) return;
+
+  if (!detectFlash_LYNX()) return;
+
+  if (!readHeader_LYNX()) return;
+
+  // Pause to read debug info
+  // wait();
+  // or alternately auto-advance
+  delay(2000);
+  display_Clear();
+
+  eraseFlash_LYNX();
+
+  print_STR(flashing_file_STR, true);
+  display_Update();
+
+  dataDir_LYNX(OUTPUT);
+  uint8_t block[lynxBlockSize];
+  const uint32_t upto = LYNX_BLOCKCOUNT * LYNX_BLOCKADDR;
+  for (uint32_t blockAddr = 0; blockAddr < upto; blockAddr += LYNX_BLOCKADDR) {
+    draw_progressbar(blockAddr, upto);
+    blinkLED();
+
+    myFile.read(block, lynxBlockSize);
+    for (uint32_t i = 0; i < lynxBlockSize; i++) {
+      uint32_t addr = blockAddr + i;
+      if (lynxUseAudin && i >= lynxBlockSize / 2) {
+        addr += LYNX_AUDIN_ON - lynxBlockSize / 2;
+      }
+
+      // BYTE PROGRAM
+      uint8_t b = block[i];
+      writeByte_LYNX(0x5555, 0xAA);
+      writeByte_LYNX(0x2AAA, 0x55);
+      writeByte_LYNX(0x5555, 0xA0);
+      writeByte_LYNX(addr, b);
+
+      waitForDataComplement_LYNX(b);
+    }
+  }
+  draw_progressbar(upto, upto);
+
+  myFile.close();
+  dataDir_LYNX(INPUT);
+  print_STR(done_STR, true);
+  waitPressButton_LYNX();
+}
+
+#endif
+
 #pragma region MENU
 
-static const char* const menuOptionsLYNX[] PROGMEM = {FSTRING_READ_ROM, FSTRING_RESET};
+static const char PROGMEM LYNX_MENU_FLASH[] = "Program Flashcart";
+static const char* const menuOptionsLYNX[] PROGMEM = { FSTRING_READ_ROM, LYNX_MENU_FLASH, FSTRING_RESET };
 
 void lynxMenu() {
   size_t menuCount = sizeof(menuOptionsLYNX) / sizeof(menuOptionsLYNX[0]);
@@ -246,8 +480,21 @@ void lynxMenu() {
       sd.chdir("/");
       compareCRC("lynx.txt", 0, true, LYNX_HEADER_SIZE);
       print_STR(done_STR, true);
-      display_Update();
-      wait();
+      waitPressButton_LYNX();
+      break;
+
+#ifdef ENABLE_FLASH
+    case 1:
+      writeROM_LYNX();
+      break;
+#endif
+
+    case 2:
+      resetArduino();
+      break;
+
+    default:
+      print_MissingModule();
       break;
   }
 }
