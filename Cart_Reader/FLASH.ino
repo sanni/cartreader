@@ -607,7 +607,7 @@ idtheflash:
     // Unknown S29GL type
     else {
       println_Msg(F("Unknown S29GL Type"));
-      flashSize = 4194304;
+      flashSize = 8388608;
       sectorSize = 65536;
       bufferSize = 32;
     }
