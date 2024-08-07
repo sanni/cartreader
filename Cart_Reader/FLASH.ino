@@ -72,7 +72,7 @@ void flashMenu() {
     case 0:
       setupCFI();
       flashSize = 8388608;
-      writeCFI_Flash(0);
+      writeCFI_Flash(1, 1, 0);
       verifyFlash();
       print_STR(press_button_STR, 0);
       display_Update();
@@ -124,7 +124,7 @@ void flashMenu() {
     case 0:
       setupCFI();
       flashSize = 8388608;
-      writeCFI_Flash(0);
+      writeCFI_Flash(1, 1, 0);
       verifyFlash();
       print_STR(press_button_STR, 0);
       display_Update();
@@ -940,7 +940,7 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     PORTL |= (1 << 6);
   }
   // for SNES LoRom repro with 2x 2MB
-  else if (mapping == 11) {
+  else if (mapping == 122) {
     // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
     // Set SNES A15(PK7) HIGH to disable SRAM
@@ -951,7 +951,7 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     PORTL ^= (1 << 6);
   }
   // for SNES HiRom repro with 2x 2MB
-  else if (mapping == 22) {
+  else if (mapping == 222) {
     // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A23
@@ -962,7 +962,7 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     PORTL |= (1 << 6);
   }
   // for SNES ExLoRom repro with 2x 4MB
-  else if (mapping == 111) {
+  else if (mapping == 124) {
     // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
     // Set SNES A15(PK7) HIGH to disable SRAM
@@ -972,12 +972,44 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     // Flip A22(PL7) to reverse P0 and P1 roms
     PORTL ^= (1 << 7);
   }
-  // for SNES ExHiRom repro
-  else if (mapping == 222) {
+  // for SNES ExHiRom repro with 2x 4MB
+  else if (mapping == 224) {
     // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A22
     PORTL = (myAddress >> 16) & 0xFF;
+    // Set PL7 to inverse of PL6 to reverse P0 and P1 roms
+    if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
+      // if PL6 is 0 set PL7 to 1
+      PORTL |= (1 << 7);
+    } else if (((myAddress >> 16) & 0xFF) & 0x40) {
+      // if PL6 is 1 set PL7 to 0
+      PORTL &= ~(1 << 7);
+    }
+    // Switch SNES BA6(PL6) to HIGH to disable SRAM
+    PORTL |= (1 << 6);
+  }
+  // for SNES ExLoRom repro with 4x 2MB
+  else if (mapping == 142) {
+    // A8-A14
+    PORTK = (myAddress >> 8) & 0x7F;
+    // Set SNES A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
+    // A15-A22
+    PORTL = (myAddress >> 15) & 0xFF;
+    // Flip BA6(PL6) to address second rom chip
+    PORTL ^= (1 << 6);
+    // Flip A22(PL7) to reverse P0 and P1 roms
+    PORTL ^= (1 << 7);
+  }
+  // for SNES ExHiRom repro with 4x 2MB
+  else if (mapping == 242) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A22
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Flip BA5(PL5) to address second rom chip
+    PORTL ^= (1 << 5);
     // Set PL7 to inverse of PL6 to reverse P0 and P1 roms
     if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
       // if PL6 is 0 set PL7 to 1
@@ -1055,7 +1087,7 @@ byte readByte_Flash(unsigned long myAddress) {
     PORTL |= (1 << 6);
   }
   // for SNES LoRom repro with 2x 2MB
-  else if (mapping == 11) {
+  else if (mapping == 122) {
     // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
     // Set SNES A15(PK7) HIGH to disable SRAM
@@ -1066,7 +1098,7 @@ byte readByte_Flash(unsigned long myAddress) {
     PORTL ^= (1 << 6);
   }
   // for SNES HiRom repro with 2x 2MB
-  else if (mapping == 22) {
+  else if (mapping == 222) {
     // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A23
@@ -1076,8 +1108,8 @@ byte readByte_Flash(unsigned long myAddress) {
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
   }
-  // for SNES ExLoRom repro
-  else if (mapping == 111) {
+  // for SNES ExLoRom repro with 2x 4MB
+  else if (mapping == 124) {
     // A8-A14
     PORTK = (myAddress >> 8) & 0x7F;
     // Set SNES A15(PK7) HIGH to disable SRAM
@@ -1087,12 +1119,44 @@ byte readByte_Flash(unsigned long myAddress) {
     // Flip A22(PL7) to reverse P0 and P1 roms
     PORTL ^= (1 << 7);
   }
-  // for SNES ExHiRom repro
-  else if (mapping == 222) {
+  // for SNES ExHiRom repro with 2x 4MB
+  else if (mapping == 224) {
     // A8-A15
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A22
     PORTL = (myAddress >> 16) & 0xFF;
+    // Set PL7 to inverse of PL6 to reverse P0 and P1 roms
+    if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
+      // if PL6 is 0 set PL7 to 1
+      PORTL |= (1 << 7);
+    } else if (((myAddress >> 16) & 0xFF) & 0x40) {
+      // if PL6 is 1 set PL7 to 0
+      PORTL &= ~(1 << 7);
+    }
+    // Switch SNES BA6(PL6) to HIGH to disable SRAM
+    PORTL |= (1 << 6);
+  }
+  // for SNES ExLoRom repro with 4x 2MB
+  else if (mapping == 142) {
+    // A8-A14
+    PORTK = (myAddress >> 8) & 0x7F;
+    // Set SNES A15(PK7) HIGH to disable SRAM
+    PORTK |= (1 << 7);
+    // A15-A22
+    PORTL = (myAddress >> 15) & 0xFF;
+    // Flip BA6(PL6) to address second rom chip
+    PORTL ^= (1 << 6);
+    // Flip A22(PL7) to reverse P0 and P1 roms
+    PORTL ^= (1 << 7);
+  }
+  // for SNES ExHiRom repro with 4x 2MB
+  else if (mapping == 242) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16-A22
+    PORTL = (myAddress >> 16) & 0xFF;
+    // Flip BA5(PL5) to address second rom chip
+    PORTL ^= (1 << 5);
     // Set PL7 to inverse of PL6 to reverse P0 and P1 roms
     if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
       // if PL6 is 0 set PL7 to 1
@@ -1964,26 +2028,42 @@ void blankcheck_Flash() {
 }
 
 void verifyFlash() {
-  verifyFlash(0);
+  verifyFlash(1, 1, 0);
 }
 
-void verifyFlash(byte romChips) {
+void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
   if (openVerifyFlashFile()) {
     blank = 0;
 
-    if (romChips == 1) {
-      myFile.seekCur(0);
-      // Truncate file to size of 1st flash chip
-      if (fileSize > flashSize / 2) {
-        fileSize = flashSize / 2;
-      }
-    } else if (romChips == 2) {
-      if (fileSize > flashSize / 2) {
-        myFile.seekCur(flashSize / 2);
-        fileSize = fileSize - (flashSize / 2);
-      } else
-        fileSize = 0;
-    }
+    if ((currChip == 1) && (totalChips == 4)) {
+      if (reversed)
+        myFile.seekSet(4194304);
+      fileSize = 2097152;
+    } else if ((currChip == 2) && (totalChips == 4) && (fileSize > 6291456)) {
+      if (reversed)
+        myFile.seekSet(6291456);
+      fileSize = 2097152;
+    } else if ((currChip == 3) && (totalChips == 4)) {
+      if (reversed)
+        myFile.seekSet(0);
+      fileSize = 2097152;
+    } else if ((currChip == 4) && (totalChips == 4)) {
+      if (reversed)
+        myFile.seekSet(2097152);
+      fileSize = 2097152;
+    } else if ((currChip == 1) && (totalChips == 2)) {
+      if (reversed)
+        myFile.seekSet(4194304);
+      fileSize = 4194304;
+    } else if ((currChip == 2) && (totalChips == 2)) {
+      if (reversed)
+        myFile.seekSet(0);
+      fileSize = 4194304;
+    } else if ((currChip == 1) && (totalChips == 1)) {
+      if (reversed)
+        myFile.seekSet(4194304);
+    } else
+      fileSize = 0;  // skip write
 
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
@@ -1991,6 +2071,15 @@ void verifyFlash(byte romChips) {
     draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
+      if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 8388608) && (currByte == 4194304)) {
+        myFile.seekSet(0);
+      }
+      if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 6291456) && (currByte == 2097152)) {
+        myFile.seekSet(0);
+        currByte = 4194304;
+        fileSize = 8388608;
+      }
+
       //fill sdBuffer
       myFile.read(sdBuffer, 512);
       for (int c = 0; c < 512; c++) {
@@ -2765,7 +2854,7 @@ void identifyCFI_Flash() {
 }
 
 // Write flashrom
-void writeCFI_Flash(byte romChips) {
+void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
   if (openFileOnSD()) {
     // Print filepath
     print_STR(flashing_file_STR, 0);
@@ -2807,29 +2896,41 @@ void writeCFI_Flash(byte romChips) {
     }
 
     print_Msg(F("Writing flash"));
-    // If we have two ROM chips only write half the ROM file here and skip to second half of file on second write
-    if (romChips == 0) {
-      println_Msg(F(""));
-    }
+    print_Msg(FS(FSTRING_SPACE));
+    print_Msg(currChip);
+    print_Msg(F("/"));
+    println_Msg(totalChips);
 
-    else if (romChips == 1) {
-      println_Msg(F(" 1/2"));
-      myFile.seekCur(0);
-      // Truncate file to size of 1st flash chip
-      if (fileSize > flashSize / 2) {
-        fileSize = flashSize / 2;
-      }
-    }
+    if ((currChip == 1) && (totalChips == 4)) {
+      if (reversed)
+        myFile.seekSet(4194304);
+      fileSize = 2097152;
+    } else if ((currChip == 2) && (totalChips == 4) && (fileSize > 6291456)) {
+      if (reversed)
+        myFile.seekSet(6291456);
+      fileSize = 2097152;
+    } else if ((currChip == 3) && (totalChips == 4)) {
+      if (reversed)
+        myFile.seekSet(0);
+      fileSize = 2097152;
+    } else if ((currChip == 4) && (totalChips == 4)) {
+      if (reversed)
+        myFile.seekSet(2097152);
+      fileSize = 2097152;
+    } else if ((currChip == 1) && (totalChips == 2)) {
+      if (reversed)
+        myFile.seekSet(4194304);
+      fileSize = 4194304;
+    } else if ((currChip == 2) && (totalChips == 2)) {
+      if (reversed)
+        myFile.seekSet(0);
+      fileSize = 4194304;
+    } else if ((currChip == 1) && (totalChips == 1)) {
+      if (reversed)
+        myFile.seekSet(4194304);
+    } else
+      fileSize = 0;  // skip write
 
-    else if (romChips == 2) {
-      println_Msg(F(" 2/2"));
-      if (fileSize > flashSize / 2) {
-        myFile.seekCur(flashSize / 2);
-        fileSize = fileSize - (flashSize / 2);
-      } else {
-        fileSize = 0;
-      }
-    }
     display_Update();
 
     //Initialize progress bar
@@ -2838,6 +2939,15 @@ void writeCFI_Flash(byte romChips) {
     draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += 512) {
+      if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 8388608) && (currAddr == 4194304)) {
+        myFile.seekSet(0);
+      }
+      if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 6291456) && (currAddr == 2097152)) {
+        myFile.seekSet(0);
+        currAddr = 4194304;
+        fileSize = 8388608;
+      }
+
       myFile.read(sdBuffer, 512);
 
       // Blink led

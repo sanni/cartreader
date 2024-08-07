@@ -66,7 +66,15 @@ static const char* const menuOptionsRepro[] PROGMEM = { reproMenuItem1, reproMen
 static const char reproCFIItem1[] PROGMEM = "1x 2MB";
 static const char reproCFIItem2[] PROGMEM = "2x 2MB";
 static const char reproCFIItem3[] PROGMEM = "1x 4MB";
-static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproCFIItem2, reproCFIItem3, FSTRING_RESET };
+static const char reproCFIItem4[] PROGMEM = "2x 4MB";
+static const char reproCFIItem5[] PROGMEM = "4x 2MB";
+static const char reproCFIItem6[] PROGMEM = "1x 8MB";
+static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproCFIItem2, reproCFIItem3, reproCFIItem4, reproCFIItem5, reproCFIItem6, FSTRING_RESET };
+
+// EX ROM config
+static const char reproEXItem1[] PROGMEM = "standard (ABCD)";
+static const char reproEXItem2[] PROGMEM = "reversed (CDAB)";
+static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXItem2, FSTRING_RESET };
 
 void setupCFI() {
 #ifdef ENABLE_FLASH
@@ -83,13 +91,39 @@ void setupCFI() {
 #endif
 }
 
+boolean reproEXMenu() {
+  boolean fileOrder = 0;
+#ifdef ENABLE_FLASH
+  // create menu with title and 3 options to choose from
+  unsigned char snsReproEX;
+  // Copy menuOptions out of progmem
+  convertPgm(menuOptionsReproEX, 3);
+  snsReproEX = question_box(F("ExROM file order"), menuOptions, 3, 0);
+
+  // wait for user choice to come back from the question box menu
+  switch (snsReproEX) {
+    case 0:
+      fileOrder = 0;
+      break;
+    case 1:
+      fileOrder = 1;
+      break;
+    case 2:
+      resetArduino();
+      break;
+  }
+#endif
+  return fileOrder;
+}
+
 // Setup number of flashroms
 void reproCFIMenu() {
-  // create menu with title and 4 options to choose from
+  boolean reversed = 0;
+  // create menu with title and 7 options to choose from
   unsigned char snsReproCFI;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsReproCFI, 4);
-  snsReproCFI = question_box(F("Select Flash Config"), menuOptions, 4, 0);
+  convertPgm(menuOptionsReproCFI, 7);
+  snsReproCFI = question_box(F("Select Flash Config"), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (snsReproCFI) {
@@ -97,41 +131,121 @@ void reproCFIMenu() {
     case 0:
       setupCFI();
       flashSize = 2097152;
-      writeCFI_Flash(0);
-      verifyFlash();
+      writeCFI_Flash(1, 1, 0);
+      verifyFlash(1, 1, 0);
       break;
 
     case 1:
       setupCFI();
       flashSize = 4194304;
       // Write first rom chip
-      writeCFI_Flash(1);
-      verifyFlash(1);
+      writeCFI_Flash(1, 2, 0);
+      verifyFlash(1, 2, 0);
       delay(300);
 
       // Switch to second ROM chip, see flash.ino low level functions line 811
       // LoROM
       if (mapping == 1)
-        mapping = 11;
+        mapping = 122;
       // HiROM
       else if (mapping == 2)
-        mapping = 22;
+        mapping = 222;
 
       // Write second rom chip
       display_Clear();
-      writeCFI_Flash(2);
-      verifyFlash(2);
+      writeCFI_Flash(2, 2, 0);
+      verifyFlash(2, 2, 0);
       break;
 
     case 2:
       setupCFI();
       flashSize = 4194304;
-      writeCFI_Flash(0);
-      verifyFlash();
+      writeCFI_Flash(1, 1, 0);
+      verifyFlash(1, 1, 0);
+      break;
+
+    case 3:
+      reversed = reproEXMenu();
+      setupCFI();
+      flashSize = 8388608;
+      // Write first rom chip
+      writeCFI_Flash(1, 2, reversed);
+      verifyFlash(1, 2, reversed);
+      delay(300);
+
+      // Switch to second ROM chip, see flash.ino low level functions line 811
+      // LoROM
+      if (mapping == 1)
+        mapping = 124;
+      // HiROM
+      else if (mapping == 2)
+        mapping = 224;
+
+      // Write second rom chip
+      display_Clear();
+      writeCFI_Flash(2, 2, reversed);
+      verifyFlash(2, 2, reversed);
+      break;
+
+    case 4:
+      reversed = reproEXMenu();
+      setupCFI();
+      flashSize = 8388608;
+      // Write first rom chip
+      writeCFI_Flash(1, 4, reversed);
+      verifyFlash(1, 4, reversed);
+      delay(300);
+
+      // Switch to second ROM chip, see flash.ino low level functions line 811
+      // LoROM
+      if (mapping == 1)
+        mapping = 122;
+      // HiROM
+      else if (mapping == 2)
+        mapping = 222;
+
+      // Write second rom chip
+      display_Clear();
+      writeCFI_Flash(2, 4, reversed);
+      verifyFlash(2, 4, reversed);
+
+      // Switch to third ROM chip
+      // LoROM
+      if (mapping == 122)
+        mapping = 124;
+      // HiROM
+      else if (mapping == 222)
+        mapping = 224;
+
+      // Write second rom chip
+      display_Clear();
+      writeCFI_Flash(3, 4, reversed);
+      verifyFlash(3, 4, reversed);
+
+      // Switch to fourth ROM chip
+      // LoROM
+      if (mapping == 124)
+        mapping = 142;
+      // HiROM
+      else if (mapping == 224)
+        mapping = 242;
+
+      // Write second rom chip
+      display_Clear();
+      writeCFI_Flash(4, 4, reversed);
+      verifyFlash(4, 4, reversed);
+      break;
+
+    case 5:
+      reversed = reproEXMenu();
+      setupCFI();
+      flashSize = 8388608;
+      writeCFI_Flash(1, 1, reversed);
+      verifyFlash(1, 1, reversed);
       break;
 #endif
 
-    case 3:
+    case 6:
       resetArduino();
       break;
   }
@@ -194,7 +308,7 @@ void reproMenu() {
       // ExLoRom
       display_Clear();
       display_Update();
-      mapping = 111;
+      mapping = 124;
       setup_Flash8();
       id_Flash8();
       wait();
@@ -205,7 +319,7 @@ void reproMenu() {
       // ExHiRom
       display_Clear();
       display_Update();
-      mapping = 222;
+      mapping = 224;
       setup_Flash8();
       id_Flash8();
       wait();
