@@ -72,8 +72,8 @@ static const char reproCFIItem6[] PROGMEM = "1x 8MB";
 static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproCFIItem2, reproCFIItem3, reproCFIItem4, reproCFIItem5, reproCFIItem6, FSTRING_RESET };
 
 // EX ROM config
-static const char reproEXItem1[] PROGMEM = "standard (ABCD)";
-static const char reproEXItem2[] PROGMEM = "reversed (CDAB)";
+static const char reproEXItem1[] PROGMEM = "standard (CDAB)";
+static const char reproEXItem2[] PROGMEM = "in-order (ABCD)";
 static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXItem2, FSTRING_RESET };
 
 void setupCFI() {
@@ -103,10 +103,10 @@ boolean reproEXMenu() {
   // wait for user choice to come back from the question box menu
   switch (snsReproEX) {
     case 0:
-      fileOrder = 0;
+      fileOrder = 1;
       break;
     case 1:
-      fileOrder = 1;
+      fileOrder = 0;
       break;
     case 2:
       resetArduino();
