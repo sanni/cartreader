@@ -936,6 +936,14 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
+    // Set PL7 to value of PL6
+    if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
+      // if PL6 is 0 set PL7 to 0
+      PORTL &= ~(1 << 7);
+    } else if (((myAddress >> 16) & 0xFF) & 0x40) {
+      // if PL6 is 1 set PL7 to 1
+      PORTL |= (1 << 7);
+    }
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
   }
@@ -1279,8 +1287,23 @@ bool openFileOnSD() {
   if (myFile.open(filePath, O_READ)) {
     // Get rom size from file
     fileSize = myFile.fileSize();
-    if (fileSize > flashSize)
+    if (fileSize > flashSize) {
+      display_Clear();
+      println_Msg(filePath);
+      println_Msg(FS(FSTRING_EMPTY));
+      print_Msg(F("File:"));
+      print_Msg(FS(FSTRING_SPACE));
+      print_Msg(FS(FSTRING_SPACE));
+      print_Msg(FS(FSTRING_SPACE));
+      print_Msg(FS(FSTRING_SPACE));
+      print_Msg(fileSize);
+      print_STR(_bytes_STR, 1);
+      print_Msg(F("Flash:"));
+      print_Msg(FS(FSTRING_SPACE));
+      print_Msg(flashSize);
+      print_STR(_bytes_STR, 1);
       print_FatalError(file_too_big_STR);
+    }
     return true;
   }
   print_STR(open_file_STR, 1);
