@@ -1091,6 +1091,14 @@ byte readByte_Flash(unsigned long myAddress) {
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
+    // Set PL7 to value of PL6
+    if (!(((myAddress >> 16) & 0xFF) & 0x40)) {
+      // if PL6 is 0 set PL7 to 0
+      PORTL &= ~(1 << 7);
+    } else if (((myAddress >> 16) & 0xFF) & 0x40) {
+      // if PL6 is 1 set PL7 to 1
+      PORTL |= (1 << 7);
+    }
     // Switch SNES BA6(PL6) to HIGH to disable SRAM
     PORTL |= (1 << 6);
   }
