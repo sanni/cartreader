@@ -2066,35 +2066,8 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
   if (openVerifyFlashFile()) {
     blank = 0;
 
-    if ((currChip == 1) && (totalChips == 4)) {
-      if (reversed)
-        myFile.seekSet(4194304);
-      fileSize = 2097152;
-    } else if ((currChip == 2) && (totalChips == 4) && (fileSize > 6291456)) {
-      if (reversed)
-        myFile.seekSet(6291456);
-      fileSize = 2097152;
-    } else if ((currChip == 3) && (totalChips == 4)) {
-      if (reversed)
-        myFile.seekSet(0);
-      fileSize = 2097152;
-    } else if ((currChip == 4) && (totalChips == 4)) {
-      if (reversed)
-        myFile.seekSet(2097152);
-      fileSize = 2097152;
-    } else if ((currChip == 1) && (totalChips == 2)) {
-      if (reversed)
-        myFile.seekSet(4194304);
-      fileSize = 4194304;
-    } else if ((currChip == 2) && (totalChips == 2)) {
-      if (reversed)
-        myFile.seekSet(0);
-      fileSize = 4194304;
-    } else if ((currChip == 1) && (totalChips == 1)) {
-      if (reversed)
-        myFile.seekSet(4194304);
-    } else
-      fileSize = 0;  // skip write
+    // Adjust filesize to fit flashchip
+    adjustFileSize(currChip, totalChips, reversed);
 
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
@@ -2884,6 +2857,72 @@ void identifyCFI_Flash() {
   display_Update();
 }
 
+// Adjust file size to fit flash chip
+void adjustFileSize(byte currChip, byte totalChips, boolean reversed) {
+  // 1 flash chip
+  if ((currChip == 1) && (totalChips == 1) && reversed) {
+    myFile.seekSet(4194304);
+  }
+  // 2 flash chips
+  else if ((currChip == 1) && (totalChips == 2)) {
+    if (fileSize > flashSize / 2)
+      fileSize = flashSize / 2;
+  } else if ((currChip == 2) && (totalChips == 2) && (fileSize > flashSize / 2)) {
+    fileSize = fileSize - flashSize / 2;
+    myFile.seekSet(flashSize / 2);
+  }
+
+  // 4*2MB
+  else if ((currChip == 1) && (totalChips == 4)) {
+    if (reversed)
+      myFile.seekSet(4194304);
+    if (fileSize > 2097152)
+      fileSize = 2097152;
+
+  } else if ((currChip == 2) && (totalChips == 4)) {
+    if (reversed) {
+      if (fileSize > 6291456) {
+        myFile.seekSet(6291456);
+        fileSize = 2097152;
+      } else
+        fileSize = 0;
+    } else {
+      if (fileSize > 2097152) {
+        myFile.seekSet(2097152);
+        fileSize = 2097152;
+      } else
+        fileSize = 0;
+    }
+
+  } else if ((currChip == 3) && (totalChips == 4)) {
+    if (reversed) {
+      myFile.seekSet(0);
+      fileSize = 2097152;
+    } else {
+      if (fileSize > 4194304) {
+        myFile.seekSet(4194304);
+        fileSize = 2097152;
+      } else
+        fileSize = 0;
+    }
+
+  } else if ((currChip == 4) && (totalChips == 4)) {
+    if (reversed) {
+      myFile.seekSet(2097152);
+      fileSize = 2097152;
+    } else {
+      if (fileSize > 6291456) {
+        myFile.seekSet(6291456);
+        fileSize = 2097152;
+      } else
+        fileSize = 0;
+    }
+  }
+  // skip write
+  else
+    fileSize = 0;
+}
+
 // Write flashrom
 void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
   if (openFileOnSD()) {
@@ -2931,37 +2970,8 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     print_Msg(currChip);
     print_Msg(F("/"));
     println_Msg(totalChips);
-
-    if ((currChip == 1) && (totalChips == 4)) {
-      if (reversed)
-        myFile.seekSet(4194304);
-      fileSize = 2097152;
-    } else if ((currChip == 2) && (totalChips == 4) && (fileSize > 6291456)) {
-      if (reversed)
-        myFile.seekSet(6291456);
-      fileSize = 2097152;
-    } else if ((currChip == 3) && (totalChips == 4)) {
-      if (reversed)
-        myFile.seekSet(0);
-      fileSize = 2097152;
-    } else if ((currChip == 4) && (totalChips == 4)) {
-      if (reversed)
-        myFile.seekSet(2097152);
-      fileSize = 2097152;
-    } else if ((currChip == 1) && (totalChips == 2)) {
-      if (reversed)
-        myFile.seekSet(4194304);
-      fileSize = 4194304;
-    } else if ((currChip == 2) && (totalChips == 2)) {
-      if (reversed)
-        myFile.seekSet(0);
-      fileSize = 4194304;
-    } else if ((currChip == 1) && (totalChips == 1)) {
-      if (reversed)
-        myFile.seekSet(4194304);
-    } else
-      fileSize = 0;  // skip write
-
+    // Adjust filesize to fit flashchip
+    adjustFileSize(currChip, totalChips, reversed);
     display_Update();
 
     //Initialize progress bar
