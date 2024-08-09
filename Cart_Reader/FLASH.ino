@@ -2868,8 +2868,11 @@ void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
   // 2*2MB or 2*4MB
   else if ((currChip == 1) && (totalChips == 2)) {
     if (reversed) {
-      fileSize = fileSize - flashSize / 2;
-      myFile.seekSet(4194304);
+      if (fileSize > 4194304) {
+        fileSize = fileSize - flashSize / 2;
+        myFile.seekSet(4194304);
+      } else
+        fileSize = 0;
     } else if (fileSize > flashSize / 2)
       fileSize = flashSize / 2;
 
@@ -2885,9 +2888,13 @@ void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
 
   // 4*2MB
   else if ((currChip == 1) && (totalChips == 4)) {
-    if (reversed)
-      myFile.seekSet(4194304);
-    if (fileSize > 2097152)
+    if (reversed) {
+      if (fileSize > 4194304) {
+        myFile.seekSet(4194304);
+        fileSize = 2097152;
+      } else
+        fileSize = 0;
+    } else if (fileSize > 2097152)
       fileSize = 2097152;
 
   } else if ((currChip == 2) && (totalChips == 4)) {
@@ -2919,8 +2926,11 @@ void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
 
   } else if ((currChip == 4) && (totalChips == 4)) {
     if (reversed) {
-      myFile.seekSet(2097152);
-      fileSize = 2097152;
+      if (fileSize > 2097152) {
+        myFile.seekSet(2097152);
+        fileSize = 2097152;
+      } else
+        fileSize = 0;
     } else {
       if (fileSize > 6291456) {
         myFile.seekSet(6291456);
