@@ -178,6 +178,7 @@ void flashromMenu8() {
         print_STR(press_button_STR, 1);
         display_Update();
         wait();
+        rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(F("Please wait..."));
         display_Update();
@@ -2883,7 +2884,8 @@ void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
     } else if (fileSize > flashSize / 2) {
       fileSize = fileSize - flashSize / 2;
       myFile.seekSet(flashSize / 2);
-    }
+    } else
+      fileSize = 0;
   }
 
   // 4*2MB
@@ -2951,6 +2953,12 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     print_STR(flashing_file_STR, 0);
     print_Msg(filePath);
     println_Msg(F("..."));
+    // Check size
+    if ((flashSize == 8388608) && (fileSize < 6291456) && reversed) {
+      println_Msg(FS(FSTRING_EMPTY));
+      print_STR(error_STR, 0);
+      print_FatalError(F("ROM file not ExROM"));
+    }
     display_Update();
 
     // Reset flash
@@ -2991,7 +2999,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
 
     print_Msg(F("Writing flash"));
 
-    // For file offset indicator SNES repros with multiple chips
+    // File offset indicator for SNES repros with multiple chips
     if ((totalChips > 1) || reversed) {
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(currChip);

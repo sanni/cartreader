@@ -71,10 +71,11 @@ static const char reproCFIItem5[] PROGMEM = "4x 2MB";
 static const char reproCFIItem6[] PROGMEM = "1x 8MB";
 static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproCFIItem2, reproCFIItem3, reproCFIItem4, reproCFIItem5, reproCFIItem6, FSTRING_RESET };
 
-// ROM file order
+/* ROM file order
 static const char reproEXItem1[] PROGMEM = "ExROM (CDAB)";
 static const char reproEXItem2[] PROGMEM = "standard (ABCD)";
 static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXItem2, FSTRING_RESET };
+*/
 
 void setupCFI() {
 #ifdef ENABLE_FLASH
@@ -91,7 +92,7 @@ void setupCFI() {
 #endif
 }
 
-boolean reproEXMenu() {
+/*boolean reproEXMenu() {
   boolean fileOrder = 0;
 #ifdef ENABLE_FLASH
   // create menu with title and 3 options to choose from
@@ -114,11 +115,11 @@ boolean reproEXMenu() {
   }
 #endif
   return fileOrder;
-}
+}*/
 
 // Setup number of flashroms
 void reproCFIMenu() {
-  boolean reversed = 0;
+  boolean reversed = 1;
   // create menu with title and 7 options to choose from
   unsigned char snsReproCFI;
   // Copy menuOptions out of progmem
@@ -165,7 +166,7 @@ void reproCFIMenu() {
       break;
 
     case 3:
-      reversed = reproEXMenu();
+      //reversed = reproEXMenu();
       setupCFI();
       flashSize = 8388608;
       // Write first rom chip
@@ -188,7 +189,7 @@ void reproCFIMenu() {
       break;
 
     case 4:
-      reversed = reproEXMenu();
+      //reversed = reproEXMenu();
       setupCFI();
       flashSize = 8388608;
       // Write first rom chip
@@ -237,7 +238,7 @@ void reproCFIMenu() {
       break;
 
     case 5:
-      reversed = reproEXMenu();
+      //reversed = reproEXMenu();
       setupCFI();
       flashSize = 8388608;
       writeCFI_Flash(1, 1, reversed);
