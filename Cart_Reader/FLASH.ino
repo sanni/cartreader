@@ -2067,7 +2067,7 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
     blank = 0;
 
     // Adjust filesize to fit flashchip
-    adjustFileSize(currChip, totalChips, reversed);
+    adjustFileSizeOffset(currChip, totalChips, reversed);
 
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
@@ -2857,19 +2857,30 @@ void identifyCFI_Flash() {
   display_Update();
 }
 
-// Adjust file size to fit flash chip
-void adjustFileSize(byte currChip, byte totalChips, boolean reversed) {
-  // 1 flash chip
-  if ((currChip == 1) && (totalChips == 1) && reversed) {
-    myFile.seekSet(4194304);
+// Adjust file size to fit flash chip and goto needed file offset
+void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
+  // 1*2MB, 1*4MB or 1*8MB
+  if ((currChip == 1) && (totalChips == 1)) {
+    if (reversed)
+      myFile.seekSet(4194304);
   }
-  // 2 flash chips
+
+  // 2*2MB or 2*4MB
   else if ((currChip == 1) && (totalChips == 2)) {
-    if (fileSize > flashSize / 2)
+    if (reversed) {
+      fileSize = fileSize - flashSize / 2;
+      myFile.seekSet(4194304);
+    } else if (fileSize > flashSize / 2)
       fileSize = flashSize / 2;
-  } else if ((currChip == 2) && (totalChips == 2) && (fileSize > flashSize / 2)) {
-    fileSize = fileSize - flashSize / 2;
-    myFile.seekSet(flashSize / 2);
+
+  } else if ((currChip == 2) && (totalChips == 2)) {
+    if (reversed) {
+      fileSize = flashSize / 2;
+      myFile.seekSet(0);
+    } else if (fileSize > flashSize / 2) {
+      fileSize = fileSize - flashSize / 2;
+      myFile.seekSet(flashSize / 2);
+    }
   }
 
   // 4*2MB
@@ -2966,7 +2977,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     }
 
     // Adjust filesize to fit flashchip
-    adjustFileSize(currChip, totalChips, reversed);
+    adjustFileSizeOffset(currChip, totalChips, reversed);
 
     print_Msg(F("Writing flash"));
 
