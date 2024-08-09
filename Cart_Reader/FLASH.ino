@@ -2965,13 +2965,40 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
       statusReg = readByte_Flash(0);
     }
 
+    // Adjust filesize to fit flashchip
+    adjustFileSize(currChip, totalChips, reversed);
+
     print_Msg(F("Writing flash"));
     print_Msg(FS(FSTRING_SPACE));
     print_Msg(currChip);
     print_Msg(F("/"));
-    println_Msg(totalChips);
-    // Adjust filesize to fit flashchip
-    adjustFileSize(currChip, totalChips, reversed);
+    print_Msg(totalChips);
+    print_Msg(FS(FSTRING_SPACE));
+    print_Msg(FS(FSTRING_SPACE));
+    print_Msg(FS(FSTRING_SPACE));
+    print_Msg(FS(FSTRING_SPACE));
+
+    switch (myFile.curPosition() / 1024 / 1024UL) {
+      case 0:
+        println_Msg(F("[A]BCD"));
+        break;
+
+      case 2:
+        println_Msg(F("A[B]CD"));
+        break;
+
+      case 4:
+        println_Msg(F("AB[C]D"));
+        break;
+
+      case 6:
+        println_Msg(F("ABC[D]"));
+        break;
+
+      default:
+        println_Msg(FS(FSTRING_SPACE));
+        break;
+    }
     display_Update();
 
     //Initialize progress bar
