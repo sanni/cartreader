@@ -3003,7 +3003,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
           break;
       }
     } else
-      print_Msg(F("..."));
+      println_Msg(F("..."));
     display_Update();
 
     //Initialize progress bar
