@@ -2509,7 +2509,7 @@ void mapBlock369in1(u32 offset) {
   writeByte_GBA(0x2, addr.byte[3]);
   writeByte_GBA(0x3, addr.byte[2]);
   writeByte_GBA(0x4, addr.byte[1]);
-  delay(100);
+  delay(500);
   setROM_GBA();
 }
 
