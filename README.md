@@ -33,6 +33,7 @@ Happy making. 🔧🔨😊
 
 #### Supported with adapters:
 - Virtual Boy
+- Pokémon Mini
 - Sega Game Gear
 - Sega Mark III
 - Sega SG-1000/SC-3000
@@ -45,29 +46,29 @@ Happy making. 🔧🔨😊
 - Benesse Pocket Challenge W
 - Benesse Pocket Challenge V2
 - Watara Supervision
+- Atari 8-bit Computer (400/800/XL/XE)
 - Atari 2600/5200/7800
 - Atari Lynx
+- Atari Jaguar
 - Emerson Arcadia 2001
 - Fairchild Channel F
 - Magnavox Odyssey 2/Philips Videopac+
 - Super A'Can
 - MSX
-- Pokémon Mini
+- Casio PV-1000
 - Casio Loopy
+- Commodore VIC-20
 - Commodore 64
 - Vectrex
-- Atari 8-bit
 - Bally Astrocade
 - Bandai Little Jammer
 - Bandai Little Jammer Pro
-- Casio PV-1000
-- Commodore VIC-20
-- LeapFrog Leapster
+- LeapFrog Leapster (L-MAX/Leapster2)
 - RCA Studio II
 - Texas Instruments TI-99
 - Tomy Pyuuta
 - TRS-80 Color Computer
-- Vtech V.Smile
+- Vtech V.Smile (Baby/V.Motion)
 
 #### Open Source Licenses:
 - Software(everything in Cart_Reader folder) = GPL v3
