@@ -536,9 +536,7 @@ void setAddress_N64(unsigned long myAddress) {
 
   // Switch WR(PH5) RD(PH6) ale_L(PC0) ale_H(PC1) to high (since the pins are active low)
   PORTH |= (1 << 5) | (1 << 6);
-  PORTC |= (1 << 1);
-  __asm__("nop\n\t");
-  PORTC |= (1 << 0);
+  PORTC |= (1 << 0) | (1 << 1);
 
   // Output high part to address pins
   PORTF = myAdrHighOut & 0xFF;
@@ -560,18 +558,6 @@ void setAddress_N64(unsigned long myAddress) {
 
   // Pull ale_L(PC0) low
   PORTC &= ~(1 << 0);
-
-  // Wait ~600ns just to be sure address is set
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
 
   // Set data pins to input
   adIn_N64();
@@ -595,8 +581,6 @@ word readWord_N64() {
   // Pull read(PH6) high
   PORTH |= (1 << 6);
 
-  // Wait 62.5ns
-  __asm__("nop\n\t");
   return tempWord;
 }
 
@@ -2184,6 +2168,8 @@ void idCart() {
     sdBuffer[c] = hiByte;
     sdBuffer[c + 1] = loByte;
   }
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
 
   // CRC1
   sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
@@ -2409,6 +2395,7 @@ void writeSram(unsigned long sramSize) {
 
 // Read sram and save to the SD card
 void readSram(unsigned long sramSize, byte flashramType) {
+  word myWord;
   int offset = 512;
   int bufferSize = 512;
   if (flashramType == 2) {
@@ -2435,23 +2422,17 @@ void readSram(unsigned long sramSize, byte flashramType) {
     setAddress_N64(currByte);
 
     for (int c = 0; c < bufferSize; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
+      // read, split and write word to buffer
+      myWord = readWord_N64();
+      sdBuffer[c] = myWord >> 8;
+      sdBuffer[c + 1] = myWord & 0xFF;
     }
+    // Pull ale_H(PC1) high
+    PORTC |= (1 << 1);
     myFile.write(sdBuffer, bufferSize);
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to "));
-  print_Msg(folder);
-  println_Msg(F("/"));
-  display_Update();
 }
 
 unsigned long verifySram(unsigned long sramSize, byte flashramType) {
@@ -2510,6 +2491,8 @@ void sendFramCmd(unsigned long myCommand) {
   // Send command
   writeWord_N64(myComHighOut);
   writeWord_N64(myComLowOut);
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
 }
 
 // Init fram
@@ -2744,6 +2727,8 @@ byte waitForFram(byte flashramType) {
       }
     }
   }
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
   return framStatus;
 }
 
@@ -2800,10 +2785,15 @@ void getFramType() {
   else {
     for (byte c = 0; c < 8; c++) {
       print_Msg(sdBuffer[c], HEX);
-      print_Msg(F(", "));
+      if (c < 7)
+        print_Msg(F(", "));
+      if (c == 7)
+        println_Msg(FS(FSTRING_EMPTY));
     }
     print_FatalError(F("Flashram unknown"));
   }
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
 }
 
 /******************************************
@@ -2847,6 +2837,9 @@ void readRom_N64() {
 
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
+
+    // Pull ale_H(PC1) high
+    PORTC |= (1 << 1);
   }
   // Close the file:
   myFile.close();
