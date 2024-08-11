@@ -16,6 +16,9 @@ F0B6BF59,A92E0966,32,0
 1080 Snowboarding (Japan, USA) (En,Ja).z64
 08FE81C7,1FBAF161,16,1
 
+40 Winks (Europe) (En,Fr,Es) (Aftermarket) (Unl).z64
+93C57D0B,4B0612E3,32,0
+
 40 Winks (Europe) (En,Es,It) (Proto) (1999-10-07).z64
 7E718143,ABA51D09,32,0
 
