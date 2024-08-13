@@ -244,7 +244,7 @@ uint8_t ramsize;
 static const char nesMenuItem1[] PROGMEM = "Read iNES Rom";
 static const char nesMenuItem2[] PROGMEM = "Read PRG/CHR";
 static const char nesMenuItem5[] PROGMEM = "Change Mapper";
-static const char nesMenuItem6[] PROGMEM = "Flash NESMaker";
+static const char nesMenuItem6[] PROGMEM = "Flash Repro";
 static const char* const menuOptionsNES[] PROGMEM = { nesMenuItem1, nesMenuItem2, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, nesMenuItem5, nesMenuItem6, FSTRING_RESET };
 
 // NES chips menu
@@ -253,6 +253,12 @@ static const char nesChipsMenuItem2[] PROGMEM = "Read only PRG";
 static const char nesChipsMenuItem3[] PROGMEM = "Read only CHR";
 static const char nesChipsMenuItem4[] PROGMEM = "Back";
 static const char* const menuOptionsNESChips[] PROGMEM = { nesChipsMenuItem1, nesChipsMenuItem2, nesChipsMenuItem3, nesChipsMenuItem4 };
+
+// Repro Writer Menu 
+static const char nesFlashMenuItem1[] PROGMEM = "Flash NesMaker";
+static const char nesFlashMenuItem2[] PROGMEM = "Flash A29040B-MAPPER0";
+static const char nesFlashMenuItem3[] PROGMEM = "Back";
+static const char* const menuOptionsNESFlash[] PROGMEM = { nesFlashMenuItem1, nesFlashMenuItem2, nesFlashMenuItem3 };
 
 // NES start menu
 void nesMenu() {
@@ -324,20 +330,7 @@ void nesMenu() {
 
     // Write FLASH
     case 5:
-      if (mapper == 30) {
-        writeFLASH();
-        resetROM();
-      } else {
-        display_Clear();
-        println_Msg(FS(string_error5));
-        println_Msg(F("Can't write to this cartridge"));
-        println_Msg(FS(FSTRING_EMPTY));
-        // Prints string out of the common strings array either with or without newline
-        print_STR(press_button_STR, 1);
-        display_Update();
-      }
-      wait();
-      break;
+      nesFlashMenu();
 
     // Reset
     case 6:
@@ -395,6 +388,53 @@ void nesChipMenu() {
 
     // Return to Main Menu
     case 3:
+      nesMenu();
+      wait();
+      break;
+  }
+}
+
+void nesFlashMenu() {
+    // create menu with title "Select NES Flash Repro" and 3 options to choose from
+  convertPgm(menuOptionsNESFlash, 3);
+  unsigned char answer = question_box(F("Select Flash Writer"), menuOptions, 3, 0);
+  switch (answer) {
+    case 0:
+
+     if (mapper == 30) {
+        writeFLASH();
+        resetROM();
+      } else {
+        display_Clear();
+        println_Msg(FS(string_error5));
+        println_Msg(F("Can't write to this cartridge"));
+        println_Msg(FS(FSTRING_EMPTY));
+        // Prints string out of the common strings array either with or without newline
+        print_STR(press_button_STR, 1);
+        display_Update();
+      }
+      wait();
+      break;
+    case 1:
+      if (mapper == 0) {
+        display_Clear();
+        A29040B_writeFLASH();
+        display_Update();
+        wait();
+      } else {
+          display_Clear();
+          println_Msg(FS(string_error5));
+          println_Msg(F("Can't write to this cartridge"));
+          println_Msg(mapper);
+          // Prints string out of the common strings array either with or without newline
+          print_STR(press_button_STR, 1);
+          display_Update();
+          wait();
+      }
+    
+      break;
+    // Return to Main Menu
+    case 2:
       nesMenu();
       wait();
       break;
@@ -819,6 +859,30 @@ static void write_prg_byte(unsigned int address, uint8_t data) {
   //  _delay_us(1);
   PHI2_HI;
   //  _delay_us(1);
+}
+
+static void write_chr_byte(unsigned int address, uint8_t data)
+{
+	PHI2_LOW;
+	ROMSEL_HI;
+	MODE_WRITE;
+	PORTK = data;	
+	set_address(address); // PHI2 low, ROMSEL always HIGH
+	_delay_us(1);
+	
+	CHR_WRITE_LOW;
+		
+	_delay_us(1); // WRITING
+	
+	CHR_WRITE_HI;
+	
+	_delay_us(1);
+	
+	MODE_READ;
+	set_address(0);
+	PHI2_HI;
+	
+	//_delay_us(1);
 }
 
 void resetROM() {
@@ -4264,6 +4328,302 @@ void writeFLASH() {
   sd.chdir();          // root
   filePath[0] = '\0';  // Reset filePath
 }
+
+
+/******************************************
+   A29040B Flash Cart [A29040B]
+ *****************************************/
+
+ // A29040B Software ID
+void A29040B_ID() {  // Read Flash ID
+  write_prg_byte(0x9555, 0xAA);
+  write_prg_byte(0xAAAA, 0x55);
+  write_prg_byte(0x9555, 0x90);
+
+  flashid = read_prg_byte(0x8000) << 8;
+  flashid |= read_prg_byte(0x8001);
+  sprintf(flashid_str, "%04X", flashid);
+  if (flashid == 0x3786)         // A29040B
+    flashfound = 1;
+
+  A29040B_PRG_ResetFlash(); 
+}
+
+void A29040B_PRG_ResetFlash() {  // Reset Flash
+    write_prg_byte(0x9555, 0xAA);
+    write_prg_byte(0xAAAA, 0x55);
+    write_prg_byte(0x9555, 0xF0);  // Reset
+    delayMicroseconds(14);          // Typical 14us
+}
+
+
+void A29040B_PRG_Write(uint16_t address, uint8_t data) {
+    write_prg_byte(0x9555, 0xAA);
+    write_prg_byte(0xAAAA, 0x55);
+    write_prg_byte(0x9555, 0xA0);
+    write_prg_byte(address, data);  // $8000-$BFFF
+    delayMicroseconds(20);          // Typical 14us
+}
+
+void A29040B_PRG_SectorErase(uint16_t sec) {
+    if (flashfound) {
+      write_prg_byte(0x9555, 0xAA);
+      write_prg_byte(0xAAAA, 0x55);
+      write_prg_byte(0x9555, 0x80); //->setup
+      write_prg_byte(0x9555, 0xAA);
+      write_prg_byte(0xAAAA, 0x55);
+      write_prg_byte(sec, 0x30); //->erase
+      delay(1000);   // WAIT MORE
+    } else {
+      println_Msg(F("FLASH NOT DETECTED OR SECTOR PROTECTED"));
+    }
+}
+
+void A29040B_PRG_ChipErase() {
+    if (flashfound) {
+      write_prg_byte(0x9555, 0xAA);
+      write_prg_byte(0xAAAA, 0x55);
+      write_prg_byte(0x9555, 0x80); //->setup
+      write_prg_byte(0x9555, 0xAA);
+      write_prg_byte(0xAAAA, 0x55);
+      write_prg_byte(0x9555, 0x10); //->erase
+      delay(8000);   // WAIT MORE
+    } else {
+      println_Msg(F("FLASH NOT DETECTED OR SECTOR PROTECTED"));
+    }
+}
+
+// CHR ================================================
+
+void A29040B_CHR_ResetFlash() {  // Reset Flash
+    write_chr_byte(0x0555, 0xAA);  // Original address for CHR
+    write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+    write_chr_byte(0x0555, 0xF0);  // Reset command with original address
+    delayMicroseconds(14);          // Typical 14us
+}
+
+void A29040B_CHR_Write(uint16_t address, uint8_t data) {
+    write_chr_byte(0x0555, 0xAA);  // Original address for CHR
+    write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+    write_chr_byte(0x0555, 0xA0);  // Program command with original address
+    write_chr_byte(address, data);  // CHR address range (0x0000 - 0x1FFF)
+    delayMicroseconds(20);          // Typical 14us
+}
+
+
+void A29040B_CHR_SectorErase(uint16_t sec) {
+    if (flashfound) {
+        write_chr_byte(0x0555, 0xAA);  // Original address for CHR
+        write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+        write_chr_byte(0x0555, 0x80);  // Erase Setup with original address
+        write_chr_byte(0x0555, 0xAA);  // Original address for CHR
+        write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+        write_chr_byte(sec, 0x30);     // Sector Erase Command with sector address
+        delay(1000);   // WAIT MORE
+    } else {
+        println_Msg(F("FLASH NOT DETECTED OR SECTOR PROTECTED"));
+    }
+}
+
+void A29040B_CHR_ChipErase() {
+    if (flashfound) {
+        write_chr_byte(0x0555, 0xAA);  // Original address for CHR
+        write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+        write_chr_byte(0x0555, 0x80);  // Erase Setup with original address
+        write_chr_byte(0x0555, 0xAA);  // Original address for CHR
+        write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+        write_chr_byte(0x0555, 0x10);  // Chip Erase Command with original address
+        delay(8000);   // WAIT MORE
+    } else {
+        println_Msg(F("FLASH NOT DETECTED OR SECTOR PROTECTED"));
+    }
+}
+#define A29040B_TITLE "FLASH A29040B MAPPER 0"
+void A29040B_writeFLASH() {
+   
+    display_Clear();
+    A29040B_ID();
+    
+    char data_str[10];
+    uint32_t prgSize = 0;
+    uint32_t chrSize = 0;
+    
+    if (!flashfound) {
+        rgbLed(red_color);
+        println_Msg(F(A29040B_TITLE));
+        println_Msg(FS(FSTRING_EMPTY));
+        print_Msg(F("Flash ID: "));
+        println_Msg(flashid_str);
+        println_Msg(FS(FSTRING_EMPTY));
+        println_Msg(F("FLASH NOT FOUND"));
+        display_Update();
+        wait();
+    } else {
+        println_Msg(F(A29040B_TITLE));
+        println_Msg(FS(FSTRING_EMPTY));
+        print_Msg(F("Flash ID: "));
+        println_Msg(flashid_str);
+        println_Msg(FS(FSTRING_EMPTY));
+        println_Msg(F("Flash Found"));
+        println_Msg(FS(FSTRING_EMPTY));
+        display_Update();
+        delay(3000);
+        fileBrowser(F("Select FLASH File"));
+        sd.chdir();
+        sprintf(filePath, "%s/%s", filePath, fileName);
+
+        if (myFile.open(filePath, O_READ)) {
+            // Step 1: Read the header and extract PRG and CHR sizes
+            uint8_t header[16];
+            myFile.read(header, 16);  // Read the 16-byte header
+            uint32_t prgAddress = 0x8000;
+
+            prgSize = (uint32_t)header[4] * 16384;  // PRG size in bytes (header[4] gives size in 16 KB units)
+            chrSize = (uint32_t)header[5] * 8192;   // CHR size in bytes (header[5] gives size in 8 KB units)
+
+            // Output the sizes for verification
+            display_Clear();
+            println_Msg(F(A29040B_TITLE));
+            println_Msg(FS(FSTRING_EMPTY));
+            println_Msg(F("PRG Size:"));
+            sprintf(data_str, "%lu", prgSize);
+            println_Msg(data_str);
+
+            println_Msg(F("CHR Size:"));
+            sprintf(data_str, "%lu", chrSize);
+            println_Msg(data_str);
+            display_Update();
+            delay(3000);
+
+            // Step 2: Erase the entire PRG space
+            rgbLed(red_color);
+            display_Clear();
+            println_Msg(F(A29040B_TITLE));
+            println_Msg(FS(FSTRING_EMPTY));
+            A29040B_PRG_ResetFlash();
+            println_Msg(F("ERASING PRG..."));
+            display_Update();
+            A29040B_PRG_ChipErase();
+
+
+            uint8_t readByte = read_prg_byte(prgAddress);
+            if (readByte != 0xFF) {
+               println_Msg(F("Erase Error!"));
+            } else {
+               println_Msg(F("Erase OK!"));
+            }
+
+            display_Update();
+
+            // Verify that the first byte has been erased
+            uint8_t erase_check = read_prg_byte(0x8000);
+            if (erase_check != 0xFF) {
+                println_Msg(F("SECTOR NOT ERASED"));
+                sprintf(data_str, "%02X", erase_check);
+                println_Msg(data_str);
+                return;
+            }
+
+            delay(18);  // Adjust delay as needed
+            
+            rgbLed(red_color);
+            println_Msg(FS(FSTRING_EMPTY));
+            println_Msg(F("Writing PRG Data..."));
+            display_Update();
+
+            A29040B_PRG_ResetFlash();
+            
+            // Step 3: Write PRG data
+            uint32_t bytesProcessed = 0;
+            uint8_t buffer[512];
+            myFile.seek(16);  // Skip header to start of PRG data
+
+            while (bytesProcessed < prgSize) {
+                int bytesRead = myFile.read(buffer, sizeof(buffer));
+                if (bytesRead <= 0) break;
+
+                for (int i = 0; i < bytesRead; i++) {
+                    A29040B_PRG_Write(prgAddress++, buffer[i]);
+                    delayMicroseconds(14);  // Typical 14us
+
+                    uint8_t readByte = read_prg_byte(prgAddress - 1);
+                    delayMicroseconds(14);  // Typical 14us
+                    if (readByte != buffer[i]) {
+                        println_Msg(F("Write Error!"));
+                        sprintf(data_str, "%02X", readByte);
+                        println_Msg(data_str);
+                        myFile.close();
+                        break;
+                    }
+                }
+                bytesProcessed += bytesRead;
+            }
+              
+            // Step 4: Erase and Write CHR data
+            A29040B_CHR_ResetFlash();
+            display_Clear();
+            println_Msg(F(A29040B_TITLE));
+            println_Msg(FS(FSTRING_EMPTY));
+            println_Msg(F("ERASING CHR..."));
+            display_Update();
+            A29040B_CHR_ChipErase();
+            delay(20);
+            display_Clear();
+            
+            uint32_t chrAddress = 0x0000;
+            bytesProcessed = 0;
+            myFile.seek(16 + prgSize);  // Seek to the start of CHR data
+
+            readByte = read_chr_byte(chrAddress);
+            if (readByte != 0xFF) {
+               println_Msg(F("Erase Error!"));
+            } else {
+               println_Msg(F("Erase OK!"));
+            }
+            display_Update();
+
+            println_Msg(F("Writing CHR Data..."));
+            display_Update();
+
+
+            while (bytesProcessed < chrSize) {
+                int bytesRead = myFile.read(buffer, sizeof(buffer));
+                if (bytesRead <= 0) break;
+
+                for (int i = 0; i < bytesRead; i++) {
+                    A29040B_CHR_Write(chrAddress++, buffer[i]);
+                    delayMicroseconds(14);  // Typical 14us
+
+                    uint8_t readByte = read_chr_byte(chrAddress - 1);
+                    delayMicroseconds(14);  // Typical 14us
+                    if (readByte != buffer[i]) {
+                        println_Msg(F("Write Error!"));
+                        sprintf(data_str, "%02X", readByte);
+                        println_Msg(data_str);
+                        myFile.close();
+                        break;
+                    }
+                }
+                bytesProcessed += bytesRead;
+            }
+            delay(3000);
+            myFile.close();
+            rgbLed(green_color);
+            display_Clear();
+            println_Msg(F(A29040B_TITLE));
+            println_Msg(FS(FSTRING_EMPTY));
+            println_Msg(F("FLASH FILE WRITTEN!"));
+            display_Update();
+        } else {
+            rgbLed(red_color);
+            println_Msg(F("SD ERROR"));
+            display_Update();
+        }
+
+        display_Update();
+    }
+}
+
 
 // avoid warnings
 #undef MODE_READ
