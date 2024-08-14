@@ -573,6 +573,7 @@ void manual_selectRomSize() {
 //  Read ROM and save it to the SD card
 //******************************************
 void readROM_SMS() {
+  sd.chdir("/");
   // Get name, add extension depending on the system and convert to char array for sd lib
   if (system_sms) {
     createFolder("SMS", "ROM", romName, "sms");
@@ -581,7 +582,6 @@ void readROM_SMS() {
   } else {
     createFolder("SG1000", "ROM", romName, "sg");
   }
-
   printAndIncrementFolder(true);
 
   print_Msg(F("ROM Size: "));
