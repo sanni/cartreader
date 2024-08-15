@@ -751,9 +751,7 @@ void readDataLineSingleDigit(FsFile& database, void* byteData) {
 #endif
 
 #if ( \
-   defined(ENABLE_ODY2) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_JAGUAR) || \
-   defined(ENABLE_VIC20)|| defined(ENABLE_ATARI8)\
- )
+  defined(ENABLE_ODY2) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_JAGUAR) || defined(ENABLE_VIC20) || defined(ENABLE_ATARI8))
 struct database_entry_mapper_size {
   byte gameMapper;
   byte gameSize;
@@ -811,22 +809,24 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
       printDataLine(data);
     }
     println_Msg(FS(FSTRING_EMPTY));
+    4
+
 #if defined(ENABLE_OLED)
-    print_STR(press_to_change_STR, 0);
+      print_STR(press_to_change_STR, 0);
     if (fastScrolling > 1)
       println_Msg(F(" (fast)"));
     else
       println_Msg("");
     print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
-    print_STR(rotate_to_change_STR, 0);
+      print_STR(rotate_to_change_STR, 0);
     if (fastScrolling > 1)
       println_Msg(F(" (fast)"));
     else
       println_Msg("");
     print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
-    println_Msg(F("U/D to Change"));
+      println_Msg(F("U/D to Change"));
     println_Msg(F("Space/Zero to Select"));
 #endif
     display_Update();
@@ -888,6 +888,10 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 void printInstructions() {
   println_Msg(FS(FSTRING_EMPTY));
 
+#ifdef ENABLE_GLOBAL_LOG
+  // Disable log to prevent unnecessary logging
+  dont_log = true;
+#endif
 #if defined(ENABLE_OLED)
   print_STR(press_to_change_STR, 1);
   print_STR(right_to_select_STR, 1);
@@ -898,8 +902,11 @@ void printInstructions() {
   println_Msg(F("U/D to Change"));
   println_Msg(F("Space/Zero to Select"));
 #endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
-
   display_Update();
+#ifdef ENABLE_GLOBAL_LOG
+  // Enable log again
+  dont_log = false;
+#endif
 }
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -3765,10 +3772,10 @@ void loop() {
     case CORE_LYNX: return lynxMenu();
 #endif
 #ifdef ENABLE_VECTREX
-  	case CORE_VECTREX: return vectrexMenu();
+    case CORE_VECTREX: return vectrexMenu();
 #endif
 #ifdef ENABLE_JAGUAR
-  	case CORE_JAGUAR: return jagMenu();
+    case CORE_JAGUAR: return jagMenu();
 #endif
 #ifdef ENABLE_ST
     case CORE_ST: return stMenu();
