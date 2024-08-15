@@ -809,24 +809,23 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
       printDataLine(data);
     }
     println_Msg(FS(FSTRING_EMPTY));
-    4
 
 #if defined(ENABLE_OLED)
-      print_STR(press_to_change_STR, 0);
+    print_STR(press_to_change_STR, 0);
     if (fastScrolling > 1)
       println_Msg(F(" (fast)"));
     else
       println_Msg("");
     print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
-      print_STR(rotate_to_change_STR, 0);
+    print_STR(rotate_to_change_STR, 0);
     if (fastScrolling > 1)
       println_Msg(F(" (fast)"));
     else
       println_Msg("");
     print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
+    println_Msg(F("U/D to Change"));
     println_Msg(F("Space/Zero to Select"));
 #endif
     display_Update();
