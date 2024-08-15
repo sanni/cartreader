@@ -133,6 +133,7 @@ uint8_t readData_ARC(uint16_t addr) {
   NOP;
   NOP;
   NOP;
+  NOP;
 
   uint8_t ret = PINC;
 
