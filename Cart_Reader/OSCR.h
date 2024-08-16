@@ -135,9 +135,11 @@ enum CORES: uint8_t {
   CORE_GB,
   CORE_GBA,
   CORE_GBM,
+  # ifdef ENABLE_FLASH
   CORE_GB_GBSMART,
   CORE_GB_GBSMART_FLASH,
   CORE_GB_GBSMART_GAME,
+# endif
 # endif
 # ifdef ENABLE_FLASH
   CORE_FLASH8,

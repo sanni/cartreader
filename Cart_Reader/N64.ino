@@ -69,12 +69,6 @@ static const char* const menuOptionsN64Controller[] PROGMEM = { N64ContMenuItem1
 static const char N64CartMenuItem4[] PROGMEM = "Force Savetype";
 static const char* const menuOptionsN64Cart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, N64CartMenuItem4, FSTRING_RESET };
 
-// N64 CRC32 error menu items
-static const char N64CRCMenuItem1[] PROGMEM = "No";
-static const char N64CRCMenuItem2[] PROGMEM = "Yes and keep old";
-static const char N64CRCMenuItem3[] PROGMEM = "Yes and delete old";
-static const char* const menuOptionsN64CRC[] PROGMEM = { N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, FSTRING_RESET };
-
 // Rom menu
 static const char N64RomItem1[] PROGMEM = "4 MB";
 static const char N64RomItem2[] PROGMEM = "8 MB";
@@ -93,6 +87,7 @@ static const char N64SaveItem4[] PROGMEM = "SRAM";
 static const char N64SaveItem5[] PROGMEM = "FLASH";
 static const char* const saveOptionsN64[] PROGMEM = { N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5 };
 
+#if defined(ENABLE_FLASH)
 // Repro write buffer menu
 static const char N64BufferItem1[] PROGMEM = "No buffer";
 static const char N64BufferItem2[] PROGMEM = "32 Byte";
@@ -106,6 +101,7 @@ static const char N64SectorItem2[] PROGMEM = "32 KB";
 static const char N64SectorItem3[] PROGMEM = "64 KB";
 static const char N64SectorItem4[] PROGMEM = "128 KB";
 static const char* const sectorOptionsN64[] PROGMEM = { N64SectorItem1, N64SectorItem2, N64SectorItem3, N64SectorItem4 };
+#endif
 
 // N64 start menu
 void n64Menu() {
@@ -132,6 +128,7 @@ void n64Menu() {
       mode = CORE_N64_CONTROLLER;
       break;
 
+#if defined(ENABLE_FLASH)
     case 2:
       display_Clear();
       display_Update();
@@ -140,6 +137,7 @@ void n64Menu() {
       printCartInfo_N64();
       mode = CORE_N64_CART;
       break;
+#endif
 
     case 3:
       display_Clear();
@@ -165,6 +163,9 @@ void n64Menu() {
     case 5:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -3039,6 +3040,7 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
 }
 #endif
 
+#if defined(ENABLE_FLASH)
 /******************************************
    N64 Repro Flashrom Functions
  *****************************************/
@@ -3997,6 +3999,7 @@ unsigned long verifyFlashrom_N64() {
     return 9999;
   }
 }
+#endif
 
 /******************************************
    N64 Gameshark Flash Functions

@@ -10,12 +10,14 @@
 static const char GBAMenuItem4[] PROGMEM = "Force Savetype";
 static const char* const menuOptionsGBA[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, GBAMenuItem4, FSTRING_RESET };
 
+#if defined(ENABLE_FLASH)
 // 369-in-1 menu items
 static const char Menu369Item1[] PROGMEM = "Read 256MB";
 static const char Menu369Item2[] PROGMEM = "Write 256MB";
 static const char Menu369Item3[] PROGMEM = "Read Offset";
 static const char Menu369Item4[] PROGMEM = "Write Offset";
 static const char* const Options369GBA[] PROGMEM = { Menu369Item1, Menu369Item2, Menu369Item3, Menu369Item4, FSTRING_RESET };
+#endif
 
 // Rom menu
 static const char GBARomItem1[] PROGMEM = "1 MB";
@@ -233,6 +235,7 @@ void gbaMenu() {
   }
 }
 
+#if defined(ENABLE_FLASH)
 // Flash GBA Repro
 void GBAReproMenu() {
   setup_GBA_Repro();
@@ -302,6 +305,7 @@ void repro369in1Menu() {
   wait();
   resetArduino();
 }
+#endif
 
 /******************************************
    Setup
@@ -367,12 +371,14 @@ void setup_GBA() {
   wait();
 }
 
+#if defined(ENABLE_FLASH)
 void setup_GBA_Repro() {
   // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
   setROM_GBA();
   display_Clear();
 }
+#endif
 
 /******************************************
    Low level functions
@@ -2002,6 +2008,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
   return wrError;
 }
 
+#if defined(ENABLE_FLASH)
 /******************************************
   GBA REPRO Functions (32MB Intel 4000L0YBQ0 and 16MB MX29GL128E)
 *****************************************/
@@ -2920,9 +2927,8 @@ void flashRepro_GBA(boolean option) {
     print_FatalError(F("Check voltage"));
   }
 }
-
 #endif
-
+#endif
 //******************************************
 // End of File
 //******************************************

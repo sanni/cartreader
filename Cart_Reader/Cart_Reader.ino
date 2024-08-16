@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2024-08-11
-   Version:          14.2
+   Date:             2024-08-16
+   Version:          14.3
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -2332,6 +2332,21 @@ void setup() {
   if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
     print_FatalError(sd_error_STR);
   }
+
+  // Start new log if file is too big
+  if (myLog.fileSize() > 262144) {
+    EEPROM_readAnything(0, foldern);
+    sprintf(folder, "%s%d%s", "OSCR_LOG_", foldern, ".txt");
+    foldern = foldern + 1;
+    EEPROM_writeAnything(0, foldern);
+    myLog.rename(folder);
+    // Close the file:
+    myLog.close();
+    if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
+      print_FatalError(sd_error_STR);
+    }
+  }
+
   println_Msg(FS(FSTRING_EMPTY));
 #if defined(HW1)
   print_Msg(F("OSCR HW1"));
@@ -3686,9 +3701,11 @@ void loop() {
     case CORE_GB: return gbMenu();
     case CORE_GBA: return gbaMenu();
     case CORE_GBM: return gbmMenu();
+#if defined(ENABLE_FLASH)
     case CORE_GB_GBSMART: return gbSmartMenu();
     case CORE_GB_GBSMART_FLASH: return gbSmartFlashMenu();
     case CORE_GB_GBSMART_GAME: return gbSmartGameOptions();
+#endif
 #endif
 #ifdef ENABLE_FLASH
     case CORE_FLASH8: return flashromMenu8();

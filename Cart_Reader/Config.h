@@ -182,7 +182,7 @@
 /* [ Flashrom Programmer for repro carts -------------------------- ]
 */
 
-#define ENABLE_FLASH
+//#define ENABLE_FLASH
 //#define ENABLE_FLASH16
 
 /****/

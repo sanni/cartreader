@@ -25,12 +25,14 @@ void gbmMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
+#if defined(ENABLE_FLASH)
     // Read Flash ID
     case 0:
       // Clear screen
       display_Clear();
       readFlashID_GBM();
       break;
+#endif
 
     // Read Flash
     case 1:
@@ -62,6 +64,7 @@ void gbmMenu() {
       readROM_GBM(64);
       break;
 
+#if defined(ENABLE_FLASH)
     // Erase Flash
     case 2:
       // Clear screen
@@ -172,6 +175,10 @@ void gbmMenu() {
       // Write mapping
       writeMapping_GBM();
       break;
+#endif
+
+    default:
+      print_MissingModule();  // does not return
   }
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
@@ -447,6 +454,7 @@ void send_GBM(byte myCommand) {
   }
 }
 
+#if defined(ENABLE_FLASH)
 void send_GBM(byte myCommand, word myAddress, byte myData) {
   byte myAddrLow = myAddress & 0xFF;
   byte myAddrHigh = (myAddress >> 8) & 0xFF;
@@ -905,7 +913,7 @@ void writeMapping_GBM() {
     print_Error(open_file_STR);
   }
 }
-
+#endif
 #endif
 
 //******************************************

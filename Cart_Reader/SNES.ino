@@ -53,6 +53,7 @@ static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
 static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
 static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, FSTRING_RESET };
 
+#if defined(ENABLE_FLASH)
 // Repro menu items
 static const char reproMenuItem1[] PROGMEM = "CFI LoROM";
 static const char reproMenuItem2[] PROGMEM = "CFI HiROM";
@@ -78,7 +79,6 @@ static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXI
 */
 
 void setupCFI() {
-#ifdef ENABLE_FLASH
   display_Clear();
   display_Update();
   filePath[0] = '\0';
@@ -89,12 +89,10 @@ void setupCFI() {
   identifyCFI_Flash();
   sprintf(filePath, "%s/%s", filePath, fileName);
   display_Clear();
-#endif
 }
 
 /*boolean reproEXMenu() {
   boolean fileOrder = 0;
-#ifdef ENABLE_FLASH
   // create menu with title and 3 options to choose from
   unsigned char snsReproEX;
   // Copy menuOptions out of progmem
@@ -113,7 +111,6 @@ void setupCFI() {
       resetArduino();
       break;
   }
-#endif
   return fileOrder;
 }*/
 
@@ -128,7 +125,6 @@ void reproCFIMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (snsReproCFI) {
-#ifdef ENABLE_FLASH
     case 0:
       setupCFI();
       flashSize = 2097152;
@@ -244,20 +240,17 @@ void reproCFIMenu() {
       writeCFI_Flash(1, 1, reversed);
       verifyFlash(1, 1, reversed);
       break;
-#endif
 
     case 6:
       resetArduino();
       break;
   }
 
-#ifdef ENABLE_FLASH
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 0);
   display_Update();
   wait();
   resetArduino();
-#endif
 }
 
 // SNES repro menu
@@ -270,7 +263,6 @@ void reproMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (snsRepro) {
-#ifdef ENABLE_FLASH
     case 0:
       // CFI LoROM
       mapping = 1;
@@ -326,13 +318,13 @@ void reproMenu() {
       wait();
       mode = CORE_FLASH8;
       break;
-#endif
 
     case 6:
       resetArduino();
       break;
   }
 }
+#endif
 
 // SNES start menu
 void snsMenu() {

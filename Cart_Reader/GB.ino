@@ -27,6 +27,7 @@ static const char* const menuOptionsGBx[] PROGMEM = { gbxMenuItem1, gbxMenuItem2
 // GB menu items
 static const char* const menuOptionsGB[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
+#if defined(ENABLE_FLASH)
 // GB Flash items
 static const char GBFlashItem1[] PROGMEM = "GB 29F Repro";
 static const char GBFlashItem2[] PROGMEM = "GB CFI Repro";
@@ -42,6 +43,7 @@ static const char GBFlash29Item2[] PROGMEM = "DIY MBC5 (WR)";
 static const char GBFlash29Item3[] PROGMEM = "HDR MBC30 (Audio)";
 static const char GBFlash29Item4[] PROGMEM = "HDR GameBoy Cam";
 static const char* const menuOptionsGBFlash29[] PROGMEM = { GBFlash29Item1, GBFlash29Item2, GBFlash29Item3, GBFlash29Item4, FSTRING_RESET };
+#endif
 
 // Pelican Codebreaker, Brainboy, and Monster Brain Operation Menu
 static const char PelicanRead[] PROGMEM = "Read Device";
@@ -55,6 +57,7 @@ static const char GameSharkRead[] PROGMEM = "Read GBC GameShark";
 static const char GameSharkWrite[] PROGMEM = "Write GBC GameShark";
 static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWrite, GameSharkRead, GameSharkWrite };
 
+#if defined(ENABLE_FLASH)
 bool gbxFlashCFI() {
   // Flash CFI
   display_Clear();
@@ -80,6 +83,7 @@ bool gbxFlashCFI() {
   }
   return true;
 }
+#endif
 
 void feedbackPressAndReset() {
   // Prints string out of the common strings array either with or without newline
@@ -113,6 +117,7 @@ void gbxMenu() {
       mode = CORE_GBA;
       break;
 
+#if defined(ENABLE_FLASH)
     case 2:
       // create submenu with title and 7 options to choose from
       unsigned char gbFlash;
@@ -314,6 +319,7 @@ void gbxMenu() {
           break;
       }
       break;
+#endif
 
     case 3:
       // Flash GB Memory
@@ -430,6 +436,9 @@ void gbxMenu() {
     case 6:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -1806,6 +1815,7 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
   }
 }
 
+#if defined(ENABLE_FLASH)
 /******************************************
   29F016/29F032/29F033 flashrom functions
 *****************************************/
@@ -2452,6 +2462,7 @@ bool writeCFI_GB() {
   }
   return true;
 }
+#endif
 
 /**************************************************
   Pelican Gameboy Device Read Function

@@ -296,6 +296,9 @@ void mdMenu() {
     case 3:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -2120,7 +2123,6 @@ void verifyFlash_MD() {
     display_Update();
   }
 }
-#endif
 
 // Delay between write operations based on status register
 void busyCheck_MD() {
@@ -2137,6 +2139,7 @@ void busyCheck_MD() {
   // Set data pins to output
   dataOut_MD();
 }
+#endif
 
 //******************************************
 // EEPROM Functions
@@ -2899,9 +2902,9 @@ void printRomSize_MD(int index) {
 void force_cartSize_MD() {
   cartSize = navigateMenu(0, 9, &printRomSize_MD);
   cartSize = pgm_read_byte(&(MDSize[cartSize])) * 131072;
-  #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
-  #endif
+#endif
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(cartSize / 131072);
   println_Msg(F(" Mbit"));
