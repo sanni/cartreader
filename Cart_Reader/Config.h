@@ -219,6 +219,7 @@
 */
 
 #define ENABLE_N64
+//#define ENABLE_CONTROLLERTEST
 
 /****/
 

@@ -178,6 +178,8 @@ void n64ControllerMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
+
+#if defined(ENABLE_CONTROLLERTEST)
     case 0:
       resetController();
       display_Clear();
@@ -189,6 +191,7 @@ void n64ControllerMenu() {
 #endif
       quit = 1;
       break;
+#endif
 
     case 1:
       resetController();
@@ -230,6 +233,9 @@ void n64ControllerMenu() {
     case 3:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -286,7 +292,8 @@ void n64CartMenu() {
       } else if ((saveType == 5) || (saveType == 6)) {
         println_Msg(F("Reading EEPROM..."));
         display_Update();
-        readEeprom();
+        resetEeprom_N64();
+        readEeprom_N64();
       } else {
         print_Error(F("Savetype Error"));
       }
@@ -355,9 +362,10 @@ void n64CartMenu() {
         // Launch file browser
         fileBrowser(F("Select eep file"));
         display_Clear();
-
-        writeEeprom();
-        writeErrors = verifyEeprom();
+        resetEeprom_N64();
+        writeEeprom_N64();
+        resetEeprom_N64();
+        writeErrors = verifyEeprom_N64();
 
         if (writeErrors == 0) {
           println_Msg(F("EEPROM verified OK"));
@@ -1005,6 +1013,8 @@ void get_button() {
 /******************************************
   N64 Controller Test
  *****************************************/
+#if defined(ENABLE_CONTROLLERTEST)
+
 #ifdef ENABLE_SERIAL
 void controllerTest_Serial() {
   while (quit) {
@@ -1522,6 +1532,7 @@ void controllerTest_Display() {
     }
   }
 }
+#endif
 #endif
 
 /******************************************
@@ -2208,7 +2219,7 @@ void idCart() {
 }
 
 // Write Eeprom to cartridge
-void writeEeprom() {
+void writeEeprom_N64() {
   if ((saveType == 5) || (saveType == 6)) {
 
     // Create filepath
@@ -2283,8 +2294,18 @@ boolean readEepromPageList(byte* output, byte page_number, byte page_count) {
   return 1;
 }
 
+// Reset Eeprom
+void resetEeprom_N64() {
+  // Pull RESET(PH0) low
+  PORTH &= ~(1 << 0);
+  delay(100);
+  // Pull RESET(PH0) high
+  PORTH |= (1 << 0);
+  delay(100);
+}
+
 // Dump Eeprom to SD
-void readEeprom() {
+void readEeprom_N64() {
   if ((saveType == 5) || (saveType == 6)) {
     // Get name, add extension and convert to char array for sd lib
     createFolderAndOpenFile("N64", "SAVE", romName, "eep");
@@ -2303,17 +2324,13 @@ void readEeprom() {
     }
     // Close the file:
     myFile.close();
-    print_Msg(F("Saved to "));
-    print_Msg(folder);
-    println_Msg(F("/"));
-    display_Update();
   } else {
     print_FatalError(F("Savetype Error"));
   }
 }
 
 // Check if a write succeeded, returns 0 if all is ok and number of errors if not
-unsigned long verifyEeprom() {
+unsigned long verifyEeprom_N64() {
   unsigned long writeErrors;
 
   if ((saveType == 5) || (saveType == 6)) {

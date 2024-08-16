@@ -331,6 +331,7 @@ void nesMenu() {
     // Write FLASH
     case 5:
       nesFlashMenu();
+      break;
 
     // Reset
     case 6:
