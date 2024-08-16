@@ -53,7 +53,7 @@ static const char confMenuItem3[] PROGMEM = "4MB HiROM 64K SRAM";
 static const char confMenuItem4[] PROGMEM = "6MB ExROM 256K SRAM";
 static const char* const menuOptionsConfManual[] PROGMEM = { confMenuItem1, confMenuItem2, confMenuItem3, confMenuItem4, FSTRING_RESET };
 
-#if defined(ENABLE_FLASH)
+#if (defined(ENABLE_FLASH) && defined(ENABLE_FLASH8))
 // Repro menu items
 static const char reproMenuItem1[] PROGMEM = "CFI LoROM";
 static const char reproMenuItem2[] PROGMEM = "CFI HiROM";
@@ -371,7 +371,7 @@ void snsMenu() {
       break;
 #endif
 
-#ifdef ENABLE_FLASH
+#if (defined(ENABLE_FLASH) && defined(ENABLE_FLASH8))
     case 5:
       setup_FlashVoltage();
       reproMenu();

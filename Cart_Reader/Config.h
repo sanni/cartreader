@@ -179,11 +179,18 @@
 
 /****/
 
-/* [ Flashrom Programmer for repro carts -------------------------- ]
+/* [ Flash Repros (all systems, SNES repro also needs FLASH8)------ ]
 */
 
-//#define ENABLE_FLASH
-//#define ENABLE_FLASH16
+//#define ENABLE_FLASH 
+
+/****/
+
+/* [ Flashrom Programmer Menu & SNES Repros------------------------ ]
+*/
+
+//#define ENABLE_FLASH8 
+//#define ENABLE_FLASH16 
 
 /****/
 
@@ -279,28 +286,28 @@
 
 /****/
 
-/* [ Super Famicom SF Memory Cassette ----------------------------- ]
+/* [ Super Famicom SF Memory Cassette (needs ENABLE_SNES)---------- ]
 */
 
 //#define ENABLE_SFM
 
 /****/
 
-/* [ Super Famicom Satellaview ------------------------------------ ]
+/* [ Super Famicom Satellaview (needs ENABLE_SNES)----------------- ]
 */
 
 //#define ENABLE_SV
 
 /****/
 
-/* [ Super Famicom Sufami Turbo ----------------------------------- ]
+/* [ Super Famicom Sufami Turbo (needs ENABLE_SNES)---------------- ]
 */
 
 //#define ENABLE_ST
 
 /****/
 
-/* [ Super Famicom Game Processor RAM Cassette -------------------- ]
+/* [ Super Famicom Game Processor RAM Cassette (needs ENABLE_SNES)- ]
 */
 
 //#define ENABLE_GPC

@@ -44,7 +44,7 @@ String CRC1 = "";
 String CRC2 = "";
 #endif
 
-#if !defined(ENABLE_FLASH)
+#if (!defined(ENABLE_FLASH8) && !(defined(ENABLE_MD) && defined(ENABLE_FLASH)))
 unsigned long flashSize;
 #endif
 

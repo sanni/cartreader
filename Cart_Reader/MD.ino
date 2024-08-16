@@ -14,6 +14,10 @@ word addrlo;
 word chksum;
 boolean is32x = 0;
 boolean isSVP = 0;
+#if (!defined(ENABLE_FLASH8) && defined(ENABLE_FLASH))
+unsigned long flashSize;
+unsigned long blank;
+#endif
 
 //***********************************************
 // EEPROM SAVE TYPES

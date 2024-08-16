@@ -141,7 +141,7 @@ enum CORES: uint8_t {
   CORE_GB_GBSMART_GAME,
 # endif
 # endif
-# ifdef ENABLE_FLASH
+# ifdef ENABLE_FLASH8
   CORE_FLASH8,
 #   ifdef ENABLE_FLASH16
   CORE_FLASH16,
@@ -393,7 +393,7 @@ enum SYSTEM_MENU: uint8_t {
 # if defined(ENABLE_VSMILE)
   SYSTEM_MENU_VSMILE,
 # endif
-# if defined(ENABLE_FLASH)
+# if defined(ENABLE_FLASH8)
   SYSTEM_MENU_FLASH,
 # endif
 # if defined(ENABLE_SELFTEST)

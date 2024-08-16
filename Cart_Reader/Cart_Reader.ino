@@ -1249,7 +1249,7 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_VSMILE
   modeItem40,
 #endif
-#ifdef ENABLE_FLASH
+#ifdef ENABLE_FLASH8
   modeItem41,
 #endif
 #ifdef ENABLE_SELFTEST
@@ -1564,7 +1564,7 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef ENABLE_FLASH
+#ifdef ENABLE_FLASH8
     case SYSTEM_MENU_FLASH:
 #ifdef ENABLE_VSELECT
       setup_FlashVoltage();
@@ -3708,7 +3708,7 @@ void loop() {
     case CORE_GB_GBSMART_GAME: return gbSmartGameOptions();
 #endif
 #endif
-#ifdef ENABLE_FLASH
+#ifdef ENABLE_FLASH8
     case CORE_FLASH8: return flashromMenu8();
 #ifdef ENABLE_FLASH16
     case CORE_FLASH16: return flashromMenu16();
