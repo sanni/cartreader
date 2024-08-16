@@ -23,24 +23,24 @@
 uint16_t tempDataLO = 0;
 uint16_t tempDataHI = 0;
 
-unsigned long jagCartSize; // (0x20000)/0x100000/0x200000/0x400000
-byte jagromSize = 0; // 0 = 1MB, 1 = 2MB, 2 = 4MB
+unsigned long jagCartSize;  // (0x20000)/0x100000/0x200000/0x400000
+byte jagromSize = 0;        // 0 = 1MB, 1 = 2MB, 2 = 4MB
 // Variable to count errors
 //unsigned long writeErrors;
 // SAVE TYPE
 // 0 = SERIAL EEPROM
 // 1 = FLASH
-byte jagSaveType = 0; // Serial EEPROM
+byte jagSaveType = 0;  // Serial EEPROM
 
 // SERIAL EEPROM 93CX6
 // CONTROL: EEPCS (PA7), EEPSK (PA6), EEPDI (PF0) [DATA D0]
 // SERIAL DATA OUTPUT: EEPDO (PA5)
-#define EEP_CS_SET PORTA |= (1<<7)
-#define EEP_CS_CLEAR PORTA &= ~(1<<7)
-#define EEP_SK_SET PORTA |= (1<<6)
-#define EEP_SK_CLEAR PORTA &= ~(1<<6)
-#define EEP_DI_SET PORTF |= (1<<0)
-#define EEP_DI_CLEAR PORTF &= ~(1<<0)
+#define EEP_CS_SET PORTA |= (1 << 7)
+#define EEP_CS_CLEAR PORTA &= ~(1 << 7)
+#define EEP_SK_SET PORTA |= (1 << 6)
+#define EEP_SK_CLEAR PORTA &= ~(1 << 6)
+#define EEP_DI_SET PORTF |= (1 << 0)
+#define EEP_DI_CLEAR PORTF &= ~(1 << 0)
 
 // SERIAL EEPROM SIZES
 // 0 = 93C46 = 128 byte = Standard
@@ -54,8 +54,8 @@ boolean jagEepBit[16];
 
 // MEMORY TRACK CART
 boolean jagMemorytrack = 0;
-char jagFlashID[5];  // AT29C010 = "1FD5"
-unsigned long jagflaSize = 0; // AT29C010 = 128K
+char jagFlashID[5];            // AT29C010 = "1FD5"
+unsigned long jagflaSize = 0;  // AT29C010 = 128K
 
 // JAGUAR EEPROM MAPPING
 // 08 ROM SIZE
@@ -74,27 +74,27 @@ static const char* const menuOptionsJag[] PROGMEM = { FSTRING_SELECT_CART, FSTRI
 static const char jagRomItem1[] PROGMEM = "1MB ROM";
 static const char jagRomItem2[] PROGMEM = "2MB ROM";
 static const char jagRomItem3[] PROGMEM = "4MB ROM";
-static const char* const jagRomMenu[] PROGMEM = {jagRomItem1, jagRomItem2, jagRomItem3};
+static const char* const jagRomMenu[] PROGMEM = { jagRomItem1, jagRomItem2, jagRomItem3 };
 
 static const char jagEepItem1[] PROGMEM = "128B (93C46)";
 static const char jagEepItem2[] PROGMEM = "256B (93C56)";
 static const char jagEepItem3[] PROGMEM = "512B (93C66)";
 static const char jagEepItem4[] PROGMEM = "1024B (93C76)";
 static const char jagEepItem5[] PROGMEM = "2048B (93C86)";
-static const char* const jagSaveMenu[] PROGMEM = {jagEepItem1, jagEepItem2, jagEepItem3, jagEepItem4, jagEepItem5};
-static const char* const ConfirmMenu[] PROGMEM = {FSTRING_OK, FSTRING_RESET};
+static const char* const jagSaveMenu[] PROGMEM = { jagEepItem1, jagEepItem2, jagEepItem3, jagEepItem4, jagEepItem5 };
+static const char* const ConfirmMenu[] PROGMEM = { FSTRING_OK, FSTRING_RESET };
 void jagMenu() {
-  
+
   convertPgm(menuOptionsJag, 7);
   uint8_t mainMenu = question_box(F("Jaguar MENU"), menuOptions, 8, 0);
 
-// wait for user choice to come back from the question box menu
+  // wait for user choice to come back from the question box menu
   switch (mainMenu) {
     // Select Cart
     case 0:
       setCart_Jag();
       break;
-    
+
     // Read ROM
     case 1:
       display_Clear();
@@ -129,8 +129,7 @@ void jagMenu() {
         fileBrowser(FS(FSTRING_SELECT_FILE));
         display_Clear();
         writeJagEEP();
-      }
-      else {
+      } else {
         println_Msg(F("Cart has no EEPROM"));
         display.display();
       }
@@ -157,8 +156,7 @@ void jagMenu() {
         display_Clear();
         writeJagFLASH();
         verifyJagFLASH();
-      }
-      else {
+      } else {
         println_Msg(F("Cart has no FLASH"));
         display.display();
       }
@@ -187,15 +185,15 @@ void readDataLine_Jag(FsFile& database, void* entry) {
 
   // Read rom size
   // Read the next ascii character and subtract 48 to convert to decimal
-  castEntry->gameSize = (database.read()-48);
-  
+  castEntry->gameSize = (database.read() - 48);
+
   // Skip over semicolon
   database.seekCur(1);
-  
-    // Read save size
+
+  // Read save size
   // Read the next ascii character and subtract 48 to convert to decimal
-  castEntry->saveSize = (database.read()-48);
-  
+  castEntry->saveSize = (database.read() - 48);
+
   // Skip rest of line
   database.seekCur(2);
 }
@@ -206,29 +204,29 @@ void printDataLine_Jag(void* entry) {
   print_Msg(castEntry->gameSize);
   println_Msg(F("MB"));
   // 0 = 93C46 = 128 byte = Standard
-// 1 = 93C56 = 256 byte = Aftermarket
-// 2 = 93C66 = 512 byte = Aftermarket
-// 3 = 93C76 = 1024 byte = Aftermarket
-// 4 = 93C86 = 2048 byte = Aftermarket - Battlesphere Gold
-        switch (castEntry->saveSize) {
-        case 0:
-          println_Msg(F("Save: 128B"));
-          break;
-    
-        case 1:
-          println_Msg(F("Save: 256B"));
-          break;
-    
-        case 2:
-          println_Msg(F("Save: 512B"));
-          break;
-        case 3:
-          println_Msg(F("Save: 1KB"));
-          break;
-         case 4:
-          println_Msg(F("Save: 2KB"));
-          break;
-      }
+  // 1 = 93C56 = 256 byte = Aftermarket
+  // 2 = 93C66 = 512 byte = Aftermarket
+  // 3 = 93C76 = 1024 byte = Aftermarket
+  // 4 = 93C86 = 2048 byte = Aftermarket - Battlesphere Gold
+  switch (castEntry->saveSize) {
+    case 0:
+      println_Msg(F("Save: 128B"));
+      break;
+
+    case 1:
+      println_Msg(F("Save: 256B"));
+      break;
+
+    case 2:
+      println_Msg(F("Save: 512B"));
+      break;
+    case 3:
+      println_Msg(F("Save: 1KB"));
+      break;
+    case 4:
+      println_Msg(F("Save: 2KB"));
+      break;
+  }
 }
 #ifndef ENABLE_NES
 void setDefaultRomName() {
@@ -270,9 +268,9 @@ void setCart_Jag() {
   // Open database
   if (myFile.open("jag.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
-      
 
-    if(checkCartSelection(myFile, &readDataLine_Jag, &entry, &printDataLine_Jag,&setRomnameFromString)) {
+
+    if (checkCartSelection(myFile, &readDataLine_Jag, &entry, &printDataLine_Jag, &setRomnameFromString)) {
       EEPROM_writeAnything(10, entry.saveSize);
       jagEepSize = entry.saveSize;
       switch (entry.gameSize) {
@@ -281,13 +279,13 @@ void setCart_Jag() {
           EEPROM_writeAnything(8, jagromSize);
           jagCartSize = 0x100000;
           break;
-    
+
         case 2:
           jagromSize = 1;
           EEPROM_writeAnything(8, jagromSize);
           jagCartSize = 0x200000;
           break;
-    
+
         case 4:
           jagromSize = 2;
           EEPROM_writeAnything(8, jagromSize);
@@ -338,35 +336,35 @@ void jagEepMenu() {
 
   switch (subMenu) {
     case 0:
-      jagEepSize = 0; // 128B
+      jagEepSize = 0;  // 128B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("128B (93C46)"));
       display.display();
       break;
 
     case 1:
-      jagEepSize = 1; // 256B
+      jagEepSize = 1;  // 256B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("256B (93C56)"));
       display.display();
       break;
 
     case 2:
-      jagEepSize = 2; // 512B
+      jagEepSize = 2;  // 512B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("512B (93C66)"));
       display.display();
       break;
 
     case 3:
-      jagEepSize = 3; // 1024B
+      jagEepSize = 3;  // 1024B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("1024B (93C76)"));
       display.display();
       break;
 
     case 4:
-      jagEepSize = 4; // 2048B
+      jagEepSize = 4;  // 2048B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("2048B (93C86)"));
       display.display();
@@ -380,12 +378,12 @@ void setup_Jag() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
-   // Set Address Pins to Output ADDR(PE3)(PJ0), SRCLR(PE4), SRCLK(PE5), RCLK(PG5)
+  // Set Address Pins to Output ADDR(PE3)(PJ0), SRCLR(PE4), SRCLK(PE5), RCLK(PG5)
   DDRE |= (1 << 3) | (1 << 4) | (1 << 5);
   DDRG |= (1 << 5);
 
   // Set Control Pins to Output OEH(PH3), OEL(PH4), CE(PH5), WE(PH6)
-  DDRH |=  (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set EEPROM Control Pins to Output EEPSK(PA6), EEPCS(PA7)
   DDRA |= (1 << 6) | (1 << 7);
@@ -403,31 +401,30 @@ void setup_Jag() {
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
   // Set 74HC595 (Address) Clear LOW - SRCLR (PE4)
-  PORTE &= ~(1 << 4); // Disable Address Shift Register
+  PORTE &= ~(1 << 4);  // Disable Address Shift Register
 
- EEPROM_readAnything(8, jagromSize);
+  EEPROM_readAnything(8, jagromSize);
   EEPROM_readAnything(10, jagEepSize);
   // Print all the info
   if (jagromSize > 2) {
-    jagromSize = 1; // default 2MB
+    jagromSize = 1;  // default 2MB
     EEPROM_writeAnything(8, jagromSize);
   }
   jagCartSize = long(int_pow(2, jagromSize)) * 0x100000;
   strcpy(romName, "JAG");
   if (jagEepSize > 4) {
-    jagEepSize = 0; // default 128B
+    jagEepSize = 0;  // default 128B
     EEPROM_writeAnything(10, jagEepSize);
   }
-    readJagID();
+  readJagID();
 
-  if (strcmp(jagFlashID, "1FD5") == 0) { // AT29C010 128K FLASH
-    jagMemorytrack = 1; // Memory Track Found
-    jagSaveType = 1; // FLASH
+  if (strcmp(jagFlashID, "1FD5") == 0) {  // AT29C010 128K FLASH
+    jagMemorytrack = 1;                   // Memory Track Found
+    jagSaveType = 1;                      // FLASH
     strcpy(romName, "jagMemorytrack");
     jagCartSize = 0x20000;
     jagflaSize = 0x20000;
-  }
-  else
+  } else
     setCart_Jag();
   getJagCartInfo();
 
@@ -448,27 +445,25 @@ void getJagCartInfo() {
   if (jagMemorytrack) {
     print_Msg(jagCartSize / 1024);
     println_Msg(F(" KB"));
-  }
-  else {
-    
-    print_Msg(jagCartSize / 1024 / 1024 );
+  } else {
+
+    print_Msg(jagCartSize / 1024 / 1024);
     println_Msg(F(" MB"));
   }
   if (jagSaveType == 0) {
     print_Msg(F("EEPROM: "));
-    print_Msg(int_pow(2, jagEepSize) * 128); // 128/256/512/1024/2048 BYTES
+    print_Msg(int_pow(2, jagEepSize) * 128);  // 128/256/512/1024/2048 BYTES
     println_Msg(F(" B"));
-  }
-  else if (jagSaveType == 1) {
+  } else if (jagSaveType == 1) {
     print_Msg(F("FLASH: "));
     print_Msg(jagflaSize / 1024);
     println_Msg(F(" KB"));
   }
   display_Update();
 
-    println_Msg(F("Press Button..."));
+  println_Msg(F("Press Button..."));
 
-    wait();
+  wait();
 }
 
 //******************************************************************************
@@ -483,29 +478,28 @@ void getJagCartInfo() {
 // CLOCK (SRCLK/SHCP) PIN 11 - LO/HI TO READ ADDRESS  = PE5
 // RESET (/SRCLR//MR) PIN 10  = PE4
 
-#define SER_CLEAR    PORTE &= ~(1 << 3);
-#define SER_SET      PORTE |= (1 << 3);
-#define SRCLR_CLEAR  PORTE &= ~(1 << 4);
-#define SRCLR_SET    PORTE |= (1 << 4);
-#define CLOCK_CLEAR  PORTE &= ~(1 << 5);
-#define CLOCK_SET    PORTE |= (1 << 5);
-#define LATCH_CLEAR  PORTG &= ~(1 << 5);
-#define LATCH_SET    PORTG |= (1 << 5);
+#define SER_CLEAR PORTE &= ~(1 << 3);
+#define SER_SET PORTE |= (1 << 3);
+#define SRCLR_CLEAR PORTE &= ~(1 << 4);
+#define SRCLR_SET PORTE |= (1 << 4);
+#define CLOCK_CLEAR PORTE &= ~(1 << 5);
+#define CLOCK_SET PORTE |= (1 << 5);
+#define LATCH_CLEAR PORTG &= ~(1 << 5);
+#define LATCH_SET PORTG |= (1 << 5);
 
 // INPUT ADDRESS BYTE IN MSB
 // LATCH LO BEFORE FIRST SHIFTOUT
 // LATCH HI AFTER LAST SHIFOUT
-void shiftOutFAST(byte addr) { // 
-  for (int i = 7; i >= 0; i--) { // MSB
+void shiftOutFAST(byte addr) {    //
+  for (int i = 7; i >= 0; i--) {  // MSB
     CLOCK_CLEAR;
     if (addr & (1 << i)) {
-      SER_SET; // 1
+      SER_SET;  // 1
+    } else {
+      SER_CLEAR;  // 0
     }
-    else {
-      SER_CLEAR; // 0
-    }
-    CLOCK_SET; // shift bit
-    SER_CLEAR; // reset 1
+    CLOCK_SET;  // shift bit
+    SER_CLEAR;  // reset 1
   }
   CLOCK_CLEAR;
 }
@@ -532,17 +526,33 @@ void readJagData(unsigned long myAddress) {
   PORTH &= ~(1 << 3) & ~(1 << 4);
 
   // Long delay here or there will be read errors
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
-  tempDataLO = (((PINK & 0xFF) << 8) | (PINF & 0xFF)); // D0-D15 [ROM U1]
-  tempDataHI = (((PINC & 0xFF) << 8) | (PINL & 0xFF)); // D16-D31 [ROM U2]
+  tempDataLO = (((PINK & 0xFF) << 8) | (PINF & 0xFF));  // D0-D15 [ROM U1]
+  tempDataHI = (((PINC & 0xFF) << 8) | (PINL & 0xFF));  // D16-D31 [ROM U2]
 
   // Setting OEH(PH3) + OEL(PH4) HIGH
   PORTH |= (1 << 3) | (1 << 4);
   // Setting CE(PH5) HIGH
   PORTH |= (1 << 5);
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   SRCLR_CLEAR;
 }
@@ -579,7 +589,7 @@ void readJagROM() {
   // create a new folder
   sd.chdir();
   EEPROM_readAnything(0, foldern);
-//  sprintf(folder, "JAG/ROM/%s/%d", romName, foldern);
+  //  sprintf(folder, "JAG/ROM/%s/%d", romName, foldern);
   sprintf(folder, "JAG/ROM/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -602,7 +612,7 @@ void readJagROM() {
     wait();
     resetArduino();
   }
-  
+
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(jagCartSize);
@@ -656,15 +666,15 @@ void readJagROM() {
 // FOR 93C76 & 93C86, TIE PIN 7 (PE) TO VCC TO ENABLE PROGRAMMING
 //*****************************************************************************
 void Eepromdisplay_Clear() {
-  DDRF |= (1 << 0); // DATA PIN PF0 AS OUTPUT
-  DDRA &= ~(1 << 5); // DO INPUT
+  DDRF |= (1 << 0);   // DATA PIN PF0 AS OUTPUT
+  DDRA &= ~(1 << 5);  // DO INPUT
   EEP_CS_CLEAR;
   EEP_SK_CLEAR;
   EEP_DI_CLEAR;
 }
 
 void EepromresetArduino() {
-  DDRF &= ~(1 << 0); // DATA PIN PF0 AS INPUT
+  DDRF &= ~(1 << 0);  // DATA PIN PF0 AS INPUT
   EEP_CS_CLEAR;
   EEP_SK_CLEAR;
   EEP_DI_CLEAR;
@@ -673,31 +683,31 @@ void EepromresetArduino() {
 void Eeprom0() {
   EEP_DI_CLEAR;
   EEP_SK_SET;
-  _delay_us(1); // minimum 250ns
+  _delay_us(1);  // minimum 250ns
   EEP_DI_CLEAR;
   EEP_SK_CLEAR;
-  _delay_us(1); // minimum 250ns
+  _delay_us(1);  // minimum 250ns
 }
 
 void Eeprom1() {
   EEP_DI_SET;
   EEP_SK_SET;
-  _delay_us(1); // minimum 250ns
+  _delay_us(1);  // minimum 250ns
   EEP_DI_CLEAR;
   EEP_SK_CLEAR;
-  _delay_us(1); // minimum 250ns
+  _delay_us(1);  // minimum 250ns
 }
 
 void EepromRead(uint16_t addr) {
   Eepromdisplay_Clear();
   EEP_CS_SET;
-  Eeprom1(); // 1
-  Eeprom1(); // 1
-  Eeprom0(); // 0
+  Eeprom1();  // 1
+  Eeprom1();  // 1
+  Eeprom0();  // 0
   if ((jagEepSize == 1) || (jagEepSize == 3))
-    Eeprom0(); // Dummy 0 for 56/76
+    Eeprom0();  // Dummy 0 for 56/76
   jagEepromSetAddress(addr);
-  _delay_us(12); // From Willem Timing
+  _delay_us(12);  // From Willem Timing
   // DATA OUTPUT
   EepromreadData();
   EEP_CS_CLEAR;
@@ -711,21 +721,21 @@ void EepromRead(uint16_t addr) {
 void EepromreadData(void) {
   for (int i = 0; i < 16; i++) {
     EEP_SK_SET;
-    _delay_us(1); // minimum 250ns
-    jagEepBit[i] = ((PINA & 0x20) >> 5); // Read DO (PA5) - PINA with Mask 0x20
+    _delay_us(1);                         // minimum 250ns
+    jagEepBit[i] = ((PINA & 0x20) >> 5);  // Read DO (PA5) - PINA with Mask 0x20
     EEP_SK_CLEAR;
-    _delay_us(1); // minimum 250ns
+    _delay_us(1);  // minimum 250ns
   }
 }
 
 void EepromWrite(uint16_t addr) {
   Eepromdisplay_Clear();
   EEP_CS_SET;
-  Eeprom1(); // 1
-  Eeprom0(); // 0
-  Eeprom1(); // 1
+  Eeprom1();  // 1
+  Eeprom0();  // 0
+  Eeprom1();  // 1
   if ((jagEepSize == 1) || (jagEepSize == 3))
-    Eeprom0(); // Dummy 0 for 56/76
+    Eeprom0();  // Dummy 0 for 56/76
   jagEepromSetAddress(addr);
   // DATA OUTPUT
   EepromWriteData();
@@ -737,20 +747,18 @@ void EepromWriteData(void) {
   byte UPPER = jagEepBuf[1];
   byte LOWER = jagEepBuf[0];
   for (int i = 0; i < 8; i++) {
-    if (((UPPER >> 7) & 0x1) == 1) { // Bit is HIGH
+    if (((UPPER >> 7) & 0x1) == 1) {  // Bit is HIGH
       Eeprom1();
-    }
-    else { // Bit is LOW
+    } else {  // Bit is LOW
       Eeprom0();
     }
     // rotate to the next bit
     UPPER <<= 1;
   }
   for (int j = 0; j < 8; j++) {
-    if (((LOWER >> 7) & 0x1) == 1) { // Bit is HIGH
+    if (((LOWER >> 7) & 0x1) == 1) {  // Bit is HIGH
       Eeprom1();
-    }
-    else { // Bit is LOW
+    } else {  // Bit is LOW
       Eeprom0();
     }
     // rotate to the next bit
@@ -758,13 +766,12 @@ void EepromWriteData(void) {
   }
 }
 
-void jagEepromSetAddress(uint16_t addr) { // 16bit
-  uint8_t shiftaddr = jagEepSize + 6; // 93C46 = 0 + 6, 93C56 = 7, 93C66 = 8, 93C76 = 9, 93C86 = 10
+void jagEepromSetAddress(uint16_t addr) {  // 16bit
+  uint8_t shiftaddr = jagEepSize + 6;      // 93C46 = 0 + 6, 93C56 = 7, 93C66 = 8, 93C76 = 9, 93C86 = 10
   for (int i = 0; i < shiftaddr; i++) {
-    if (((addr >> shiftaddr) & 1) == 1) { // Bit is HIGH
+    if (((addr >> shiftaddr) & 1) == 1) {  // Bit is HIGH
       Eeprom1();
-    }
-    else { // Bit is LOW
+    } else {  // Bit is LOW
       Eeprom0();
     }
     // rotate to the next bit
@@ -775,102 +782,109 @@ void jagEepromSetAddress(uint16_t addr) { // 16bit
 // EWEN/ERAL/EWDS
 // 93C56/93C66 - 10000xxxxxx (6 PULSES)
 // 93C76/93C86 - 10000xxxxxxxx (8 PULSES)
-void EepromEWEN(void) { // EWEN 10011xxxx
+void EepromEWEN(void) {  // EWEN 10011xxxx
   Eepromdisplay_Clear();
   EEP_CS_SET;
-  Eeprom1(); // 1
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom1(); // 1
-  Eeprom1(); // 1
+  Eeprom1();  // 1
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom1();  // 1
+  Eeprom1();  // 1
   // 46 = 4x Trailing 0s for 16bit
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
   // 56/66 = 6x Trailing 0s for 16bit
   if (jagEepSize > 0) {
-    Eeprom0(); // 0
-    Eeprom0(); // 0
+    Eeprom0();  // 0
+    Eeprom0();  // 0
   }
   // 76/86 = 8x Trailing 0s for 16bit
   if (jagEepSize > 2) {
-    Eeprom0(); // 0
-    Eeprom0(); // 0
+    Eeprom0();  // 0
+    Eeprom0();  // 0
   }
   EEP_CS_CLEAR;
   _delay_us(2);
+#ifdef SERIAL_MONITOR
   Serial.println(F("ERASE ENABLED"));
+#endif
 }
 
-void EepromERAL(void) { // ERASE ALL 10010xxxx
+void EepromERAL(void) {  // ERASE ALL 10010xxxx
   EEP_CS_SET;
-  Eeprom1(); // 1
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom1(); // 1
-  Eeprom0(); // 0
+  Eeprom1();  // 1
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom1();  // 1
+  Eeprom0();  // 0
   // 46 = 4x Trailing 0s for 16bit
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
   // 56/66 = 6x Trailing 0s for 16bit
   if (jagEepSize > 0) {
-    Eeprom0(); // 0
-    Eeprom0(); // 0
+    Eeprom0();  // 0
+    Eeprom0();  // 0
   }
   // 76/86 = 8x Trailing 0s for 16bit
   if (jagEepSize > 2) {
-    Eeprom0(); // 0
-    Eeprom0(); // 0
+    Eeprom0();  // 0
+    Eeprom0();  // 0
   }
   EEP_CS_CLEAR;
   jagEepromStatus();
+#ifdef SERIAL_MONITOR
   Serial.println(F("ERASED ALL"));
+#endif
 }
 
-void EepromEWDS(void) { // DISABLE 10000xxxx
+void EepromEWDS(void) {  // DISABLE 10000xxxx
   Eepromdisplay_Clear();
   EEP_CS_SET;
-  Eeprom1(); // 1
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
+  Eeprom1();  // 1
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
   // 46 = 4x Trailing 0s for 16bit
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
-  Eeprom0(); // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
+  Eeprom0();  // 0
   // 56/66 = 6x Trailing 0s for 16bit
   if (jagEepSize > 0) {
-    Eeprom0(); // 0
-    Eeprom0(); // 0
+    Eeprom0();  // 0
+    Eeprom0();  // 0
   }
   // 76/86 = 8x Trailing 0s for 16bit
   if (jagEepSize > 2) {
-    Eeprom0(); // 0
-    Eeprom0(); // 0
+    Eeprom0();  // 0
+    Eeprom0();  // 0
   }
   EEP_CS_CLEAR;
   _delay_us(2);
+#ifdef SERIAL_MONITOR
   Serial.println(F("ERASE DISABLED"));
+#endif
 }
 
-void jagEepromStatus(void) {// CHECK READY/BUSY
-  __asm__("nop\n\t""nop\n\t"); // CS LOW for minimum 100ns
+void jagEepromStatus(void) {  // CHECK READY/BUSY
+  __asm__("nop\n\t"
+          "nop\n\t");  // CS LOW for minimum 100ns
   EEP_CS_SET;
-  boolean status = ((PINA & 0x20) >> 5); // Check DO
+  boolean status = ((PINA & 0x20) >> 5);  // Check DO
   do {
     _delay_ms(1);
     status = ((PINA & 0x20) >> 5);
-  }
-  while (!status); // status == 0 = BUSY
+  } while (!status);  // status == 0 = BUSY
   EEP_CS_CLEAR;
 }
 
-void EepromDisplay(){ // FOR SERIAL ONLY
+#ifdef SERIAL_MONITOR
+void EepromDisplay() {  // FOR SERIAL ONLY
   word eepEnd = int_pow(2, jagEepSize) * 128;
   for (word address = 0; address < eepEnd; address += 2) {
     EepromRead(address);
@@ -888,10 +902,10 @@ void EepromDisplay(){ // FOR SERIAL ONLY
   Serial.println(F(""));
   Serial.println(F(""));
 }
-
+#endif
 //*****************************************************************************
 // EEPROM
-// (0) 93C46 128B STANDARD 
+// (0) 93C46 128B STANDARD
 // (1) 93C56 256B AFTERMARKET
 // (2) 93C66 512B AFTERMARKET
 // (3) 93C76 1024B AFTERMARKET
@@ -903,11 +917,11 @@ void readJagEEP() {
   strcpy(fileName, romName);
   strcat(fileName, ".eep");
   println_Msg(F("Reading..."));
-  
+
   // create a new folder for the save file
   EEPROM_readAnything(0, foldern);
   sd.chdir();
-//  sprintf(folder, "JAG/SAVE/%s/%d", romName, foldern);
+  //  sprintf(folder, "JAG/SAVE/%s/%d", romName, foldern);
   sprintf(folder, "JAG/SAVE/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -925,8 +939,8 @@ void readJagEEP() {
     wait();
     resetArduino();
   }
-  word eepEnd = int_pow(2, jagEepSize) * 64; // WORDS
-  if (jagEepSize > 1) { // 93C66/93C76/93C86 - 256/512/1024 WORDS
+  word eepEnd = int_pow(2, jagEepSize) * 64;  // WORDS
+  if (jagEepSize > 1) {                       // 93C66/93C76/93C86 - 256/512/1024 WORDS
     for (word currWord = 0; currWord < eepEnd; currWord += 256) {
       for (int i = 0; i < 256; i++) {
         EepromRead((currWord + i) * 2);
@@ -935,8 +949,7 @@ void readJagEEP() {
       }
       myFile.write(sdBuffer, 512);
     }
-  }
-  else { // 93C46/93C56 - 64/128 WORDS
+  } else {  // 93C46/93C56 - 64/128 WORDS
     for (word currWord = 0; currWord < eepEnd; currWord++) {
       EepromRead(currWord * 2);
       sdBuffer[(currWord * 2)] = jagEepBuf[1];
@@ -964,11 +977,13 @@ void writeJagEEP() {
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
-    EepromEWEN(); // ERASE/WRITE ENABLE
-    EepromERAL(); // ERASE ALL
+    EepromEWEN();  // ERASE/WRITE ENABLE
+    EepromERAL();  // ERASE ALL
+#ifdef SERIAL_MONITOR
     Serial.println(F("WRITING"));
-    word eepEnd = int_pow(2, jagEepSize) * 64; // WORDS
-    if (jagEepSize > 1) { // 93C66/93C76/93C86
+#endif
+    word eepEnd = int_pow(2, jagEepSize) * 64;  // WORDS
+    if (jagEepSize > 1) {                       // 93C66/93C76/93C86
       for (word currWord = 0; currWord < eepEnd; currWord += 256) {
         myFile.read(sdBuffer, 512);
         for (int i = 0; i < 256; i++) {
@@ -977,8 +992,7 @@ void writeJagEEP() {
           EepromWrite((currWord + i) * 2);
         }
       }
-    }
-    else { // 93C46/93C56
+    } else {  // 93C46/93C56
       myFile.read(sdBuffer, eepEnd * 2);
       for (word currWord = 0; currWord < eepEnd; currWord++) {
         jagEepBuf[0] = sdBuffer[currWord * 2];
@@ -986,15 +1000,14 @@ void writeJagEEP() {
         EepromWrite(currWord * 2);
       }
     }
-    EepromEWDS(); // ERASE/WRITE DISABLE
+    EepromEWDS();  // ERASE/WRITE DISABLE
     EepromresetArduino();
     // Close the file:
     myFile.close();
     println_Msg(F(""));
     println_Msg(F("DONE"));
     display_Update();
-  }
-  else {
+  } else {
     println_Msg(F("SD ERROR"));
     println_Msg(F("Press Button to Reset"));
     display_Update();
@@ -1006,14 +1019,14 @@ void writeJagEEP() {
 //*****************************************************************************
 // MEMORY TRACK NVRAM FLASH
 //*****************************************************************************
-void readJagID() { // AT29C010 Flash ID "1FD5"
+void readJagID() {  // AT29C010 Flash ID "1FD5"
   // Switch to write
   dataOut_Jag();
 
   // ID command sequence
-  writeBYTE_FLASH(0x15554, 0xAA); // 0x5555
-  writeBYTE_FLASH(0xAAA8, 0x55);  // 0x2AAA
-  writeBYTE_FLASH(0x15554, 0x90); // 0x5555
+  writeBYTE_FLASH(0x15554, 0xAA);  // 0x5555
+  writeBYTE_FLASH(0xAAA8, 0x55);   // 0x2AAA
+  writeBYTE_FLASH(0x15554, 0x90);  // 0x5555
 
   // Switch to read
   dataIn_Jag();
@@ -1024,7 +1037,7 @@ void readJagID() { // AT29C010 Flash ID "1FD5"
   resetFLASH();
 }
 
-void eraseFLASH() { // Chip Erase (NOT NEEDED FOR WRITES)
+void eraseFLASH() {  // Chip Erase (NOT NEEDED FOR WRITES)
   // Switch to write
   dataOut_Jag();
 
@@ -1032,12 +1045,12 @@ void eraseFLASH() { // Chip Erase (NOT NEEDED FOR WRITES)
   display_Update();
 
   // Erase command sequence
-  writeBYTE_FLASH(0x15554, 0xAA); // 0x5555
-  writeBYTE_FLASH(0xAAA8, 0x55);  // 0x2AAA
-  writeBYTE_FLASH(0x15554, 0x80); // 0x5555
-  writeBYTE_FLASH(0x15554, 0xAA); // 0x5555
-  writeBYTE_FLASH(0xAAA8, 0x55);  // 0x2AAA
-  writeBYTE_FLASH(0x15554, 0x10); // 0x5555
+  writeBYTE_FLASH(0x15554, 0xAA);  // 0x5555
+  writeBYTE_FLASH(0xAAA8, 0x55);   // 0x2AAA
+  writeBYTE_FLASH(0x15554, 0x80);  // 0x5555
+  writeBYTE_FLASH(0x15554, 0xAA);  // 0x5555
+  writeBYTE_FLASH(0xAAA8, 0x55);   // 0x2AAA
+  writeBYTE_FLASH(0x15554, 0x10);  // 0x5555
 
   // Wait for command to complete
   busyCheck();
@@ -1051,9 +1064,9 @@ void resetFLASH() {
   dataOut_Jag();
 
   // Reset command sequence
-  writeBYTE_FLASH(0x15554, 0xAA); // 0x5555
-  writeBYTE_FLASH(0xAAA8, 0x55);  // 0x2AAA
-  writeBYTE_FLASH(0x15554, 0xF0); // 0x5555
+  writeBYTE_FLASH(0x15554, 0xAA);  // 0x5555
+  writeBYTE_FLASH(0xAAA8, 0x55);   // 0x2AAA
+  writeBYTE_FLASH(0x15554, 0xF0);  // 0x5555
 
   // Switch to read
   dataIn_Jag();
@@ -1069,18 +1082,28 @@ void busyCheck() {
 
   // CE or OE must be toggled with each subsequent status read or the
   // completion of a program or erase operation will not be evident.
-  while (((PINL >> 6) & 0x1) == 0) { // IO6 = PORTL PL6
+  while (((PINL >> 6) & 0x1) == 0) {  // IO6 = PORTL PL6
     // Setting CE(PH5) HIGH
     PORTH |= (1 << 5);
 
     // Leave CE high for at least 60ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
 
     // Setting CE(PH5) LOW
     PORTH &= ~(1 << 5);
 
     // Leave CE low for at least 50ns
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
 
     // Read register
     readBYTE_FLASH(0x0000);
@@ -1100,7 +1123,12 @@ byte readBYTE_FLASH(unsigned long myAddress) {
   LATCH_SET;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Setting CE(PH5) LOW
   PORTH &= ~(1 << 5);
@@ -1109,17 +1137,33 @@ byte readBYTE_FLASH(unsigned long myAddress) {
   // Setting OEL(PH4) LOW
   PORTH &= ~(1 << 4);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
-  byte tempByte = PINL; // D16..D23
+  byte tempByte = PINL;  // D16..D23
 
   // Setting CE(PH5) HIGH
   PORTH |= (1 << 5);
   // Setting OEL(PH4) HIGH
   PORTH |= (1 << 4);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempByte;
 }
@@ -1134,24 +1178,45 @@ byte readBYTE_MEMROM(unsigned long myAddress) {
   LATCH_SET;
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Setting CE(PH5) LOW
   PORTH &= ~(1 << 5);
   // Setting OEH(PH3) LOW
   PORTH &= ~(1 << 3);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Read
-  byte tempByte = PINF; // D0..D7
+  byte tempByte = PINF;  // D0..D7
 
   // Setting CE(PH5) HIGH
   PORTH |= (1 << 5);
   // Setting OEH(PH3) HIGH
   PORTH |= (1 << 3);
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   return tempByte;
 }
@@ -1167,7 +1232,12 @@ void writeBYTE_FLASH(unsigned long myAddress, byte myData) {
 
   PORTL = myData;
 
-  __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
 
   // Setting OEL(PH4) HIGH
   PORTH |= (1 << 4);
@@ -1188,9 +1258,9 @@ void writeSECTOR_FLASH(unsigned long myAddress) {
   dataOut_Jag();
 
   // Enable command sequence
-  writeBYTE_FLASH(0x15554, 0xAA); // 0x5555
-  writeBYTE_FLASH(0xAAA8, 0x55);  // 0x2AAA
-  writeBYTE_FLASH(0x15554, 0xA0); // 0x5555
+  writeBYTE_FLASH(0x15554, 0xAA);  // 0x5555
+  writeBYTE_FLASH(0xAAA8, 0x55);   // 0x2AAA
+  writeBYTE_FLASH(0x15554, 0xA0);  // 0x5555
 
   for (int i = 0; i < 128; i++) {
     SRCLR_CLEAR;
@@ -1198,26 +1268,33 @@ void writeSECTOR_FLASH(unsigned long myAddress) {
     LATCH_CLEAR;
     shiftOutFAST((((myAddress + i) * 4) >> 16) & 0xFF);
     shiftOutFAST((((myAddress + i) * 4) >> 8) & 0xFF);
-    shiftOutFAST((myAddress + i) * 4); // (myAddress + i) * 4
+    shiftOutFAST((myAddress + i) * 4);  // (myAddress + i) * 4
     LATCH_SET;
-  
+
     PORTL = sdBuffer[i];
-    __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+    __asm__("nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t"
+            "nop\n\t");
 
     // Setting OEL(PH4) HIGH
-//    PORTH |= (1 << 4);
+    //    PORTH |= (1 << 4);
     // Setting CE(PH5) LOW
     PORTH &= ~(1 << 5);
     // Switch WE(PH6) LOW
     PORTH &= ~(1 << 6);
-    __asm__("nop\n\t""nop\n\t"); // Minimum 90ns
-  
+    __asm__("nop\n\t"
+            "nop\n\t");  // Minimum 90ns
+
     // Switch WE(PH6) HIGH
     PORTH |= (1 << 6);
     // Setting CE(PH5) HIGH
     PORTH |= (1 << 5);
 
-    __asm__("nop\n\t""nop\n\t"); // Minimum 100ns
+    __asm__("nop\n\t"
+            "nop\n\t");  // Minimum 100ns
   }
   delay(30);
 }
@@ -1232,14 +1309,14 @@ void writeSECTOR_FLASH(unsigned long myAddress) {
 void readJagMEMORY() {
   // Set control
   dataIn_Jag();
-  
+
   strcpy(fileName, romName);
   strcat(fileName, ".J64");
 
   // create a new folder
   sd.chdir();
   EEPROM_readAnything(0, foldern);
-//  sprintf(folder, "JAG/ROM/%s/%d", romName, foldern);
+  //  sprintf(folder, "JAG/ROM/%s/%d", romName, foldern);
   sprintf(folder, "JAG/ROM/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -1283,7 +1360,6 @@ void readJagMEMORY() {
 
   println_Msg(F("Press Button..."));
   wait();
-
 }
 
 //*****************************************************************************
@@ -1302,7 +1378,7 @@ void readJagFLASH() {
   // create a new folder for the save file
   sd.chdir();
   EEPROM_readAnything(0, foldern);
-//  sprintf(folder, "JAG/SAVE/%s/%d", romName, foldern);
+  //  sprintf(folder, "JAG/SAVE/%s/%d", romName, foldern);
   sprintf(folder, "JAG/SAVE/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -1334,7 +1410,7 @@ void readJagFLASH() {
     if (currByte % 16384 == 0)
       blinkLED();
     for (int i = 0; i < 512; i++) {
-      sdBuffer[i] = readBYTE_FLASH((currByte + i) * 4); // Address Shift A2..A18
+      sdBuffer[i] = readBYTE_FLASH((currByte + i) * 4);  // Address Shift A2..A18
     }
     myFile.write(sdBuffer, 512);
     processedProgressBar += 512;
@@ -1365,9 +1441,9 @@ void writeJagFLASH() {
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     //Initialize progress bar
-  uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(jagflaSize);
-  draw_progressbar(0, totalProgressBar);
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)(jagflaSize);
+    draw_progressbar(0, totalProgressBar);
     for (unsigned long currByte = 0; currByte < jagflaSize; currByte += 128) {
       // Blink led
       if (currByte % 16384 == 0)
@@ -1377,15 +1453,14 @@ void writeJagFLASH() {
         sdBuffer[i] = myFile.read() & 0xFF;
       }
       writeSECTOR_FLASH(currByte);
-          processedProgressBar += 128;
-    draw_progressbar(processedProgressBar, totalProgressBar);
+      processedProgressBar += 128;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Close the file:
     myFile.close();
     println_Msg(F("WRITE COMPLETE"));
     display_Update();
-  }
-  else {
+  } else {
     println_Msg(F("SD ERROR"));
     println_Msg(F("Press Button to Reset"));
     display_Update();
@@ -1418,8 +1493,7 @@ unsigned long verifyJagFLASH() {
     }
     // Close the file:
     myFile.close();
-  }
-  else {
+  } else {
     println_Msg(F("SD ERROR"));
     println_Msg(F("Press Button to Reset"));
     display_Update();
@@ -1450,7 +1524,7 @@ void writeConfirm() {
   convertPgm(ConfirmMenu, 4);
   uint8_t resetMenu = question_box(F("CONTINUE?"), menuOptions, 2, 0);
 
-// wait for user choice to come back from the question box menu
+  // wait for user choice to come back from the question box menu
   switch (resetMenu) {
     case 0:
       return;
@@ -1459,7 +1533,6 @@ void writeConfirm() {
       wait();
       resetArduino();
   }
-  
 }
 #endif
 //******************************************

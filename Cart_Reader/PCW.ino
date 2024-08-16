@@ -76,10 +76,10 @@
 #define NAND_1A_LOW PORTH &= ~(1 << 3)
 #define NAND_1B_HIGH PORTH |= (1 << 4)
 #define NAND_1B_LOW PORTH &= ~(1 << 4)  // Built-in RAM + I/O
-#define WE_HIGH PORTH |= (1 << 5)
-#define WE_LOW PORTH &= ~(1 << 5)
-#define OE_HIGH PORTH |= (1 << 6)
-#define OE_LOW PORTH &= ~(1 << 6)
+#define WE_HIGH_PCW PORTH |= (1 << 5)
+#define WE_LOW_PCW PORTH &= ~(1 << 5)
+#define OE_HIGH_PCW PORTH |= (1 << 6)
+#define OE_LOW_PCW PORTH &= ~(1 << 6)
 
 #define MODE_READ DDRC = 0      // [INPUT]
 #define MODE_WRITE DDRC = 0xFF  //[OUTPUT]
@@ -207,8 +207,8 @@ void read_setup_PCW()
 {
   NAND_1A_HIGH;
   NAND_1B_HIGH;
-  OE_HIGH;
-  WE_HIGH;
+  OE_HIGH_PCW;
+  WE_HIGH_PCW;
   LE_LOW;
 }
 
@@ -226,11 +226,11 @@ unsigned char read_rom_byte_PCW(unsigned long address)
   __asm__("nop\n\t"
           "nop\n\t");
   // Read Data on AD0-AD7
-  OE_LOW;
+  OE_LOW_PCW;
   DATA_READ;
   delayMicroseconds(5);  // 3+ Microseconds for Problem Carts
   unsigned char data = PINC;
-  OE_HIGH;
+  OE_HIGH_PCW;
 
   return data;
 }
@@ -254,7 +254,7 @@ unsigned char read_ram_byte_1A_PCW(unsigned long address)
           "nop\n\t"
           "nop\n\t");
   // Read Data on AD0-AD7
-  OE_LOW;
+  OE_LOW_PCW;
   DATA_READ;
   __asm__("nop\n\t"
           "nop\n\t"
@@ -263,7 +263,7 @@ unsigned char read_ram_byte_1A_PCW(unsigned long address)
           "nop\n\t"
           "nop\n\t");
   unsigned char data = PINC;
-  OE_HIGH;
+  OE_HIGH_PCW;
   NAND_1A_HIGH;
   __asm__("nop\n\t"
           "nop\n\t"
@@ -300,7 +300,7 @@ unsigned char read_ram_byte_1B_PCW(unsigned long address)
           "nop\n\t"
           "nop\n\t");
   // Read Data on AD0-AD7
-  OE_LOW;
+  OE_LOW_PCW;
   DATA_READ;
   __asm__("nop\n\t"
           "nop\n\t"
@@ -309,7 +309,7 @@ unsigned char read_ram_byte_1B_PCW(unsigned long address)
           "nop\n\t"
           "nop\n\t");
   unsigned char data = PINC;
-  OE_HIGH;
+  OE_HIGH_PCW;
   NAND_1B_HIGH;
   __asm__("nop\n\t"
           "nop\n\t"
@@ -333,13 +333,13 @@ void write_ram_byte_1A_PCW(unsigned long address, unsigned char data)
   PORTC = address & 0xFF;  // A0-A7
   LE_LOW;                  // Address Latched
   // Write Data on AD0-AD7 - WE LOW ~240-248ns
-  WE_LOW;
+  WE_LOW_PCW;
   PORTC = data;
   __asm__("nop\n\t"
           "nop\n\t"
           "nop\n\t"
           "nop\n\t");
-  WE_HIGH;
+  WE_HIGH_PCW;
   NAND_1A_HIGH;
 }
 
@@ -358,7 +358,7 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data)
   PORTC = address & 0xFF;  // A0-A7
   LE_LOW;                  // Address Latched
   // Write Data on AD0-AD7 - WE LOW ~740ns
-  WE_LOW;
+  WE_LOW_PCW;
   PORTC = data;
   __asm__("nop\n\t"
           "nop\n\t"
@@ -370,7 +370,7 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data)
           "nop\n\t"
           "nop\n\t"
           "nop\n\t");
-  WE_HIGH;
+  WE_HIGH_PCW;
   NAND_1B_HIGH;
 }
 
@@ -540,13 +540,13 @@ void write_bank_byte_PCW(unsigned char data)
   PORTC = 0xFF;  // A0-A7
   LE_LOW;        // Address Latched
   // Write Data on AD0-AD7 - WE LOW ~728-736ns
-  WE_LOW;
+  WE_LOW_PCW;
   PORTC = data;
 
   for (unsigned int x = 0; x < 40; x++)
       __asm__("nop\n\t");
 
-  WE_HIGH;
+  WE_HIGH_PCW;
   NAND_1B_HIGH;
 }
 

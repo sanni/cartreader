@@ -37,13 +37,14 @@
    fceux - iNes header
    PsyK0p4T - Sufami Turbo module
    LuigiBlood - SNES Game Processor RAM Cassette module
-
+   
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
    jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
    Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman, Chomemel, 
    philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage, qufb,
    vpelletier, Ancyker, mattiacci, RWeick, ButThouMust, partlyhuman, fakkuyuu, hxlnt, breyell,
-   smesgr9000, joshman196, PsychoFox11, plaidpants, LuigiBlood, InvalidInterrupt
+   smesgr9000, joshman196, PsychoFox11, plaidpants, LuigiBlood, InvalidInterrupt, andy-miles,
+   wfmarques
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 

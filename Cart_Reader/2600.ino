@@ -291,7 +291,7 @@ void writeData3F_2600(uint16_t addr, uint8_t data) {
 boolean checkE7(uint16_t bank) {
   writeData_2600(0x1800, 0xFF);
   readData_2600(0x1FE0 + bank);
-  uint32_t testdata = (readData_2600(0x1000) << 24) | (readData_2600(0x1001) << 16) | (readData_2600(0x1002) << 8) | (readData_2600(0x1003));
+  uint32_t testdata = ((uint32_t)readData_2600(0x1000) << 24) | ((uint32_t)readData_2600(0x1001) << 16) | (readData_2600(0x1002) << 8) | (readData_2600(0x1003));
   return (testdata == 0xFFFFFFFF);
 }
 

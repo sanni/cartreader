@@ -105,7 +105,7 @@ byte ljprosize;
 byte newljprosize;
 
 char mnfID[3];
-char deviceID[5];
+char deviceID_str[5];
 boolean ljproflash1found = false;
 boolean ljproflash2found = false;
 byte ljproflash1size;
@@ -346,18 +346,18 @@ void readID_U1() // Parallel Mode
   CS1_HIGH; // U1 HIGH
   // Flash ID
   sprintf(mnfID, "%02X", id0);
-  sprintf(deviceID, "%02X%02X", id1, id2);
+  sprintf(deviceID_str, "%02X%02X", id1, id2);
 //  println_Msg(mnfID);
-//  println_Msg(deviceID);
+//  println_Msg(deviceID_str);
 //  display_Update();
-  if(strcmp(deviceID, "2015") == 0) { // MX25L1605
+  if(strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash1found = 1;
     ljproflash1size = 2;
     display_Clear();
     println_Msg(F("U1 MX25L1605 FOUND"));
     display_Update();
   }
-  else if (strcmp(deviceID, "2016") == 0) { // MX25L3205
+  else if (strcmp(deviceID_str, "2016") == 0) { // MX25L3205
     ljproflash1found = 1;
     ljproflash1size = 4;
     display_Clear();
@@ -380,17 +380,17 @@ void readID_U2() // Parallel Mode
   CS2_HIGH; // U2 HIGH
   // Flash ID
   sprintf(mnfID, "%02X", id0);
-  sprintf(deviceID, "%02X%02X", id1, id2);
+  sprintf(deviceID_str, "%02X%02X", id1, id2);
 //  println_Msg(mnfID);
-//  println_Msg(deviceID);
+//  println_Msg(deviceID_str);
 //  display_Update();
-  if(strcmp(deviceID, "2015") == 0) { // MX25L1605
+  if(strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash2found = 1;
     ljproflash2size = 2;
     println_Msg(F("U2 MX25L1605 FOUND"));
     display_Update();
   }
-  else if (strcmp(deviceID, "2016") == 0) { // MX25L3205
+  else if (strcmp(deviceID_str, "2016") == 0) { // MX25L3205
     ljproflash2found = 1;
     ljproflash2size = 4;
     println_Msg(F("U2 MX25L3205 FOUND"));
