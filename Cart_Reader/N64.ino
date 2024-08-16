@@ -545,7 +545,9 @@ void setAddress_N64(unsigned long myAddress) {
 
   // Switch WR(PH5) RD(PH6) ale_L(PC0) ale_H(PC1) to high (since the pins are active low)
   PORTH |= (1 << 5) | (1 << 6);
-  PORTC |= (1 << 0) | (1 << 1);
+  PORTC |= (1 << 1);
+  __asm__("nop\n\t"); // needed for repro
+  PORTC |= (1 << 0);
 
   // Output high part to address pins
   PORTF = myAdrHighOut & 0xFF;
@@ -3302,13 +3304,11 @@ void flashRepro_N64() {
       myFile.close();
 
       // Verify
-      print_STR(verifying_STR, 0);
+      print_STR(verifying_STR, 1);
       display_Update();
       writeErrors = verifyFlashrom_N64();
-      if (writeErrors == 0) {
-        println_Msg(FS(FSTRING_OK));
-        display_Update();
-      } else {
+      if (writeErrors != 0) {
+        display_Clear();
         print_Msg(writeErrors);
         print_Msg(F(" bytes "));
         print_Error(did_not_verify_STR);
@@ -3753,6 +3753,11 @@ boolean blankcheckFlashrom_N64() {
 
 // Write Intel flashrom
 void writeIntel4400_N64() {
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
+
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
     // Blink led
     blinkLED();
@@ -3800,12 +3805,19 @@ void writeIntel4400_N64() {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
 // Write Fujitsu MSP55LV100S flashrom consisting out of two MSP55LV512 flashroms one used for the high byte the other for the low byte
 void writeMSP55LV100_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -3856,6 +3868,8 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -3863,6 +3877,11 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
 // Write Spansion S29GL256N flashrom using the 32 byte write buffer
 void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
   unsigned long flashBase = romBase;
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -3918,6 +3937,8 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -3925,6 +3946,11 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
 // Write MX29LV640 flashrom without write buffer
 void writeFlashrom_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -3956,6 +3982,8 @@ void writeFlashrom_N64(unsigned long sectorSize) {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -3964,6 +3992,11 @@ unsigned long verifyFlashrom_N64() {
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     writeErrors = 0;
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)(fileSize);
+    draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       // Blink led
@@ -3988,6 +4021,8 @@ unsigned long verifyFlashrom_N64() {
             }
           }
         }
+        processedProgressBar += 512;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
     // Close the file:
