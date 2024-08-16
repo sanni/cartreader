@@ -142,6 +142,19 @@ void flashMenu() {
 }
 #endif
 
+void setupCFI() {
+  display_Clear();
+  display_Update();
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(F("Select file"));
+  display_Clear();
+  setup_Flash8();
+  identifyCFI_Flash();
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  display_Clear();
+}
+
 void readOnlyMode() {
   display_Clear();
   println_Msg(FS(FSTRING_EMPTY));

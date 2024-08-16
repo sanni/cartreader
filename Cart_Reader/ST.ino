@@ -1,7 +1,7 @@
 /******************************************
   SUPER FAMICOM SUFAMI TURBO MODULE
 ******************************************/
-#ifdef ENABLE_ST
+#if (defined(ENABLE_ST) && defined(ENABLE_SNES))
 
 /******************************************
   Menu

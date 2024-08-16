@@ -5,7 +5,7 @@
    an easy to build and easy to modify cartridge dumper.
 
    Date:             2024-08-16
-   Version:          14.3
+   Version:          14.4
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -3691,7 +3691,7 @@ void loop() {
 #ifdef ENABLE_SNES
     case CORE_SNES: return snesMenu();
 #endif
-#ifdef ENABLE_SFM
+#if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
     case CORE_SFM: return sfmMenu();
 #ifdef ENABLE_FLASH
     case CORE_SFM_FLASH: return sfmFlashMenu();
@@ -3722,7 +3722,7 @@ void loop() {
 #ifdef ENABLE_PCE
     case CORE_PCE: return pceMenu();
 #endif
-#ifdef ENABLE_SV
+ #if (defined(ENABLE_SV) && defined(ENABLE_SNES))
     case CORE_SV: return svMenu();
 #endif
 #ifdef ENABLE_NES
@@ -3794,10 +3794,10 @@ void loop() {
 #ifdef ENABLE_JAGUAR
     case CORE_JAGUAR: return jagMenu();
 #endif
-#ifdef ENABLE_ST
+#if (defined(ENABLE_ST) && defined(ENABLE_SNES))
     case CORE_ST: return stMenu();
 #endif
-#ifdef ENABLE_GPC
+#if (defined(ENABLE_GPC) && defined(ENABLE_SNES))
     case CORE_GPC: return gpcMenu();
 #endif
 #ifdef ENABLE_ATARI8

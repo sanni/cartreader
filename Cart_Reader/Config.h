@@ -282,7 +282,7 @@
 /* [ Super Famicom SF Memory Cassette ----------------------------- ]
 */
 
-#define ENABLE_SFM
+//#define ENABLE_SFM
 
 /****/
 

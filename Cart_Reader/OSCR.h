@@ -124,7 +124,7 @@ enum CORES: uint8_t {
 # ifdef ENABLE_SNES
   CORE_SNES,
 # endif
-# ifdef ENABLE_SFM
+#if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
   CORE_SFM,
 #   ifdef ENABLE_FLASH
   CORE_SFM_FLASH,
@@ -155,7 +155,7 @@ enum CORES: uint8_t {
 # ifdef ENABLE_PCE
   CORE_PCE,
 # endif
-# ifdef ENABLE_SV
+ #if (defined(ENABLE_SV) && defined(ENABLE_SNES))
   CORE_SV,
 # endif
 # ifdef ENABLE_NES
@@ -227,10 +227,10 @@ enum CORES: uint8_t {
 # ifdef ENABLE_VECTREX
   CORE_VECTREX,
 # endif
-# ifdef ENABLE_ST
+#if (defined(ENABLE_ST) && defined(ENABLE_SNES))
   CORE_ST,
 # endif
-# ifdef ENABLE_GPC
+#if (defined(ENABLE_GPC) && defined(ENABLE_SNES))
   CORE_GPC,
 # endif
 # ifdef ENABLE_ATARI8

@@ -1,7 +1,7 @@
 //******************************************
 // SF MEMORY MODULE
 //******************************************
-#ifdef ENABLE_SFM
+#if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
 
 /******************************************
    SF Memory Clock Source
