@@ -2294,10 +2294,9 @@ void readPRG(bool readrom) {
 
       case 82:  // 128K
         banks = int_pow(2, prgsize) * 2;
-        for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x7EFA, i << 2);        // PRG Bank 0 ($8000-$9FFF)
-          write_prg_byte(0x7EFB, (i + 1) << 2);  // PRG Bank 1 ($A000-$BFFF)
-          dumpBankPRG(0x0, 0x4000, base);        // 8K Banks ($8000-$BFFF)
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x7EFA, i << 2);  // PRG Bank 0 ($8000-$9FFF)
+          dumpBankPRG(0x0, 0x2000, base);  // 8K Banks ($8000-$BFFF)
         }
         break;
 
