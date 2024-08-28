@@ -600,7 +600,12 @@
       "default_text_size": 50.0,
       "field_names": [
         {
-          "name": "JLCPCB",
+          "name": "LCSC",
+          "url": false,
+          "visible": false
+        },
+        {
+          "name": "Part",
           "url": false,
           "visible": false
         }
