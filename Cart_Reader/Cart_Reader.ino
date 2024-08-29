@@ -883,8 +883,6 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
   return false;
 }
 
-#if ( \
-  defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_GBX) || defined(ENABLE_BALLY) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_VSMILE) || defined(ENABLE_TI99) || defined(ENABLE_ATARI8))
 void printInstructions() {
   println_Msg(FS(FSTRING_EMPTY));
 
@@ -988,7 +986,6 @@ int navigateMenu(__attribute__((unused)) int min, __attribute__((unused)) int ma
   return selectedNumber;
 }
 #endif /* (ENABLE_OLED | ENABLE_LCD) */
-#endif /* ENABLE_<CORES> */
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void starting_letter__subDraw(byte selection, byte line) {
@@ -2335,8 +2332,8 @@ void setup() {
   }
 
   // Start new log if file is too big
-  if (myLog.fileSize() > 262144) {
-    EEPROM_readAnything(0, foldern);
+  EEPROM_readAnything(0, foldern);
+  if ((myLog.fileSize() > 262144) && (foldern < 9999) && (foldern > 0)){
     sprintf(folder, "%s%d%s", "OSCR_LOG_", foldern, ".txt");
     foldern = foldern + 1;
     EEPROM_writeAnything(0, foldern);
