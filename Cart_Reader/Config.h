@@ -49,11 +49,10 @@
 /****/
 
 /* [ Clock Generator ---------------------------------------------- ]
-    Enable this if you have the clock generator module. This will
-    automatically be enabled if you selected HW2 or newer above.
+    Disable this if you don't have the clock generator module. 
 */
 
-//#define ENABLE_CLOCKGEN
+#define ENABLE_CLOCKGEN
 
 /****/
 
@@ -528,7 +527,7 @@
     with all Cart Readers
 */
 
-//#define OPTION_N64_FASTCRC
+#define OPTION_N64_FASTCRC
 
 /****/
 
@@ -559,29 +558,21 @@
 #define ENABLE_NEOPIXEL
 #define ENABLE_ROTARY
 //# define rotate_counter_clockwise
-#define ENABLE_CLOCKGEN
-#define OPTION_N64_FASTCRC
 #define OPTION_WS_ADAPTER_V2
 #endif
 
 #if (defined(HW2) || defined(HW3))
 #define ENABLE_OLED
 #define ENABLE_BUTTON2
-#define ENABLE_CLOCKGEN
 #define ENABLE_CA_LED
-#define OPTION_N64_FASTCRC
 #endif
 
 #if defined(HW1)
 #define ENABLE_OLED
-//#define ENABLE_CLOCKGEN
-//#define OPTION_N64_FASTCRC
 #endif
 
 #if defined(SERIAL_MONITOR)
 #define ENABLE_SERIAL
-//#define ENABLE_CLOCKGEN
-//#define OPTION_N64_FASTCRC
 #endif
 
 /* Firmware updater only works with HW3 and HW5 */
