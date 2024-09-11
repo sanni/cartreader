@@ -2749,7 +2749,7 @@ void readPRG(bool readrom) {
       case 552:
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x7EFA, ((i & 0x01) << 5) | ((i & 0x02) << 3) | ((i & 0x04) << 1) | ((i & 0x08) >> 2) | ((i & 0x10) >> 3) | ((i & 0x20) >> 5));  // PRG Bank 0 ($8000-$9FFF)
+          write_prg_byte(0x7EFA, ((i & 0x01) << 5) | ((i & 0x02) << 3) | ((i & 0x04) << 1) | ((i & 0x08) >> 1) | ((i & 0x10) >> 3) | ((i & 0x20) >> 5));  // PRG Bank 0 ($8000-$9FFF)
           dumpBankPRG(0x0, 0x2000, base);                                                                                                                 // 8K Banks ($8000-$BFFF)
         }
         break;
