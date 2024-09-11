@@ -268,28 +268,34 @@ void mdMenu() {
       resetFlash_MD();
       idFlash_MD();
       resetFlash_MD();
-      print_Msg(F("Flash ID: "));
-      println_Msg(flashid_str);
       if (flashid == 0xC2F1) {
         println_Msg(F("MX29F1610 detected"));
         flashSize = 2097152;
+      } else if (flashid == 0x017E) {
+        println_Msg(F("S29GL064N detected"));
+        flashSize = 4194304;
       } else {
+        print_Msg(F("Flash ID: "));
+        println_Msg(flashid_str);
         print_FatalError(F("Error: Unknown flashrom"));
       }
+      println_Msg("Erasing...");
       display_Update();
-
       eraseFlash_MD();
       resetFlash_MD();
       blankcheck_MD();
-      write29F1610_MD();
+      if (flashid == 0xC2F1)
+        write29F1610_MD();
+      else if (flashid == 0x017E)
+        write29GL_MD();
       resetFlash_MD();
       delay(1000);
       resetFlash_MD();
       delay(1000);
+      println_Msg("Verifying...");
       verifyFlash_MD();
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
-      println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       display_Update();
@@ -1976,6 +1982,11 @@ void write29F1610_MD() {
     // Set data pins to output
     dataOut_MD();
 
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize / 2;
+    draw_progressbar(0, totalProgressBar);
+
     // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
     int d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
@@ -2002,6 +2013,90 @@ void write29F1610_MD() {
       // Check if write is complete
       delayMicroseconds(100);
       busyCheck_MD();
+
+      // update progress bar
+      processedProgressBar += 64;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+
+    // Set data pins to input again
+    dataIn_MD();
+
+    // Close the file:
+    myFile.close();
+  } else {
+    print_STR(open_file_STR, 1);
+    display_Update();
+  }
+}
+
+void write29GL_MD() {
+  // Create filepath
+  sprintf(filePath, "%s/%s", filePath, fileName);
+  print_STR(flashing_file_STR, 0);
+  print_Msg(filePath);
+  println_Msg(F("..."));
+  display_Update();
+
+  // Open file on sd card
+  if (myFile.open(filePath, O_READ)) {
+    // Get rom size from file
+    fileSize = myFile.fileSize();
+    if (fileSize > flashSize) {
+      print_FatalError(file_too_big_STR);
+    }
+    // Set data pins to output
+    dataOut_MD();
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
+    for (unsigned long currSdBuffer = 0; currSdBuffer < fileSize; currSdBuffer += 512) {
+      myFile.read(sdBuffer, 512);
+
+      // Blink led
+      if (currSdBuffer % 4096 == 0) {
+        blinkLED();
+      }
+
+      for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
+        // Two unlock cycles
+        writeFlash_MD(0x555, 0xaa);
+        writeFlash_MD(0x2aa, 0x55);
+        // Write Buffer Load command to Sector Address
+        writeFlash_MD((currSdBuffer + currWriteBuffer) / 2, 0x25);
+        // Sector Address, Word count
+        writeFlash_MD((currSdBuffer + currWriteBuffer) / 2, 16 - 1);
+
+        // Load buffer
+        word currWord;
+        for (byte currByte = 0; currByte < 32; currByte += 2) {
+          currWord = ((sdBuffer[currWriteBuffer + currByte] & 0xFF) << 8) | (sdBuffer[currWriteBuffer + currByte + 1] & 0xFF);
+          writeFlash_MD((currSdBuffer + currWriteBuffer + currByte) / 2, currWord);
+        }
+
+        // Write buffer
+        writeFlash_MD((currSdBuffer + currWriteBuffer + 32 - 2) / 2, 0x29);
+
+        // Check if write is complete
+        // Set data pins to input
+        dataIn_MD();
+
+        // Read the status register
+        word statusReg = readFlash_MD((currSdBuffer + currWriteBuffer + 32 - 2) / 2);
+
+        while ((statusReg | 0xFF7F) != (currWord | 0xFF7F)) {
+          statusReg = readFlash_MD((currSdBuffer + currWriteBuffer + 32 - 2) / 2);
+        }
+
+        // Set data pins to output
+        dataOut_MD();
+      }
+      // update progress bar
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
 
     // Set data pins to input again
