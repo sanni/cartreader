@@ -760,13 +760,26 @@ void getCartInfo_MD() {
     id[c + 1] = loByte;
   }
 
+  // Get cart name
+  for (byte c = 0; c < 48; c += 2) {
+    // split word
+    word myWord = readWord_MD((0x150 + c) / 2);
+    byte loByte = myWord & 0xFF;
+    byte hiByte = myWord >> 8;
+
+    // write to buffer
+    sdBuffer[c] = hiByte;
+    sdBuffer[c + 1] = loByte;
+  }
+  romName[copyToRomName_MD(romName, sdBuffer, sizeof(romName) - 1)] = 0;
+
   // Identify games using SVP chip
   if (!strncmp("GM MK-1229 ", id, 11) || !strncmp("GM G-7001  ", id, 11))  // Virtua Racing (E/U/J)
     isSVP = 1;
   else
     isSVP = 0;
 
-  // Fix cartridge sizes according to no-intro database
+  // Fix cartridge sizes and checksums according to no-intro database
   if (cartSize == 0x400000) {
     switch (chksum) {
       case 0xCE25:  // Super Street Fighter 2 (J) 40Mbit
@@ -893,173 +906,159 @@ void getCartInfo_MD() {
     }
   }
 
-  // Fatman (Japan).md
+  // Fatman (Japan)
   if (!strncmp("GM T-44013 ", id, 11) && (chksum == 0xFFFF)) {
     chksum = 0xC560;
     cartSize = 0xA0000;
   }
+  
+  // Slaughter Sport (USA)
+  if (!strncmp("GMT5604600jJ", romName, 12) && (chksum == 0xFFFF)) {
+    strcpy(romName, "SLAUGHTERSPORT");
+    chksum = 0x6BAE;
+  }
 
-  // Beggar Prince (Rev 1)(Aftermarket)
+  // Fixes aftermarket cartridges
+  // Beggar Prince (Rev 1)
   if (!strncmp("SF-001", id, 6) && (chksum == 0x3E08)) {
     cartSize = 0x400000;
   }
-
-  // Legend of Wukong (Aftermarket)
+  // Legend of Wukong
   if (!strncmp("SF-002", id, 6) && (chksum == 0x12B0)) {
     chksum = 0x45C6;
   }
-
-  // YM2612 Instrument Editor (Aftermarket)
+  // YM2612 Instrument Editor
   if (!strncmp("GM 10101010", id, 11) && (chksum == 0xC439)) {
     chksum = 0x21B0;
     cartSize = 0x100000;
   }
-
-  // Technoptimistic (Aftermarket)
+  // Technoptimistic
   if (!strncmp("MU REMUTE01", id, 11) && (chksum == 0x0000)) {
     chksum = 0xB55C;
     cartSize = 0x400000;
   }
-
-  // Decoder (Aftermarket)
+  // Decoder
   if (!strncmp("GM REMUTE02", id, 11) && (chksum == 0x0000)) {
     chksum = 0x5426;
     cartSize = 0x400000;
   }
-
-  // Handy Harvy (Aftermarket)
+  // Handy Harvy
   if (!strncmp("GM HHARVYSG", id, 11) && (chksum == 0x0000)) {
     chksum = 0xD9D2;
     cartSize = 0x100000;
   }
-
-  // Jim Power - The Lost Dimension in 3D (Aftermarket)
+  // Jim Power - The Lost Dimension in 3D
   if (!strncmp("GM T-107036", id, 11) && (chksum == 0x0000)) {
     chksum = 0xAA28;
   }
-
-  // mikeyeldey95 (Aftermarket)
+  // mikeyeldey95
   if (!strncmp("GM 00000000-43", id, 14) && (chksum == 0x0000)) {
     chksum = 0x921B;
     cartSize = 0x400000;
   }
-
-  // Enryuu Seiken Xiao-Mei (Aftermarket)
+  // Enryuu Seiken Xiao-Mei
   if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x1E0C)) {
     chksum = 0xE7E5;
     cartSize = 0x400000;
   }
-
-  // Life on Earth - Reimagined (Aftermarket)
+  // Life on Earth - Reimagined
   if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x6BD5)) {
     chksum = 0x1FEA;
     cartSize = 0x400000;
   }
-
-  // Sasha Darko's Sacred Line I (Aftermarket)
+  // Sasha Darko's Sacred Line I
   if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x9F34)) {
     chksum = 0xA094;
     cartSize = 0x400000;
   }
-
-  // Sasha Darko's Sacred Line II (Aftermarket)
+  // Sasha Darko's Sacred Line II
   if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x0E9B)) {
     chksum = 0x6B4B;
     cartSize = 0x400000;
   }
-
-  // Sasha Darko's Sacred Line (Watermelon Release) (Aftermarket)
+  // Sasha Darko's Sacred Line (Watermelon Release)
   if (!strncmp("GM T-574323-00", id, 14) && (chksum == 0xAEDD)) {
     cartSize = 0x400000;
   }
-
-  // Kromasphere (Aftermarket)
+  // Kromasphere
   if (!strncmp("GM MK-0000 -00", id, 14) && (chksum == 0xC536)) {
     chksum = 0xFAB1;
     cartSize = 0x200000;
   }
-
-  // YM2017 (Aftermarket)
+  // YM2017
   if (!strncmp("GM CSET0001-02", id, 14) && (chksum == 0x0000)) {
     chksum = 0xE3A9;
   }
-
-  // The Curse of Illmore Bay (Aftermarket)
+  // The Curse of Illmore Bay
   if (!strncmp("1774          ", id, 14) && (chksum == 0x0000)) {
     chksum = 0x6E34;
     cartSize = 0x400000;
   }
-
-  // Coffee Crisis (Aftermarket)
+  // Coffee Crisis
   if (!strncmp("JN-20160131-03", id, 14) && (chksum == 0x0000)) {
     chksum = 0x8040;
     cartSize = 0x400000;
   }
+  // Romeow & Julicat
+  if (!strncmp("ROMEOWJULICAT", romName, 13) && (chksum == 0x0000)) {
+    chksum = 0xB094;
+    cartSize = 0x200000;
+  }
 
-  // Sonic & Knuckles Check
+  // Sonic & Knuckles checks
   SnKmode = 0;
-  if (chksum == 0xDFB3) {
+  if (!strcmp("GM MK-1563 -00", id) && (chksum == 0xDFB3)) {
+    char labelLockon[17];
+    memset(labelLockon, 0, 17);
 
-    //Sonic & Knuckles ID:GM MK-1563 -00
-    if (!strcmp("GM MK-1563 -00", id)) {
-      char labelLockon[17];
-      memset(labelLockon, 0, 17);
+    // Get labelLockon
+    for (byte c = 0; c < 16; c += 2) {
+      // split word
+      word myWord = readWord_MD((0x200100 + c) / 2);
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
 
-      // Get labelLockon
-      for (byte c = 0; c < 16; c += 2) {
+      // write to buffer
+      labelLockon[c] = hiByte;
+      labelLockon[c + 1] = loByte;
+    }
+
+    // check Lock-on game presence
+    if (!(strcmp("SEGA MEGA DRIVE ", labelLockon) & strcmp("SEGA GENESIS    ", labelLockon))) {
+      char idLockon[15];
+      memset(idLockon, 0, 15);
+
+      // Lock-on cart checksum
+      chksumLockon = readWord_MD(0x1000C7);
+      // Lock-on cart size
+      cartSizeLockon = ((long(readWord_MD(0x1000D2)) << 16) | readWord_MD(0x1000D3)) + 1;
+
+      // Get IdLockon
+      for (byte c = 0; c < 14; c += 2) {
         // split word
-        word myWord = readWord_MD((0x200100 + c) / 2);
+        word myWord = readWord_MD((0x200180 + c) / 2);
         byte loByte = myWord & 0xFF;
         byte hiByte = myWord >> 8;
 
         // write to buffer
-        labelLockon[c] = hiByte;
-        labelLockon[c + 1] = loByte;
+        idLockon[c] = hiByte;
+        idLockon[c + 1] = loByte;
       }
 
-      // check Lock-on game presence
-      if (!(strcmp("SEGA MEGA DRIVE ", labelLockon) & strcmp("SEGA GENESIS    ", labelLockon))) {
-        char idLockon[15];
-        memset(idLockon, 0, 15);
-
-        // Lock-on cart checksum
-        chksumLockon = readWord_MD(0x1000C7);
-        // Lock-on cart size
-        cartSizeLockon = ((long(readWord_MD(0x1000D2)) << 16) | readWord_MD(0x1000D3)) + 1;
-
-        // Get IdLockon
-        for (byte c = 0; c < 14; c += 2) {
-          // split word
-          word myWord = readWord_MD((0x200180 + c) / 2);
-          byte loByte = myWord & 0xFF;
-          byte hiByte = myWord >> 8;
-
-          // write to buffer
-          idLockon[c] = hiByte;
-          idLockon[c + 1] = loByte;
-        }
-
-        if (!strncmp("GM 00001009-0", idLockon, 13) || !strncmp("GM 00004049-0", idLockon, 13)) {
-          //Sonic1 ID:GM 00001009-0? or GM 00004049-0?
-          SnKmode = 2;
-        } else if (!strcmp("GM 00001051-00", idLockon) || !strcmp("GM 00001051-01", idLockon) || !strcmp("GM 00001051-02", idLockon)) {
-          //Sonic2 ID:GM 00001051-00 or GM 00001051-01 or GM 00001051-02
-          SnKmode = 3;
-
-          // Prepare Sonic2 Banks
-          writeSSF2Map(0x509878, 1);  // 0xA130F1
-
-        } else if (!strcmp("GM MK-1079 -00", idLockon)) {
-          //Sonic3 ID:GM MK-1079 -00
-          SnKmode = 4;
-        } else {
-          //Other game
-          SnKmode = 5;
-        }
-
-      } else {
-        SnKmode = 1;
+      if (!strncmp("GM 00001009-0", idLockon, 13) || !strncmp("GM 00004049-0", idLockon, 13)) { // Sonic1 ID:GM 00001009-0? or GM 00004049-0?
+        SnKmode = 2;
+      } else if (!strcmp("GM 00001051-00", idLockon) || !strcmp("GM 00001051-01", idLockon) || !strcmp("GM 00001051-02", idLockon)) { // Sonic2 ID:GM 00001051-00 or GM 00001051-01 or GM 00001051-02
+        SnKmode = 3;
+        // Prepare Sonic2 Banks
+        writeSSF2Map(0x509878, 1);  // 0xA130F1
+      } else if (!strcmp("GM MK-1079 -00", idLockon)) { // Sonic3 ID:GM MK-1079 -00
+        SnKmode = 4;
+      } else { // Other game
+        SnKmode = 5;
       }
+
+    } else {
+      SnKmode = 1;
     }
   }
 
@@ -1232,25 +1231,6 @@ void getCartInfo_MD() {
         sramBase = sramBase >> 1;
       }
     }
-  }
-
-  // Get name
-  for (byte c = 0; c < 48; c += 2) {
-    // split word
-    word myWord = readWord_MD((0x150 + c) / 2);
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
-  }
-  romName[copyToRomName_MD(romName, sdBuffer, sizeof(romName) - 1)] = 0;
-
-  //Check for Slaughter Sport
-  if (!strncmp("GMT5604600jJ", romName, 12) && (chksum == 0xFFFF)) {
-    strcpy(romName, "SLAUGHTERSPORT");
-    chksum = 0x6BAE;
   }
 
   //Get Lock-on cart name
