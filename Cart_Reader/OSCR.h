@@ -269,6 +269,13 @@ enum CORES: uint8_t {
 # ifdef ENABLE_VSMILE
   CORE_VSMILE,
 # endif
+# ifdef ENABLE_CPS3
+  CORE_CPS3_CART,
+  CORE_CPS3_64SIMM,
+  CORE_CPS3_128SIMM,
+  CORE_CPS3_512SIMM,
+  CORE_CPS3_01SIMM,
+# endif
   CORE_MAX // Always last
 };
 
@@ -395,6 +402,9 @@ enum SYSTEM_MENU: uint8_t {
 # endif
 # if defined(ENABLE_FLASH8)
   SYSTEM_MENU_FLASH,
+# endif
+# if defined(ENABLE_CPS3)
+  SYSTEM_MENU_CPS3,
 # endif
 # if defined(ENABLE_SELFTEST)
   SYSTEM_MENU_SELFTEST,

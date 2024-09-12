@@ -884,7 +884,7 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 }
 
 #if ( \
-  defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_GBX) || defined(ENABLE_BALLY) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_VSMILE) || defined(ENABLE_TI99) || defined(ENABLE_ATARI8))
+defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_5200) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_GBX) || defined(ENABLE_BALLY) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_VSMILE) || defined(ENABLE_TI99) || defined(ENABLE_ATARI8) || defined(ENABLE_CPS3))
 void printInstructions() {
   println_Msg(FS(FSTRING_EMPTY));
 
@@ -1125,8 +1125,9 @@ constexpr char modeItem38[] PROGMEM = "Tomy Pyuuta";
 constexpr char modeItem39[] PROGMEM = "TRS-80";
 constexpr char modeItem40[] PROGMEM = "Vtech V.Smile (3V)";
 constexpr char modeItem41[] PROGMEM = "Flashrom Programmer";
-constexpr char modeItem42[] PROGMEM = "Self Test (3V)";
-constexpr char modeItem43[] PROGMEM = "About";
+constexpr char modeItem42[] PROGMEM = "CP System III";
+constexpr char modeItem43[] PROGMEM = "Self Test (3V)";
+constexpr char modeItem44[] PROGMEM = "About";
 
 static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_GBX
@@ -1252,10 +1253,13 @@ static const char* const modeOptions[] PROGMEM = {
 #ifdef ENABLE_FLASH8
   modeItem41,
 #endif
-#ifdef ENABLE_SELFTEST
+#ifdef ENABLE_CPS3
   modeItem42,
 #endif
-  modeItem43, FSTRING_RESET
+#ifdef ENABLE_SELFTEST
+  modeItem43,
+#endif
+  modeItem44, FSTRING_RESET
 
 };
 
@@ -1571,6 +1575,11 @@ void mainMenu() {
 #endif
       return flashMenu();
       break;
+#endif
+
+#ifdef ENABLE_CPS3
+    case SYSTEM_MENU_CPS3:
+      return cpsMenu();
 #endif
 
 #ifdef ENABLE_SELFTEST
@@ -3835,6 +3844,11 @@ void loop() {
 #endif
 #ifdef ENABLE_VSMILE
     case CORE_VSMILE: return vsmileMenu();
+#endif
+#ifdef ENABLE_CPS3
+    case CORE_CPS3_CART: return flashromCPS_Cartridge();
+    case CORE_CPS3_128SIMM: return flashromCPS_SIMM2x8();
+    case CORE_CPS3_64SIMM: return flashromCPS_SIMM4x8();
 #endif
     case CORE_MAX: return resetArduino();
   }
