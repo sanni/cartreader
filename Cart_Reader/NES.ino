@@ -101,7 +101,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 78, 3, 3, 5, 5, 0, 0 },  // irem 74hc161/32
   { 79, 1, 2, 2, 3, 0, 0 },  // NINA-03/06 by AVE [UNLICENSED]
   { 80, 3, 3, 5, 6, 0, 1 },  // taito x1-005                                       [prgram r/w]
-  { 82, 3, 3, 5, 6, 0, 1 },  // taito x1-017                                       [prgram r/w]
+  { 82, 3, 3, 5, 6, 0, 1 },  // taito x1-017 wrong bank order                      [prgram r/w]
   // 84 - bad mapper, not used
   { 85, 3, 5, 0, 5, 0, 1 },  // vrc7                                               [sram r/w]
   { 86, 3, 3, 4, 4, 0, 0 },  // jaleco jf-13 (moero pro yakyuu)
@@ -174,7 +174,8 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 246, 5, 5, 7, 7, 0, 0 },  // C&E Feng Shen Bang [UNLICENSED]
   // 248 - bad mapper, not used
   { 255, 4, 7, 5, 8, 0, 0 },  // 110-in-1 multicart (same as 225) [UNLICENSED]
-  { 446, 0, 8, 0, 0, 0, 0 }   // Mindkids SMD172B_FGPA submapper 0 & 1
+  { 446, 0, 8, 0, 0, 0, 0 },  // Mindkids SMD172B_FGPA submapper 0 & 1
+  { 552, 0, 5, 0, 6, 0, 0 }   // Taito X1-017 actual bank order
 };
 
 const char _file_name_no_number_fmt[] PROGMEM = "%s.%s";
@@ -2286,19 +2287,17 @@ void readPRG(bool readrom) {
       case 80:   // 128K
       case 207:  // 256K [CART SOMETIMES NEEDS POWERCYCLE]
         banks = int_pow(2, prgsize) * 2;
-        for (size_t i = 0; i < banks; i += 2) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x7EFA, i);      // PRG Bank 0 ($8000-$9FFF)
-          write_prg_byte(0x7EFC, i + 1);  // PRG Bank 1 ($A000-$BFFF)
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
       case 82:  // 128K
         banks = int_pow(2, prgsize) * 2;
-        for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x7EFA, i << 2);        // PRG Bank 0 ($8000-$9FFF)
-          write_prg_byte(0x7EFB, (i + 1) << 2);  // PRG Bank 1 ($A000-$BFFF)
-          dumpBankPRG(0x0, 0x4000, base);        // 8K Banks ($8000-$BFFF)
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x7EFA, i << 2);  // PRG Bank 0 ($8000-$9FFF)
+          dumpBankPRG(0x0, 0x2000, base);  // 8K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2736,18 +2735,24 @@ void readPRG(bool readrom) {
         break;
 
       case 446:
-        {
-          banks = int_pow(2, prgsize) * 2;
-          write_prg_byte(0x5003, 0);
-          write_prg_byte(0x5005, 0);
-          for (uint8_t i = 0; i < banks; i++) {  // 8192 for 64MiB
-            write_prg_byte(0x5002, i >> 8);      // outer bank LSB
-            write_prg_byte(0x5001, i);           // outer bank MSB
-            write_prg_byte(0x8000, 0);
-            dumpBankPRG(0x0, 0x2000, base);
-          }
-          break;
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0x5003, 0);
+        write_prg_byte(0x5005, 0);
+        for (uint8_t i = 0; i < banks; i++) {  // 8192 for 64MiB
+          write_prg_byte(0x5002, i >> 8);      // outer bank LSB
+          write_prg_byte(0x5001, i);           // outer bank MSB
+          write_prg_byte(0x8000, 0);
+          dumpBankPRG(0x0, 0x2000, base);
         }
+        break;
+
+      case 552:
+        banks = int_pow(2, prgsize) * 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x7EFA, ((i & 0x01) << 5) | ((i & 0x02) << 3) | ((i & 0x04) << 1) | ((i & 0x08) >> 1) | ((i & 0x10) >> 3) | ((i & 0x20) >> 5));  // PRG Bank 0 ($8000-$9FFF)
+          dumpBankPRG(0x0, 0x2000, base);                                                                                                                 // 8K Banks ($8000-$BFFF)
+        }
+        break;
     }
     if (!readrom) {
       myFile.flush();
@@ -3296,13 +3301,13 @@ void readCHR(bool readrom) {
         case 80:   // 128K/256K
         case 82:   // 128K/256K
         case 207:  // 128K [CART SOMETIMES NEEDS POWERCYCLE]
-          banks = int_pow(2, chrsize) * 4;
-          for (size_t i = 0; i < banks; i += 4) {
-            write_prg_byte(0x7EF2, i);      // CHR Bank 2 [REGISTERS 0x7EF0/0x7EF1 WON'T WORK]
-            write_prg_byte(0x7EF3, i + 1);  // CHR Bank 3
-            write_prg_byte(0x7EF4, i + 2);  // CHR Bank 4
-            write_prg_byte(0x7EF5, i + 3);  // CHR Bank 5
-            dumpBankCHR(0x0, 0x2000);
+        case 552:
+          banks = int_pow(2, chrsize) * 2;
+          write_prg_byte(0x7EF6, 0x00);     // CHR mode [2x 2KiB banks at $0000-$0FFF]
+          for (size_t i = 0; i < banks; i += 2) {
+            write_prg_byte(0x7EF0, i << 1);
+            write_prg_byte(0x7EF1, (i + 1) << 1);
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
