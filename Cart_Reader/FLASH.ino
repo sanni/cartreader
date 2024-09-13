@@ -16,6 +16,7 @@ unsigned long blank;
 unsigned long sectorSize;
 uint16_t bufferSize;
 byte mapping = 0;
+boolean byteCtrl = 0;
 
 /******************************************
    Menu
@@ -238,7 +239,7 @@ void flashromMenu8() {
               writeFlash29LV640();
             else if (flashid == 0x017E)
               writeFlash29GL(sectorSize, bufferSize);
-            else if ((flashid == 0x0458) || (flashid == 0x0158) || (flashid == 0x01AB))
+            else if ((flashid == 0x0458) || (flashid == 0x0158) || (flashid == 0x01AB) || (flashid == 0x0422) || (flashid == 0x0423))
               writeFlash29F800();
             else if (flashid == 0x0)  // Manual flash config, pick most common type
               writeFlash29LV640();
@@ -576,7 +577,7 @@ idtheflash:
     flashSize = 2097152;
     flashromType = 1;
   } else if (flashid == 0x04AD) {
-    println_Msg(F("AM29F016D detected"));
+    println_Msg(F("MBM29F016A detected"));
     flashSize = 2097152;
     flashromType = 1;
   } else if (flashid == 0x04D4) {
@@ -593,6 +594,14 @@ idtheflash:
     flashromType = 2;
   } else if (flashid == 0x01AB) {
     println_Msg(F("AM29F400AB detected"));
+    flashSize = 131072 * 4;
+    flashromType = 2;
+  } else if (flashid == 0x0423) {
+    println_Msg(F("MBM29F400TC detected"));
+    flashSize = 131072 * 4;
+    flashromType = 2;
+  } else if (flashid == 0x0422) {
+    println_Msg(F("MBM29F400BC detected"));
     flashSize = 131072 * 4;
     flashromType = 2;
   } else if (flashid == 0x0158) {
@@ -1207,8 +1216,13 @@ byte readByte_Flash(unsigned long myAddress) {
           "nop\n\t"
           "nop\n\t");
 
-  // Setting OE(PH1) OE_SNS(PH3) LOW
-  PORTH &= ~((1 << 1) | (1 << 3));
+  if (byteCtrl) {
+    // Setting OE(PH1) LOW
+    PORTH &= ~(1 << 1);
+  } else {
+    // Setting OE(PH1) OE_SNS(PH3) LOW
+    PORTH &= ~((1 << 1) | (1 << 3));
+  }
 
   __asm__("nop\n\t"
           "nop\n\t"
@@ -1220,8 +1234,13 @@ byte readByte_Flash(unsigned long myAddress) {
   // Read
   byte tempByte = PINC;
 
-  // Setting OE(PH1) OE_SNS(PH3) HIGH
-  PORTH |= (1 << 1) | (1 << 3);
+  if (byteCtrl) {
+    // Setting OE(PH1) HIGH
+    PORTH |= (1 << 1);
+  } else {
+    // Setting OE(PH1) OE_SNS(PH3) HIGH
+    PORTH |= (1 << 1) | (1 << 3);
+  }
   __asm__("nop\n\t"
           "nop\n\t"
           "nop\n\t"
@@ -1507,8 +1526,13 @@ int busyCheck29F032(uint32_t addr, byte c) {
   // Set data pins to input
   dataIn8();
 
-  // Setting OE(PH1) OE_SNS(PH3) CE(PH6)LOW
-  PORTH &= ~((1 << 1) | (1 << 3) | (1 << 6));
+  if (byteCtrl) {
+    // Setting OE(PH1) CE(PH6)LOW
+    PORTH &= ~((1 << 1) | (1 << 6));
+  } else {
+    // Setting OE(PH1) OE_SNS(PH3) CE(PH6)LOW
+    PORTH &= ~((1 << 1) | (1 << 3) | (1 << 6));
+  }
   // Setting WE(PH4) WE_SNES(PH5) HIGH
   PORTH |= (1 << 4) | (1 << 5);
 
@@ -1537,8 +1561,13 @@ int busyCheck29F032(uint32_t addr, byte c) {
   // Set data pins to output
   dataOut();
 
-  // Setting OE(PH1) OE_SNS(PH3) HIGH
-  PORTH |= (1 << 1) | (1 << 3);
+  if (byteCtrl) {
+    // Setting OE(PH1) HIGH
+    PORTH |= (1 << 1);
+  } else {
+    // Setting OE(PH1) OE_SNS(PH3) HIGH
+    PORTH |= (1 << 1) | (1 << 3);
+  }
   return ret;
 }
 /******************************************
@@ -2425,11 +2454,11 @@ void printFlash16(int numBytes) {
       byte right_byte = (currWord >> 8) & 0xFF;
 
 
-      sprintf(buf, "%.2x", left_byte);
+      sprintf(buf, "%.2X", left_byte);
       // Now print the significant bits
       print_Msg(buf);
 
-      sprintf(buf, "%.2x", right_byte);
+      sprintf(buf, "%.2X", right_byte);
       // Now print the significant bits
       print_Msg(buf);
     }
