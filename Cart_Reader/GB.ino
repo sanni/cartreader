@@ -1857,6 +1857,28 @@ void sendFlashCommand_GB(byte cmd, boolean commandSet) {
   }
 }
 
+// Read the status register
+void busyCheck_GB(unsigned long address, byte data) {
+  byte statusReg = readByte_GB(address);
+  //byte count = 0;
+  while ((statusReg & 0x80) != (data & 0x80)) {
+    // Update Status
+    statusReg = readByte_GB(address);
+    /* Debug
+    count++;
+    if (count > 250) {
+      println_Msg("");
+      print_Msg(F("Bank: "));
+      print_Msg(currBank);
+      print_Msg(F(" Addr: "));
+      println_Msg(currAddr + currByte);
+      display_Update();
+      wait();
+    }
+    */
+  }
+}
+
 // Write AMD type flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
@@ -1938,6 +1960,18 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       print_Msg(romBanks);
       println_Msg(F("/32"));
       display_Update();
+    } else if (flashid == 0xBFB6) {
+      println_Msg(F("SST 39SF020"));
+      print_Msg(F("Banks: "));
+      print_Msg(romBanks);
+      println_Msg(F("/16"));
+      display_Update();
+    } else if (flashid == 0xBFB5) {
+      println_Msg(F("SST 39SF010"));
+      print_Msg(F("Banks: "));
+      print_Msg(romBanks);
+      println_Msg(F("/8"));
+      display_Update();
     } else {
       print_Msg(F("Flash ID: "));
       sprintf(flashid_str, "%04X", flashid);
@@ -1959,13 +1993,8 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       sendFlashCommand_GB(0x80, commandSet);
       sendFlashCommand_GB(0x10, commandSet);
 
-      // Read the status register
-      byte statusReg = readByte_GB(0);
-      // After a completed erase D7 will output 1
-      while ((statusReg & 0x80) != 0x80) {
-        // Update Status
-        statusReg = readByte_GB(0);
-      }
+      // Wait until erase is complete
+      busyCheck_GB(0, 0x80);
 
       // Blankcheck
       println_Msg(F("Blankcheck"));
@@ -2037,26 +2066,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
             PORTH &= ~(1 << 6);
 
             // Busy check
-            //byte count = 0;
-            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-              /*
-              // Debug
-              count++;
-              __asm__("nop\n\t"
-                      "nop\n\t"
-                      "nop\n\t"
-                      "nop\n\t");
-              if (count > 250) {
-                println_Msg("");
-                print_Msg(F("Bank: "));
-                print_Msg(currBank);
-                print_Msg(F(" Addr: "));
-                println_Msg(currAddr + currByte);
-                display_Update();
-                wait();
-              }
-              */
-            }
+            busyCheck_GB(currAddr + currByte, sdBuffer[currByte]);
 
             // Switch OE/RD(PH6) to HIGH
             PORTH |= (1 << 6);
@@ -2103,8 +2113,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
             PORTH &= ~(1 << 6);
 
             // Busy check
-            while ((PINC & 0x80) != (sdBuffer[currByte] & 0x80)) {
-            }
+            busyCheck_GB(currAddr + currByte, sdBuffer[currByte]);
 
             // Switch OE/RD(PH6) to HIGH
             PORTH |= (1 << 6);
