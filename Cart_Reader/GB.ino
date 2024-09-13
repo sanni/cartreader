@@ -29,7 +29,7 @@ static const char* const menuOptionsGB[] PROGMEM = { FSTRING_READ_ROM, FSTRING_R
 
 #if defined(ENABLE_FLASH)
 // GB Flash items
-static const char GBFlashItem1[] PROGMEM = "GB 29F Repro";
+static const char GBFlashItem1[] PROGMEM = "GB 29F/39SF Repro";
 static const char GBFlashItem2[] PROGMEM = "GB CFI Repro";
 static const char GBFlashItem3[] PROGMEM = "GB CFI and Save";
 static const char GBFlashItem4[] PROGMEM = "GB Smart";
@@ -42,7 +42,8 @@ static const char GBFlash29Item1[] PROGMEM = "DIY MBC3 (WR)";
 static const char GBFlash29Item2[] PROGMEM = "DIY MBC5 (WR)";
 static const char GBFlash29Item3[] PROGMEM = "HDR MBC30 (Audio)";
 static const char GBFlash29Item4[] PROGMEM = "HDR GameBoy Cam";
-static const char* const menuOptionsGBFlash29[] PROGMEM = { GBFlash29Item1, GBFlash29Item2, GBFlash29Item3, GBFlash29Item4, FSTRING_RESET };
+static const char GBFlash29Item5[] PROGMEM = "39SF040 (Audio)";
+static const char* const menuOptionsGBFlash29[] PROGMEM = { GBFlash29Item1, GBFlash29Item2, GBFlash29Item3, GBFlash29Item4, GBFlash29Item5, FSTRING_RESET };
 #endif
 
 // Pelican Codebreaker, Brainboy, and Monster Brain Operation Menu
@@ -132,8 +133,8 @@ void gbxMenu() {
           // create submenu with title and 5 options to choose from
           unsigned char gbFlash29;
           // Copy menuOptions out of progmem
-          convertPgm(menuOptionsGBFlash29, 5);
-          gbFlash29 = question_box(F("Select MBC"), menuOptions, 5, 0);
+          convertPgm(menuOptionsGBFlash29, 6);
+          gbFlash29 = question_box(F("Select MBC"), menuOptions, 6, 0);
 
           // wait for user choice to come back from the question box menu
           switch (gbFlash29) {
@@ -147,7 +148,7 @@ void gbxMenu() {
               // Change working dir to root
               sd.chdir("/");
               //MBC3
-              writeFlash29F_GB(3, 1);
+              writeFlash_GB(3, 0, 1);
               feedbackPressAndReset();
               break;
 
@@ -161,12 +162,12 @@ void gbxMenu() {
               // Change working dir to root
               sd.chdir("/");
               //MBC5
-              writeFlash29F_GB(5, 1);
+              writeFlash_GB(5, 0, 1);
               feedbackPressAndReset();
               break;
 
             case 2:
-              //Also pulse Audio-In during writes
+              //Pulse Audio-In during writes
               display_Clear();
               display_Update();
               setup_GB();
@@ -176,13 +177,13 @@ void gbxMenu() {
               DDRH |= (1 << 4);
               // Output a high signal on Audio-In(PH4)
               PORTH |= (1 << 4);
-              //Tell writeByte_GB function to pulse Audio-In too
+              //Tell writeByte_GB function to pulse Audio-In
               audioWE = 1;
 
               // Change working dir to root
               sd.chdir("/");
               //MBC5
-              writeFlash29F_GB(3, 1);
+              writeFlash_GB(3, 0, 1);
               feedbackPressAndReset();
               break;
 
@@ -197,7 +198,7 @@ void gbxMenu() {
               // Change working dir to root
               sd.chdir("/");
               //MBC3
-              writeFlash29F_GB(3, 1);
+              writeFlash_GB(3, 0, 1);
               // Prints string out of the common strings array either with or without newline
               print_STR(press_button_STR, 1);
               display_Update();
@@ -219,7 +220,7 @@ void gbxMenu() {
               // Change working dir to root
               sd.chdir("/");
               //MBC3
-              writeFlash29F_GB(3, 0);
+              writeFlash_GB(3, 0, 0);
 
               // Reset
               println_Msg(FS(FSTRING_EMPTY));
@@ -227,6 +228,27 @@ void gbxMenu() {
               break;
 
             case 4:
+              //Flash MBC5 cart with 39SF040 and WE on Audio
+              display_Clear();
+              display_Update();
+              setup_GB();
+              mode = CORE_GB;
+
+              //Setup Audio-In(PH4) as Output
+              DDRH |= (1 << 4);
+              // Output a high signal on Audio-In(PH4)
+              PORTH |= (1 << 4);
+              //Tell writeByte_GB function to pulse Audio-In
+              audioWE = 1;
+
+              // Change working dir to root
+              sd.chdir("/");
+              //MBC5 with Audio and 39SF040 command set
+              writeFlash_GB(5, 1, 1);
+              feedbackPressAndReset();
+              break;
+
+            case 5:
               resetArduino();
               break;
           }
@@ -774,6 +796,7 @@ void writeByte_GB(int myAddress, byte myData) {
   if (audioWE)
     // Pull Audio-In(PH4) low
     PORTH &= ~(1 << 4);
+  //else
   // Pull WR(PH5) low
   PORTH &= ~(1 << 5);
 
@@ -786,6 +809,7 @@ void writeByte_GB(int myAddress, byte myData) {
   if (audioWE)
     // Pull Audio-In(PH4) HIGH
     PORTH |= (1 << 4);
+  //else
   // Pull WR(PH5) HIGH
   PORTH |= (1 << 5);
 
@@ -1817,18 +1841,26 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
 
 #if defined(ENABLE_FLASH)
 /******************************************
-  29F016/29F032/29F033 flashrom functions
+  29F016/29F032/29F033/39SF040 flashrom functions
 *****************************************/
-void sendFlash29FCommand_GB(byte cmd) {
-  writeByte_GB(0x555, 0xaa);
-  writeByte_GB(0x2aa, 0x55);
-  writeByte_GB(0x555, cmd);
+void sendFlashCommand_GB(byte cmd, boolean commandSet) {
+  if (commandSet == 0) {
+    //29F016/29F032/29F033
+    writeByte_GB(0x555, 0xaa);
+    writeByte_GB(0x2aa, 0x55);
+    writeByte_GB(0x555, cmd);
+  } else if (commandSet == 1) {
+    //39SF040
+    writeByte_GB(0x5555, 0xaa);
+    writeByte_GB(0x2aaa, 0x55);
+    writeByte_GB(0x5555, cmd);
+  }
 }
 
-// Write 29F032 flashrom
+// Write AMD type flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-void writeFlash29F_GB(byte MBC, boolean flashErase) {
+void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
@@ -1860,11 +1892,11 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     delay(100);
 
     // Reset flash
-    writeByte_GB(0x555, 0xf0);
+    sendFlashCommand_GB(0xf0, commandSet);
     delay(100);
 
     // ID command sequence
-    sendFlash29FCommand_GB(0x90);
+    sendFlashCommand_GB(0x90, commandSet);
 
     // Read the two id bytes into a string
     flashid = readByte_GB(0) << 8;
@@ -1900,6 +1932,12 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       print_Msg(romBanks);
       println_Msg(F("/64"));
       display_Update();
+    } else if (flashid == 0xBFB7) {
+      println_Msg(F("SST 39SF040"));
+      print_Msg(F("Banks: "));
+      print_Msg(romBanks);
+      println_Msg(F("/32"));
+      display_Update();
     } else {
       print_Msg(F("Flash ID: "));
       sprintf(flashid_str, "%04X", flashid);
@@ -1909,7 +1947,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     }
 
     // Reset flash
-    writeByte_GB(0x555, 0xf0);
+    sendFlashCommand_GB(0xf0, commandSet);
 
     delay(100);
 
@@ -1918,8 +1956,8 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       display_Update();
 
       // Erase flash
-      sendFlash29FCommand_GB(0x80);
-      sendFlash29FCommand_GB(0x10);
+      sendFlashCommand_GB(0x80, commandSet);
+      sendFlashCommand_GB(0x10, commandSet);
 
       // Read the status register
       byte statusReg = readByte_GB(0);
@@ -1959,7 +1997,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
       if (audioWE)
         println_Msg(F("Writing flash MBC30 (Audio)"));
       else
-        println_Msg(F("Writing flash MBC3"));
+        println_Msg(F("Writing flash MBC3 (WR)"));
       display_Update();
 
       // Write flash
@@ -1991,7 +2029,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
-            sendFlash29FCommand_GB(0xa0);
+            sendFlashCommand_GB(0xa0, commandSet);
             // Write current byte
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
@@ -2031,7 +2069,10 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
     }
 
     else if (MBC == 5) {
-      println_Msg(F("Writing flash MBC5"));
+      if (audioWE)
+        println_Msg(F("Writing flash MBC5 (Audio)"));
+      else
+        println_Msg(F("Writing flash MBC5 (WR)"));
       display_Update();
 
       // Write flash
@@ -2054,7 +2095,7 @@ void writeFlash29F_GB(byte MBC, boolean flashErase) {
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
-            sendFlash29FCommand_GB(0xa0);
+            sendFlashCommand_GB(0xa0, commandSet);
             // Write current byte
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
 
