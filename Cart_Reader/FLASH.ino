@@ -36,7 +36,8 @@ static const char* const menuOptionsFLASH8[] PROGMEM = { flashMenuItemBlankcheck
 // Flash mode menu
 static const char modeMenuItem1[] PROGMEM = "CFI Mode";
 static const char modeMenuItem2[] PROGMEM = "Standard Mode";
-static const char* const menuOptionsMode[] PROGMEM = { modeMenuItem1, modeMenuItem2, FSTRING_RESET };
+static const char modeMenuItem3[] PROGMEM = "PLCC32 to SNES";
+static const char* const menuOptionsMode[] PROGMEM = { modeMenuItem1, modeMenuItem2, modeMenuItem3, FSTRING_RESET };
 #endif
 
 // Misc flash strings
@@ -46,9 +47,10 @@ const char PROGMEM ATTENTION_3_3V[] = "ATTENTION 3.3V";
 // Flash start menu
 static const char flashMenuItem1[] PROGMEM = "CFI";
 static const char flashMenuItem2[] PROGMEM = "8bit Flash";
-static const char flashMenuItem3[] PROGMEM = "Eprom";
-static const char flashMenuItem4[] PROGMEM = "16bit Flash";
-static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4, FSTRING_RESET };
+static const char flashMenuItem3[] PROGMEM = "PLCC32 to SNES";
+static const char flashMenuItem4[] PROGMEM = "Eprom";
+static const char flashMenuItem5[] PROGMEM = "16bit Flash";
+static const char* const menuOptionsFlash[] PROGMEM = { flashMenuItem1, flashMenuItem2, flashMenuItem3, flashMenuItem4, flashMenuItem5, FSTRING_RESET };
 
 // 16bit Flash menu items
 static const char* const menuOptionsFLASH16[] PROGMEM = { flashMenuItemBlankcheck, flashMenuItemErase, flashMenuItemRead, flashMenuItemWrite, flashMenuItemID, flashMenuItemPrint, FSTRING_RESET };
@@ -62,11 +64,11 @@ void flashMenu() {
   display_Update();
   mapping = 0;
 
-  // create menu with title and 5 options to choose from
+  // create menu with title and 6 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 5);
-  flashSlot = question_box(F("Select Mode"), menuOptions, 5, 0);
+  convertPgm(menuOptionsFlash, 6);
+  flashSlot = question_box(F("Select Mode"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot) {
@@ -89,18 +91,26 @@ void flashMenu() {
       break;
 
     case 2:
+      mapping = 3;
+      setup_Flash8();
+      id_Flash8();
+      wait();
+      mode = CORE_FLASH8;
+      break;
+
+    case 3:
       setup_Eprom();
       mode = CORE_EPROM;
       break;
 
-    case 3:
+    case 4:
       setup_Flash16();
       id_Flash16();
       wait();
       mode = CORE_FLASH16;
       break;
 
-    case 4:
+    case 5:
       resetArduino();
       break;
 
@@ -114,11 +124,11 @@ void flashMenu() {
   display_Update();
   mapping = 0;
 
-  // create menu with title and 3 options to choose from
+  // create menu with title and 4 options to choose from
   unsigned char flashMode;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMode, 3);
-  flashMode = question_box(F("Select Flash Mode"), menuOptions, 3, 0);
+  convertPgm(menuOptionsMode, 4);
+  flashMode = question_box(F("Select Flash Mode"), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (flashMode) {
@@ -139,6 +149,21 @@ void flashMenu() {
       wait();
       mode = CORE_FLASH8;
       break;
+
+    case 2:
+      mapping = 3;
+      setup_Flash8();
+      id_Flash8();
+      wait();
+      mode = CORE_FLASH8;
+      break;
+
+    case 3:
+      resetArduino();
+      break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 #endif
@@ -647,7 +672,6 @@ idtheflash:
   } else if ((flashid == 0x8916) || (flashid == 0x8917) || (flashid == 0x8918)) {
     // E28FXXXJ3A
     print_Msg(F("E28F"));
-
     switch (flashid & 0x00f0) {
       case 0x60:
         flashSize = 131072 * 32;
@@ -662,11 +686,14 @@ idtheflash:
         print_Msg(F("128"));
         break;
     }
-
     println_Msg(F("J3A detected"));
     sectorSize = 131072;
     bufferSize = 32;
     flashromType = 3;
+  } else if (flashid == 0xBFB7) {
+    println_Msg(F("39F040 detected"));
+    flashSize = 524288;
+    flashromType = 1;
   } else if (secondID == 1) {
     // Read ID a second time using a different command (type 1 flashrom)
     resetFlash8();
@@ -676,7 +703,6 @@ idtheflash:
   } else if (secondID == 2) {
     // Backup first ID read-out
     strncpy(vendorID, flashid_str, 5);
-
     // Read ID a third time using a different command (type 2 flashrom)
     resetFlash8();
     idFlash29F1610();
@@ -944,6 +970,37 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
   }
+  /* SNES maskrom flash adapter combined with PLCC32 adapter
+  SNES A19 -> 32PLCC A17
+  SNES A18 -> 32PLCC A16
+  SNES A17 -> 32PLCC A18
+  SNES A16 -> 32PLCC OE
+  SNES CS/Flash OE -> 32PLCC WE
+  */
+  else if (mapping == 3) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16
+    if (!(((myAddress >> 16) & 0xFF) & 0x1)) {
+      PORTL &= ~(1 << 2);
+    } else if (((myAddress >> 16) & 0xFF) & 0x1) {
+      PORTL |= (1 << 2);
+    }
+    // A17
+    if (!(((myAddress >> 16) & 0xFF) & 0x2)) {
+      PORTL &= ~(1 << 3);
+    } else if (((myAddress >> 16) & 0xFF) & 0x2) {
+      PORTL |= (1 << 3);
+    }
+    // A18
+    if (!(((myAddress >> 16) & 0xFF) & 0x4)) {
+      PORTL &= ~(1 << 1);
+    } else if (((myAddress >> 16) & 0xFF) & 0x4) {
+      PORTL |= (1 << 1);
+    }
+    // Switch PLCC32 OE to HIGH to disable output
+    PORTL |= (1 << 0);
+  }
   // SNES LoRom
   else if (mapping == 1) {
     // A8-A14
@@ -1065,8 +1122,12 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
           "nop\n\t"
           "nop\n\t");
 
-  // Switch WE(PH4) WE_SNS(PH5) to LOW
-  PORTH &= ~((1 << 4) | (1 << 5));
+  if (mapping == 3)
+    // Switch PLCC32 WE to LOW
+    PORTH &= ~(1 << 3);
+  else
+    // Switch WE(PH4) WE_SNS(PH5) to LOW
+    PORTH &= ~((1 << 4) | (1 << 5));
 
   // Leave WE low for at least 60ns
   __asm__("nop\n\t"
@@ -1076,8 +1137,12 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
           "nop\n\t"
           "nop\n\t");
 
-  // Switch WE(PH4) WE_SNS(PH5) to HIGH
-  PORTH |= (1 << 4) | (1 << 5);
+  if (mapping == 3)
+    // Switch PLCC32 WE to HIGH
+    PORTH |= (1 << 3);
+  else
+    // Switch WE(PH4) WE_SNS(PH5) to HIGH
+    PORTH |= (1 << 4) | (1 << 5);
 
   // Leave WE high for at least 50ns
   __asm__("nop\n\t"
@@ -1098,6 +1163,37 @@ byte readByte_Flash(unsigned long myAddress) {
     PORTK = (myAddress >> 8) & 0xFF;
     // A16-A23
     PORTL = (myAddress >> 16) & 0xFF;
+  }
+  /* SNES maskrom flash adapter combined with PLCC32 adapter
+  SNES A19 -> 32PLCC A17
+  SNES A18 -> 32PLCC A16
+  SNES A17 -> 32PLCC A18
+  SNES A16 -> 32PLCC OE
+  SNES CS/Flash OE -> 32PLCC WE
+  */
+  else if (mapping == 3) {
+    // A8-A15
+    PORTK = (myAddress >> 8) & 0xFF;
+    // A16
+    if (!(((myAddress >> 16) & 0xFF) & 0x1)) {
+      PORTL &= ~(1 << 2);
+    } else if (((myAddress >> 16) & 0xFF) & 0x1) {
+      PORTL |= (1 << 2);
+    }
+    // A17
+    if (!(((myAddress >> 16) & 0xFF) & 0x2)) {
+      PORTL &= ~(1 << 3);
+    } else if (((myAddress >> 16) & 0xFF) & 0x2) {
+      PORTL |= (1 << 3);
+    }
+    // A18
+    if (!(((myAddress >> 16) & 0xFF) & 0x4)) {
+      PORTL &= ~(1 << 1);
+    } else if (((myAddress >> 16) & 0xFF) & 0x4) {
+      PORTL |= (1 << 1);
+    }
+    // Switch PLCC32 WE to HIGH to disable writing
+    PORTH |= (1 << 3);
   }
   // SNES LoRom
   else if (mapping == 1) {
@@ -1219,6 +1315,9 @@ byte readByte_Flash(unsigned long myAddress) {
   if (byteCtrl) {
     // Setting OE(PH1) LOW
     PORTH &= ~(1 << 1);
+  } else if (mapping == 3) {
+    // Switch PLCC32 OE to LOW
+    PORTL &= ~(1 << 0);
   } else {
     // Setting OE(PH1) OE_SNS(PH3) LOW
     PORTH &= ~((1 << 1) | (1 << 3));
@@ -1237,6 +1336,9 @@ byte readByte_Flash(unsigned long myAddress) {
   if (byteCtrl) {
     // Setting OE(PH1) HIGH
     PORTH |= (1 << 1);
+  } else if (mapping == 3) {
+    // Switch PLCC32 OE to HIGH
+    PORTL |= (1 << 0);
   } else {
     // Setting OE(PH1) OE_SNS(PH3) HIGH
     PORTH |= (1 << 1) | (1 << 3);
@@ -1374,9 +1476,16 @@ bool openVerifyFlashFile() {
   Command functions
 *****************************************/
 void writeByteCommand_Flash(byte command) {
-  writeByte_Flash(0x555, 0xaa);
-  writeByte_Flash(0x2aa, 0x55);
-  writeByte_Flash(0x555, command);
+  if (mapping == 3) {
+    //39F040
+    writeByte_Flash(0x5555, 0xaa);
+    writeByte_Flash(0x2aaa, 0x55);
+    writeByte_Flash(0x5555, command);
+  } else {
+    writeByte_Flash(0x555, 0xaa);
+    writeByte_Flash(0x2aa, 0x55);
+    writeByte_Flash(0x555, command);
+  }
 }
 
 void writeByteCommandShift_Flash(byte command) {
