@@ -124,7 +124,7 @@ E2E11B2D
 Bezerkoids (World) (Proto 1) (Aftermarket) (Unl).lnx
 6BDF6D54
 
-Bill &amp; Ted's Excellent Adventure (USA, Europe).lnx
+Bill & Ted's Excellent Adventure (USA, Europe).lnx
 143A313E
 
 Biniax (World) (v1.0) (Aftermarket) (Unl).lnx
@@ -955,10 +955,10 @@ Sorrow (World) (Proto) (Aftermarket) (Unl).lnx
 Space Domino (World) (Aftermarket) (Unl).lnx
 1FA8F631
 
-Space Lock &amp; Space Shoot (World) (2005-05-16) (Proto) (Aftermarket) (Unl).lnx
+Space Lock & Space Shoot (World) (2005-05-16) (Proto) (Aftermarket) (Unl).lnx
 DC62DF2D
 
-Space Lock &amp; Space Shoot (World) (2005-04-25) (Proto) (Aftermarket) (Unl).lnx
+Space Lock & Space Shoot (World) (2005-04-25) (Proto) (Aftermarket) (Unl).lnx
 A319FE86
 
 Spacewar (USA) (Demo).lnx
