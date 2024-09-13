@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2024-08-16
-   Version:          14.4
+   Date:             2024-09-13
+   Version:          14.5
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -15,7 +15,7 @@
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
 
-   Compiled with Arduino IDE 2.2.1
+   Compiled with Arduino IDE 2.3.2
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
@@ -1574,7 +1574,7 @@ void mainMenu() {
       break;
 #endif
 
-#ifdef ENABLE_CPS3
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16)) 
     case SYSTEM_MENU_CPS3:
       return cpsMenu();
 #endif
@@ -3842,7 +3842,7 @@ void loop() {
 #ifdef ENABLE_VSMILE
     case CORE_VSMILE: return vsmileMenu();
 #endif
-#ifdef ENABLE_CPS3
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16)) 
     case CORE_CPS3_CART: return flashromCPS_Cartridge();
     case CORE_CPS3_128SIMM: return flashromCPS_SIMM2x8();
     case CORE_CPS3_64SIMM: return flashromCPS_SIMM4x8();

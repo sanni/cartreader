@@ -269,7 +269,7 @@ enum CORES: uint8_t {
 # ifdef ENABLE_VSMILE
   CORE_VSMILE,
 # endif
-# ifdef ENABLE_CPS3
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16)) 
   CORE_CPS3_CART,
   CORE_CPS3_64SIMM,
   CORE_CPS3_128SIMM,

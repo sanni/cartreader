@@ -5,7 +5,7 @@
 // Tested with  HW5
 // https://github.com/herzmx/CPS3-OSCR-Adapter
 //******************************************
-#ifdef ENABLE_CPS3
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16)) 
 /******************************************
    Variables
  *****************************************/

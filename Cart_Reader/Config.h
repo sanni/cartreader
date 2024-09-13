@@ -391,9 +391,10 @@
 /****/
 
 /* [ CP System III ------------------------------------------------ ]
+also needs ENABLE_FLASH8 and ENABLE_FLASH16 to be enabled
 */
 
-#define ENABLE_CPS3
+//#define ENABLE_CPS3
 
 /****/
 
