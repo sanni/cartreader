@@ -611,8 +611,10 @@ void printDataLine_NES(void* entry) {
   // Identify variant for use across multiple functions
   if (mapper == 4) {  // Check for MMC6/MMC3
     checkMMC6();
-    if (mmc6)
-      ram = 1;  // 1K
+    if (mmc6) {
+      ram = 1;      // 1K
+      ramsize = 1;  // Must be a non-zero value
+    }
   }
   printNESSettings();
 }
@@ -1627,8 +1629,10 @@ void checkStatus_NES() {
   // Identify variant for use across multiple functions
   if (mapper == 4) {  // Check for MMC6/MMC3
     checkMMC6();
-    if (mmc6)
-      ram = 1;                // 1K
+    if (mmc6) {
+      ram = 1;      // 1K
+      ramsize = 1;  // Must be a non-zero value
+    }
   } else if (mapper == 30) {  // Check for Flashable/Non-Flashable
 #if defined(ENABLE_FLASH)
     NESmaker_ID();  // Flash ID
