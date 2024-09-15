@@ -2147,7 +2147,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
     }
 
     else if (MBC == 0) {
-      if (fileSize > 0x7FFF)
+      if (fileSize > 0x8000)
         print_FatalError(file_too_big_STR);
       if (audioWE)
         println_Msg(F("Writing flash (Audio)"));
