@@ -40,7 +40,7 @@
 // | 34 |- SWVCC
 // +----+
 //
-// Version 1.1
+// Version 1.2
 // By @partlyhuman
 // This implementation would not be possible without the invaluable
 // documentation on
@@ -125,9 +125,11 @@ static bool waitPressButton_LYNX(bool ret = false) {
 
 static void compareStride_LYNX(uint8_t b, int i, int stride) {
   uint8_t other = readByte_LYNX(i + stride);
-  if (other == 0xff) {
-    // If this is a flash cart, these in-between spaces should be formatted to all 1's
+  if (other == 0xff || other == 0x00) {
+    // If this is NOR flash, these in-between spaces should be formatted to all 1's
     // in which case, we DON'T report this as an unmirrored area
+    // Additionally, we have encountered commercial carts where the maskrom is larger than it needs to be
+    // and in this case, the maskrom will be initialized to 0s, not 1s.
     return;
   }
   if (b != other) {
