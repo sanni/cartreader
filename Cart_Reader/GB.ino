@@ -2147,13 +2147,14 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
     }
 
     else if (MBC == 0) {
-      if (fileSize > 0x8000)
-        print_FatalError(file_too_big_STR);
       if (audioWE)
         println_Msg(F("Writing flash (Audio)"));
       else
         println_Msg(F("Writing flash (WR)"));
       display_Update();
+
+      // Limit file size to 32KB
+      romBanks = 2;
 
       // Write flash
       //Initialize progress bar
@@ -2161,7 +2162,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
       draw_progressbar(0, totalProgressBar);
 
-      for (unsigned int currAddr = 0x4000; currAddr < fileSize; currAddr += 512) {
+      for (unsigned int currAddr = 0; currAddr < 0x7FFF; currAddr += 512) {
         myFile.read(sdBuffer, 512);
 
         for (int currByte = 0; currByte < 512; currByte++) {
