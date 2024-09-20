@@ -2486,7 +2486,7 @@ FIFA - Road to World Cup 98 (Europe) (En,Fr,De,Es,It,Sv) (A8FP).sfc
 0CC77AF7,15E7,966E8246,16,064
 
 FIFA 97 (Europe) (En,Fr,De,Es,It,Sv).sfc
-E92D28B7,BA0A,D16282E9,15,060
+470EABE5,BA0A,D16282E9,15,060
 
 FIFA International Soccer (Europe).sfc
 A350821A,22E9,1D4FDBEE,08,032
