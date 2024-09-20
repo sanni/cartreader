@@ -694,6 +694,14 @@ idtheflash:
     println_Msg(F("39F040 detected"));
     flashSize = 524288;
     flashromType = 1;
+  } else if (flashid == 0xBFB6) {
+    println_Msg(F("39F020 detected"));
+    flashSize = 262144;
+    flashromType = 1;
+  } else if (flashid == 0xBFB5) {
+    println_Msg(F("39F010 detected"));
+    flashSize = 131072;
+    flashromType = 1;
   } else if (secondID == 1) {
     // Read ID a second time using a different command (type 1 flashrom)
     resetFlash8();
@@ -706,6 +714,10 @@ idtheflash:
     // Read ID a third time using a different command (type 2 flashrom)
     resetFlash8();
     idFlash29F1610();
+    secondID = 3;
+    goto idtheflash;
+  } else if (secondID == 3) {
+    idFlash39SF040();
     secondID = 0;
     goto idtheflash;
   } else {
@@ -1476,7 +1488,7 @@ bool openVerifyFlashFile() {
   Command functions
 *****************************************/
 void writeByteCommand_Flash(byte command) {
-  if (mapping == 3) {
+  if ((flashid == 0xBFB7) || (flashid == 0xBFB6) || (flashid == 0xBFB5)) {
     //39F040
     writeByte_Flash(0x5555, 0xaa);
     writeByte_Flash(0x2aaa, 0x55);
@@ -1501,7 +1513,7 @@ void writeWordCommand_Flash(byte command) {
 }
 
 /******************************************
-  29F032 flashrom functions
+  29F032/39SF040 flashrom functions
 *****************************************/
 void resetFlash29F032() {
   // Set data pins to output
@@ -1514,6 +1526,23 @@ void resetFlash29F032() {
   dataIn8();
 
   delay(500);
+}
+
+void idFlash39SF040() {
+  // Set data pins to output
+  dataOut();
+
+  writeByte_Flash(0x5555, 0xaa);
+  writeByte_Flash(0x2aaa, 0x55);
+  writeByte_Flash(0x5555, 0x90);
+
+  // Set data pins to input again
+  dataIn8();
+
+  // Read the two id bytes into a string
+  flashid = readByte_Flash(0) << 8;
+  flashid |= readByte_Flash(1);
+  sprintf(flashid_str, "%04X", flashid);
 }
 
 void idFlash29F032() {
