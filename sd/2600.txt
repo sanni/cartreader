@@ -400,6 +400,9 @@ Encounter at L-5
 Enduro
 064
 
+Ente und der Wolf, Die
+064
+
 Entombed
 064
 
@@ -429,6 +432,9 @@ Fatal Run
 
 Fathom
 248
+
+Feuerwehr im Einsatz
+064
 
 Fighter Pilot
 246
@@ -755,6 +761,9 @@ Mission 3000 A.D.
 064
 
 Mission Survive
+064
+
+Moderne Ritter, Der
 064
 
 Mogul Maniac
