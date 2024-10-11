@@ -442,6 +442,9 @@ Fighter Pilot
 Final Approach
 064
 
+Fire Birds
+064
+
 Fire Fighter
 064
 
@@ -789,6 +792,9 @@ MotoRodeo
 
 Mountain King
 250
+
+Mountain Man
+064
 
 Mouse Trap
 064
