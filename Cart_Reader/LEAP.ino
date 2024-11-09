@@ -361,7 +361,7 @@ void checkStart_LEAP()
   OE_LOW;
   CE_LOW;
   BYTE_HIGH;
-  tempword = read_rom_word_LEAP(0x0);
+  word tempword = read_rom_word_LEAP(0x0);
   if ((LEAP[0] == ((tempword >> 0x8) & 0xFF)) && (LEAP[1] == (tempword & 0xFF))) {
     tempword = read_rom_word_LEAP(0x1);
     findTable_LEAP(0x4, 0xA2);
@@ -383,7 +383,7 @@ void findTable_LEAP(unsigned long startAddr, unsigned long endAddr)
   delay(500);
   CE_LOW;
   for (unsigned long addr = startAddr; addr < endAddr; addr +=2) {
-    tempword = read_rom_word_LEAP(addr);
+    word tempword = read_rom_word_LEAP(addr);
     if ((TBL[0] == ((tempword >> 0x8) & 0xFF))&&(TBL[1] == (tempword & 0xFF))) {
       tempword = read_rom_word_LEAP(addr + 1);
       if ((TBL[2] == ((tempword >> 0x8) & 0xFF))&&(TBL[3] == (tempword & 0xFF))) {
@@ -400,7 +400,7 @@ void readTable_LEAP(unsigned long startAddr, unsigned long endAddr)
   delay(500);
   CE_LOW;
   for (unsigned long addr = startAddr; addr < endAddr; addr++) {
-    tempword = read_rom_word_LEAP(addr);
+    word tempword = read_rom_word_LEAP(addr);
     if ((TXT[0] == ((tempword >> 0x8) & 0xFF))&&(TXT[1] == (tempword & 0xFF))) {
       tempword = read_rom_word_LEAP(addr + 1);
       if ((TXT[2] == ((tempword >> 0x8) & 0xFF))&&(TXT[3] == (tempword & 0xFF))) { // Text Block Marker Found
@@ -465,7 +465,7 @@ void readROM_LEAP()
 
   for (unsigned long address = 0; address < 0x200000; address += 256) { // 4MB
     for (unsigned int x = 0; x < 256; x++) {
-      tempword = read_rom_word_LEAP(address + x);
+      word tempword = read_rom_word_LEAP(address + x);
       sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
       sdBuffer[(x * 2) + 1] = tempword & 0xFF;
     }
@@ -474,7 +474,7 @@ void readROM_LEAP()
   if (leapsize > 0) {
     for (unsigned long address = 0x200000; address < 0x400000; address += 256) { // +4MB = 8MB
       for (unsigned int x = 0; x < 256; x++) {
-        tempword = read_rom_word_LEAP(address + x);
+        word tempword = read_rom_word_LEAP(address + x);
         sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
         sdBuffer[(x * 2) + 1] = tempword & 0xFF;
       }
@@ -483,7 +483,7 @@ void readROM_LEAP()
     if (leapsize > 1) {
       for (unsigned long address = 0x400000; address < 0x800000; address += 256) { // +8MB = 16MB
         for (unsigned int x = 0; x < 256; x++) {
-          tempword = read_rom_word_LEAP(address + x);
+          word tempword = read_rom_word_LEAP(address + x);
           sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
           sdBuffer[(x * 2) + 1] = tempword & 0xFF;
         }
@@ -528,7 +528,7 @@ void setROMSize_LEAP()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(LEAPSTER[newleapsize]);
-  println_Msg(F("KB"));
+  println_Msg(F("MB"));
   display_Update();
   delay(1000);
 #else
@@ -542,7 +542,7 @@ setrom:
       Serial.print(i);
       Serial.print(F(" = "));
       Serial.print(LEAPSTER[i + leaplo]);
-      Serial.println(F("KB"));
+      Serial.println(F("MB"));
     }
     Serial.print(F("Enter ROM Size: "));
     while (Serial.available() == 0) {}
@@ -557,7 +557,7 @@ setrom:
   }
   Serial.print(F("ROM Size = "));
   Serial.print(LEAPSTER[newleapsize]);
-  Serial.println(F("KB"));
+  Serial.println(F("MB"));
 #endif
   EEPROM_writeAnything(8, newleapsize);
   leapsize = newleapsize;
