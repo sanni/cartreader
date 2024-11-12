@@ -7,6 +7,9 @@ Shinkenzemi 'Chuugaku Kouza' - Chuu 1 Eigo (Japan) (5BB111NH).pcw
 Shinkenzemi 'Chuugaku Kouza' - Chuu 1 Eigo (Japan) (5BB112SS).pcw
 7F7AAF5B
 
+Shinkenzemi 'Chuugaku Kouza' - Chuu 1 Eigo (Japan) (5BB113NC).pcw
+1A3716EC
+
 Shinkenzemi 'Chuugaku Kouza' - Chuu 2 Eigo (Japan) (5BB211NH).pcw
 505F954E
 
@@ -24,6 +27,9 @@ AD5136AE
 
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Japan) (6BD410) (Alt).pcw
 32A902B8
+
+Shinkenzemi 'Chuugaku Kouza' - Chuugaku Chiri (Japan) (6BD410) (Alt 2).pcw
+F8BB9D68
 
 Shinkenzemi 'Chuugaku Kouza' - Chuugaku Koumin (Japan) (6BE310).pcw
 0AF098CA
@@ -49,7 +55,7 @@ Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB113NC - 7BB113NC).pcw
 Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB111NH - 7BB111NH).pcw
 BE0CFA07
 
-Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (7BB112SS).pcw
+Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (0BB112SS - 7BB112SS).pcw
 742C17C3
 
 Shinkenzemi Chuugaku Kouza - Chuu 1 Eigo (Japan) (7BB115OW).pcw
@@ -70,7 +76,7 @@ Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB213NC).pcw
 Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB214TE).pcw
 3C08E0DA
 
-Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (7BB215OW).pcw
+Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (Japan) (0BB215OW - 7BB215OW).pcw
 370CFF2F
 
 Shinkenzemi Chuugaku Kouza - Chuu 2 Eigo (New Horizon, Columbus 21) (Japan) (2BB211).pcw
@@ -99,6 +105,9 @@ Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (New Crown, Total English) (Japan) (2BB
 
 Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (New Horizon, Columbus 21) (Japan) (2BB311).pcw
 919279ED
+
+Shinkenzemi Chuugaku Kouza - Chuu 3 Eigo (Sunshine, One World) (Japan) (2BB312).pcw
+9F05CFE4
 
 Shinkenzemi Chuugaku Kouza - Chuugaku Chiri (Japan) (0BD410).pcw
 AC87B035
