@@ -174,6 +174,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 246, 5, 5, 7, 7, 0, 0 },  // C&E Feng Shen Bang [UNLICENSED]
   // 248 - bad mapper, not used
   { 255, 4, 7, 5, 8, 0, 0 },  // 110-in-1 multicart (same as 225) [UNLICENSED]
+  { 268, 0, 11, 0, 0, 0, 0 },  // MindKids/CoolGirl submapper 0
   { 446, 0, 8, 0, 0, 0, 0 },  // Mindkids SMD172B_FGPA submapper 0 & 1
   { 552, 0, 5, 0, 6, 0, 0 }   // Taito X1-017 actual bank order
 };
@@ -2735,6 +2736,21 @@ void readPRG(bool readrom) {
           write_prg_byte(0x6002, (i | 2));
           write_prg_byte(0x6003, (i | 3));
           dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 268:  // submapper 0
+        banks = int_pow(2, prgsize) * 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x6000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
+          write_prg_byte(0x6001, ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
+          write_prg_byte(0x6002, 0x00);
+          write_prg_byte(0x6003, 0x00);
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, i);
+          for (size_t address = 0x0; address < 0x2000; address += 512) {
+            dumpPRG(base, address);
+          }
         }
         break;
 
