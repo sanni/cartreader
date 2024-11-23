@@ -8,21 +8,19 @@
 #ifdef ENABLE_NES
 
 //Line Content
-//28   Supported Mappers
-//106  Defines
-//136  Variables
-//197  Menus
-//383  Setup
-//412  No-Intro SD Database Functions
-//1125 Low Level Functions
-//1372 CRC Functions
-//1426 File Functions
-//1527 NES 2.0 Header Functions
-//1957 Config Functions
-//2760 ROM Functions
-//3951 RAM Functions
-//4384 Eeprom Functions
-//4574 NESmaker Flash Cart Functions
+//37   Supported Mappers
+//185  Defines
+//211  Variables
+//242  Menus
+//456  Setup
+//486  No-Intro SD Database Functions
+//803  Low Level Functions
+//1012 File Functions
+//1083 Config Functions
+//1701 ROM Functions
+//3666 RAM Functions
+//4066 Eeprom Functions
+//4254 NESmaker Flash Cart Functions
 
 struct mapper_NES {
   uint16_t mapper;
@@ -993,6 +991,20 @@ static void write_wram_byte(unsigned int address, uint8_t data) {  // Mapper 5 (
   set_address(0);
   // Set phi2 to high state to keep cartridge unreseted
   PHI2_HI;
+}
+
+// Pirate Mapper 59
+static void write_reg_m59(unsigned int address) {
+  ROMSEL_HI;
+  MODE_WRITE;
+  PRG_WRITE;
+  set_address(address);
+  set_romsel(address);
+  _delay_us(1); // WRITING
+  ROMSEL_HI;
+  PRG_READ;
+  MODE_READ;
+  set_address(0);
 }
 
 /******************************************
@@ -2169,9 +2181,9 @@ void readPRG(bool readrom) {
 
       case 59:
         banks = int_pow(2, prgsize);
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte((0x8000 + (i & 0x07)) << 4 | 0x80, 0);
-          dumpBankPRG(0x0, 0x4000, base);
+        for (size_t i = 0; i < banks; i += 2) {
+          write_reg_m59(0x8000 + ((i & 0x07) << 4));
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -3201,7 +3213,7 @@ void readCHR(bool readrom) {
         case 59:
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + (i & 0x07), 0);
+            write_reg_m59(0x8000 + (i & 0x07));
             dumpBankCHR(0x0, 0x2000);
           }
           break;
