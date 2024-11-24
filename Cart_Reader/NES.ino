@@ -2172,8 +2172,8 @@ void readPRG(bool readrom) {
 
       case 58:
       case 213:
-        banks = int_pow(2, prgsize) / 2;
-        for (size_t i = 0; i < banks; i++) {
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000 + (i & 0x07), 0x00);
           dumpBankPRG(0x0, 0x8000, base);
         }
