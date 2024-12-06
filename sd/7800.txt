@@ -10,6 +10,9 @@ Alien Brigade
 Asteroids
 0,0
 
+Asteroids Deluxe
+0,1
+
 Atari 7800 Development Card
 0,0
 
@@ -87,6 +90,9 @@ Food Fight (Europe)
 
 Food Fight (USA)
 0,1
+
+Frenzy
+0,2
 
 Galaga (Europe)
 0,2
