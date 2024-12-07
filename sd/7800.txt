@@ -31,6 +31,9 @@ Baseball
 Basketbrawl
 1,4
 
+Berzerk
+0,2
+
 Centipede
 0,0
 
@@ -180,6 +183,9 @@ Scrapyard Dog
 
 Sentinel
 1,4
+
+Space Duel
+0,1
 
 Summer Games
 1,4
