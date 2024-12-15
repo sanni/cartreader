@@ -75,7 +75,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 46, 1, 6, 0, 8, 0, 0 },  // Rumble Station [UNLICENSED]
   { 47, 4, 4, 6, 6, 0, 0 },  // (super spike vball + world cup)
   { 48, 3, 4, 6, 6, 0, 0 },  // taito tc0690
-  { 52, 0, 3, 0, 3, 0, 0 },  // Realtec 8213 [UNLICENSED]
+  { 52, 0, 5, 0, 7, 0, 0 },  // Realtec 8213 [UNLICENSED]
   { 56, 0, 7, 0, 6, 0, 0 },  // KS202 [UNLICENSED]
   { 57, 0, 3, 0, 5, 0, 0 },  // BMC-GKA [UNLICENSED]
   { 58, 1, 6, 1, 6, 0, 0 },  // BMC-GKB (C)NROM-based multicarts, duplicate of mapper 213 [UNLICENSED]
@@ -2147,11 +2147,13 @@ void readPRG(bool readrom) {
         break;
 
       case 52:
-        banks = int_pow(2, prgsize);
+        banks = int_pow(2, prgsize) * 2;
         write_prg_byte(0xA001, 0x80);  // enable WRAM write
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6000, (i & 0x07) | 0x08);
-          dumpBankPRG(0x0, 0x4000, base);
+          write_prg_byte(0x6000, (i & 0x07) >> 4);
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, i);
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -3199,11 +3201,13 @@ void readCHR(bool readrom) {
           break;
 
         case 52:
-          banks = int_pow(2, chrsize);
+          banks = int_pow(2, chrsize) * 4;
           write_prg_byte(0xA001, 0x80);  // enable WRAM write
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6000, (i & 0x04) << 2 | (i & 0x03) << 4 | 0x40);
-            dumpBankCHR(0x0, 0x1000);
+            write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x200) >> 7);
+            write_prg_byte(0x8000, 0x02);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x1000, 0x1400);
           }
           break;
 
