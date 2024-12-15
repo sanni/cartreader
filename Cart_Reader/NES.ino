@@ -172,7 +172,10 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 246, 5, 5, 7, 7, 0, 0 },  // C&E Feng Shen Bang [UNLICENSED]
   // 248 - bad mapper, not used
   { 255, 4, 7, 5, 8, 0, 0 },  // 110-in-1 multicart (same as 225) [UNLICENSED]
-  { 268, 0, 11, 0, 0, 0, 0 },  // MindKids/CoolGirl submapper 0
+  { 268, 0, 11, 0, 8, 0, 0 },  // 268.0 MindKids/CoolGirl [UNLICENSED]
+  { 315, 0, 5, 0, 7, 0, 0 },   // BMC-830134C [UNLICENSED]
+  { 329, 1, 7, 0, 0, 0, 3 },   // UNL-EDU2000, same as 177 [UNLICENSED]
+  { 366, 0, 6, 0, 8, 0, 0 },   // GN-45 [UNLICENSED]
   { 446, 0, 8, 0, 0, 0, 0 },  // Mindkids SMD172B_FGPA submapper 0 & 1
   { 552, 0, 5, 0, 6, 0, 0 }   // Taito X1-017 actual bank order
 };
@@ -2760,9 +2763,29 @@ void readPRG(bool readrom) {
           write_prg_byte(0x6003, 0x00);
           write_prg_byte(0x8000, 6);
           write_prg_byte(0x8001, i);
-          for (size_t address = 0x0; address < 0x2000; address += 512) {
-            dumpPRG(base, address);
-          }
+          dumpBankPRG(0x0, 0x2000, base);
+        }
+        break;
+
+      case 315:
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0xA001, 0x80);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x6800, (i & 30) >> 3);
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, i);
+          dumpBankPRG(0x0, 0x2000, base);
+        }
+        break;
+
+      case 366:
+        banks = int_pow(2, prgsize) * 2;
+        write_prg_byte(0xA001, 0x80);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x6800 + (i & 0x70), i);
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, i);
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -3643,6 +3666,39 @@ void readCHR(bool readrom) {
             write_prg_byte(0x6006, (i | 2));
             write_prg_byte(0x6007, (i | 3));
             dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 268:  // mapper 268.0
+          banks = int_pow(2, chrsize) * 4;
+          write_prg_byte(0xA001, 0x80);
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x6000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
+            write_prg_byte(0x8000, 0x02);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x1000, 0x1400);
+          }
+          break;
+
+        case 315:
+          banks = int_pow(2, chrsize) * 4;
+          write_prg_byte(0xA001, 0x80);
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x6800, ((i & 0x100) >> 8) | ((i & 0x80) >> 6) | ((i & 0x40) >> 3));
+            write_prg_byte(0x8000, 0x02);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x1000, 0x1400);
+          }
+          break;
+
+        case 366:
+          banks = int_pow(2, chrsize) * 4;
+          write_prg_byte(0xA001, 0x80);
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x6800 + ((i & 0x380) >> 3), i);
+            write_prg_byte(0x8000, 0x02);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x1000, 0x1400);
           }
           break;
       }
