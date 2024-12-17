@@ -171,13 +171,14 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 242, 5, 5, 0, 0, 0, 0 },  // ET-113 [UNLICENSED]
   { 246, 5, 5, 7, 7, 0, 0 },  // C&E Feng Shen Bang [UNLICENSED]
   // 248 - bad mapper, not used
-  { 255, 4, 7, 5, 8, 0, 0 },  // 110-in-1 multicart (same as 225) [UNLICENSED]
+  { 255, 4, 7, 5, 8, 0, 0 },   // 110-in-1 multicart (same as 225) [UNLICENSED]
   { 268, 0, 11, 0, 8, 0, 0 },  // 268.0 MindKids/CoolGirl [UNLICENSED]
   { 315, 0, 5, 0, 7, 0, 0 },   // BMC-830134C [UNLICENSED]
   { 329, 1, 7, 0, 0, 0, 3 },   // UNL-EDU2000, same as 177 [UNLICENSED]
   { 366, 0, 6, 0, 8, 0, 0 },   // GN-45 [UNLICENSED]
-  { 446, 0, 8, 0, 0, 0, 0 },  // Mindkids SMD172B_FGPA submapper 0 & 1
-  { 552, 0, 5, 0, 6, 0, 0 }   // Taito X1-017 actual bank order
+  { 446, 0, 8, 0, 0, 0, 0 },   // Mindkids SMD172B_FGPA submapper 0 & 1 [UNLICENSED]
+  { 470, 0, 11, 0, 0, 0, 0 },  // INX_007T_V01 [UNLICENSED]
+  { 552, 0, 5, 0, 6, 0, 0 }    // Taito X1-017 actual bank order
 };
 
 const char _file_name_no_number_fmt[] PROGMEM = "%s.%s";
@@ -2800,6 +2801,15 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5001, i);           // outer bank MSB
           write_prg_byte(0x8000, 0);
           dumpBankPRG(0x0, 0x2000, base);
+        }
+        break;
+
+      case 470:
+        banks = int_pow(2, prgsize) / 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x5000, i >> 3);
+          write_prg_byte(0x8000, i & 0x07);
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
