@@ -311,7 +311,7 @@ Dark Cavern
 064
 
 Dark Chambers
-246
+006
 
 Dark Mage
 248
