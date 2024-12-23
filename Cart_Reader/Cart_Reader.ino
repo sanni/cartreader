@@ -267,11 +267,6 @@ boolean holdEventPast2 = false;      // whether or not the hold event happened a
 boolean longholdEventPast2 = false;  // whether or not the long hold event happened already
 #endif
 
-#ifdef ENABLE_SERIAL
-// For incoming serial data
-int incomingByte;
-#endif
-
 // Variables for the menu
 int choice = 0;
 // Temporary array that holds the menu option read out of progmem
@@ -2955,7 +2950,7 @@ byte questionBox_Serial(const __FlashStringHelper* question __attribute__((unuse
   }
 
   // Read the incoming byte:
-  incomingByte = Serial.read() - 48;
+  int incomingByte = Serial.read() - 48;
 
   // Page up (u)
   if (incomingByte == 69) {
@@ -3197,7 +3192,7 @@ void checkUpdater() {
 uint8_t checkButton() {
   while (Serial.available() == 0) {
   }
-  incomingByte = Serial.read() - 48;
+  int incomingByte = Serial.read() - 48;
 
   //Next
   if (incomingByte == 52) {
@@ -3223,7 +3218,7 @@ void wait_serial() {
   }
   while (Serial.available() == 0) {
   }
-  incomingByte = Serial.read() - 48;
+  int incomingByte = Serial.read() - 48;
   /* if ((incomingByte == 53) && (fileName[0] != '\0')) {
       // Open file on sd card
       sd.chdir(folder);
