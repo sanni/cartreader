@@ -3210,6 +3210,11 @@ uint8_t checkButton() {
     return 3;
   }
 
+  //Long Press (simulate)
+  else if ((incomingByte == 'l') || (incomingByte == 'L')) {
+    return 4;
+  }
+
   return 0;
 }
 
