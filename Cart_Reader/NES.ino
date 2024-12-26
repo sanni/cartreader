@@ -164,6 +164,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 228, 4, 7, 5, 7, 0, 0 },  // Action 52 + Cheetahmen II [UNLICENSED]
   { 229, 5, 5, 6, 6, 0, 0 },  // BMC 31-IN-1 [UNLICENSED]
   { 232, 4, 4, 0, 0, 0, 0 },  // Camerica/Codemasters "Quattro" cartridges [UNLICENSED]
+  { 233, 6, 6, 0, 0, 0, 0 },  // BMC 22-IN-1/20-IN-1 (42-IN-1) [UNLICENSED]  
   { 235, 6, 8, 0, 0, 0, 0 },  // "Golden Game" multicarts [UNLICENSED]
   { 236, 0, 6, 0, 5, 0, 0 },  // Realtec 8031, 8099, 8106, 8155 [UNLICENSED]
   { 240, 1, 5, 1, 5, 0, 3 },  // C&E Bootleg Board (Sheng Huo Lie Zhuan, Jing Ke Xin Zhuan) [UNLICENSED]
@@ -1009,6 +1010,63 @@ static void write_reg_m59(unsigned int address) {
   PRG_READ;
   MODE_READ;
   set_address(0);
+}
+
+// Multicart Mapper 226
+static void write_prg_pulsem2(unsigned int address, uint8_t data) {
+  PHI2_LOW;
+  ROMSEL_HI;
+  PHI2_HI;
+  MODE_WRITE;
+  PHI2_LOW;
+  PRG_WRITE;
+  PHI2_HI;
+  PORTK = data;
+  PHI2_LOW;
+  set_address(address); // PHI2 low, ROMSEL always HIGH
+  PHI2_HI;
+  set_romsel(address); // ROMSEL is low if need, PHI2 high
+  for (unsigned int i = 0; i < 8; i++) {
+    PHI2_LOW;
+    PHI2_HI;
+  }
+  PHI2_LOW;
+  for (unsigned int i = 0; i < 8; i++) {
+    PHI2_LOW;
+    PHI2_HI;
+  }
+  ROMSEL_HI;
+  PHI2_LOW;
+  PRG_READ;
+  PHI2_HI;
+  MODE_READ;
+  PHI2_LOW;
+  set_address(0);
+  PHI2_HI;
+}
+
+static unsigned char read_prg_pulsem2(unsigned int address) {
+  PHI2_LOW;
+  MODE_READ;
+  PHI2_HI;
+  PRG_READ;
+  PHI2_LOW;
+  set_address(address);
+  PHI2_HI;
+  set_romsel(address);
+  PHI2_LOW;
+  for (unsigned int i = 0; i < 8; i++) {
+    PHI2_LOW;
+    PHI2_HI;
+  }
+  return PINK;
+}
+
+void dumpPRG_pulsem2(word base, word address) {
+  for (size_t x = 0; x < 512; x++) {
+    sdBuffer[x] = read_prg_pulsem2(base + address + x);
+  }
+  myFile.write(sdBuffer, 512);
 }
 
 /******************************************
@@ -2568,12 +2626,18 @@ void readPRG(bool readrom) {
         }
         break;
 
-      case 226:
+      // MAPPER 226 - BMC SUPER 42-IN-1, BMC 76-IN-1 1024K/2048K
+      // CART REQUIRES PULSING M2 TO ENABLE BANKSWITCH
+      // WRITING DATA TO THE SD CARD BREAKS THE M2 PULSING SEQUENCE
+      // SET THE BANK USING THE PULSING M2 CODE FOR EACH 512 BYTE BLOCK
+      case 226: // 1024K/2048K
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8001, (i & 0x40) >> 6);
-          write_prg_byte(0x8000, ((i & 0x20) << 2) | (i & 0x1F));
-          dumpBankPRG(0x0, 0x8000, base);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            write_prg_pulsem2(0x8001, (i & 0x40) >> 6);
+            write_prg_pulsem2(0x8000, ((i & 0x20) << 2) | (i & 0x1F));
+            dumpPRG_pulsem2(base, address);
+          }
         }
         break;
 
@@ -2618,6 +2682,36 @@ void readPRG(bool readrom) {
             dumpBankPRG(0x0, 0x4000, base);
           }
         }
+        break;
+
+      // MAPPER 233 BMC 22-IN-1/20-IN-1 (42-IN-1) 1024K
+      // ROM SPLIT INTO 512K + 512K CHIPS THAT COMBINE USING /CE + CE PINS
+      // ENABLING PRG CHIP 1 DISABLES PRG CHIP 2 AND VICE VERSA
+      // CART USES DIODE AND CAP TIED TO TC4520BP THAT CONTROLS THE ENABLE LINE TO THE PRG CHIPS
+      // M2 IS NOT CONNECTED ON THIS CART UNLIKE OTHER RESET-BASED MULTICARTS
+      // SWITCHING PRG CHIPS REQUIRES A POWER CYCLE OF THE CART READER
+      // COMBINE THE LOWER AND UPPER DUMPS - BE SURE TO REMOVE ANY INES HEADER ON THE UPPER DUMP
+      case 233: // 1024K
+        // BMC 22-in-1/20-in-1 (42-in-1)
+        // POWER CYCLE TO SWITCH BETWEEN CHIPS
+        banks = int_pow(2, prgsize) / 2; // 512K/512K
+        // Check PRG Chip
+        write_prg_byte(0x8000, 0);
+        eeptemp = read_prg_byte(0x8001); // Use eeptemp to hold byte
+        if (eeptemp == 0x00) { // PRG CHIP 1
+          println_Msg(F("READING LOWER CHIP"));
+          display_Update();
+        }
+        else { // PRG CHIP 2 - Should be 0xEF
+          println_Msg(F("READING UPPER CHIP"));
+          display_Update();
+        }
+        for (size_t i = 0; i < banks; i += 2) {
+          write_prg_byte(0x8000, i & 0x1F);
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        println_Msg(F("POWER CYCLE TO SWITCH"));
+        display_Update();
         break;
 
       case 235:
