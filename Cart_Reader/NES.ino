@@ -1850,16 +1850,21 @@ void readPRG(bool readrom) {
 
       case 1:
       case 155:  // 32K/64K/128K/256K/512K
-        banks = int_pow(2, prgsize);
-        for (size_t i = 0; i < banks; i++) {  // 16K Banks ($8000-$BFFF)
-          write_prg_byte(0x8000, 0x80);       // Clear Register
-          write_mmc1_byte(0x8000, 0x0C);      // Switch 16K Bank ($8000-$BFFF) + Fixed Last Bank ($C000-$FFFF)
-          if (prgsize > 4)                    // 512K
-            write_mmc1_byte(0xA000, 0x00);    // Reset 512K Flag for Lower 256K
-          if (i > 15)                         // Switch Upper 256K
-            write_mmc1_byte(0xA000, 0x10);    // Set 512K Flag
-          write_mmc1_byte(0xE000, i);
-          dumpBankPRG(0x0, 0x4000, base);
+        if (prgsize == 1) { // fix for SEROM/SHROM/SH1ROM PCBs
+          write_prg_byte(0x8000, 0x80);
+          dumpBankPRG(0x0, 0x8000, base);
+        } else {
+          banks = int_pow(2, prgsize);
+          for (size_t i = 0; i < banks; i++) {  // 16K Banks ($8000-$BFFF)
+            write_prg_byte(0x8000, 0x80);       // Clear Register
+            write_mmc1_byte(0x8000, 0x0C);      // Switch 16K Bank ($8000-$BFFF) + Fixed Last Bank ($C000-$FFFF)
+            if (prgsize > 4)                    // 512K
+              write_mmc1_byte(0xA000, 0x00);    // Reset 512K Flag for Lower 256K
+            if (i > 15)                         // Switch Upper 256K
+              write_mmc1_byte(0xA000, 0x10);    // Set 512K Flag
+            write_mmc1_byte(0xE000, i);
+            dumpBankPRG(0x0, 0x4000, base);
+          }
         }
         break;
 
