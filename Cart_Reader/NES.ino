@@ -2888,7 +2888,6 @@ void readCHR(bool readrom) {
         case 52:
         case 64:
         case 76:
-        case 88:  // 128K
         case 95:  // 32K
         case 118:
         case 119:
@@ -3405,6 +3404,30 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {  // 16K/32K
             write_prg_byte(0x6000, (((i & 0x1) << 1) | ((i & 0x2) >> 1)));
             dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 88:
+          banks = int_pow(2, chrsize) * 4;
+          write_prg_byte(0xA001, 0x80);
+          for (size_t i = 0; i < banks; i += 4) {
+            if (i < 64) {
+              write_prg_byte(0x8000, 0);
+              write_prg_byte(0x8001, i);
+              write_prg_byte(0x8000, 1);
+              write_prg_byte(0x8001, i + 2);
+              dumpBankCHR(0x0, 0x1000);
+            } else {
+              write_prg_byte(0x8000, 2);
+              write_prg_byte(0x8001, i);
+              write_prg_byte(0x8000, 3);
+              write_prg_byte(0x8001, i + 1);
+              write_prg_byte(0x8000, 4);
+              write_prg_byte(0x8001, i + 2);
+              write_prg_byte(0x8000, 5);
+              write_prg_byte(0x8001, i + 3);
+              dumpBankCHR(0x1000, 0x2000);
+            }
           }
           break;
 
