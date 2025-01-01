@@ -31,8 +31,14 @@ Baseball
 Basketbrawl
 1,4
 
+Bentley Bear's Crystal Quest
+8,5
+
 Berzerk
 0,2
+
+Bounty Bob Strikes Back!
+8,5
 
 Centipede
 0,0

@@ -60,9 +60,10 @@ static const byte PROGMEM a7800mapsize[] = {
   5, 3, 3,  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
   6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant]
   7, 1, 4,  // Bankset switching
+  8, 5, 5,  // Bentley Bears Bear's Crystal Quest/Bounty Bob Strikes Back
 };
 
-byte a7800mapcount = 8;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
+byte a7800mapcount = 9;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
 byte a7800mapselect;
 int a7800index;
 
@@ -413,6 +414,12 @@ void readROM_7800() {
         readStandard_7800();
       }
       break;
+    case 8: // Bentley Bear's Crystal Quest/Bounty Bob Strikes Back!
+      readSegment_7800(0x4000, 0x8000);   //            16K
+      readSegmentBank_7800(0, 7);         // Bank 0-6 +112K
+      readSegment_7800(0xC000, 0x10000);  // Bank 7   + 16K = 144K
+      break;
+
   }
   myFile.close();
 
@@ -474,6 +481,8 @@ void println_Mapper7800(byte mapper) {
     println_Msg(F("KARATEKA(PAL) [78S4]"));
   else if (mapper == 7)
     println_Msg(F("BANKSET"));
+  else if (mapper == 8)
+    println_Msg(F("CRYSTALQUEST/BOUNTBO"));
 }
 
 void printRomSize_7800(int index) {
@@ -535,7 +544,7 @@ setrom:
 void checkStatus_7800() {
   EEPROM_readAnything(7, a7800mapper);
   EEPROM_readAnything(8, a7800size);
-  if (a7800mapper > 7) {
+  if (a7800mapper > (a7800mapcount - 1)) {
     a7800mapper = 0;  // default
     EEPROM_writeAnything(7, a7800mapper);
   }
@@ -576,6 +585,8 @@ void checkStatus_7800() {
     Serial.println(F("Karateka (PAL) [78S4 Variant]"));
   else if (a7800mapper == 7)
     Serial.println(F("Bankset"));
+  else if (a7800mapper == 8)
+    Serial.println(F("Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
   Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(A7800[a7800size]);
   Serial.println(F("K"));
@@ -622,7 +633,8 @@ setmapper:
   Serial.println(F("5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
   Serial.println(F("6 = Karateka (PAL) [78S4 Variant]"));
   Serial.println(F("7 = Bankset"));
-  Serial.print(F("Enter Mapper [0-7]: "));
+  Serial.println(F("8 = Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
+  Serial.print(F("Enter Mapper [0-8]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
