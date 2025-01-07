@@ -71,7 +71,7 @@ bool gbxFlashCFI() {
   sd.chdir("/");
   // Launch filebrowser
   filePath[0] = '\0';
-  sd.chdir("/");
+
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
   identifyCFI_GB();
@@ -93,6 +93,36 @@ void feedbackPressAndReset() {
   display_Update();
   wait();
   resetArduino();
+}
+
+// Common code for setting up GB port used by GB carts, Datel,
+// Pelican Codebreaker, MonsterBrain
+void setup_GBPort() {
+  // Set Address Pins to Output
+  //A0-A7
+  DDRF = 0xFF;
+  //A8-A15
+  DDRK = 0xFF;
+
+  // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
+  // Output a high signal on all pins, pins are active low therefore everything is disabled now
+  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
+  // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
+  // Output a low signal on RST(PH0) to initialize MMC correctly
+  PORTH &= ~((1 << 0) | (1 << 1));
+
+  /* FIXME setup_GB sets this up too. Should this also for Datel and others?
+  // Set Audio-In(PH4) to Input
+  DDRH &= ~(1 << 4);
+  // Enable Internal Pullup
+  PORTH |= (1 << 4);
+  */
+
+  // Set Data Pins (D0-D7) to Input
+  DDRC = 0x00;
+  // Enable Internal Pullups
+  PORTC = 0xFF;
 }
 
 // Start menu for both GB and GBA
@@ -368,24 +398,7 @@ void gbxMenu() {
 
     case 4:
       // Read or Write a Pelican Codebreaker or MonsterBrain
-      // Set Address Pins to Output
-      //A0-A7
-      DDRF = 0xFF;
-      //A8-A15
-      DDRK = 0xFF;
-
-      // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
-      DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
-      // Output a high signal on all pins, pins are active low therefore everything is disabled now
-      PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-      // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
-      // Output a low signal on RST(PH0) to initialize MMC correctly
-      PORTH &= ~((1 << 0) | (1 << 1));
-
-      // Set Data Pins (D0-D7) to Input
-      DDRC = 0x00;
-      // Enable Internal Pullups
-      PORTC = 0xFF;
+      setup_GBPort();
 
       delay(400);
 
@@ -415,24 +428,7 @@ void gbxMenu() {
 
     case 5:
       // Read or Write a Datel Device (Mega Memory Card and Gameshark)
-      // Set Address Pins to Output
-      //A0-A7
-      DDRF = 0xFF;
-      //A8-A15
-      DDRK = 0xFF;
-
-      // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
-      DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
-      // Output a high signal on all pins, pins are active low therefore everything is disabled now
-      PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-      // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
-      // Output a low signal on RST(PH0) to initialize MMC correctly
-      PORTH &= ~((1 << 0) | (1 << 1));
-
-      // Set Data Pins (D0-D7) to Input
-      DDRC = 0x00;
-      // Enable Internal Pullups
-      PORTC = 0xFF;
+      setup_GBPort();
 
       delay(400);
 
@@ -567,29 +563,13 @@ void setup_GB() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
-  // Set Address Pins to Output
-  //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
+  setup_GBPort();
 
-  // Set Control Pins to Output RST(PH0) CLK(PH1) CS(PH3) WR(PH5) RD(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6);
-  // Output a high signal on all pins, pins are active low therefore everything is disabled now
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-  // Output a low signal on CLK(PH1) to disable writing GB Camera RAM
-  // Output a low signal on RST(PH0) to initialize MMC correctly
-  PORTH &= ~((1 << 0) | (1 << 1));
-
+  // FIXME for now setup_GBPort doesn't set these ones up
   // Set Audio-In(PH4) to Input
   DDRH &= ~(1 << 4);
   // Enable Internal Pullup
   PORTH |= (1 << 4);
-
-  // Set Data Pins (D0-D7) to Input
-  DDRC = 0x00;
-  // Enable Internal Pullups
-  PORTC = 0xFF;
 
   delay(400);
 
