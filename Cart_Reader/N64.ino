@@ -3017,7 +3017,8 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
 
 #ifdef ENABLE_RTC
   myFile.print(F("Dumped\t: "));
-  myFile.println(RTCStamp());
+  char time[21];
+  myFile.println(RTCStamp(time));
 #endif
 
   myFile.print(F("CRC\t: "));
