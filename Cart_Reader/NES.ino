@@ -830,6 +830,7 @@ static void set_romsel(unsigned int address) {
 static unsigned char read_prg_byte(unsigned int address) {
   MODE_READ;
   PRG_READ;
+  ROMSEL_HI;
   set_address(address);
   PHI2_HI;
   set_romsel(address);
