@@ -79,10 +79,10 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 38, 1, 3, 0, 3, 0, 0 },  // 普澤 [Bit Corp.] PCI556 (Crime Busters)
   { 39, 3, 5, 0, 0, 0, 0 },  // duplicate of 241
   // 40 - NTDEC 2722/2752 [TODO]
-  // 41 - NTDEC 2399 (Caltron 6-in-1) [TODO]
+  { 41, 4, 4, 5, 5, 0, 0 },  // NTDEC 2399 (Caltron 6-in-1)
   { 42, 0, 3, 0, 5, 0, 0 },  // AC08/LH09 (FDS games hacked to cartridges)
-  // 43 - TONY-I / YS-612 [TODO]
-  // 44 - Super HiK 7-in-1 (MMC3) [TODO]
+  { 43, 2, 2, 0, 0, 0, 0 },  // TONY-I / YS-612 [88KiB]
+  // { 44, 5, 6, 7, 8, 0, 0 }, Super HiK 7-in-1 (MMC3) [TODO]
   { 45, 3, 6, 0, 8, 0, 0 },  // TC3294/GA23C
   { 46, 1, 6, 0, 8, 0, 0 },  // GameStation/RumbleStation
   { 47, 4, 5, 6, 7, 0, 0 },  // Nintendo NES-QJ (2-in-1)
@@ -1901,8 +1901,8 @@ void readPRG(bool readrom) {
         break;
 
       case 1:
-      case 155:              // 32K/64K/128K/256K/512K
-        if (prgsize == 1) {  // fix for SEROM/SHROM/SH1ROM PCBs
+      case 155:  // 32K/64K/128K/256K/512K
+        if (prgsize == 1) {
           write_prg_byte(0x8000, 0x80);
           dumpBankPRG(0x0, 0x8000, base);
         } else {
@@ -2247,6 +2247,15 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 41:
+        banks = int_pow(2, prgsize) / 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x6000 + i, 0);
+          write_prg_byte(0x6000 + i, 0);
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
       case 42:
         banks = int_pow(2, prgsize) * 2;
         base = 0x6000;  // 8k switchable PRG ROM bank at $6000-$7FFF
@@ -2256,6 +2265,20 @@ void readPRG(bool readrom) {
         }
         base = 0x8000;  // last 32k fixed to $8000-$FFFF
         dumpBankPRG(0x0, 0x8000, base);
+        break;
+
+      case 43:
+        base = 0xC000;
+        for (size_t i = 0; i < 8; i++) {
+          write_prg_byte(0x4022, i);
+          dumpBankPRG(0x0, 0x2000, base);
+        }
+        base = 0x5000;
+        for (size_t i = 0; i < 4; i++) {
+          dumpBankPRG(0x0, 0x1000, base);
+        }
+        base = 0xE000;
+        dumpBankPRG(0x0, 0x1000, base);
         break;
 
       case 45:                                    // MMC3 Clone with Outer Registers
@@ -2932,6 +2955,7 @@ void readCHR(bool readrom) {
     if (myFile) {
       switch (mapper) {
         case 0:  // 8K
+        case 43:
           dumpBankCHR(0x0, 0x2000);
           break;
 
@@ -3144,41 +3168,43 @@ void readCHR(bool readrom) {
           break;
 
         case 23:
-          banks = int_pow(2, chrsize) * 4;
-          // Detect VRC4e Carts - read PRG 0x1FFF6 (DATE)
-          // Boku Dracula-kun = 890810, Tiny Toon = 910809
-          // Crisis Force = 910701, Parodius Da! = 900916
-          write_prg_byte(0x8000, 15);
-          uint8_t prgchk0 = read_prg_byte(0x9FF6);
-          if (prgchk0 == 0x30) {  // Check for "0" in middle of date. If true, assume VRC4e Cart
-            for (size_t i = 0; i < banks; i++) {
-              write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
-              write_prg_byte(0xB004, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4e
-              dumpBankCHR(0x0, 0x400);
+          {  // 128K
+            banks = int_pow(2, chrsize) * 4;
+            // Detect VRC4e Carts - read PRG 0x1FFF6 (DATE)
+            // Boku Dracula-kun = 890810, Tiny Toon = 910809
+            // Crisis Force = 910701, Parodius Da! = 900916
+            write_prg_byte(0x8000, 15);
+            uint8_t prgchk0 = read_prg_byte(0x9FF6);
+            if (prgchk0 == 0x30) {  // Check for "0" in middle of date. If true, assume VRC4e Cart
+              for (size_t i = 0; i < banks; i++) {
+                write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
+                write_prg_byte(0xB004, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4e
+                dumpBankCHR(0x0, 0x400);
+              }
+              break;
+            }
+            // VRC2b/VRC4f - See https://www.nesdev.org/wiki/VRC2_and_VRC4
+            for (size_t i = 0; i < banks; i += 8) {
+              write_prg_byte(0xB000, i & 0xF);               // CHR Bank 0: Lower 4 bits
+              write_prg_byte(0xB001, (i >> 4) & 0xF);        // CHR Bank 0: Upper 4 bits
+              write_prg_byte(0xB002, (i + 1) & 0xF);         // CHR Bank 1: Lower 4 bits
+              write_prg_byte(0xB003, ((i + 1) >> 4) & 0xF);  // CHR Bank 1: Upper 4 bits
+              write_prg_byte(0xC000, (i + 2) & 0xF);         // CHR Bank 2: Lower 4 bits
+              write_prg_byte(0xC001, ((i + 2) >> 4) & 0xF);  // CHR Bank 2: Upper 4 bits
+              write_prg_byte(0xC002, (i + 3) & 0xF);         // CHR Bank 3: Lower 4 bits
+              write_prg_byte(0xC003, ((i + 3) >> 4) & 0xF);  // CHR Bank 3: Upper 4 bits
+              write_prg_byte(0xD000, (i + 4) & 0xF);         // CHR Bank 4: Lower 4 bits
+              write_prg_byte(0xD001, ((i + 4) >> 4) & 0xF);  // CHR Bank 4: Upper 4 bits
+              write_prg_byte(0xD002, (i + 5) & 0xF);         // CHR Bank 5: Lower 4 bits
+              write_prg_byte(0xD003, ((i + 5) >> 4) & 0xF);  // CHR Bank 5: Upper 4 bits
+              write_prg_byte(0xE000, (i + 6) & 0xF);         // CHR Bank 6: Lower 4 bits
+              write_prg_byte(0xE001, ((i + 6) >> 4) & 0xF);  // CHR Bank 6: Upper 4 bits
+              write_prg_byte(0xE002, (i + 7) & 0xF);         // CHR Bank 7: Lower 4 bits
+              write_prg_byte(0xE003, ((i + 7) >> 4) & 0xF);  // CHR Bank 7: Upper 4 bits
+              dumpBankCHR(0x0, 0x2000);                      // 8 Banks for a total of 8 KiB
             }
             break;
           }
-          // VRC2b/VRC4f - See https://www.nesdev.org/wiki/VRC2_and_VRC4
-          for (size_t i = 0; i < banks; i += 8) {
-            write_prg_byte(0xB000, i & 0xF);               // CHR Bank 0: Lower 4 bits
-            write_prg_byte(0xB001, (i >> 4) & 0xF);        // CHR Bank 0: Upper 4 bits
-            write_prg_byte(0xB002, (i + 1) & 0xF);         // CHR Bank 1: Lower 4 bits
-            write_prg_byte(0xB003, ((i + 1) >> 4) & 0xF);  // CHR Bank 1: Upper 4 bits
-            write_prg_byte(0xC000, (i + 2) & 0xF);         // CHR Bank 2: Lower 4 bits
-            write_prg_byte(0xC001, ((i + 2) >> 4) & 0xF);  // CHR Bank 2: Upper 4 bits
-            write_prg_byte(0xC002, (i + 3) & 0xF);         // CHR Bank 3: Lower 4 bits
-            write_prg_byte(0xC003, ((i + 3) >> 4) & 0xF);  // CHR Bank 3: Upper 4 bits
-            write_prg_byte(0xD000, (i + 4) & 0xF);         // CHR Bank 4: Lower 4 bits
-            write_prg_byte(0xD001, ((i + 4) >> 4) & 0xF);  // CHR Bank 4: Upper 4 bits
-            write_prg_byte(0xD002, (i + 5) & 0xF);         // CHR Bank 5: Lower 4 bits
-            write_prg_byte(0xD003, ((i + 5) >> 4) & 0xF);  // CHR Bank 5: Upper 4 bits
-            write_prg_byte(0xE000, (i + 6) & 0xF);         // CHR Bank 6: Lower 4 bits
-            write_prg_byte(0xE001, ((i + 6) >> 4) & 0xF);  // CHR Bank 6: Upper 4 bits
-            write_prg_byte(0xE002, (i + 7) & 0xF);         // CHR Bank 7: Lower 4 bits
-            write_prg_byte(0xE003, ((i + 7) >> 4) & 0xF);  // CHR Bank 7: Upper 4 bits
-            dumpBankCHR(0x0, 0x2000);                      // 8 Banks for a total of 8 KiB
-          }
-          break;
 
         case 24:  // 128K
           banks = int_pow(2, chrsize) * 4;
@@ -3277,6 +3303,17 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x7000, i << 2);
+            dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 41:
+          banks = int_pow(2, chrsize) / 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0x00);
+            write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0x00);
+            write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
+            write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
             dumpBankCHR(0x0, 0x2000);
           }
           break;
@@ -3574,16 +3611,6 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 122:
-        case 184:  // 16K/32K
-          banks = int_pow(2, chrsize);
-          for (size_t i = 0; i < banks; i++) {  // 4K Banks
-            write_prg_byte(0x6000, i);          // CHR LOW (Bits 0-2) ($0000-$0FFF)
-            dumpBankCHR(0x0, 0x1000);           // 4K Banks ($0000-$0FFF)
-          }
-          break;
-
-
         case 140:  // 32K/128K
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
@@ -3596,6 +3623,15 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < 8; i++) {
             write_prg_byte(0xFF00 + (i << 1), 0);
             dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 122:
+        case 184:  // 16K/32K
+          banks = int_pow(2, chrsize);
+          for (size_t i = 0; i < banks; i++) {  // 4K Banks
+            write_prg_byte(0x6000, i);          // CHR LOW (Bits 0-2) ($0000-$0FFF)
+            dumpBankCHR(0x0, 0x1000);           // 4K Banks ($0000-$0FFF)
           }
           break;
 
@@ -3730,6 +3766,18 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8000, 0x02);
             write_prg_byte(0x8001, i);
             dumpBankCHR(0x1000, 0x1400);
+          }
+          break;
+
+        case 332:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x6001, 0x30 | (i & 0x07));  // NROM mode, A15-A13
+            write_prg_byte(0x6001, 0x30 | (i & 0x07));  // NROM mode, A15-A13
+            write_prg_byte(0x6000, (i & 0x08) << 3);    // A16
+            write_prg_byte(0x6000, (i & 0x08) << 3);    // A16
+            delay(100);
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
       }
