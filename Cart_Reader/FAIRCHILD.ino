@@ -417,6 +417,7 @@ void readROM_FAIRCHILD() {
         }
         myFile.write(sdBuffer, 512);
         delay(1);  // Added delay
+        startbyte = sdBuffer[1]; // Restore byte for 3K Hangman Check
         for (int z = 1; z < blocks; z++) {
           if ((cartsize == 0x0C00) && (startbyte == 0x2B)) {  // 3K Hangman
             // Skip SRAM Code for 3K Hangman Cart
