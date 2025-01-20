@@ -418,8 +418,8 @@ void readROM_FAIRCHILD() {
         myFile.write(sdBuffer, 512);
         delay(1);  // Added delay
         for (int z = 1; z < blocks; z++) {
-          if (cartsize == 0x0C00) {  // 3K
-            // Skip SRAM Code for 3K Carts - Tested with Hangman 3K
+          if ((cartsize == 0x0C00) && (startbyte == 0x2B)) {  // 3K Hangman
+            // Skip SRAM Code for 3K Hangman Cart
             // Hangman uses an F21022PC 1K SRAM Chip at 0x0400
             // SRAM is NOT Battery Backed so contents change
             // Chips are organized: 1K ROM + 1K SRAM + 1K ROM + 1K ROM
