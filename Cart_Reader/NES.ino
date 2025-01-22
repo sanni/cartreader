@@ -3950,9 +3950,8 @@ void readCHR(bool readrom) {
           write_prg_byte(0xA001, 0x80);
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
-            write_prg_byte(0x6000, 0x02);
             write_prg_byte(0x5000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
-            write_prg_byte(0x5000, 0x02);
+            write_prg_byte(0x8000, 0x02);
             write_prg_byte(0x8001, i);
             dumpBankCHR(0x1000, 0x1400);
           }
