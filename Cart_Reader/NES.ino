@@ -65,7 +65,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 24, 0, 4, 0, 6, 0, 0 },  // Konami 351951 (VRC6a)
   { 25, 3, 4, 5, 7, 0, 1 },  // Konami VRC2c / VRC4b / VRC4d                       [sram r/w]
   { 26, 0, 4, 0, 6, 1, 1 },  // Konami 351949A (VRC6b)                             [sram r/w]
-  // 27 - CC-21 [TODO]
+  { 27, 0, 7, 0, 8, 0, 0 },  // CC-21
   { 28, 5, 7, 0, 0, 0, 0 },  // Action 53
   { 29, 0, 3, 0, 3, 0, 0 },  // RET-CUFROM (Sealie Computing)
   { 30, 4, 5, 0, 0, 0, 0 },  // UNROM-512
@@ -78,18 +78,18 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 37, 4, 4, 6, 6, 0, 0 },  // Nintendo ZZ (3-in-1)
   { 38, 1, 3, 0, 3, 0, 0 },  // 普澤 [Bit Corp.] PCI556 (Crime Busters)
   { 39, 3, 5, 0, 0, 0, 0 },  // Subor Study & Game 32-in-1 (duplicate of 241)
-  // 40 - NTDEC 2722/2752 [TODO]
+  { 40, 0, 3, 0, 3, 0, 0 },  // NTDEC 2722/2752
   { 41, 4, 4, 5, 5, 0, 0 },  // NTDEC 2399 (Caltron 6-in-1)
   { 42, 0, 3, 0, 5, 0, 0 },  // AC08/LH09 (FDS games hacked to cartridges)
   { 43, 2, 2, 0, 0, 0, 0 },  // TONY-I / YS-612 [88KiB]
-  // { 44, 5, 6, 7, 8, 0, 0 }, Super HiK 7-in-1 (MMC3) [TODO]
+  { 44, 5, 6, 7, 8, 0, 0 },  // Super HiK 7-in-1
   { 45, 3, 8, 0, 8, 0, 0 },  // TC3294 / GA23C
   { 46, 1, 6, 0, 8, 0, 0 },  // GameStation / RumbleStation
   { 47, 4, 5, 6, 7, 0, 0 },  // Nintendo NES-QJ (2-in-1)
   { 48, 3, 4, 6, 6, 0, 0 },  // Taito TC0690/TC0190+PAL16R4
   { 49, 0, 5, 0, 7, 0, 0 },  // 820401 / T-217 (Super HIK 4-in-1 MMC3 multicart)
   { 50, 3, 3, 0, 0, 0, 0 },  // N-32 (761214)
-  // 51 - 820718C [TODO]
+  // 51 - 820718C (11-in-1 Ball Games) [TODO]
   { 52, 0, 5, 0, 7, 0, 0 },  // Realtec 8213
   // 53 - Supervision 16-in-1 [TODO]
   // 54 - not used
@@ -112,7 +112,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 71, 2, 4, 0, 0, 0, 0 },  // Codemasters BIC BF9093 / BF9097
   { 72, 3, 3, 5, 5, 0, 0 },  // Jaleco JF-17
   { 73, 3, 3, 0, 0, 0, 0 },  // Konami VRC3
-  // 74 - 43-393 / 43-406 / 860908C [TODO]
+  { 74, 0, 5, 0, 6, 0, 0 },  // 43-393 / 43-406 / 860908C
   { 75, 3, 3, 5, 5, 0, 0 },  // Konami VRC1
   { 76, 3, 3, 5, 5, 0, 0 },  // Namco 3446
   { 77, 3, 3, 3, 3, 0, 0 },  // Irem LROG017 (Napoleon Senki)
@@ -139,13 +139,13 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 98 - irrelevant (GBC to NES ports)
   // 99 - irrelevant (Nintendo Vs. System)
   // 100 - irrelevant (Nesticle MMC3)
-  // 101 - irrelevant (Jaleco / Konami CNROM with wrong bit order)
+  // 101 - irrelevant (Jaleco / Konami CNROM with wrong bit order, use mapper 87 instead)
   // 102 - Quietust's Drip port (duplicate of 284)
   // 103 - Whirlwind Manu LH30 (Doki Doki Panic) [TODO]
   // 104 - Pegasus 5-in-1 [TODO]
   { 105, 4, 4, 0, 0, 0, 0 },  // NES-EVENT (Nintendo World Championships)
   // 106 - 890418 (Super Mario Bros 3 bootleg) [TODO]
-  // 107 - Magic Dragon [TODO]
+  { 107, 0, 7, 0, 9, 0, 0 },  // Magic Dragon
   // 108 - DH-08 (Whirlwind Manu FDS-to-cartridge conversions) [TODO]
   // 109 - duplicate of 137
   // 110 - duplicate of 243
@@ -154,7 +154,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 113, 1, 4, 0, 5, 0, 0 },  // HES NTD-8
   { 114, 3, 4, 5, 6, 0, 0 },  // 6122 (SuperGame MMC3-clone)
   { 115, 0, 5, 0, 7, 0, 0 },  // 卡聖 [Kǎshèng] SFC-02B/-03/-004
-  // 116 - 哥德 [Gēdé] SOMARI-P [TODO]
+  { 116, 0, 5, 0, 7, 0, 0 },  // 哥德 [Gēdé] SOMARI-P
   { 117, 0, 7, 0, 6, 0, 0 },  // Future Media
   { 118, 3, 4, 5, 5, 0, 1 },  // Nintendo TKSROM / TLSROM                          [sram r/w]
   { 119, 3, 3, 4, 4, 0, 0 },  // Nintendo TQROM
@@ -172,7 +172,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 131 - duplicate of 205
   // 132 - TXC Corporation 01-22003-400 / 01-22111-100 / 01-22270-000 [TODO]
   // 133 - 聖謙 [Sachen] 3009 / 72008 聖謙 [Dao Shuai] [TODO]
-  { 134, 1, 8, 0, 8, 0, 0 },  // WX-KB4K / T4A54A / BS-5652
+  { 134, 0, 6, 0, 8, 0, 0 },  // WX-KB4K / T4A54A / BS-5652
   // 135 - 聖謙 [Sachen] TC-021A (duplicate of 141?) [TODO]
   // 136 - 聖謙 [Sachen] 3011 / SA-002 [TODO]
   // 137 - 聖謙 [Sachen] SA8259D [TODO]
@@ -203,7 +203,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 162, 6, 7, 0, 0, 0, 0 },  // 外星 [Wàixīng] FS304
   { 163, 6, 7, 0, 0, 0, 0 },  // 南晶 [Nánjīng] FC-001
   // 164 - 燕城 [Yànchéng] cy2000-3 [TODO]
-  // 165 - Fire Emblem pirate version [TODO]
+  { 165, 5, 5, 5, 5, 0, 0 },  // 圣火徽章 [Fire Emblem] Chinese version by 外星 [Wàixīng]
   // 166 - duplicate of 167 with wrong bank order
   // 167 - Subor educational cartridges [TODO]
   // 168 - Racermate Challenge 2 [TODO]
@@ -213,7 +213,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 172 - Super Mega SMCYII-900 [TODO]
   // 173 - Idea-Tek ET.xx [TODO]
   { 174, 3, 3, 4, 4, 0, 0 },  // NTDEC 5-in-1
-  // 175 - Kaiser KS-122 (15-in-1) [TODO]
+  { 175, 4, 4, 5, 5, 0, 0 },  // Kaiser KS-122 (15-in-1)
   { 176, 4, 4, 5, 5, 0, 0 },  // YH-xxx / SFC-12B / many others...
   { 177, 1, 7, 0, 0, 0, 0 },  // 恒格电子 [Hénggé Diànzǐ]
   { 178, 5, 5, 0, 0, 0, 0 },  // 外星 [Wàixīng] FS305 / 南晶 [Nánjīng] NJ0430 / PB030703-1x1
@@ -227,14 +227,14 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 186 - irrelevant (Fukutake Shoten's Family Study Box BIOS)
   // 187 - 卡聖 [Kǎshèng] A98402 [TODO]
   // 188 - Bandai Karaoke Studio [TODO]
-  // 189 - TXC 01-22017-000 / 01-22018-400 [TODO]
+  { 189, 3, 5, 5, 7, 0, 0 },  // TXC 01-22017-000 / 01-22018-400
   // 190 - Zemina [TODO]
   // 191 - Pirate TQROM variant [TODO]
   // 192 - Waixing FS308 [TODO]
   // 193 - NTDEC 2394 [TODO]
   // 194 - Waixing FS30x [TODO]
-  // 195 - 外星 [Wàixīng] FS303 [TODO]
-  // 196 - MRCM UT1374 [TODO]
+  { 195, 0, 5, 0, 6, 0, 0 },  // 外星 [Wàixīng] FS303
+  { 196, 0, 5, 0, 6, 0, 0 },  // MRCM UT1374
   // 197 - TLROM-512 [TODO]
   // 198 - TNROM-640 [TODO]
   // 199 - 外星 [Wàixīng] FS309 [TODO]
@@ -283,15 +283,15 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 242, 5, 5, 0, 0, 0, 0 },  // ET-113 / 43272
   // 243 - 聖謙 [Sachen] SA-020A (duplicate of 150)
   // 244 - C&E's Decathlon [TODO]
-  // 245 - 外星 [Wàixīng] FS003 [TODO]
+  { 245, 6, 6, 0, 0, 0, 0 },  // 外星 [Wàixīng] FS003 (勇者斗恶龙 VII)
   { 246, 5, 5, 7, 7, 0, 0 },  // G0151-1 (封神榜/Fēngshénbǎng)
   // 247 - not used
   { 248, 0, 5, 0, 7, 0, 0 },  // 卡聖 [Kǎshèng] SFC-02B/-03/-004 (duplicate of 115)
   // 249 - 外星 [Wàixīng] T9552 (duplicate of 4)
   // 250 - Nitra L4015 [TODO]
   // 251 - duplicate of 45
-  // 252 - 外星 [Wàixīng] (三国志/Sangokushi) [TODO]
-  // 253 - 外星 [Wàixīng] F009S (Dragon Ball Z: 強襲! サイヤ人)
+  { 252, 4, 4, 5, 5, 0, 0 },  // 外星 [Wàixīng] (三国志/Sangokushi)
+  { 253, 4, 4, 7, 7, 0, 0 },  // 外星 [Wàixīng] F009S (Dragon Ball Z: 強襲! サイヤ人)
   // 254 - Pikachu Y2K (Felix the Cat hack)
   { 255, 4, 7, 5, 8, 0, 0 },  // ET-4310 / K-1010 (duplicate of 225)
   // 256 - irrelevant (OneBus)
@@ -309,11 +309,13 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 268, 0, 11, 0, 8, 0, 0 },  // KP6022 / AA6023 ASIC (Mindkids/Coolboy)
   { 286, 0, 3, 0, 5, 0, 0 },   // Benshieng BS-5 multicarts [TODO]
   { 289, 5, 7, 0, 0, 0, 0 },   // 60311C / N76A-1
-  { 315, 0, 5, 0, 7, 0, 0 },   // 820732C / 830134C
-  { 319, 3, 3, 4, 4, 0, 0 },   // HP-898F / KD-7/9-E
-  { 329, 1, 7, 0, 0, 0, 3 },   // EDU2000 (duplicate of 177)
-  { 332, 3, 4, 4, 5, 0, 0 },   // WS-1001
-  { 366, 0, 6, 0, 8, 0, 0 },   // GN-45
+  // 313 - undumpable (reset-based TKROM multicarts)
+  { 315, 0, 5, 0, 7, 0, 0 },  // 820732C / 830134C
+  { 319, 3, 3, 4, 4, 0, 0 },  // HP-898F / KD-7/9-E
+  { 329, 1, 7, 0, 0, 0, 3 },  // EDU2000 (duplicate of 177)
+  { 331, 0, 5, 0, 7, 0, 0 },  // NewStar multicarts (NS03, 7-in-1, 12-in-1)
+  { 332, 3, 4, 4, 5, 0, 0 },  // WS-1001
+  { 366, 0, 6, 0, 8, 0, 0 },  // GN-45
   // 422 - TEC9719 [TODO]
   { 446, 0, 8, 0, 0, 0, 0 },   // SMD172B_FPGA
   { 470, 0, 11, 0, 0, 0, 0 },  // INX_007T_V01
@@ -2070,22 +2072,29 @@ void readPRG(bool readrom) {
       case 4:
       case 12:
       case 37:
+      case 44:
       case 47:
       case 49:
       case 52:
       case 64:
+      case 74:
       case 76:
       case 88:
       case 95:
       case 115:
+      case 116:
       case 118:
       case 119:
       case 126:
       case 134:
       case 154:  // 128K
       case 158:
+      case 165:  // 512K
       case 176:
+      case 195:
+      case 196:
       case 206:  // 32/64/128K
+      case 245:  // 1024K
       case 248:
       case 268:  // submapper 0
       case 315:
@@ -2115,6 +2124,9 @@ void readPRG(bool readrom) {
                 write_prg_byte(0x6000, 4);  // Switch to 128K Block ($20000-$3FFFF)
               }
             }
+            if (mapper == 44) {
+              write_prg_byte(0xA001, 0x80 | ((i >> 4) & 0x07));
+            }
             if (mapper == 47) {
               write_prg_byte(0x6000 + (i >> 4), 0);
             }
@@ -2127,14 +2139,28 @@ void readPRG(bool readrom) {
             if ((mapper == 115) || (mapper == 248)) {
               write_prg_byte(0x6000, (i & 0x10) << 2);  // A18
             }
+            if (mapper == 116) {
+              write_prg_byte(0x4100, 0x01);  // MMC3 mode
+            }
             if (mapper == 126) {
               write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x70) >> 4);
             }
             if (mapper == 134) {
-              write_prg_byte(0x6001, (i & 0x30) >> 4);
+              write_prg_byte(0x6801, (i >> 4) & 0x02);  // A18
+              write_prg_byte(0x6800, (i >> 2) & 0x10);  // A19
             }
             if (mapper == 176) {
               write_prg_byte(0x5FF1, (i & 0xE0) >> 1);
+            }
+            if (mapper == 245) {  // uses CHR A11 as PRG A19
+              if (i == 0) {
+                write_prg_byte(0x8000, 0);
+                write_prg_byte(0x8001, 0);
+              }
+              if (i == 64) {
+                write_prg_byte(0x8000, 0);
+                write_prg_byte(0x8001, 0xFF);
+              }
             }
             if (mapper == 268) {
               write_prg_byte(0x5000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
@@ -2291,6 +2317,14 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 27:
+        banks = int_pow(2, prgsize) * 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xA000, i);
+          dumpBankPRG(0x2000, 0x4000, base);
+        }
+        break;
+
       case 28:  // using 32k mode for inner and outer banks, switching only with outer
         banks = int_pow(2, prgsize) / 2;
         write_prg_byte(0x5000, 0x81);
@@ -2373,6 +2407,20 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x7000, i);
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 40:
+        banks = int_pow(2, prgsize) * 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xFFFF, i);
+          dumpBankPRG(0x4000, 0x6000, base);
+        }
+        if (prgsize > 2) {
+          write_prg_byte(0xC018, 0);
+          dumpBankPRG(0x0, 0x8000, base);
+          write_prg_byte(0xC058, 0);
           dumpBankPRG(0x0, 0x8000, base);
         }
         break;
@@ -2719,6 +2767,14 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 107:
+        banks = int_pow(2, prgsize) / 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xC000, i << 1);
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
       case 111:
         banks = int_pow(2, prgsize) / 2;
         for (size_t i = 0; i < banks; i++) {
@@ -2828,9 +2884,18 @@ void readPRG(bool readrom) {
         }
         break;
 
-      case 174:  // 128k
+      case 174:  // 128K
         for (size_t i = 0; i < 8; i++) {
           write_prg_byte(0xFF00 + (i << 4), 0);
+          dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
+      case 175:  // 256K
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xA000, i << 2);
+          write_prg_byte(0x8000, i);
           dumpBankPRG(0x0, 0x4000, base);
         }
         break;
@@ -2842,6 +2907,14 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x4802, i >> 3);    // high PRG (up to 8 bits?!)
           write_prg_byte(0x4801, i & 0x07);  // low PRG (3 bits)
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 189:
+        banks = int_pow(2, prgsize) / 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x4132, (i << 4) & 0xF0);
           dumpBankPRG(0x0, 0x8000, base);
         }
         break;
@@ -3072,6 +3145,15 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 252:
+      case 253:
+        banks = int_pow(2, prgsize) * 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xA010, i);
+          dumpBankPRG(0x2000, 0x4000, base);
+        }
+        break;
+
       case 286:
         banks = int_pow(2, prgsize) * 2;
         for (size_t i = 0; i < banks; i += 1) {
@@ -3095,6 +3177,16 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize) / 2;
         for (int i = 0; i < banks; i++) {
           write_prg_byte(0x6004, (i << 3) | 0x40);  // PRG A14 = CPU A14 (NROM-256)
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 331:
+        banks = int_pow(2, prgsize);
+        for (int i = 0; i < banks; i++) {
+          write_prg_byte(0xE000, i >> 3);
+          write_prg_byte(0xA000, i);
+          write_prg_byte(0xC000, i);
           dumpBankPRG(0x0, 0x8000, base);
         }
         break;
@@ -3217,13 +3309,16 @@ void readCHR(bool readrom) {
         case 4:
         case 12:
         case 37:
+        case 44:
         case 47:
         case 49:
         case 52:
         case 64:
+        case 74:
         case 76:
         case 95:  // 32K
         case 115:
+        case 116:
         case 118:
         case 119:
         case 126:
@@ -3231,6 +3326,9 @@ void readCHR(bool readrom) {
         case 154:  // 128K
         case 158:
         case 176:
+        case 189:
+        case 195:
+        case 196:
         case 206:  // 16K/32K/64K
         case 248:
         case 315:
@@ -3260,6 +3358,9 @@ void readCHR(bool readrom) {
                 write_prg_byte(0x6000, 4);
               }
             }
+            if (mapper == 44) {
+              write_prg_byte(0xA001, 0x80 | ((i >> 7) & 0x07));
+            }
             if (mapper == 47) {
               write_prg_byte(0x6800 + ((i & 0x180) >> 7), 0);
             }
@@ -3272,11 +3373,15 @@ void readCHR(bool readrom) {
             if ((mapper == 115) || (mapper == 248)) {
               write_prg_byte(0x6000, (i & 0x100) >> 8);  // A18
             }
+            if (mapper == 116) {
+              write_prg_byte(0x4100, 0x01 | ((i & 0x100) >> 6));  // A18
+            }
             if (mapper == 126) {
               write_prg_byte(0x6000, (i & 0x200) >> 5 | (i & 0x100) >> 3);  // select outer bank
             }
             if (mapper == 134) {
-              write_prg_byte(0x6001, (i & 0x180) >> 3);  // select outer bank
+              write_prg_byte(0x6801, (i >> 3) & 0x20);  // A18
+              write_prg_byte(0x6800, (i >> 4) & 0x20);  // A19
             }
             if (mapper == 176) {
               write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
@@ -3439,6 +3544,14 @@ void readCHR(bool readrom) {
           }
           break;
 
+        case 27:
+          banks = int_pow(2, chrsize) * 4;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0xB000, i & 0x0F);
+            write_prg_byte(0xB001, i >> 4);
+            dumpBankCHR(0x0, 0x400);
+          }
+          break;
 
         case 32:  // 128K
         case 65:  // 128K/256K
@@ -3778,6 +3891,14 @@ void readCHR(bool readrom) {
           }
           break;
 
+        case 107:
+          banks = int_pow(2, chrsize) / 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0xC000, i);
+            dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
         case 113:
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
@@ -3822,9 +3943,27 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 174:  // 64k
+        case 165:  // 128K
+          banks = int_pow(2, chrsize);
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x8000, 0x02);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x1000, 0x2000);
+          }
+          break;
+
+        case 174:  // 64K
           for (size_t i = 0; i < 8; i++) {
             write_prg_byte(0xFF00 + (i << 1), 0);
+            dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 175:  // 128K
+          banks = int_pow(2, chrsize) / 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0xA000, i << 2);
+            write_prg_byte(0x8000, i);
             dumpBankCHR(0x0, 0x2000);
           }
           break;
@@ -3945,6 +4084,16 @@ void readCHR(bool readrom) {
           }
           break;
 
+        case 252:
+        case 253:
+          banks = int_pow(2, chrsize) * 4;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0xB000, i & 0x0F);
+            write_prg_byte(0xB004, ((i >> 4) & 0x0F) | ((i >> 8) << 4));
+            dumpBankCHR(0x0, 0x400);
+          }
+          break;
+
         case 268:  // mapper 268.0 and 268.1
           banks = int_pow(2, chrsize) * 4;
           write_prg_byte(0xA001, 0x80);
@@ -3970,6 +4119,15 @@ void readCHR(bool readrom) {
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x6000, i << 4);
             dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 331:
+          banks = int_pow(2, chrsize);
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0xE000, i >> 3);
+            write_prg_byte(0xA000, i << 3);
+            dumpBankCHR(0x0, 0x1000);
           }
           break;
 
