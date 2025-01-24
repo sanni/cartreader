@@ -206,7 +206,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 165, 5, 5, 5, 5, 0, 0 },  // 圣火徽章 [Fire Emblem] Chinese version by 外星 [Wàixīng]
   // 166 - not used (wrong bank order, use 167 instead)
   // 167 - Subor educational cartridges [TODO]
-  { 168, 2, 2, 0, 0, 0, 0 },   // Racermate Challenge 2
+  { 168, 2, 2, 0, 0, 0, 0 },  // Racermate Challenge 2
   // 169 - not used (duplicate of 15)
   // 170 - 藤屋 [Fujiya] NROM [TODO]
   // 171 - 步步高 [Bùbùgāo / BBK] [TODO]
@@ -259,7 +259,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 218 - Magic Floor [TODO]
   // 219 - 卡聖 [Kǎshèng] A9746 [TODO]
   // 220 - not used (reserved for debugging)
-  // 221 - NTDEC N625092 [TODO]
+  { 221, 0, 7, 0, 0, 0, 0 },  // NTDEC N625092 (400-in-1)
   // 222 - 810343-C [TODO]
   // 223 - not used (duplicate of 199)
   // 224 - 晶科泰 [Jncota] KT-008 (duplicate of 268)
@@ -308,7 +308,9 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 267 - 晶太 EL861121C / JY-119 multicart [TODO]
   { 268, 0, 11, 0, 8, 0, 0 },  // KP6022 / AA6023 ASIC (Mindkids/Coolboy)
   { 286, 0, 3, 0, 5, 0, 0 },   // Benshieng BS-5 multicarts [TODO]
+  { 288, 0, 3, 0, 4, 0, 0 },   // GKCXIN1 (21-in-1)
   { 289, 5, 7, 0, 0, 0, 0 },   // 60311C / N76A-1
+  { 290, 0, 5, 0, 4, 0, 0 },   // Asder 20-in-1
   // 313 - undumpable (reset-based TKROM multicarts)
   { 315, 0, 5, 0, 7, 0, 0 },  // 820732C / 830134C
   { 319, 3, 3, 4, 4, 0, 0 },  // HP-898F / KD-7/9-E
@@ -2994,6 +2996,15 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 221:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x8000 + ((i << 2) & 0xE0) + ((i << 3) & 0x200), 0);
+          write_prg_byte(0xC000 + (i & 7), 0);
+          dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
       case 225:
       case 255:
         banks = int_pow(2, prgsize);
@@ -3181,7 +3192,7 @@ void readPRG(bool readrom) {
 
       case 261:
         banks = int_pow(2, prgsize);
-        for (size_t i = 0; i < banks; i += 1) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xF000 + ((i & 0x0E) << 6) + ((i & 0x01) << 5), i);
           dumpBankPRG(0x0, 0x4000, base);
         }
@@ -3189,9 +3200,17 @@ void readPRG(bool readrom) {
 
       case 286:
         banks = int_pow(2, prgsize) * 2;
-        for (size_t i = 0; i < banks; i += 1) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA0F0 + i, i);
           dumpBankPRG(0x0, 0x2000, base);
+        }
+        break;
+
+      case 288:
+        banks = int_pow(2, prgsize) / 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x8000 + ((i << 3) & 0x18), i);
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -3203,6 +3222,14 @@ void readPRG(bool readrom) {
             write_prg_pulsem2(0x6001, i);                             // Set Bank
             dumpPRG_pulsem2(base, address);
           }
+        }
+        break;
+
+      case 290:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x8000 | ((i << 10) & 0x7800) | ((i << 6) & 0x40), i);
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -4161,6 +4188,22 @@ void readCHR(bool readrom) {
           for (int i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + i, i);
             dumpBankCHR(0x0, 0x800);
+          }
+          break;
+
+        case 288:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x8000 + (i & 0x07), i);
+            dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 290:
+          banks = int_pow(2, chrsize) / 2;
+          for (int i = 0; i < banks; i++) {
+            write_prg_byte(0x8000 | ((i << 5) & 0x300) | (i & 0x07), i);
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
