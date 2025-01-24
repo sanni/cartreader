@@ -142,15 +142,15 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 101 - irrelevant (Jaleco / Konami CNROM with wrong bit order, use mapper 87 instead)
   // 102 - Quietust's Drip port (duplicate of 284)
   // 103 - Whirlwind Manu LH30 (Doki Doki Panic) [TODO]
-  // 104 - Pegasus 5-in-1 [TODO]
+  { 104, 7, 7, 0, 0, 0, 0 },  // Pegasus 5-in-1 [1280K]
   { 105, 4, 4, 0, 0, 0, 0 },  // NES-EVENT (Nintendo World Championships)
   // 106 - 890418 (Super Mario Bros 3 bootleg) [TODO]
   { 107, 0, 7, 0, 9, 0, 0 },  // Magic Dragon
   // 108 - DH-08 (Whirlwind Manu FDS-to-cartridge conversions) [TODO]
-  // 109 - duplicate of 137
-  // 110 - duplicate of 243
+  // 109 - not used (duplicate of 137)
+  // 110 - not used (duplicate of 243)
   { 111, 5, 5, 0, 0, 0, 0 },  // GTROM
-  // 112 - NTDEC MMC3 [TODO]
+  { 112, 0, 7, 0, 6, 0, 0 },  // NTDEC MMC3
   { 113, 1, 4, 0, 5, 0, 0 },  // HES NTD-8
   { 114, 3, 4, 5, 6, 0, 0 },  // 6122 (SuperGame MMC3-clone)
   { 115, 0, 5, 0, 7, 0, 0 },  // 卡聖 [Kǎshèng] SFC-02B/-03/-004
@@ -167,10 +167,10 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 126, 1, 8, 0, 8, 0, 0 },  // TEC9719 with swapped CHR
   // 127 - Double Dragon pirate [TODO]
   // 128 - 1994 Super HiK 4-in-1 [TODO]
-  // 129 - duplicate of 58
-  // 130 - duplicate of 331
-  // 131 - duplicate of 205
-  // 132 - TXC Corporation 01-22003-400 / 01-22111-100 / 01-22270-000 [TODO]
+  // 129 - not used (duplicate of 58)
+  // 130 - not used (duplicate of 331)
+  // 131 - not used (duplicate of 205)
+  // { 132, 0, 2, 0, 3, 0, 0 },  // TXC Corporation 01-22003-400 / 01-22111-100 / 01-22270-000 [TODO]
   // 133 - 聖謙 [Sachen] 3009 / 72008 聖謙 [Dao Shuai] [TODO]
   { 134, 0, 6, 0, 8, 0, 0 },  // WX-KB4K / T4A54A / BS-5652
   // 135 - 聖謙 [Sachen] TC-021A (duplicate of 141?) [TODO]
@@ -189,7 +189,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 148, 1, 2, 0, 4, 0, 0 },  // 聖謙 [Sachen] SA-008-A
   // 149 - 聖謙 [Sachen] SA-0036 [TODO]
   // 150 - 聖謙 [Sachen] SA-015 / SA-630 [TODO]
-  // 151 - duplicate of 75
+  // 151 - not used (duplicate of 75)
   { 152, 2, 3, 5, 5, 0, 0 },  // Bandai UOROM 1SM
   { 153, 5, 5, 0, 0, 1, 1 },  // Bandai FCG with 8 KiB PRG-RAM                     [sram r/w]
   { 154, 3, 3, 5, 5, 0, 0 },  // Namco 3453 (Devil Man)
@@ -198,16 +198,16 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 157, 4, 4, 0, 0, 0, 0 },  // Datach
   { 158, 3, 3, 5, 5, 0, 0 },  // Tengen 800037 (RAMBO-1 variant)
   { 159, 3, 4, 5, 6, 1, 1 },  // Bandai FCG with 24C01 EEPROM                      [eep r/w]
-  // 160 - duplicate of 90
-  // 161 - duplicate of 1
+  // 160 - not used (duplicate of 90)
+  // 161 - not used (duplicate of 1)
   { 162, 6, 7, 0, 0, 0, 0 },  // 外星 [Wàixīng] FS304
   { 163, 6, 7, 0, 0, 0, 0 },  // 南晶 [Nánjīng] FC-001
   // 164 - 燕城 [Yànchéng] cy2000-3 [TODO]
   { 165, 5, 5, 5, 5, 0, 0 },  // 圣火徽章 [Fire Emblem] Chinese version by 外星 [Wàixīng]
-  // 166 - duplicate of 167 with wrong bank order
+  // 166 - not used (wrong bank order, use 167 instead)
   // 167 - Subor educational cartridges [TODO]
-  // 168 - Racermate Challenge 2 [TODO]
-  // 169 - duplicate of 15
+  { 168, 2, 2, 0, 0, 0, 0 },   // Racermate Challenge 2
+  // 169 - not used (duplicate of 15)
   // 170 - 藤屋 [Fujiya] NROM [TODO]
   // 171 - 步步高 [Bùbùgāo / BBK] [TODO]
   // 172 - Super Mega SMCYII-900 [TODO]
@@ -299,7 +299,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 258 - Shanghai Paradise 158B [TODO]
   // 259 - F-15 [TODO]
   // 260 - HP10xx / HP20xx [TODO]
-  // 261 - 810544-C-A1 / NTDEC 2746 [TODO]
+  { 261, 0, 4, 0, 5, 0, 0 },  // 810544-C-A1 / NTDEC 2746
   // 262 - 侍魂/Street Heroes [TODO]
   // 263 - S.M.I. NSM-xxx [TODO]
   // 264 - Yoko Soft / Cony Soft [TODO]
@@ -2752,6 +2752,14 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 104:  // 1280K
+        for (size_t i = 1; i < 80; i++) {
+          write_prg_byte(0x8000, (i & 0x70) >> 4);  // outer bank
+          write_prg_byte(0xC000, i & 0x0F);         // inner bank
+          dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
       case 105:                           // 256K
         write_mmc1_byte(0xA000, 0);       // Clear PRG Init/IRQ (Bit 4)
         write_mmc1_byte(0xA000, 0x10);    // Set PRG Init/IRQ (Bit 4) to enable bank swapping
@@ -2780,6 +2788,15 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, i);
           dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 112:
+        banks = int_pow(2, prgsize) * 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x8000, 0);
+          write_prg_byte(0xA000, i);
+          dumpBankPRG(0x0, 0x2000, base);
         }
         break;
 
@@ -2881,6 +2898,14 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
           write_prg_byte(0x5000, i & 0x0F);         // A18-A15
           dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 168:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x8000, i << 6);
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -3151,6 +3176,14 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA010, i);
           dumpBankPRG(0x2000, 0x4000, base);
+        }
+        break;
+
+      case 261:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i += 1) {
+          write_prg_byte(0xF000 + ((i & 0x0E) << 6) + ((i & 0x01) << 5), i);
+          dumpBankPRG(0x0, 0x4000, base);
         }
         break;
 
@@ -3899,6 +3932,15 @@ void readCHR(bool readrom) {
           }
           break;
 
+        case 112:
+          banks = int_pow(2, chrsize) * 4;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x8000, 6);
+            write_prg_byte(0xA000, i);
+            dumpBankCHR(0x1000, 0x1400);
+          }
+          break;
+
         case 113:
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
@@ -4091,6 +4133,14 @@ void readCHR(bool readrom) {
             write_prg_byte(0xB000, i & 0x0F);
             write_prg_byte(0xB004, ((i >> 4) & 0x0F) | ((i >> 8) << 4));
             dumpBankCHR(0x0, 0x400);
+          }
+          break;
+
+        case 261:
+          banks = int_pow(2, chrsize) / 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0xF000 + (i & 0x0F), i);
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
 
