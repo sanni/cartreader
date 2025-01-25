@@ -317,6 +317,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 329, 1, 7, 0, 0, 0, 3 },  // EDU2000 (duplicate of 177)
   { 331, 0, 5, 0, 7, 0, 0 },  // NewStar multicarts (NS03, 7-in-1, 12-in-1)
   { 332, 3, 4, 4, 5, 0, 0 },  // WS-1001
+  { 351, 0, 6, 0, 8, 0, 0 },  // Techline XB multicarts
   { 366, 0, 6, 0, 8, 0, 0 },  // GN-45
   // 422 - TEC9719 [TODO]
   { 446, 0, 8, 0, 0, 0, 0 },   // SMD172B_FPGA
@@ -2100,6 +2101,7 @@ void readPRG(bool readrom) {
       case 248:
       case 268:  // submapper 0
       case 315:
+      case 351:
       case 366:
         if ((mapper == 206) && (prgsize == 1)) {
           dumpBankPRG(0x0, 0x8000, base);
@@ -2116,7 +2118,12 @@ void readPRG(bool readrom) {
             write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
             write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
           }
-          for (size_t i = 0; i < banks; i += 1) {
+          if (mapper == 351) {
+            write_prg_byte(0x5000, 0);
+            write_prg_byte(0x5001, 0);
+            write_prg_byte(0x5002, 0);
+          }
+          for (size_t i = 0; i < banks; i++) {
             if (mapper == 37) {
               if (i == 0) {
                 write_prg_byte(0x6000, 0);  // Switch to Lower Block ($0000-$FFFF)
@@ -2148,8 +2155,8 @@ void readPRG(bool readrom) {
               write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x70) >> 4);
             }
             if (mapper == 134) {
-              write_prg_byte(0x6801, (i >> 4) & 0x02);  // A18
-              write_prg_byte(0x6800, (i >> 2) & 0x10);  // A19
+              write_prg_byte(0x6000, (i & 0x40) >> 2);  // A19
+              write_prg_byte(0x6001, (i & 0x30) >> 4);  // A18-17
             }
             if (mapper == 176) {
               write_prg_byte(0x5FF1, (i & 0xE0) >> 1);
@@ -2176,6 +2183,9 @@ void readPRG(bool readrom) {
             }
             if (mapper == 315) {
               write_prg_byte(0x6800, (i & 30) >> 3);
+            }
+            if (mapper == 351) {
+              write_prg_byte(0x5001, i << 1);
             }
             if (mapper == 366) {
               write_prg_byte(0x6800 + (i & 0x70), i);
@@ -3375,7 +3385,6 @@ void readCHR(bool readrom) {
         case 52:
         case 64:
         case 74:
-        case 76:
         case 95:  // 32K
         case 115:
         case 116:
@@ -3383,7 +3392,6 @@ void readCHR(bool readrom) {
         case 119:
         case 126:
         case 134:
-        case 154:  // 128K
         case 158:
         case 176:
         case 189:
@@ -3392,6 +3400,7 @@ void readCHR(bool readrom) {
         case 206:  // 16K/32K/64K
         case 248:
         case 315:
+        case 351:
         case 366:
           banks = int_pow(2, chrsize) * 4;
           write_prg_byte(0xA001, 0x80);
@@ -3404,6 +3413,11 @@ void readCHR(bool readrom) {
           if (mapper == 176) {
             write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
             write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
+          }
+          if (mapper == 351) {
+            write_prg_byte(0x5000, 0);
+            write_prg_byte(0x5001, 0);
+            write_prg_byte(0x5002, 0);
           }
           for (size_t i = 0; i < banks; i++) {
             if (mapper == 12) {
@@ -3440,8 +3454,8 @@ void readCHR(bool readrom) {
               write_prg_byte(0x6000, (i & 0x200) >> 5 | (i & 0x100) >> 3);  // select outer bank
             }
             if (mapper == 134) {
-              write_prg_byte(0x6801, (i >> 3) & 0x20);  // A18
-              write_prg_byte(0x6800, (i >> 4) & 0x20);  // A19
+              write_prg_byte(0x6000, (i & 0x200) >> 4);  // A19
+              write_prg_byte(0x6001, (i & 0x180) >> 3);  // A18-17
             }
             if (mapper == 176) {
               write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
@@ -3452,6 +3466,9 @@ void readCHR(bool readrom) {
             }
             if (mapper == 315) {
               write_prg_byte(0x6800, ((i & 0x100) >> 8) | ((i & 0x80) >> 6) | ((i & 0x40) >> 3));
+            }
+            if (mapper == 351) {
+              write_prg_byte(0x5000, (i >> 1) & 0xFC);
             }
             if (mapper == 366) {
               write_prg_byte(0x6800 + ((i & 0x380) >> 3), i);
@@ -3831,6 +3848,15 @@ void readCHR(bool readrom) {
           }
           break;
 
+        case 76:
+          banks = int_pow(2, chrsize) * 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x8000, 2);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x0, 0x800);
+          }
+          break;
+
         case 77:  // 32K
           banks = int_pow(2, chrsize) * 2;
           for (size_t i = 0; i < banks; i++) {  // 2K Banks
@@ -4009,6 +4035,19 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x6000, i);
             dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 154:  // 128K
+          for (size_t i = 0; i < 64; i += 2) {
+            write_prg_byte(0x8000, 0);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x0, 0x800);
+          }
+          for (size_t i = 0; i < 64; i++) {
+            write_prg_byte(0x8000, 2);
+            write_prg_byte(0x8001, i);
+            dumpBankCHR(0x1000, 0x1400);
           }
           break;
 
