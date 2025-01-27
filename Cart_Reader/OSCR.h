@@ -15,8 +15,14 @@
 #include "Config.h"
 
 /*==== SANITY CHECKS ==============================================*/
+// Error if no hardware version is enabled
 # if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
 #   error !!! PLEASE CHOOSE HARDWARE VERSION IN CONFIG.H !!!
+# endif
+
+// Error if more than one hardware version is enabled
+# if (defined(HW1) + defined(HW2) + defined(HW3) + defined(HW4) + defined(HW5) + defined(SERIAL_MONITOR)) > 1
+#   error !!! PLEASE CHOOSE ONLY ONE HARDWARE VERSION IN CONFIG.H !!!
 # endif
 
 // Let user know unsafe configs are allowed
@@ -66,6 +72,26 @@
 #   endif /* SERIAL_MONITOR */
 
 # endif /* ENABLE_VSELECT */
+
+// ENABLE_SERIAL && ENABLE_3V3FIX are incompatible options
+#   if defined(ENABLE_SERIAL) && defined(ENABLE_3V3FIX)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using a configuration with ENABLE_SERIAL and ENABLE_3V3FIX is incompatible.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using a configuration with ENABLE_SERIAL and ENABLE_3V3FIX is incompatible. \
+              If you are a developer trying to make this work you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* ENABLE_SERIAL && ENABLE_3V3FIX */
+
+// ENABLE_SERIAL && ENABLE_UPDATER are incompatible options
+#   if defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using a configuration with ENABLE_SERIAL and ENABLE_UPDATER is incompatible.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using a configuration with ENABLE_SERIAL and ENABLE_UPDATER is incompatible. \
+              If you are a developer trying to make this work you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* ENABLE_SERIAL && ENABLE_UPDATER */
 
 /*==== CONSTANTS ==================================================*/
 /**
