@@ -3202,7 +3202,7 @@ void readPRG(bool readrom) {
 
       case 237:  // 1024K
         banks = int_pow(2, prgsize) / 2;
-        for (int i = 0; i < banks; i++) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_pulsem2(0x8000, i | 0xC0);  // 32K NROM Mode
           dumpBankPRG(0x0, 0x8000, base);
         }
@@ -3273,7 +3273,7 @@ void readPRG(bool readrom) {
 
       case 289:  // 512K/1024K/2048K
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i++) {
+        for (size_t i = 0; i < banks; i++) {
           for (word address = 0; address < 0x4000; address += 512) {  // 16K
             write_prg_pulsem2(0x6000, 0);                             // NROM-128 Mode
             write_prg_pulsem2(0x6001, i);                             // Set Bank
@@ -3292,7 +3292,7 @@ void readPRG(bool readrom) {
 
       case 319:  // 128K
         banks = int_pow(2, prgsize) / 2;
-        for (int i = 0; i < banks; i++) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6004, (i << 3) | 0x40);  // PRG A14 = CPU A14 (NROM-256)
           dumpBankPRG(0x0, 0x8000, base);
         }
@@ -3300,7 +3300,7 @@ void readPRG(bool readrom) {
 
       case 331:
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i++) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xE000, i >> 3);
           write_prg_byte(0xA000, i);
           write_prg_byte(0xC000, i);
@@ -3310,7 +3310,7 @@ void readPRG(bool readrom) {
 
       case 332:
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i++) {
+        for (size_t i = 0; i < banks; i++) {
           for (word address = 0x0; address < 0x4000; address += 512) {
             write_prg_pulsem2(0x6000, 0x08 | (i & 0x07) | ((i & 0x08) << 3));
             dumpPRG_pulsem2(base, address);
@@ -3320,7 +3320,7 @@ void readPRG(bool readrom) {
 
       case 396:
         banks = int_pow(2, prgsize);
-        for (int i = 0; i < banks; i++) {
+        for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, (i >> 3) & 0x07);
           write_prg_byte(0x8000, i & 0x07);
           dumpBankPRG(0x0, 0x4000, base);
@@ -4279,7 +4279,7 @@ void readCHR(bool readrom) {
 
         case 286:
           banks = int_pow(2, chrsize) * 2;
-          for (int i = 0; i < banks; i++) {
+          for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + i, i);
             dumpBankCHR(0x0, 0x800);
           }
@@ -4287,7 +4287,7 @@ void readCHR(bool readrom) {
 
         case 288:
           banks = int_pow(2, chrsize) / 2;
-          for (int i = 0; i < banks; i++) {
+          for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0x07), i);
             dumpBankCHR(0x0, 0x2000);
           }
@@ -4295,7 +4295,7 @@ void readCHR(bool readrom) {
 
         case 290:
           banks = int_pow(2, chrsize) / 2;
-          for (int i = 0; i < banks; i++) {
+          for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | ((i << 5) & 0x300) | (i & 0x07), i);
             dumpBankCHR(0x0, 0x2000);
           }
@@ -4303,7 +4303,7 @@ void readCHR(bool readrom) {
 
         case 319:  // 64K
           banks = int_pow(2, chrsize) / 2;
-          for (int i = 0; i < banks; i++) {
+          for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, i << 4);
             dumpBankCHR(0x0, 0x2000);
           }
@@ -4311,7 +4311,7 @@ void readCHR(bool readrom) {
 
         case 331:
           banks = int_pow(2, chrsize);
-          for (int i = 0; i < banks; i++) {
+          for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xE000, i >> 3);
             write_prg_byte(0xA000, i << 3);
             dumpBankCHR(0x0, 0x1000);
@@ -4320,7 +4320,7 @@ void readCHR(bool readrom) {
 
         case 332:  // 128K
           banks = int_pow(2, chrsize) / 2;
-          for (int i = 0; i < banks; i++) {
+          for (size_t i = 0; i < banks; i++) {
             for (word address = 0x0; address < 0x2000; address += 512) {
               write_prg_pulsem2(0x6001, 0x30 | (i & 0x07));
               write_prg_pulsem2(0x6000, (i & 0x08) << 3);
