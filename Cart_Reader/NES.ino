@@ -307,6 +307,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   // 266 - City Fighter IV [TODO]
   // 267 - 晶太 [Jīngtài] EL861121C / JY-119 multicart [TODO]
   { 268, 0, 11, 0, 8, 0, 0 },  // KP6022 / AA6023 ASIC (Mindkids/Coolboy) [268.0-1]
+  { 272, 0, 3, 0, 5, 0, 0 },   // J-2012-II (bootleg ぼくDracula君)
   { 286, 0, 3, 0, 5, 0, 0 },   // Benshieng BS-5 multicarts [TODO]
   { 288, 0, 3, 0, 4, 0, 0 },   // GKCXIN1 (21-in-1)
   { 289, 5, 7, 0, 0, 0, 0 },   // 60311C / N76A-1
@@ -319,10 +320,12 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 332, 3, 4, 4, 5, 0, 0 },   // WS-1001
   { 351, 0, 6, 0, 8, 0, 0 },   // Techline XB multicarts
   { 366, 0, 6, 0, 8, 0, 0 },   // GN-45
+  { 380, 0, 5, 0, 0, 0, 0 },   // 970630C / KN-35A
   { 396, 0, 6, 0, 0, 0, 0 },   // 晶太 [Jīngtài] YY850437C
   { 422, 1, 8, 0, 8, 0, 0 },   // TEC9719
   { 446, 0, 8, 0, 0, 0, 0 },   // SMD172B_FPGA
   { 470, 0, 11, 0, 0, 0, 0 },  // INX_007T_V01
+  { 519, 0, 6, 0, 8, 0, 0 },   // VT-29B/VT1210
   { 532, 4, 4, 6, 6, 0, 0 },   // CHINA_ER_SAN2 (duplicate of 19)
   { 534, 1, 8, 0, 8, 0, 0 },   // ING003C / PJ-008 / AT-207
   // 551 - 晶科泰 [Jncota] KT-xxx [TODO]
@@ -2351,6 +2354,7 @@ void readPRG(bool readrom) {
       case 25:
       case 65:
       case 75:  // 128K/256K
+      case 272:
         banks = int_pow(2, prgsize) * 2;
         if (mapper == 23) {
           write_prg_byte(0x9002, 0);
@@ -2358,6 +2362,10 @@ void readPRG(bool readrom) {
         }
         if (mapper == 25) {
           write_prg_byte(0x9005, 0);  // set vrc4 swap setting for TMNT2
+        }
+        if (mapper == 272) {
+          write_prg_byte(0x9002, 0);
+          write_prg_byte(0x9004, 0);
         }
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000, i);
@@ -3318,6 +3326,14 @@ void readPRG(bool readrom) {
         }
         break;
 
+      case 380:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xF201 + ((i & 0x1F) << 2), 0);
+          dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
       case 396:
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
@@ -3344,6 +3360,14 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, i >> 3);
           write_prg_byte(0x8000, i & 0x07);
+          dumpBankPRG(0x0, 0x8000, base);
+        }
+        break;
+
+      case 519:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i += 2) {
+          write_prg_byte(0x8000 + (i & 0x3F), 0);
           dumpBankPRG(0x0, 0x8000, base);
         }
         break;
@@ -3644,13 +3668,16 @@ void readCHR(bool readrom) {
           break;
 
         case 23:
+        case 272:
           {
             banks = int_pow(2, chrsize) * 4;
             // Detect VRC4e Carts - read PRG 0x1FFF6 (DATE)
             // Boku Dracula-kun = 890810, Tiny Toon = 910809, Crisis Force = 910701, Parodius Da! = 900916
             write_prg_byte(0x8000, 15);  // Load last bank
             uint16_t m23reg = 0xB001;
-            if (read_prg_byte(0x9FF6) == 0x30) {
+            if ((read_prg_byte(0x9FF6) == 0x30) && !(mapper == 272)) {
+              println_Msg(F("VRC4e detected!"));
+              display_Update();
               m23reg = 0xB004;
             }
             for (size_t i = 0; i < banks; i++) {
@@ -4326,6 +4353,14 @@ void readCHR(bool readrom) {
               write_prg_pulsem2(0x6000, (i & 0x08) << 3);
               dumpCHR_pulsem2(address);
             }
+          }
+          break;
+
+        case 519:
+          banks = int_pow(2, chrsize) / 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_byte(0x8000, i & 0x7F);
+            dumpBankCHR(0x0, 0x2000);
           }
           break;
       }
