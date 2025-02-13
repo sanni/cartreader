@@ -4921,6 +4921,9 @@ Madou Monogatari - Hanamaru Daiyouchienji (Japan).sfc
 Maerchen Adventure Cotton 100% (Japan).sfc
 5FB7A31D,CD3C,81AC7F8A,16,064
 
+Maerchen Adventure Cotton 100% (Japan) (Columbus Circle Release).sfc
+F4C10A72,1BF0,5C37BB91,16,064
+
 Magic Boy (Europe).sfc
 7718C867,05A7,103AC871,04,016
 
