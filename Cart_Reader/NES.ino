@@ -216,7 +216,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 175, 4, 4, 5, 5, 0, 0 },  // Kaiser KS-122 (15-in-1)
   { 176, 4, 4, 5, 5, 0, 0 },  // YH-xxx / SFC-12B / many others...
   { 177, 1, 7, 0, 0, 0, 0 },  // 恒格电子 [Hénggé Diànzǐ]
-  { 178, 5, 5, 0, 0, 0, 0 },  // 外星 [Wàixīng] FS305 / 南晶 [Nánjīng] NJ0430 / PB030703-1x1
+  { 178, 5, 6, 0, 0, 0, 0 },  // 外星 [Wàixīng] FS305 / 南晶 [Nánjīng] NJ0430 / PB030703-1x1
   // 179 - duplicate of 176
   { 180, 3, 3, 0, 0, 0, 0 },  // Inverse UNROM (Crazy Climber)
   // 181 - duplicate of 185
@@ -313,6 +313,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 289, 5, 7, 0, 0, 0, 0 },   // 60311C / N76A-1
   { 290, 0, 5, 0, 4, 0, 0 },   // Asder 20-in-1
   // 313 - undumpable (reset-based TKROM multicarts)
+  { 314, 6, 7, 0, 7, 0, 0 },   // bmc-64in1norepeat
   { 315, 0, 5, 0, 7, 0, 0 },   // 820732C / 830134C
   { 319, 3, 3, 4, 4, 0, 0 },   // HP-898F / KD-7/9-E
   { 329, 1, 7, 0, 0, 0, 3 },   // EDU2000 (duplicate of 177)
@@ -2997,9 +2998,11 @@ void readPRG(bool readrom) {
         write_prg_byte(0x4800, 0);  // NROM-256 mode
         write_prg_byte(0x4803, 0);  // set PRG-RAM
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x4802, i >> 3);    // high PRG (up to 8 bits?!)
-          write_prg_byte(0x4801, i & 0x07);  // low PRG (3 bits)
-          dumpBankPRG(0x0, 0x8000, base);
+          for (word address = 0x0; address < 0x8000; address += 512) {
+            write_prg_byte(0x4802, i >> 3);    // high PRG (up to 8 bits?!)
+            write_prg_byte(0x4801, i & 0x07);  // low PRG (3 bits)
+            dumpPRG(base, address);
+          }
         }
         break;
 
@@ -3295,6 +3298,15 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | ((i << 10) & 0x7800) | ((i << 6) & 0x40), i);
           dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
+      case 314: // 1024K/2048K
+        banks = int_pow(2, prgsize) / 2;
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_pulsem2(0x5000, 0x80); // NROM
+          write_prg_pulsem2(0x5001, ((i & 0x3F) | 0x80)); // prg 32k bank (M==1 (NROM-256))
+          dumpBankPRG(0x0, 0x8000, base);
         }
         break;
 
@@ -4324,6 +4336,15 @@ void readCHR(bool readrom) {
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | ((i << 5) & 0x300) | (i & 0x07), i);
+            dumpBankCHR(0x0, 0x2000);
+          }
+          break;
+
+        case 314: // 512K
+          banks = int_pow(2, chrsize) / 2;
+          for (size_t i = 0; i < banks; i++) {
+            write_prg_pulsem2(0x5000, ((i & 0x3) << 1)); // chr 8k bank (bits 0-1)
+            write_prg_pulsem2(0x5002, i >> 2); // chr 8k bank (bits 2-5)
             dumpBankCHR(0x0, 0x2000);
           }
           break;
