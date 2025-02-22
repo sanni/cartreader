@@ -2164,7 +2164,7 @@ void readPRG(bool readrom) {
               write_prg_byte(0x6000, (i & 0x70) >> 4);
             }
             if ((mapper == 115) || (mapper == 248)) {
-              write_prg_byte(0x6000, (i & 0x10) << 2);  // A18
+              write_prg_byte(0x6000, (i & 0x20) << 1);  // A18
             }
             if (mapper == 116) {
               write_prg_byte(0x4100, 0x01);  // MMC3 mode
@@ -3541,7 +3541,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x200) >> 7);
             }
             if ((mapper == 115) || (mapper == 248)) {
-              write_prg_byte(0x6000, (i & 0x100) >> 8);  // A18
+              write_prg_byte(0x6001, (i & 0x100) >> 8);  // A18
             }
             if (mapper == 116) {
               write_prg_byte(0x4100, 0x01 | ((i & 0x100) >> 6));  // A18
