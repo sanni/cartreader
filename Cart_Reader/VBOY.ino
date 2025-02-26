@@ -54,7 +54,6 @@
 //******************************************
 // SETUP
 //******************************************
-
 void setup_VBOY() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
@@ -87,6 +86,10 @@ void setup_VBOY() {
   // Set Unused Pins HIGH
   PORTJ |= (1 << 0);  // TIME(PJ0)
 
+  // Reset Rom/Sram values
+  cartSize = 0;
+  sramSize = 0;
+
   getCartInfo_VB();
 
   mode = CORE_VBOY;
@@ -95,13 +98,20 @@ void setup_VBOY() {
 //******************************************
 //  MENU
 //******************************************
-
 // Base Menu
-static const char* const menuOptionsVBOY[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
+static const char* const menuOptionsVBOY[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_SET_SIZE, FSTRING_RESET };
+
+// Manual Rom size selection Menu
+static const char VBRomSizeItem1[] PROGMEM = "64 KB";
+static const char VBRomSizeItem2[] PROGMEM = "512 KB";
+static const char VBRomSizeItem3[] PROGMEM = "1 MB";
+static const char VBRomSizeItem4[] PROGMEM = "2 MB";
+static const char VBRomSizeItem5[] PROGMEM = "4 MB";
+static const char* const VBRomSizeMenu[] PROGMEM = { VBRomSizeItem1, VBRomSizeItem2, VBRomSizeItem3, VBRomSizeItem4, VBRomSizeItem5 };
 
 void vboyMenu() {
-  convertPgm(menuOptionsVBOY, 4);
-  uint8_t mainMenu = question_box(F("VIRTUALBOY MENU"), menuOptions, 4, 0);
+  convertPgm(menuOptionsVBOY, 5);
+  uint8_t mainMenu = question_box(F("VIRTUALBOY MENU"), menuOptions, 5, 0);
 
   switch (mainMenu) {
     case 0:
@@ -163,6 +173,11 @@ void vboyMenu() {
       break;
 
     case 3:
+      // Set Rom size manually
+      setRomSize();
+      break;
+
+    case 4:
       // reset
       resetArduino();
       break;
@@ -303,13 +318,17 @@ void dataIn_VB() {
 void getCartInfo_VB() {
   // Set control
   dataIn_VB();
-
-  cartSize = 0;
-  for (unsigned long address = 0x80000; address <= 0x400000; address *= 2) {
+  
+  for (unsigned long address = 0x10000; address <= 0x400000; address *= 2) {
     // Get Serial
     word vbSerial = readWord_VB((address - 0x204) / 2);  // Cart Serial
 
+    // Get Rom/Sram sizes for known serials
     switch (vbSerial) {
+      case 0x3431:           // 41 = Robonaut
+        cartSize = 0x10000;  // 64KB
+        break;
+
       case 0x4D54:           // MT = Mario's Tennis
       case 0x4832:           // H2 = Panic Bomber/Tobidase! Panibomb
       case 0x5350:           // SP = Space Invaders
@@ -350,6 +369,7 @@ void getCartInfo_VB() {
         break;
 
       case 0x4644:            // FD = Hyper Fighting
+      case 0x575A:            // WZ = Virtual WarZone
         cartSize = 0x400000;  // 4MB
         sramSize = 0x2000;    // 8KB
         break;
@@ -383,9 +403,19 @@ void getCartInfo_VB() {
   println_Msg(FS(FSTRING_SPACE));
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
+  
   print_Msg(FS(FSTRING_SIZE));
-  print_Msg(cartSize * 8 / 1024 / 1024);
-  println_Msg(F(" MBit"));
+  if (cartSize == 0) {
+    println_Msg(F("Unknown (set manually)"));
+  }
+  else if(cartSize < 0x100000) {
+    print_Msg(cartSize / 1024);
+    println_Msg(F(" KBit"));
+  } else {
+    print_Msg(cartSize * 8 / 1024 / 1024);
+    println_Msg(F(" MBit"));
+  }
+  
   print_Msg(F("Sram: "));
   if (sramSize > 0) {
     print_Msg(sramSize * 8 / 1024);
@@ -538,6 +568,34 @@ unsigned long verifySRAM_VB() {
   }
 
   return writeErrors;
+}
+
+//******************************************
+// SET ROM SIZE MANUALLY
+//******************************************
+
+void setRomSize() {
+  unsigned char VBRomSize;
+  convertPgm(VBRomSizeMenu, 5);
+  VBRomSize = question_box(F("Select ROM size"), menuOptions, 5, 0);
+  switch (VBRomSize) {
+    case 0:
+      cartSize = 0x10000;    // 64KB
+      break;
+    case 1:
+      cartSize = 0x80000;    // 512KB
+      break;
+    case 2:
+      cartSize = 0x100000;   // 1MB
+      break;
+    case 3:
+      cartSize = 0x200000;   // 2MB
+      break;
+    case 4:
+      cartSize = 0x400000;   // 4MB
+      break;
+    }
+  getCartInfo_VB();
 }
 #endif
 //******************************************
