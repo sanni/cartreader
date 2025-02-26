@@ -16,8 +16,7 @@ static const char SMSAdapterItem6[] PROGMEM = "SG-1000 raphnet";
 static const char* const SMSAdapterMenu[] PROGMEM = { SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5, SMSAdapterItem6 };
 
 // Operations menu
-static const char SMSOperationMenuItem4[] PROGMEM = "Set ROM Size";
-static const char* const SMSOperationMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, SMSOperationMenuItem4, FSTRING_RESET };
+static const char* const SMSOperationMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_SET_SIZE, FSTRING_RESET };
 
 // SG Operations menu
 static const char* const SGOperationsMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
