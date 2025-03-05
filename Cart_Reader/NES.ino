@@ -323,6 +323,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 366, 0, 6, 0, 8, 0, 0 },   // GN-45
   { 380, 0, 5, 0, 0, 0, 0 },   // 970630C / KN-35A
   { 396, 0, 6, 0, 0, 0, 0 },   // 晶太 [Jīngtài] YY850437C
+  { 399, 0, 6, 0, 0, 0, 0 },   // BATMAP-000
   { 422, 1, 8, 0, 8, 0, 0 },   // TEC9719
   { 446, 0, 8, 0, 0, 0, 0 },   // SMD172B_FPGA
   { 470, 0, 11, 0, 0, 0, 0 },  // INX_007T_V01
@@ -3351,6 +3352,14 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, (i >> 3) & 0x07);
           write_prg_byte(0x8000, i & 0x07);
+          dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
+      case 399:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0xE001, i);
           dumpBankPRG(0x0, 0x4000, base);
         }
         break;
