@@ -41,6 +41,7 @@ static const byte PROGMEM a2600mapsize[] = {
   0x0A, 2,  // "UA" UA Ltd 8K
   0x3E, 5,  // Tigervision 32K with 32K RAM
   0x07, 6,  // X07 64K ROM
+  0xDF, 7,  // "DFSC" Penult 128K
 };
 
 byte a2600mapcount = (sizeof(a2600mapsize) / sizeof(a2600mapsize[0])) / 2;
@@ -562,6 +563,17 @@ void readROM_2600() {
         readData_2600(0x080D | (x << 4));
         readSegment_2600(0x1000, 0x2000);
       }
+      break;
+
+   case 0xDF:  // DFSC 128K
+      for (int x = 0; x < 0x20; x++) {
+        readData_2600(0x1FC0 + x);
+        readSegment_2600(0x1000, 0x1FBF);
+      }
+      break;
+
+    default:
+      break;
   }
   myFile.close();
 
@@ -599,6 +611,8 @@ void println_Mapper2600(byte mapper) {
     println_Msg(F("TP"));
   else if (mapper == 0x07)
     println_Msg(F("X07"));
+  else if (mapper == 0xDF)
+    println_Msg(F("DFSC"));
   else
     println_Msg(mapper, HEX);
 #else
@@ -622,6 +636,8 @@ void println_Mapper2600(byte mapper) {
     Serial.println(F("TP"));
   else if (mapper == 0x07)
     Serial.println(F("X07"));
+  else if (mapper == 0xDF)
+    Serial.println(F("DFSC"));
   else
     Serial.println(mapper, HEX);
 #endif
@@ -713,6 +729,7 @@ setmapper:
   Serial.println(F("16 = TP [Time Pilot 8K]"));
   Serial.println(F("17 = UA [UA Ltd]"));
   Serial.println(F("18 = 3E [Tigervision 32K \w RAM]"));
+  Serial.println(F("19 = DFSC [Penult 128K]"));
   Serial.print(F("Enter Mapper [0-17]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
