@@ -1,7 +1,7 @@
 /******************************************
   SUPER FAMICOM SUFAMI TURBO MODULE
 ******************************************/
-#ifdef ENABLE_ST
+#if (defined(ENABLE_ST) && defined(ENABLE_SNES))
 
 /******************************************
   Menu
@@ -167,26 +167,7 @@ void readSlot(bool cartSlot) {
 // Read ST rom to SD card
 void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // create a new folder to save rom file
-  EEPROM_readAnything(0, foldern);
-  strcpy(fileName, "SUFAMI_TURBO.st");
-  sprintf(folder, "ST/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("ST", "ROM", "SUFAMI_TURBO", "st");
 
   // Read specified banks
   readLoRomBanks(bankStart + 0x80, bankEnd + 0x80, &myFile);

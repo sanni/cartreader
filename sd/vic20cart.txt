@@ -1,0 +1,718 @@
+A World at War
+7,2
+
+A.E.
+5,6
+
+Adventureland
+3,6
+
+Aggressor
+7,2
+
+Alien
+7,2
+
+Alien Blitz
+7,1
+
+Alien Sidestep
+7,1
+
+Alphabet Zoo
+5,6
+
+Amazing Maze
+7,1
+
+Amidar
+7,2
+
+Amok!
+7,1
+
+Ape Escape
+7,2
+
+Apple Panic
+5,3
+
+Arachnoid
+5,6
+
+Arcadia
+7,2
+
+Artillery Duel
+5,6
+
+Assam - Assembler
+7,2
+
+Astroblitz
+7,1
+
+Atlantis
+7,1
+
+Attack of the Mutant Camels
+7,2
+
+Avenger
+7,2
+
+Baldor's Castle
+1,5
+
+Bandits
+7,2
+
+Bank Robber
+7,2
+
+Battle Zone
+5,6
+
+Black Hole
+7,1
+
+Bridge 20
+5,6
+
+Buck Rogers
+5,6
+
+Bug Crusher
+7,1
+
+BUTI - Basic UTIlity
+7,1
+
+Cannonball Blitz
+2,4
+
+Capture the Flag
+7,2
+
+Car Race
+7,2
+
+Cassette Turbo
+7,1
+
+Catch-a-Snatch
+7,2
+
+Cave-In
+7,2
+
+CBM BASIC v4.0
+7,1
+
+CBM BASIC v5.0
+7,2
+
+Centipede
+2,6
+
+Choplifter
+7,2
+
+Chuck Norris Superkicks
+7,2
+
+Close Encounters
+7,1
+
+Cloudburst
+7,1
+
+Clowns
+7,2
+
+ComBASIC
+8,1
+
+Commodore Artist
+7,1
+
+Computer War
+7,2
+
+Congo Bongo
+7,2
+
+Cosmic Cruncher
+7,2
+
+Cosmic Jailbreak
+7,2
+
+Crater Raider
+7,1
+
+Creepy Corridors
+7,2
+
+Crossfire
+7,2
+
+Cyclon
+7,2
+
+Dancing Bear
+2,6
+
+Data 20 Display Manager
+7,0
+
+Deadly Duck
+7,1
+
+Deadly Skies
+7,1
+
+Defender
+5,6
+
+Demon Attack
+7,1
+
+D'Fuse
+7,2
+
+Dig Dug
+2,6
+
+Donkey Kong
+2,6
+
+Dot Gobbler
+7,1
+
+Dragonfire
+7,2
+
+Droids
+7,2
+
+E.T.
+7,2
+
+ExBasic Level II
+7,2
+
+Face Maker
+7,2
+
+Fast Eddie
+7,2
+
+Final Orbit + Bumper Bash
+7,2
+
+Flipper 1.0
+7,2
+
+Frogger
+7,2
+
+Frogman
+7,2
+
+Fun with Music
+7,2
+
+Galaxian
+7,2
+
+Garden Wars
+7,2
+
+Ghost Manor
+7,2
+
+Gold Fever
+7,1
+
+Gorf
+7,2
+
+Gridrunner
+7,1
+
+Handy Toolkit
+7,2
+
+HesMon v1.1
+7,1
+
+HesWriter v1.1
+7,2
+
+HiRes Toolkit
+8,1
+
+Home Baby Sitter II
+7,2
+
+Household Finance
+7,2
+
+IEEE-488
+8,0
+
+IFR: Flight Simulator
+7,2
+
+In The Chips
+5,6
+
+Jawbreaker II
+7,2
+
+Jelly Monster v.1
+7,2
+
+Jelly Monster v.2
+7,2
+
+Jungle Hunt
+5,6
+
+Jupiter Lander
+7,2
+
+Key-Quest
+7,2
+
+Kids on Keys
+7,2
+
+Kindercomp
+5,6
+
+K-Razy Antiks
+5,6
+
+K-Star Patrol
+5,6
+
+Laser Zone
+7,2
+
+Lode Runner
+5,6
+
+Lunar Leeper
+2,4
+
+Machine Language Monitor
+0,1
+
+Mastertype
+5,6
+
+Maze
+7,2
+
+Medieval Joust
+7,2
+
+Meteor Run
+7,2
+
+Mine Madness
+7,2
+
+Miner 2049er
+7,2
+
+Mission Impossible
+3,6
+
+Mobile Attack
+7,2
+
+Mole Attack
+7,2
+
+Money Wars
+7,2
+
+Monster Maze
+7,2
+
+Moon Patrol
+5,6
+
+Mosquito Infestation
+7,1
+
+Motocross Racer
+7,2
+
+Mountain King
+5,6
+
+Ms. Pac-Man
+5,6
+
+Mutant Herd
+7,2
+
+Number Crunch
+7,2
+
+Number Nabber & Shape Grabber
+7,2
+
+Omega Race
+7,2
+
+Outworld (NTSC)
+5,3
+
+Outworld (PAL)
+7,2
+
+Pac-Man
+7,2
+
+Paratrooper
+7,2
+
+Personal Finance
+7,2
+
+PET Loader
+7,2
+
+Pharaoh's Curse
+5,6
+
+Pinball
+5,6
+
+Pinball Spectacular
+5,6
+
+Pipes
+7,2
+
+Pirate's Cove
+3,6
+
+Poker
+7,2
+
+Polaris
+7,2
+
+Pole Position
+5,6
+
+Predator
+7,2
+
+Princess and Frog
+7,2
+
+Programmer's Aid Cartridge
+6,1
+
+Protector
+7,2
+
+Q*bert
+7,2
+
+Quackers
+7,2
+
+Quick Brown Fox
+4,2
+
+Radar Rat Race
+7,2
+
+Raid on Fort Knox
+7,2
+
+Rally-X
+7,2
+
+Rat Hotel
+7,2
+
+Renaissance
+5,3
+
+River Rescue
+7,2
+
+Road Race
+7,2
+
+Robin Hood
+7,2
+
+Robot Panic
+7,2
+
+Robotron: 2084
+5,4
+
+SamMON
+0,2
+
+Sargon II Chess
+7,2
+
+Satellite and Meteorites! (NTSC)
+5,3
+
+Satellite and Meteorites! (PAL)
+7,2
+
+Satellite Patrol
+7,1
+
+Scorpion
+7,2
+
+Scram 20
+7,1
+
+Screen Master
+7,1
+
+Sea Wolf
+7,2
+
+Seafox
+5,6
+
+Serpentine
+7,2
+
+Shamus
+7,2
+
+Sir Lancelot
+7,2
+
+Skibbereen
+7,1
+
+Skyblazer
+5,6
+
+Slot
+7,2
+
+Snake Byte
+7,1
+
+Space Ric-o-Shay
+7,1
+
+Space Snake
+7,2
+
+Speed Math & Bingo Math
+7,2
+
+Spider City
+7,1
+
+Spider of Mars (NTSC)
+7,2
+
+Spider of Mars (PAL)
+5,3
+
+Spike's Peak
+7,2
+
+Spills & Fills
+7,2
+
+Springer
+5,6
+
+Squish 'em
+5,6
+
+Star Battle
+7,2
+
+Star Post
+7,2
+
+Star Trek
+7,2
+
+Story Machine
+5,5
+
+Sub Chase
+7,1
+
+Sub Commander
+5,4
+
+Super Amok
+7,2
+
+Super Expander
+7,1
+
+Super Slot
+7,2
+
+Super Smash
+7,2
+
+Synthesound
+7,2
+
+Tank Atak
+7,2
+
+Tank Wars
+7,1
+
+Terraguard
+7,1
+
+The Count
+3,6
+
+The Fourth Encounter
+7,2
+
+The Sky is Falling
+7,2
+
+Threshold
+7,2
+
+Titan
+7,2
+
+Tomarc the Barbarian
+7,2
+
+Tooth Invaders
+7,2
+
+Topper
+7,2
+
+Trashman
+5,3
+
+Turmoil
+7,2
+
+Turtle Graphics
+7,2
+
+Tutankham
+7,2
+
+Type Attack
+7,2
+
+Typo
+7,2
+
+VC Extra
+7,2
+
+VC Song-Cartridge
+7,2
+
+VIC 20 Diagnostic Cartridge
+7,1
+
+VIC 20 Micromon v1.2
+8,1
+
+VIC 20 Mikro Assembler
+5,3
+
+VIC Color Test
+7,0
+
+VIC Forth v1.0
+7,2
+
+VIC Forth v1.1
+7,2
+
+VIC Graph
+7,2
+
+VIC Menagerie
+7,2
+
+VIC Music Composer
+7,2
+
+VIC Stat
+7,2
+
+VIC Super Lander
+7,2
+
+Vic Tool
+8,0
+
+VICKIT 1
+8,0
+
+VICKIT 2
+8,1
+
+VICKIT 3
+8,1
+
+VICKIT 4
+7,1
+
+VICKIT 5
+8,1
+
+VICterm 40
+7,1
+
+Video Vermin
+7,2
+
+Videomania
+7,1
+
+Visible Solar System
+7,2
+
+Voodoo Castle
+3,6
+
+Wacky Waiters
+7,2
+
+Waterloo BASIC
+7,1
+
+Witch Way
+7,2
+
+Wordcraft 20
+5,6
+
+Write Now!
+7,2
+
+

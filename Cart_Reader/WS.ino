@@ -376,7 +376,7 @@ static void showCartInfo_WS() {
   print_Msg(F("Game: "));
   println_Msg(romName);
 
-  print_Msg(F("Rom Size: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (cartSize == 0x00)
     println_Msg(romSize, HEX);
   else {
@@ -403,7 +403,7 @@ static void showCartInfo_WS() {
   print_Msg(F("Version: 1."));
   println_Msg(romVersion, HEX);
 
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
 
   // Prints string out of the common strings array either with or without newline
@@ -489,19 +489,11 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
   if (outPathBuf != NULL && bufferSize > 0)
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   // get correct starting rom bank
   uint16_t bank = (256 - (cartSize >> 16));
@@ -561,25 +553,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
 
 static void readSRAM_WS() {
   // generate fullname of rom file
-  snprintf(fileName, FILENAME_LENGTH, "%s.sav", romName);
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "WS/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("WS", "SAVE", romName, "save");
 
   uint32_t bank_size = (sramSize << 7);
   uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
@@ -654,7 +628,7 @@ static void verifySRAM_WS() {
       print_Error(did_not_verify_STR);
     }
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -700,31 +674,13 @@ static void writeSRAM_WS() {
     println_Msg(F("Writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
 static void readEEPROM_WS() {
   // generate fullname of eep file
-  snprintf(fileName, FILENAME_LENGTH, "%s.eep", romName);
-
-  // create a new folder for storing eep file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "WS/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
+  createFolderAndOpenFile("WS", "SAVE", romName, "eep");
 
   uint32_t eepromSize = (sramSize << 7);
   uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
@@ -808,7 +764,7 @@ static void verifyEEPROM_WS() {
       print_Error(did_not_verify_STR);
     }
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -859,7 +815,7 @@ static void writeEEPROM_WS() {
 
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -948,7 +904,7 @@ static void writeWitchOS_WS() {
 
       print_STR(done_STR, 1);
     } else {
-      print_Error(F("File doesn't exist"));
+      print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     }
   }
 

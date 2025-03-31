@@ -303,28 +303,7 @@ void readSegment_INTV(uint32_t startaddr, uint32_t endaddr) {
 
 // MODIFIED READ ROUTINE FOR ALL 10 MAPPERS
 void readROM_INTV() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".int");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "INTV/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("INTV", "ROM", romName, "int");
 
   switch (intvmapper) {
     case 0:                              //default mattel up to 32K (8K/12K/16K/24K/32K)
@@ -485,7 +464,7 @@ void ecsBank(uint32_t addr, uint8_t bank) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_INTV(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   intvindex = index * 4;
   intvmapselect = pgm_read_byte(intvmapsize + intvindex);
   println_Msg(intvmapselect);
@@ -545,7 +524,7 @@ void checkMapperSize_INTV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_INTV(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(pgm_read_byte(&(INTV[index])));
 }
 #endif
@@ -561,7 +540,7 @@ void setROMSize_INTV() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[newintvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -617,7 +596,7 @@ void checkStatus_INTV() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[intvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -681,10 +660,10 @@ void readDataLine_INTV(FsFile& database, void* entry) {
 
 void printDataLine_INTV(void* entry) {
   struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   println_Msg(castEntry->gameMapper);
 }
 

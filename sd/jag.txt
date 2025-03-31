@@ -1,0 +1,305 @@
+Aircars (USA) (Beta) (1994-11-14).j64
+53E35744,1,0
+
+Alien vs Predator (World).j64
+DC187F82,4,0
+
+Alien vs Predator (World) (Beta) (1993-08-18).j64
+3153D470,4,0
+
+Alien vs Predator (World) (Beta) (1993-10-13).j64
+B4E7BC59,4,0
+
+Alien vs Predator (World) (v0.93) (Beta) (1994-04-08).j64
+E65DA590,4,0
+
+Atari Karts (World).j64
+E28756DE,4,0
+
+Arena Football '95 (World).j64
+199B9D83,4,0
+
+Atari Karts (World) (Beta).j64
+52C996E0,4,0
+
+Attack of the Mutant Penguins (World).j64
+CD5BF827,2,0
+
+Barkley Shut Up and Jam (USA) (Beta).j64
+3A3B1FD2,4,0
+
+Battle Sphere (World).j64
+5F2C2774,4,3
+
+Battle Sphere Gold (World).j64
+67F9AB3A,4,4
+
+Breakout 2000 (USA, Europe).j64
+B5604D40,2,0
+
+Breakout 2000 (USA, Europe) (Beta).j64
+20DBFF9F,2,0
+
+Brutal Sports Football (World).j64
+BCB1A4BF,2,0
+
+Bubsy in Fractured Furry Tales (World).j64
+2E17D5DA,2,0
+
+Burn Out (World) (Demo 2) (WCES 1995).j64
+0F698FB3,2,0
+
+Burn Out (World) (Demo 1).j64
+701E7BBE,2,0
+
+Cannon Fodder (World).j64
+BDA405C6,2,0
+
+Checkered Flag (World).j64
+FA7775AE,2,0
+
+Checkered Flag (World) (Beta) (CES 1993).j64
+CE94C0D5,2,0
+
+Club Drive (World).j64
+EEE8D61D,2,0
+
+Club Drive (World) (Beta).j64
+0E320385,2,0
+
+Cybermorph (World) (Rev A).j64
+BDE67498,1,0
+
+Cybermorph (World) (Rev B).j64
+ECF854E7,1,0
+
+Cybermorph (World) (Beta) (1993-08-23).j64
+9EB389F9,1,0
+
+Defender 2000 (World).j64
+27594C6A,4,0
+
+Defender 2000 (World) (Beta).j64
+952D07F0,4,0
+
+Doom (World).j64
+5E2CDBC0,4,0
+
+Double Dragon V - The Shadow Falls (World).j64
+348E6449,2,0
+
+Dragon - The Bruce Lee Story (World).j64
+8FEA5AB0,2,0
+
+Dragon - The Bruce Lee Story (World) (Beta) (1994-09-26).j64
+A14F94AB,2,0
+
+Dragon - The Bruce Lee Story (World) (Beta) (1994-10-06).j64
+83C6ACC0,2,0
+
+Evolution - Dino Dudes (World).j64
+0EC5369D,2,0
+
+Fever Pitch Soccer (World) (En,Fr,De,Es,It).j64
+3615AF6A,2,0
+
+Fight for Life (USA, Europe).j64
+B14C4753,4,0
+
+Fight for Life (USA, Europe) (Beta) (1995-03-22).j64
+59458199,4,0
+
+Fight for Life (USA, Europe) (Beta) (1995-09-07).j64
+036A25E6,4,0
+
+Flashback - The Quest for Identity (World) (En,Fr).j64
+DE55DCC7,2,0
+
+Flip Out! (World).j64
+892BC67C,2,0
+
+High Voltage C Maze (USA) (Demo).j64
+25F79B1F,2,0
+
+Hover Strike (World).j64
+4899628F,2,0
+
+Hyper Force (World).j64
+F0360DB3,2,0
+
+I-War (USA, Europe).j64
+97EB4651,2,0
+
+I-War (USA, Europe) (Beta) (1995-10-20).j64
+5BFFA5AC,2,0
+
+International Sensible Soccer (World).j64
+5A101212,2,0
+
+Iron Soldier (World).j64
+08F15576,2,0
+
+Iron Soldier 2 (World).j64
+D6C19E34,2,0
+
+Jack Nicklaus Cyber Golf (USA) (v0.02) (Proto) (1994-07-04).j64
+7733F701,2,0
+
+Jack Nicklaus Cyber Golf (USA) (v0.03) (Demo) (1995-01-13).j64
+E20F0EEF,1,0
+
+Jack Nicklaus Cyber Golf (USA) (v0.04) (Demo) (1995-01-16).j64
+BE5E9EF1,1,0
+
+Jaguar Hockey Legends 2013 (World) (Unl).j64
+7E90046E,4,0
+
+Kasumi Ninja (World).j64
+0957A072,4,0
+
+Kasumi Ninja (World) (v0.01) (Beta).j64
+EE9529EE,4,0
+
+Kasumi Ninja (World) (v0.29) (Beta) (1994-05-24).j64
+3D6C5D44,4,0
+
+Missile Command 3D (World).j64
+DA9C4162,2,0
+
+Missile Command VR (World) (Beta) (1995-07-05).j64
+5810CADB,2,0
+
+NBA Jam - Tournament Edition (USA, Europe).j64
+0AC83D77,4,0
+
+Phase Zero (World).j64
+7168B143,2,0
+
+Painter (World) (1995-12-29) (Unl).j64
+5F9EF174,1,0
+
+Pinball Fantasies (World).j64
+5CFF14AB,2,0
+
+Pitfall - The Mayan Adventure (USA, Europe).j64
+817A2273,4,0
+
+Plucky Duck in Hollywood Hijinks (USA) (Proto) (1994-10-28).j64
+4E77A83C,2,0
+
+Power Drive Rally (World).j64
+1660F070,2,0
+
+Raiden (World).j64
+0509C85E,2,0
+
+Raiden (World) (Rev A).j64
+31812799,2,0
+
+Rayman (World).j64
+A9F8A00E,4,0
+
+Rayman (World) (Beta 2).j64
+254DD949,4,0
+
+Rayman (World) (Beta 1).j64
+92743C49,4,0
+
+Ruiner Pinball (USA, Europe).j64
+5B6BB205,2,0
+
+Skyhammer (World).j64
+3C044941,4,0
+
+SkyCopter II (USA) (Proto).j64
+4F464FA5,2,0
+
+Slam Racer (USA) (Proto).j64
+E25FEC7C,4,0
+
+Soccer Kid (World).j64
+732FFAB6,2,0
+
+Space War 2000 (World).j64
+D821F5EB,2,0
+
+Speedster II (USA) (Proto).j64
+F7CFE6E6,2,0
+
+Super Burnout (World).j64
+6F8B2547,2,0
+
+Supercross 3D (USA, Europe).j64
+EC22F572,2,0
+
+Syndicate (World).j64
+58272540,2,0
+
+Tempest 2000 (World).j64
+6B2B95AD,2,0
+
+Thea Realm Fighters (USA) (Proto 2).j64
+BB06D3C6,4,0
+
+Thea Realm Fighters (USA) (Proto 1).j64
+85BE7E07,4,0
+
+Theme Park (World).j64
+47EBC158,2,0
+
+Tiny Toon Adventures (USA) (Proto).j64
+F4ACBB04,2,0
+
+Total Carnage (USA) (Beta).j64
+8F80EDCF,4,0
+
+Towers II - Plight of the Stargazer (USA, Europe).j64
+83A3FB5D,2,0
+
+Trevor McFur in the Crescent Galaxy (World) (Rev A).j64
+1E451446,2,0
+
+Trevor McFur in the Crescent Galaxy (World) (Beta).j64
+0A055EE0,2,0
+
+Trevor McFur in the Crescent Galaxy (World).j64
+95143668,2,0
+
+Troy Aikman NFL Football (World).j64
+38A130ED,2,0
+
+Ultimate Brain Games (USA) (Proto).j64
+8FB54827,2,0
+
+Ultra Vortek (World).j64
+0F6A1C2C,4,0
+
+Ultra Vortex (World) (Beta) (1995-03-20).j64
+A27823D8,4,0
+
+Val d'Isere Skiing and Snowboarding (World).j64
+C9608717,2,0
+
+Virtual VCS (USA) (Proto).j64
+59A8863F,1,0
+
+White Men Can't Jump (USA, Europe).j64
+14915F20,4,0
+
+Wolfenstein 3D (World).j64
+E91BD644,2,0
+
+Worms (USA, Europe).j64
+6EB774EB,2,0
+
+Zero 5 (USA) (Beta).j64
+691B54BA,2,0
+
+Zool 2 (World).j64
+8975F48B,2,0
+
+Zoop (USA, Europe).j64
+C5562581,1,0
+
+Zzyorxx II (USA) (Demo).j64
+C8C7E4C7,1,0

@@ -60,9 +60,10 @@ static const byte PROGMEM a7800mapsize[] = {
   5, 3, 3,  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
   6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant]
   7, 1, 4,  // Bankset switching
+  8, 5, 5,  // Bentley Bears Bear's Crystal Quest/Bounty Bob Strikes Back
 };
 
-byte a7800mapcount = 8;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
+byte a7800mapcount = 9;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
 byte a7800mapselect;
 int a7800index;
 
@@ -185,7 +186,7 @@ void a7800Menu() {
 // READ CODE
 //******************************************
 
-uint8_t readData_7800(uint32_t addr)  // Add Input Pullup
+uint8_t readData_7800(uint16_t addr)  // Add Input Pullup
 {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
@@ -223,7 +224,7 @@ uint8_t readData_7800(uint32_t addr)  // Add Input Pullup
   return ret;
 }
 
-void readSegment_7800(uint32_t startaddr, uint32_t endaddr) {
+void readSegment_7800(uint16_t startaddr, uint32_t endaddr) {
   for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_7800(addr + w);
@@ -233,7 +234,29 @@ void readSegment_7800(uint32_t startaddr, uint32_t endaddr) {
   }
 }
 
-void writeData_7800(uint32_t addr, uint8_t data) {
+void readSegmentBank_7800(uint8_t startbank, uint8_t endbank) {
+  for (uint8_t x = startbank; x < endbank; x++) {
+    writeData_7800(0x8000, x);
+    readSegment_7800(0x8000, 0xC000);
+  }
+}
+
+void readStandard_7800() {
+  if (a7800size > 1)
+    readSegment_7800(0x4000, 0x8000); // +16K = 48K
+  if (a7800size > 0)
+    readSegment_7800(0x8000, 0xC000); // +16K = 32K
+  // Base 16K
+  readSegment_7800(0xC000, 0x10000);  // 16K
+}
+
+void readSupergame_7800() {
+  readSegmentBank_7800(0, 7);         // Bank 0-6 16K * 7 = 112K
+  readSegment_7800(0xC000, 0x10000);  // Bank 7  +16K = 128K
+}
+
+
+void writeData_7800(uint16_t addr, uint8_t data) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
   NOP;
@@ -293,7 +316,7 @@ void writeData_7800(uint32_t addr, uint8_t data) {
 }
 
 // Activision Bankswitch - Double Dragon/Rampage 128K
-void bankSwitch_7800(uint32_t addr) {
+void bankSwitch_7800(uint16_t addr) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
   NOP;
@@ -320,28 +343,7 @@ void bankSwitch_7800(uint32_t addr) {
 //******************************************
 
 void readROM_7800() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".a78");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "7800/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("7800", "ROM", romName, "a78");
 
   switch (a7800mapper) {
     case 0:  // Standard 16K/32K/48K [7816/7832/7848]
@@ -354,10 +356,7 @@ void readROM_7800() {
 
     case 2:                              // SuperGame - Alien Brigade/Crossbow 144K [78S9]
       readSegment_7800(0x4000, 0x8000);  // 16K
-      for (int x = 0; x < 8; x++) {
-        writeData_7800(0x8000, x);         // Banks 0-7
-        readSegment_7800(0x8000, 0xC000);  // 16K * 8 = +128K = 144K
-      }
+      readSegmentBank_7800(0, 8);        // 16K * 8 = +128K = 144K
       break;
 
     case 3:                                // F-18 Hornet 64K [78AB]
@@ -395,17 +394,11 @@ void readROM_7800() {
       break;
 
     case 5:  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
-      for (int x = 0; x < 4; x++) {
-        writeData_7800(0x8000, x);
-        readSegment_7800(0x8000, 0xC000);  // 16K * 4 = 64K
-      }
+      readSegmentBank_7800(0, 4); // 16K * 4 = 64K
       break;
 
     case 6:  // Karateka (PAL) 64K [78S4 Variant]
-      for (int x = 4; x < 8; x++) {
-        writeData_7800(0x8000, x);
-        readSegment_7800(0x8000, 0xC000);  // 16K * 4 = 64K
-      }
+      readSegmentBank_7800(4, 8); // 16K * 4 = 64K
       break;
 
     case 7: // Bankset switching
@@ -421,6 +414,12 @@ void readROM_7800() {
         readStandard_7800();
       }
       break;
+    case 8: // Bentley Bear's Crystal Quest/Bounty Bob Strikes Back!
+      readSegment_7800(0x4000, 0x8000);   //            16K
+      readSegmentBank_7800(0, 7);         // Bank 0-6 +112K
+      readSegment_7800(0xC000, 0x10000);  // Bank 7   + 16K = 144K
+      break;
+
   }
   myFile.close();
 
@@ -431,23 +430,6 @@ void readROM_7800() {
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
-}
-
-void readStandard_7800() {
-  if (a7800size > 1)
-    readSegment_7800(0x4000, 0x8000);  // +16K = 48K
-  if (a7800size > 0)
-    readSegment_7800(0x8000, 0xC000);  // +16K = 32K
-  // Base 16K
-  readSegment_7800(0xC000, 0x10000);  // 16K
-}
-
-void readSupergame_7800() {
-  for (int x = 0; x < 7; x++) {
-    writeData_7800(0x8000, x);         // Banks 0-6
-    readSegment_7800(0x8000, 0xC000);  // 16K * 7 = 112K
-  }
-  readSegment_7800(0xC000, 0x10000);  // Bank 7 +16 = 128K
 }
 
 void setHalt_7800(byte on) {
@@ -499,11 +481,13 @@ void println_Mapper7800(byte mapper) {
     println_Msg(F("KARATEKA(PAL) [78S4]"));
   else if (mapper == 7)
     println_Msg(F("BANKSET"));
+  else if (mapper == 8)
+    println_Msg(F("CRYSTALQUEST/BOUNTBO"));
 }
 
 void printRomSize_7800(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(a7800[index]);
 }
 #endif
@@ -520,7 +504,7 @@ void setROMSize_7800() {
     new7800size = navigateMenu(a7800lo, a7800hi, &printRomSize_7800);
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[new7800size]);
   println_Msg(F("K"));
   display_Update();
@@ -560,7 +544,7 @@ setrom:
 void checkStatus_7800() {
   EEPROM_readAnything(7, a7800mapper);
   EEPROM_readAnything(8, a7800size);
-  if (a7800mapper > 7) {
+  if (a7800mapper > (a7800mapcount - 1)) {
     a7800mapper = 0;  // default
     EEPROM_writeAnything(7, a7800mapper);
   }
@@ -577,7 +561,7 @@ void checkStatus_7800() {
   print_Msg(F("MAPPER:   "));
   println_Msg(a7800mapper);
   println_Mapper7800(a7800mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[a7800size]);
   println_Msg(F("K"));
   display_Update();
@@ -601,7 +585,9 @@ void checkStatus_7800() {
     Serial.println(F("Karateka (PAL) [78S4 Variant]"));
   else if (a7800mapper == 7)
     Serial.println(F("Bankset"));
-  Serial.print(F("ROM SIZE: "));
+  else if (a7800mapper == 8)
+    Serial.println(F("Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(A7800[a7800size]);
   Serial.println(F("K"));
   Serial.println(FS(FSTRING_EMPTY));
@@ -615,7 +601,7 @@ void checkStatus_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_7800(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   a7800index = index * 3;
   a7800mapselect = pgm_read_byte(a7800mapsize + a7800index);
   println_Msg(a7800mapselect);
@@ -647,7 +633,8 @@ setmapper:
   Serial.println(F("5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
   Serial.println(F("6 = Karateka (PAL) [78S4 Variant]"));
   Serial.println(F("7 = Bankset"));
-  Serial.print(F("Enter Mapper [0-7]: "));
+  Serial.println(F("8 = Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
+  Serial.print(F("Enter Mapper [0-8]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);

@@ -44,9 +44,7 @@ void setup_SuprAcan() {
   PORTG |= (1 << 5);
 
   dataOut_MD();
-  writeWord_Acan(0xaaaa, 0xaaaa);
-  writeWord_Acan(0x5555, 0x5555);
-  writeWord_Acan(0xaaaa, 0x9090);
+  writeCommand_Acan(0, 0x9090);
 
   dataIn_MD();
   eepbit[0] = readWord_Acan(0x2);
@@ -145,26 +143,30 @@ void suprAcanMenu() {
   wait();
 }
 
+static void writeCommand_Acan(uint32_t offset, uint16_t command) {
+  writeWord_Acan(offset + 0xaaaa, 0xaaaa);
+  writeWord_Acan(offset + 0x5555, 0x5555);
+  writeWord_Acan(offset + 0xaaaa, command);
+}
+
+static void openFile_Acan() {
+  filePath[0] = 0;
+  sd.chdir();
+  fileBrowser(FS(FSTRING_SELECT_FILE));
+  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
+
+  display_Clear();
+
+  if (!myFile.open(filePath, O_READ)) {
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    return;
+  }
+}
+
 static void readROM_Acan() {
   uint32_t crc32 = 0xffffffff;
 
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, FILEPATH_LENGTH, "/ACAN/ROM/%d", foldern);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  if (!myFile.open("rom.bin", O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("/ACAN", "ROM", "rom", "bin");
 
   draw_progressbar(0, cartSize);
 
@@ -192,24 +194,7 @@ static void readROM_Acan() {
 }
 
 static void readSRAM_Acan() {
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, FILEPATH_LENGTH, "/ACAN/SAVE/%d", foldern);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  if (!myFile.open("save.bin", O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("/ACAN", "SAVE", "save", "bin");
 
   dataIn_MD();
   for (uint32_t i = 0; i < 0x10000; i += 1024) {
@@ -224,17 +209,7 @@ static void readSRAM_Acan() {
 }
 
 static void writeSRAM_Acan() {
-  filePath[0] = 0;
-  sd.chdir();
-  fileBrowser(F("Select a file"));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-
-  if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
-    return;
-  }
+  openFile_Acan();
 
   print_Msg(F("Writing "));
   print_Msg(filePath);
@@ -260,7 +235,7 @@ static void verifySRAM_Acan() {
   display_Update();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 
@@ -290,24 +265,7 @@ static void verifySRAM_Acan() {
 }
 
 static void readUM6650() {
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "/ACAN/UM6650/%d", foldern);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  if (!myFile.open("UM6650.bin", O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("/ACAN", "UM6650", "UM6650", "bin");
 
   for (uint16_t i = 0; i < 256; i++) {
     dataOut_MD();
@@ -328,7 +286,7 @@ static void verifyUM6650() {
   display_Update();
 
   if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
 
@@ -357,17 +315,7 @@ static void verifyUM6650() {
 }
 
 static void writeUM6650() {
-  filePath[0] = 0;
-  sd.chdir("/");
-  fileBrowser(F("Select a file"));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-
-  if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
-    return;
-  }
+  openFile_Acan();
 
   uint16_t len = myFile.read(sdBuffer, 256);
   myFile.close();
@@ -392,17 +340,7 @@ static void writeUM6650() {
 static void flashCart_Acan() {
   uint32_t *flash_size = (uint32_t *)(eepbit + 4);
 
-  filePath[0] = 0;
-  sd.chdir();
-  fileBrowser(F("Select a file"));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-
-  if (!myFile.open(filePath, O_READ)) {
-    print_Error(F("File doesn't exist"));
-    return;
-  }
+  openFile_Acan();
 
   print_Msg(F("Writing "));
   print_Msg(filePath + 1);
@@ -420,12 +358,8 @@ static void flashCart_Acan() {
   for (i = 0; i < file_length; i += *flash_size) {
     // erase chip
     dataOut_MD();
-    writeWord_Acan(i + 0xaaaa, 0xaaaa);
-    writeWord_Acan(i + 0x5555, 0x5555);
-    writeWord_Acan(i + 0xaaaa, 0x8080);
-    writeWord_Acan(i + 0xaaaa, 0xaaaa);
-    writeWord_Acan(i + 0x5555, 0x5555);
-    writeWord_Acan(i + 0xaaaa, 0x1010);
+    writeCommand_Acan(i, 0x8080);
+    writeCommand_Acan(i, 0x1010);
 
     dataIn_MD();
     while (readWord_Acan(i) != 0xffff)
@@ -438,9 +372,7 @@ static void flashCart_Acan() {
         data = *((uint16_t *)(sdBuffer + k));
 
         dataOut_MD();
-        writeWord_Acan(i + 0xaaaa, 0xaaaa);
-        writeWord_Acan(i + 0x5555, 0x5555);
-        writeWord_Acan(i + 0xaaaa, 0xa0a0);
+        writeCommand_Acan(i, 0xa0a0);
         writeWord_Acan(i + j + k, data);
 
         dataIn_MD();
@@ -484,7 +416,7 @@ static void checkRomExist_Acan() {
   if (cartSize == 0)
     print_Error(F("Unable to find rom signature..."));
   else {
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     print_Msg(romSize);
     println_Msg(F(" Mb"));
   }

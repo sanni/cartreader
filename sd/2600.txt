@@ -136,7 +136,13 @@ BMX Air Master
 Bobby Is Going Home
 064
 
+Bogey Blaster
+064
+
 Boing!
+064
+
+Boom Bang
 064
 
 Bowling
@@ -193,6 +199,9 @@ Cat Trax
 Cathouse Blues
 064
 
+Caverns of Mars
+246
+
 Centipede
 248
 
@@ -207,6 +216,9 @@ Chase the Chuckwagon
 
 Checkers
 032
+
+Chess
+064
 
 China Syndrome
 064
@@ -299,7 +311,7 @@ Dark Cavern
 064
 
 Dark Chambers
-246
+006
 
 Dark Mage
 248
@@ -394,6 +406,9 @@ Encounter at L-5
 Enduro
 064
 
+Ente und der Wolf, Die
+064
+
 Entombed
 064
 
@@ -424,10 +439,16 @@ Fatal Run
 Fathom
 248
 
+Feuerwehr im Einsatz
+064
+
 Fighter Pilot
 246
 
 Final Approach
+064
+
+Fire Birds
 064
 
 Fire Fighter
@@ -629,7 +650,10 @@ King Kong
 064
 
 Klax
-246
+006
+
+Kleine Baer, Der
+064
 
 Knight on the Town
 064
@@ -751,6 +775,9 @@ Mission 3000 A.D.
 Mission Survive
 064
 
+Moderne Ritter, Der
+064
+
 Mogul Maniac
 064
 
@@ -774,6 +801,9 @@ MotoRodeo
 
 Mountain King
 250
+
+Mountain Man
+064
 
 Mouse Trap
 064
@@ -818,7 +848,7 @@ Obelix
 248
 
 Off the Wall
-246
+006
 
 Oink!
 064
@@ -928,6 +958,9 @@ Pressure Cooker
 Private Eye
 248
 
+Punch Chess
+064
+
 Pyramid War
 064
 
@@ -956,7 +989,7 @@ Racquetball
 064
 
 Radar Lock
-246
+006
 
 Raft Rider
 064
@@ -1057,6 +1090,9 @@ Secret Quest
 Sentinel
 246
 
+Sesam Offne Dich!
+064
+
 Shark Attack
 064
 
@@ -1104,6 +1140,9 @@ Smurf Rescue in Gargamels Castle
 
 Smurfs Save the Day
 248
+
+Snail Against Squirrel
+064
 
 Sneak 'n Peek
 064
@@ -1223,7 +1262,7 @@ Star Wars - Jedi Arena
 064
 
 Stargate
-246
+006
 
 Stargunner
 064
@@ -1280,7 +1319,7 @@ Super Cobra
 224
 
 Super Football
-248
+008
 
 Superman
 064
@@ -1348,7 +1387,7 @@ Title Match Pro Wrestling
 Tomarc the Barbarian
 248
 
-Tomcat
+Tomcat - The F-14 Fighter Simulator
 246
 
 Tooth Protectors

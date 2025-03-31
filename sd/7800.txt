@@ -10,6 +10,9 @@ Alien Brigade
 Asteroids
 0,0
 
+Asteroids Deluxe
+0,1
+
 Atari 7800 Development Card
 0,0
 
@@ -28,6 +31,15 @@ Baseball
 Basketbrawl
 1,4
 
+Bentley Bear's Crystal Quest
+8,5
+
+Berzerk
+0,2
+
+Bounty Bob Strikes Back!
+8,5
+
 Centipede
 0,0
 
@@ -45,6 +57,9 @@ Crack'ed
 
 Crossbow
 2,5
+
+Danger Zone
+0,2
 
 Dark Chambers
 1,4
@@ -84,6 +99,9 @@ Food Fight (Europe)
 
 Food Fight (USA)
 0,1
+
+Frenzy
+0,2
 
 Galaga (Europe)
 0,2
@@ -171,6 +189,9 @@ Scrapyard Dog
 
 Sentinel
 1,4
+
+Space Duel
+0,1
 
 Summer Games
 1,4

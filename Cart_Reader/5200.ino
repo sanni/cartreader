@@ -54,6 +54,12 @@
 #define DISABLE_8000 PORTH |= (1 << 6)  // ROM SELECT 8000-BFFF
 #define ENABLE_8000 PORTH &= ~(1 << 6)
 
+struct a5200_DB_entry {
+  char crc32[9];
+  byte gameMapper;
+  byte gameSize;
+};
+
 //******************************************
 //  Supported Mappers
 //******************************************
@@ -166,37 +172,14 @@ uint8_t readData_5200(uint16_t addr)  // Add Input Pullup
 {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A13
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
+  cycleDelay(5);
 
   // DDRC = 0x00; // Set to Input
   PORTC = 0xFF;  // Input Pullup
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  // Extended Delay for Vanguard
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
+  cycleDelay(15); // Standard + extended delay for Vanguard
 
   uint8_t ret = PINC;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
-  NOP;
+  cycleDelay(5);
 
   return ret;
 }
@@ -211,46 +194,52 @@ void readSegment_5200(uint16_t startaddr, uint16_t endaddr) {
   }
 }
 
+void readBankBountyBob_5200(uint16_t startaddr) {
+  for (int w = 0; w < 4; w++) {
+    readData_5200(startaddr + 0xFF6 + w);
+    readSegment_5200(startaddr, startaddr + 0xE00);
+    // Split Read of Last 0x200 bytes
+    for (int x = 0; x < 0x1F6; x++) {
+      sdBuffer[x] = readData_5200(startaddr + 0xE00 + x);
+    }
+    myFile.write(sdBuffer, 502);
+    // Bank Registers 0xFF6-0xFF9
+    for (int y = 0; y < 4; y++) {
+      readData_5200(startaddr + 0xFFF);  // Reset Bank
+      sdBuffer[y] = readData_5200(startaddr + 0xFF6 + y);
+    }
+    // End of Bank 0xFFA-0xFFF
+    readData_5200(startaddr + 0xFFF);      // Reset Bank
+    readData_5200(startaddr + 0xFF6 + w);  // Set Bank
+    for (int z = 4; z < 10; z++) {
+      sdBuffer[z] = readData_5200(startaddr + 0xFF6 + z);  // 0xFFA-0xFFF
+    }
+    myFile.write(sdBuffer, 10);
+  }
+  readData_5200(startaddr + 0xFFF);  // Reset Bank
+}
+
 //******************************************
 // READ ROM
 //******************************************
 
 void readROM_5200() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".a52");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "5200/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("5200", "ROM", romName, "a52");
 
   // 5200 A13-A0 = 10 0000 0000 0000
-
   switch (a5200mapper) {
     case 0:  // Standard 4KB/8KB/16KB/32KB
       // Lower Half of 32K is at 0x4000
       if (a5200size == 3) {  // 32K
         ENABLE_4000;
+        cycleDelay(15);
         readSegment_5200(0x4000, 0x8000);  // +16K = 32K
         DISABLE_4000;
+        cycleDelay(15);
       }
       // 4K/8K/16K + Upper Half of 32K
       ENABLE_8000;
+      cycleDelay(15);
       if (a5200size > 1)
         readSegment_5200(0x8000, 0xA000);  // +8K = 16K
       if (a5200size > 0)
@@ -258,74 +247,41 @@ void readROM_5200() {
       // Base 4K
       readSegment_5200(0xB000, 0xC000);  // 4K
       DISABLE_8000;
+      cycleDelay(15);
       break;
 
     case 1:  // Two Chip 16KB
       ENABLE_4000;
+      cycleDelay(15);
       readSegment_5200(0x4000, 0x6000);  // 8K
       DISABLE_4000;
+      cycleDelay(15);
       ENABLE_8000;
+      cycleDelay(15);
       readSegment_5200(0x8000, 0xA000);  // +8K = 16K
       DISABLE_8000;
+      cycleDelay(15);
       break;
 
     case 2:  // Bounty Bob Strikes Back 40KB [UNTESTED]
       ENABLE_4000;
+      cycleDelay(15);
       // First 16KB (4KB x 4)
-      for (int w = 0; w < 4; w++) {
-        readData_5200(0x4FF6 + w);
-        readSegment_5200(0x4000, 0x4E00);
-        // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F6; x++) {
-          sdBuffer[x] = readData_5200(0x4E00 + x);
-        }
-        myFile.write(sdBuffer, 502);
-        // Bank Registers 0x4FF6-0x4FF9
-        for (int y = 0; y < 4; y++) {
-          readData_5200(0x4FFF);  // Reset Bank
-          sdBuffer[y] = readData_5200(0x4FF6 + y);
-        }
-        // End of Bank 0x4FFA-0x4FFF
-        readData_5200(0x4FFF);      // Reset Bank
-        readData_5200(0x4FF6 + w);  // Set Bank
-        for (int z = 4; z < 10; z++) {
-          sdBuffer[z] = readData_5200(0x4FF6 + z);  // 0x4FFA-0x4FFF
-        }
-        myFile.write(sdBuffer, 10);
-      }
-      readData_5200(0x4FFF);  // Reset Bank
+      readBankBountyBob_5200(0x4000);
       // Second 16KB (4KB x 4)
-      for (int w = 0; w < 4; w++) {
-        readData_5200(0x5FF6 + w);
-        readSegment_5200(0x5000, 0x5E00);
-        // Split Read of Last 0x200 bytes
-        for (int x = 0; x < 0x1F6; x++) {
-          sdBuffer[x] = readData_5200(0x5E00 + x);
-        }
-        myFile.write(sdBuffer, 502);
-        // Bank Registers 0x5FF6-0x5FF9
-        for (int y = 0; y < 4; y++) {
-          readData_5200(0x5FFF);  // Reset Bank
-          sdBuffer[y] = readData_5200(0x5FF6 + y);
-        }
-        // End of Bank 0x5FFA-0x5FFF
-        readData_5200(0x5FFF);      // Reset Bank
-        readData_5200(0x5FF6 + w);  // Set Bank
-        for (int z = 4; z < 10; z++) {
-          sdBuffer[z] = readData_5200(0x5FF6 + z);  // 0x5FFA-0x5FFF
-        }
-        myFile.write(sdBuffer, 10);
-      }
-      readData_5200(0x5FFF);  // Reset Bank
+      readBankBountyBob_5200(0x5000);
       DISABLE_4000;
+      cycleDelay(15);
       ENABLE_8000;
+      cycleDelay(15);
       readSegment_5200(0x8000, 0xA000);  // +8K = 40K
       DISABLE_8000;
+      cycleDelay(15);
       break;
   }
   myFile.close();
 
-  printCRC(fileName, NULL, 0);
+  compareCRC("5200.txt", 0, 1, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
@@ -371,7 +327,7 @@ void checkMapperSize_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_5200(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(a5200[index]);
 }
 #endif
@@ -387,7 +343,7 @@ void setROMSize_5200() {
     
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[new5200size]);
   println_Msg(F("K"));
   display_Update();
@@ -444,7 +400,7 @@ void checkStatus_5200() {
   print_Msg(F("MAPPER:   "));
   println_Msg(a5200mapper);
   println_Mapper5200(a5200mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[a5200size]);
   println_Msg(F("K"));
   display_Update();
@@ -453,11 +409,40 @@ void checkStatus_5200() {
   Serial.print(F("MAPPER:   "));
   Serial.println(a5200mapper);
   println_Mapper5200(a5200mapper);
-  Serial.print(F("ROM SIZE: "));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(a5200[a5200size]);
   Serial.println(F("K"));
   Serial.println(FS(FSTRING_EMPTY));
 #endif
+}
+
+//******************************************
+// READ MAPPER
+//******************************************
+
+void readDbEntry(FsFile& database, void* entry) {
+  struct a5200_DB_entry* castEntry = (a5200_DB_entry*)entry;
+
+  // Read expected CRC32 as a string
+  for (int i = 0; i < 8; ++i) {
+    castEntry->crc32[i] = database.read();
+  }
+  castEntry->crc32[8] = '\0';
+  database.seekCur(1); // Skip comma delimiter
+
+  // Read mapper
+  castEntry->gameMapper = database.read() - 48;
+
+  // if next char is not a comma, expect an additional digit
+  char temp = database.read();
+  if (temp != ',') {
+    castEntry->gameMapper = (castEntry->gameMapper * 10) + (temp - 48);
+    database.seekCur(1); // Skip over comma
+  }
+
+  // Read rom size
+  castEntry->gameSize = database.read() - 48;
+  database.seekCur(2); // Skip rest of line
 }
 
 //******************************************
@@ -467,7 +452,7 @@ void checkStatus_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_5200(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   a5200index = index * 3;
   a5200mapselect = pgm_read_byte(a5200mapsize + a5200index);
   println_Msg(a5200mapselect);
@@ -512,7 +497,7 @@ void setCart_5200() {
   //go to root
   sd.chdir();
 
-  struct database_entry_mapper_size entry;
+  struct a5200_DB_entry entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
@@ -521,12 +506,20 @@ void setCart_5200() {
   if (myFile.open("5200.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
+    if(checkCartSelection(myFile, &readDbEntry, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
     print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+  }
+}
+
+// While not precise in terms of exact cycles for NOP due to the for-loop
+// overhead, it simplifies the code while still achieving a similar result. 
+void cycleDelay(byte cycleCount) {
+  for (byte i = 0; i < cycleCount; ++i) {
+    NOP;
   }
 }
 #endif

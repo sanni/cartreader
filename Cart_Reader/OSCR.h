@@ -15,13 +15,83 @@
 #include "Config.h"
 
 /*==== SANITY CHECKS ==============================================*/
+// Error if no hardware version is enabled
 # if !(defined(HW1) || defined(HW2) || defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
 #   error !!! PLEASE CHOOSE HARDWARE VERSION IN CONFIG.H !!!
 # endif
 
+// Error if more than one hardware version is enabled
+# if (defined(HW1) + defined(HW2) + defined(HW3) + defined(HW4) + defined(HW5) + defined(SERIAL_MONITOR)) > 1
+#   error !!! PLEASE CHOOSE ONLY ONE HARDWARE VERSION IN CONFIG.H !!!
+# endif
+
+// Let user know unsafe configs are allowed
+# if defined(ALLOW_UNSAFE_CONFIG)
+// Error if defined during GitHub CI tests. This should not happen unless someone accidentally committed their Config.h
+#   if defined(GITHUB_CI)
+#     error !! UNSAFE CONFIGURATIONS ARE ALLOWED !! -- This should not be enabled on the repository!
+#   else /* !defined(GITHUB_CI) */
+#     warning !! UNSAFE CONFIGURATIONS ARE ALLOWED !! -- Unless you are a developer this probably is not something you want set.
+#   endif /* GITHUB_CI */
+# endif /* ALLOW_UNSAFE_CONFIG */
+
 # if defined(ENABLE_3V3FIX) && !defined(ENABLE_VSELECT)
 #   warning Using 3V3FIX is best with VSELECT.
 # endif
+
+# if defined(ENABLE_VSELECT)
+
+// Error if not a supported hardware version
+#   if !(defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using VSELECT with hardware revisions other than 4 or 5 is not supported.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using VSELECT with hardware revisions other than 4 or 5 is not supported. \
+              If you understand what you are doing you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* !(HW4 | HW5 | SERIAL_MONITOR) */
+
+// HW4 might work but needs tested. Make sure they know it's untested.
+#   if defined(HW4)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using VSELECT with HW4 is untested. Verification with a multimeter before use is strongly recommended. Please remember to report back with your findings.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using VSELECT with HW4 is untested. Verification with a multimeter before use is strongly recommended. \
+              Define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling. Please report back with your findings after testing!
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* HW4 */
+
+// SERIAL might work but needs tested. Make sure they know it's untested.
+#   if defined(SERIAL_MONITOR)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using VSELECT with a serial-only OSCR is untested. Verification with a multimeter before use is strongly recommended. Please remember to report back with your findings.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using VSELECT with a serial-only OSCR is untested. Verification with a multimeter before use is strongly recommended. \
+              Define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling. Please report back with your findings after testing!
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* SERIAL_MONITOR */
+
+# endif /* ENABLE_VSELECT */
+
+// ENABLE_SERIAL && ENABLE_3V3FIX are incompatible options
+#   if defined(ENABLE_SERIAL) && defined(ENABLE_3V3FIX)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using a configuration with ENABLE_SERIAL and ENABLE_3V3FIX is incompatible.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using a configuration with ENABLE_SERIAL and ENABLE_3V3FIX is incompatible. \
+              If you are a developer trying to make this work you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* ENABLE_SERIAL && ENABLE_3V3FIX */
+
+// ENABLE_SERIAL && ENABLE_UPDATER are incompatible options
+#   if defined(ENABLE_SERIAL) && defined(ENABLE_UPDATER)
+#     if defined(ALLOW_UNSAFE_CONFIG)
+#       warning Using a configuration with ENABLE_SERIAL and ENABLE_UPDATER is incompatible.
+#     else /* !defined(ALLOW_UNSAFE_CONFIG) */
+#       error Using a configuration with ENABLE_SERIAL and ENABLE_UPDATER is incompatible. \
+              If you are a developer trying to make this work you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
+#     endif /* ALLOW_UNSAFE_CONFIG */
+#   endif /* ENABLE_SERIAL && ENABLE_UPDATER */
 
 /*==== CONSTANTS ==================================================*/
 /**
@@ -41,7 +111,8 @@ extern const char PROGMEM FSTRING_CURRENT_SETTINGS[];
 // Messages
 extern const char PROGMEM FSTRING_OSCR[];
 extern const char PROGMEM FSTRING_MODULE_NOT_ENABLED[];
-extern const char FSTRING_DATABASE_FILE_NOT_FOUND[];
+extern const char PROGMEM FSTRING_DATABASE_FILE_NOT_FOUND[];
+extern const char PROGMEM FSTRING_FILE_DOESNT_EXIST[];
 
 // Cart
 extern const char PROGMEM FSTRING_READ_ROM[];
@@ -49,8 +120,16 @@ extern const char PROGMEM FSTRING_READ_SAVE[];
 extern const char PROGMEM FSTRING_WRITE_SAVE[];
 extern const char PROGMEM FSTRING_SELECT_CART[];
 extern const char PROGMEM FSTRING_SELECT_CART_TYPE[];
+extern const char PROGMEM FSTRING_SELECT_FILE[];
 extern const char PROGMEM FSTRING_SET_SIZE[];
 extern const char PROGMEM FSTRING_REFRESH_CART[];
+extern const char PROGMEM FSTRING_MAPPER[];
+extern const char PROGMEM FSTRING_SIZE[];
+extern const char PROGMEM FSTRING_ROM_SIZE[];
+extern const char PROGMEM FSTRING_NAME[];
+extern const char PROGMEM FSTRING_CHECKSUM[];
+extern const char PROGMEM FSTRING_REVISION[];
+extern const char PROGMEM FSTRING_SERIAL[];
 
 #define FS(pmem_string) (reinterpret_cast<const __FlashStringHelper *>(pmem_string))
 
@@ -71,7 +150,7 @@ enum CORES: uint8_t {
 # ifdef ENABLE_SNES
   CORE_SNES,
 # endif
-# ifdef ENABLE_SFM
+#if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
   CORE_SFM,
 #   ifdef ENABLE_FLASH
   CORE_SFM_FLASH,
@@ -82,11 +161,13 @@ enum CORES: uint8_t {
   CORE_GB,
   CORE_GBA,
   CORE_GBM,
+  # ifdef ENABLE_FLASH
   CORE_GB_GBSMART,
   CORE_GB_GBSMART_FLASH,
   CORE_GB_GBSMART_GAME,
 # endif
-# ifdef ENABLE_FLASH
+# endif
+# ifdef ENABLE_FLASH8
   CORE_FLASH8,
 #   ifdef ENABLE_FLASH16
   CORE_FLASH16,
@@ -100,7 +181,7 @@ enum CORES: uint8_t {
 # ifdef ENABLE_PCE
   CORE_PCE,
 # endif
-# ifdef ENABLE_SV
+ #if (defined(ENABLE_SV) && defined(ENABLE_SNES))
   CORE_SV,
 # endif
 # ifdef ENABLE_NES
@@ -163,14 +244,63 @@ enum CORES: uint8_t {
 # ifdef ENABLE_7800
   CORE_7800,
 # endif
+# ifdef ENABLE_JAGUAR
+  CORE_JAGUAR,
+# endif
+# ifdef ENABLE_LYNX
+  CORE_LYNX,
+# endif
 # ifdef ENABLE_VECTREX
   CORE_VECTREX,
 # endif
-# ifdef ENABLE_ST
+#if (defined(ENABLE_ST) && defined(ENABLE_SNES))
   CORE_ST,
 # endif
-# ifdef ENABLE_GPC
+#if (defined(ENABLE_GPC) && defined(ENABLE_SNES))
   CORE_GPC,
+# endif
+# ifdef ENABLE_ATARI8
+  CORE_ATARI8,
+# endif
+# ifdef ENABLE_BALLY
+  CORE_BALLY,
+# endif
+# ifdef ENABLE_LJ
+  CORE_LJ,
+# endif
+# ifdef ENABLE_LJPRO
+  CORE_LJPRO,
+# endif
+# ifdef ENABLE_PV1000
+  CORE_PV1000,
+# endif
+# ifdef ENABLE_VIC20
+  CORE_VIC20,
+# endif
+# ifdef ENABLE_LEAP
+  CORE_LEAP,
+# endif
+# ifdef ENABLE_RCA
+  CORE_RCA,
+# endif
+# ifdef ENABLE_TI99
+  CORE_TI99,
+# endif
+# ifdef ENABLE_PYUUTA
+  CORE_PYUUTA,
+# endif
+# ifdef ENABLE_TRS80
+  CORE_TRS80,
+# endif
+# ifdef ENABLE_VSMILE
+  CORE_VSMILE,
+# endif
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16)) 
+  CORE_CPS3_CART,
+  CORE_CPS3_64SIMM,
+  CORE_CPS3_128SIMM,
+  CORE_CPS3_512SIMM,
+  CORE_CPS3_01SIMM,
 # endif
   CORE_MAX // Always last
 };
@@ -251,11 +381,56 @@ enum SYSTEM_MENU: uint8_t {
 # if defined(ENABLE_7800)
   SYSTEM_MENU_7800,
 # endif
+# if defined(ENABLE_JAGUAR)
+  SYSTEM_MENU_JAGUAR,
+# endif
+# if defined(ENABLE_LYNX)
+  SYSTEM_MENU_LYNX,
+# endif
 # if defined(ENABLE_VECTREX)
   SYSTEM_MENU_VECTREX,
 # endif
-# if defined(ENABLE_FLASH)
+# if defined(ENABLE_ATARI8)
+  SYSTEM_MENU_ATARI8,
+# endif
+# if defined(ENABLE_BALLY)
+  SYSTEM_MENU_BALLY,
+# endif
+# if defined(ENABLE_LJ)
+  SYSTEM_MENU_LJ,
+# endif
+# if defined(ENABLE_LJPRO)
+  SYSTEM_MENU_LJPRO,
+# endif
+# if defined(ENABLE_PV1000)
+  SYSTEM_MENU_PV1000,
+# endif
+# if defined(ENABLE_VIC20)
+  SYSTEM_MENU_VIC20,
+# endif
+# if defined(ENABLE_LEAP)
+  SYSTEM_MENU_LEAP,
+# endif
+# if defined(ENABLE_RCA)
+  SYSTEM_MENU_RCA,
+# endif
+# if defined(ENABLE_TI99)
+  SYSTEM_MENU_TI99,
+# endif
+# if defined(ENABLE_PYUUTA)
+  SYSTEM_MENU_PYUUTA,
+# endif
+# if defined(ENABLE_TRS80)
+  SYSTEM_MENU_TRS80,
+# endif
+# if defined(ENABLE_VSMILE)
+  SYSTEM_MENU_VSMILE,
+# endif
+# if defined(ENABLE_FLASH8)
   SYSTEM_MENU_FLASH,
+# endif
+# if defined(ENABLE_CPS3)
+  SYSTEM_MENU_CPS3,
 # endif
 # if defined(ENABLE_SELFTEST)
   SYSTEM_MENU_SELFTEST,

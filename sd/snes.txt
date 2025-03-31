@@ -2207,7 +2207,7 @@ Earthworm Jim (Europe).sfc
 84AB251B,17DB,A46FEA67,24,048
 
 Earthworm Jim (Japan).sfc
-6F8ED108,4A4A,E4A6FF5F,24,096
+6F8ED108,D173,5E3CCBBC,24,048
 
 Earthworm Jim (USA) (Beta) (1994-08-19).sfc
 00A79820,0000,4BA9B6B9,24,048
@@ -2486,7 +2486,7 @@ FIFA - Road to World Cup 98 (Europe) (En,Fr,De,Es,It,Sv) (A8FP).sfc
 0CC77AF7,15E7,966E8246,16,064
 
 FIFA 97 (Europe) (En,Fr,De,Es,It,Sv).sfc
-E92D28B7,BA0A,D16282E9,15,060
+470EABE5,BA0A,D16282E9,15,060
 
 FIFA International Soccer (Europe).sfc
 A350821A,22E9,1D4FDBEE,08,032
@@ -4920,6 +4920,9 @@ Madou Monogatari - Hanamaru Daiyouchienji (Japan).sfc
 
 Maerchen Adventure Cotton 100% (Japan).sfc
 5FB7A31D,CD3C,81AC7F8A,16,064
+
+Maerchen Adventure Cotton 100% (Japan) (Columbus Circle Release).sfc
+F4C10A72,1BF0,5C37BB91,16,064
 
 Magic Boy (Europe).sfc
 7718C867,05A7,103AC871,04,016

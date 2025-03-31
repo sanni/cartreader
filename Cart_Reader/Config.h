@@ -49,11 +49,10 @@
 /****/
 
 /* [ Clock Generator ---------------------------------------------- ]
-    Enable this if you have the clock generator module. This will
-    automatically be enabled if you selected HW2 or newer above.
+    Disable this if you don't have the clock generator module. 
 */
 
-//#define ENABLE_CLOCKGEN
+#define ENABLE_CLOCKGEN
 
 /****/
 
@@ -89,6 +88,47 @@
 
 /****/
 
+/* [ Atari Jaguar --------------------------------------------------- ]
+*/
+//#define ENABLE_JAGUAR
+
+/****/
+
+/* [ Atari LYNX --------------------------------------------------- ]
+*/
+
+//#define ENABLE_LYNX
+
+/****/
+
+/* [ Atari 8-bit -------------------------------------------------- ]
+*/
+
+//#define ENABLE_ATARI8
+
+/****/
+
+/* [ Bally Astrocade ---------------------------------------------- ]
+*/
+
+//#define ENABLE_BALLY
+
+/****/
+
+/* [ Bandai Little Jammer ----------------------------------------- ]
+*/
+
+//#define ENABLE_LJ
+
+/****/
+
+/* [ Bandai Little Jammer Pro ------------------------------------- ]
+*/
+
+//#define ENABLE_LJPRO
+
+/****/
+
 /* [ Benesse Pocket Challenge W ----------------------------------- ]
 */
 
@@ -96,10 +136,10 @@
 
 /****/
 
-/* [ C64 --------------------------------------------------- ]
+/* [ Casio PV-1000 ------------------------------------------------ ]
 */
 
-//#define ENABLE_C64
+//#define ENABLE_PV1000
 
 /****/
 
@@ -107,6 +147,20 @@
 */
 
 //#define ENABLE_COLV
+
+/****/
+
+/* [ Commodore 64 ------------------------------------------------- ]
+*/
+
+//#define ENABLE_C64
+
+/****/
+
+/* [ Commodore VIC-20 --------------------------------------------- ]
+*/
+
+//#define ENABLE_VIC20
 
 /****/
 
@@ -124,11 +178,18 @@
 
 /****/
 
-/* [ Flashrom Programmer for SNES repros -------------------------- ]
+/* [ Flash Repros (all systems, SNES repro also needs FLASH8)------ ]
 */
 
-//#define ENABLE_FLASH
-//#define ENABLE_FLASH16
+//#define ENABLE_FLASH 
+
+/****/
+
+/* [ Flashrom Programmer Menu & SNES Repros------------------------ ]
+*/
+
+//#define ENABLE_FLASH8 
+//#define ENABLE_FLASH16 
 
 /****/
 
@@ -146,6 +207,13 @@
 
 /****/
 
+/* [ LeapFrog Leapster -------------------------------------------- ]
+*/
+
+//#define ENABLE_LEAP
+
+/****/
+
 /* [ Neo Geo Pocket ----------------------------------------------- ]
 */
 
@@ -157,6 +225,7 @@
 */
 
 #define ENABLE_N64
+//#define ENABLE_CONTROLLERTEST
 
 /****/
 
@@ -174,7 +243,7 @@
 
 /****/
 
-/* [ MSX ------------------------------------------- ]
+/* [ MSX ---------------------------------------------------------- ]
 */
 
 //#define ENABLE_MSX
@@ -188,10 +257,17 @@
 
 /****/
 
-/* [ Pokemon Mini -------------------------------------- ]
+/* [ Pokemon Mini ------------------------------------------------- ]
 */
 
 //#define ENABLE_POKE
+
+/****/
+
+/* [ RCA Studio II ------------------------------------------------ ]
+*/
+
+//#define ENABLE_RCA
 
 /****/
 
@@ -209,28 +285,28 @@
 
 /****/
 
-/* [ Super Famicom SF Memory Cassette ----------------------------- ]
+/* [ Super Famicom SF Memory Cassette (needs ENABLE_SNES)---------- ]
 */
 
 //#define ENABLE_SFM
 
 /****/
 
-/* [ Super Famicom Satellaview ------------------------------------ ]
+/* [ Super Famicom Satellaview (needs ENABLE_SNES)----------------- ]
 */
 
 //#define ENABLE_SV
 
 /****/
 
-/* [ Super Famicom Sufami Turbo ----------------------------------- ]
+/* [ Super Famicom Sufami Turbo (needs ENABLE_SNES)---------------- ]
 */
 
 //#define ENABLE_ST
 
 /****/
 
-/* [ Super Famicom Game Processor RAM Cassette -------------------- ]
+/* [ Super Famicom Game Processor RAM Cassette (needs ENABLE_SNES)- ]
 */
 
 //#define ENABLE_GPC
@@ -244,7 +320,28 @@
 
 /****/
 
-/* [ Vectrex --------------------------------------------------- ]
+/* [ Texas Instruments TI-99 -------------------------------------- ]
+*/
+
+//#define ENABLE_TI99
+
+/****/
+
+/* [ Tomy Pyuuta -------------------------------------------------- ]
+*/
+
+//#define ENABLE_PYUUTA
+
+/****/
+
+/* [ TRS-80 Color Computer ---------------------------------------- ]
+*/
+
+//#define ENABLE_TRS80
+
+/****/
+
+/* [ Vectrex ------------------------------------------------------ ]
 */
 
 //#define ENABLE_VECTREX
@@ -255,6 +352,13 @@
 */
 
 //#define ENABLE_VBOY
+
+/****/
+
+/* [ Vtech V.Smile ------------------------------------------------ ]
+*/
+
+//#define ENABLE_VSMILE
 
 /****/
 
@@ -283,6 +387,14 @@
 */
 
 //#define ENABLE_LOOPY
+
+/****/
+
+/* [ CP System III ------------------------------------------------ ]
+also needs ENABLE_FLASH8 and ENABLE_FLASH16 to be enabled
+*/
+
+//#define ENABLE_CPS3
 
 /****/
 
@@ -423,7 +535,7 @@
     with all Cart Readers
 */
 
-//#define OPTION_N64_FASTCRC
+#define OPTION_N64_FASTCRC
 
 /****/
 
@@ -442,46 +554,38 @@
 */
 
 #if defined(ENABLE_CONFIG)
-# define CONFIG_FILE       "config.txt"
+#define CONFIG_FILE "config.txt"
 // Define the max length of the key=value pairs
 // Do your best not to have to increase these.
-# define CONFIG_KEY_MAX    32
-# define CONFIG_VALUE_MAX  32
+#define CONFIG_KEY_MAX 32
+#define CONFIG_VALUE_MAX 32
 #endif
 
 #if (defined(HW4) || defined(HW5))
-# define ENABLE_LCD
-# define ENABLE_NEOPIXEL
-# define ENABLE_ROTARY
+#define ENABLE_LCD
+#define ENABLE_NEOPIXEL
+#define ENABLE_ROTARY
 //# define rotate_counter_clockwise
-# define ENABLE_CLOCKGEN
-# define OPTION_N64_FASTCRC
-# define OPTION_WS_ADAPTER_V2
+#define OPTION_WS_ADAPTER_V2
 #endif
 
 #if (defined(HW2) || defined(HW3))
-# define ENABLE_OLED
-# define ENABLE_BUTTON2
-# define ENABLE_CLOCKGEN
-# define ENABLE_CA_LED
-# define OPTION_N64_FASTCRC
+#define ENABLE_OLED
+#define ENABLE_BUTTON2
+#define ENABLE_CA_LED
 #endif
 
 #if defined(HW1)
-# define ENABLE_OLED
-//#define ENABLE_CLOCKGEN
-//#define OPTION_N64_FASTCRC
+#define ENABLE_OLED
 #endif
 
 #if defined(SERIAL_MONITOR)
-# define ENABLE_SERIAL
-//#define ENABLE_CLOCKGEN
-//#define OPTION_N64_FASTCRC
+#define ENABLE_SERIAL
 #endif
 
 /* Firmware updater only works with HW3 and HW5 */
 #if !(defined(HW5) || defined(HW3))
-# undef ENABLE_UPDATER
+#undef ENABLE_UPDATER
 #endif
 
 /* End of settings */

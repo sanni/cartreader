@@ -185,29 +185,7 @@ uint8_t readByte_WSV(uint32_t addr) {
 //******************************************
 
 void readROM_WSV() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".sv");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  //sprintf(folder, "WSV/ROM/%s/%d", romName, foldern);
-  sprintf(folder, "WSV/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("WSV", "ROM", romName, "sv");
 
   // start reading rom
   dataIn_WSV();
@@ -244,7 +222,7 @@ void readROM_WSV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_WSV(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(pgm_read_word(&(WSV[index])));
 }
 #endif
@@ -260,7 +238,7 @@ void setROMSize_WSV() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[newwsvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -309,7 +287,7 @@ void checkStatus_WSV() {
   println_Msg(F("WATARA SUPERVISION"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[wsvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -358,7 +336,7 @@ void readDataLine_WSV(FsFile& database, void* entry) {
 
 void printDataLine_WSV(void* entry) {
   struct database_entry_WSV* castEntry = (database_entry_WSV*)entry;
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   if (castEntry->gameSize == 51)
     print_Msg(F("512"));
   else

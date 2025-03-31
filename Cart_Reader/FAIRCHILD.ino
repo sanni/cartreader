@@ -392,29 +392,7 @@ uint8_t readData_FAIRCHILD() {
 }
 
 void readROM_FAIRCHILD() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "FAIRCHILD/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("FAIRCHILD", "ROM", romName, "bin");
 
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   uint8_t blocks = cartsize / 0x200;
@@ -439,9 +417,10 @@ void readROM_FAIRCHILD() {
         }
         myFile.write(sdBuffer, 512);
         delay(1);  // Added delay
+        startbyte = sdBuffer[1]; // Restore byte for 3K Hangman Check
         for (int z = 1; z < blocks; z++) {
-          if (cartsize == 0x0C00) {  // 3K
-            // Skip SRAM Code for 3K Carts - Tested with Hangman 3K
+          if ((cartsize == 0x0C00) && (startbyte == 0x2B)) {  // 3K Hangman
+            // Skip SRAM Code for 3K Hangman Cart
             // Hangman uses an F21022PC 1K SRAM Chip at 0x0400
             // SRAM is NOT Battery Backed so contents change
             // Chips are organized: 1K ROM + 1K SRAM + 1K ROM + 1K ROM
@@ -479,31 +458,8 @@ void readROM_FAIRCHILD() {
   wait();
 }
 
-void read16K_FAIRCHILD()  // Read 16K Bytes
-{
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "FAIRCHILD/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+void read16K_FAIRCHILD() { // Read 16K Bytes
+  createFolderAndOpenFile("FAIRCHILD", "ROM", romName, "bin");
 
   unsigned long cartsize = FAIRCHILD[fairchildsize] * 0x400;
   for (uint16_t y = 0; y < 0x20; y++) {
@@ -541,7 +497,7 @@ void read16K_FAIRCHILD()  // Read 16K Bytes
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_FAIRCHILD(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(FAIRCHILD[index]);
 }
 #endif
@@ -557,7 +513,7 @@ void setROMSize_FAIRCHILD() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[newfairchildsize]);
   println_Msg(F("K"));
   display_Update();
@@ -606,7 +562,7 @@ void checkStatus_FAIRCHILD() {
   println_Msg(F("CHANNEL F READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[fairchildsize]);
   println_Msg(F("K"));
   display_Update();

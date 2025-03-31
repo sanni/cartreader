@@ -3,7 +3,7 @@
 // Revision 1.0.0 October 22nd 2018
 // Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
-#ifdef ENABLE_SV
+ #if (defined(ENABLE_SV) && defined(ENABLE_SNES))
 
 /******************************************
    Satellaview 8M Memory Pack
@@ -288,13 +288,7 @@ void readSRAM_SV() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "BSX.srm");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/SAVE/BSX/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("SNES", "SAVE", "BSX", "srm");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -373,7 +367,7 @@ void writeSRAM_SV() {
     println_Msg(F("SRAM writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -404,7 +398,7 @@ unsigned long verifySRAM_SV() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
     return 1;
   }
 }
@@ -419,29 +413,7 @@ void readROM_SV() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "MEMPACK.bs");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/ROM/%s/%d", "MEMPACK", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  //clear the screen
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("SNES", "ROM", "MEMPACK", "bs");
 
   // Read Banks
   for (int currBank = 0x40; currBank < 0x50; currBank++) {
@@ -577,7 +549,7 @@ void writeROM_SV(void) {
     wait();
 
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 

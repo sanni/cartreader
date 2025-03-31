@@ -151,7 +151,7 @@ uint8_t readData_COL(uint32_t addr) {
   return ret;
 }
 
-void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
+void readSegment_COL(uint16_t startaddr, uint32_t endaddr) {
   for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_COL(addr + w);
@@ -162,33 +162,10 @@ void readSegment_COL(uint32_t startaddr, uint32_t endaddr) {
 }
 
 void readROM_COL() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".col");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  //  sprintf(folder, "COL/ROM/%s/%d", romName, foldern);
-  sprintf(folder, "COL/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("COL", "ROM", romName, "col");
 
   // RESET ALL CS PINS HIGH (DISABLE)
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
   readSegment_COL(0x8000, 0xA000);  // 8K
   if (colsize > 0) {
     readSegment_COL(0xA000, 0xB000);  // +4K = 12K
@@ -227,7 +204,7 @@ void readROM_COL() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_COL(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(pgm_read_byte(&(COL[index])));
 }
 #endif
@@ -244,7 +221,7 @@ void setROMSize_COL() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
   
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[newcolsize])));
   println_Msg(F("K"));
   display_Update();
@@ -293,7 +270,7 @@ void checkStatus_COL() {
   println_Msg(F("COLECOVISION READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[colsize])));
   println_Msg(F("K"));
   println_Msg(FS(FSTRING_EMPTY));
@@ -347,7 +324,7 @@ void readDataLine_COL(FsFile& database, void* entry) {
 void printDataLine_COL(void* entry) {
   struct database_entry_COL* castEntry = (database_entry_COL*)entry;
 
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
   println_Msg(F("KB"));
 }

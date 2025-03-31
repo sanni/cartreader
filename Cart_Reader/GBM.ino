@@ -25,12 +25,14 @@ void gbmMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
+#if defined(ENABLE_FLASH)
     // Read Flash ID
     case 0:
       // Clear screen
       display_Clear();
       readFlashID_GBM();
       break;
+#endif
 
     // Read Flash
     case 1:
@@ -62,6 +64,7 @@ void gbmMenu() {
       readROM_GBM(64);
       break;
 
+#if defined(ENABLE_FLASH)
     // Erase Flash
     case 2:
       // Clear screen
@@ -172,6 +175,10 @@ void gbmMenu() {
       // Write mapping
       writeMapping_GBM();
       break;
+#endif
+
+    default:
+      print_MissingModule();  // does not return
   }
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
@@ -396,13 +403,13 @@ void send_GBM(byte myCommand) {
       break;
 
     case 0x04:
-      //CMD_04h -> Map entire flashrom (MBC4 mode)
+      //CMD_04h -> Disable mapping; makes the entire flash and SRAM accessible
       writeByte_GBM(0x0120, 0x04);
       writeByte_GBM(0x013F, 0xA5);
       break;
 
     case 0x05:
-      //CMD_05h -> Map menu (MBC5 mode)
+      //CMD_05h -> Enable mapping; re-enables the mapping that was previously selected by 0xCn
       writeByte_GBM(0x0120, 0x05);
       writeByte_GBM(0x013F, 0xA5);
       break;
@@ -447,6 +454,7 @@ void send_GBM(byte myCommand) {
   }
 }
 
+#if defined(ENABLE_FLASH)
 void send_GBM(byte myCommand, word myAddress, byte myData) {
   byte myAddrLow = myAddress & 0xFF;
   byte myAddrHigh = (myAddress >> 8) & 0xFF;
@@ -471,8 +479,14 @@ void switchGame_GBM(byte myData) {
   // Enable ports 0x0120 (F2)
   send_GBM(0x09);
 
+  // Enable mapping. Mapping must be enabled before the C0 cmd, otherwise switching has no effect.
+  send_GBM(0x05);
+
   //CMD_C0h -> map selected game without reset
-  writeByte_GBM(0x0120, 0xC0 & myData);
+  //           C0 is the menu or a single 1MB sized game
+  //           C1 is the first game entry
+  //           C2 is the second game entry...
+  writeByte_GBM(0x0120, 0xC0 | myData);
   writeByte_GBM(0x013F, 0xA5);
 }
 
@@ -688,7 +702,7 @@ void writeFlash_GBM() {
     myFile.close();
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
   }
 }
 
@@ -902,10 +916,10 @@ void writeMapping_GBM() {
     myFile.close();
     print_STR(done_STR, 1);
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
   }
 }
-
+#endif
 #endif
 
 //******************************************

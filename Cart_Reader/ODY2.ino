@@ -212,29 +212,7 @@ void bankSwitch_ODY2(uint16_t addr, uint8_t data) {
 }
 
 void readROM_ODY2() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ODY2/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("ODY2", "ROM", romName, "bin");
 
   if (ody2mapper == 1) {  // A10 CONNECTED
     // Videopac 31:  Musician
@@ -279,7 +257,7 @@ void readROM_ODY2() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_ODY2(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(ODY2[index]);
 }
 #endif
@@ -295,7 +273,7 @@ void setROMSize_ODY2() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[newody2size]);
   println_Msg(F("K"));
   display_Update();
@@ -351,7 +329,7 @@ void checkStatus_ODY2() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(ody2mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[ody2size]);
   println_Msg(F("K"));
   display_Update();

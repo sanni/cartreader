@@ -16,6 +16,9 @@ F0B6BF59,A92E0966,32,0
 1080 Snowboarding (Japan, USA) (En,Ja).z64
 08FE81C7,1FBAF161,16,1
 
+40 Winks (Europe) (En,Fr,Es) (Aftermarket) (Unl).z64
+93C57D0B,4B0612E3,32,0
+
 40 Winks (Europe) (En,Es,It) (Proto) (1999-10-07).z64
 7E718143,ABA51D09,32,0
 
@@ -530,7 +533,7 @@ Destruction Derby 64 (USA).z64
 38F1B5D9,DEE584A2,16,0
 
 Dezaemon 3D (Japan).z64
-9E978488,8979169C,16,0
+9E978488,8979169C,16,2
 
 Diddy Kong Racing (Europe) (En,Fr,De) (Rev 1).z64
 B1E87639,596E145B,12,5
@@ -977,10 +980,10 @@ Hoshi no Kirby 64 (Japan) (Rev 1).z64
 A263C1B9,CA1BB86F,32,1
 
 Hoshi no Kirby 64 (Japan) (Rev 2).z64
-F4589AA8,0C581C7A,32,1
+F4589AA8,0C581C7A,32,6
 
 Hoshi no Kirby 64 (Japan) (Rev 3).z64
-6D5E1332,BCB1F89F,32,1
+6D5E1332,BCB1F89F,32,6
 
 Hoshi no Kirby 64 (Japan).z64
 AE7CB69D,C1D702BD,32,1

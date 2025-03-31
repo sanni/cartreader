@@ -87,6 +87,7 @@ static const byte PROGMEM msxmapsize[] = {
   11, 0, 4, 2, 2,  // PAC 0K/FM-PAC 64K                     [sram r/w] 8K
   12, 7, 7, 0, 0,  // R-Type 384K
   13, 5, 5, 0, 0,  // Super Lode Runner (Irem) 128K
+  14, 2, 3, 0, 0,  // Hudson Soft Bee Pack
 };
 
 // MSX1 = 8,16,32,128,256
@@ -99,7 +100,7 @@ byte MSXRAM[] = { 0, 2, 8, 16, 32 };
 byte msxramlo = 0;  // Lowest Entry
 byte msxramhi = 4;  // Highest Entry
 
-byte msxmapcount = 14;  // (sizeof(mapsize)/sizeof(mapsize[0])) / 5;
+byte msxmapcount = 15;  // (sizeof(mapsize)/sizeof(mapsize[0])) / 5;
 boolean msxmapfound = false;
 byte msxmapselect;
 int msxindex;
@@ -291,23 +292,6 @@ void writeData_MSX(uint16_t addr, uint8_t data) {
 }
 
 //******************************************
-// POWER
-//******************************************
-#ifndef ENABLE_NES
-int int_pow(int base, int exp)  // Power for int
-{
-  int result = 1;
-  while (exp) {
-    if (exp & 1)
-      result *= base;
-    exp /= 2;
-    base *= base;
-  }
-  return result;
-}
-#endif
-
-//******************************************
 // CS CODE
 //******************************************
 void setCS()  // Set CS Line
@@ -360,28 +344,7 @@ void readROM_MSX() {
     println_Msg(F("ROM SIZE 0K"));
     display_Update();
   } else {
-    strcpy(fileName, romName);
-    strcat(fileName, ".bin");
-
-    // create a new folder for storing rom file
-    EEPROM_readAnything(0, foldern);
-    sprintf(folder, "MSX/ROM/%d", foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
-
-    display_Clear();
-    print_STR(saving_to_STR, 0);
-    print_Msg(folder);
-    println_Msg(F("/..."));
-    display_Update();
-
-    // open file on sdcard
-    if (!myFile.open(fileName, O_RDWR | O_CREAT))
-      print_FatalError(sd_error_STR);
-
-    // write new folder number back to EEPROM
-    foldern++;
-    EEPROM_writeAnything(0, foldern);
+    createFolderAndOpenFile("MSX", "ROM", romName, "bin");
 
     switch (msxmapper) {
       case 0:  // No Mapper
@@ -438,7 +401,7 @@ void readROM_MSX() {
         CS2_DISABLE;
         break;
 
-      case 4:                             // Game Master 2 (128K)
+      case 4:  // Game Master 2 (128K)
         readSegment_MSX(0x4000, 0x6000);  // 8K Fixed Bank 0
         writeData_MSX(0x6000, 1);         // Set Bank 1 for subsequent reads
         readSegment_MSX(0x6000, 0x8000);  // 8K Init Bank 1
@@ -488,7 +451,7 @@ void readROM_MSX() {
         CS2_DISABLE;
         break;
 
-      case 8:                             // Konami MegaROM without SCC
+      case 8:  // Konami MegaROM without SCC
         readSegment_MSX(0x4000, 0x6000);  // 8K Fixed Bank 0
         readSegment_MSX(0x6000, 0x8000);  // 8K Init Bank 1
         msxbanks = int_pow(2, msxsize - 1);
@@ -551,6 +514,17 @@ void readROM_MSX() {
         }
         CS2_DISABLE;
         MERQ_DISABLE;
+        break;
+
+      case 14: // Hudson Soft Bee Pack (16K/32K)
+        CS1_ENABLE;
+        readSegment_MSX(0x4000,0x8000); // 16K Bank 0
+        CS1_DISABLE;
+        if (msxsize == 3) { // 32K
+          CS2_ENABLE;
+          readSegment_MSX(0x8000, 0xC000); // +16K Bank 1
+          CS2_DISABLE;
+        }
         break;
     }
     myFile.close();
@@ -656,7 +630,7 @@ void readRAM_MSX() {
         writeData_MSX(0x7000, 0);  // SRAM Disable
         break;
 
-      case 2:                               // ASCII16 (2K/8K)
+      case 2:  // ASCII16 (2K/8K)
         writeData_MSX(0x7000, 0x10);        // Bit 4 Enable
         readSegment_MSX(0x8000, 0x8800);    // 2K - Hydlide 2 & Daisenryaku (2K)
         if (msxramsize == 2)                // A-Train (8K)
@@ -664,7 +638,7 @@ void readRAM_MSX() {
         writeData_MSX(0x7000, 0);           // SRAM Disable
         break;
 
-      case 4:                             // Game Master 2 (8K)
+      case 4:  // Game Master 2 (8K)
         writeData_MSX(0xA000, 0x10);      // Bit 4 Enable, Bit 5 SRAM Segment 0
         readSegment_MSX(0xB000, 0xC000);  // 4K
         writeData_MSX(0xA000, 0x30);      // Bit 4 Enable, Bit 5 SRAM Segment 1
@@ -705,7 +679,7 @@ void readRAM_MSX() {
         writeData_MSX(0x7000, 0);  // SRAM Disable
         break;
 
-      case 11:                            // PAC/FM-PAC (8K)
+      case 11:  // PAC/FM-PAC (8K)
         writeData_MSX(0x5FFE, 0x4D);      // SRAM Enable Step 1
         writeData_MSX(0x5FFF, 0x69);      // SRAM Enable Step 2
         readSegment_MSX(0x4000, 0x6000);  // 8K
@@ -746,7 +720,7 @@ void writeRAM_MSX() {
     if (myFile.open(filePath, O_READ)) {
 
       switch (msxmapper) {
-        case 1:                                                                                    // ASCII8 (2K/8K)
+        case 1:  // ASCII8 (2K/8K)
           for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {  // 2K/8K
             if (msxramsize == 1)
               writeData_MSX(0x7000, 0x10);  // Bit 4
@@ -760,8 +734,8 @@ void writeRAM_MSX() {
           writeData_MSX(0x7000, 0);  // SRAM Disable
           break;
 
-        case 2:                                                                                    // ASCII16 (2K/8K)
-          writeData_MSX(0x7000, 0x10);                                                             // Bit 4 Enable
+        case 2:  // ASCII16 (2K/8K)
+          writeData_MSX(0x7000, 0x10);  // Bit 4 Enable
           for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {  // 2K/8K
             myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
@@ -773,7 +747,7 @@ void writeRAM_MSX() {
 
         case 4:  // Game Master 2 (8K)
           for (int y = 0; y < 2; y++) {
-            writeData_MSX(0xA000, 0x10 + (y * 0x20));                     // Bit 4 Enable, Bit 5 SRAM Segment 0/1
+            writeData_MSX(0xA000, 0x10 + (y * 0x20));  // Bit 4 Enable, Bit 5 SRAM Segment 0/1
             for (word address = 0x0; address < 0x1000; address += 512) {  // 4K
               myFile.read(sdBuffer, 512);
               for (int x = 0; x < 512; x++) {
@@ -786,7 +760,7 @@ void writeRAM_MSX() {
 
         case 5:  // HAL Note (16K)
           MERQ_ENABLE;
-          writeData_MSX(0x4FFF, 0x80);                                // Bit 7 Enable
+          writeData_MSX(0x4FFF, 0x80);  // Bit 7 Enable
           for (word address = 0; address < 0x4000; address += 512) {  // 16K
             myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
@@ -802,7 +776,7 @@ void writeRAM_MSX() {
           if (srambit6)
             writeData_MSX(0x7000, 0xC0);  // Bit 6 + Bit 7 Enable
           else
-            writeData_MSX(0x7000, 0xA0);                                // Bit 5 + Bit 7 Enable
+            writeData_MSX(0x7000, 0xA0);  // Bit 5 + Bit 7 Enable
           for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
             myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
@@ -814,7 +788,7 @@ void writeRAM_MSX() {
               if (srambit6)
                 writeData_MSX(0x7000, 0xC0 + y);  // Bit 6 + Bit 7 Enable
               else
-                writeData_MSX(0x7000, 0xA0 + y);                            // Bit 5 + Bit 7 Enable
+                writeData_MSX(0x7000, 0xA0 + y);  // Bit 5 + Bit 7 Enable
               for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
                 myFile.read(sdBuffer, 512);
                 for (int x = 0; x < 512; x++) {
@@ -826,9 +800,9 @@ void writeRAM_MSX() {
           writeData_MSX(0x7000, 0);  // SRAM Disable
           break;
 
-        case 11:                                                        // PAC/FM-PAC (8K)
-          writeData_MSX(0x5FFE, 0x4D);                                  // SRAM Enable Step 1
-          writeData_MSX(0x5FFF, 0x69);                                  // SRAM Enable Step 2
+        case 11:  // PAC/FM-PAC (8K)
+          writeData_MSX(0x5FFE, 0x4D);  // SRAM Enable Step 1
+          writeData_MSX(0x5FFF, 0x69);  // SRAM Enable Step 2
           for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
             myFile.read(sdBuffer, 512);
             for (int x = 0; x < 512; x++) {
@@ -859,7 +833,7 @@ void writeRAM_MSX() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_MSX(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   msxindex = index * 5;
   msxmapselect = pgm_read_byte(msxmapsize + msxindex);
   println_Msg(msxmapselect);
@@ -884,7 +858,7 @@ setmapper:
   String newmap;
   msxmapfound = false;
   printMapper(0);
-  Serial.print(F("Enter Mapper [0-13]: "));
+  Serial.print(F("Enter Mapper [0-14]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
@@ -927,7 +901,7 @@ void checkMapperSize_MSX() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_MSX(uint8_t index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(MSX[index]);
 }
 #endif
@@ -988,7 +962,7 @@ void setROMSize_MSX() {
     }
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (msxmapper == 12)  // R-Type
     print_Msg(F("384"));
   else
@@ -1160,7 +1134,7 @@ void checkStatus_MSX() {
   EEPROM_readAnything(7, msxmapper);
   EEPROM_readAnything(8, msxsize);
   EEPROM_readAnything(10, msxramsize);
-  if (msxmapper > 13) {
+  if (msxmapper > 14) {
     msxmapper = 0;
     EEPROM_writeAnything(7, msxmapper);
   }
@@ -1181,7 +1155,7 @@ void checkStatus_MSX() {
   print_Msg(F("MAPPER:   "));
   println_Msg(msxmapper);
   printMapper(msxmapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (msxmapper == 12)  // R-Type
     print_Msg(F("384"));
   else
@@ -1253,6 +1227,9 @@ void printMapper(byte msxmaplabel) {
     case 13:
       println_Msg(F("SUPER LODE RUNNER"));
       break;
+    case 14:
+      println_Msg(F("HUDSON SOFT BEE PACK"));
+      break;
   }
 #else
   Serial.println(F("0 = NONE"));
@@ -1269,6 +1246,7 @@ void printMapper(byte msxmaplabel) {
   Serial.println(F("11 = PAC/FM-PAC"));
   Serial.println(F("12 = R-TYPE"));
   Serial.println(F("13 = SUPER LODE RUNNER"));
+  Serial.println(F("14 = HUDSON SOFT BEE PACK"));
 #endif
 }
 

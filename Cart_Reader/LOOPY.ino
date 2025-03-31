@@ -55,7 +55,7 @@
 //
 // * Blank pins have various uses depending on cartridge but are not necessary for dumping.
 // IMPORTANT: All data are stored as BIG-ENDIAN. Many ROM dumps online are little endian.
-// See https://github.com/kasamikona/Loopy-Tools/blob/master/ROM%20Structure.md
+// See https://github.com/kasamikona/Loopy-Tools/blob/master/Documentation/ROM%20Structure.md
 //
 // By @partlyhuman
 // Special thanks to @kasamikona
@@ -494,11 +494,11 @@ void getCartInfo_LOOPY() {
 
   println_Msg(F("Cart Info"));
   println_Msg(FS(FSTRING_SPACE));
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(loopyRomNameLong);
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
   print_Msg(F("Sram: "));
@@ -522,25 +522,7 @@ void getCartInfo_LOOPY() {
 void readROM_LOOPY() {
   dataIn_LOOPY();
 
-  sprintf(fileName, "%s.bin", romName);
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "LOOPY/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("LOOPY", "ROM", romName, "bin");
 
   draw_progressbar(0, cartSize);
 
@@ -657,12 +639,7 @@ void formatSRAM_LOOPY() {
 void readSRAM_LOOPY() {
   dataIn_LOOPY();
 
-  sprintf(fileName, "%s.sav", romName);
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "LOOPY/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("LOOPY", "SAVE", romName, "sav");
 
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);

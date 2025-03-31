@@ -34,7 +34,7 @@ B25A0635
 Cardcaptor Sakura - Sakura to Fushigi na Clow Card (Japan).ws
 7F3A14C0
 
-Challenge Eiwa Jiten (Japan).pc2
+Challenge Eiwa Jiten (Japan) (6FQ410).pc2
 D5338AAD
 
 Chaos Gear - Michibikareshi Mono (Japan).ws
@@ -55,16 +55,16 @@ Chou Aniki - Otoko no Tamafuda (Japan) (Rev 4).ws
 Chou Denki Card Battle - Youfu Makai (Japan) (Rev 3).ws
 56E2C069
 
-Chuu 1 Ei Suu Koku Pack (Japan).pc2
+Chuu 1 Ei Suu Koku Pack (Japan) (6FP105).pc2
 51B5822D
 
-Chuu 1 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan).pc2
+Chuu 1 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan) (6FP103).pc2
 A863F998
 
-Chuu 1 Ei Suu Koku Pack (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+Chuu 1 Ei Suu Koku Pack (New Horizon, Columbus21 Taiou Ban) (Japan) (6FP101).pc2
 2980A25B
 
-Chuu 1 Ei Suu Koku Pack (Sunshine, One World Taiou Ban) (Japan).pc2
+Chuu 1 Ei Suu Koku Pack (Sunshine, One World Taiou Ban) (Japan) (6FP102).pc2
 A4BBD00E
 
 Chuu 1 English (New Crown, Total English Taiou Ban) (Japan) (2BB113).pc2
@@ -82,13 +82,16 @@ Chuu 1 English (New Horizon, Columbus21 Taiou Ban) (Japan) (3BB111).pc2
 Chuu 1 English (New Horizon, Columbus21 Taiou Ban) (Japan) (4BB111).pc2
 62A7256C
 
-Chuu 1 English (Sunshine, One World Taiou Ban) (Japan).pc2
+Chuu 1 English (Sunshine, One World Taiou Ban) (Japan) (2BB112).pc2
+7AB74681
+
+Chuu 1 English (Sunshine, One World Taiou Ban) (Japan) (3BB112).pc2
 9DE13DB9
 
-Chuu 1 Kokugo - Hyakunin Isshu (Japan).pc2
+Chuu 1 Kokugo - Hyakunin Isshu (Japan) (2BK401).pc2
 7622D70A
 
-Chuu 1 Suugaku (Japan).pc2
+Chuu 1 Suugaku (Japan) (2BM110).pc2
 723A239D
 
 Chuu 2 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan) (4BP203).pc2
@@ -97,40 +100,40 @@ FDB39F68
 Chuu 2 Ei Suu Koku Pack (New Crown, Total English Taiou Ban) (Japan) (6FP203).pc2
 1BBB32A0
 
-Chuu 2 Ei Suu Koku Pack (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+Chuu 2 Ei Suu Koku Pack (New Horizon, Columbus21 Taiou Ban) (Japan) (6FP211).pc2
 2FD8B59E
 
-Chuu 2 Ei Suu Koku Pack (Sunshine, One World Taiou Ban) (Japan).pc2
+Chuu 2 Ei Suu Koku Pack (Sunshine, One World Taiou Ban) (Japan) (6FP212).pc2
 D2DBDF31
 
-Chuu 2 English (New Crown, Total English Taiou Ban) (Japan).pc2
+Chuu 2 English (New Crown, Total English Taiou Ban) (Japan) (3BB213).pc2
 5C679BD3
 
-Chuu 2 English (Sunshine, One World Taiou Ban) (Japan).pc2
+Chuu 2 English (Sunshine, One World Taiou Ban) (Japan) (3BB212).pc2
 F1E10E0E
 
-Chuu 2 Kokugo (Japan).pc2
+Chuu 2 Kokugo (Japan) (3BK210).pc2
 B17F0BD0
 
-Chuu 2 Suugaku (Japan).pc2
+Chuu 2 Suugaku (Japan) (3BM210).pc2
 8C671FC9
 
-Chuu 3 Ei - Suu - Koumin Pack (New Crown, Total English Taiou Ban) (Japan) (5FP303) [b].pc2
-9797DB5E
+Chuu 3 Ei - Suu - Koumin Pack (New Crown, Total English Taiou Ban) (Japan) (5FP303).pc2
+1914E63E
 
 Chuu 3 Ei - Suu - Koumin Pack (New Crown, Total English Taiou Ban) (Japan) (6FP313).pc2
 C14378C8
 
-Chuu 3 Ei - Suu - Koumin Pack (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+Chuu 3 Ei - Suu - Koumin Pack (New Horizon, Columbus21 Taiou Ban) (Japan) (5FP301).pc2
 AC84B3D2
 
-Chuu 3 English (New Crown, Total English Taiou Ban) (Japan).pc2
+Chuu 3 English (New Crown, Total English Taiou Ban) (Japan) (4BB313).pc2
 89AF7DB1
 
-Chuu 3 English (New Horizon, Columbus21 Taiou Ban) (Japan).pc2
+Chuu 3 English (New Horizon, Columbus21 Taiou Ban) (Japan) (4BB311).pc2
 240734C4
 
-Chuu 3 Suugaku (Japan).pc2
+Chuu 3 Suugaku (Japan) (4BM310).pc2
 389D36A4
 
 Chuugaku Chiri (Japan) (2BD410).pc2
@@ -151,13 +154,13 @@ Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japa
 Chuugaku Chiri - Rekishi Pack (Chiri Soft - Rekishi Soft Kanzen Taiou Ban) (Japan) (6FD400).pc2
 0AC0E39D
 
-Chuugaku Chiri - Rekishi Pack (Rekishi Juuyou Yougo Jiten Shuuroku) (Japan).pc2
+Chuugaku Chiri - Rekishi Pack (Rekishi Juuyou Yougo Jiten Shuuroku) (Japan) (6FD401).pc2
 6C644DFE
 
-Chuugaku Koumin (Japan).pc2
+Chuugaku Koumin (Japan) (4BE310).pc2
 3859FEE1
 
-Chuugaku Rekishi (Japan).pc2
+Chuugaku Rekishi (Japan) (2BC410).pc2
 4059E1B7
 
 Chuugaku Rika (1-bunya) (Japan) (2BF411).pc2
@@ -289,7 +292,7 @@ Dokodemo Hamster 3 - Odekake Saffron (Japan) (Rev 2).wsc
 Dragon Ball (Japan).wsc
 067238D1
 
-Eiken 3-kyuu - 4-kyuu (Japan).pc2
+Eiken 3-kyuu - 4-kyuu (Japan) (2BK931).pc2
 9BE7A2AC
 
 Engacho! for WonderSwan (Japan).ws
@@ -460,7 +463,7 @@ Judgement Silversword - Rebirth Edition (Japan) (Rev 5C21).wsc
 Kakutou Ryouri Densetsu Bistro Recipe - Wonder Battle Hen (Japan).ws
 4D103236
 
-Kanken 3-kyuu - 4-kyuu - 5-kyuu (Japan).pc2
+Kanken 3-kyuu - 4-kyuu - 5-kyuu (Japan) (6FK940).pc2
 BB88A5FC
 
 Kaze no Klonoa - Moonlight Museum (Japan).ws
@@ -505,13 +508,13 @@ Koukou Juken (5-kyouka) (Japan) (4BI716).pc2
 Koukou Juken (5-kyouka) (Japan) (5FI710).pc2
 AD82DD22
 
-Koukou Juken 5-kyouka Pack + Nyuushi Theme-Betsu Tokkou (Japan).pc2
+Koukou Juken 5-kyouka Pack + Nyuushi Theme-Betsu Tokkou (Japan) (6FI901).pc2
 C27FAEEB
 
-Koukou Juken EX (Goukaku Tokkou 700) (Japan).pc2
+Koukou Juken EX (Goukaku Tokkou 700) (Japan) (4FI720).pc2
 EC11D3AE
 
-Koukou Juken V Pack - Koukou Juken (5-kamoku), Koukou Juken EX (Goukaku Tokkou 700) Kanzen Taiou Ban
+Koukou Juken V Pack - Koukou Juken (5-kamoku), Koukou Juken EX (Goukaku Tokkou 700) Kanzen Taiou Ban (Japan) (5FI900).pc2
 3D4F25B5
 
 Kurupara! (Japan) (Rev 1).wsc
@@ -748,7 +751,7 @@ Shanghai Pocket (Japan).ws
 Shin Nihon Pro Wrestling - Toukon Retsuden (Japan) (Rev 1).ws
 5B76F901
 
-Shougakkou Soumatome (Koku - San - Ri - Sha) + Chuu 1 Ei Suu Koku Pack (Japan).pc2
+Shougakkou Soumatome (Koku - San - Ri - Sha) + Chuu 1 Ei Suu Koku Pack (Japan) (6FP104).pc2
 4E432B54
 
 Shougi Touryuumon (Japan).ws

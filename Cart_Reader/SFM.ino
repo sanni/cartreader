@@ -1,7 +1,7 @@
 //******************************************
 // SF MEMORY MODULE
 //******************************************
-#ifdef ENABLE_SFM
+#if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
 
 /******************************************
    SF Memory Clock Source
@@ -58,13 +58,18 @@ void sfmMenu() {
     case 0:
       sfmGameMenu();
       break;
+#ifdef ENABLE_FLASH
     // Flash menu
     case 1:
       mode = CORE_SFM_FLASH;
       break;
+#endif
     // Reset
     case 2:
       resetArduino();
+      break;
+    default:
+      print_MissingModule();
       break;
   }
 }
@@ -723,7 +728,7 @@ void getCartInfo_SFM() {
   if (checkcart_SFM() == 0) {
     // Checksum either corrupt or 0000
     errorLvl = 1;
-    setColor_RGB(255, 0, 0);
+    rgbLed(red_color);
     display_Clear();
     println_Msg(F("ERROR"));
     println_Msg(F("Rom header corrupt"));
@@ -735,17 +740,17 @@ void getCartInfo_SFM() {
   }
 
   display_Clear();
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
   println_Msg(FS(FSTRING_SPACE));
 
   print_Msg(F("Version: 1."));
   println_Msg(romVersion);
 
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
 
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(romSize);
   println_Msg(F("Mbit "));
 
@@ -882,14 +887,7 @@ void readROM_SFM() {
   controlIn_SFM();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".sfc");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "NP/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("NP", "ROM", romName, "sfc");
 
   //clear the screen
   display_Clear();

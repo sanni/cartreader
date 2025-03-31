@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "!OSCRMisc")(type "KiCad")(uri "${KIPRJMOD}/../symbols/!OSCRMisc.kicad_sym")(options "")(descr "OSCR Misc. Symbols"))
+)

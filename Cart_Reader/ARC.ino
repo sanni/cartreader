@@ -133,6 +133,7 @@ uint8_t readData_ARC(uint16_t addr) {
   NOP;
   NOP;
   NOP;
+  NOP;
 
   uint8_t ret = PINC;
 
@@ -150,28 +151,7 @@ void readSegment_ARC(uint16_t startaddr, uint16_t endaddr) {
 }
 
 void readROM_ARC() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ARC/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("ARC", "ROM", romName, "bin");
 
   readSegment_ARC(0x0000, 0x0800);  // 2K
   if (arcsize > 0) {
@@ -200,7 +180,7 @@ void readROM_ARC() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_ARC(int index) {
     display_Clear();
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     println_Msg(ARC[index]);
 }
 #endif
@@ -216,7 +196,7 @@ void setROMSize_ARC() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[newarcsize]);
   println_Msg(F("K"));
   display_Update();
@@ -265,7 +245,7 @@ void checkStatus_ARC() {
   println_Msg(F("ARCADIA 2001 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[arcsize]);
   println_Msg(F("K"));
   display_Update();

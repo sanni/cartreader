@@ -182,7 +182,7 @@ void readDataArray_2600(uint16_t addr, uint16_t size) {
 
 void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr) {
   for (uint16_t addr = startaddr; addr < endaddr; addr += 512) {
-    for (int w = 0; w < 512; w++) {
+    for (uint16_t w = 0; w < 512; w++) {
       if (addr > 0x1FF9)  // SET BANK ADDRESS FOR 0x1FFA-0x1FFF
         readData_2600(bankaddr);
       uint8_t temp = readData_2600(addr + w);
@@ -190,6 +190,33 @@ void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr)
     }
     myFile.write(sdBuffer, 512);
   }
+}
+
+void readSegmentE7_2600(uint8_t start, uint8_t end) {
+  for (uint8_t x = start; x <= end; x++) {
+    readData_2600(0x1FE0 + x);
+    readSegment_2600(0x1000, 0x1800);
+  }
+}
+
+void readSegmentFx_2600(bool hasRAM, uint16_t size) {
+  if(hasRAM) {
+    outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
+    readDataArray_2600(0x1100, 0x100);
+  } else {
+    readSegment_2600(0x1000, 0x1200);
+  }
+  readSegment_2600(0x1200, 0x1E00);
+  // Split Read of Last 0x200 bytes
+  readDataArray_2600(0x1E00, size);
+}
+
+void readSegmentTigervision_2600(uint8_t banks) {
+  for (uint8_t x = 0; x < banks; x++) {
+    writeData3F_2600(0x3F, x);
+    readSegment_2600(0x1000, 0x1800);
+  }
+  readSegment_2600(0x1800, 0x2000);
 }
 
 void outputFF_2600(uint16_t size) {
@@ -262,39 +289,15 @@ void writeData3F_2600(uint16_t addr, uint8_t data) {
 }
 
 // E7 Mapper Check - Check Bank for FFs
-boolean checkE7(int bank) {
+boolean checkE7(uint16_t bank) {
   writeData_2600(0x1800, 0xFF);
   readData_2600(0x1FE0 + bank);
-  uint32_t testdata = (readData_2600(0x1000) << 24) | (readData_2600(0x1001) << 16) | (readData_2600(0x1002) << 8) | (readData_2600(0x1003));
-  if (testdata == 0xFFFFFFFF)
-    return true;
-  else
-    return false;
+  uint32_t testdata = ((uint32_t)readData_2600(0x1000) << 24) | ((uint32_t)readData_2600(0x1001) << 16) | (readData_2600(0x1002) << 8) | (readData_2600(0x1003));
+  return (testdata == 0xFFFFFFFF);
 }
 
 void readROM_2600() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".a26");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ATARI/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("ATARI", "ROM", romName, "a26");
 
   // ROM Start 0xF000
   // Address A12-A0 = 0x1000 = 1 0000 0000 0000 = 4KB
@@ -306,19 +309,11 @@ void readROM_2600() {
       break;
 
     case 0x3F:  // 3F Mapper 8KB
-      for (int x = 0; x < 0x3; x++) {
-        writeData3F_2600(0x3F, x);
-        readSegment_2600(0x1000, 0x1800);
-      }
-      readSegment_2600(0x1800, 0x2000);
+      readSegmentTigervision_2600(3);
       break;
 
     case 0x3E:  // 3E Mapper 32KB ROM 32K RAM
-      for (int x = 0; x < 15; x++) {
-        writeData3F_2600(0x3F, x);
-        readSegment_2600(0x1000, 0x1800);
-      }
-      readSegment_2600(0x1800, 0x2000);
+      readSegmentTigervision_2600(15);
       break;    
 
     case 0x40:  // 4K Default 4KB
@@ -385,33 +380,18 @@ void readROM_2600() {
       break;
 
     case 0xE7: // E7 Mapper 8KB/12KB/16KB
+      writeData_2600(0x1800, 0xFF);
       // Check Bank 0 - If 0xFFs then Bump 'n' Jump
       if (checkE7(0)) { // Bump 'n' Jump 8K
-        writeData_2600(0x1800, 0xFF);
-
-        for (int x = 4; x < 7; x++) { // Banks 4-6
-          readData_2600(0x1FE0 + x);
-          readSegment_2600(0x1000, 0x1800);
-        }
+        readSegmentE7_2600(4, 6); // Banks 4-6
       }
       // Check Bank 3 - If 0xFFs then BurgerTime
       else if (checkE7(3)) { // BurgerTime 12K
-        writeData_2600(0x1800, 0xFF);
-        for (int x = 0; x < 2; x++) { // Banks 0+1
-          readData_2600(0x1FE0 + x);
-          readSegment_2600(0x1000, 0x1800);
-        }
-        for (int x = 4; x < 7; x++) { // Banks 4-6
-          readData_2600(0x1FE0 + x);
-          readSegment_2600(0x1000, 0x1800);
-        }
+        readSegmentE7_2600(0, 1); // Banks 0+1
+        readSegmentE7_2600(4, 6); // Banks 4-6
       }
       else { // Masters of the Universe (or Unknown Cart) 16K
-        writeData_2600(0x1800, 0xFF);
-        for (int x = 0; x < 7; x++) { // Banks 0-6
-          readData_2600(0x1FE0 + x);
-          readSegment_2600(0x1000, 0x1800);
-        }
+        readSegmentE7_2600(0, 6); // Banks 0-6
       }
       readSegment_2600(0x1800, 0x2000); // Bank 7
       break;
@@ -427,15 +407,7 @@ void readROM_2600() {
     case 0xF4: // F4 Mapper 32KB
       for (int x = 0; x < 8; x++) {
         readData_2600(0x1FF4 + x);
-        if(a2600mapper == 0xF4) {
-          readSegment_2600(0x1000, 0x1200);
-        } else {
-          outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
-          readDataArray_2600(0x1100, 0x100);
-        }
-        readSegment_2600(0x1200, 0x1E00);
-        // Split Read of Last 0x200 bytes
-        readDataArray_2600(0x1E00, 0x1F4);
+        readSegmentFx_2600(a2600mapper == 0x04, 0x1F4);
         for (int z = 0; z < 12; z++) {
           // Set Bank to ensure 0x1FFC-0x1FFF is correct
           readData_2600(0x1FF4 + x);
@@ -449,15 +421,7 @@ void readROM_2600() {
     case 0xF6: // F6 Mapper 16KB
       for (int w = 0; w < 4; w++) {
         readData_2600(0x1FF6 + w);
-        if(a2600mapper == 0xF6) {
-          readSegment_2600(0x1000, 0x1200);
-        } else {
-          outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
-          readDataArray_2600(0x1100, 0x100);
-        }
-        readSegment_2600(0x1200, 0x1E00);
-        // Split Read of Last 0x200 bytes
-        readDataArray_2600(0x1E00, 0x1F6);
+        readSegmentFx_2600(a2600mapper == 0x06, 0x1F6);
         // Bank Registers 0x1FF6-0x1FF9
         for (int y = 0; y < 4; y++){
           readData_2600(0x1FFF); // Reset Bank
@@ -478,15 +442,7 @@ void readROM_2600() {
     case 0xF8: // F8 Mapper 8KB
       for (int w = 0; w < 2; w++) {
         readData_2600(0x1FF8 + w);
-        if(a2600mapper == 0xF8) {
-          readSegment_2600(0x1000, 0x1200);
-        } else {
-          outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
-          readDataArray_2600(0x1100, 0x100);
-        }
-        readSegment_2600(0x1200, 0x1E00);
-        // Split Read of Last 0x200 bytes
-        readDataArray_2600(0x1E00, 0x1F8);
+        readSegmentFx_2600(a2600mapper == 0x08, 0x1F8);
         // Bank Registers 0x1FF8-0x1FF9
         for (int y = 0; y < 2; y++){
           readData_2600(0x1FFF); // Reset Bank
@@ -658,7 +614,7 @@ void checkStatus_2600() {
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (a2600mapper == 0xD0)
     print_Msg(F("10"));
   else
@@ -670,7 +626,7 @@ void checkStatus_2600() {
   Serial.print(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
 
-  Serial.print(F("ROM SIZE: "));
+  Serial.print(FS(FSTRING_ROM_SIZE));
   if (a2600mapper == 0xD0)
     Serial.print(F("10"));
   else
@@ -687,7 +643,7 @@ void checkStatus_2600() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printMapperSelection_2600(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
+  print_Msg(FS(FSTRING_MAPPER));
   a2600index = index * 2;
   a2600mapselect = pgm_read_byte(a2600mapsize + a2600index);
   println_Mapper2600(a2600mapselect);
@@ -729,8 +685,9 @@ setmapper:
   Serial.println(F("16 = TP [Time Pilot 8K]"));
   Serial.println(F("17 = UA [UA Ltd]"));
   Serial.println(F("18 = 3E [Tigervision 32K \w RAM]"));
-  Serial.println(F("19 = DFSC [Penult 128K]"));
-  Serial.print(F("Enter Mapper [0-17]: "));
+  Serial.println(F("19 = 07 [X07 64K]"));
+  Serial.println(F("20 = DFSC [Penult 128K]"));
+  Serial.print(F("Enter Mapper [0-20]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);

@@ -44,12 +44,9 @@ String CRC1 = "";
 String CRC2 = "";
 #endif
 
-#if !defined(ENABLE_FLASH)
+#if (!defined(ENABLE_FLASH8) && !(defined(ENABLE_MD) && defined(ENABLE_FLASH)))
 unsigned long flashSize;
 #endif
-
-static const char N64_EEP_FILENAME_FMT[] PROGMEM = "%s.eep";
-static const char N64_SAVE_DIRNAME_FMT[] PROGMEM = "N64/SAVE/%s/%d";
 
 /******************************************
   Menu
@@ -72,12 +69,6 @@ static const char* const menuOptionsN64Controller[] PROGMEM = { N64ContMenuItem1
 static const char N64CartMenuItem4[] PROGMEM = "Force Savetype";
 static const char* const menuOptionsN64Cart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, N64CartMenuItem4, FSTRING_RESET };
 
-// N64 CRC32 error menu items
-static const char N64CRCMenuItem1[] PROGMEM = "No";
-static const char N64CRCMenuItem2[] PROGMEM = "Yes and keep old";
-static const char N64CRCMenuItem3[] PROGMEM = "Yes and delete old";
-static const char* const menuOptionsN64CRC[] PROGMEM = { N64CRCMenuItem1, N64CRCMenuItem2, N64CRCMenuItem3, FSTRING_RESET };
-
 // Rom menu
 static const char N64RomItem1[] PROGMEM = "4 MB";
 static const char N64RomItem2[] PROGMEM = "8 MB";
@@ -96,6 +87,7 @@ static const char N64SaveItem4[] PROGMEM = "SRAM";
 static const char N64SaveItem5[] PROGMEM = "FLASH";
 static const char* const saveOptionsN64[] PROGMEM = { N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5 };
 
+#if defined(ENABLE_FLASH)
 // Repro write buffer menu
 static const char N64BufferItem1[] PROGMEM = "No buffer";
 static const char N64BufferItem2[] PROGMEM = "32 Byte";
@@ -109,6 +101,7 @@ static const char N64SectorItem2[] PROGMEM = "32 KB";
 static const char N64SectorItem3[] PROGMEM = "64 KB";
 static const char N64SectorItem4[] PROGMEM = "128 KB";
 static const char* const sectorOptionsN64[] PROGMEM = { N64SectorItem1, N64SectorItem2, N64SectorItem3, N64SectorItem4 };
+#endif
 
 // N64 start menu
 void n64Menu() {
@@ -135,6 +128,7 @@ void n64Menu() {
       mode = CORE_N64_CONTROLLER;
       break;
 
+#if defined(ENABLE_FLASH)
     case 2:
       display_Clear();
       display_Update();
@@ -143,6 +137,7 @@ void n64Menu() {
       printCartInfo_N64();
       mode = CORE_N64_CART;
       break;
+#endif
 
     case 3:
       display_Clear();
@@ -168,6 +163,9 @@ void n64Menu() {
     case 5:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -181,6 +179,8 @@ void n64ControllerMenu() {
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
+
+#if defined(ENABLE_CONTROLLERTEST)
     case 0:
       resetController();
       display_Clear();
@@ -192,6 +192,7 @@ void n64ControllerMenu() {
 #endif
       quit = 1;
       break;
+#endif
 
     case 1:
       resetController();
@@ -233,6 +234,9 @@ void n64ControllerMenu() {
     case 3:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -277,6 +281,10 @@ void n64CartMenu() {
         println_Msg(F("Reading SRAM..."));
         display_Update();
         readSram(32768, 1);
+      } else if (saveType == 2) {
+        println_Msg(F("Reading Sram 768..."));
+        display_Update();
+        readSram(98304, 1);
       } else if (saveType == 4) {
         getFramType();
         println_Msg(F("Reading FLASH..."));
@@ -285,7 +293,8 @@ void n64CartMenu() {
       } else if ((saveType == 5) || (saveType == 6)) {
         println_Msg(F("Reading EEPROM..."));
         display_Update();
-        readEeprom();
+        resetEeprom_N64();
+        readEeprom_N64();
       } else {
         print_Error(F("Savetype Error"));
       }
@@ -308,6 +317,22 @@ void n64CartMenu() {
         writeErrors = verifySram(32768, 1);
         if (writeErrors == 0) {
           println_Msg(F("SRAM verified OK"));
+          display_Update();
+        } else {
+          print_STR(error_STR, 0);
+          print_Msg(writeErrors);
+          print_STR(_bytes_STR, 1);
+          print_Error(did_not_verify_STR);
+        }
+      } else if (saveType == 2) {
+        // Launch file browser
+        fileBrowser(F("Select Sram 768 file"));
+        display_Clear();
+
+        writeSram(98304);
+        writeErrors = verifySram(98304, 1);
+        if (writeErrors == 0) {
+          println_Msg(F("Sram verified OK"));
           display_Update();
         } else {
           print_STR(error_STR, 0);
@@ -338,9 +363,10 @@ void n64CartMenu() {
         // Launch file browser
         fileBrowser(F("Select eep file"));
         display_Clear();
-
-        writeEeprom();
-        writeErrors = verifyEeprom();
+        resetEeprom_N64();
+        writeEeprom_N64();
+        resetEeprom_N64();
+        writeErrors = verifyEeprom_N64();
 
         if (writeErrors == 0) {
           println_Msg(F("EEPROM verified OK"));
@@ -520,7 +546,7 @@ void setAddress_N64(unsigned long myAddress) {
   // Switch WR(PH5) RD(PH6) ale_L(PC0) ale_H(PC1) to high (since the pins are active low)
   PORTH |= (1 << 5) | (1 << 6);
   PORTC |= (1 << 1);
-  __asm__("nop\n\t");
+  __asm__("nop\n\t"); // needed for repro
   PORTC |= (1 << 0);
 
   // Output high part to address pins
@@ -544,18 +570,6 @@ void setAddress_N64(unsigned long myAddress) {
   // Pull ale_L(PC0) low
   PORTC &= ~(1 << 0);
 
-  // Wait ~600ns just to be sure address is set
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-
   // Set data pins to input
   adIn_N64();
 }
@@ -578,8 +592,6 @@ word readWord_N64() {
   // Pull read(PH6) high
   PORTH |= (1 << 6);
 
-  // Wait 62.5ns
-  __asm__("nop\n\t");
   return tempWord;
 }
 
@@ -1004,6 +1016,8 @@ void get_button() {
 /******************************************
   N64 Controller Test
  *****************************************/
+#if defined(ENABLE_CONTROLLERTEST)
+
 #ifdef ENABLE_SERIAL
 void controllerTest_Serial() {
   while (quit) {
@@ -1522,6 +1536,7 @@ void controllerTest_Display() {
   }
 }
 #endif
+#endif
 
 /******************************************
    N64 Controller Pak Functions
@@ -1926,19 +1941,22 @@ void printCartInfo_N64() {
   // Print start page
   if (cartSize != 0) {
     display_Clear();
-    print_Msg(F("Title: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
-    print_Msg(F("Serial: "));
+    print_Msg(FS(FSTRING_SERIAL));
     println_Msg(cartID);
-    print_Msg(F("Revision: "));
+    print_Msg(FS(FSTRING_REVISION));
     println_Msg(romVersion);
-    print_Msg(F("ROM Size: "));
+    print_Msg(FS(FSTRING_ROM_SIZE));
     print_Msg(cartSize);
     println_Msg(F(" MB"));
     print_Msg(F("Save Type: "));
     switch (saveType) {
       case 1:
         println_Msg(F("SRAM"));
+        break;
+      case 2:
+        println_Msg(F("SRAM 768"));
         break;
       case 4:
         println_Msg(F("FLASH"));
@@ -1970,9 +1988,9 @@ void printCartInfo_N64() {
     display_Clear();
     println_Msg(F("GAMEPAK ERROR"));
     println_Msg("");
-    print_Msg(F("Title: "));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
-    print_Msg(F("Serial: "));
+    print_Msg(FS(FSTRING_SERIAL));
     println_Msg(cartID);
     print_Msg(F("CRC1: "));
     println_Msg(checksumStr);
@@ -2164,6 +2182,8 @@ void idCart() {
     sdBuffer[c] = hiByte;
     sdBuffer[c + 1] = loByte;
   }
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
 
   // CRC1
   sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
@@ -2202,7 +2222,7 @@ void idCart() {
 }
 
 // Write Eeprom to cartridge
-void writeEeprom() {
+void writeEeprom_N64() {
   if ((saveType == 5) || (saveType == 6)) {
 
     // Create filepath
@@ -2277,26 +2297,21 @@ boolean readEepromPageList(byte* output, byte page_number, byte page_count) {
   return 1;
 }
 
+// Reset Eeprom
+void resetEeprom_N64() {
+  // Pull RESET(PH0) low
+  PORTH &= ~(1 << 0);
+  delay(100);
+  // Pull RESET(PH0) high
+  PORTH |= (1 << 0);
+  delay(100);
+}
+
 // Dump Eeprom to SD
-void readEeprom() {
+void readEeprom_N64() {
   if ((saveType == 5) || (saveType == 6)) {
     // Get name, add extension and convert to char array for sd lib
-    snprintf_P(fileName, sizeof(fileName), N64_EEP_FILENAME_FMT, romName);
-
-    // create a new folder for the save file
-    EEPROM_readAnything(0, foldern);
-    snprintf_P(folder, sizeof(folder), N64_SAVE_DIRNAME_FMT, romName, foldern);
-    sd.mkdir(folder, true);
-    sd.chdir(folder);
-
-    // write new folder number back to eeprom
-    foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
-
-    // Open file on sd card
-    if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-      print_FatalError(create_file_STR);
-    }
+    createFolderAndOpenFile("N64", "SAVE", romName, "eep");
 
     for (int i = 0; i < eepPages; i += sizeof(sdBuffer) / 8) {
       // If any missing bytes error out
@@ -2312,17 +2327,13 @@ void readEeprom() {
     }
     // Close the file:
     myFile.close();
-    print_Msg(F("Saved to "));
-    print_Msg(folder);
-    println_Msg(F("/"));
-    display_Update();
   } else {
     print_FatalError(F("Savetype Error"));
   }
 }
 
 // Check if a write succeeded, returns 0 if all is ok and number of errors if not
-unsigned long verifyEeprom() {
+unsigned long verifyEeprom_N64() {
   unsigned long writeErrors;
 
   if ((saveType == 5) || (saveType == 6)) {
@@ -2364,7 +2375,7 @@ unsigned long verifyEeprom() {
 *****************************************/
 // Write sram to cartridge
 void writeSram(unsigned long sramSize) {
-  if (saveType == 1) {
+  if (saveType == 1 || saveType == 2) {
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     println_Msg(F("Writing..."));
@@ -2404,6 +2415,7 @@ void writeSram(unsigned long sramSize) {
 
 // Read sram and save to the SD card
 void readSram(unsigned long sramSize, byte flashramType) {
+  word myWord;
   int offset = 512;
   int bufferSize = 512;
   if (flashramType == 2) {
@@ -2412,53 +2424,35 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
+  const char* suffix;
 
   if (saveType == 4) {
-    strcat(fileName, ".fla");
+    suffix = "fla";
   } else if (saveType == 1) {
-    strcat(fileName, ".sra");
+    suffix = "sra";
+  } else if (saveType == 2) {
+    suffix = "768";
   } else {
     print_FatalError(F("Savetype Error"));
   }
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "N64/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("N64", "SAVE", romName, suffix);
 
   for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
     // Set the address
     setAddress_N64(currByte);
 
     for (int c = 0; c < bufferSize; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
+      // read, split and write word to buffer
+      myWord = readWord_N64();
+      sdBuffer[c] = myWord >> 8;
+      sdBuffer[c + 1] = myWord & 0xFF;
     }
+    // Pull ale_H(PC1) high
+    PORTC |= (1 << 1);
     myFile.write(sdBuffer, bufferSize);
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to "));
-  print_Msg(folder);
-  println_Msg(F("/"));
-  display_Update();
 }
 
 unsigned long verifySram(unsigned long sramSize, byte flashramType) {
@@ -2517,6 +2511,8 @@ void sendFramCmd(unsigned long myCommand) {
   // Send command
   writeWord_N64(myComHighOut);
   writeWord_N64(myComLowOut);
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
 }
 
 // Init fram
@@ -2751,6 +2747,8 @@ byte waitForFram(byte flashramType) {
       }
     }
   }
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
   return framStatus;
 }
 
@@ -2807,10 +2805,15 @@ void getFramType() {
   else {
     for (byte c = 0; c < 8; c++) {
       print_Msg(sdBuffer[c], HEX);
-      print_Msg(F(", "));
+      if (c < 7)
+        print_Msg(F(", "));
+      if (c == 7)
+        println_Msg(FS(FSTRING_EMPTY));
     }
     print_FatalError(F("Flashram unknown"));
   }
+  // Pull ale_H(PC1) high
+  PORTC |= (1 << 1);
 }
 
 /******************************************
@@ -2821,25 +2824,11 @@ void getFramType() {
 // dumping rom slow
 void readRom_N64() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".Z64");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("N64", "ROM", romName, "Z64");
 
   // clear the screen
   // display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -2868,6 +2857,9 @@ void readRom_N64() {
 
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
+
+    // Pull ale_H(PC1) high
+    PORTC |= (1 << 1);
   }
   // Close the file:
   myFile.close();
@@ -2876,25 +2868,11 @@ void readRom_N64() {
 // dumping rom fast
 uint32_t readRom_N64() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".Z64");
-
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "N64/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("N64", "ROM", romName, "Z64");
 
   // clear the screen
   // display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -3039,7 +3017,8 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
 
 #ifdef ENABLE_RTC
   myFile.print(F("Dumped\t: "));
-  myFile.println(RTCStamp());
+  char time[21];
+  myFile.println(RTCStamp(time));
 #endif
 
   myFile.print(F("CRC\t: "));
@@ -3057,13 +3036,14 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   myFile.print(F("Time\t: "));
   myFile.println(timeElapsed);
 
-  myFile.println(FSTRING_SPACE);
+  myFile.println(FS(FSTRING_SPACE));
 
   // Close the file:
   myFile.close();
 }
 #endif
 
+#if defined(ENABLE_FLASH)
 /******************************************
    N64 Repro Flashrom Functions
  *****************************************/
@@ -3325,13 +3305,11 @@ void flashRepro_N64() {
       myFile.close();
 
       // Verify
-      print_STR(verifying_STR, 0);
+      print_STR(verifying_STR, 1);
       display_Update();
       writeErrors = verifyFlashrom_N64();
-      if (writeErrors == 0) {
-        println_Msg(FS(FSTRING_OK));
-        display_Update();
-      } else {
+      if (writeErrors != 0) {
+        display_Clear();
         print_Msg(writeErrors);
         print_Msg(F(" bytes "));
         print_Error(did_not_verify_STR);
@@ -3342,7 +3320,7 @@ void flashRepro_N64() {
       print_Error(F("failed"));
     }
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
   }
 
   // Prints string out of the common strings array either with or without newline
@@ -3377,17 +3355,21 @@ void resetFlashrom_N64(unsigned long flashBase) {
   delay(100);
 }
 
+void sendFlashromCommand_N64(unsigned long addr, byte cmd) {
+  setAddress_N64(addr + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(addr + (0x2AA << 1));
+  writeWord_N64(0x55);
+  setAddress_N64(addr + (0x555 << 1));
+  writeWord_N64(cmd);
+}
+
 void idFlashrom_N64() {
   // Set size to 0 if no ID is found
   cartSize = 0;
 
   // Send flashrom ID command
-  setAddress_N64(romBase + (0x555 << 1));
-  writeWord_N64(0xAA);
-  setAddress_N64(romBase + (0x2AA << 1));
-  writeWord_N64(0x55);
-  setAddress_N64(romBase + (0x555 << 1));
-  writeWord_N64(0x90);
+  sendFlashromCommand_N64(romBase, 0x90);
 
   // Read 1 byte vendor ID
   setAddress_N64(romBase);
@@ -3407,12 +3389,7 @@ void idFlashrom_N64() {
     resetFlashrom_N64(romBase);
 
     // Test for second flashrom chip at 0x2000000 (32MB)
-    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
-    writeWord_N64(0xAA);
-    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
-    writeWord_N64(0x55);
-    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
-    writeWord_N64(0x90);
+    sendFlashromCommand_N64(romBase + 0x2000000, 0x90);
 
     char tempID[5];
     setAddress_N64(romBase + 0x2000000);
@@ -3435,12 +3412,7 @@ void idFlashrom_N64() {
     resetFlashrom_N64(romBase + 0x800000);
 
     // Test for second flashrom chip at 0x800000 (8MB)
-    setAddress_N64(romBase + 0x800000 + (0x555 << 1));
-    writeWord_N64(0xAA);
-    setAddress_N64(romBase + 0x800000 + (0x2AA << 1));
-    writeWord_N64(0x55);
-    setAddress_N64(romBase + 0x800000 + (0x555 << 1));
-    writeWord_N64(0x90);
+    sendFlashromCommand_N64(romBase + 0x800000, 0x90);
 
     char tempID[5];
     setAddress_N64(romBase + 0x800000);
@@ -3463,12 +3435,7 @@ void idFlashrom_N64() {
     resetIntel4400_N64();
 
     // Test if second half of the flashrom might be hidden
-    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
-    writeWord_N64(0xAA);
-    setAddress_N64(romBase + 0x2000000 + (0x2AA << 1));
-    writeWord_N64(0x55);
-    setAddress_N64(romBase + 0x2000000 + (0x555 << 1));
-    writeWord_N64(0x90);
+    sendFlashromCommand_N64(romBase + 0x2000000, 0x90);
 
     // Read manufacturer ID
     setAddress_N64(romBase + 0x2000000);
@@ -3711,18 +3678,8 @@ void eraseFlashrom_N64() {
   display_Update();
 
   // Send Erase Command
-  setAddress_N64(romBase + (0x555 << 1));
-  writeWord_N64(0xAA);
-  setAddress_N64(romBase + (0x2AA << 1));
-  writeWord_N64(0x55);
-  setAddress_N64(romBase + (0x555 << 1));
-  writeWord_N64(0x80);
-  setAddress_N64(romBase + (0x555 << 1));
-  writeWord_N64(0xAA);
-  setAddress_N64(romBase + (0x2AA << 1));
-  writeWord_N64(0x55);
-  setAddress_N64(romBase + (0x555 << 1));
-  writeWord_N64(0x10);
+  sendFlashromCommand_N64(romBase, 0x80);
+  sendFlashromCommand_N64(romBase, 0x10);
 
   // Read the status register
   setAddress_N64(romBase);
@@ -3758,18 +3715,14 @@ void eraseSector_N64(unsigned long sectorSize) {
     }
 
     // Send Erase Command
-    setAddress_N64(flashBase + (0x555 << 1));
-    writeWord_N64(0xAA);
-    setAddress_N64(flashBase + (0x2AA << 1));
-    writeWord_N64(0x55);
-    setAddress_N64(flashBase + (0x555 << 1));
-    writeWord_N64(0x80);
+    sendFlashromCommand_N64(flashBase, 0x80);
     setAddress_N64(flashBase + (0x555 << 1));
     writeWord_N64(0xAA);
     setAddress_N64(flashBase + (0x2AA << 1));
     writeWord_N64(0x55);
     setAddress_N64(romBase + currSector);
     writeWord_N64(0x30);
+
 
     // Read the status register
     setAddress_N64(romBase + currSector);
@@ -3801,6 +3754,11 @@ boolean blankcheckFlashrom_N64() {
 
 // Write Intel flashrom
 void writeIntel4400_N64() {
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
+
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
     // Blink led
     blinkLED();
@@ -3848,12 +3806,19 @@ void writeIntel4400_N64() {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
 // Write Fujitsu MSP55LV100S flashrom consisting out of two MSP55LV512 flashroms one used for the high byte the other for the low byte
 void writeMSP55LV100_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -3904,6 +3869,8 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -3911,6 +3878,11 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
 // Write Spansion S29GL256N flashrom using the 32 byte write buffer
 void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
   unsigned long flashBase = romBase;
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -3966,6 +3938,8 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -3973,6 +3947,11 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
 // Write MX29LV640 flashrom without write buffer
 void writeFlashrom_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
+
+  //Initialize progress bar
+  uint32_t processedProgressBar = 0;
+  uint32_t totalProgressBar = (uint32_t)(fileSize);
+  draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -3991,13 +3970,7 @@ void writeFlashrom_N64(unsigned long sectorSize) {
         // Join two bytes into one word
         word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
         // 2 unlock commands
-        setAddress_N64(flashBase + (0x555 << 1));
-        writeWord_N64(0xAA);
-        setAddress_N64(flashBase + (0x2AA << 1));
-        writeWord_N64(0x55);
-        // Program command
-        setAddress_N64(flashBase + (0x555 << 1));
-        writeWord_N64(0xA0);
+        sendFlashromCommand_N64(flashBase, 0xA0);
         // Write word
         setAddress_N64(romBase + currSector + currSdBuffer + currByte);
         writeWord_N64(currWord);
@@ -4010,6 +3983,8 @@ void writeFlashrom_N64(unsigned long sectorSize) {
           statusReg = readWord_N64();
         }
       }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -4018,6 +3993,11 @@ unsigned long verifyFlashrom_N64() {
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
     writeErrors = 0;
+
+    //Initialize progress bar
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)(fileSize);
+    draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       // Blink led
@@ -4042,6 +4022,8 @@ unsigned long verifyFlashrom_N64() {
             }
           }
         }
+        processedProgressBar += 512;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
     // Close the file:
@@ -4053,10 +4035,20 @@ unsigned long verifyFlashrom_N64() {
     return 9999;
   }
 }
+#endif
 
 /******************************************
    N64 Gameshark Flash Functions
  *****************************************/
+void sendFlashromGamesharkCommand_N64(uint16_t cmd) {
+  setAddress_N64(0x1EF0AAA8);
+  writeWord_N64(0xAAAA);
+  setAddress_N64(0x1EE05554);
+  writeWord_N64(0x5555);
+  setAddress_N64(0x1EF0AAA8);
+  writeWord_N64(cmd);
+}
+
 void flashGameshark_N64() {
   // Check flashrom ID's
   unlockGSAddressRanges();
@@ -4148,7 +4140,7 @@ void flashGameshark_N64() {
         print_Error(did_not_verify_STR);
       }
     } else {
-      print_Error(F("Can't open file"));
+      print_Error(open_file_STR);
     }
   }
 
@@ -4161,22 +4153,17 @@ void flashGameshark_N64() {
 }
 
 void unlockGSAddressRanges() {
-    // This enables using the 0x1EEx_xxxx, 0x1EFx_xxxx, and 0x1ECx_xxxx address ranges, necessary for writing to all supported chips
-    setAddress_N64(0x10400400);
-    writeWord_N64(0x1E);
-    writeWord_N64(0x1E);
+  // This enables using the 0x1EEx_xxxx, 0x1EFx_xxxx, and 0x1ECx_xxxx address ranges, necessary for writing to all supported chips
+  setAddress_N64(0x10400400);
+  writeWord_N64(0x1E);
+  writeWord_N64(0x1E);
 }
 
 //Test for SST 29LE010  or SST 28LF040 (0404) or AMTEL AT29LV010A (3535) or SST 29EE010 (0707)
 void idGameshark_N64() {
   flashid = 0x0;
   //Send flashrom ID command
-  setAddress_N64(0x1EF0AAA8);
-  writeWord_N64(0xAAAA);
-  setAddress_N64(0x1EE05554);
-  writeWord_N64(0x5555);
-  setAddress_N64(0x1EF0AAA8);
-  writeWord_N64(0x9090);
+  sendFlashromGamesharkCommand_N64(0x9090);
 
   setAddress_N64(0x1EC00000);
   // Read 1 byte vendor ID
@@ -4206,48 +4193,18 @@ void idGameshark_N64() {
 void resetGameshark_N64() {
   if (flashid == 0x0808 || flashid == 0x3535 || flashid == 0x0707) {
     // Send reset command for SST 29LE010 / AMTEL AT29LV010A / SST 29EE010
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xAAAA);
-    setAddress_N64(0x1EE05554);
-    writeWord_N64(0x5555);
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xF0F0);
+    sendFlashromGamesharkCommand_N64(0xF0F0);
     delay(100);
   } else if (flashid == 0x0404) {
     // Send reset command for SST 28LF040
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xAAAA);
-    setAddress_N64(0x1EE05554);
-    writeWord_N64(0x5555);
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xFFFF);
+    sendFlashromGamesharkCommand_N64(0xFFFF);
     delay(300);
   }
 }
 
 // Read rom and save to the SD card
 void backupGameshark_N64() {
-  // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(fileName, "GS%d", foldern);
-  strcat(fileName, ".z64");
-  sd.mkdir("N64/ROM/Gameshark", true);
-  sd.chdir("N64/ROM/Gameshark");
-
-  display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(fileName);
-  println_Msg(F("..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("N64", "ROM", "GameShark", "z64");
 
   for (unsigned long currByte = romBase + 0xEC00000; currByte < (romBase + 0xEC00000 + flashSize); currByte += 512) {
     // Blink led
@@ -4279,18 +4236,8 @@ void eraseGameshark_N64() {
 
   // Send chip erase to SST 29LE010 / AMTEL AT29LV010A / SST 29EE010
   if (flashid == 0x0808 || flashid == 0x3535 || flashid == 0x0707) {
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xAAAA);
-    setAddress_N64(0x1EE05554);
-    writeWord_N64(0x5555);
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0x8080);
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xAAAA);
-    setAddress_N64(0x1EE05554);
-    writeWord_N64(0x5555);
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0x1010);
+    sendFlashromGamesharkCommand_N64(0x8080);
+    sendFlashromGamesharkCommand_N64(0x1010);
 
     delay(20);
   }
@@ -4314,12 +4261,7 @@ void eraseGameshark_N64() {
     delay(1000);
 
     //Erase flash
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0xAAAA);
-    setAddress_N64(0x1EE05554);
-    writeWord_N64(0x5555);
-    setAddress_N64(0x1EF0AAA8);
-    writeWord_N64(0x3030);
+    sendFlashromGamesharkCommand_N64(0x3030);
     setAddress_N64(0x1EF0AAA8);
     writeWord_N64(0x3030);
     delay(1000);
@@ -4327,25 +4269,25 @@ void eraseGameshark_N64() {
 }
 
 void blankCheck_N64() {
-    // Blankcheck
-    println_Msg(F("Blankcheck..."));
-    display_Update();
+  // Blankcheck
+  println_Msg(F("Blankcheck..."));
+  display_Update();
 
-    for (unsigned long currSector = 0; currSector < flashSize; currSector += 131072) {
-      // Blink led
-      blinkLED();
-      for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
-        for (int currByte = 0; currByte < 512; currByte += 2) {
-          // Read flash
-          setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
-          // Compare both
-          if (readWord_N64() != 0xFFFF) {
-            println_Msg(F("Not empty"));
-            print_FatalError(F("Erase failed"));
-          }
+  for (unsigned long currSector = 0; currSector < flashSize; currSector += 131072) {
+    // Blink led
+    blinkLED();
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
+      for (int currByte = 0; currByte < 512; currByte += 2) {
+        // Read flash
+        setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
+        // Compare both
+        if (readWord_N64() != 0xFFFF) {
+          println_Msg(F("Not empty"));
+          print_FatalError(F("Erase failed"));
         }
       }
     }
+  }
 }
 
 void writeGameshark_N64() {
@@ -4362,12 +4304,7 @@ void writeGameshark_N64() {
       myFile.read(sdBuffer, 256);
 
       //Send page write command to both flashroms
-      setAddress_N64(0x1EF0AAA8);
-      writeWord_N64(0xAAAA);
-      setAddress_N64(0x1EE05554);
-      writeWord_N64(0x5555);
-      setAddress_N64(0x1EF0AAA8);
-      writeWord_N64(0xA0A0);
+      sendFlashromGamesharkCommand_N64(0xA0A0);
 
       // Write 1 page each, one flashrom gets the low byte, the other the high byte.
       for (unsigned long currByte = 0; currByte < 256; currByte += 2) {
@@ -4399,26 +4336,21 @@ void writeGameshark_N64() {
         for (unsigned long currByte = 0; currByte < 256; currByte += 2) {
 
           // Send byte program command
-          setAddress_N64(0x1EF0AAA8);
-          writeWord_N64(0xAAAA);
-          setAddress_N64(0x1EE05554);
-          writeWord_N64(0x5555);
-          setAddress_N64(0x1EF0AAA8);
-          writeWord_N64(0x1010);
+          sendFlashromGamesharkCommand_N64(0x1010);
 
           // Set address
           setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
-          
+
           // Join two bytes into one word
           word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
-          
+
           // Send byte data
           writeWord_N64(currWord);
           delayMicroseconds(60);
         }
-      processedProgressBar += 256;
-      draw_progressbar(processedProgressBar, totalProgressBar);
-      blinkLED();
+        processedProgressBar += 256;
+        draw_progressbar(processedProgressBar, totalProgressBar);
+        blinkLED();
       }
     }
 
@@ -4482,6 +4414,12 @@ unsigned long verifyGameshark_N64() {
 /******************************************
    XPLORER 64 Functions
  *****************************************/
+void sendFlashromXplorerCommand_N64(uint16_t cmd) {
+  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
+  evenXPaddrWrite(0x10405555, 0x5555);
+  oddXPaddrWrite(0x1040AAAA, cmd);
+}
+
 void flashXplorer_N64() {
   // Check flashrom ID's
   idXplorer_N64();
@@ -4548,7 +4486,8 @@ void flashXplorer_N64() {
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(F("Turn Cart Reader off now"));
         display_Update();
-        while (1);
+        while (1)
+          ;
       } else {
         display_Clear();
         display_Update();
@@ -4558,7 +4497,7 @@ void flashXplorer_N64() {
         print_Error(did_not_verify_STR);
       }
     } else {
-      print_Error(F("Can't open file"));
+      print_Error(open_file_STR);
     }
   }
 
@@ -4574,9 +4513,7 @@ void flashXplorer_N64() {
 void idXplorer_N64() {
   flashid = 0x0;
   //Send flashrom ID command
-  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-  evenXPaddrWrite(0x10405555, 0x5555);
-  oddXPaddrWrite(0x1040AAAA, 0x9090);
+  sendFlashromXplorerCommand_N64(0x9090);
 
   setAddress_N64(0x10760000);
   readWord_N64();
@@ -4586,50 +4523,29 @@ void idXplorer_N64() {
   readWord_N64();
 
   if (flashid != 0x0808) {
-        println_Msg(F("Check cart connection"));
-        println_Msg(F("Unknown Flash ID"));
-        sprintf(flashid_str, "%04X", flashid);
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
-        mainMenu();
-      }
+    println_Msg(F("Check cart connection"));
+    println_Msg(F("Unknown Flash ID"));
+    sprintf(flashid_str, "%04X", flashid);
+    print_STR(press_button_STR, 1);
+    display_Update();
+    wait();
+    mainMenu();
+  }
   sprintf(flashid_str, "%04X", flashid);
   // Reset flashrom
   resetXplorer_N64();
 }
 
 void resetXplorer_N64() {
-    // Send reset command for SST 29LE010
-    oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-    evenXPaddrWrite(0x10405555, 0x5555);
-    oddXPaddrWrite(0x1040AAAA, 0xF0F0);
-    delay(100);
+  // Send reset command for SST 29LE010
+  sendFlashromXplorerCommand_N64(0xF0F0);
+  delay(100);
 }
- 
+
 // Read rom and save to the SD card
 void backupXplorer_N64() {
   // create a new folder
-  EEPROM_readAnything(0, foldern);
-  sprintf(fileName, "XP64-%d", foldern);
-  strcat(fileName, ".z64");
-  sd.mkdir("N64/ROM/XPLORER64", true);
-  sd.chdir("N64/ROM/XPLORER64");
-
-  display_Clear();
-  print_Msg(F("Saving "));
-  print_Msg(fileName);
-  println_Msg(F("..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("N64", "ROM", "XPLORER64", "z64");
 
   for (unsigned long currByte = 0x10400000; currByte <= 0x1043FFFF; currByte += 512) {
     // Blink led
@@ -4657,26 +4573,16 @@ void backupXplorer_N64() {
 }
 
 unsigned long unscramble(unsigned long addr) {
-    unsigned long result = (((addr >> 4) & 0x001) | ((addr >> 8) & 0x002) | 
-                            ((~addr >> 9) & 0x004) | ((addr >> 3) & 0x008) | 
-                            ((addr >> 6) & 0x010) | ((addr >> 2) & 0x020) | 
-                            ((~addr << 5) & 0x0C0) | ((~addr << 8) & 0x100) | 
-                            ((~addr << 6) & 0x200) | ((~addr << 2) & 0x400) | 
-                            ((addr << 6) & 0x800) | (addr & 0x1F000));
-    
-    return result;
+  unsigned long result = (((addr >> 4) & 0x001) | ((addr >> 8) & 0x002) | ((~addr >> 9) & 0x004) | ((addr >> 3) & 0x008) | ((addr >> 6) & 0x010) | ((addr >> 2) & 0x020) | ((~addr << 5) & 0x0C0) | ((~addr << 8) & 0x100) | ((~addr << 6) & 0x200) | ((~addr << 2) & 0x400) | ((addr << 6) & 0x800) | (addr & 0x1F000));
+
+  return result;
 }
 
 
 unsigned long scramble(unsigned long addr) {
-    unsigned long result = (((~addr >> 8) & 0x001) | ((~addr >> 5) & 0x006) | 
-                            ((~addr >> 6) & 0x008) | ((addr << 4) & 0x010) | 
-                            ((addr >> 6) & 0x020) | ((addr << 3) & 0x040) | 
-                            ((addr << 2) & 0x080) | ((~addr >> 2) & 0x100) | 
-                            ((addr << 8) & 0x200) | ((addr << 6) & 0x400) | 
-                            ((~addr << 9) & 0x800) | (addr & 0x1F000));
-    
-    return result;
+  unsigned long result = (((~addr >> 8) & 0x001) | ((~addr >> 5) & 0x006) | ((~addr >> 6) & 0x008) | ((addr << 4) & 0x010) | ((addr >> 6) & 0x020) | ((addr << 3) & 0x040) | ((addr << 2) & 0x080) | ((~addr >> 2) & 0x100) | ((addr << 8) & 0x200) | ((addr << 6) & 0x400) | ((~addr << 9) & 0x800) | (addr & 0x1F000));
+
+  return result;
 }
 
 
@@ -4691,7 +4597,6 @@ void oddXPaddrWrite(unsigned long addr, word data) {
   setAddress_N64(0x10740000);
   readWord_N64();
   readWord_N64();
-  
 }
 
 void evenXPaddrWrite(unsigned long addr, word data) {
@@ -4712,12 +4617,8 @@ void eraseXplorer_N64() {
   display_Update();
 
   // Send chip erase to SST 29LE010
-  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-  evenXPaddrWrite(0x10405555, 0x5555);
-  oddXPaddrWrite(0x1040AAAA, 0x8080);
-  oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-  evenXPaddrWrite(0x10405555, 0x5555);
-  oddXPaddrWrite(0x1040AAAA,0x1010);
+  sendFlashromXplorerCommand_N64(0x8080);
+  sendFlashromXplorerCommand_N64(0x1010);
 
   delay(20);
 }
@@ -4755,7 +4656,7 @@ void writeXplorer_N64() {
 
     // Fill SD buffer with data in the order it will be expected by the CPLD
     for (unsigned long i = 0; i < 256; i += 2) {
-      unsigned long unscrambled_address = (unscramble(((currPage*2) + i) / 2) * 2);
+      unsigned long unscrambled_address = (unscramble(((currPage * 2) + i) / 2) * 2);
       myFile.seek(unscrambled_address);
       myFile.read(&sdBuffer[i], 1);
       myFile.seek(unscrambled_address + 1);
@@ -4763,19 +4664,17 @@ void writeXplorer_N64() {
     }
 
     //Send page write command to both flashroms
-    oddXPaddrWrite(0x1040AAAA, 0xAAAA);
-    evenXPaddrWrite(0x10405555, 0x5555);
-    oddXPaddrWrite(0x1040AAAA, 0xA0A0);
+    sendFlashromXplorerCommand_N64(0xA0A0);
 
     // Write 1 page each, one flashrom gets the low byte, the other the high byte.
     for (unsigned long currByte = 0; currByte < 256; currByte += 2) {
       // Join two bytes into one word
       word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
       // Set address
-      if ((((currByte/2) >> 4) & 0x1) == 0) {
-        evenXPaddrWrite(0x10400000 + (currPage*2) + currByte, currWord);
+      if ((((currByte / 2) >> 4) & 0x1) == 0) {
+        evenXPaddrWrite(0x10400000 + (currPage * 2) + currByte, currWord);
       } else {
-        oddXPaddrWrite(0x10400000 + (currPage*2) + currByte, currWord);
+        oddXPaddrWrite(0x10400000 + (currPage * 2) + currByte, currWord);
       }
     }
     processedProgressBar += 256;

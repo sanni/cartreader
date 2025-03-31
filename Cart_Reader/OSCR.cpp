@@ -49,7 +49,7 @@
  * String Constants
  **/
 // Firmware Version
-constexpr char PROGMEM FSTRING_VERSION[] = "V13.2";
+constexpr char PROGMEM FSTRING_VERSION[] = "V14.5";
 
 // Universal
 constexpr char PROGMEM FSTRING_RESET[] = "Reset";
@@ -62,6 +62,7 @@ constexpr char PROGMEM FSTRING_CURRENT_SETTINGS[] = "CURRENT SETTINGS";
 constexpr char PROGMEM FSTRING_OSCR[] = "OSCR";
 constexpr char PROGMEM FSTRING_MODULE_NOT_ENABLED[] = "Module is not enabled.";
 constexpr char PROGMEM FSTRING_DATABASE_FILE_NOT_FOUND[] = "Database file not found";
+constexpr char PROGMEM FSTRING_FILE_DOESNT_EXIST[] = "File doesn't exist";
 
 // Cart
 constexpr char PROGMEM FSTRING_READ_ROM[] = "Read ROM";
@@ -69,8 +70,16 @@ constexpr char PROGMEM FSTRING_READ_SAVE[] = "Read Save";
 constexpr char PROGMEM FSTRING_WRITE_SAVE[] = "Write Save";
 constexpr char PROGMEM FSTRING_SELECT_CART[] = "Select Cart";
 constexpr char PROGMEM FSTRING_SELECT_CART_TYPE[] = "Select Cart Type";
+constexpr char PROGMEM FSTRING_SELECT_FILE[] = "Select file";
 constexpr char PROGMEM FSTRING_SET_SIZE[] = "Set Size";
 constexpr char PROGMEM FSTRING_REFRESH_CART[] = "Refresh Cart";
+constexpr char PROGMEM FSTRING_MAPPER[] = "Mapper: ";
+constexpr char PROGMEM FSTRING_SIZE[] = "Size: ";
+constexpr char PROGMEM FSTRING_NAME[] = "Name: ";
+constexpr char PROGMEM FSTRING_CHECKSUM[] = "Checksum: ";
+constexpr char PROGMEM FSTRING_ROM_SIZE[] = "ROM Size: ";
+constexpr char PROGMEM FSTRING_REVISION[] = "Revision: ";
+constexpr char PROGMEM FSTRING_SERIAL[] = "Serial: ";
 
 /*==== /CONSTANTS =================================================*/
 
