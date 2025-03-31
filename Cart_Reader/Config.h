@@ -31,7 +31,7 @@
 
 //#define HW5
 //#define HW4
-//#define HW3
+#define HW3
 //#define HW2
 //#define HW1
 //#define SERIAL_MONITOR
@@ -70,7 +70,7 @@
 /* [ Atari 2600 --------------------------------------------------- ]
 */
 
-//#define ENABLE_2600
+#define ENABLE_2600
 
 /****/
 

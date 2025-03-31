@@ -41,14 +41,14 @@ static const byte PROGMEM a2600mapsize[] = {
   0x0A, 2,  // "UA" UA Ltd 8K
   0x3E, 5,  // Tigervision 32K with 32K RAM
   0x07, 6,  // X07 64K ROM
-  0xDF, 7,  // "DFSC" Penult 128K
+  0xDF, 7,  // "DFSC" Penult 128K ROM with 32K RAM
 };
 
 byte a2600mapcount = (sizeof(a2600mapsize) / sizeof(a2600mapsize[0])) / 2;
 byte a2600mapselect;
 int a2600index;
 
-byte a2600[] = { 2, 4, 8, 12, 16, 32, 64 };
+byte a2600[] = { 2, 4, 8, 12, 16, 32, 64, 128 };
 byte a2600mapper = 0;
 byte a2600size;
 
@@ -602,7 +602,7 @@ void println_Mapper2600(byte mapper) {
 void checkStatus_2600() {
   EEPROM_readAnything(7, a2600mapper);
   EEPROM_readAnything(8, a2600size);
-  if (a2600size > 6) {
+  if (a2600size > 7) {
     a2600size = 1;  // default 4KB
     EEPROM_writeAnything(8, a2600size);
   }
