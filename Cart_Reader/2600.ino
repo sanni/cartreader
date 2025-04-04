@@ -42,13 +42,15 @@ static const byte PROGMEM a2600mapsize[] = {
   0x3E, 5,  // Tigervision 32K with 32K RAM
   0x07, 6,  // X07 64K ROM
   0xDF, 7,  // "DFSC" Penult 128K ROM with 32K RAM
+  0xBA, 7,  // SUPERBank 128K Casey's Gold
+  0xBB, 8,  // SUPERBank 256K
 };
 
 byte a2600mapcount = (sizeof(a2600mapsize) / sizeof(a2600mapsize[0])) / 2;
 byte a2600mapselect;
 int a2600index;
 
-byte a2600[] = { 2, 4, 8, 12, 16, 32, 64, 128 };
+int a2600[] = { 2, 4, 8, 12, 16, 32, 64, 128, 256 };
 byte a2600mapper = 0;
 byte a2600size;
 
@@ -528,6 +530,20 @@ void readROM_2600() {
       }
       break;
 
+    case 0xBA:  // SUPERbank 128K
+      for (int x = 0; x < 0x20; x++) {
+        readData_2600(0x0800 + x);
+        readSegment_2600(0x1000, 0x2000);
+      }
+      break;
+
+    case 0xBB:  // SUPERbank 256K
+      for (int x = 0; x < 0x40; x++) {
+        readData_2600(0x0800 + x);
+        readSegment_2600(0x1000, 0x2000);
+      }
+      break;
+
     default:
       break;
   }
@@ -569,6 +585,10 @@ void println_Mapper2600(byte mapper) {
     println_Msg(F("X07"));
   else if (mapper == 0xDF)
     println_Msg(F("DFSC"));
+  else if (mapper == 0xBA)
+    println_Msg(F("SB 128K"));
+  else if (mapper == 0xBB)
+    println_Msg(F("SB 256K"));
   else
     println_Msg(mapper, HEX);
 #else
@@ -594,6 +614,10 @@ void println_Mapper2600(byte mapper) {
     Serial.println(F("X07"));
   else if (mapper == 0xDF)
     Serial.println(F("DFSC"));
+  else if (mapper == 0xBA)
+    Serial.println(F("SB 128K"));
+  else if (mapper == 0xBB)
+    Serial.println(F("SB 256K"));
   else
     Serial.println(mapper, HEX);
 #endif
@@ -602,7 +626,7 @@ void println_Mapper2600(byte mapper) {
 void checkStatus_2600() {
   EEPROM_readAnything(7, a2600mapper);
   EEPROM_readAnything(8, a2600size);
-  if (a2600size > 7) {
+  if (a2600size > 8) {
     a2600size = 1;  // default 4KB
     EEPROM_writeAnything(8, a2600size);
   }
@@ -687,7 +711,9 @@ setmapper:
   Serial.println(F("18 = 3E [Tigervision 32K \w RAM]"));
   Serial.println(F("19 = 07 [X07 64K]"));
   Serial.println(F("20 = DFSC [Penult 128K]"));
-  Serial.print(F("Enter Mapper [0-20]: "));
+  Serial.println(F("21 = SB [SuperBank Casey's Gold 128K]"));
+  Serial.println(F("22 = SB [SuperBank 256K]"));
+  Serial.print(F("Enter Mapper [0-22]: "));
   while (Serial.available() == 0) {}
   newmap = Serial.readStringUntil('\n');
   Serial.println(newmap);
