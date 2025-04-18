@@ -40,6 +40,9 @@ Alpha Beam with Ernie
 Amidar
 064
 
+Angriff der Luftflotten
+064
+
 Armor Ambush
 064
 
@@ -382,6 +385,9 @@ Dragonfire
 Dragster
 032
 
+Dschungel Boy
+064
+
 Dukes of Hazzard
 246
 
@@ -670,6 +676,9 @@ Kung Fu Superkicks
 Kung-Fu Master
 248
 
+Labyrinth
+064
+
 Lady in Wading
 064
 
@@ -713,6 +722,9 @@ Marauder
 064
 
 Marine Wars
+064
+
+Marineflieger
 064
 
 Mario Bros.
@@ -815,6 +827,9 @@ Mr. Do!'s Castle
 224
 
 Mr. Postman
+064
+
+Mr. T
 064
 
 Ms. Pac-Man
@@ -959,6 +974,9 @@ Private Eye
 248
 
 Punch Chess
+064
+
+Pygmy
 064
 
 Pyramid War
@@ -1276,6 +1294,9 @@ Steeplechase
 Stellar Track
 064
 
+Strahlen der Teufelsvogel
+064
+
 Strategy X
 064
 
@@ -1499,6 +1520,9 @@ World End
 064
 
 Worm War I
+064
+
+Wuestenschlacht
 064
 
 Xenophobe
