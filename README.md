@@ -69,6 +69,7 @@ Happy making. 🔧🔨😊
 - Tomy Pyuuta
 - TRS-80 Color Computer
 - Vtech V.Smile (Baby/V.Motion)
+- CPS3
 
 #### Open Source Licenses:
 - Software(everything in Cart_Reader folder) = GPL v3
