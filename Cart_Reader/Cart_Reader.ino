@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2024-09-13
-   Version:          14.5
+   Date:             2025-04-22
+   Version:          14.6
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -14,8 +14,6 @@
    SI5351 lib: https://github.com/etherkit/Si5351Arduino
    RTC lib: https://github.com/adafruit/RTClib
    Frequency lib: https://github.com/PaulStoffregen/FreqCount
-
-   Compiled with Arduino IDE 2.3.2
 
    Thanks to:
    MichlK - ROM Reader for Super Nintendo
@@ -37,14 +35,13 @@
    fceux - iNes header
    PsyK0p4T - Sufami Turbo module
    LuigiBlood - SNES Game Processor RAM Cassette module
+   herzmx - CPS3 module
    
    And a special Thank You to all coders and contributors on Github and the Arduino forum:
-   jiyunomegami, splash5, Kreeblah, ramapcsx2, PsyK0p4T, Dakkaron, majorpbx, Pickle, sdhizumi,
-   Uzlopak, sakman55, Tombo89, scrap-a, borti4938, vogelfreiheit, CaitSith2, Modman, Chomemel, 
-   philenotfound, karimhadjsalem, nsx0r, ducky92, niklasweber, Lesserkuma, BacteriaMage, qufb,
-   vpelletier, Ancyker, mattiacci, RWeick, ButThouMust, partlyhuman, fakkuyuu, hxlnt, breyell,
-   smesgr9000, joshman196, PsychoFox11, plaidpants, LuigiBlood, InvalidInterrupt, andy-miles,
-   wfmarques
+   Ancyker, Andy-miles, BacteriaMage, Borti4938, Breyell, ButThouMust, CaitSith2, Chomemel, Dakkaron, Ducky92, Fakkuyuu, Gemarcano,
+   Hxlnt, InvalidInterrupt, Jiyunomegami, Joshman196, Karimhadjsalem, Kreeblah, Lesserkuma, LuigiBlood, Majorpbx, Mattiacci, Modman,
+   Niklasweber, Nsx0r, Partlyhuman, Philenotfound, Pickle, Plaidpants, PsychoFox11, PsyK0p4T, Qufb, RWeick, Ramapcsx2, Sakman55,
+   Scrap-a, Sdhizumi, Smesgr9000, Splash5, Tombo89, Uzlopak, Vogelfreiheit, Vpelletier, Wfmarques
 
    And to nocash for figuring out the secrets of the SFC Nintendo Power cartridge.
 
