@@ -1763,7 +1763,7 @@ void aboutScreen() {
   display_Clear();
   println_Msg(F("Cartridge Reader"));
   println_Msg(F("github.com/sanni"));
-  print_Msg(F("2024 FW "));
+  print_Msg(F("2025 FW "));
   println_Msg(FS(FSTRING_VERSION));
   println_Msg(FS(FSTRING_EMPTY));
   println_Msg(FS(FSTRING_EMPTY));
@@ -2222,7 +2222,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println(FS(FSTRING_EMPTY));
   Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2024 github.com/sanni"));
+  Serial.println(F("2025 github.com/sanni"));
   // LED Error
   rgbLed(blue_color);
 #endif /* ENABLE_SERIAL */
