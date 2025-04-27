@@ -2,7 +2,7 @@ name: Monthly Release
 
 on:
   schedule:
-    - cron: '0 0 1 * *'  # Runs at 00:00 on the 1st of every month
+    - cron: '0 0 21 * *'  # Runs at 00:00 on the 1st of every month
   workflow_dispatch:
 
 jobs:
