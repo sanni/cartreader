@@ -1839,7 +1839,8 @@ void writeMPK() {
   if (myFile.open(filePath, O_READ)) {
 
     //Initialize progress bar
-    uint32_t totalProgressBar = 0x7FFF;
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)(0x7FFF);
     draw_progressbar(0, totalProgressBar);
 
     for (word address = 0x0000; address < 0x8000; address += 32) {
@@ -1860,9 +1861,10 @@ void writeMPK() {
 
       if ((address & 0x1FF) == 0) {
         // Blink led
-        // Update progress bar
         blinkLED();
-        draw_progressbar(address, totalProgressBar);
+        // Update progress bar
+        processedProgressBar += 512;
+        draw_progressbar(processedProgressBar, totalProgressBar);
       }
     }
     // Close the file:
