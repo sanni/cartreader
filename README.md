@@ -4,7 +4,7 @@
 This project represents a community-driven effort to provide an easy to build and easy to modify cartridge dumper.
 Its main purpose is to dump a video game's ROM and save file to an SD card without the need of a PC.
 
-For any questions you can use the [Discussions](https://github.com/sanni/cartreader/discussions) and/or [Issues](https://github.com/sanni/cartreader/issues) section here on GitHub or visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001), where you can reach most of the devs directly.
+For any questions you can use the [Discussions](https://github.com/sanni/cartreader/discussions) and/or [Issues](https://github.com/sanni/cartreader/issues) section here on GitHub, visit the accompanying thread in the [Arduino Forum](http://forum.arduino.cc/index.php?topic=158974.9001) or check out our [community discord server](https://discord.gg/YVxv7BnzXt), where you can reach most of the devs directly.
 
 Also be sure to check the guides in the [Wiki](https://github.com/sanni/cartreader/wiki) too.
 
