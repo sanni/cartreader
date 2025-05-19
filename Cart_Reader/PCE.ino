@@ -903,6 +903,8 @@ void flash_PCE() {
       break;
     case 0xC2D5:
       // MX29F080 = 8Mbit
+    case 0x20F1:
+      // M29F080 = 8Mbit
       flashSize = 1048576UL;
       break;
   }
