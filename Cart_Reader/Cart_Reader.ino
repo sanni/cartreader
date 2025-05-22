@@ -3528,9 +3528,15 @@ for (byte pass = 0; pass < 2; pass++) {
 #endif
   myDir.close();
 
-  for (byte i = 0; i < count; i++) {
+  if (currFile == 0) {
+    // Prevent SD error on empty folder
+    count = 1;
+    snprintf(answers[0], FILEOPTS_LENGTH, "%s", "Empty folder");
+  } else {
     // Copy short string into fileOptions
-    snprintf(answers[i], FILEOPTS_LENGTH, "%s", fileNames[i]);
+    for (byte i = 0; i < count; i++) {
+      snprintf(answers[i], FILEOPTS_LENGTH, "%s", fileNames[i]);
+    }
   }
 
   // Create menu with title and 1-7 options to choose from
@@ -3540,6 +3546,11 @@ for (byte pass = 0; pass < 2; pass++) {
   if (currPage != lastPage) {
     lastPage = currPage;
     goto page;
+  }
+
+  // Setting root after question_box still allows to escape empty folder by scrolling left
+  if(strcmp(answers[0], "Empty folder") == 0) {
+    root = 1; 
   }
 
   // Check if we are supposed to go back to the root dir
