@@ -37,6 +37,15 @@ jobs:
           mkdir oscr_release
           cd oscr_release
           powershell Invoke-WebRequest https://downloads.arduino.cc/arduino-1.8.19-windows.zip -OutFile arduino-1.8.19-windows.zip
+          FOR /F "usebackq delims=" %%H IN (`powershell -Command "(Get-FileHash 'arduino-1.8.19-windows.zip' -Algorithm SHA256).Hash"`) DO (
+          SET HASH=%%H
+          )
+          IF /I NOT "%HASH%"=="C704A821089EAB2588F1DEAE775916219B1517FEBD1DD574FF29958DCA873945" (
+           ECHO Checksum mismatch!
+           EXIT /B 1
+          ) ELSE (
+           ECHO Checksum OK.
+          )
           powershell expand-archive arduino-1.8.19-windows.zip
           del arduino-1.8.19-windows.zip
           cd arduino-1.8.19-windows
