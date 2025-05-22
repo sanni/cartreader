@@ -185,6 +185,13 @@ jobs:
             echo.
             echo set /p close="Press any key to close this window"
           ) > UPDATE.bat
+          
+          echo Extracting version from OSCR.cpp
+          powershell -Command "$pattern = 'FSTRING_VERSION\[\] = \"(.*)\";'; $line = Select-String -Path 'Arduino IDE\portable\sketchbook\Cart_Reader\OSCR.cpp' -Pattern $pattern | Select-Object -First 1; if (-not $line) { throw 'Version string not found in OSCR.cpp' }; $version = [regex]::Match($line.Line, $pattern).Groups[1].Value; Set-Content -Path version.txt -Value $version"
+
+          for /f "delims=" %%v in (version.txt) do set "OSCR_VERSION=%%v"
+          echo OSCR_VERSION=%OSCR_VERSION%>> %GITHUB_ENV%
+          del version.txt
 
           echo Optimize U8g2 for size
           cd "Arduino IDE\portable\sketchbook\libraries\U8g2_Arduino-master\src\clib\"
@@ -202,24 +209,60 @@ jobs:
           cd..
           cd..
 
-          echo Create oscr_release.zip
+          echo Create VXX.X_Portable.zip
           cd..
-          powershell compress-archive -Path oscr_release -DestinationPath oscr_release.zip
-          IF EXIST oscr_release rmdir oscr_release /s /q
-
-      - name: Get current date
-        id: date
-        shell: pwsh
-        run: |
-          $date = Get-Date -Format yyyyMMdd
-          echo "date=$date" >> $env:GITHUB_OUTPUT
-
+          IF EXIST %OSCR_VERSION%_Portable rmdir %OSCR_VERSION%_Portable /s /q
+          ren oscr_release %OSCR_VERSION%_Portable
+          powershell compress-archive -Path %OSCR_VERSION%_Portable -DestinationPath %OSCR_VERSION%_Portable.zip
+          IF EXIST %OSCR_VERSION%_Portable rmdir %OSCR_VERSION%_Portable /s /q
+      
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.date.outputs.date }}
-          name: ${{ steps.date.outputs.date }}
+          tag_name: ${{ env.OSCR_VERSION }}
+          name: ${{ env.OSCR_VERSION }}
           body: Automated monthly OSCR release
-          files: oscr_release.zip
+          files: ${{ env.OSCR_VERSION }}_Portable.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sparse checkout OSCR.cpp
+        run: |
+          git init bump-temp
+          cd bump-temp
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git config core.sparseCheckout true
+          echo Cart_Reader/OSCR.cpp > .git/info/sparse-checkout
+          git pull origin master
+        shell: bash
+
+      - name: Bump version in OSCR.cpp and push
+        run: |
+          cd bump-temp/Cart_Reader
+
+          # Extract current version numbers
+          OLD_VERSION=$(grep 'FSTRING_VERSION' OSCR.cpp | sed -E 's/.*"V([0-9]+)\.([0-9]+)".*/\1 \2/')
+          MAJOR=$(echo $OLD_VERSION | cut -d' ' -f1)
+          MINOR=$(echo $OLD_VERSION | cut -d' ' -f2)
+
+          # Increment version according to your scheme
+          if [ "$MINOR" -lt 9 ]; then
+            MINOR=$((MINOR + 1))
+          else
+            MINOR=0
+            MAJOR=$((MAJOR + 1))
+          fi
+
+          NEW_VERSION="V${MAJOR}.${MINOR}"
+
+          # Replace version in OSCR.cpp
+          sed -i -E "s/(FSTRING_VERSION\\[\\] = \")V[0-9]+\\.[0-9]+(\";)/\1${NEW_VERSION}\2/" OSCR.cpp
+
+          # Commit & push changes
+          cd ..
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add Cart_Reader/OSCR.cpp
+          git commit -m "Bump version to ${NEW_VERSION} after monthly release"
+          git push origin HEAD:master
+        shell: bash
