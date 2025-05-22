@@ -547,6 +547,14 @@ also needs ENABLE_FLASH8 and ENABLE_FLASH16 to be enabled
 
 /****/
 
+/* [ Filebrowser: Sort direction ---------------------------------- ]
+    Enable to sort files/folders from newest to oldest
+*/
+
+//#define OPTION_REVERSE_SORT
+
+/****/
+
 /*==== PROCESSING =================================================*/
 
 /*

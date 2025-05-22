@@ -4,8 +4,8 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2025-04-22
-   Version:          14.6
+   Date:             2025-05-22
+   Version:          14.7
 
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
@@ -3447,53 +3447,88 @@ browserstart:
   myDir.close();
 
   page_layout = div(currFile, 7);
-  numPages = page_layout.quot + 1;
+  numPages = page_layout.quot + (page_layout.rem ? 1 : 0);
 
   // Fill the array "answers" with 7 options to choose from in the file browser
   char answers[7][20];
 
 page:
+  display_Clear();
+  println_Msg(F("Sorting..."));
+  display_Update();
 
   // If there are less than 7 entries, set count to that number so no empty options appear
-  byte count = currPage == numPages ? page_layout.rem : 7;
+  byte count = (currPage < numPages || page_layout.rem == 0) ? 7 : page_layout.rem;
 
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
     print_FatalError(sd_error_STR);
   }
+  
+#if defined(OPTION_REVERSE_SORT)
+  uint16_t startIndex = currFile - ((currPage - 1) * 7) - 1;
+  byte remaining = 0;
 
-  int countFile = 0;
-  byte i = 0;
-  // Cycle through all files
-  while ((myFile.openNext(&myDir, O_READ)) && (i < 8)) {
-    // Get name of file
+  // Run twice: first for directories, then for files
+  for (byte pass = 0; pass < 2; pass++) {
+    for (int16_t index = startIndex; index >= 0 && remaining < count; index--) {
+      myDir.rewind();
+      int16_t found = 0;
+
+      while (myFile.openNext(&myDir, O_READ)) {
+        if (!myFile.isHidden() && (myFile.isDir() || myFile.isFile())) {
+          if (found == index) {
+            bool isDir = myFile.isDir();
+            if ((!pass && isDir) || (pass && !isDir)) {
+              myFile.getName(nameStr, FILENAME_LENGTH);
+              if (isDir) {
+                snprintf(fileNames[remaining], FILENAME_LENGTH, "/%s", nameStr);
+              } else {
+                snprintf(fileNames[remaining], FILENAME_LENGTH, "%s", nameStr);
+              }
+              remaining++;
+            }
+            myFile.close();
+            break;
+          }
+          found++;
+        }
+        myFile.close();
+      }
+    }
+  }
+#else
+int countFile = 0;
+byte i = 0;
+// Run twice: first for directories, then for files
+for (byte pass = 0; pass < 2; pass++) {
+  myDir.rewind();
+
+  while ((myFile.openNext(&myDir, O_READ)) && (i < 7)) {
     myFile.getName(nameStr, FILENAME_LENGTH);
 
-    // Ignore if hidden
-    if (myFile.isHidden()) {
-    }
-    // Directory
-    else if (myFile.isDir()) {
-      if (countFile == ((currPage - 1) * 7 + i)) {
-        snprintf(fileNames[i], FILENAME_LENGTH, "%s%s", "/", nameStr);
-        i++;
+    if (!myFile.isHidden()) {
+      bool isDir = myFile.isDir();
+      if ((!pass && isDir) || (pass && myFile.isFile())) {
+        if (countFile == ((currPage - 1) * 7 + i)) {
+          if (isDir) {
+            snprintf(fileNames[i], FILENAME_LENGTH, "/%s", nameStr);
+          } else {
+            snprintf(fileNames[i], FILENAME_LENGTH, "%s", nameStr);
+          }
+          i++;
+        }
+        countFile++;
       }
-      countFile++;
-    }
-    // File
-    else if (myFile.isFile()) {
-      if (countFile == ((currPage - 1) * 7 + i)) {
-        snprintf(fileNames[i], FILENAME_LENGTH, "%s", nameStr);
-        i++;
-      }
-      countFile++;
     }
     myFile.close();
   }
+}
+#endif
   myDir.close();
 
-  for (byte i = 0; i < 8; i++) {
+  for (byte i = 0; i < count; i++) {
     // Copy short string into fileOptions
     snprintf(answers[i], FILEOPTS_LENGTH, "%s", fileNames[i]);
   }
@@ -3523,6 +3558,9 @@ page:
 
   // Add directory to our filepath if we just entered a new directory
   if (fileName[0] == '/') {
+    // Prevent double backslash
+    if(filePath[1] == '\0')
+      filePath[0] = '\0';
     // add dirname to path
     strcat(filePath, fileName);
     // Remove / from dir name
