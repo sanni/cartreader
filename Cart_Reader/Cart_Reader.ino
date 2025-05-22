@@ -4,9 +4,6 @@
    This project represents a community-driven effort to provide
    an easy to build and easy to modify cartridge dumper.
 
-   Date:             2025-05-22
-   Version:          14.7
-
    SD lib: https://github.com/greiman/SdFat
    LCD lib: https://github.com/olikraus/u8g2
    Neopixel lib: https://github.com/adafruit/Adafruit_NeoPixel
