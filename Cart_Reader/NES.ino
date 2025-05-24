@@ -2601,9 +2601,11 @@ void readPRG(bool readrom) {
       case 57:
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8800, (i & 0x07) << 5);
-          write_prg_byte(0x8000, 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          for (word address = 0; address < 0x4000; address += 512) {
+            write_prg_pulsem2(0x8800, i << 5);
+            write_prg_pulsem2(0x8000, 0x80);
+            dumpPRG_pulsem2(base, address);
+          }
         }
         break;
 
@@ -3869,9 +3871,11 @@ void readCHR(bool readrom) {
         case 57:
           banks = int_pow(2, chrsize) / 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8800, i & 0x07);                  // A15-A13
-            write_prg_byte(0x8000, 0x80 | ((i & 0x08) << 3));  // A16
-            dumpBankCHR(0x0, 0x2000);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              write_prg_pulsem2(0x8800, i & 0x07);                  // A15-A13
+              write_prg_pulsem2(0x8000, 0x80 | ((i & 0x08) << 3));  // A16
+              dumpCHR_pulsem2(address);
+            }
           }
           break;
 
