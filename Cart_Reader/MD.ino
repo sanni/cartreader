@@ -2972,10 +2972,16 @@ void readRealtec_MD() {
 }
 
 void printRomSize_MD(int index) {
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = true;
+  #endif
   display_Clear();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(MDSize[index])));
   println_Msg(F(" Mbit"));
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = false;
+  #endif
 }
 
 void force_cartSize_MD() {

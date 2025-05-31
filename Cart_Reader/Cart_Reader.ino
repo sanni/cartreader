@@ -1912,7 +1912,7 @@ void clkcal() {
   println_Msg(String(cal_factor));
   display_Update();
   delay(500);
-
+  
   if (cal_factor > INT32_MIN) {
     i2c_found = clockgen.init(SI5351_CRYSTAL_LOAD_8PF, 0, cal_factor);
   } else {
@@ -1940,11 +1940,18 @@ void clkcal() {
   // Frequency Counter
   delay(500);
   FreqCount.begin(1000);
+
   while (1) {
     if (old_cal != cal_factor) {
+      #ifdef ENABLE_GLOBAL_LOG
+      dont_log = true;
+      #endif
       display_Clear();
       println_Msg(F("Adjusting..."));
       display_Update();
+      #ifdef ENABLE_GLOBAL_LOG
+      dont_log = false;
+      #endif
       clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
       clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
       clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLB);
@@ -1962,6 +1969,9 @@ void clkcal() {
 
       if (FreqCount.available()) {
         float count = FreqCount.read();
+        #ifdef ENABLE_GLOBAL_LOG
+        dont_log = true;
+        #endif
         display_Clear();
         println_Msg(F("Clock Calibration"));
         print_Msg(F("Freq:   "));
@@ -1986,6 +1996,9 @@ void clkcal() {
 #endif
 #endif
         display_Update();
+        #ifdef ENABLE_GLOBAL_LOG
+        dont_log = false;
+        #endif
       }
 #ifdef ENABLE_BUTTON2
       // get input button
@@ -2562,7 +2575,7 @@ void print_Msg(const char myString[]) {
     // Print until end of display
     display.print(myString[strPos++]);
   }
-
+  
 #endif
 #ifdef ENABLE_SERIAL
   Serial.print(myString);
@@ -2688,7 +2701,13 @@ void println_Msg(byte message, int outputFormat) {
 
 void println_Msg(const char myString[]) {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+#ifdef ENABLE_GLOBAL_LOG
+  dont_log = true;
+#endif
   print_Msg(myString);
+#ifdef ENABLE_GLOBAL_LOG
+  dont_log = false;
+#endif
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
@@ -3450,9 +3469,15 @@ browserstart:
   char answers[7][20];
 
 page:
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = true;
+  #endif
   display_Clear();
   println_Msg(F("Sorting..."));
   display_Update();
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = false;
+  #endif
 
   // If there are less than 7 entries, set count to that number so no empty options appear
   byte count = (currPage < numPages || page_layout.rem == 0) ? 7 : page_layout.rem;

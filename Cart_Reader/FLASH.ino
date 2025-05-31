@@ -498,16 +498,28 @@ void epromMenu() {
    Flash ID
  *****************************************/
 void printFlashSize(int index) {
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = true;
+  #endif
   display_Clear();
   print_Msg(F("Flashsize: "));
   print_Msg(index);
   println_Msg(F("MB"));
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = false;
+  #endif
 }
 
 void printFlashType(int index) {
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = true;
+  #endif
   display_Clear();
   print_Msg(F("Flashtype: "));
   println_Msg(index);
+  #ifdef ENABLE_GLOBAL_LOG
+  dont_log = false;
+  #endif
 }
 
 byte selectFlashtype(boolean option) {
