@@ -577,111 +577,170 @@ try {
 				return
 			}
 
-			if (-not (Test-Path $prefsPath)) {
-				Write-Host "preferences.txt file not found. Creating new file..." -ForegroundColor Yellow
-				$parentDir = Split-Path $prefsPath -Parent
-				if (-not (Test-Path $parentDir)) {
-					New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
-					Write-Host "Created directory: $parentDir" -ForegroundColor Green
-				}
-				$newFileContent = @(
-					"board=mega",
-					"custom_cpu=mega_atmega2560",
-					"serial.port=$selectedPort"
-				)
-				try {
-					[System.IO.File]::WriteAllLines($prefsPath, $newFileContent, [System.Text.UTF8Encoding]::new($false))
-					Write-Host "Created new preferences.txt with required settings:" -ForegroundColor Green
-					Write-Host "  board=mega" -ForegroundColor White
-					Write-Host "  custom_cpu=mega_atmega2560" -ForegroundColor White
-					Write-Host "  serial.port=$selectedPort" -ForegroundColor White
-				}
-				catch {
-					Write-Host "Error creating file: $($_.Exception.Message)" -ForegroundColor Red
-				}
-			}
-			else {
-				$content = Get-Content $prefsPath
-				Write-Host "Checking Arduino IDE preferences..." -ForegroundColor Green
-	
-				$targetBoard = "board=mega"
-				$targetCpu = "custom_cpu=mega_atmega2560"
-				$targetPort = "serial.port=$selectedPort"
+            # --- Build last.sketch0.path dynamically ---
+            $scriptDir = $null
+            if ($PSScriptRoot) {
+                $scriptDir = $PSScriptRoot
+            } elseif ($MyInvocation.MyCommand.Path) {
+                $scriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
+            } else {
+                $scriptDir = Get-Location
+            }
+            $sketchRelPath = "Arduino IDE\portable\sketchbook\Cart_Reader\Cart_Reader.ino"
+            $sketchFullPath = [System.IO.Path]::Combine($scriptDir, $sketchRelPath)
+            $sketchFullPath = [System.IO.Path]::GetFullPath($sketchFullPath)
+            $targetSketch = "last.sketch0.path=$sketchFullPath"
+            $targetSketchCount = "last.sketch.count=1"
 
-				$boardFound = $false
-				$cpuFound = $false
-				$portFound = $false
-				$boardCorrect = $false
-				$cpuCorrect = $false
-				$portCorrect = $false
-				$modified = $false
+            if (-not (Test-Path $prefsPath)) {
+                Write-Host "preferences.txt file not found. Creating new file..." -ForegroundColor Yellow
+                $parentDir = Split-Path $prefsPath -Parent
+                if (-not (Test-Path $parentDir)) {
+                    New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+                    Write-Host "Created directory: $parentDir" -ForegroundColor Green
+                }
+                $newFileContent = @(
+                    "board=mega",
+                    "custom_cpu=mega_atmega2560",
+                    "serial.port=$selectedPort",
+                    $targetSketch,
+                    $targetSketchCount
+                )
+                try {
+                    [System.IO.File]::WriteAllLines($prefsPath, $newFileContent, [System.Text.UTF8Encoding]::new($false))
+                    Write-Host "Created new preferences.txt with required settings:" -ForegroundColor Green
+                    Write-Host "  board=mega" -ForegroundColor White
+                    Write-Host "  custom_cpu=mega_atmega2560" -ForegroundColor White
+                    Write-Host "  serial.port=$selectedPort" -ForegroundColor White
+                    Write-Host "  $targetSketch" -ForegroundColor White
+                    Write-Host "  $targetSketchCount" -ForegroundColor White
+                }
+                catch {
+                    Write-Host "Error creating file: $($_.Exception.Message)" -ForegroundColor Red
+                }
+            }
+            else {
+                $content = Get-Content $prefsPath
+                Write-Host "Checking Arduino IDE preferences..." -ForegroundColor Green
 
-				foreach ($line in $content) {
-					if ($line -match "^board=") {
-						$boardFound = $true
-						if ($line -eq $targetBoard) { $boardCorrect = $true }
-					}
-					elseif ($line -match "^custom_cpu=") {
-						$cpuFound = $true
-						if ($line -eq $targetCpu) { $cpuCorrect = $true }
-					}
-					elseif ($line -match "^serial\.port=") {
-						$portFound = $true
-						if ($line -eq $targetPort) { $portCorrect = $true }
-					}
-				}
+                $targetBoard = "board=mega"
+                $targetCpu = "custom_cpu=mega_atmega2560"
+                $targetPort = "serial.port=$selectedPort"
+                $targetSketch = "last.sketch0.path=$sketchFullPath"
+                $targetSketchCount = "last.sketch.count=1"
 
-				$newContent = @()
-				foreach ($line in $content) {
-					if ($line -match "^board=" -and -not $boardCorrect) {
-						$newContent += $targetBoard
-						$modified = $true
-					}
-					elseif ($line -match "^custom_cpu=" -and -not $cpuCorrect) {
-						$newContent += $targetCpu
-						$modified = $true
-					}
-					elseif ($line -match "^serial\.port=") {
-						if (-not $portCorrect) {
-							$newContent += $targetPort
-							$modified = $true
-						} else {
-							$newContent += $line
-						}
-					}
-					else {
-						$newContent += $line
-					}
-				}
-				if (-not $boardFound) {
-					$newContent += $targetBoard
-					$modified = $true
-				}
-				if (-not $cpuFound) {
-					$newContent += $targetCpu
-					$modified = $true
-				}
-				if (-not $portFound) {
-					$newContent += $targetPort
-					$modified = $true
-				}
+                $boardFound = $false
+                $cpuFound = $false
+                $portFound = $false
+                $sketchFound = $false
+                $sketchCountFound = $false
+                $boardCorrect = $false
+                $cpuCorrect = $false
+                $portCorrect = $false
+                $sketchCorrect = $false
+                $sketchCountCorrect = $false
+                $modified = $false
 
-				if ($modified) {
-					try {
-						[System.IO.File]::WriteAllLines($prefsPath, $newContent, [System.Text.UTF8Encoding]::new($false))
-						Write-Host "`nChanges saved successfully!" -ForegroundColor Green
-						Write-Host "Updated preferences:" -ForegroundColor Green
-						Write-Host "  $targetBoard" -ForegroundColor White
-						Write-Host "  $targetCpu" -ForegroundColor White
-						Write-Host "  $targetPort" -ForegroundColor White
-					}
-					catch {
-						Write-Host "`nError writing to file: $($_.Exception.Message)" -ForegroundColor Red
-					}
-				} else {
-					Write-Host "`nNo changes needed - all settings are correct!" -ForegroundColor Green
-				}
-			}
+                foreach ($line in $content) {
+                    if ($line -match "^board=") {
+                        $boardFound = $true
+                        if ($line -eq $targetBoard) { $boardCorrect = $true }
+                    }
+                    elseif ($line -match "^custom_cpu=") {
+                        $cpuFound = $true
+                        if ($line -eq $targetCpu) { $cpuCorrect = $true }
+                    }
+                    elseif ($line -match "^serial\.port=") {
+                        $portFound = $true
+                        if ($line -eq $targetPort) { $portCorrect = $true }
+                    }
+                    elseif ($line -match "^last\.sketch0\.path=") {
+                        $sketchFound = $true
+                        if ($line -eq $targetSketch) { $sketchCorrect = $true }
+                    }
+                    elseif ($line -match "^last\.sketch\.count=") {
+                        $sketchCountFound = $true
+                        if ($line -eq $targetSketchCount) { $sketchCountCorrect = $true }
+                    }
+                }
+
+                $newContent = @()
+                foreach ($line in $content) {
+                    if ($line -match "^board=" -and -not $boardCorrect) {
+                        $newContent += $targetBoard
+                        $modified = $true
+                    }
+                    elseif ($line -match "^custom_cpu=" -and -not $cpuCorrect) {
+                        $newContent += $targetCpu
+                        $modified = $true
+                    }
+                    elseif ($line -match "^serial\.port=") {
+                        if (-not $portCorrect) {
+                            $newContent += $targetPort
+                            $modified = $true
+                        } else {
+                            $newContent += $line
+                        }
+                    }
+                    elseif ($line -match "^last\.sketch0\.path=") {
+                        if (-not $sketchCorrect) {
+                            $newContent += $targetSketch
+                            $modified = $true
+                        } else {
+                            $newContent += $line
+                        }
+                    }
+                    elseif ($line -match "^last\.sketch\.count=") {
+                        if (-not $sketchCountCorrect) {
+                            $newContent += $targetSketchCount
+                            $modified = $true
+                        } else {
+                            $newContent += $line
+                        }
+                    }
+                    else {
+                        $newContent += $line
+                    }
+                }
+                if (-not $boardFound) {
+                    $newContent += $targetBoard
+                    $modified = $true
+                }
+                if (-not $cpuFound) {
+                    $newContent += $targetCpu
+                    $modified = $true
+                }
+                if (-not $portFound) {
+                    $newContent += $targetPort
+                    $modified = $true
+                }
+                if (-not $sketchFound) {
+                    $newContent += $targetSketch
+                    $modified = $true
+                }
+                if (-not $sketchCountFound) {
+                    $newContent += $targetSketchCount
+                    $modified = $true
+                }
+
+                if ($modified) {
+                    try {
+                        [System.IO.File]::WriteAllLines($prefsPath, $newContent, [System.Text.UTF8Encoding]::new($false))
+                        Write-Host "`nChanges saved successfully!" -ForegroundColor Green
+                        Write-Host "Updated preferences:" -ForegroundColor Green
+                        Write-Host "  $targetBoard" -ForegroundColor White
+                        Write-Host "  $targetCpu" -ForegroundColor White
+                        Write-Host "  $targetPort" -ForegroundColor White
+                        Write-Host "  $targetSketch" -ForegroundColor White
+                        Write-Host "  $targetSketchCount" -ForegroundColor White
+                    }
+                    catch {
+                        Write-Host "`nError writing to file: $($_.Exception.Message)" -ForegroundColor Red
+                    }
+                } else {
+                    Write-Host "`nNo changes needed - all settings are correct!" -ForegroundColor Green
+                }
+            }
 
 			Start-Sleep -Milliseconds 500
 			Write-Host "Launching Arduino IDE..." -ForegroundColor Green
