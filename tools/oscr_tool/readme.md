@@ -1,4 +1,4 @@
-![oscr_tool](https://github.com/user-attachments/assets/35118365-feb8-47ef-bc9c-a8b578feca25)
+![oscr_tool](https://github.com/user-attachments/assets/8cd62013-c8b5-43fb-90f5-64531e117fc0)
 
 Copy oscr_tool.exe to the root directory of the portable release.
 
