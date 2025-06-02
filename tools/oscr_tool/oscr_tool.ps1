@@ -685,11 +685,25 @@ try {
             $comPortDropdown.Items.Clear()
             $comPortPorts = Get-ComPorts
             $comPortDropdown.Items.AddRange($comPortPorts)
-            if ($comPortPorts.Count -gt 0 -and $comPortPorts[0] -ne "No COM ports found") {
-                $comPortDropdown.SelectedIndex = 0
+            if ($comPortPorts.Count -gt 0 -and $comPortPorts -notcontains "No COM ports found") {
+				$statusLabel.ForeColor = [System.Drawing.Color]::Green
+				$comPortDropdown.SelectedIndex = 0
+				$statusLabel.Text = "COM ports refreshed"
             }
-            $statusLabel.Text = "COM ports refreshed"
-            $statusLabel.ForeColor = [System.Drawing.Color]::Green
+			else {
+				$statusLabel.ForeColor = [System.Drawing.Color]::Red	
+				$comPortDropdown.SelectedIndex = 0
+				$statusLabel.Text = "COM ports refreshed"
+				# Ask user if they want to install CH341 drivers
+				$result = [System.Windows.Forms.MessageBox]::Show("No COM ports found. Would you like to install CH341 drivers?", "Install Drivers", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question)
+				if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+					try {
+						Start-Process -FilePath ".\CH341 Drivers\SETUP.EXE" -Verb RunAs
+					} catch {
+						[System.Windows.Forms.MessageBox]::Show("Error launching driver installer:`n$($_.Exception.Message)", "Driver Install Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+					}
+				}
+			}         
         } catch {
             [System.Windows.Forms.MessageBox]::Show("Error refreshing COM ports:`n$($_.Exception.Message)", "Refresh Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
         }
