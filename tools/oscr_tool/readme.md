@@ -1,8 +1,8 @@
-![oscr_tool](https://github.com/user-attachments/assets/7ab1c3ad-3fdf-463e-808c-54c10274b5d9)
+![oscr_tool](https://github.com/user-attachments/assets/15cb9c9a-acc5-44a7-802b-1f618fe3bf72)
 
-Move oscr_tool.ps1 and launch_oscr_tool.bat to the root directory of the portable release and double click on launch_oscr_tool.bat to start it.
+Copy the files to the root directory of the portable release and double click on launch_oscr_tool.bat to start it.
 
-![oscr_location](https://github.com/user-attachments/assets/d221ef68-62f8-44d4-bb10-3962c20a868c)
+![launch](https://github.com/user-attachments/assets/0409c0ec-2ab4-46f1-b9c1-931831f9251b)
 
 You can also create an apply_config.txt with the settings you always want to have applied, see example apply_config.txt.
 
