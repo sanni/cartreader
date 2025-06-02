@@ -1,6 +1,6 @@
 ![oscr_tool](https://github.com/user-attachments/assets/8cd62013-c8b5-43fb-90f5-64531e117fc0)
 
-Copy oscr_tool.exe to the root directory of the portable release.
+Copy oscr_tool.ps1 to the root directory of the portable release, right-click and select Run with PowerShell.
 
 ![oscr_tool_copy](https://github.com/user-attachments/assets/677cd1ec-4172-4bfa-85d2-40fdbc79e575)
 

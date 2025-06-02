@@ -288,15 +288,19 @@ try {
 
     $form = New-Object Windows.Forms.Form
     $form.Text = "Open Source Cartridge Reader"
-    $form.Size = New-Object Drawing.Size(760, 850)
+    $form.Size = New-Object Drawing.Size(760, 920)
     $form.StartPosition = "CenterScreen"
     $form.Topmost = $false
-    $form.MinimumSize = New-Object Drawing.Size(760, 600)
+    $form.MinimumSize = New-Object Drawing.Size(760, 920)
 
-    # Disable horizontal scrolling by setting AutoScroll to true and hiding horizontal scroll
+    # Remove scrollbars from the main panel
     $panel = New-Object Windows.Forms.Panel
-    $panel.AutoScroll = $true
+    $panel.AutoScroll = $false
     $panel.Dock = "Fill"
+    $panel.HorizontalScroll.Enabled = $false
+    $panel.HorizontalScroll.Visible = $false
+    $panel.VerticalScroll.Enabled = $false
+    $panel.VerticalScroll.Visible = $true
 
     function New-Grid {
         param($rowCount)
@@ -493,8 +497,14 @@ try {
     $labelModule.Size = New-Object Drawing.Size(700, 20)
     $labelModule.Font = New-Object Drawing.Font("Microsoft Sans Serif", 10, [System.Drawing.FontStyle]::Bold)
 
-    $gridModule = New-Grid -rowCount $moduleSet.Count
+    # --- Only the module grid should scroll ---
+    # Set a fixed height for the module grid and enable vertical scrolling
+    $gridModuleVisibleRows = 12
+    $gridModule = New-Grid -rowCount $gridModuleVisibleRows
     $gridModule.Location = New-Object Drawing.Point(10, ($labelModule.Location.Y + 25))
+    $gridModule.Height = 23 + ($gridModuleVisibleRows * 22) + 5
+    $gridModule.ScrollBars = [System.Windows.Forms.ScrollBars]::Vertical
+    $gridModule.Anchor = "Top, Left, Right"
 
     # Add tooltip functionality to module grid
     $gridModule.add_CellMouseEnter({
@@ -1234,15 +1244,14 @@ try {
             [System.Windows.Forms.MessageBox]::Show($errorMessage, "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
         }
     })
-    $form.Controls.Add($btnCopyToSD)
 
     # Enable vertical scrolling for the panel content
-    $panel.AutoScroll = $true
+    $panel.AutoScroll = $false
     $panel.HorizontalScroll.Enabled = $false
     $panel.HorizontalScroll.Visible = $false
 
     $panel.Controls.AddRange(@(
-        $comPortDropdown, $btnRefreshCOM, $btnUpdate, $btnBackup, $btnApply, $btnArduinoIDE, $btnRestore, $statusLabel,
+        $comPortDropdown, $btnRefreshCOM, $btnUpdate, $btnBackup, $btnApply, $btnArduinoIDE, $btnRestore, $btnCopyToSD, $statusLabel,
         $labelHardware, $gridHardware,
         $labelOption, $gridOption,
         $labelModule, $gridModule
