@@ -322,7 +322,7 @@ try {
         $colDefine.Name = "Define"
         $colDefine.HeaderText = "Define"
         $colDefine.ReadOnly = $true
-        $colDefine.Width = 420
+        $colDefine.Width = 454
 
         $colFuture = New-Object Windows.Forms.DataGridViewComboBoxColumn
         $colFuture.Name = "Will Be After Apply"
@@ -418,7 +418,15 @@ try {
     $btnRestore.Location = New-Object Drawing.Point(550, 10)
     $btnRestore.BackColor = [System.Drawing.Color]::LightCoral
     $btnRestore.FlatStyle = "Flat"
-
+	
+    # --- Copy to SD Button ---
+    $btnCopyToSD = New-Object Windows.Forms.Button
+    $btnCopyToSD.Text = "Copy to SD"
+    $btnCopyToSD.Size = New-Object Drawing.Size(80, 35)
+    $btnCopyToSD.Location = New-Object Drawing.Point(640, 10)
+    $btnCopyToSD.BackColor = [System.Drawing.Color]::LightCyan
+    $btnCopyToSD.FlatStyle = "Flat"
+	
     # Create tooltips for buttons
     $tooltip = New-Object Windows.Forms.ToolTip
     $tooltip.SetToolTip($btnRefreshCOM, "Searches for available COM ports")
@@ -427,6 +435,7 @@ try {
     $tooltip.SetToolTip($btnApply, "Writes the changes colored in red to the config.h")
     $tooltip.SetToolTip($btnArduinoIDE, "Launches the Arduino IDE so you can compile and flash the code")
     $tooltip.SetToolTip($btnRestore, "Restores the saved firmware in case something went wrong")
+    $tooltip.SetToolTip($btnCopyToSD, "Copies the game databases to the SD card and hides them")
 
     # Status label
     $statusLabel = New-Object Windows.Forms.Label
@@ -727,7 +736,8 @@ try {
             Invoke-WebRequest "https://github.com/sanni/cartreader/archive/refs/heads/master.zip" -OutFile "master.zip"
 
             # Extracting
-            Expand-Archive -Path "master.zip" -DestinationPath "master"
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            [System.IO.Compression.ZipFile]::ExtractToDirectory("master.zip", "master")
 
             # Moving to sub-folders
             Move-Item "master\cartreader-master\Cart_Reader" "Arduino IDE\portable\sketchbook\Cart_Reader"
@@ -744,8 +754,6 @@ try {
             if (Test-Path $licenseCopy) { Remove-Item $licenseCopy -Force }
             if (Test-Path "master") { Remove-Item "master" -Recurse -Force }
             if (Test-Path "master.zip") { Remove-Item "master.zip" -Force }
-
-            Clear-Host
 
             # Reload config data after update
             $script:configDefs = Get-ConfigData
@@ -861,6 +869,7 @@ try {
         }
     })
 
+    # Apply button click handler
     $btnApply.Add_Click({
         try {
             $newConfigDefs = @{}
@@ -1079,6 +1088,153 @@ try {
             [System.Windows.Forms.MessageBox]::Show("Error applying changes:`n$($_.Exception.Message)", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
         }
     })
+
+    # Copy to SD button click handler
+    $btnCopyToSD.Add_Click({
+        try {
+            # Get current script directory more defensively
+            $scriptDir = $null
+            if ($PSScriptRoot) {
+                $scriptDir = $PSScriptRoot
+            } elseif ($MyInvocation.MyCommand.Path) {
+                $scriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
+            } else {
+                $scriptDir = Get-Location
+            }
+
+            # Ask user to select SD card root
+            $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
+            $folderBrowser.Description = "Select the root of your SD card"
+            $folderBrowser.ShowNewFolderButton = $false
+            $folderBrowser.RootFolder = [System.Environment+SpecialFolder]::MyComputer
+
+            $dialogResult = $folderBrowser.ShowDialog()
+
+            if ($dialogResult -eq [System.Windows.Forms.DialogResult]::OK) {
+                $sdPath = $folderBrowser.SelectedPath
+
+                # Validate SD path
+                if (-not $sdPath -or $sdPath.Trim() -eq "") {
+                    [System.Windows.Forms.MessageBox]::Show("No SD card path selected.", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+                    return
+                }
+
+                # Build source path
+                $sourcePath = $null
+                if ($scriptDir) {
+                    $sourcePath = [System.IO.Path]::Combine($scriptDir, "SD Card")
+                }
+
+                if (-not $sourcePath -or $sourcePath.Trim() -eq "") {
+                    [System.Windows.Forms.MessageBox]::Show("Could not determine source path.", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+                    return
+                }
+
+                # Check if source folder exists
+                if (-not (Test-Path -Path $sourcePath -PathType Container)) {
+                    [System.Windows.Forms.MessageBox]::Show("The folder 'SD Card' was not found at: $sourcePath", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+                    return
+                }
+
+                # Get all items recursively, excluding config.txt
+                $allItems = @()
+
+                try {
+                    $allItems = Get-ChildItem -Path $sourcePath -Recurse -Force -ErrorAction Stop | Where-Object {
+                        $_.Name.ToLower() -ne "config.txt"
+                    }
+                } catch {
+                    [System.Windows.Forms.MessageBox]::Show("Failed to scan source directory: $($_.Exception.Message)", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+                    return
+                }
+
+                if (-not $allItems -or $allItems.Count -eq 0) {
+                    [System.Windows.Forms.MessageBox]::Show("No files found to copy.", "Information", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+                    return
+                }
+
+                $fileItems = $allItems | Where-Object { -not $_.PSIsContainer }
+                $totalFiles = if ($fileItems) { $fileItems.Count } else { 0 }
+                $currentFile = 0
+
+                # Process each item
+                foreach ($item in $allItems) {
+                    try {
+                        if (-not $item -or -not $item.FullName) {
+                            Write-Host "Skipping invalid item" -ForegroundColor Yellow
+                            continue
+                        }
+
+                        # Calculate relative path using .NET methods for better reliability
+                        $itemFullPath = $item.FullName
+                        $sourceFullPath = (Get-Item $sourcePath).FullName
+
+                        if (-not $itemFullPath.StartsWith($sourceFullPath)) {
+                            Write-Host "Skipping item outside source path: $itemFullPath" -ForegroundColor Yellow
+                            continue
+                        }
+
+                        $relativePath = $itemFullPath.Substring($sourceFullPath.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar)
+
+                        if (-not $relativePath -or $relativePath.Trim() -eq "") {
+                            Write-Host "Skipping item with empty relative path" -ForegroundColor Yellow
+                            continue
+                        }
+
+                        $targetPath = [System.IO.Path]::Combine($sdPath, $relativePath)
+
+                        if ($item.PSIsContainer) {
+                            # Create directory
+                            if (-not (Test-Path -Path $targetPath -PathType Container)) {
+                                New-Item -ItemType Directory -Path $targetPath -Force -ErrorAction Stop | Out-Null
+                                Write-Host "Created directory: $relativePath" -ForegroundColor Blue
+                            }
+                        } else {
+                            # Copy file
+                            $targetDir = [System.IO.Path]::GetDirectoryName($targetPath)
+
+                            if ($targetDir -and -not (Test-Path -Path $targetDir -PathType Container)) {
+                                New-Item -ItemType Directory -Path $targetDir -Force -ErrorAction Stop | Out-Null
+                            }
+
+                            Copy-Item -Path $itemFullPath -Destination $targetPath -Force -ErrorAction Stop
+
+                            # Set file as hidden
+                            if (Test-Path -Path $targetPath -PathType Leaf) {
+                                try {
+                                    $file = Get-Item -Path $targetPath -Force -ErrorAction SilentlyContinue
+                                    if ($file) {
+                                        $file.Attributes = $file.Attributes -bor [System.IO.FileAttributes]::Hidden
+                                    }
+                                } catch {
+                                    Write-Host "Warning: Could not hide file $relativePath" -ForegroundColor Yellow
+                                }
+                            }
+
+                            $currentFile++
+                            if ($totalFiles -gt 0) {
+                                Write-Progress -Activity "Copying to SD Card" -Status "File $currentFile of $totalFiles" -PercentComplete (($currentFile / $totalFiles) * 100)
+                            }
+                            Write-Host "Copied and hid: $relativePath"
+                        }
+                    } catch {
+                        Write-Host "Failed to process item: $($item.Name) - $($_.Exception.Message)" -ForegroundColor Red
+                    }
+                }
+
+                Write-Progress -Activity "Copying to SD Card" -Completed
+                Write-Host "Copy operation completed successfully!" 
+            } else {
+                Write-Host "User cancelled SD card selection" -ForegroundColor Yellow
+            }
+        } catch {
+            $errorMessage = "Copy operation failed: $($_.Exception.Message)"
+            Write-Host $errorMessage -ForegroundColor Red
+            Write-Host "Stack trace: $($_.ScriptStackTrace)" -ForegroundColor Red
+            [System.Windows.Forms.MessageBox]::Show($errorMessage, "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+        }
+    })
+    $form.Controls.Add($btnCopyToSD)
 
     # Enable vertical scrolling for the panel content
     $panel.AutoScroll = $true
