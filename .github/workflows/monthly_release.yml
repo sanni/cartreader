@@ -72,6 +72,8 @@ jobs:
           move master\cartreader-master\Cart_Reader "Arduino IDE\portable\sketchbook" >nul
           move master\cartreader-master\sd >nul
           move master\cartreader-master\LICENSE LICENSE.txt >nul
+          move master\cartreader-master\tools\oscr_tool\launch_oscr_tool.bat >nul
+          move master\cartreader-master\tools\oscr_tool\oscr_tool.ps1 >nul
           rename sd "SD Card"
           IF EXIST "SD Card\README.md" del "SD Card\README.md"
           IF EXIST "Arduino IDE\portable\sketchbook\Cart_Reader\README.md" del "Arduino IDE\portable\sketchbook\Cart_Reader\README.md"
@@ -112,100 +114,7 @@ jobs:
             echo.
             echo More info: https://github.com/sanni/cartreader/wiki
           ) > README.txt
-
-          echo Creating RESTORE.bat
-          (
-            echo @echo off
-            echo echo Please unplug any Arduinos or similar devices that are not the OSCR you want to restore.
-            echo pause
-            echo echo.
-            echo pnputil /enum-devices /class "Ports"
-            echo set /p "comportnum=Enter COM Port number of connected OSCR, usually displayed as USB-SERIAL CH340 (COM?), e.g. 8: "
-            echo echo.
-            echo echo Restoring backup of previously saved firmware...
-            echo "Arduino IDE\hardware\tools\avr\bin\avrdude.exe" -C "Arduino IDE\hardware\tools\avr\etc\avrdude.conf" -D -c wiring -P COM%%comportnum%% -b 115200 -p m2560 -U flash:w:backup.hex 
-            echo pause 
-          ) > RESTORE.bat
-
-          echo Creating BACKUP.bat
-          (
-            echo @echo off
-            echo echo Please unplug any Arduinos or similar devices that are not the OSCR you want to backup.
-            echo pause
-            echo echo.
-            echo pnputil /enum-devices /class "Ports"
-            echo set /p "comportnum=Enter COM Port number of connected OSCR, usually displayed as USB-SERIAL CH340 (COM?), e.g. 8: "
-            echo echo.
-            echo echo Creating backup of current firmware...
-            echo "Arduino IDE\hardware\tools\avr\bin\avrdude.exe" -C "Arduino IDE\hardware\tools\avr\etc\avrdude.conf" -c wiring -P COM%%comportnum%% -b 115200 -p m2560 -U flash:r:backup.hex
-            echo pause 
-          ) > BACKUP.bat
-
-          echo Creating UPDATE.bat
-          (
-            echo @echo off
-            echo.
-            echo rem echo Delete old version
-            echo IF EXIST "Arduino IDE\portable\sketchbook\Cart_Reader" rmdir "Arduino IDE\portable\sketchbook\Cart_Reader" /s /q
-            echo IF EXIST "SD Card" rmdir "SD Card" /s /q
-            echo IF EXIST master rmdir master /s /q
-            echo IF EXIST master.zip del master.zip /q
-            echo IF EXIST LICENSE.txt del LICENSE.txt /q
-            echo.
-            echo echo Downloading latest OSCR version from github.com/sanni/cartreader
-            echo powershell Invoke-WebRequest https://github.com/sanni/cartreader/archive/refs/heads/master.zip -OutFile master.zip
-            echo rem Extracting
-            echo powershell expand-archive master.zip
-            echo.
-            echo rem Moving to sub-folders
-            echo move master\cartreader-master\Cart_Reader "Arduino IDE\portable\sketchbook" ^>nul
-            echo move master\cartreader-master\sd ^>nul
-            echo move master\cartreader-master\LICENSE LICENSE.txt ^>nul
-            echo rename sd "SD Card"
-            echo.
-            echo rem Clean-up
-            echo IF EXIST "SD Card\README.md" del "SD Card\README.md"
-            echo IF EXIST "Arduino IDE\portable\sketchbook\Cart_Reader\README.md" del "Arduino IDE\portable\sketchbook\Cart_Reader\README.md"
-            echo IF EXIST "Arduino IDE\portable\sketchbook\Cart_Reader\LICENSE.txt" del "Arduino IDE\portable\sketchbook\Cart_Reader\LICENSE.txt"
-            echo IF EXIST master rmdir master /s /q
-            echo IF EXIST master.zip del master.zip /q
-            echo cls
-            echo.
-            echo rem Start Arduino IDE
-            echo "Arduino IDE\arduino.exe" "Arduino IDE\portable\sketchbook\Cart_Reader\Cart_Reader.ino"
-            echo.
-            echo echo README
-            echo echo.
-            echo echo First go to "Tools" then "Port" and select your Arduino's COM Port
-            echo echo If you can't find the Arduino there you need to install the CH341 drivers
-            echo echo.
-            echo echo Now select the "Config.h" tab and define your HW version by removing // in front of e.g. "#define HW5"
-            echo echo There you can also remove // in front of e.g. "//#define ENABLE_C64" to enable more systems
-            echo echo.
-            echo echo Select "Sketch" then "Upload" and wait until the flashing is done
-            echo echo If you get an error message about exceeding available space you need to disable some of the systems
-            echo echo.
-            echo echo Next copy the content of the "SD Card" folder to your SD card
-            echo echo Finally mark the *.txt files on the SD as hidden so they are not visible in the OSCRs file browser
-            echo echo.
-            echo echo You can find more detailed instructions in the Wiki
-            echo echo https://github.com/sanni/cartreader/wiki
-            echo echo.
-            echo.
-            echo set /p driverinstall="Do you want to install the CH341 Drivers? (Y/N)"
-            echo if %%driverinstall%%==Y "CH341 Drivers\SETUP.exe"
-            echo if %%driverinstall%%==y "CH341 Drivers\SETUP.exe"
-            echo echo.
-            echo.
-            echo set /p makebackup="Do you want to make a backup of your current firmware? (Y/N)"
-            echo echo.
-            echo if %%makebackup%%==Y "BACKUP.bat"
-            echo if %%makebackup%%==y "BACKUP.bat"
-            echo echo.
-            echo.
-            echo set /p close="Press any key to close this window"
-          ) > UPDATE.bat
-          
+       
           echo Extracting version from OSCR.cpp
           powershell -Command "$pattern = 'FSTRING_VERSION\[\] = \"(.*)\";'; $line = Select-String -Path 'Arduino IDE\portable\sketchbook\Cart_Reader\OSCR.cpp' -Pattern $pattern | Select-Object -First 1; if (-not $line) { throw 'Version string not found in OSCR.cpp' }; $version = [regex]::Match($line.Line, $pattern).Groups[1].Value; Set-Content -Path version.txt -Value $version"
 
