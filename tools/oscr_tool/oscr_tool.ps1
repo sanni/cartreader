@@ -6,7 +6,200 @@ $ErrorActionPreference = "Stop"
 try {
     $configPath = "Arduino IDE\portable\sketchbook\Cart_Reader\config.h"
     $applyPath = "apply_config.txt"
+	
+	function Get-FileWithProgress {
+        param (
+            [Parameter(Mandatory = $true)][string]$Url,
+            [Parameter(Mandatory = $true)][string]$Destination
+        )
 
+        Add-Type -AssemblyName System.Net.Http
+
+        Write-Host "Downloading: $Url"
+        $client = New-Object System.Net.Http.HttpClient
+        $response = $client.GetAsync($Url, [System.Net.Http.HttpCompletionOption]::ResponseHeadersRead).Result
+        $total = $response.Content.Headers.ContentLength
+        $stream = $response.Content.ReadAsStreamAsync().Result
+
+        $fileStream = [System.IO.File]::OpenWrite($Destination)
+        $buffer = New-Object byte[] 8192
+        $read = 0
+        $totalRead = 0
+        $lastPercent = -1
+
+        do {
+            $read = $stream.Read($buffer, 0, $buffer.Length)
+            if ($read -gt 0) {
+                $fileStream.Write($buffer, 0, $read)
+                $totalRead += $read
+                if ($total) {
+                    $percent = [math]::Floor(($totalRead / $total) * 100)
+                    if ($percent -ne $lastPercent) {
+                        Write-Progress -Activity "Downloading" -Status "$percent% complete" -PercentComplete $percent
+                        $lastPercent = $percent
+                    }
+                }
+            }
+        } while ($read -gt 0)
+
+        $fileStream.Close()
+        $stream.Close()
+        Write-Progress -Activity "Downloading" -Completed
+        Write-Host "Download complete: $Destination"
+    }
+
+    function Expand-Zip {
+        param (
+            [string]$ZipPath,
+            [string]$OutPath
+        )
+        Expand-Archive -Path $ZipPath -DestinationPath $OutPath -Force
+    }
+
+    function Update-OSCR {
+        param()
+        try {
+            $root = $PSScriptRoot
+            Set-Location $root
+
+            # Check if Arduino IDE folder exists to skip Steps 1-3
+            if (Test-Path "$root\Arduino IDE") {
+                Write-Host "Arduino IDE folder already exists. Skipping Steps 1, 2, 3."
+            } else {
+                ### Step 1: Arduino IDE ###
+                Write-Host "Step 1: Downloading Arduino IDE..."
+                $ideZip = Join-Path $root "arduino-1.8.19-windows.zip"
+                Get-FileWithProgress -Url "https://downloads.arduino.cc/arduino-1.8.19-windows.zip" -Destination $ideZip
+
+                Write-Host "Step 2: Verifying SHA256..."
+                $expectedHash = "C704A821089EAB2588F1DEAE775916219B1517FEBD1DD574FF29958DCA873945"
+                $hash = (Get-FileHash $ideZip -Algorithm SHA256).Hash
+                if ($hash -ne $expectedHash) {
+                    Write-Error "Checksum mismatch! Aborting."
+                    exit 1
+                } else {
+                    Write-Host "Checksum OK."
+                }
+
+                Write-Host "Step 3: Extracting Arduino IDE..."
+                Expand-Zip -ZipPath $ideZip -OutPath $root
+                Remove-Item $ideZip
+
+                Rename-Item -Path "$root\arduino-1.8.19" -NewName "Arduino IDE"
+            }
+
+            ### Step 4: OSCR Sketch ###
+            Write-Host "Step 4: Downloading OSCR sketch..."
+            $sketchZip = Join-Path $root "master.zip"
+            Get-FileWithProgress -Url "https://github.com/sanni/cartreader/archive/refs/heads/master.zip" -Destination $sketchZip
+            Expand-Zip -ZipPath $sketchZip -OutPath $root
+            Remove-Item $sketchZip
+
+            $sketchRoot = Join-Path $root "cartreader-master"
+
+            # Delete existing Cart_Reader folder if it exists before moving the new one
+            $cartReaderDest = "$root\Arduino IDE\portable\sketchbook\Cart_Reader"
+            if (Test-Path $cartReaderDest) {
+                Write-Host "Existing Cart_Reader folder found. Removing..."
+                Remove-Item $cartReaderDest -Recurse -Force
+            }
+
+            # Delete existing SD Card folder if it exists before moving
+            $sdCardDest = "$root\SD Card"
+            if (Test-Path $sdCardDest) {
+                Write-Host "Existing SD Card folder found. Removing..."
+                Remove-Item $sdCardDest -Recurse -Force
+            }
+
+            # Delete existing libtemp folder if it exists before moving
+            $libtempDest = "$root\libtemp"
+            if (Test-Path $libtempDest) {
+                Write-Host "Existing libtemp folder found. Removing..."
+                Remove-Item $libtempDest -Recurse -Force
+            }
+
+            # Delete existing libraries folder if it exists before moving
+            $librariesDest = "$root\Arduino IDE\portable\sketchbook\libraries"
+            if (Test-Path $librariesDest) {
+                Write-Host "Existing libraries folder found. Removing..."
+                Remove-Item $librariesDest -Recurse -Force
+            }
+
+            # Make sure libraries folder exists (you already have this)
+            New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
+
+            Move-Item "$sketchRoot\Cart_Reader" $cartReaderDest
+            Move-Item "$sketchRoot\sd" $sdCardDest
+            Move-Item "$sketchRoot\LICENSE" "$root\LICENSE.txt" -Force
+            Move-Item "$sketchRoot\tools\oscr_tool\launch_oscr_tool.bat" "$root" -Force
+            Move-Item "$sketchRoot\tools\oscr_tool\oscr_tool.ps1" "$root" -Force
+
+            Remove-Item "$sdCardDest\README.md","$cartReaderDest\README.md","$cartReaderDest\LICENSE.txt" -ErrorAction SilentlyContinue
+            Remove-Item "$sketchRoot" -Recurse -Force
+
+            ### Step 5: Libraries ###
+            Write-Host "Step 5: Downloading Arduino libraries..."
+            $libraries = @(
+                "greiman/SdFat",
+                "olikraus/U8g2_Arduino",
+                "adafruit/Adafruit_NeoPixel",
+                "mathertel/RotaryEncoder",
+                "etherkit/Si5351Arduino",
+                "adafruit/RTClib",
+                "adafruit/Adafruit_BusIO",
+                "PaulStoffregen/FreqCount"
+            )
+
+            foreach ($lib in $libraries) {
+                $zipFile = "libtemp.zip"
+                $zipPath = Join-Path $root $zipFile
+                Get-FileWithProgress -Url "https://github.com/$lib/archive/refs/heads/master.zip" -Destination $zipPath
+                Expand-Zip -ZipPath $zipPath -OutPath "$root\libtemp"
+                $libName = $lib.Split('/')[1]
+                Move-Item "$root\libtemp\$libName-master" "$root\Arduino IDE\portable\sketchbook\libraries" -Force
+                Remove-Item "$zipPath" -Force
+                Remove-Item "$root\libtemp" -Recurse -Force
+            }
+
+            ### Step 6: CH341 Drivers ###
+            Write-Host "Step 6: Downloading CH341 driver..."
+			# Delete existing CH341 Drivers folder if it exists before moving
+            $CH341Dest = "$root\CH341 Drivers"
+            if (Test-Path $CH341Dest) {
+                Write-Host "Existing CH341 Drivers folder found. Removing..."
+                Remove-Item $CH341Dest -Recurse -Force
+            }
+            $drvZip = Join-Path $root "drivers.zip"
+            Get-FileWithProgress -Url "https://www.wch.cn/download/file?id=5" -Destination $drvZip
+            Expand-Zip -ZipPath $drvZip -OutPath "$root\drivers"
+            Move-Item "$root\drivers\CH341SER" "$root\CH341 Drivers" -Force
+            Remove-Item "$root\drivers" -Recurse -Force
+            Remove-Item $drvZip -Force
+
+            ### Step 7: Optimize U8g2 ###
+            Write-Host "Step 7: Optimizing U8g2 for size..."
+            $u8g2Header = "$root\Arduino IDE\portable\sketchbook\libraries\U8g2_Arduino-master\src\clib\u8g2.h"
+
+            (Get-Content $u8g2Header) `
+                -replace '#define U8G2_16BIT', '//#define U8G2_16BIT' `
+                -replace '#define U8G2_WITH_HVLINE_SPEED_OPTIMIZATION', '//#define U8G2_WITH_HVLINE_SPEED_OPTIMIZATION' `
+                -replace '#define U8G2_WITH_INTERSECTION', '//#define U8G2_WITH_INTERSECTION' `
+                -replace '#define U8G2_WITH_CLIP_WINDOW_SUPPORT', '//#define U8G2_WITH_CLIP_WINDOW_SUPPORT' `
+                -replace '#define U8G2_WITH_FONT_ROTATION', '//#define U8G2_WITH_FONT_ROTATION' `
+                -replace '#define U8G2_WITH_UNICODE', '//#define U8G2_WITH_UNICODE' |
+            Set-Content -Encoding ASCII $u8g2Header
+
+            Write-Host "DONE. Portable Arduino IDE for OSCR is ready."
+        }
+        catch {
+            Write-Host "Error. Update failed."
+        }
+    }
+
+    if (-not (Test-Path $configPath)) {
+		Write-Host "Portable Arduino IDE for OSCR not found."
+        Update-OSCR
+    }
     if (-not (Test-Path $configPath)) {
         throw "Missing config.h at $configPath"
     }
@@ -422,7 +615,7 @@ try {
     $btnRestore.Location = New-Object Drawing.Point(550, 10)
     $btnRestore.BackColor = [System.Drawing.Color]::LightCoral
     $btnRestore.FlatStyle = "Flat"
-	
+
     # --- Copy to SD Button ---
     $btnCopyToSD = New-Object Windows.Forms.Button
     $btnCopyToSD.Text = "Copy to SD"
@@ -430,7 +623,7 @@ try {
     $btnCopyToSD.Location = New-Object Drawing.Point(640, 10)
     $btnCopyToSD.BackColor = [System.Drawing.Color]::LightCyan
     $btnCopyToSD.FlatStyle = "Flat"
-	
+
     # Create tooltips for buttons
     $tooltip = New-Object Windows.Forms.ToolTip
     $tooltip.SetToolTip($btnRefreshCOM, "Searches for available COM ports")
@@ -794,35 +987,7 @@ try {
             $statusLabel.ForeColor = [System.Drawing.Color]::Orange
             $statusLabel.Refresh()
 
-            Write-Host "Delete old version"
-            if (Test-Path "Arduino IDE\portable\sketchbook\Cart_Reader") { Remove-Item "Arduino IDE\portable\sketchbook\Cart_Reader" -Recurse -Force }
-            if (Test-Path "SD Card") { Remove-Item "SD Card" -Recurse -Force }
-            if (Test-Path "master") { Remove-Item "master" -Recurse -Force }
-            if (Test-Path "master.zip") { Remove-Item "master.zip" -Force }
-            if (Test-Path "LICENSE.txt") { Remove-Item "LICENSE.txt" -Force }
-
-            Write-Host "Downloading latest OSCR version from github.com/sanni/cartreader"
-            Invoke-WebRequest "https://github.com/sanni/cartreader/archive/refs/heads/master.zip" -OutFile "master.zip"
-
-            # Extracting
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
-            [System.IO.Compression.ZipFile]::ExtractToDirectory("master.zip", "master")
-
-            # Moving to sub-folders
-            Move-Item "master\cartreader-master\Cart_Reader" "Arduino IDE\portable\sketchbook\Cart_Reader"
-            Move-Item "master\cartreader-master\sd" .
-            Move-Item "master\cartreader-master\LICENSE" "LICENSE.txt"
-            Rename-Item "sd" "SD Card"
-
-            # Clean-up
-            $readme1 = "SD Card\README.md"
-            $readme2 = "Arduino IDE\portable\sketchbook\Cart_Reader\README.md"
-            $licenseCopy = "Arduino IDE\portable\sketchbook\Cart_Reader\LICENSE.txt"
-            if (Test-Path $readme1) { Remove-Item $readme1 -Force }
-            if (Test-Path $readme2) { Remove-Item $readme2 -Force }
-            if (Test-Path $licenseCopy) { Remove-Item $licenseCopy -Force }
-            if (Test-Path "master") { Remove-Item "master" -Recurse -Force }
-            if (Test-Path "master.zip") { Remove-Item "master.zip" -Force }
+            Update-OSCR
 
             # Reload config data after update
             $script:configDefs = Get-ConfigData
@@ -1059,7 +1224,7 @@ try {
                                 # Map color name to RGB string if needed, otherwise use as-is if already RGB
                                 if ($null -eq $value) {
                                     $rgb = "100, 0, 0" # fallback to Green if null
-                                } elseif ($value -match '^\d+\s*,\s*\d+\s*,\s*\d+$') {
+								} elseif ($value -match '^\d+\s*,\s*\d+\s*,\s*\d+$') {	
                                     $rgb = $value
                                 } else {
                                     switch ($value) {
@@ -1150,9 +1315,11 @@ try {
             if (-not $script:currentHardware) { $script:currentHardware = $hardwareKeys[0] }
             $script:currentRTC = $rtcKeys | Where-Object { $script:configDefs[$_] } | Select-Object -First 1
             if (-not $script:currentRTC) { $script:currentRTC = $rtcKeys[0] }
-            Add-ConfigRows -grid $gridHardware -keys $hardwareDisplayKeys -configDefs $script:configDefs -applyChanges $script:applyChanges -currentHardware $script:currentHardware -applyHardware $script:currentHardware -currentRTC $script:currentRTC -applyRTC $script:currentRTC -tooltipTexts $tooltipTexts
-            Add-ConfigRows -grid $gridOption -keys $optionSet -configDefs $script:configDefs -applyChanges $script:applyChanges -currentHardware $script:currentHardware -applyHardware $script:currentHardware -currentRTC $script:currentRTC -applyRTC $script:currentRTC -tooltipTexts $tooltipTexts
-            Add-ConfigRows -grid $gridModule -keys $moduleSet -configDefs $script:configDefs -applyChanges $script:applyChanges -currentHardware $script:currentHardware -applyHardware $script:currentHardware -currentRTC $script:currentRTC -applyRTC $script:currentRTC -tooltipTexts $tooltipTexts
+			$script:applyHardware = $script:currentHardware
+			$script:applyRTC = $script:currentRTC
+            Add-ConfigRows -grid $gridHardware -keys $hardwareDisplayKeys -configDefs $script:configDefs -applyChanges $script:applyChanges -currentHardware $script:currentHardware -applyHardware $script:applyHardware -currentRTC $script:currentRTC -applyRTC $script:currentRTC -tooltipTexts $tooltipTexts
+            Add-ConfigRows -grid $gridOption -keys $optionSet -configDefs $script:configDefs -applyChanges $script:applyChanges -currentHardware $script:currentHardware -applyHardware $script:applyHardware -currentRTC $script:currentRTC -applyRTC $script:currentRTC -tooltipTexts $tooltipTexts
+            Add-ConfigRows -grid $gridModule -keys $moduleSet -configDefs $script:configDefs -applyChanges $script:applyChanges -currentHardware $script:currentHardware -applyHardware $script:applyHardware -currentRTC $script:currentRTC -applyRTC $script:currentRTC -tooltipTexts $tooltipTexts
         } catch {
             [System.Windows.Forms.MessageBox]::Show("Error applying changes:`n$($_.Exception.Message)", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
         }
