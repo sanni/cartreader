@@ -12,7 +12,7 @@ jobs:
       contents: write
     defaults:
       run:
-        shell: cmd
+        shell: pwsh
 
     steps:
       - name: Checkout repository
@@ -24,127 +24,261 @@ jobs:
           COMMITS=$(git rev-list --count --since="30 days ago" origin/master)
           echo "Commits in last 30 days: $COMMITS"
           if [ "$COMMITS" -eq 0 ]; then
-          echo "No commits in the last 30 days. Skipping release."
-          exit 0
+            echo "No commits in the last 30 days. Skipping release."
+            exit 0
           fi
         shell: bash
 
       - name: Build OSCR Release
         run: |
-          @chcp 65001 > nul
-          @echo off
-          echo Creating OSCR Release
-          echo Current task:
-          echo.
-          echo.
-          echo.
-          echo.
-          echo.
-          echo.
-          echo Log:
+          #Requires -Version 5.1
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = "Stop"
 
-          echo Downloading Arduino IDE
-          IF EXIST oscr_release rmdir oscr_release /s /q
-          mkdir oscr_release
-          cd oscr_release
-          powershell Invoke-WebRequest https://downloads.arduino.cc/arduino-1.8.19-windows.zip -OutFile arduino-1.8.19-windows.zip
-          FOR /F "usebackq delims=" %%H IN (`powershell -Command "(Get-FileHash 'arduino-1.8.19-windows.zip' -Algorithm SHA256).Hash"`) DO (
-          SET HASH=%%H
+          function Download-FileWithProgress {
+              param (
+                  [Parameter(Mandatory = $true)][string]$Url,
+                  [Parameter(Mandatory = $true)][string]$Destination
+              )
+
+              Add-Type -AssemblyName System.Net.Http
+
+              Write-Host "Downloading: $Url"
+              $client = New-Object System.Net.Http.HttpClient
+              $response = $client.GetAsync($Url, [System.Net.Http.HttpCompletionOption]::ResponseHeadersRead).Result
+              $total = $response.Content.Headers.ContentLength
+              $stream = $response.Content.ReadAsStreamAsync().Result
+
+              $fileStream = [System.IO.File]::OpenWrite($Destination)
+              $buffer = New-Object byte[] 8192
+              $read = 0
+              $totalRead = 0
+              $lastPercent = -1
+
+              do {
+                  $read = $stream.Read($buffer, 0, $buffer.Length)
+                  if ($read -gt 0) {
+                      $fileStream.Write($buffer, 0, $read)
+                      $totalRead += $read
+                      if ($total) {
+                          $percent = [math]::Floor(($totalRead / $total) * 100)
+                          if ($percent -ne $lastPercent) {
+                              Write-Progress -Activity "Downloading" -Status "$percent% complete" -PercentComplete $percent
+                              $lastPercent = $percent
+                          }
+                      }
+                  }
+              } while ($read -gt 0)
+
+              $fileStream.Close()
+              $stream.Close()
+              Write-Progress -Activity "Downloading" -Completed
+              Write-Host "Download complete: $Destination"
+          }
+
+          function Expand-Zip {
+              param (
+                  [string]$ZipPath,
+                  [string]$OutPath
+              )
+              Expand-Archive -Path $ZipPath -DestinationPath $OutPath -Force
+          }
+
+          $root = Join-Path (Get-Location) "oscr_release"
+
+          if (Test-Path $root) {
+              Remove-Item $root -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path $root | Out-Null
+          Set-Location $root
+
+          # Check if Arduino IDE folder exists to skip Steps 1-3
+          if (Test-Path "$root\Arduino IDE") {
+              Write-Host "Arduino IDE folder already exists. Skipping Steps 1, 2, 3."
+          } else {
+              ### Step 1: Arduino IDE ###
+              Write-Host "Step 1: Downloading Arduino IDE..."
+              $ideZip = Join-Path $root "arduino-1.8.19-windows.zip"
+              Download-FileWithProgress -Url "https://downloads.arduino.cc/arduino-1.8.19-windows.zip" -Destination $ideZip
+
+              Write-Host "Step 2: Verifying SHA256..."
+              $expectedHash = "C704A821089EAB2588F1DEAE775916219B1517FEBD1DD574FF29958DCA873945"
+              $hash = (Get-FileHash $ideZip -Algorithm SHA256).Hash
+              if ($hash -ne $expectedHash) {
+                  Write-Error "Checksum mismatch! Aborting."
+                  exit 1
+              } else {
+                  Write-Host "Checksum OK."
+              }
+
+              Write-Host "Step 3: Extracting Arduino IDE..."
+              Expand-Zip -ZipPath $ideZip -OutPath $root
+              Remove-Item $ideZip
+
+              Rename-Item -Path "$root\arduino-1.8.19" -NewName "Arduino IDE"
+          }
+
+          ### Step 4: OSCR Sketch ###
+          Write-Host "Step 4: Downloading OSCR sketch..."
+          $sketchZip = Join-Path $root "master.zip"
+          Download-FileWithProgress -Url "https://github.com/sanni/cartreader/archive/refs/heads/master.zip" -Destination $sketchZip
+          Expand-Zip -ZipPath $sketchZip -OutPath $root
+          Remove-Item $sketchZip
+
+          $sketchRoot = Join-Path $root "cartreader-master"
+
+          # Delete existing Cart_Reader folder if it exists before moving the new one
+          $cartReaderDest = "$root\Arduino IDE\portable\sketchbook\Cart_Reader"
+          if (Test-Path $cartReaderDest) {
+              Write-Host "Existing Cart_Reader folder found. Removing..."
+              Remove-Item $cartReaderDest -Recurse -Force
+          }
+
+          # Delete existing SD Card folder if it exists before moving
+          $sdCardDest = "$root\SD Card"
+          if (Test-Path $sdCardDest) {
+              Write-Host "Existing SD Card folder found. Removing..."
+              Remove-Item $sdCardDest -Recurse -Force
+          }
+
+          # Delete existing libtemp folder if it exists before moving
+          $libtempDest = "$root\libtemp"
+          if (Test-Path $libtempDest) {
+              Write-Host "Existing libtemp folder found. Removing..."
+              Remove-Item $libtempDest -Recurse -Force
+          }
+
+          # Delete existing libraries folder if it exists before moving
+          $librariesDest = "$root\Arduino IDE\portable\sketchbook\libraries"
+          if (Test-Path $librariesDest) {
+              Write-Host "Existing libraries folder found. Removing..."
+              Remove-Item $librariesDest -Recurse -Force
+          }
+
+          # Make sure libraries folder exists (you already have this)
+          New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
+
+          Move-Item "$sketchRoot\Cart_Reader" $cartReaderDest
+          Move-Item "$sketchRoot\sd" $sdCardDest
+          Move-Item "$sketchRoot\LICENSE" "$root\LICENSE.txt" -Force
+          Move-Item "$sketchRoot\tools\oscr_tool\launch_oscr_tool.bat" "$root" -Force
+          Move-Item "$sketchRoot\tools\oscr_tool\oscr_tool.ps1" "$root" -Force
+
+          Remove-Item "$sdCardDest\README.md","$cartReaderDest\README.md","$cartReaderDest\LICENSE.txt" -ErrorAction SilentlyContinue
+          Remove-Item "$sketchRoot" -Recurse -Force
+
+          ### Step 5: Libraries ###
+          Write-Host "Step 5: Downloading Arduino libraries..."
+          $libraries = @(
+              "greiman/SdFat",
+              "olikraus/U8g2_Arduino",
+              "adafruit/Adafruit_NeoPixel",
+              "mathertel/RotaryEncoder",
+              "etherkit/Si5351Arduino",
+              "adafruit/RTClib",
+              "adafruit/Adafruit_BusIO",
+              "PaulStoffregen/FreqCount"
           )
-          IF /I NOT "%HASH%"=="C704A821089EAB2588F1DEAE775916219B1517FEBD1DD574FF29958DCA873945" (
-           ECHO Checksum mismatch!
-           EXIT /B 1
-          ) ELSE (
-           ECHO Checksum OK.
-          )
-          powershell expand-archive arduino-1.8.19-windows.zip
-          del arduino-1.8.19-windows.zip
-          cd arduino-1.8.19-windows
-          ren arduino-1.8.19 "Arduino IDE"
-          move "Arduino IDE" ..\"Arduino IDE" >nul
-          cd..
-          IF EXIST arduino-1.8.19-windows rmdir arduino-1.8.19-windows /s /q
 
-          echo Downloading OSCR sketch
-          powershell Invoke-WebRequest https://github.com/sanni/cartreader/archive/refs/heads/master.zip -OutFile master.zip
-          powershell expand-archive master.zip
-          mkdir "Arduino IDE\portable\sketchbook\libraries"
-          move master\cartreader-master\Cart_Reader "Arduino IDE\portable\sketchbook" >nul
-          move master\cartreader-master\sd >nul
-          move master\cartreader-master\LICENSE LICENSE.txt >nul
-          move master\cartreader-master\tools\oscr_tool\launch_oscr_tool.bat >nul
-          move master\cartreader-master\tools\oscr_tool\oscr_tool.ps1 >nul
-          rename sd "SD Card"
-          IF EXIST "SD Card\README.md" del "SD Card\README.md"
-          IF EXIST "Arduino IDE\portable\sketchbook\Cart_Reader\README.md" del "Arduino IDE\portable\sketchbook\Cart_Reader\README.md"
-          IF EXIST "Arduino IDE\portable\sketchbook\Cart_Reader\LICENSE.txt" del "Arduino IDE\portable\sketchbook\Cart_Reader\LICENSE.txt"
-          IF EXIST master rmdir master /s /q
-          IF EXIST master.zip del master.zip /q
+          foreach ($lib in $libraries) {
+              $zipFile = "libtemp.zip"
+              $zipPath = Join-Path $root $zipFile
+              Download-FileWithProgress -Url "https://github.com/$lib/archive/refs/heads/master.zip" -Destination $zipPath
+              Expand-Zip -ZipPath $zipPath -OutPath "$root\libtemp"
+              $libName = $lib.Split('/')[1]
+              Move-Item "$root\libtemp\$libName-master" "$root\Arduino IDE\portable\sketchbook\libraries" -Force
+              Remove-Item "$zipPath" -Force
+              Remove-Item "$root\libtemp" -Recurse -Force
+          }
 
-          echo Downloading Libraries
-          set LIBS=greiman/SdFat olikraus/U8g2_Arduino adafruit/Adafruit_NeoPixel mathertel/RotaryEncoder etherkit/Si5351Arduino adafruit/RTClib adafruit/Adafruit_BusIO PaulStoffregen/FreqCount
-          for %%L in (%LIBS%) do (
-            powershell Invoke-WebRequest https://github.com/%%~L/archive/refs/heads/master.zip -OutFile master.zip
-            powershell expand-archive master.zip
-            for /F "tokens=2 delims=/" %%A in ("%%L") do move master\%%A-master "Arduino IDE\portable\sketchbook\libraries" > nul
-            IF EXIST master rmdir master /s /q
-            IF EXIST master.zip del master.zip /q
-          )
+          ### Step 6: CH341 Drivers ###
+          Write-Host "Step 6: Downloading CH341 driver..."
+          $drvZip = Join-Path $root "drivers.zip"
+          Download-FileWithProgress -Url "https://www.wch.cn/download/file?id=5" -Destination $drvZip
+          Expand-Zip -ZipPath $drvZip -OutPath "$root\drivers"
+          Move-Item "$root\drivers\CH341SER" "$root\CH341 Drivers" -Force
+          Remove-Item "$root\drivers" -Recurse -Force
+          Remove-Item $drvZip -Force
 
-          echo Downloading CH341 driver
-          powershell Invoke-WebRequest https://www.wch.cn/download/file?id=5 -OutFile drivers.zip
-          powershell expand-archive drivers.zip
-          move drivers\CH341SER CH341SER >nul
-          ren CH341SER "CH341 Drivers"
-          IF EXIST drivers rmdir drivers /s /q
-          IF EXIST drivers.zip del drivers.zip /q
+          ### Step 7: README ###
+          Write-Host "Step 7: Creating README.txt..."
+          @"
+          1) Install CH341 Drivers by running SETUP.exe in the "CH341 Drivers" folder
+          2) Launch arduino.exe found in the "Arduino IDE" directory
+          3) In the Arduino IDE go File -> Sketchbook -> Cart_Reader
+          4) Then Tools -> Board and select "Arduino/Genuino Mega or Mega 2560"
+          5) Followed by Tools -> Port and select your Arduino
+          6) In Config.h define your HW version by removing // in front of "#define HWX" where X is your hardware version
+          7) Next Sketch -> Upload
+          8) Verify that the upload didn't give you any errors
+          9) Copy the content of the "SD Card" folder to the root of your SD card
+          10) Mark the *.txt files as hidden
 
-          echo Creating README.txt
-          (
-            echo 1^) Install CH341 Drivers by running SETUP.exe in the "CH341 Drivers" folder
-            echo 2^) Launch arduino.exe found in "Arduino IDE" directory
-            echo 3^) In the Arduino IDE go File -^> Sketchbook -^> Cart_Reader
-            echo 4^) Then Tools -^> Board and select "Arduino/Genduino Mega or Mega 2560"
-            echo 5^) Followed by Tools -^> Port and select your Arduino
-            echo 6^) In Config.h define your HW version by removing // in front of "#define HWX" where X is your hardware version
-            echo 7^) Next Sketch -^> Upload
-            echo 8^) Verify that the upload didn't give you any errors
-            echo 9^) Copy the content of the "SD Card" folder to the root of your SD card
-            echo 10^) Mark the *.txt files as hidden
-            echo.
-            echo More info: https://github.com/sanni/cartreader/wiki
-          ) > README.txt
-       
-          echo Extracting version from OSCR.cpp
-          powershell -Command "$pattern = 'FSTRING_VERSION\[\] = \"(.*)\";'; $line = Select-String -Path 'Arduino IDE\portable\sketchbook\Cart_Reader\OSCR.cpp' -Pattern $pattern | Select-Object -First 1; if (-not $line) { throw 'Version string not found in OSCR.cpp' }; $version = [regex]::Match($line.Line, $pattern).Groups[1].Value; Set-Content -Path version.txt -Value $version"
+          More info: https://github.com/sanni/cartreader/wiki
+          "@ | Set-Content -Encoding UTF8 -Path "$root\README.txt"
 
-          for /f "delims=" %%v in (version.txt) do set "OSCR_VERSION=%%v"
-          echo OSCR_VERSION=%OSCR_VERSION%>> %GITHUB_ENV%
-          del version.txt
+          ### Step 8: Extracting version from OSCR.cpp ###
+          Write-Host "Step 8: Extracting version from OSCR.cpp..."
 
-          echo Optimize U8g2 for size
-          cd "Arduino IDE\portable\sketchbook\libraries\U8g2_Arduino-master\src\clib\"
-          powershell -Command "(gc u8g2.h) -replace '#define U8G2_16BIT', '//#define U8G2_16BIT' | Out-File -encoding ASCII u8g2.h"
-          powershell -Command "(gc u8g2.h) -replace '#define U8G2_WITH_HVLINE_SPEED_OPTIMIZATION', '//#define U8G2_WITH_HVLINE_SPEED_OPTIMIZATION' | Out-File -encoding ASCII u8g2.h"
-          powershell -Command "(gc u8g2.h) -replace '#define U8G2_WITH_INTERSECTION', '//#define U8G2_WITH_INTERSECTION' | Out-File -encoding ASCII u8g2.h"
-          powershell -Command "(gc u8g2.h) -replace '#define U8G2_WITH_CLIP_WINDOW_SUPPORT', '//#define U8G2_WITH_CLIP_WINDOW_SUPPORT' | Out-File -encoding ASCII u8g2.h"
-          powershell -Command "(gc u8g2.h) -replace '#define U8G2_WITH_FONT_ROTATION', '//#define U8G2_WITH_FONT_ROTATION' | Out-File -encoding ASCII u8g2.h"
-          powershell -Command "(gc u8g2.h) -replace '#define U8G2_WITH_UNICODE', '//#define U8G2_WITH_UNICODE' | Out-File -encoding ASCII u8g2.h"
-          cd..
-          cd..
-          cd..
-          cd..
-          cd..
-          cd..
-          cd..
+          $pattern = 'FSTRING_VERSION\[\] = "(.*)";'
+          $cppPath = Join-Path $root "Arduino IDE\portable\sketchbook\Cart_Reader\OSCR.cpp"
+          $line = Select-String -Path $cppPath -Pattern $pattern | Select-Object -First 1
 
-          echo Create VXX.X_Portable.zip
-          cd..
-          IF EXIST %OSCR_VERSION%_Portable rmdir %OSCR_VERSION%_Portable /s /q
-          ren oscr_release %OSCR_VERSION%_Portable
-          powershell compress-archive -Path %OSCR_VERSION%_Portable -DestinationPath %OSCR_VERSION%_Portable.zip
-          IF EXIST %OSCR_VERSION%_Portable rmdir %OSCR_VERSION%_Portable /s /q
-      
+          if (-not $line) {
+              throw "Version string not found in OSCR.cpp"
+          }
+
+          $version = [regex]::Match($line.Line, $pattern).Groups[1].Value
+          Write-Host "Extracted version: $version"
+
+          # Write version to GitHub Actions environment
+          $githubEnv = $env:GITHUB_ENV
+          if (-not $githubEnv) {
+              throw "`$GITHUB_ENV is not set. Are you running this inside GitHub Actions?"
+          }
+
+          Add-Content -Path $githubEnv -Value "OSCR_VERSION=$version"
+
+          ### Step 9: Optimize U8g2 ###
+          Write-Host "Step 9: Optimizing U8g2 for size..."
+          $u8g2Header = "$root\Arduino IDE\portable\sketchbook\libraries\U8g2_Arduino-master\src\clib\u8g2.h"
+
+          (Get-Content $u8g2Header) `
+            -replace '#define U8G2_16BIT', '//#define U8G2_16BIT' `
+            -replace '#define U8G2_WITH_HVLINE_SPEED_OPTIMIZATION', '//#define U8G2_WITH_HVLINE_SPEED_OPTIMIZATION' `
+            -replace '#define U8G2_WITH_INTERSECTION', '//#define U8G2_WITH_INTERSECTION' `
+            -replace '#define U8G2_WITH_CLIP_WINDOW_SUPPORT', '//#define U8G2_WITH_CLIP_WINDOW_SUPPORT' `
+            -replace '#define U8G2_WITH_FONT_ROTATION', '//#define U8G2_WITH_FONT_ROTATION' `
+            -replace '#define U8G2_WITH_UNICODE', '//#define U8G2_WITH_UNICODE' |
+            Set-Content -Encoding ASCII $u8g2Header
+
+          ### Step 10: Create zip ###
+          Write-Host "Step 10: Create zip..."
+          # Go up one directory
+          Set-Location (Split-Path $root -Parent)
+
+          # Define release folder name
+          $releaseFolder = "${version}_Portable"
+
+          # Remove old folder if it exists
+          if (Test-Path $releaseFolder) {
+              Remove-Item $releaseFolder -Recurse -Force
+          }
+
+          # Rename oscr_release to versioned folder
+          Rename-Item -Path "oscr_release" -NewName $releaseFolder
+
+          # Create zip archive
+          Compress-Archive -Path $releaseFolder -DestinationPath "$releaseFolder.zip"
+
+          # Clean up folder after zipping
+          if (Test-Path $releaseFolder) {
+              Remove-Item $releaseFolder -Recurse -Force
+          }
+
+          Write-Host "DONE. Portable Arduino IDE for OSCR is ready."
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
