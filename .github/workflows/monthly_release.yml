@@ -23,8 +23,8 @@ jobs:
           git fetch origin master
           COMMITS=$(git rev-list --count --since="30 days ago" origin/master)
           echo "Commits in last 30 days: $COMMITS"
-          if [ "$COMMITS" -eq 0 ]; then
-            echo "No commits in the last 30 days. Skipping release."
+          if [ "$COMMITS" -lt 2 ]; then
+            echo "$COMMITS commits in the last 30 days. Skipping release."
             exit 0
           fi
         shell: bash
