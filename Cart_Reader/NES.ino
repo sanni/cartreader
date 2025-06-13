@@ -312,6 +312,7 @@ static const struct mapper_NES PROGMEM mapsize[] = {
   { 288, 0, 3, 0, 4, 0, 0 },   // GKCXIN1 (21-in-1)
   { 289, 5, 7, 0, 0, 0, 0 },   // 60311C / N76A-1
   { 290, 0, 5, 0, 4, 0, 0 },   // Asder 20-in-1
+  { 312, 0, 3, 0, 0, 0, 0 },   // Kaiser's Highway Star
   // 313 - undumpable (reset-based TKROM multicarts)
   { 314, 6, 7, 0, 7, 0, 0 },   // bmc-64in1norepeat
   { 315, 0, 5, 0, 7, 0, 0 },   // 820732C / 830134C
@@ -3300,6 +3301,14 @@ void readPRG(bool readrom) {
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | ((i << 10) & 0x7800) | ((i << 6) & 0x40), i);
+          dumpBankPRG(0x0, 0x4000, base);
+        }
+        break;
+
+      case 312:
+        banks = int_pow(2, prgsize);
+        for (size_t i = 0; i < banks; i++) {
+          write_prg_byte(0x6000, i);
           dumpBankPRG(0x0, 0x4000, base);
         }
         break;
