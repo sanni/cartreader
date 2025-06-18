@@ -56,7 +56,7 @@ try {
         Expand-Archive -Path $ZipPath -DestinationPath $OutPath -Force
     }
 
-    function Update-OSCR {
+	function Update-OSCR {
         param()
         try {
             $root = $PSScriptRoot
@@ -67,11 +67,11 @@ try {
                 Write-Host "Arduino IDE folder already exists. Skipping Steps 1, 2, 3."
             } else {
                 ### Step 1: Arduino IDE ###
-                Write-Host "Step 1: Downloading Arduino IDE..."
+                Write-Host "Step 1: Downloading Arduino IDE..." -ForegroundColor Green
                 $ideZip = Join-Path $root "arduino-1.8.19-windows.zip"
                 Get-FileWithProgress -Url "https://downloads.arduino.cc/arduino-1.8.19-windows.zip" -Destination $ideZip
 
-                Write-Host "Step 2: Verifying SHA256..."
+                Write-Host "Verifying SHA256..."
                 $expectedHash = "C704A821089EAB2588F1DEAE775916219B1517FEBD1DD574FF29958DCA873945"
                 $hash = (Get-FileHash $ideZip -Algorithm SHA256).Hash
                 if ($hash -ne $expectedHash) {
@@ -81,15 +81,226 @@ try {
                     Write-Host "Checksum OK."
                 }
 
-                Write-Host "Step 3: Extracting Arduino IDE..."
+                Write-Host "Extracting Arduino IDE..."
                 Expand-Zip -ZipPath $ideZip -OutPath $root
                 Remove-Item $ideZip
 
                 Rename-Item -Path "$root\arduino-1.8.19" -NewName "Arduino IDE"
-            }
 
-            ### Step 4: OSCR Sketch ###
-            Write-Host "Step 4: Downloading OSCR sketch..."
+                ### Step 2: Update AVR-GCC compiler ###
+                Write-Host "Step 2: Downloading latest AVR-GCC compiler..." -ForegroundColor Green
+                $avrGccZip = Join-Path $root "avr-gcc-14.1.0-x64-windows.zip"
+                Get-FileWithProgress -Url "https://github.com/ZakKemble/avr-gcc-build/releases/download/v14.1.0-1/avr-gcc-14.1.0-x64-windows.zip" -Destination $avrGccZip
+
+                Write-Host "Verifying AVR-GCC SHA256..."
+                $expectedAvrHash = "d0efbf289004b2d700ae039aa0b592d7d34a9e797e8fe8aa1fef249e997bbae7"
+                $avrHash = (Get-FileHash $avrGccZip -Algorithm SHA256).Hash
+                if ($avrHash -ne $expectedAvrHash) {
+                    Write-Error "AVR-GCC checksum mismatch! Aborting."
+                    exit 1
+                } else {
+                    Write-Host "AVR-GCC checksum OK."
+                }
+
+                # Extract new AVR-GCC
+                Write-Host "Extracting AVR-GCC..."
+                Expand-Zip -ZipPath $avrGccZip -OutPath "$root\temp_avr"
+                Remove-Item $avrGccZip
+
+                # Replace old AVR folder with new one
+                $toolsPath = "$root\Arduino IDE\hardware\tools"
+                $oldAvrPath = "$toolsPath\avr"
+                $backupAvrPath = "$root\avr_backup"
+
+                if (Test-Path $oldAvrPath) {
+                    Write-Host "Backing up old AVR compiler..."
+                    # Remove existing backup if it exists
+                    if (Test-Path $backupAvrPath) {
+                        Remove-Item $backupAvrPath -Recurse -Force
+                    }
+                    Move-Item $oldAvrPath $backupAvrPath
+                }
+
+                # Move new AVR-GCC to tools folder
+                Write-Host "Installing new AVR-GCC compiler..."
+                Move-Item "$root\temp_avr\avr-gcc-14.1.0-x64-windows" "$toolsPath\avr"
+
+                # Copy essential files from old AVR installation if backup exists
+                if (Test-Path $backupAvrPath) {
+                    Write-Host "Copying essential files from old AVR installation..."
+                    
+                    # Copy avrdude.exe if it exists
+                    $oldAvrdude = "$backupAvrPath\bin\avrdude.exe"
+                    $newAvrdudeDir = "$toolsPath\avr\bin"
+                    if (Test-Path $oldAvrdude) {
+                        Copy-Item $oldAvrdude $newAvrdudeDir -Force
+                        Write-Host "Copied avrdude.exe"
+                    }
+
+                    # Copy builtin_tools_versions.txt if it exists
+                    $oldVersions = "$backupAvrPath\builtin_tools_versions.txt"
+                    $newAvrDir = "$toolsPath\avr"
+                    if (Test-Path $oldVersions) {
+                        Copy-Item $oldVersions $newAvrDir -Force
+                        Write-Host "Copied builtin_tools_versions.txt"
+                    }
+
+                    # Copy etc folder if it exists
+                    $oldEtc = "$backupAvrPath\etc"
+                    $newAvrDir = "$toolsPath\avr"
+                    if (Test-Path $oldEtc) {
+                        Copy-Item $oldEtc $newAvrDir -Recurse -Force
+                        Write-Host "Copied etc folder"
+                    }
+                }
+
+                # Clean up temporary files
+                Remove-Item "$root\temp_avr" -Recurse -Force
+				Remove-Item "$root\avr_backup" -Recurse -Force
+				
+				### Step 3: Update AVRDUDE ###
+				Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
+				$avrdudeZip = Join-Path $root "avrdude-v8.0-windows-x64.zip"
+				$avrdudeBinPath = "$root\Arduino IDE\hardware\tools\avr\bin"
+				$avrdudeEtcPath = "$root\Arduino IDE\hardware\tools\avr\etc"
+				$avrdudeExePath = Join-Path $avrdudeBinPath "avrdude.exe"
+				$avrdudeConfPath = Join-Path $avrdudeEtcPath "avrdude.conf"         
+            
+                Write-Host "Downloading AVRDUDE..."
+                Get-FileWithProgress -Url "https://github.com/avrdudes/avrdude/releases/download/v8.0/avrdude-v8.0-windows-x64.zip" -Destination $avrdudeZip
+                
+                Write-Host "Verifying AVRDUDE SHA256..."
+                $expectedAvrdudeHash = "f4aa811042ef95b52c68531f6e5044c5b5a8711bcd4b495d6b9af20f9ac41325"
+                $avrdudeHash = (Get-FileHash $avrdudeZip -Algorithm SHA256).Hash
+                if ($avrdudeHash -ne $expectedAvrdudeHash) {
+                    Write-Error "AVRDUDE checksum mismatch! Aborting."
+                    exit 1
+                } else {
+                    Write-Host "AVRDUDE checksum OK."
+                }
+                
+                Write-Host "Extracting AVRDUDE..."
+                $tempAvrdudeDir = "$root\temp_avrdude"
+                Expand-Zip -ZipPath $avrdudeZip -OutPath $tempAvrdudeDir
+                Remove-Item $avrdudeZip
+                
+                # Ensure target directories exist
+                if (-not (Test-Path $avrdudeBinPath)) {
+                    New-Item -ItemType Directory -Path $avrdudeBinPath -Force
+                }
+                if (-not (Test-Path $avrdudeEtcPath)) {
+                    New-Item -ItemType Directory -Path $avrdudeEtcPath -Force
+                }
+                                
+                # Find the extracted avrdude files and copy them
+                $extractedAvrdudeExe = Get-ChildItem -Path $tempAvrdudeDir -Name "avrdude.exe" -Recurse | Select-Object -First 1
+                $extractedAvrdudeConf = Get-ChildItem -Path $tempAvrdudeDir -Name "avrdude.conf" -Recurse | Select-Object -First 1
+                
+                if ($extractedAvrdudeExe) {
+                    $fullAvrdudeExePath = Join-Path $tempAvrdudeDir $extractedAvrdudeExe
+                    Write-Host "Installing avrdude.exe to $avrdudeBinPath"
+                    Copy-Item $fullAvrdudeExePath $avrdudeExePath -Force
+                } else {
+                    Write-Error "Could not find avrdude.exe in extracted files!"
+                }
+                
+                if ($extractedAvrdudeConf) {
+                    $fullAvrdudeConfPath = Join-Path $tempAvrdudeDir $extractedAvrdudeConf
+                    Write-Host "Installing avrdude.conf to $avrdudeEtcPath"
+                    Copy-Item $fullAvrdudeConfPath $avrdudeConfPath -Force
+                } else {
+                    Write-Error "Could not find avrdude.conf in extracted files!"
+                }
+                
+                # Clean up temporary files
+                Remove-Item $tempAvrdudeDir -Recurse -Force
+                Write-Host "AVRDUDE v8.0 installation complete!"            
+            }
+			
+			# Step 4: Arduino CLI Setup
+            Write-Host "Step 4: Setting up Arduino CLI..." -ForegroundColor Green
+			# Make sure libraries folder exists
+            New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
+            $arduinoCliZip = Join-Path $root "arduino-cli_1.2.2_Windows_64bit.zip"
+            $arduinoCliExe = Join-Path $root "Arduino IDE\arduino-cli.exe"
+            
+            # Download arduino-cli if not already present
+            if (-not (Test-Path $arduinoCliExe)) {
+                Write-Host "Downloading Arduino CLI..."
+                Get-FileWithProgress -Url "https://github.com/arduino/arduino-cli/releases/download/v1.2.2/arduino-cli_1.2.2_Windows_64bit.zip" -Destination $arduinoCliZip
+                
+                Write-Host "Verifying Arduino CLI SHA256..."
+                $expectedCliHash = "bdd3ed88a361af8539e51a1cc0bf831b269be155ddfdd90cb96a900ce78723b7"
+                $cliHash = (Get-FileHash $arduinoCliZip -Algorithm SHA256).Hash
+                if ($cliHash -ne $expectedCliHash) {
+                    Write-Error "Arduino CLI checksum mismatch! Aborting."
+                    exit 1
+                } else {
+                    Write-Host "Arduino CLI checksum OK."
+                }
+                
+                Write-Host "Extracting Arduino CLI..."
+                Expand-Zip -ZipPath $arduinoCliZip -OutPath "$root\temp_cli"
+                Remove-Item $arduinoCliZip
+                
+                # Move arduino-cli.exe to Arduino IDE directory
+                Move-Item "$root\temp_cli\arduino-cli.exe" $arduinoCliExe
+                Remove-Item "$root\temp_cli" -Recurse -Force
+            } else {
+                Write-Host "Arduino CLI already exists, skipping download."
+            }
+            
+            # Configure Arduino CLI for portable mode
+            Write-Host "Configuring Arduino CLI for portable mode..."
+            Set-Location "$root\Arduino IDE"
+            
+            # Initialize configuration
+            & ".\arduino-cli.exe" config init
+            
+            # Set portable sketchbook directory
+            & ".\arduino-cli.exe" config set directories.user "portable\sketchbook"
+            
+            # Update package index
+            Write-Host "Updating Arduino CLI package index..."
+            & ".\arduino-cli.exe" core update-index
+            
+            # Step 5: Install Required Libraries
+            Write-Host "Step 5: Installing required libraries..." -ForegroundColor Green
+            $libraries = @(
+                "SdFat",
+                "Adafruit BusIO",
+                "U8g2",
+                "Adafruit NeoPixel",
+                "RotaryEncoder",
+                "Etherkit Si5351",
+                "RTClib",
+                "FreqCount"
+            )
+            
+            foreach ($lib in $libraries) {
+                Write-Host "Installing library: $lib"
+                try {
+                    & ".\arduino-cli.exe" lib install $lib
+                    Write-Host "Successfully installed: $lib"
+                } catch {
+                    Write-Warning "Failed to install library: $lib - $($_.Exception.Message)"
+                }
+            }
+            
+            # Update all libraries
+            Write-Host "Updating library index..."
+            & ".\arduino-cli.exe" lib update-index
+            
+            Write-Host "Upgrading all libraries..."
+            & ".\arduino-cli.exe" lib upgrade
+            
+            Write-Host "Arduino CLI setup and library installation complete!"
+            
+            # Return to original directory
+            Set-Location $root			
+
+            ### Step 6: OSCR Sketch ###
+            Write-Host "Step 6: Downloading OSCR sketch..." -ForegroundColor Green
             $sketchZip = Join-Path $root "master.zip"
             Get-FileWithProgress -Url "https://github.com/sanni/cartreader/archive/refs/heads/master.zip" -Destination $sketchZip
             Expand-Zip -ZipPath $sketchZip -OutPath $root
@@ -111,23 +322,6 @@ try {
                 Remove-Item $sdCardDest -Recurse -Force
             }
 
-            # Delete existing libtemp folder if it exists before moving
-            $libtempDest = "$root\libtemp"
-            if (Test-Path $libtempDest) {
-                Write-Host "Existing libtemp folder found. Removing..."
-                Remove-Item $libtempDest -Recurse -Force
-            }
-
-            # Delete existing libraries folder if it exists before moving
-            $librariesDest = "$root\Arduino IDE\portable\sketchbook\libraries"
-            if (Test-Path $librariesDest) {
-                Write-Host "Existing libraries folder found. Removing..."
-                Remove-Item $librariesDest -Recurse -Force
-            }
-
-            # Make sure libraries folder exists (you already have this)
-            New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
-
             Move-Item "$sketchRoot\Cart_Reader" $cartReaderDest
             Move-Item "$sketchRoot\sd" $sdCardDest
             Move-Item "$sketchRoot\LICENSE" "$root\LICENSE.txt" -Force
@@ -137,33 +331,9 @@ try {
             Remove-Item "$sdCardDest\README.md","$cartReaderDest\README.md","$cartReaderDest\LICENSE.txt" -ErrorAction SilentlyContinue
             Remove-Item "$sketchRoot" -Recurse -Force
 
-            ### Step 5: Libraries ###
-            Write-Host "Step 5: Downloading Arduino libraries..."
-            $libraries = @(
-                "greiman/SdFat",
-                "olikraus/U8g2_Arduino",
-                "adafruit/Adafruit_NeoPixel",
-                "mathertel/RotaryEncoder",
-                "etherkit/Si5351Arduino",
-                "adafruit/RTClib",
-                "adafruit/Adafruit_BusIO",
-                "PaulStoffregen/FreqCount"
-            )
-
-            foreach ($lib in $libraries) {
-                $zipFile = "libtemp.zip"
-                $zipPath = Join-Path $root $zipFile
-                Get-FileWithProgress -Url "https://github.com/$lib/archive/refs/heads/master.zip" -Destination $zipPath
-                Expand-Zip -ZipPath $zipPath -OutPath "$root\libtemp"
-                $libName = $lib.Split('/')[1]
-                Move-Item "$root\libtemp\$libName-master" "$root\Arduino IDE\portable\sketchbook\libraries" -Force
-                Remove-Item "$zipPath" -Force
-                Remove-Item "$root\libtemp" -Recurse -Force
-            }
-
-            ### Step 6: CH341 Drivers ###
-            Write-Host "Step 6: Downloading CH341 driver..."
-			# Delete existing CH341 Drivers folder if it exists before moving
+            ### Step 7: CH341 Drivers ###
+            Write-Host "Step 7: Downloading CH341 driver..." -ForegroundColor Green
+            # Delete existing CH341 Drivers folder if it exists before moving
             $CH341Dest = "$root\CH341 Drivers"
             if (Test-Path $CH341Dest) {
                 Write-Host "Existing CH341 Drivers folder found. Removing..."
@@ -176,9 +346,9 @@ try {
             Remove-Item "$root\drivers" -Recurse -Force
             Remove-Item $drvZip -Force
 
-            ### Step 7: Optimize U8g2 ###
-            Write-Host "Step 7: Optimizing U8g2 for size..."
-            $u8g2Header = "$root\Arduino IDE\portable\sketchbook\libraries\U8g2_Arduino-master\src\clib\u8g2.h"
+            ### Step 8: Optimize U8g2 ###
+            Write-Host "Step 8: Optimizing U8g2 for size..." -ForegroundColor Green
+            $u8g2Header = "$root\Arduino IDE\portable\sketchbook\libraries\U8g2\src\clib\u8g2.h"
 
             (Get-Content $u8g2Header) `
                 -replace '#define U8G2_16BIT', '//#define U8G2_16BIT' `
@@ -189,10 +359,10 @@ try {
                 -replace '#define U8G2_WITH_UNICODE', '//#define U8G2_WITH_UNICODE' |
             Set-Content -Encoding ASCII $u8g2Header
 
-            Write-Host "DONE. Portable Arduino IDE for OSCR is ready."
+            Write-Host "DONE. Portable Arduino IDE for OSCR with updated AVR-GCC compiler is ready."
         }
         catch {
-            Write-Host "Error. Update failed."
+            Write-Host "Error. Update failed: $($_.Exception.Message)"
         }
     }
 
