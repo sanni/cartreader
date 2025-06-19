@@ -174,9 +174,18 @@ void gbaMenu() {
             verifyFLASH_GBA(65536, 0);
           } else {
             eraseFLASH_GBA();
-            if (blankcheckFLASH_GBA(65536)) {
-              writeFLASH_GBA(1, 65536, 0, 0);
-              verifyFLASH_GBA(65536, 0);
+            if (strcmp("PEAJ", cartID) == 0) {  // Japanese e-reader
+              println_Log(F("Skipping last 128 bytes"));
+              if (blankcheckFLASH_GBA(65408)) {
+                writeFLASH_GBA(1, 65408, 0, 0);
+                verifyFLASH_GBA(65408, 0);
+              }
+            }
+            else {
+              if (blankcheckFLASH_GBA(65536)) {
+                writeFLASH_GBA(1, 65536, 0, 0);
+                verifyFLASH_GBA(65536, 0);
+              }
             }
           }
           break;
@@ -200,11 +209,22 @@ void gbaMenu() {
           for (byte bank = 0; bank < 2; bank++) {
             switchBank_GBA(bank);
             setROM_GBA();
-            if (!blankcheckFLASH_GBA(65536))
-              break;
-            writeFLASH_GBA(!bank, 65536, bank ? 65536 : 0, 0);
-            if (verifyFLASH_GBA(65536, bank ? 65536 : 0))
-              break;
+            // Card e-Reader+ does not allow access to last 128 bytes of a bank
+            if (strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0) { // Japanese e-reader+, USA e-reader
+              println_Log(F("Skipping last 128 bytes"));
+              if (!blankcheckFLASH_GBA(65408))
+                break;
+              writeFLASH_GBA(!bank, 65408, bank ? 65536 : 0, 0);
+              if (verifyFLASH_GBA(65408, bank ? 65536 : 0))
+                break;
+            }
+            else {
+              if (!blankcheckFLASH_GBA(65536))
+                break;
+              writeFLASH_GBA(!bank, 65536, bank ? 65536 : 0, 0);
+              if (verifyFLASH_GBA(65536, bank ? 65536 : 0))
+                break;
+            }
           }
           break;
 
@@ -1453,7 +1473,7 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
       sdBuffer[c] = readByteFlash_GBA(currAddress + c);
     }
     // Check buffer
-    for (uint32_t currByte = 0; currByte < 512; currByte++) {
+    for (uint32_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
         print_Error(F("Erase failed"));
         currByte = 512;
@@ -1588,7 +1608,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
         //fill sdBuffer
         myFile.read(sdBuffer, 512);
 
-        for (int c = 0; c < 512; c++) {
+        for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
           // Write command sequence
           writeByteFlash_GBA(0x5555, 0xaa);
           writeByteFlash_GBA(0x2aaa, 0x55);
@@ -1662,7 +1682,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
     myFile.read(sdBuffer, 512);
 
-    for (int c = 0; c < 512; c++) {
+    for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
       // Read byte
       if (sdBuffer[c] != readByteFlash_GBA(currAddress + c)) {
         wrError++;
