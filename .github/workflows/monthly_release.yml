@@ -450,6 +450,9 @@ jobs:
           # Create zip archive
           Compress-Archive -Path $releaseFolder -DestinationPath "$releaseFolder.zip"
 
+          # Create 7zip archive
+          & "C:\Program Files\7-Zip\7z.exe" a "$releaseFolder.7z" "$releaseFolder"
+
           # Clean up folder after zipping
           if (Test-Path $releaseFolder) {
               Remove-Item $releaseFolder -Recurse -Force
@@ -463,7 +466,9 @@ jobs:
           tag_name: ${{ env.OSCR_VERSION }}
           name: ${{ env.OSCR_VERSION }}
           body: Automated monthly OSCR release
-          files: ${{ env.OSCR_VERSION }}_Portable.zip
+          files: |
+            ${{ env.OSCR_VERSION }}_Portable.zip
+            ${{ env.OSCR_VERSION }}_Portable.7z
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
