@@ -48,7 +48,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte PV1000[] = {8,16};
+byte PV1000[] = {8, 16};
 byte pv1000lo = 0; // Lowest Entry
 byte pv1000hi = 1; // Highest Entry
 byte pv1000size;
@@ -87,7 +87,7 @@ void pv1000Menu()
       // Set Size
       setROMSize_PV1000();
       break;
-    
+
     case 3:
       // reset
       resetArduino();
@@ -113,7 +113,7 @@ void setup_PV1000()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //       ---(PH0)   ---(PH1)  /CS2(PH3)  /CS1(PH4)   /WR(PH5)   /RD(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -184,18 +184,18 @@ void readSegment_PV1000(uint32_t startaddr, uint32_t endaddr)
 // READ ROM
 //******************************************
 
-void readROM_PV1000() 
+void readROM_PV1000()
 {
   createFolderAndOpenFile("PV1000", "ROM", romName, "bin");
 
   if (pv1000size == 0) { // 8K
     PORTH &= ~(1 << 4); // /CS1(PH4) LOW
-    readSegment_PV1000(0x0000,0x2000); // 8K
+    readSegment_PV1000(0x0000, 0x2000); // 8K
     PORTH |= (1 << 4); // /CS1(PH4) HIGH
   }
   else { // 16K
     PORTH &= ~(1 << 3); // /CS2(PH3) LOW
-    readSegment_PV1000(0x0000,0x4000); // 16K
+    readSegment_PV1000(0x0000, 0x4000); // 16K
     PORTH |= (1 << 3); // /CS2(PH3) HIGH
   }
   myFile.close();
@@ -205,7 +205,7 @@ void readROM_PV1000()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -215,9 +215,9 @@ void readROM_PV1000()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_PV1000(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(PV1000[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(PV1000[index]);
 }
 #endif
 
@@ -230,7 +230,7 @@ void setROMSize_PV1000()
     newpv1000size = pv1000lo;
   else {
     newpv1000size = navigateMenu(pv1000lo, pv1000hi, &printRomSize_PV1000);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -314,7 +314,7 @@ void setCart_PV1000()
   if (myFile.open("pv1000cart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

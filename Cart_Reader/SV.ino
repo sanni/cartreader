@@ -3,7 +3,7 @@
 // Revision 1.0.0 October 22nd 2018
 // Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
- #if (defined(ENABLE_SV) && defined(ENABLE_SNES))
+#if (defined(ENABLE_SV) && defined(ENABLE_SNES))
 
 /******************************************
    Satellaview 8M Memory Pack

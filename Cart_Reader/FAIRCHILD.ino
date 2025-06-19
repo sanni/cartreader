@@ -496,9 +496,9 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_FAIRCHILD(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(FAIRCHILD[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(FAIRCHILD[index]);
 }
 #endif
 
@@ -591,7 +591,7 @@ void setCart_FAIRCHILD() {
   if (myFile.open("fairchildcart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

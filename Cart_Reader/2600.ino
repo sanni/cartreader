@@ -176,10 +176,10 @@ void readSegment_2600(uint16_t startaddr, uint16_t endaddr) {
 }
 
 void readDataArray_2600(uint16_t addr, uint16_t size) {
-    for (uint16_t w = 0; w < size; w++) {
-      sdBuffer[w] = readData_2600(addr + w);
-    }
-    myFile.write(sdBuffer, size);
+  for (uint16_t w = 0; w < size; w++) {
+    sdBuffer[w] = readData_2600(addr + w);
+  }
+  myFile.write(sdBuffer, size);
 }
 
 void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr) {
@@ -202,7 +202,7 @@ void readSegmentE7_2600(uint8_t start, uint8_t end) {
 }
 
 void readSegmentFx_2600(bool hasRAM, uint16_t size) {
-  if(hasRAM) {
+  if (hasRAM) {
     outputFF_2600(0x100); // Skip 0x1000-0x10FF RAM
     readDataArray_2600(0x1100, 0x100);
   } else {
@@ -316,7 +316,7 @@ void readROM_2600() {
 
     case 0x3E:  // 3E Mapper 32KB ROM 32K RAM
       readSegmentTigervision_2600(15);
-      break;    
+      break;
 
     case 0x40:  // 4K Default 4KB
       readSegment_2600(0x1000, 0x2000);
@@ -425,7 +425,7 @@ void readROM_2600() {
         readData_2600(0x1FF6 + w);
         readSegmentFx_2600(a2600mapper == 0x06, 0x1F6);
         // Bank Registers 0x1FF6-0x1FF9
-        for (int y = 0; y < 4; y++){
+        for (int y = 0; y < 4; y++) {
           readData_2600(0x1FFF); // Reset Bank
           sdBuffer[y] = readData_2600(0x1FF6 + y);
         }
@@ -446,7 +446,7 @@ void readROM_2600() {
         readData_2600(0x1FF8 + w);
         readSegmentFx_2600(a2600mapper == 0x08, 0x1F8);
         // Bank Registers 0x1FF8-0x1FF9
-        for (int y = 0; y < 2; y++){
+        for (int y = 0; y < 2; y++) {
           readData_2600(0x1FFF); // Reset Bank
           sdBuffer[y] = readData_2600(0x1FF8 + y);
         }
@@ -523,7 +523,7 @@ void readROM_2600() {
       }
       break;
 
-   case 0xDF:  // DFSC 128K
+    case 0xDF:  // DFSC 128K
       for (int x = 0; x < 0x20; x++) {
         readData_2600(0x1FC0 + x);
         readSegment_2600(0x1000, 0x1FBF);
@@ -751,7 +751,7 @@ void setCart_2600() {
   if (myFile.open("2600.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_2600, &gameMapper)) {
+    if (checkCartSelection(myFile, &readDataLine_2600, &gameMapper)) {
       EEPROM_writeAnything(7, gameMapper);
       for (int i = 0; i < a2600mapcount; i++) {
         a2600index = i * 2;

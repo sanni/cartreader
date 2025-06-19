@@ -52,7 +52,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte PYUUTA[] = {8,16,32};
+byte PYUUTA[] = {8, 16, 32};
 byte pyuutalo = 0; // Lowest Entry
 byte pyuutahi = 2; // Highest Entry
 byte pyuutasize;
@@ -91,7 +91,7 @@ void pyuutaMenu()
       // Set Size
       setROMSize_PYUUTA();
       break;
-    
+
     case 3:
       // reset
       resetArduino();
@@ -117,7 +117,7 @@ void setup_PYUUTA()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //      /RST(PH0)   ---(PH1)  /CS0(PH3)  /DBIN(PH4)  ---(PH5)  /CS1(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -179,7 +179,7 @@ void readSegment_PYUUTA(uint32_t startaddr, uint32_t endaddr)
 // READ ROM
 //******************************************
 
-void readROM_PYUUTA() 
+void readROM_PYUUTA()
 {
   createFolderAndOpenFile("PYUUTA", "ROM", romName, "bin");
 
@@ -189,15 +189,15 @@ void readROM_PYUUTA()
   PORTH &= ~(1 << 4); // /DBIN(PH4) LOW
   if (pyuutasize > 1) { // 32K [3D CARTS]
     PORTH &= ~(1 << 6); // /CS1(PH6) LOW
-    readSegment_PYUUTA(0x4000,0x8000); // +16K = 32K
+    readSegment_PYUUTA(0x4000, 0x8000); // +16K = 32K
     PORTH |= (1 << 6); // /CS1(PH6) HIGH
   }
   PORTH &= ~(1 << 3); // /CS0(PH3) LOW
-  readSegment_PYUUTA(0x8000,0xA000); // 8K
+  readSegment_PYUUTA(0x8000, 0xA000); // 8K
   PORTH |= (1 << 3); // /CS0(PH3) HIGH
   if (pyuutasize > 0) { // 16K
     PORTH &= ~(1 << 3); // /CS0(PH3) LOW
-    readSegment_PYUUTA(0xA000,0xC000); // +8K = 16K
+    readSegment_PYUUTA(0xA000, 0xC000); // +8K = 16K
     PORTH |= (1 << 3); // /CS0(PH3) HIGH
   }
   PORTH |= (1 << 4); // /DBIN(PH4) HIGH
@@ -208,7 +208,7 @@ void readROM_PYUUTA()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -218,9 +218,9 @@ void readROM_PYUUTA()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_PYUUTA(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(PYUUTA[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(PYUUTA[index]);
 }
 #endif
 
@@ -233,7 +233,7 @@ void setROMSize_PYUUTA()
     newpyuutasize = pyuutalo;
   else {
     newpyuutasize = navigateMenu(pyuutalo, pyuutahi, &printRomSize_PYUUTA);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -317,7 +317,7 @@ void setCart_PYUUTA()
   if (myFile.open("pyuutacart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

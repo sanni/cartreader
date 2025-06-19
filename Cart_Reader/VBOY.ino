@@ -318,7 +318,7 @@ void dataIn_VB() {
 void getCartInfo_VB() {
   // Set control
   dataIn_VB();
-  
+
   for (unsigned long address = 0x10000; address <= 0x400000; address *= 2) {
     // Get Serial
     word vbSerial = readWord_VB((address - 0x204) / 2);  // Cart Serial
@@ -403,19 +403,19 @@ void getCartInfo_VB() {
   println_Msg(FS(FSTRING_SPACE));
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
-  
+
   print_Msg(FS(FSTRING_SIZE));
   if (cartSize == 0) {
     println_Msg(F("Unknown (set manually)"));
   }
-  else if(cartSize < 0x100000) {
+  else if (cartSize < 0x100000) {
     print_Msg(cartSize / 1024);
     println_Msg(F(" KBit"));
   } else {
     print_Msg(cartSize * 8 / 1024 / 1024);
     println_Msg(F(" MBit"));
   }
-  
+
   print_Msg(F("Sram: "));
   if (sramSize > 0) {
     print_Msg(sramSize * 8 / 1024);
@@ -594,7 +594,7 @@ void setRomSize() {
     case 4:
       cartSize = 0x400000;   // 4MB
       break;
-    }
+  }
   getCartInfo_VB();
 }
 #endif

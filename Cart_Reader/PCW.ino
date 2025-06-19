@@ -544,7 +544,7 @@ void write_bank_byte_PCW(unsigned char data)
   PORTC = data;
 
   for (unsigned int x = 0; x < 40; x++)
-      __asm__("nop\n\t");
+    __asm__("nop\n\t");
 
   WE_HIGH_PCW;
   NAND_1B_HIGH;
@@ -625,7 +625,7 @@ void readMultiROM_PCW()
 //******************************************
 
 void readSRAM_PCW()
-{  // readSRAM_1A()
+{ // readSRAM_1A()
   createFolder("PCW", "SAVE", romName, "srm");
 
   foldern = foldern + 1;

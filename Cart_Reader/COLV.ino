@@ -203,9 +203,9 @@ void readROM_COL() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_COL(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(pgm_read_byte(&(COL[index])));
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(pgm_read_byte(&(COL[index])));
 }
 #endif
 
@@ -217,10 +217,10 @@ void setROMSize_COL() {
     newcolsize = collo;
   else {
     newcolsize = navigateMenu(collo, colhi, &printRomSize_COL);
-  
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  
+
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[newcolsize])));
   println_Msg(F("K"));
@@ -342,7 +342,7 @@ void setCart_COL() {
   if (myFile.open("colv.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_COL, &entry, &printDataLine_COL)) {
+    if (checkCartSelection(myFile, &readDataLine_COL, &entry, &printDataLine_COL)) {
       //byte COL[] = {8, 12, 16, 20, 24, 32};
       switch (entry.gameSize) {
         case 8:
@@ -372,8 +372,8 @@ void setCart_COL() {
         default:
           colsize = 0;
           break;
-        }
-        EEPROM_writeAnything(8, colsize);
+      }
+      EEPROM_writeAnything(8, colsize);
     }
   } else {
     print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));

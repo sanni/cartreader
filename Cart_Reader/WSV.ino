@@ -221,9 +221,9 @@ void readROM_WSV() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_WSV(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(pgm_read_word(&(WSV[index])));
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(pgm_read_word(&(WSV[index])));
 }
 #endif
 
@@ -357,7 +357,7 @@ void setCart_WSV() {
   if (myFile.open("wsv.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_WSV, &entry, &printDataLine_WSV)) {
+    if (checkCartSelection(myFile, &readDataLine_WSV, &entry, &printDataLine_WSV)) {
       //word WSV[] = {32,64,512};
       switch (entry.gameSize) {
         case 32:
@@ -371,8 +371,8 @@ void setCart_WSV() {
         case 51:
           wsvsize = 2;
           break;
-        }
-        EEPROM_writeAnything(8, wsvsize);
+      }
+      EEPROM_writeAnything(8, wsvsize);
     }
   } else {
     print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));

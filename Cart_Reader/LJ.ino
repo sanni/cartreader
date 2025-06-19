@@ -5,7 +5,7 @@
 // Little Jammer
 // Cartridge Pinout
 // 48P 1.25mm pitch connector
-// 
+//
 // FORM FACTOR IS SAME AS BANDAI WONDERSWAN/BENESSE POCKET CHALLENGE V2/LITTLE JAMMER PRO
 // WIRING IS COMPLETELY DIFFERENT!
 //
@@ -79,7 +79,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte LJ[] = {1,2,4};
+byte LJ[] = {1, 2, 4};
 byte ljlo = 0; // Lowest Entry
 byte ljhi = 2; // Highest Entry
 byte ljsize;
@@ -121,7 +121,7 @@ void ljMenu()
     case 2:
       setROMSize_LJ();
       break;
-    
+
     // Reset
     case 3:
       resetArduino();
@@ -147,7 +147,7 @@ void setup_LJ()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //      /RST(PH0)   ---(PH1)   /CE(PH3)   ---(PH4)   /WR(PH5)   /OE(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -221,13 +221,13 @@ void readROM_LJ()
   createFolderAndOpenFile("LJ", "ROM", romName, "bin");
 
   // Maximum Direct Address Size is 4MB
-  readSegment_LJ(0x000000,0x100000); // 1MB
+  readSegment_LJ(0x000000, 0x100000); // 1MB
   if (ljsize > 0) // 2MB/4MB
   {
-    readSegment_LJ(0x100000,0x200000); // +1MB = 2MB
+    readSegment_LJ(0x100000, 0x200000); // +1MB = 2MB
     if (ljsize > 1) // 4MB
     {
-      readSegment_LJ(0x200000,0x400000); // +2MB = 4MB
+      readSegment_LJ(0x200000, 0x400000); // +2MB = 4MB
     }
   }
   myFile.close();
@@ -247,9 +247,9 @@ void readROM_LJ()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_LJ(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(LJ[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(LJ[index]);
 }
 #endif
 
@@ -262,7 +262,7 @@ void setROMSize_LJ()
     newljsize = ljlo;
   else {
     newljsize = navigateMenu(ljlo, ljhi, &printRomSize_LJ);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -346,7 +346,7 @@ void setCart_LJ()
   if (myFile.open("ljcart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

@@ -138,7 +138,7 @@ void setup_7800() {
   clockgen.update_status();
 
 #else
-  // Set CLK(PH1) to Output 
+  // Set CLK(PH1) to Output
   DDRH |= (1 << 1);
   // Output a high signal CLK(PH1)
   PORTH |= (1 << 1);
@@ -433,7 +433,7 @@ void readROM_7800() {
 }
 
 void setHalt_7800(byte on) {
-  if(on == 1) {
+  if (on == 1) {
     PORTH |= (1 << 0);  // HALT(PH0) HIGH = SALLY
   } else {
     PORTH &= ~(1 << 0); // HALT(PH0) LOW = MARIA
@@ -486,9 +486,9 @@ void println_Mapper7800(byte mapper) {
 }
 
 void printRomSize_7800(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(a7800[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(a7800[index]);
 }
 #endif
 
@@ -665,7 +665,7 @@ void setCart_7800() {
   if (myFile.open("7800.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
+    if (checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }

@@ -73,9 +73,9 @@ static const char reproCFIItem6[] PROGMEM = "1x 8MB";
 static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproCFIItem2, reproCFIItem3, reproCFIItem4, reproCFIItem5, reproCFIItem6, FSTRING_RESET };
 
 /* ROM file order
-static const char reproEXItem1[] PROGMEM = "ExROM (CDAB)";
-static const char reproEXItem2[] PROGMEM = "standard (ABCD)";
-static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXItem2, FSTRING_RESET };
+  static const char reproEXItem1[] PROGMEM = "ExROM (CDAB)";
+  static const char reproEXItem2[] PROGMEM = "standard (ABCD)";
+  static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXItem2, FSTRING_RESET };
 */
 
 /*boolean reproEXMenu() {
@@ -99,7 +99,7 @@ static const char* const menuOptionsReproEX[] PROGMEM = { reproEXItem1, reproEXI
       break;
   }
   return fileOrder;
-}*/
+  }*/
 
 // Setup number of flashroms
 void reproCFIMenu() {

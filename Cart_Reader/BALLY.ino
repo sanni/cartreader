@@ -41,7 +41,7 @@
 // LEFT  |                                                                                                           | RIGHT
 //       |   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18   19   20  21  22  23  24  25  26 |
 //       +-----------------------------------------------------------------------------------------------------------+
-//         GND  A7  A6  A5  A4  A3  A2  A1  A0  D0  D1  D2 GND  D3  D4  D5  D6  D7  A11  A10 /EN A12  A9  A8 +5V GND  
+//         GND  A7  A6  A5  A4  A3  A2  A1  A0  D0  D1  D2 GND  D3  D4  D5  D6  D7  A11  A10 /EN A12  A9  A8 +5V GND
 //
 //                                                        BOTTOM SIDE
 
@@ -52,7 +52,7 @@
 // VARIABLES
 //******************************************
 
-byte BALLY[] = {2,4,8};
+byte BALLY[] = {2, 4, 8};
 byte ballylo = 0; // Lowest Entry
 byte ballyhi = 2; // Highest Entry
 
@@ -92,7 +92,7 @@ void ballyMenu()
       // Set Size
       setROMSize_BALLY();
       break;
-    
+
     case 3:
       // reset
       resetArduino();
@@ -118,7 +118,7 @@ void setup_BALLY()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //       ---(PH0)   ---(PH1) /ENABLE(PH3) ---(PH4)   ---(PH5)   ---(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -184,15 +184,15 @@ void readSegment_BALLY(uint16_t startaddr, uint16_t endaddr)
 // READ ROM
 //******************************************
 
-void readROM_BALLY() 
+void readROM_BALLY()
 {
   createFolderAndOpenFile("BALLY", "ROM", romName, "bin");
 
-  readSegment_BALLY(0x0000,0x0800); // 2K
+  readSegment_BALLY(0x0000, 0x0800); // 2K
   if (ballysize > 0) {
-    readSegment_BALLY(0x0800,0x1000); // +2K = 4K
+    readSegment_BALLY(0x0800, 0x1000); // +2K = 4K
     if (ballysize > 1) {
-      readSegment_BALLY(0x1000,0x2000); // +4K = 8K
+      readSegment_BALLY(0x1000, 0x2000); // +4K = 8K
     }
   }
   myFile.close();
@@ -202,7 +202,7 @@ void readROM_BALLY()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -212,9 +212,9 @@ void readROM_BALLY()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_BALLY(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(BALLY[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(BALLY[index]);
 }
 #endif
 
@@ -227,7 +227,7 @@ void setROMSize_BALLY()
     newballysize = ballylo;
   else {
     newballysize = navigateMenu(ballylo, ballyhi, &printRomSize_BALLY);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -311,7 +311,7 @@ void setCart_BALLY()
   if (myFile.open("ballycart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

@@ -113,10 +113,10 @@ void setup_GBPort() {
   PORTH &= ~((1 << 0) | (1 << 1));
 
   /* FIXME setup_GB sets this up too. Should this also for Datel and others?
-  // Set Audio-In(PH4) to Input
-  DDRH &= ~(1 << 4);
-  // Enable Internal Pullup
-  PORTH |= (1 << 4);
+    // Set Audio-In(PH4) to Input
+    DDRH &= ~(1 << 4);
+    // Enable Internal Pullup
+    PORTH |= (1 << 4);
   */
 
   // Set Data Pins (D0-D7) to Input
@@ -1118,7 +1118,7 @@ void readROM_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
   draw_progressbar(0, totalProgressBar);
 
   // M161 banks are double size and start with 0
@@ -1864,8 +1864,8 @@ void busyCheck_GB(unsigned long address, byte data) {
     // Update Status
     statusReg = readByte_GB(address);
     /* Debug
-    count++;
-    if (count > 250) {
+      count++;
+      if (count > 250) {
       println_Msg("");
       print_Msg(F("Bank: "));
       print_Msg(currBank);
@@ -1873,7 +1873,7 @@ void busyCheck_GB(unsigned long address, byte data) {
       println_Msg(currAddr + currByte);
       display_Update();
       wait();
-    }
+      }
     */
   }
 }
@@ -2037,7 +2037,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
 
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
+      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
       draw_progressbar(0, totalProgressBar);
 
       for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -2090,7 +2090,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       // Write flash
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
+      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
       draw_progressbar(0, totalProgressBar);
 
       for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -2139,7 +2139,7 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       // Write flash
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
-      uint32_t totalProgressBar = (uint32_t)(romBanks)*16384;
+      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
       draw_progressbar(0, totalProgressBar);
 
       for (unsigned int currAddr = 0; currAddr < 0x7FFF; currAddr += 512) {
@@ -2638,7 +2638,7 @@ void readPelican_GB() {
 
   // Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
   draw_progressbar(0, totalProgressBar);
 
   for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
@@ -2817,7 +2817,7 @@ void writePelican_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
   draw_progressbar(0, totalProgressBar);
 
   for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -3016,7 +3016,7 @@ void readMegaMem_GB() {
 
   // Initialize progress bar
   processedProgressBar = 0;
-  totalProgressBar = (uint32_t)(romBanks)*8192;
+  totalProgressBar = (uint32_t)(romBanks) * 8192;
   draw_progressbar(0, totalProgressBar);
 
   for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
@@ -3157,7 +3157,7 @@ void writeMegaMem_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
   draw_progressbar(0, totalProgressBar);
 
   for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -3327,7 +3327,7 @@ void readGameshark_GB() {
 
   // Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
   draw_progressbar(0, totalProgressBar);
 
   for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
@@ -3447,7 +3447,7 @@ void writeGameshark_GB() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(romBanks)*8192;
+  uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
   draw_progressbar(0, totalProgressBar);
 
   for (word currBank = 0; currBank < romBanks; currBank++) {

@@ -491,7 +491,7 @@ void getCartInfo_SMS() {
   println_Msg(F("KB"));
   println_Msg(FS(FSTRING_SPACE));
 
-// Wait for user input
+  // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);

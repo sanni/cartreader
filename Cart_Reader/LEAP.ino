@@ -16,7 +16,7 @@
 //       D10 -| 5B   5A |- D5
 //       GND -| 6B   6A |- D2
 //       D13 -| 7B   7A |- D9
-//        nc -| 8B   8A |- nc 
+//        nc -| 8B   8A |- nc
 //        D6 -| 9B   9A |- D1
 //       D14 -| 10B 10A |- D8
 //            |---------|
@@ -57,7 +57,7 @@
 //******************************************
 // CONTROL PINS - OE/WE/CE
 #define OE_HIGH PORTH |= (1<<3)
-#define OE_LOW PORTH &= ~(1<<3) 
+#define OE_LOW PORTH &= ~(1<<3)
 #define WE_HIGH PORTH |= (1<<5)
 #define WE_LOW PORTH &= ~(1<<5)
 #define CE_HIGH PORTH |= (1<<6)
@@ -96,7 +96,7 @@
 // RAM File = SAVE.eep
 // FLASH File = SAVE.fla
 
-byte LEAPSTER[] = {4,8,16};
+byte LEAPSTER[] = {4, 8, 16};
 byte leaplo = 0; // Lowest Entry
 byte leaphi = 2; // Highest Entry
 byte leapsize;
@@ -113,38 +113,38 @@ word tempcheck;
 //******************************************
 // ROM STRUCTURE
 //******************************************
-char LEAP[] = {0x4C,0x45,0x41,0x50}; // "LEAP" MARKER AT 0x00 OR 0x144 (WORD 0xA2)
-char TBL[] = {0x01,0x00,0x00,0x01};  // TABLE START
-char TXT[] = {0x04,0x00,0x00,0x01};  // NEXT DWORD IS TEXT BLOCK [5 SENTENCES] START
-char VER[] = {0x0A,0x00,0x00,0x01};  // NEXT DWORD IS ROM VERSION LOCATION
-char TTL[] = {0x0B,0x00,0x00,0x01};  // NEXT DWORD IS ROM TITLE LOCATION
-char END[] = {0x10,0x00,0x00,0x01}; // LAST BLOCK - END SEARCH
+char LEAP[] = {0x4C, 0x45, 0x41, 0x50}; // "LEAP" MARKER AT 0x00 OR 0x144 (WORD 0xA2)
+char TBL[] = {0x01, 0x00, 0x00, 0x01}; // TABLE START
+char TXT[] = {0x04, 0x00, 0x00, 0x01}; // NEXT DWORD IS TEXT BLOCK [5 SENTENCES] START
+char VER[] = {0x0A, 0x00, 0x00, 0x01}; // NEXT DWORD IS ROM VERSION LOCATION
+char TTL[] = {0x0B, 0x00, 0x00, 0x01}; // NEXT DWORD IS ROM TITLE LOCATION
+char END[] = {0x10, 0x00, 0x00, 0x01}; // LAST BLOCK - END SEARCH
 word sentenceAddr = 0; // Sentence Block Start Address
 word versionAddr = 0;  // Version Address
 word titleAddr = 0;    // Title Address
 char ROMVersion[20];   // Fosters [20] "155-11172 152-11808"
 char ROMTitle[50];     // "Mr. Pencils Learn to Draw and Write." [37]
-                       // "Thomas and Friends Calling All Engines" [39]
-                       // "The Letter Factory.v1.0 - Initial Release JBM3" [47]
+// "Thomas and Friends Calling All Engines" [39]
+// "The Letter Factory.v1.0 - Initial Release JBM3" [47]
 
 //******************************************
 // DATA INTEGRITY BLOCK
 //******************************************
-// 5 Sentences - 172 bytes 
+// 5 Sentences - 172 bytes
 // Location not static between ROMs
 
 static const unsigned char LeapCheck [] = {
-0x4C,0x69,0x6C,0x20,0x64,0x75,0x63,0x6B,0x65,0x64,0x2E,0x20,0x20,0x54,0x68,0x65,
-0x20,0x6A,0x65,0x74,0x20,0x7A,0x69,0x70,0x70,0x65,0x64,0x20,0x70,0x61,0x73,0x74,
-0x20,0x68,0x65,0x72,0x20,0x68,0x65,0x61,0x64,0x2E,0x20,0x20,0x44,0x75,0x73,0x74,
-0x20,0x66,0x6C,0x65,0x77,0x2C,0x20,0x4C,0x69,0x6C,0x20,0x73,0x6E,0x65,0x65,0x7A,
-0x65,0x64,0x2C,0x20,0x61,0x6E,0x64,0x20,0x4C,0x65,0x61,0x70,0x20,0x74,0x75,0x72,
-0x6E,0x65,0x64,0x20,0x72,0x65,0x64,0x2E,0x20,0x20,0x54,0x68,0x65,0x6E,0x20,0x4C,
-0x69,0x6C,0x20,0x67,0x6F,0x74,0x20,0x75,0x70,0x2C,0x20,0x61,0x62,0x6F,0x75,0x74,
-0x20,0x74,0x6F,0x20,0x79,0x65,0x6C,0x6C,0x2E,0x20,0x20,0x4C,0x65,0x61,0x70,0x20,
-0x67,0x61,0x73,0x70,0x65,0x64,0x2C,0x20,0x22,0x4C,0x6F,0x6F,0x6B,0x2C,0x20,0x4C,
-0x69,0x6C,0x21,0x20,0x20,0x59,0x6F,0x75,0x72,0x20,0x74,0x6F,0x6F,0x74,0x68,0x21,
-0x20,0x20,0x49,0x74,0x20,0x66,0x65,0x6C,0x6C,0x21,0x22,0x00 
+  0x4C, 0x69, 0x6C, 0x20, 0x64, 0x75, 0x63, 0x6B, 0x65, 0x64, 0x2E, 0x20, 0x20, 0x54, 0x68, 0x65,
+  0x20, 0x6A, 0x65, 0x74, 0x20, 0x7A, 0x69, 0x70, 0x70, 0x65, 0x64, 0x20, 0x70, 0x61, 0x73, 0x74,
+  0x20, 0x68, 0x65, 0x72, 0x20, 0x68, 0x65, 0x61, 0x64, 0x2E, 0x20, 0x20, 0x44, 0x75, 0x73, 0x74,
+  0x20, 0x66, 0x6C, 0x65, 0x77, 0x2C, 0x20, 0x4C, 0x69, 0x6C, 0x20, 0x73, 0x6E, 0x65, 0x65, 0x7A,
+  0x65, 0x64, 0x2C, 0x20, 0x61, 0x6E, 0x64, 0x20, 0x4C, 0x65, 0x61, 0x70, 0x20, 0x74, 0x75, 0x72,
+  0x6E, 0x65, 0x64, 0x20, 0x72, 0x65, 0x64, 0x2E, 0x20, 0x20, 0x54, 0x68, 0x65, 0x6E, 0x20, 0x4C,
+  0x69, 0x6C, 0x20, 0x67, 0x6F, 0x74, 0x20, 0x75, 0x70, 0x2C, 0x20, 0x61, 0x62, 0x6F, 0x75, 0x74,
+  0x20, 0x74, 0x6F, 0x20, 0x79, 0x65, 0x6C, 0x6C, 0x2E, 0x20, 0x20, 0x4C, 0x65, 0x61, 0x70, 0x20,
+  0x67, 0x61, 0x73, 0x70, 0x65, 0x64, 0x2C, 0x20, 0x22, 0x4C, 0x6F, 0x6F, 0x6B, 0x2C, 0x20, 0x4C,
+  0x69, 0x6C, 0x21, 0x20, 0x20, 0x59, 0x6F, 0x75, 0x72, 0x20, 0x74, 0x6F, 0x6F, 0x74, 0x68, 0x21,
+  0x20, 0x20, 0x49, 0x74, 0x20, 0x66, 0x65, 0x6C, 0x6C, 0x21, 0x22, 0x00
 };
 
 //******************************************
@@ -245,7 +245,7 @@ void setup_LEAP()
   checkStart_LEAP();
 
   // 39VF040 Flash Check
-//  idFLASH();
+  //  idFLASH();
 
   checkStatus_LEAP();
   strncpy(romName, ROMTitle, 16);  // Truncate ROMTitle to fit
@@ -382,11 +382,11 @@ void findTable_LEAP(unsigned long startAddr, unsigned long endAddr)
 {
   delay(500);
   CE_LOW;
-  for (unsigned long addr = startAddr; addr < endAddr; addr +=2) {
+  for (unsigned long addr = startAddr; addr < endAddr; addr += 2) {
     tempword = read_rom_word_LEAP(addr);
-    if ((TBL[0] == ((tempword >> 0x8) & 0xFF))&&(TBL[1] == (tempword & 0xFF))) {
+    if ((TBL[0] == ((tempword >> 0x8) & 0xFF)) && (TBL[1] == (tempword & 0xFF))) {
       tempword = read_rom_word_LEAP(addr + 1);
-      if ((TBL[2] == ((tempword >> 0x8) & 0xFF))&&(TBL[3] == (tempword & 0xFF))) {
+      if ((TBL[2] == ((tempword >> 0x8) & 0xFF)) && (TBL[3] == (tempword & 0xFF))) {
         readTable_LEAP(startAddr, endAddr);
         break;
       }
@@ -401,42 +401,42 @@ void readTable_LEAP(unsigned long startAddr, unsigned long endAddr)
   CE_LOW;
   for (unsigned long addr = startAddr; addr < endAddr; addr++) {
     tempword = read_rom_word_LEAP(addr);
-    if ((TXT[0] == ((tempword >> 0x8) & 0xFF))&&(TXT[1] == (tempword & 0xFF))) {
+    if ((TXT[0] == ((tempword >> 0x8) & 0xFF)) && (TXT[1] == (tempword & 0xFF))) {
       tempword = read_rom_word_LEAP(addr + 1);
-      if ((TXT[2] == ((tempword >> 0x8) & 0xFF))&&(TXT[3] == (tempword & 0xFF))) { // Text Block Marker Found
+      if ((TXT[2] == ((tempword >> 0x8) & 0xFF)) && (TXT[3] == (tempword & 0xFF))) { // Text Block Marker Found
         ptrword = read_rom_word_LEAP(addr + 2);
         sentenceAddr = (((ptrword >> 8) & 0xFF) | ((ptrword & 0xFF) << 8)); // Swap Byte Order
       }
     }
-    else if ((VER[0] == ((tempword >> 0x8) & 0xFF))&&(VER[1] == (tempword & 0xFF))) {
+    else if ((VER[0] == ((tempword >> 0x8) & 0xFF)) && (VER[1] == (tempword & 0xFF))) {
       tempword = read_rom_word_LEAP(addr + 1);
-      if ((VER[2] == ((tempword >> 0x8) & 0xFF))&&(VER[3] == (tempword & 0xFF))) { // Version Marker Found
+      if ((VER[2] == ((tempword >> 0x8) & 0xFF)) && (VER[3] == (tempword & 0xFF))) { // Version Marker Found
         ptrword = read_rom_word_LEAP(addr + 2);
         versionAddr = (((ptrword >> 8) & 0xFF) | ((ptrword & 0xFF) << 8)); // Swap Byte Order
       }
     }
-    else if ((TTL[0] == ((tempword >> 0x8) & 0xFF))&&(TTL[1] == (tempword & 0xFF))) {
-      tempword = read_rom_word_LEAP(addr + 1);      
-      if ((TTL[2] == ((tempword >> 0x8) & 0xFF))&&(TTL[3] == (tempword & 0xFF))) { // Title Marker Found
+    else if ((TTL[0] == ((tempword >> 0x8) & 0xFF)) && (TTL[1] == (tempword & 0xFF))) {
+      tempword = read_rom_word_LEAP(addr + 1);
+      if ((TTL[2] == ((tempword >> 0x8) & 0xFF)) && (TTL[3] == (tempword & 0xFF))) { // Title Marker Found
         ptrword = read_rom_word_LEAP(addr + 2);
         titleAddr = (((ptrword >> 8) & 0xFF) | ((ptrword & 0xFF) << 8)); // Swap Byte Order
       }
     }
-    else if ((END[0] == ((tempword >> 0x8) & 0xFF))&&(END[1] == (tempword & 0xFF))) {
-      tempword = read_rom_word_LEAP(addr + 1);      
-      if ((END[2] == ((tempword >> 0x8) & 0xFF))&&(END[3] == (tempword & 0xFF))) { // END OF TABLE
+    else if ((END[0] == ((tempword >> 0x8) & 0xFF)) && (END[1] == (tempword & 0xFF))) {
+      tempword = read_rom_word_LEAP(addr + 1);
+      if ((END[2] == ((tempword >> 0x8) & 0xFF)) && (END[3] == (tempword & 0xFF))) { // END OF TABLE
         break;
       }
     }
   }
   CE_HIGH;
-//  print_Msg(F("Text Addr: "));
-//  println_Msg(sentenceAddr, HEX);
-//  print_Msg(F("Version Addr: "));
-//  println_Msg(versionAddr, HEX);
-//  print_Msg(F("Title Addr: "));
-//  println_Msg(titleAddr, HEX);
-//  display_Update();
+  //  print_Msg(F("Text Addr: "));
+  //  println_Msg(sentenceAddr, HEX);
+  //  print_Msg(F("Version Addr: "));
+  //  println_Msg(versionAddr, HEX);
+  //  print_Msg(F("Title Addr: "));
+  //  println_Msg(titleAddr, HEX);
+  //  display_Update();
 
   delay(500);
   CE_LOW;
@@ -508,9 +508,9 @@ void readROM_LEAP()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_LEAP(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(LEAPSTER[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(LEAPSTER[index]);
 }
 #endif
 
@@ -523,7 +523,7 @@ void setROMSize_LEAP()
     newleapsize = leaplo;
   else {
     newleapsize = navigateMenu(leaplo, leaphi, &printRomSize_LEAP);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -603,7 +603,7 @@ void checkStatus_LEAP()
 // FLASH 39VF040
 // MR. PENCIL'S LEARN TO DRAW & WRITE
 // TOP SECRET - PERSONAL BEESWAX
-// FLASH IS BYTE MODE 
+// FLASH IS BYTE MODE
 // BYTE PIN IS A0 - SHIFT ADDRESS >> 1
 
 void dataOut_LEAP()
@@ -676,7 +676,7 @@ void readFLASH_LEAP()
 {
   createFolderAndOpenFile("LEAP", "SAVE", romName, "fla");
 
-  if(myFile) {
+  if (myFile) {
     CE_HIGH;
     OE_LOW;
     FL_CE_LOW;
@@ -971,11 +971,11 @@ void readEEP_LEAP()
       }
       myFile.write(sdBuffer, 256);
     }
-// 24LC02
-//    for (word currByte = 0; currByte < 256; currByte++) {
-//      readEepromByte_LEAP(currByte);
-//    }
-//    myFile.write(sdBuffer, 256);
+    // 24LC02
+    //    for (word currByte = 0; currByte < 256; currByte++) {
+    //      readEepromByte_LEAP(currByte);
+    //    }
+    //    myFile.write(sdBuffer, 256);
     myFile.close();
 
     printCRC(fileName, NULL, 0); // 2048
@@ -994,7 +994,7 @@ void writeEEP_LEAP()
 
   display_Clear();
   println_Msg(F("Writing File: "));
-//  println_Msg(filePath);
+  //  println_Msg(filePath);
   println_Msg(fileName);
   display_Update();
 
@@ -1042,7 +1042,7 @@ void setCart_LEAP()
   if (myFile.open("leapster.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

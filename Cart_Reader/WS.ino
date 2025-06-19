@@ -95,7 +95,7 @@ static boolean headerCheck() {
   dataIn_WS();
 
   for (uint32_t i = 0; i < 16; i += 2)
-    *((uint16_t *)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
+    * ((uint16_t *)(sdBuffer + i)) = readWord_WS(0xffff0 + i);
 
   uint8_t startByte = sdBuffer[0];
   if (startByte == 0xEA) {  // Start should be 0xEA

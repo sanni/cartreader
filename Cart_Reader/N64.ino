@@ -837,13 +837,13 @@ void sendJoyBus(const byte* buffer, char length) {
                        //   instruction. Pick Z as it is the only call-used such register,
                        //   avoiding the need to preserve any value a caller may have set it to.
                        : [buffer] "+z"(buffer),
-                         [length] "+r"(length),
-                         [cur_byte] "=&r"(cur_byte),
-                         [mask] "=&a"(mask),
-                         [scratch] "=&a"(scratch)
+                       [length] "+r"(length),
+                       [cur_byte] "=&r"(cur_byte),
+                       [mask] "=&a"(mask),
+                       [scratch] "=&a"(scratch)
                        : [line_low] "r"(line_low),
-                         [line_high] "r"(line_high),
-                         [out_byte] "i"(&DDRH)
+                       [line_high] "r"(line_high),
+                       [out_byte] "i"(&DDRH)
                        : "cc", "memory");
 }
 
@@ -944,13 +944,13 @@ word recvJoyBus(byte* output, byte byte_count) {
                        "\trjmp .read_end_%=\n"              // 2
                        ".read_end_%=:\n"
                        : [output] "+z"(output),
-                         [byte_count] "+r"(byte_count),
-                         [mask] "=&a"(mask),
-                         [cur_byte] "=&r"(cur_byte),
-                         [timeout] "=&a"(timeout),
-                         [scratch] "=&a"(scratch)
+                       [byte_count] "+r"(byte_count),
+                       [mask] "=&a"(mask),
+                       [cur_byte] "=&r"(cur_byte),
+                       [timeout] "=&a"(timeout),
+                       [scratch] "=&a"(scratch)
                        : [in_byte] "i"(&PINH),
-                         [in_bit] "i"(4)
+                       [in_bit] "i"(4)
                        : "cc", "memory");
   return byte_count;
 }
@@ -2839,7 +2839,7 @@ void readRom_N64() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(cartSize)*1024 * 1024;
+  uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
   draw_progressbar(0, totalProgressBar);
 
   for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
@@ -2885,7 +2885,7 @@ uint32_t readRom_N64() {
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(cartSize)*1024 * 1024;
+  uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
   draw_progressbar(0, totalProgressBar);
 
   // prepare crc32

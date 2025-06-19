@@ -38,7 +38,7 @@
 // LEFT  |                                                                          | RIGHT
 //       |   1   3   5   7   9  11  13  15  17  19  21  23  25  27  29  31  33  35  |
 //       +--------------------------------------------------------------------------+
-//         RST  D7  D6  D5  D4  D3  D2  D1  D0 +5V GS* A14 DBIN GRC -5V GR VSS GND  
+//         RST  D7  D6  D5  D4  D3  D2  D1  D0 +5V GS* A14 DBIN GRC -5V GR VSS GND
 //
 //                                        BOTTOM SIDE
 
@@ -84,9 +84,9 @@
 // Cart Configurations
 // Format = {mapper,gromlo,gromhi,romlo,romhi}
 static const byte PROGMEM ti99mapsize [] = {
-0,0,5,0,4, // Normal Carts (GROM 0K/6K/12K/18K/24K/30K + ROM 0K/4K/8K/12K/16K)
-1,1,3,4,4, // MBX (GROM 6K/12K/18K + ROM 16K)
-2,1,1,4,4, // TI-CALC (GROM 6K + ROM 16K)
+  0, 0, 5, 0, 4, // Normal Carts (GROM 0K/6K/12K/18K/24K/30K + ROM 0K/4K/8K/12K/16K)
+  1, 1, 3, 4, 4, // MBX (GROM 6K/12K/18K + ROM 16K)
+  2, 1, 1, 4, 4, // TI-CALC (GROM 6K + ROM 16K)
 };
 
 byte ti99mapcount = 3; // (sizeof(mapsize)/sizeof(mapsize[0])) / 5;
@@ -95,11 +95,11 @@ byte ti99mapselect;
 int ti99index;
 
 //int GROM[] = {0,8,16,24,32,40}; // padded sizes
-int GROM[] = {0,6,12,18,24,30};
+int GROM[] = {0, 6, 12, 18, 24, 30};
 byte gromlo = 0; // Lowest Entry
 byte gromhi = 5; // Highest Entry
 
-int CROM[] = {0,4,8,12,16};
+int CROM[] = {0, 4, 8, 12, 16};
 byte cromlo = 0; // Lowest Entry
 byte cromhi = 4; // Highest Entry
 
@@ -220,7 +220,7 @@ void setup_TI99()
   DDRA = 0xFF;
 
   // Set Unused PORTL Pins HIGH except GR(PL0)
-  PORTL |= (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6)| (1 << 7);
+  PORTL |= (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7);
 
   // Set Unused Pins HIGH
   PORTA = 0xFF;
@@ -292,10 +292,10 @@ void pulseGRC(int times)
   for (int i = 0; i < (times * 2); i++) {
     PORTH ^= (1 << 1);
     // NOP (62.5ns) x 20 = 1250ns = 1.25us
-//    NOP; NOP; NOP; NOP; NOP; // 20 NOPs = 20 x 62.5ns = 1250ns x 2 = 2.5us = 400 kHz
-//    NOP; NOP; NOP; NOP; NOP;
-//    NOP; NOP; NOP; NOP; NOP;
-//    NOP; NOP; NOP; NOP; NOP;
+    //    NOP; NOP; NOP; NOP; NOP; // 20 NOPs = 20 x 62.5ns = 1250ns x 2 = 2.5us = 400 kHz
+    //    NOP; NOP; NOP; NOP; NOP;
+    //    NOP; NOP; NOP; NOP; NOP;
+    //    NOP; NOP; NOP; NOP; NOP;
     // Switch to 100 kHz due to some GROMs not reading out properly at faster speeds
     delayMicroseconds(5); // 5us x 2 = 10us = 100 kHz
   }
@@ -327,7 +327,7 @@ void pulseGROM(uint16_t addr) // Controlled Pulse Code
   pulseGRC(16);
   ENABLE_GROM;
   pulseGRC(4); // this works
-//  checkGRC(); // Disable checkGRC() otherwise Q-bert hangs (GROM 7 at 0xE000 with NO GROMs at 0x6000/0x8000/0xA000/0xC000)
+  //  checkGRC(); // Disable checkGRC() otherwise Q-bert hangs (GROM 7 at 0xE000 with NO GROMs at 0x6000/0x8000/0xA000/0xC000)
   pulseGRC(2); // Replace checkGRC() with 2 pulse cycles
   pulseGRC(10);
   DISABLE_GROM;
@@ -336,7 +336,7 @@ void pulseGROM(uint16_t addr) // Controlled Pulse Code
   pulseGRC(16);
   ENABLE_GROM;
   pulseGRC(4); // this works
-//  checkGRC(); // Disable checkGRC() otherwise Q-bert hangs (GROM 7 at 0xE000 with NO GROMs at 0x6000/0x8000/0xA000/0xC000)
+  //  checkGRC(); // Disable checkGRC() otherwise Q-bert hangs (GROM 7 at 0xE000 with NO GROMs at 0x6000/0x8000/0xA000/0xC000)
   pulseGRC(2); // Replace checkGRC() with 2 pulse cycles
   pulseGRC(10);
   DISABLE_GROM;
@@ -451,8 +451,8 @@ void readGROM_TI99()
 #endif
   }
   else {
-//    println_Msg(F("USE GOOD POWER SUPPLY"));
-//    println_Msg(FS(FSTRING_EMPTY));
+    //    println_Msg(F("USE GOOD POWER SUPPLY"));
+    //    println_Msg(FS(FSTRING_EMPTY));
     print_Msg(F("Saving to "));
     print_Msg(folder);
     println_Msg(F("/..."));
@@ -478,15 +478,15 @@ void readGROM_TI99()
         ENABLE_GROM;
         setupGROM();
         if (x == 3)
-          readSegmentGROM_TI99(0x6000,0x7800); // 6K
+          readSegmentGROM_TI99(0x6000, 0x7800); // 6K
         else if (x == 4)
-          readSegmentGROM_TI99(0x8000,0x9800); // +6K = 12K
+          readSegmentGROM_TI99(0x8000, 0x9800); // +6K = 12K
         else if (x == 5)
-          readSegmentGROM_TI99(0xA000,0xB800); // +6K = 18K
+          readSegmentGROM_TI99(0xA000, 0xB800); // +6K = 18K
         else if (x == 6)
-          readSegmentGROM_TI99(0xC000,0xD800); // +6K = 24K
+          readSegmentGROM_TI99(0xC000, 0xD800); // +6K = 24K
         else if (x == 7)
-          readSegmentGROM_TI99(0xE000,0xF800); // +6K = 30K
+          readSegmentGROM_TI99(0xE000, 0xF800); // +6K = 30K
         DISABLE_GROM;
         myFile.close();
 
@@ -497,7 +497,7 @@ void readGROM_TI99()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 // CARTRIDGE ROM
@@ -550,24 +550,24 @@ void readCROM_TI99()
       DISABLE_GROM;
       ENABLE_ROM;
       writeData_TI99(0x7000, 0x00); // Set Bank 0
-      readSegment_TI99(0x7000,0x8000); // 4K
+      readSegment_TI99(0x7000, 0x8000); // 4K
       writeData_TI99(0x7002, 0x00); // Set Bank 1
-      readSegment_TI99(0x7000,0x8000); // +4K = 8K
+      readSegment_TI99(0x7000, 0x8000); // +4K = 8K
       writeData_TI99(0x7004, 0x00); // Set Bank 2
       readSegment_TI99(0x7000, 0x8000); // +4K = 12K
       writeData_TI99(0x7006, 0x00); // Set Bank 3
       readSegment_TI99(0x7000, 0x8000); // +4K = 16K
     }
-    else { 
+    else {
       // Normal Cart ROM 4K/8K/12K/16K
       // ROM Space 0x6000-0x7FFF
       // Bankswitch 0x7000-0x7FFF using write to 0x6000/0x6002
       DISABLE_GROM;
       ENABLE_ROM;
       writeData_TI99(0x6000, 0x00); // Set Bank 0
-      readSegment_TI99(0x6000,0x7000); // 4K
+      readSegment_TI99(0x6000, 0x7000); // 4K
       if (cromsize > 1) {
-        readSegment_TI99(0x7000,0x8000); // +4K = 8K
+        readSegment_TI99(0x7000, 0x8000); // +4K = 8K
         if (cromsize > 2) {
           writeData_TI99(0x6002, 0x00); // Set Bank 1
           if (cromsize > 3) // 16K
@@ -616,7 +616,7 @@ void checkStatus_TI99()
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:     "));
-//  println_Msg(ti99mapper);
+  //  println_Msg(ti99mapper);
   printMapper_TI99(ti99mapper);
   print_Msg(F("GROM SIZE:  "));
   print_Msg(GROM[gromsize]);
@@ -686,7 +686,7 @@ void setMapper_TI99()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   navigateMenu(0, ti99mapcount - 1, &printMapperSelection_TI99);
   newti99mapper = ti99mapselect;
-  
+
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(newti99mapper);
@@ -784,7 +784,7 @@ void setGROMSize_TI99()
   gromsize = newgromsize;
   // Default GROM Map to sequential GROMs
   newgrommap = 0;
-  for (int x = 0; x < gromsize; x++){
+  for (int x = 0; x < gromsize; x++) {
     newgrommap = (newgrommap | (1 << (x + 3)));
   }
   EEPROM_writeAnything(13, newgrommap);
@@ -824,7 +824,7 @@ setgrom:
   gromsize = newgromsize;
   // Default GROM Map to sequential GROMs
   newgrommap = 0;
-  for (int x = 0; x < gromsize; x++){
+  for (int x = 0; x < gromsize; x++) {
     newgrommap = (newgrommap | (1 << (x + 3)));
   }
   EEPROM_writeAnything(13, newgrommap);
@@ -855,13 +855,13 @@ void readGROMMap()
     Serial.print(0);
   else (
     for (int x = 3; x < 8; x++) {
-      if (((grommap >> x) & 0x1) == 1) {
+    if (((grommap >> x) & 0x1) == 1) {
         Serial.print(x);
         newgromsize++;
       }
     }
-  }
-  Serial.println(FS(FSTRING_EMPTY));
+}
+Serial.println(FS(FSTRING_EMPTY));
 #endif
   if (gromsize != newgromsize) {
     EEPROM_writeAnything(8, newgromsize);
@@ -875,7 +875,7 @@ void setGROMMap_TI99()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   int b = 0;
-  for(int i = 3; i < 8; i++) {
+  for (int i = 3; i < 8; i++) {
     display_Clear();
     print_Msg(F("Enable GROM "));
     println_Msg(i);
@@ -938,9 +938,9 @@ void setGROMMap_TI99()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_TI99(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(CROM[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(CROM[index]);
 }
 #endif
 
@@ -953,7 +953,7 @@ void setCROMSize_TI99()
     newcromsize = cromlo;
   else {
     newcromsize = navigateMenu(cromlo, cromhi, &printRomSize_TI99);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -1006,7 +1006,7 @@ struct database_entry_TI99 {
 void readDataLine_TI99(FsFile& database, void* entry)
 {
   struct database_entry_TI99* castEntry = (database_entry_TI99*)entry;
-  
+
   // Read Maooer
   castEntry->gameMapper = database.read() - 48;
 
@@ -1052,13 +1052,13 @@ void setCart_TI99()
 
   struct database_entry_TI99 entry;
 
-    // Select starting letter
+  // Select starting letter
   byte myLetter = starting_letter();
 
   if (myFile.open("ti99cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_TI99, &entry, &printDataLine_TI99)) {
+    if (checkCartSelection(myFile, &readDataLine_TI99, &entry, &printDataLine_TI99)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gromSize);
       EEPROM_writeAnything(9, entry.romSize);

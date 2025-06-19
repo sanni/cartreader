@@ -326,9 +326,9 @@ void checkMapperSize_5200() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_5200(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(a5200[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(a5200[index]);
 }
 #endif
 
@@ -340,7 +340,7 @@ void setROMSize_5200() {
     new5200size = a5200lo;
   else {
     new5200size = navigateMenu(a5200lo, a5200hi, &printRomSize_5200);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -506,7 +506,7 @@ void setCart_5200() {
   if (myFile.open("5200.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDbEntry, &entry)) {
+    if (checkCartSelection(myFile, &readDbEntry, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }
@@ -516,7 +516,7 @@ void setCart_5200() {
 }
 
 // While not precise in terms of exact cycles for NOP due to the for-loop
-// overhead, it simplifies the code while still achieving a similar result. 
+// overhead, it simplifies the code while still achieving a similar result.
 void cycleDelay(byte cycleCount) {
   for (byte i = 0; i < cycleCount; ++i) {
     NOP;

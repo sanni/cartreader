@@ -33,7 +33,7 @@
 //          +-------+
 //
 //                                                       TOP
-//       A15  A13  SND  GND  A12  A10   A8   A6   A4   A2   A0   D7   D5   D3   D1  +5V   Q /RST /HLT NC 
+//       A15  A13  SND  GND  A12  A10   A8   A6   A4   A2   A0   D7   D5   D3   D1  +5V   Q /RST /HLT NC
 //      +-----------------------------------------------------------------------------------------------+
 //      | 39   37   35   33   31   29   27   25   23   21   19   17   15   13   11    9   7   5   3   1 |
 // LEFT |                                                                                               | RIGHT
@@ -53,7 +53,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte TRS80[] = {2,4,8,10,16,32,64,128};
+byte TRS80[] = {2, 4, 8, 10, 16, 32, 64, 128};
 byte trs80lo = 0; // Lowest Entry
 byte trs80hi = 7; // Highest Entry
 
@@ -93,7 +93,7 @@ void trs80Menu()
       // Set Size
       setROMSize_TRS80();
       break;
-    
+
     case 3:
       // reset
       resetArduino();
@@ -119,7 +119,7 @@ void setup_TRS80()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //      /RST(PH0)    E(PH1)   /CTS(PH3)  /SCS(PH4)   R/W(PH5)   ---(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -229,7 +229,7 @@ void bankSwitch_TRS80(uint16_t addr, uint8_t data)
 // READ ROM
 //******************************************
 
-void readROM_TRS80() 
+void readROM_TRS80()
 {
   createFolderAndOpenFile("TRS80", "ROM", romName, "ccc");
 
@@ -239,7 +239,7 @@ void readROM_TRS80()
   // Set /RESET to HIGH
   PORTH |= (1 << 0); // /RESET HIGH
   // Set R/W to READ
-  PORTH |= (1 << 5); // R/W HIGH  
+  PORTH |= (1 << 5); // R/W HIGH
 
   if (trs80size > 5) { // Bankswitch Carts - Predator 64K/Robocop 128K
     // Predator 64K = (2^6) / 16 = 4
@@ -251,21 +251,21 @@ void readROM_TRS80()
     }
   }
   else { // Normal Carts 2K/4K/8K/10K/16K/32K
-    readSegment_TRS80(0xC000,0xC800); // 2K
+    readSegment_TRS80(0xC000, 0xC800); // 2K
     if (trs80size > 0) {
-      readSegment_TRS80(0xC800,0xD000); // +2K = 4K
+      readSegment_TRS80(0xC800, 0xD000); // +2K = 4K
       if (trs80size > 1) {
-        readSegment_TRS80(0xD000,0xE000); // +4K = 8K
+        readSegment_TRS80(0xD000, 0xE000); // +4K = 8K
         if (trs80size > 2) {
-          readSegment_TRS80(0xE000,0xE800); // +2K = 10K
+          readSegment_TRS80(0xE000, 0xE800); // +2K = 10K
           if (trs80size > 3) {
-            readSegment_TRS80(0xE800,0x10000); // +6K = 16K
+            readSegment_TRS80(0xE800, 0x10000); // +6K = 16K
             if (trs80size == 5) { // 32K
               // Second Chip Select - Switch to Upper 16K (Mind-Roll)
               PORTH &= ~(1 << 4); // /SCS LOW
               NOP; NOP; NOP; NOP; NOP;
               PORTH |= (1 << 4); // /SCS HIGH
-              readSegment_TRS80(0x8000,0xC000); // +16K = 32K
+              readSegment_TRS80(0x8000, 0xC000); // +16K = 32K
             }
           }
         }
@@ -279,7 +279,7 @@ void readROM_TRS80()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -289,9 +289,9 @@ void readROM_TRS80()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_TRS80(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(TRS80[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(TRS80[index]);
 }
 #endif
 
@@ -304,7 +304,7 @@ void setROMSize_TRS80()
     newtrs80size = trs80lo;
   else {
     newtrs80size = navigateMenu(trs80lo, trs80hi, &printRomSize_TRS80);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -365,8 +365,8 @@ void checkStatus_TRS80()
 #else
   Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(TRS80[trs80size];
-  Serial.println(F("KB"));
-  Serial.println(FS(FSTRING_EMPTY));
+               Serial.println(F("KB"));
+               Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -388,7 +388,7 @@ void setCart_TRS80()
   if (myFile.open("trs80cart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

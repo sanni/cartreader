@@ -34,13 +34,13 @@
 //          +-------+
 //
 //                                              BACK
-//       GND NC /RST /NMI PH2 I3  I2 A13 A12 A11 A10  A9  A8 A7 A6 A5 A4 A3 A2 A1 A0 GND    
+//       GND NC /RST /NMI PH2 I3  I2 A13 A12 A11 A10  A9  A8 A7 A6 A5 A4 A3 A2 A1 A0 GND
 //      +-------------------------------------------------------------------------------+
 //      |  Z   Y   X   W   V   U   T   S   R   P   N   M   L  K  J  H  F  E  D  C  B  A |
 // LEFT |                                                                               | RIGHT
 //      | 22  21  20  19  18  17  16  15  14  13  12  11  10  9  8  7  6  5  4  3  2  1 |
 //      +-------------------------------------------------------------------------------+
-//       GND +5V  NC IRQ CRW VRW /R3 /R2 /R1 /B5 /B3 /B2 /B1 D7 D6 D5 D4 D3 D2 D1 D0 GND  
+//       GND +5V  NC IRQ CRW VRW /R3 /R2 /R1 /B5 /B3 /B2 /B1 D7 D6 D5 D4 D3 D2 D1 D0 GND
 //                                              FRONT
 
 // CONTROL PINS:
@@ -53,15 +53,15 @@
 // VARIABLES
 //******************************************
 byte VIC20MAP[] = {
-0x20, // 0x2000
-0x24, // 0x2000/0x4000
-0x2A, // 0x2000/0xA000
-0x46, // 0x4000/0x6000 - Adventure Games
-0x60, // 0x6000
-0x6A, // 0x6000/0xA000 - Standard 16K 
-0x70, // 0x7000
-0xA0, // 0xA000        - Standard 8K
-0xB0  // 0xB000
+  0x20, // 0x2000
+  0x24, // 0x2000/0x4000
+  0x2A, // 0x2000/0xA000
+  0x46, // 0x4000/0x6000 - Adventure Games
+  0x60, // 0x6000
+  0x6A, // 0x6000/0xA000 - Standard 16K
+  0x70, // 0x7000
+  0xA0, // 0xA000        - Standard 8K
+  0xB0  // 0xB000
 };
 
 byte vic20mapcount = 9;
@@ -72,13 +72,13 @@ byte vic20map = 0;
 byte newvic20map;
 
 byte VIC20SIZE[] = {
-0x20, // 2K/0K 0x800 
-0x40, // 4K/0K 0x1000
-0x80, // 8K/0K 0x2000
-0x44, // 4K/4K 0x1000/0x1000
-0x48, // 4K/8K 0x1000/0x2000
-0x84, // 8K/4K 0x2000/0x1000
-0x88  // 8K/8K 0x2000/0x2000	
+  0x20, // 2K/0K 0x800
+  0x40, // 4K/0K 0x1000
+  0x80, // 8K/0K 0x2000
+  0x44, // 4K/4K 0x1000/0x1000
+  0x48, // 4K/8K 0x1000/0x2000
+  0x84, // 8K/4K 0x2000/0x1000
+  0x88  // 8K/8K 0x2000/0x2000
 };
 
 byte vic20lo = 0; // Lowest Entry
@@ -129,7 +129,7 @@ void vic20Menu()
       setROMMap_VIC20();
       setROMSize_VIC20();
       break;
-    
+
     case 3:
       // reset
       resetArduino();
@@ -155,7 +155,7 @@ void setup_VIC20()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //      /RST(PH0)   ---(PH1)  /BLK1(PH3) /BLK2(PH4) /BLK3(PH5) /BLK5(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -237,7 +237,7 @@ void FinishROMFolder_VIC20()
 // READ ROM
 //******************************************
 
-void readROM_VIC20() 
+void readROM_VIC20()
 {
   display_Clear();
   print_Msg(F("Saving to "));
@@ -267,45 +267,45 @@ void readROM_VIC20()
 
     if (rommap == 0x20) { // BLK1
       PORTH &= ~(1 << 3); // BLK1(PH3) LOW
-      readSegment_VIC20(0x2000,0x3000); // 4K
+      readSegment_VIC20(0x2000, 0x3000); // 4K
       if (romsize == 8)
-        readSegment_VIC20(0x3000,0x4000); // +4K = 8K
+        readSegment_VIC20(0x3000, 0x4000); // +4K = 8K
       PORTH |= (1 << 3); // BLK1(PH3) HIGH
     }
     else if (rommap == 0x40) { // BLK2
       PORTH &= ~(1 << 4); // BLK2(PH4) LOW
-      readSegment_VIC20(0x4000,0x5000); // 4K
+      readSegment_VIC20(0x4000, 0x5000); // 4K
       if (romsize == 8)
-        readSegment_VIC20(0x5000,0x6000); // +4K = 8K
+        readSegment_VIC20(0x5000, 0x6000); // +4K = 8K
       PORTH |= (1 << 4); // BLK2(PH4) HIGH
     }
     else if (rommap == 0x60) { // BLK3
       PORTH &= ~(1 << 5); // BLK3(PH5) LOW
-      readSegment_VIC20(0x6000,0x7000); // 4K
-        if (romsize == 8)
-          readSegment_VIC20(0x7000,0x8000); // +4K = 8K
+      readSegment_VIC20(0x6000, 0x7000); // 4K
+      if (romsize == 8)
+        readSegment_VIC20(0x7000, 0x8000); // +4K = 8K
       PORTH |= (1 << 5); // BLK3(PH5) HIGH
     }
     else if (rommap == 0x70) { // BLK3 UPPER HALF
       PORTH &= ~(1 << 5); // BLK3(PH5) LOW
-      readSegment_VIC20(0x7000,0x8000);
+      readSegment_VIC20(0x7000, 0x8000);
       PORTH |= (1 << 5); // BLK3(PH5) HIGH
     }
     else if (rommap == 0xA0) { // BLK5
       PORTH &= ~(1 << 6); // BLK5(PH6) LOW
-      readSegment_VIC20(0xA000,0xA800); // 2K
+      readSegment_VIC20(0xA000, 0xA800); // 2K
       if (romsize > 2) {
-        readSegment_VIC20(0xA800,0xB000); // +2K = 4K
+        readSegment_VIC20(0xA800, 0xB000); // +2K = 4K
         if (romsize > 4)
-          readSegment_VIC20(0xB000,0xC000); // +4K = 8K
+          readSegment_VIC20(0xB000, 0xC000); // +4K = 8K
       }
       PORTH |= (1 << 6); // BLK5(PH6) HIGH
     }
     else if (rommap == 0xB0) { // BLK5 UPPER HALF
       PORTH &= ~(1 << 6); // BLK5(PH6) LOW
-      readSegment_VIC20(0xB000,0xB800); // 2K
+      readSegment_VIC20(0xB000, 0xB800); // 2K
       if (romsize > 2)
-        readSegment_VIC20(0xB800,0xC000); // +2K = 4K
+        readSegment_VIC20(0xB800, 0xC000); // +2K = 4K
       PORTH |= (1 << 6); // BLK5(PH6) HIGH
     }
     myFile.close();
@@ -318,7 +318,7 @@ void readROM_VIC20()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -421,7 +421,7 @@ void checkStatus_VIC20()
     vic20size = 2; // default 8K
     EEPROM_writeAnything(8, vic20size);
   }
- 
+
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("COMMODORE VIC-20"));
@@ -477,7 +477,7 @@ void setROMMap_VIC20()
         // Correct Overshoot
         if (i == 0)
           i = vic20mapcount - 1;
-        else 
+        else
           i--;
         break;
       }
@@ -565,7 +565,7 @@ void setCart_VIC20()
   if (myFile.open("vic20cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
+    if (checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }

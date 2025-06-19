@@ -210,7 +210,7 @@ void readROM_VECTREX()
   createFolderAndOpenFile("VECTREX", "ROM", romName, "vec");
 
   PB6_DISABLE;  // PB6 LOW - Switch Bank
-  
+
   // Standard Carts 4K/8K
   readSegment_VECTREX(0x0000, 0x1000);  // 4K
   if (vectrexsize > 0) {
@@ -249,9 +249,9 @@ void readROM_VECTREX()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_VECTREX(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(VECTREX[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(VECTREX[index]);
 }
 #endif
 
@@ -264,7 +264,7 @@ void setROMSize_VECTREX()
     newvectrexsize = vectrexlo;
   else {
     newvectrexsize = navigateMenu(vectrexlo, vectrexhi, &printRomSize_VECTREX);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -347,7 +347,7 @@ void setCart_VECTREX()
   if (myFile.open("vectrexcart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

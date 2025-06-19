@@ -170,11 +170,11 @@ void setup_C64() {
   // Set Control Pins to Output
   //       /RST(PH0) ---(PH5)   R/W(PH6)
   DDRH |= (1 << 0) | (1 << 5) | (1 << 6);
-  
+
   // Set Port Pins to Input
   //      /GAME(PH3) /EXROM(PH4)
   DDRH &= ~((1 << 3) | (1 << 4));
-  
+
   // Set TIME(PJ0) to Output (UNUSED)
   DDRJ |= (1 << 0);
 
@@ -215,7 +215,7 @@ void setup_C64() {
   clockgen.update_status();
 
 #else
-  // Set PHI2(PH1 to Output 
+  // Set PHI2(PH1 to Output
   DDRH |= (1 << 1);
   // Setting Control Pins to HIGH for PHI2(PH1)
   PHI2_ENABLE;
@@ -273,7 +273,7 @@ void readSegmentBankD0D5_C64(uint16_t banks, uint16_t address, byte romLow) {
   uint32_t endAddress = address + 0x2000;
   for (uint16_t x = 0; x < banks; x++) {
     bankSwitch_C64(0xDE00, x);        // Switch Bank using D0-D5
-    readSegment_C64(address, endAddress);  
+    readSegment_C64(address, endAddress);
   }
   PORTL |= (1 << romLow); // disable ROML or ROMH
 }
@@ -381,7 +381,7 @@ void readROM_C64() {
           if (c64size > 1)
             readSegmentEnableDisable_C64(0xA000, 0xC000, 1); // +8K = 16K
         }
-        else 
+        else
           readSegmentEnableDisable_C64(0x9000, 0xA000, 0);  // 4K
       }
       break;
@@ -433,24 +433,24 @@ void readROM_C64() {
     // IF 0x75 OR 0x83, THEN Two Chip ELSE Single Chip
 
     case 5: {        // Ocean 128K/256K/512K
-      ROML_ENABLE;
-      bankSwitch_C64(0xDE00, 0);  // Reset Bank 0
-      uint8_t checkOcean = readData_C64(0x8002);
-      ROML_DISABLE;
-      if ((c64size == 8) && ((checkOcean == 0x75) || (checkOcean == 0x83))) {  // Two Chip 256K
-        // Robocop 2 + Shadow of the Beast
-        println_Msg(F("TWO CHIP"));
-        display_Update();
-        readSegmentBankD0D5_C64(16, 0x8000, 0); // 8K * 16 = 128K
-        readSegmentBankD0D5_C64(16, 0xA000, 1); // 8K * 16 = +128K = 256K
-      } else {  // Single Chip 128K/256K/512K
-        println_Msg(F("SINGLE CHIP"));
-        display_Update();
-        c64banks = C64[c64size] / 8;
-        readSegmentBankD0D5_C64(c64banks, 0x8000, 0); // 8K * Banks = 128K/256K/512K
+        ROML_ENABLE;
+        bankSwitch_C64(0xDE00, 0);  // Reset Bank 0
+        uint8_t checkOcean = readData_C64(0x8002);
+        ROML_DISABLE;
+        if ((c64size == 8) && ((checkOcean == 0x75) || (checkOcean == 0x83))) {  // Two Chip 256K
+          // Robocop 2 + Shadow of the Beast
+          println_Msg(F("TWO CHIP"));
+          display_Update();
+          readSegmentBankD0D5_C64(16, 0x8000, 0); // 8K * 16 = 128K
+          readSegmentBankD0D5_C64(16, 0xA000, 1); // 8K * 16 = +128K = 256K
+        } else {  // Single Chip 128K/256K/512K
+          println_Msg(F("SINGLE CHIP"));
+          display_Update();
+          c64banks = C64[c64size] / 8;
+          readSegmentBankD0D5_C64(c64banks, 0x8000, 0); // 8K * Banks = 128K/256K/512K
+        }
+        break;
       }
-      break;
-    }
     case 6:           // Expert Cartridge (8K)
       readSegmentEnableDisable_C64(0x8000, 0xA000, 0);
       break;
@@ -628,9 +628,9 @@ void checkMapperSize_C64() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_C64(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(C64[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(C64[index]);
 }
 #endif
 
@@ -833,7 +833,7 @@ void setCart_C64() {
   if (myFile.open("c64cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
+    if (checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }

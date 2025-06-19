@@ -498,28 +498,28 @@ void epromMenu() {
    Flash ID
  *****************************************/
 void printFlashSize(int index) {
-  #ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   dont_log = true;
-  #endif
+#endif
   display_Clear();
   print_Msg(F("Flashsize: "));
   print_Msg(index);
   println_Msg(F("MB"));
-  #ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   dont_log = false;
-  #endif
+#endif
 }
 
 void printFlashType(int index) {
-  #ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   dont_log = true;
-  #endif
+#endif
   display_Clear();
   print_Msg(F("Flashtype: "));
   println_Msg(index);
-  #ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   dont_log = false;
-  #endif
+#endif
 }
 
 byte selectFlashtype(boolean option) {
@@ -995,11 +995,11 @@ void writeByte_Flash(unsigned long myAddress, byte myData) {
     PORTL = (myAddress >> 16) & 0xFF;
   }
   /* SNES maskrom flash adapter combined with PLCC32 adapter
-  SNES A19 -> 32PLCC A17
-  SNES A18 -> 32PLCC A16
-  SNES A17 -> 32PLCC A18
-  SNES A16 -> 32PLCC OE
-  SNES CS/Flash OE -> 32PLCC WE
+    SNES A19 -> 32PLCC A17
+    SNES A18 -> 32PLCC A16
+    SNES A17 -> 32PLCC A18
+    SNES A16 -> 32PLCC OE
+    SNES CS/Flash OE -> 32PLCC WE
   */
   else if (mapping == 3) {
     // A8-A15
@@ -1189,11 +1189,11 @@ byte readByte_Flash(unsigned long myAddress) {
     PORTL = (myAddress >> 16) & 0xFF;
   }
   /* SNES maskrom flash adapter combined with PLCC32 adapter
-  SNES A19 -> 32PLCC A17
-  SNES A18 -> 32PLCC A16
-  SNES A17 -> 32PLCC A18
-  SNES A16 -> 32PLCC OE
-  SNES CS/Flash OE -> 32PLCC WE
+    SNES A19 -> 32PLCC A17
+    SNES A18 -> 32PLCC A16
+    SNES A17 -> 32PLCC A18
+    SNES A16 -> 32PLCC OE
+    SNES CS/Flash OE -> 32PLCC WE
   */
   else if (mapping == 3) {
     // A8-A15
@@ -2947,7 +2947,7 @@ void print_Eprom(int numBytes) {
 #endif
 
 /******************************************
-CFI flashrom functions (modified from GB.ino)
+  CFI flashrom functions (modified from GB.ino)
 *****************************************/
 void sendCFICommand_Flash(byte cmd) {
   writeByteCompensated_Flash(0xAAA, 0xaa);

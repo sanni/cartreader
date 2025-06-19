@@ -56,7 +56,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte VSMILE[] = {4,6,8,16};
+byte VSMILE[] = {4, 6, 8, 16};
 byte vsmilelo = 0; // Lowest Entry
 byte vsmilehi = 3; // Highest Entry
 byte vsmilesize;
@@ -256,9 +256,9 @@ void readROM_VSMILE()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_VSMILE(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(VSMILE[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(VSMILE[index]);
 }
 #endif
 
@@ -271,7 +271,7 @@ void setROMSize_VSMILE()
     newvsmilesize = vsmilelo;
   else {
     newvsmilesize = navigateMenu(vsmilelo, vsmilehi, &printRomSize_VSMILE);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -355,7 +355,7 @@ void setCart_VSMILE()
   if (myFile.open("vsmilecart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

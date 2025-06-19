@@ -37,7 +37,7 @@
 // LEFT  |                                                                                           | RIGHT
 //       |   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20   21  22  |
 //       +-------------------------------------------------------------------------------------------+
-//          D7  D6  D5  D4  D3 DIS GND  D2  D1  D0  A0  A1  A2  A3 +5V  A4  A5  A6 TPA  A7 /MRD  CS  
+//          D7  D6  D5  D4  D3 DIS GND  D2  D1  D0  A0  A1  A2  A3 +5V  A4  A5  A6 TPA  A7 /MRD  CS
 //
 //                                                FRONT SIDE
 
@@ -48,7 +48,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte RCA[] = {1,2};
+byte RCA[] = {1, 2};
 byte rcalo = 0; // Lowest Entry
 byte rcahi = 1; // Highest Entry
 
@@ -88,7 +88,7 @@ void rcaMenu()
       // Set Size
       setROMSize_RCA();
       break;
-    
+
     case 3:
       // reset
       resetArduino();
@@ -114,7 +114,7 @@ void setup_RCA()
   //A16-A23
   DDRL = 0xFF;
 
-  // Set Control Pins to Output 
+  // Set Control Pins to Output
   //       ---(PH0)   ---(PH1)  /MRD(PH3)   ---(PH4)   ---(PH5)   TPA(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 
@@ -194,13 +194,13 @@ void readSegment_RCA(uint16_t startaddr, uint16_t endaddr)
 // READ ROM
 //******************************************
 
-void readROM_RCA() 
+void readROM_RCA()
 {
   createFolderAndOpenFile("RCA", "ROM", romName, "bin");
 
-  readSegment_RCA(0x0400,0x0600); // 512B
+  readSegment_RCA(0x0400, 0x0600); // 512B
   if (rcasize > 0)
-    readSegment_RCA(0x0600,0x0800); // +512B = 1K
+    readSegment_RCA(0x0600, 0x0800); // +512B = 1K
   myFile.close();
 
   printCRC(fileName, NULL, 0);
@@ -208,7 +208,7 @@ void readROM_RCA()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -218,9 +218,9 @@ void readROM_RCA()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_RCA(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(RCA[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(RCA[index]);
 }
 #endif
 
@@ -233,7 +233,7 @@ void setROMSize_RCA()
     newrcasize = rcalo;
   else {
     newrcasize = navigateMenu(rcalo, rcahi, &printRomSize_RCA);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -317,7 +317,7 @@ void setCart_RCA()
   if (myFile.open("rcacart.txt", O_READ)) {
     // seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+    if (checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {

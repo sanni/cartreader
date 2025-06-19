@@ -911,7 +911,7 @@ void getCartInfo_MD() {
     chksum = 0xC560;
     cartSize = 0xA0000;
   }
-  
+
   // Slaughter Sport (USA)
   if (!strncmp("GMT5604600jJ", romName, 12) && (chksum == 0xFFFF)) {
     strcpy(romName, "SLAUGHTERSPORT");
@@ -2972,16 +2972,16 @@ void readRealtec_MD() {
 }
 
 void printRomSize_MD(int index) {
-  #ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   dont_log = true;
-  #endif
+#endif
   display_Clear();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(MDSize[index])));
   println_Msg(F(" Mbit"));
-  #ifdef ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   dont_log = false;
-  #endif
+#endif
 }
 
 void force_cartSize_MD() {

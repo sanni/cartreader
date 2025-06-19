@@ -5,7 +5,7 @@
 // Little Jammer Pro
 // Cartridge Pinout
 // 48P 1.25mm pitch connector
-// 
+//
 // FORM FACTOR IS SAME AS BANDAI WONDERSWAN/BENESSE POCKET CHALLENGE V2/LITTLE JAMMER
 // WIRING IS COMPLETELY DIFFERENT!
 //
@@ -165,7 +165,7 @@ void setup_LJPRO()
   //     U2_HLD(PH0) SCLK(PH1)  U2_SI(PH3) U1_HLD(PH4) U2_WP(PH5) U2_CS(PH6)
   DDRH |=  (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
   //      U1_CS(PK0) U1_SI(PK1) U1_WP(PK2) --------
-  DDRK |=  (1 << 0) | (1 << 1) | (1 <<2) | (1 << 3);
+  DDRK |=  (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
 
   // FLASH Configuration Pins to Input
   //         S1(PK4)    S2(PK5)    S3(PK6)    S4(PK7)
@@ -273,13 +273,13 @@ void readSerialID_U1()
   // Flash ID
   sprintf(mnfID, "%02X", id0);
   sprintf(deviceID_str, "%02X%02X", id1, id2);
-  if(strcmp(deviceID_str, "2013") == 0) { // MX25L4005
+  if (strcmp(deviceID_str, "2013") == 0) { // MX25L4005
     ljproflash1found = 1;
     ljproflash1size = 1;
     println_Msg(F("U1 MX25L4005 FOUND"));
     display_Update();
   }
-  else if(strcmp(deviceID_str, "2015") == 0) { // MX25L1605
+  else if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash1found = 1;
     ljproflash1size = 2;
     println_Msg(F("U1 MX25L1605 FOUND"));
@@ -313,13 +313,13 @@ void readSerialID_U2()
   // Flash ID
   sprintf(mnfID, "%02X", id0);
   sprintf(deviceID_str, "%02X%02X", id1, id2);
-  if(strcmp(deviceID_str, "2013") == 0) { // MX25L4005
+  if (strcmp(deviceID_str, "2013") == 0) { // MX25L4005
     ljproflash2found = 1;
     ljproflash2size = 1;
     println_Msg(F("U2 MX25L4005 FOUND"));
     display_Update();
   }
-  else if(strcmp(deviceID_str, "2015") == 0) { // MX25L1605
+  else if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash2found = 1;
     ljproflash2size = 2;
     println_Msg(F("U2 MX25L1605 FOUND"));
@@ -436,7 +436,7 @@ void readID_U1() // Parallel Mode
   // Flash ID
   sprintf(mnfID, "%02X", id0);
   sprintf(deviceID_str, "%02X%02X", id1, id2);
-  if(strcmp(deviceID_str, "2015") == 0) { // MX25L1605
+  if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash1found = 1;
     ljproflash1size = 2;
     display_Clear();
@@ -474,7 +474,7 @@ void readID_U2() // Parallel Mode
   // Flash ID
   sprintf(mnfID, "%02X", id0);
   sprintf(deviceID_str, "%02X%02X", id1, id2);
-  if(strcmp(deviceID_str, "2015") == 0) { // MX25L1605
+  if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash2found = 1;
     ljproflash2size = 2;
     println_Msg(F("U2 MX25L1605 FOUND"));
@@ -498,7 +498,7 @@ void readID_U2() // Parallel Mode
 // READ ROM
 //******************************************
 
-void readROM_LJPRO() 
+void readROM_LJPRO()
 {
   createFolderAndOpenFile("LJPRO", "ROM", romName, "bin");
 
@@ -546,7 +546,7 @@ void readROM_LJPRO()
     sendSerial_U1(0x00); // Address A23-A16
     sendSerial_U1(0x00); // Address A15-A8
     sendSerial_U1(0x00); // Address A7-A0
-    readSerialData_U1(0x00000,0x80000); // 512KB
+    readSerialData_U1(0x00000, 0x80000); // 512KB
     CS1_HIGH; // U1 HIGH
   }
   else { // 25L1605/25L3205/25L6405 - Parallel Mode
@@ -580,7 +580,7 @@ void readROM_LJPRO()
       sendSerial_U2(0x00); // Address A23-A16
       sendSerial_U2(0x00); // Address A15-A8
       sendSerial_U2(0x00); // Address A7-A0
-      readSerialData_U2(0x00000,0x80000); // 512KB
+      readSerialData_U2(0x00000, 0x80000); // 512KB
       CS2_HIGH; // U2 HIGH
     }
     else { // 25L1605/25L3205/25L6405 - Parallel Mode
@@ -611,6 +611,6 @@ void readROM_LJPRO()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 #endif

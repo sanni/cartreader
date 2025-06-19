@@ -5,7 +5,7 @@
 // Tested with  HW5
 // https://github.com/herzmx/CPS3-OSCR-Adapter
 //******************************************
-#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16)) 
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16))
 /******************************************
    Variables
  *****************************************/
@@ -501,11 +501,11 @@ void flashromCPS_SIMM4x8() {
       println_Msg(F("ID Flashrom"));
       switch (flashromType) {
         case 0: break;
-        case 1: 
-            enable64MSB();
-            idFlash2x8(0x0);
-            enable64LSB();
-            idFlash2x8(0x1);
+        case 1:
+          enable64MSB();
+          idFlash2x8(0x0);
+          enable64LSB();
+          idFlash2x8(0x1);
           break;
         case 2: break;
         case 3: break;
@@ -1200,7 +1200,7 @@ void id_SIMM4x8() {
   resetSIMM4x8();
   uint8_t ngFlash = 0;
   uint8_t okFlash = 0;
-  
+
   flashid = flashids[7];
   sprintf(flashid_str, "%04X", flashid);
   for (byte i = 4; i < 8; i++) {
@@ -1387,7 +1387,7 @@ void writeSIMM4x8() {
       // Blink led
       if (currByte % 2048 == 0)
         blinkLED();
-      
+
       noInterrupts();
       for (int c = 0; c < 128; c++) {
         // 0600 0EA0

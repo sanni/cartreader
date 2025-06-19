@@ -25,7 +25,8 @@
 enum PCE_MODE_T : uint8_t { HUCARD,
                             TURBOCHIP,
                             HUCARD_NOSWAP,
-                            PCE_FLASH };
+                            PCE_FLASH
+                          };
 
 /******************************************
    Prototype Declarations
@@ -761,7 +762,7 @@ void read_rom_PCE(void) {
 
   //clear the screen
   display_Clear();
-  
+
   rom_size = detect_rom_size_PCE();
   if (pce_force_rom_size > 0) {
     rom_size = pce_force_rom_size;
@@ -843,7 +844,7 @@ void flash_mode_PCE() {
 void flash_wait_status_PCE(uint8_t expected) {
   set_cs_rd_low_PCE();
   data_input_PCE();
-  
+
   uint8_t status;
   do {
     PORTH &= ~(1 << 3);  // RD low
@@ -873,7 +874,7 @@ void flash_PCE() {
   write_byte_PCE(0x5555, 0x90);
   data_input_PCE();
   // tIDA = 150ns
-  NOP;NOP;NOP;
+  NOP; NOP; NOP;
   // MFG,DEVICE
   uint16_t deviceId = (read_byte_PCE(0x0) << 8) | read_byte_PCE(0x1);
 
@@ -902,7 +903,7 @@ void flash_PCE() {
       flashSize = 524288UL;
       break;
     case 0xC2D5:
-      // MX29F080 = 8Mbit
+    // MX29F080 = 8Mbit
     case 0x20F1:
       // M29F080 = 8Mbit
       flashSize = 1048576UL;

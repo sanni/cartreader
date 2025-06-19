@@ -476,7 +476,7 @@ void setMapper_INTV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   navigateMenu(0, intvmapcount - 1, &printMapperSelection_INTV);
   newintvmapper = intvmapselect;
-  
+
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(newintvmapper);
@@ -523,9 +523,9 @@ void checkMapperSize_INTV() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_INTV(int index) {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(pgm_read_byte(&(INTV[index])));
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(pgm_read_byte(&(INTV[index])));
 }
 #endif
 
@@ -680,7 +680,7 @@ void setCart_INTV() {
   if (myFile.open("intv.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLine_INTV, &entry, &printDataLine_INTV)) {
+    if (checkCartSelection(myFile, &readDataLine_INTV, &entry, &printDataLine_INTV)) {
       //byte INTV[] = {8, 12, 16, 24, 32, 48};
       switch (entry.gameSize) {
         case 8:

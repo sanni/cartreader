@@ -4510,7 +4510,7 @@ void readRAM() {
 
         case 16:  // 256-byte EEPROM 24C02
         case 159:
-          {  // 128-byte EEPROM 24C01 [Little Endian]
+          { // 128-byte EEPROM 24C01 [Little Endian]
             size_t eepsize;
             if (mapper == 159)
               eepsize = 128;
@@ -4710,7 +4710,7 @@ void writeRAM() {
 
         case 16:  // 256-byte EEPROM 24C02
         case 159:
-          {  // 128-byte EEPROM 24C01 [Little Endian]
+          { // 128-byte EEPROM 24C01 [Little Endian]
             size_t eepsize;
             if (mapper == 159)
               eepsize = 128;

@@ -28,7 +28,7 @@
 //
 //                                LABEL SIDE
 //
-//        RD4 GND A4  A5  A6  A7  A8  A9  A12 D3  D7  A11 A10 R/W PHI2  
+//        RD4 GND A4  A5  A6  A7  A8  A9  A12 D3  D7  A11 A10 R/W PHI2
 //      +-------------------------------------------------------------+
 //      |  A   B   C   D   E   F   H   J   K   L   M   N   P   R   S  |
 // LEFT |                                                             | RIGHT
@@ -60,7 +60,7 @@
 //******************************************
 // VARIABLES
 //******************************************
-byte ATARI8[] = {8,16,32,40,64,128};
+byte ATARI8[] = {8, 16, 32, 40, 64, 128};
 byte atari8lo = 0; // Lowest Entry
 byte atari8hi = 5; // Highest Entry
 byte atari8size;
@@ -111,7 +111,7 @@ void atari8Menu()
       // Set Size
       setROMSize_ATARI8();
       break;
-    
+
     case 4:
       // reset
       resetArduino();
@@ -235,7 +235,7 @@ void readBountyBobBank_ATARI8(uint16_t startaddr)
     }
     myFile.write(sdBuffer, 502);
     // Bank Registers 0xFF6-0xFF9
-    for (int y = 0; y < 4; y++){
+    for (int y = 0; y < 4; y++) {
       readData_ATARI8(startaddr + 0x0FFF); // Reset Bank
       sdBuffer[y] = readData_ATARI8(startaddr + 0x0FF6 + y);
     }
@@ -301,7 +301,7 @@ void bankSwitch_ATARI8(uint8_t bank)
 // READ ROM
 //******************************************
 
-void readROM_ATARI8() 
+void readROM_ATARI8()
 {
   createFolderAndOpenFile("ATARI8", "ROM", romName, "bin");
 
@@ -318,11 +318,11 @@ void readROM_ATARI8()
     // Right slot carts use /S4 assigned to Pin 12
     // Pin 12 = RIGHT Slot /S4 = LEFT Slot /S5
     ENABLE_S5;
-    readSegment_ATARI8(0x8000,0xA000); // 8K
+    readSegment_ATARI8(0x8000, 0xA000); // 8K
     DISABLE_S5;
     // Correct Size to 8K
     atari8size = 0; // 8K
-    EEPROM_writeAnything(8, atari8size); 
+    EEPROM_writeAnything(8, atari8size);
   }
   else if (atari8size == 3) { // Bounty Bob Strikes Back 40K
     ENABLE_S4;
@@ -341,12 +341,12 @@ void readROM_ATARI8()
     for (int x = 0; x < banks; x++) {
       bankSwitch_ATARI8(x);
       ENABLE_S4;
-      readSegment_ATARI8(0x8000,0xA000); // 8K
+      readSegment_ATARI8(0x8000, 0xA000); // 8K
       DISABLE_S4;
     }
     // Last Bank
     ENABLE_S5;
-    readSegment_ATARI8(0xA000,0xC000); // +8K
+    readSegment_ATARI8(0xA000, 0xC000); // +8K
     DISABLE_S5;
   }
   else { // Standard LEFT Cart 8K/16K
@@ -355,11 +355,11 @@ void readROM_ATARI8()
       bankSwitch_ATARI8(0);
       // Standard 16K
       ENABLE_S4;
-      readSegment_ATARI8(0x8000,0xA000); // +8K = 16K
+      readSegment_ATARI8(0x8000, 0xA000); // +8K = 16K
       DISABLE_S4;
     }
     ENABLE_S5;
-    readSegment_ATARI8(0xA000,0xC000); // 8K
+    readSegment_ATARI8(0xA000, 0xC000); // 8K
     DISABLE_S5;
   }
   myFile.close();
@@ -369,7 +369,7 @@ void readROM_ATARI8()
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
-  wait(); 
+  wait();
 }
 
 //******************************************
@@ -379,9 +379,9 @@ void readROM_ATARI8()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_ATARI8(int index)
 {
-    display_Clear();
-    print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(ATARI8[index]);
+  display_Clear();
+  print_Msg(FS(FSTRING_ROM_SIZE));
+  println_Msg(ATARI8[index]);
 }
 #endif
 
@@ -394,7 +394,7 @@ void setROMSize_ATARI8()
     newatari8size = atari8lo;
   else {
     newatari8size = navigateMenu(atari8lo, atari8hi, &printRomSize_ATARI8);
-    
+
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -488,7 +488,7 @@ void setCart_ATARI8()
   if (myFile.open("atari8cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if(checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
+    if (checkCartSelection(myFile, &readDataLineMapperSize, &entry)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
     }

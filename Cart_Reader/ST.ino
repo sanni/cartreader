@@ -123,10 +123,10 @@ bool getHeader(unsigned int bank) {
 
   // Check if 'BANDAI' header is present
   if (strncmp(romName, "BANDAI SFC-ADX", 14) == 0)
-    return(1);
+    return (1);
   else
-    return(0);
-} 
+    return (0);
+}
 
 // Select the slot to use and detect cart size
 void readSlot(bool cartSlot) {
@@ -136,12 +136,12 @@ void readSlot(bool cartSlot) {
   sd.chdir("/");
   display_Clear();
 
-  if(!cartSlot) {            // Slot A was selected
+  if (!cartSlot) {           // Slot A was selected
     if (getHeader(32)) {     // Look for a cart in slot A
       if (getHeader(48))     // Look for mirrored data in slot A
-        readRom_ST(32,48);   // Dump 512KB cart
-      else                   
-        readRom_ST(32,64);   // Dump 1MB cart
+        readRom_ST(32, 48);  // Dump 512KB cart
+      else
+        readRom_ST(32, 64);  // Dump 1MB cart
     }
     else {
       println_Msg(F("No cart detected in Slot A"));
@@ -152,9 +152,9 @@ void readSlot(bool cartSlot) {
   else {                      // Slot B was selected
     if (getHeader(64)) {      // Look for a cart in slot B
       if (getHeader(80))      // Look for mirrored data in slot B
-        readRom_ST(64,80);    // Dump 512KB cart
+        readRom_ST(64, 80);   // Dump 512KB cart
       else
-        readRom_ST(64,96);    // Dump 1MB cart
+        readRom_ST(64, 96);   // Dump 1MB cart
     }
     else {
       println_Msg(F("No cart detected in Slot B"));
@@ -177,7 +177,7 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
 
   // Compare dump CRC with db values
   compareCRC("st.txt", 0, 1, 0);
-  
+
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();

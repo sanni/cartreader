@@ -341,7 +341,7 @@ void writeRAM_GPC(void) {
     byte keepByte = readBank_GPC(0x20, 0x6000);
     delay(100);
     dataOut();
-    controlOut_SNES();    
+    controlOut_SNES();
     writeBank_GPC(0x20, 0x6000, keepByte);
 
     draw_progressbar(0x80000, 0x80000);
