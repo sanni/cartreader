@@ -934,13 +934,13 @@ try {
     })
 
 	$btnArduinoIDE.Add_Click({
-		try {
-			$prefsPath = "Arduino IDE\portable\preferences.txt"
-			$selectedPort = $comPortDropdown.SelectedItem
-			if (-not $selectedPort -or $selectedPort -eq "No COM ports found" -or $selectedPort -eq "Error detecting ports") {
-				[System.Windows.Forms.MessageBox]::Show("Please select a valid COM port first.", "No COM Port Selected", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
-				return
-			}
+        try {
+            $prefsPath = "Arduino IDE\portable\preferences.txt"
+            $selectedPort = $comPortDropdown.SelectedItem
+            if (-not $selectedPort -or $selectedPort -eq "No COM ports found" -or $selectedPort -eq "Error detecting ports") {
+                [System.Windows.Forms.MessageBox]::Show("Please select a valid COM port first.", "No COM Port Selected", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
+                return
+            }
 
             # --- Build last.sketch0.path dynamically ---
             $scriptDir = $null
@@ -954,8 +954,18 @@ try {
             $sketchRelPath = "Arduino IDE\portable\sketchbook\Cart_Reader\Cart_Reader.ino"
             $sketchFullPath = [System.IO.Path]::Combine($scriptDir, $sketchRelPath)
             $sketchFullPath = [System.IO.Path]::GetFullPath($sketchFullPath)
-            $targetSketch = "last.sketch0.path=$sketchFullPath"
-            $targetSketchCount = "last.sketch.count=1"
+            
+            # Define all target settings
+            $targetSettings = @{
+                "board" = "board=mega"
+                "custom_cpu" = "custom_cpu=mega_atmega2560"
+                "serial.port" = "serial.port=$selectedPort"
+                "last.sketch0.path" = "last.sketch0.path=$sketchFullPath"
+                "last.sketch.count" = "last.sketch.count=1"
+                "compiler.warning_level" = "compiler.warning_level=all"
+                "editor.linenumbers" = "editor.linenumbers=true"
+                "editor.save_on_verify" = "editor.save_on_verify=false"
+            }
 
             if (-not (Test-Path $prefsPath)) {
                 Write-Host "preferences.txt file not found. Creating new file..." -ForegroundColor Yellow
@@ -964,21 +974,13 @@ try {
                     New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
                     Write-Host "Created directory: $parentDir" -ForegroundColor Green
                 }
-                $newFileContent = @(
-                    "board=mega",
-                    "custom_cpu=mega_atmega2560",
-                    "serial.port=$selectedPort",
-                    $targetSketch,
-                    $targetSketchCount
-                )
+                $newFileContent = $targetSettings.Values
                 try {
                     [System.IO.File]::WriteAllLines($prefsPath, $newFileContent, [System.Text.UTF8Encoding]::new($false))
                     Write-Host "Created new preferences.txt with required settings:" -ForegroundColor Green
-                    Write-Host "  board=mega" -ForegroundColor White
-                    Write-Host "  custom_cpu=mega_atmega2560" -ForegroundColor White
-                    Write-Host "  serial.port=$selectedPort" -ForegroundColor White
-                    Write-Host "  $targetSketch" -ForegroundColor White
-                    Write-Host "  $targetSketchCount" -ForegroundColor White
+                    foreach ($setting in $targetSettings.Values) {
+                        Write-Host "  $setting" -ForegroundColor White
+                    }
                 }
                 catch {
                     Write-Host "Error creating file: $($_.Exception.Message)" -ForegroundColor Red
@@ -988,104 +990,58 @@ try {
                 $content = Get-Content $prefsPath
                 Write-Host "Checking Arduino IDE preferences..." -ForegroundColor Green
 
-                $targetBoard = "board=mega"
-                $targetCpu = "custom_cpu=mega_atmega2560"
-                $targetPort = "serial.port=$selectedPort"
-                $targetSketch = "last.sketch0.path=$sketchFullPath"
-                $targetSketchCount = "last.sketch.count=1"
-
-                $boardFound = $false
-                $cpuFound = $false
-                $portFound = $false
-                $sketchFound = $false
-                $sketchCountFound = $false
-                $boardCorrect = $false
-                $cpuCorrect = $false
-                $portCorrect = $false
-                $sketchCorrect = $false
-                $sketchCountCorrect = $false
+                # Track which settings are found and correct
+                $settingsStatus = @{}
+                foreach ($key in $targetSettings.Keys) {
+                    $settingsStatus[$key] = @{
+                        Found = $false
+                        Correct = $false
+                    }
+                }
                 $modified = $false
 
+                # Check existing content
                 foreach ($line in $content) {
-                    if ($line -match "^board=") {
-                        $boardFound = $true
-                        if ($line -eq $targetBoard) { $boardCorrect = $true }
-                    }
-                    elseif ($line -match "^custom_cpu=") {
-                        $cpuFound = $true
-                        if ($line -eq $targetCpu) { $cpuCorrect = $true }
-                    }
-                    elseif ($line -match "^serial\.port=") {
-                        $portFound = $true
-                        if ($line -eq $targetPort) { $portCorrect = $true }
-                    }
-                    elseif ($line -match "^last\.sketch0\.path=") {
-                        $sketchFound = $true
-                        if ($line -eq $targetSketch) { $sketchCorrect = $true }
-                    }
-                    elseif ($line -match "^last\.sketch\.count=") {
-                        $sketchCountFound = $true
-                        if ($line -eq $targetSketchCount) { $sketchCountCorrect = $true }
+                    foreach ($key in $targetSettings.Keys) {
+                        $pattern = "^" + [regex]::Escape($key) + "="
+                        if ($line -match $pattern) {
+                            $settingsStatus[$key].Found = $true
+                            if ($line -eq $targetSettings[$key]) {
+                                $settingsStatus[$key].Correct = $true
+                            }
+                            break
+                        }
                     }
                 }
 
+                # Build new content
                 $newContent = @()
                 foreach ($line in $content) {
-                    if ($line -match "^board=" -and -not $boardCorrect) {
-                        $newContent += $targetBoard
-                        $modified = $true
-                    }
-                    elseif ($line -match "^custom_cpu=" -and -not $cpuCorrect) {
-                        $newContent += $targetCpu
-                        $modified = $true
-                    }
-                    elseif ($line -match "^serial\.port=") {
-                        if (-not $portCorrect) {
-                            $newContent += $targetPort
-                            $modified = $true
-                        } else {
-                            $newContent += $line
+                    $lineProcessed = $false
+                    foreach ($key in $targetSettings.Keys) {
+                        $pattern = "^" + [regex]::Escape($key) + "="
+                        if ($line -match $pattern) {
+                            if (-not $settingsStatus[$key].Correct) {
+                                $newContent += $targetSettings[$key]
+                                $modified = $true
+                            } else {
+                                $newContent += $line
+                            }
+                            $lineProcessed = $true
+                            break
                         }
                     }
-                    elseif ($line -match "^last\.sketch0\.path=") {
-                        if (-not $sketchCorrect) {
-                            $newContent += $targetSketch
-                            $modified = $true
-                        } else {
-                            $newContent += $line
-                        }
-                    }
-                    elseif ($line -match "^last\.sketch\.count=") {
-                        if (-not $sketchCountCorrect) {
-                            $newContent += $targetSketchCount
-                            $modified = $true
-                        } else {
-                            $newContent += $line
-                        }
-                    }
-                    else {
+                    if (-not $lineProcessed) {
                         $newContent += $line
                     }
                 }
-                if (-not $boardFound) {
-                    $newContent += $targetBoard
-                    $modified = $true
-                }
-                if (-not $cpuFound) {
-                    $newContent += $targetCpu
-                    $modified = $true
-                }
-                if (-not $portFound) {
-                    $newContent += $targetPort
-                    $modified = $true
-                }
-                if (-not $sketchFound) {
-                    $newContent += $targetSketch
-                    $modified = $true
-                }
-                if (-not $sketchCountFound) {
-                    $newContent += $targetSketchCount
-                    $modified = $true
+
+                # Add missing settings
+                foreach ($key in $targetSettings.Keys) {
+                    if (-not $settingsStatus[$key].Found) {
+                        $newContent += $targetSettings[$key]
+                        $modified = $true
+                    }
                 }
 
                 if ($modified) {
@@ -1093,11 +1049,9 @@ try {
                         [System.IO.File]::WriteAllLines($prefsPath, $newContent, [System.Text.UTF8Encoding]::new($false))
                         Write-Host "`nChanges saved successfully!" -ForegroundColor Green
                         Write-Host "Updated preferences:" -ForegroundColor Green
-                        Write-Host "  $targetBoard" -ForegroundColor White
-                        Write-Host "  $targetCpu" -ForegroundColor White
-                        Write-Host "  $targetPort" -ForegroundColor White
-                        Write-Host "  $targetSketch" -ForegroundColor White
-                        Write-Host "  $targetSketchCount" -ForegroundColor White
+                        foreach ($setting in $targetSettings.Values) {
+                            Write-Host "  $setting" -ForegroundColor White
+                        }
                     }
                     catch {
                         Write-Host "`nError writing to file: $($_.Exception.Message)" -ForegroundColor Red
@@ -1107,20 +1061,20 @@ try {
                 }
             }
 
-			Start-Sleep -Milliseconds 500
-			Write-Host "Launching Arduino IDE..." -ForegroundColor Green
+            Start-Sleep -Milliseconds 500
+            Write-Host "Launching Arduino IDE..." -ForegroundColor Green
 
-			if (Test-Path ".\Arduino IDE\arduino.exe") {
-				Start-Process -FilePath ".\Arduino IDE\arduino.exe"
-				$statusLabel.Text = "Arduino IDE launched (preferences checked)"
-				$statusLabel.ForeColor = [System.Drawing.Color]::Green
-			} else {
-				[System.Windows.Forms.MessageBox]::Show("Arduino IDE not found at .\Arduino IDE\arduino.exe", "Arduino IDE Not Found", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
-			}
-		} catch {
-			[System.Windows.Forms.MessageBox]::Show("Error launching Arduino IDE:`n$($_.Exception.Message)", "Launch Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
-		}
-	})
+            if (Test-Path ".\Arduino IDE\arduino.exe") {
+                Start-Process -FilePath ".\Arduino IDE\arduino.exe"
+                $statusLabel.Text = "Arduino IDE launched (preferences checked)"
+                $statusLabel.ForeColor = [System.Drawing.Color]::Green
+            } else {
+                [System.Windows.Forms.MessageBox]::Show("Arduino IDE not found at .\Arduino IDE\arduino.exe", "Arduino IDE Not Found", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+            }
+        } catch {
+            [System.Windows.Forms.MessageBox]::Show("Error launching Arduino IDE:`n$($_.Exception.Message)", "Launch Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+        }
+    })
 
     # Refresh COM Port button click handler
     $btnRefreshCOM.Add_Click({
