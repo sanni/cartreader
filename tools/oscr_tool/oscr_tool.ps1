@@ -255,14 +255,16 @@ try {
             Set-Location "$root\Arduino IDE"
             
             # Initialize configuration
-            & ".\arduino-cli.exe" config init
+            & ".\arduino-cli.exe" --config-dir "portable\data" config init
             
             # Set portable sketchbook directory
-            & ".\arduino-cli.exe" config set directories.user "portable\sketchbook"
+            & ".\arduino-cli.exe" --config-dir "portable\data" config set directories.data "portable\data"
+            & ".\arduino-cli.exe" --config-dir "portable\data" config set directories.downloads "portable\downloads"
+            & ".\arduino-cli.exe" --config-dir "portable\data" config set directories.user "portable\sketchbook"
             
             # Update package index
             Write-Host "Updating Arduino CLI package index..."
-            & ".\arduino-cli.exe" core update-index
+            & ".\arduino-cli.exe" --config-dir "portable\data" core update-index
             
             # Step 5: Install Required Libraries
             Write-Host "Step 5: Installing required libraries..." -ForegroundColor Green
@@ -280,7 +282,7 @@ try {
             foreach ($lib in $libraries) {
                 Write-Host "Installing library: $lib"
                 try {
-                    & ".\arduino-cli.exe" lib install $lib
+                    & ".\arduino-cli.exe" --config-dir "portable\data" lib install $lib
                     Write-Host "Successfully installed: $lib"
                 } catch {
                     Write-Warning "Failed to install library: $lib - $($_.Exception.Message)"
@@ -289,10 +291,10 @@ try {
             
             # Update all libraries
             Write-Host "Updating library index..."
-            & ".\arduino-cli.exe" lib update-index
+            & ".\arduino-cli.exe" --config-dir "portable\data" lib update-index
             
             Write-Host "Upgrading all libraries..."
-            & ".\arduino-cli.exe" lib upgrade
+            & ".\arduino-cli.exe" --config-dir "portable\data" lib upgrade
             
             Write-Host "Arduino CLI setup and library installation complete!"
             
