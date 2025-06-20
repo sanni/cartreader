@@ -45,7 +45,6 @@ try {
         $fileStream.Close()
         $stream.Close()
         Write-Progress -Activity "Downloading" -Completed
-        Write-Host "Download complete: $Destination"
     }
 
     function Expand-Zip {
@@ -169,10 +168,10 @@ try {
                 Remove-Item "$root\avr_backup" -Recurse -Force
 				
                 ### Step 3: Update AVRDUDE ###
-		if ($true) {
-			# New avrdude 8.0 hangs on old PC, skip for now
-			Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
-		}
+                if ($true) {
+                    # New avrdude 8.0 hangs on old PC, skip for now
+                    Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
+                }
                 else {
                     Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
                     $avrdudeZip = Join-Path $root "avrdude-v8.0-windows-x64.zip"
@@ -299,7 +298,6 @@ try {
                 Write-Host "Installing library: $lib"
                 try {
                     & ".\arduino-cli.exe" --config-dir "portable\data" lib install $lib
-                    Write-Host "Successfully installed: $lib"
                 } catch {
                     Write-Warning "Failed to install library: $lib - $($_.Exception.Message)"
                 }
@@ -981,6 +979,7 @@ try {
                 "compiler.warning_level" = "compiler.warning_level=all"
                 "editor.linenumbers" = "editor.linenumbers=true"
                 "editor.save_on_verify" = "editor.save_on_verify=false"
+                "upload.verbose" = "upload.verbose=true"
             }
 
             if (-not (Test-Path $prefsPath)) {
