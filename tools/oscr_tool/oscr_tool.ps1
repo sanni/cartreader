@@ -7,7 +7,7 @@ try {
     $configPath = "Arduino IDE\portable\sketchbook\Cart_Reader\config.h"
     $applyPath = "apply_config.txt"
 	
-	function Get-FileWithProgress {
+    function Get-FileWithProgress {
         param (
             [Parameter(Mandatory = $true)][string]$Url,
             [Parameter(Mandatory = $true)][string]$Destination
@@ -56,7 +56,7 @@ try {
         Expand-Archive -Path $ZipPath -DestinationPath $OutPath -Force
     }
 
-	function Update-OSCR {
+    function Update-OSCR {
         param()
         try {
             $root = $PSScriptRoot
@@ -169,10 +169,10 @@ try {
                 Remove-Item "$root\avr_backup" -Recurse -Force
 				
                 ### Step 3: Update AVRDUDE ###
-				if ($true) {
-					# New avrdude 8.0 hangs on old PC, skip for now
-					Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
-				}
+		if ($true) {
+			# New avrdude 8.0 hangs on old PC, skip for now
+			Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
+		}
                 else {
                     Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
                     $avrdudeZip = Join-Path $root "avrdude-v8.0-windows-x64.zip"
@@ -233,9 +233,9 @@ try {
                 }
             }
 			
-			# Step 4: Arduino CLI Setup
+            # Step 4: Arduino CLI Setup
             Write-Host "Step 4: Setting up Arduino CLI..." -ForegroundColor Green
-			# Make sure libraries folder exists
+            # Make sure libraries folder exists
             New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
             $arduinoCliZip = Join-Path $root "arduino-cli_1.2.2_Windows_64bit.zip"
             $arduinoCliExe = Join-Path $root "Arduino IDE\arduino-cli.exe"
