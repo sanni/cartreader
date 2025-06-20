@@ -167,6 +167,16 @@ jobs:
                       Copy-Item $oldAvrdude $newAvrdudeDir -Force
                       Write-Host "Copied avrdude.exe"
                   }
+                  
+                  # Copy old libusb0.dll
+                  $oldLibusb = "$backupAvrPath\bin\libusb0.dll"
+                  if (Test-Path $oldLibusb) {
+                      Copy-Item $oldLibusb $newAvrdudeDir -Force
+                      Write-Host "Copied libusb0.dll"
+                  }	
+                  
+                  # Delete new avrdude.conf
+                  Remove-Item "$toolsPath\avr\bin\avrdude.conf"
 
                   # Copy builtin_tools_versions.txt if it exists
                   $oldVersions = "$backupAvrPath\builtin_tools_versions.txt"
@@ -190,62 +200,67 @@ jobs:
               Remove-Item "$root\avr_backup" -Recurse -Force
 
               ### Step 3: Update AVRDUDE ###
-              Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
-              $avrdudeZip = Join-Path $root "avrdude-v8.0-windows-x64.zip"
-              $avrdudeBinPath = "$root\Arduino IDE\hardware\tools\avr\bin"
-              $avrdudeEtcPath = "$root\Arduino IDE\hardware\tools\avr\etc"
-              $avrdudeExePath = Join-Path $avrdudeBinPath "avrdude.exe"
-              $avrdudeConfPath = Join-Path $avrdudeEtcPath "avrdude.conf"
+              if ($true) {
+                  # New avrdude 8.0 hangs on old PC, skip for now
+                  Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
+                  } else {
+                  Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
+                  $avrdudeZip = Join-Path $root "avrdude-v8.0-windows-x64.zip"
+                  $avrdudeBinPath = "$root\Arduino IDE\hardware\tools\avr\bin"
+                  $avrdudeEtcPath = "$root\Arduino IDE\hardware\tools\avr\etc"
+                  $avrdudeExePath = Join-Path $avrdudeBinPath "avrdude.exe"
+                  $avrdudeConfPath = Join-Path $avrdudeEtcPath "avrdude.conf"
 
-              Write-Host "Downloading AVRDUDE..."
-              Get-FileWithProgress -Url "https://github.com/avrdudes/avrdude/releases/download/v8.0/avrdude-v8.0-windows-x64.zip" -Destination $avrdudeZip
+                  Write-Host "Downloading AVRDUDE..."
+                  Get-FileWithProgress -Url "https://github.com/avrdudes/avrdude/releases/download/v8.0/avrdude-v8.0-windows-x64.zip" -Destination $avrdudeZip
 
-              Write-Host "Verifying AVRDUDE SHA256..."
-              $expectedAvrdudeHash = "f4aa811042ef95b52c68531f6e5044c5b5a8711bcd4b495d6b9af20f9ac41325"
-              $avrdudeHash = (Get-FileHash $avrdudeZip -Algorithm SHA256).Hash
-              if ($avrdudeHash -ne $expectedAvrdudeHash) {
-                  Write-Error "AVRDUDE checksum mismatch! Aborting."
-                  exit 1
-              } else {
-                  Write-Host "AVRDUDE checksum OK."
+                  Write-Host "Verifying AVRDUDE SHA256..."
+                  $expectedAvrdudeHash = "f4aa811042ef95b52c68531f6e5044c5b5a8711bcd4b495d6b9af20f9ac41325"
+                  $avrdudeHash = (Get-FileHash $avrdudeZip -Algorithm SHA256).Hash
+                  if ($avrdudeHash -ne $expectedAvrdudeHash) {
+                      Write-Error "AVRDUDE checksum mismatch! Aborting."
+                      exit 1
+                  } else {
+                      Write-Host "AVRDUDE checksum OK."
+                  }
+
+                  Write-Host "Extracting AVRDUDE..."
+                  $tempAvrdudeDir = "$root\temp_avrdude"
+                  Expand-Zip -ZipPath $avrdudeZip -OutPath $tempAvrdudeDir
+                  Remove-Item $avrdudeZip
+
+                  # Ensure target directories exist
+                  if (-not (Test-Path $avrdudeBinPath)) {
+                      New-Item -ItemType Directory -Path $avrdudeBinPath -Force
+                  }
+                  if (-not (Test-Path $avrdudeEtcPath)) {
+                      New-Item -ItemType Directory -Path $avrdudeEtcPath -Force
+                  }
+
+                  # Find the extracted avrdude files and copy them
+                  $extractedAvrdudeExe = Get-ChildItem -Path $tempAvrdudeDir -Name "avrdude.exe" -Recurse | Select-Object -First 1
+                  $extractedAvrdudeConf = Get-ChildItem -Path $tempAvrdudeDir -Name "avrdude.conf" -Recurse | Select-Object -First 1
+
+                  if ($extractedAvrdudeExe) {
+                      $fullAvrdudeExePath = Join-Path $tempAvrdudeDir $extractedAvrdudeExe
+                      Write-Host "Installing avrdude.exe to $avrdudeBinPath"
+                      Copy-Item $fullAvrdudeExePath $avrdudeExePath -Force
+                  } else {
+                      Write-Error "Could not find avrdude.exe in extracted files!"
+                  }
+
+                  if ($extractedAvrdudeConf) {
+                      $fullAvrdudeConfPath = Join-Path $tempAvrdudeDir $extractedAvrdudeConf
+                      Write-Host "Installing avrdude.conf to $avrdudeEtcPath"
+                      Copy-Item $fullAvrdudeConfPath $avrdudeConfPath -Force
+                  } else {
+                      Write-Error "Could not find avrdude.conf in extracted files!"
+                  }
+
+                  # Clean up temporary files
+                  Remove-Item $tempAvrdudeDir -Recurse -Force
+                  Write-Host "AVRDUDE v8.0 installation complete!"
               }
-
-              Write-Host "Extracting AVRDUDE..."
-              $tempAvrdudeDir = "$root\temp_avrdude"
-              Expand-Zip -ZipPath $avrdudeZip -OutPath $tempAvrdudeDir
-              Remove-Item $avrdudeZip
-
-              # Ensure target directories exist
-              if (-not (Test-Path $avrdudeBinPath)) {
-                  New-Item -ItemType Directory -Path $avrdudeBinPath -Force
-              }
-              if (-not (Test-Path $avrdudeEtcPath)) {
-                  New-Item -ItemType Directory -Path $avrdudeEtcPath -Force
-              }
-
-              # Find the extracted avrdude files and copy them
-              $extractedAvrdudeExe = Get-ChildItem -Path $tempAvrdudeDir -Name "avrdude.exe" -Recurse | Select-Object -First 1
-              $extractedAvrdudeConf = Get-ChildItem -Path $tempAvrdudeDir -Name "avrdude.conf" -Recurse | Select-Object -First 1
-
-              if ($extractedAvrdudeExe) {
-                  $fullAvrdudeExePath = Join-Path $tempAvrdudeDir $extractedAvrdudeExe
-                  Write-Host "Installing avrdude.exe to $avrdudeBinPath"
-                  Copy-Item $fullAvrdudeExePath $avrdudeExePath -Force
-              } else {
-                  Write-Error "Could not find avrdude.exe in extracted files!"
-              }
-
-              if ($extractedAvrdudeConf) {
-                  $fullAvrdudeConfPath = Join-Path $tempAvrdudeDir $extractedAvrdudeConf
-                  Write-Host "Installing avrdude.conf to $avrdudeEtcPath"
-                  Copy-Item $fullAvrdudeConfPath $avrdudeConfPath -Force
-              } else {
-                  Write-Error "Could not find avrdude.conf in extracted files!"
-              }
-
-              # Clean up temporary files
-              Remove-Item $tempAvrdudeDir -Recurse -Force
-              Write-Host "AVRDUDE v8.0 installation complete!"
           }
 
           # Step 4: Arduino CLI Setup
