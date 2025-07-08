@@ -36,7 +36,7 @@ static const char snsMenuItem5[] PROGMEM = "Game Processor RAM";
 static const char snsMenuItem6[] PROGMEM = "Flash repro";
 #ifdef OPTION_CLOCKGEN_CALIBRATION
 static const char snsMenuItem7[] PROGMEM = "Calibrate Clock";
-static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, snsMenuItem7, FSTRING_RESET };
+static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, snsMenuItem7 };
 #else
 static const char* const menuOptionsSNS[] PROGMEM = { snsMenuItem1, snsMenuItem2, snsMenuItem3, snsMenuItem4, snsMenuItem5, snsMenuItem6, FSTRING_RESET };
 #endif
@@ -318,13 +318,8 @@ void snsMenu() {
   // create menu with title and 7 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-#ifdef OPTION_CLOCKGEN_CALIBRATION
-  convertPgm(menuOptionsSNS, 8);
-  snsCart = question_box(FS(FSTRING_SELECT_CART_TYPE), menuOptions, 8, 0);
-#else
   convertPgm(menuOptionsSNS, 7);
   snsCart = question_box(FS(FSTRING_SELECT_CART_TYPE), menuOptions, 7, 0);
-#endif
 
   // wait for user choice to come back from the question box menu
   switch (snsCart) {
