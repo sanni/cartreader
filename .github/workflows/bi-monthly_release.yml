@@ -1,8 +1,8 @@
-name: Monthly Release
+name: bi-monthly release
 
 on:
   schedule:
-    - cron: '0 0 1 * *'  # Runs at 00:00 on the 1st of every month
+    - cron: '0 0 1 2,4,6,8,10,12 *'  # Runs at 00:00 on the 1st of every month
   workflow_dispatch:
 
 jobs:
@@ -18,13 +18,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check for commits in the last 30 days
+      - name: Check for commits since last release
         run: |
-          git fetch origin master
-          COMMITS=$(git rev-list --count --since="30 days ago" origin/master)
-          echo "Commits in last 30 days: $COMMITS"
+          git fetch origin master --tags
+          LATEST_TAG=$(git describe --tags --abbrev=0 origin/master 2>/dev/null)
+
+          COMMITS=$(git rev-list --count $LATEST_TAG..origin/master)
+          echo "Commits since last release: $COMMITS"
+    
           if [ "$COMMITS" -lt 2 ]; then
-            echo "$COMMITS commits in the last 30 days. Skipping release."
+            echo "$COMMITS commits since last release. Skipping release."
             exit 0
           fi
         shell: bash
@@ -480,7 +483,7 @@ jobs:
         with:
           tag_name: ${{ env.OSCR_VERSION }}
           name: ${{ env.OSCR_VERSION }}
-          body: Automated monthly OSCR release
+          body: Automated bi-monthly OSCR release
           files: |
             ${{ env.OSCR_VERSION }}_Portable.zip
             ${{ env.OSCR_VERSION }}_Portable.7z
@@ -524,6 +527,6 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add Cart_Reader/OSCR.cpp
-          git commit -m "Bump version to ${NEW_VERSION} after monthly release"
+          git commit -m "Bump version to ${NEW_VERSION} after bi-monthly release"
           git push origin HEAD:master
         shell: bash
