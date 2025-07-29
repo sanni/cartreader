@@ -37,14 +37,28 @@ static const char GBFlashItem5[] PROGMEM = "GBA Repro (3V)";
 static const char GBFlashItem6[] PROGMEM = "GBA 369-in-1 (3V)";
 static const char* const menuOptionsGBFlash[] PROGMEM = { GBFlashItem1, GBFlashItem2, GBFlashItem3, GBFlashItem4, GBFlashItem5, GBFlashItem6, FSTRING_RESET };
 
-// 29F Flash items
-static const char GBFlash29Item1[] PROGMEM = "DIY MBC3 (WR)";
-static const char GBFlash29Item2[] PROGMEM = "DIY MBC5 (WR)";
-static const char GBFlash29Item3[] PROGMEM = "HDR MBC30 (Audio)";
-static const char GBFlash29Item4[] PROGMEM = "HDR GameBoy Cam";
-static const char GBFlash29Item5[] PROGMEM = "Orange FM (WR)";
-static const char GBFlash29Item6[] PROGMEM = "39SF MBC5 (Audio)";
-static const char* const menuOptionsGBFlash29[] PROGMEM = { GBFlash29Item1, GBFlash29Item2, GBFlash29Item3, GBFlash29Item4, GBFlash29Item5, GBFlash29Item6, FSTRING_RESET };
+// 29F MBC selection items
+static const char GBFlashMBCItem1[] PROGMEM = "MBC5";
+static const char GBFlashMBCItem2[] PROGMEM = "MBC3";
+static const char GBFlashMBCItem3[] PROGMEM = "MBC1";
+static const char GBFlashMBCItem4[] PROGMEM = "MBC0";
+static const char GBFlashMBCItem5[] PROGMEM = "GB Camera";
+static const char* const menuOptionsGBFlashMBC[] PROGMEM = { GBFlashMBCItem1, GBFlashMBCItem2, GBFlashMBCItem3, GBFlashMBCItem4, GBFlashMBCItem5, FSTRING_RESET };
+
+// 29F write enable selection items
+static const char GBFlashWEItem1[] PROGMEM = "WR";
+static const char GBFlashWEItem2[] PROGMEM = "Audio";
+static const char* const menuOptionsGBFlashWE[] PROGMEM = { GBFlashWEItem1, GBFlashWEItem2, FSTRING_RESET };
+
+// 29F erase selection items
+static const char GBFlashEraseItem1[] PROGMEM = "Yes";
+static const char GBFlashEraseItem2[] PROGMEM = "No";
+static const char* const menuOptionsGBFlashErase[] PROGMEM = { GBFlashEraseItem1, GBFlashEraseItem2, FSTRING_RESET };
+
+// 29F command set selection items
+static const char GBFlashCommandItem1[] PROGMEM = "29F";
+static const char GBFlashCommandItem2[] PROGMEM = "39SF";
+static const char* const menuOptionsGBFlashCommand[] PROGMEM = { GBFlashCommandItem1, GBFlashCommandItem2, FSTRING_RESET };
 #endif
 
 // Pelican Codebreaker, Brainboy, and Monster Brain Operation Menu
@@ -159,66 +173,110 @@ void gbxMenu() {
 
       // wait for user choice to come back from the question box menu
       switch (gbFlash) {
-        case 0:
-          //29F Menu
-          // create submenu with title and 7 options to choose from
-          unsigned char gbFlash29;
-          // Copy menuOptions out of progmem
-          convertPgm(menuOptionsGBFlash29, 7);
-          gbFlash29 = question_box(F("Select MBC"), menuOptions, 7, 0);
+        case 0: { // {} needed to limit scope of variables
+            //29F menu variables
+            byte selectedMBC = 0;
+            boolean selectedWE = 0;
+            boolean selectedErase = 0;
+            boolean selectedCommand = 0;
 
-          // wait for user choice to come back from the question box menu
-          switch (gbFlash29) {
-            case 0:
-              //Flash MBC3
-              display_Clear();
-              display_Update();
-              setup_GB();
-              mode = CORE_GB;
+            // create submenu with title and 6 options to choose from
+            unsigned char gbFlashMBC;
+            // Copy menuOptions out of progmem
+            convertPgm(menuOptionsGBFlashMBC, 6);
+            gbFlashMBC = question_box(F("Select MBC"), menuOptions, 6, 0);
 
-              // Change working dir to root
-              sd.chdir("/");
-              //MBC3, standard command set, with erase
-              writeFlash_GB(3, 0, 1);
-              feedbackPressAndReset();
-              break;
+            // wait for user choice to come back from the question box menu
+            switch (gbFlashMBC) {
+              case 0:
+                selectedMBC = 5;
+                break;
 
-            case 1:
-              //Flash MBC5
-              display_Clear();
-              display_Update();
-              setup_GB();
-              mode = CORE_GB;
+              case 1:
+                selectedMBC = 3;
+                break;
 
-              // Change working dir to root
-              sd.chdir("/");
-              //MBC5, standard command set, with erase
-              writeFlash_GB(5, 0, 1);
-              feedbackPressAndReset();
-              break;
+              case 2:
+                selectedMBC = 1;
+                break;
 
-            case 2:
-              // Flash MBC3 with flash WE connected to audio pin
-              display_Clear();
-              display_Update();
-              setup_GB();
-              mode = CORE_GB;
+              case 3:
+                selectedMBC = 0;
+                break;
 
-              //Setup Audio-In(PH4) as Output
-              DDRH |= (1 << 4);
-              // Output a high signal on Audio-In(PH4)
-              PORTH |= (1 << 4);
-              //Tell writeByte_GB function to pulse Audio-In
-              audioWE = 1;
+              case 4:
+                selectedMBC = 30;
+                break;
 
-              // Change working dir to root
-              sd.chdir("/");
-              //MBC3, standard command set, with erase
-              writeFlash_GB(3, 0, 1);
-              feedbackPressAndReset();
-              break;
+              case 5:
+                resetArduino();
+                break;
+            }
 
-            case 3:
+            // create submenu with title and 3 options to choose from
+            unsigned char gbFlashWE;
+            // Copy menuOptions out of progmem
+            convertPgm(menuOptionsGBFlashWE, 3);
+            gbFlashWE = question_box(F("Select WE Pin"), menuOptions, 3, 0);
+
+            // wait for user choice to come back from the question box menu
+            switch (gbFlashWE) {
+              case 0:
+                selectedWE = 1;
+                break;
+
+              case 1:
+                selectedWE = 0;
+                break;
+
+              case 2:
+                resetArduino();
+                break;
+            }
+
+            // create submenu with title and 3 options to choose from
+            unsigned char gbFlashErase;
+            // Copy menuOptions out of progmem
+            convertPgm(menuOptionsGBFlashErase, 3);
+            gbFlashErase = question_box(F("Erase?"), menuOptions, 3, 0);
+
+            // wait for user choice to come back from the question box menu
+            switch (gbFlashErase) {
+              case 0:
+                selectedErase = 1;
+                break;
+
+              case 1:
+                selectedErase = 0;
+                break;
+
+              case 2:
+                resetArduino();
+                break;
+            }
+
+            // create submenu with title and 3 options to choose from
+            unsigned char gbFlashCommand;
+            // Copy menuOptions out of progmem
+            convertPgm(menuOptionsGBFlashCommand, 3);
+            gbFlashCommand = question_box(F("Select Command Set"), menuOptions, 3, 0);
+
+            // wait for user choice to come back from the question box menu
+            switch (gbFlashCommand) {
+              case 0:
+                selectedCommand = 0;
+                break;
+
+              case 1:
+                selectedCommand = 1;
+                break;
+
+              case 2:
+                resetArduino();
+                break;
+            }
+
+            if (selectedMBC == 30) {
               //Flash GB Camera
               display_Clear();
               display_Update();
@@ -256,46 +314,30 @@ void gbxMenu() {
               // Reset
               println_Msg(FS(FSTRING_EMPTY));
               feedbackPressAndReset();
-              break;
 
-            case 4:
-              //Flash 39SF010 cart without MBC
+            }
+            else {
+              //Flash repro
               display_Clear();
               display_Update();
               setup_GB();
               mode = CORE_GB;
 
-              // Change working dir to root
-              sd.chdir("/");
-              // No MBC, 39SF040 command set, with erase
-              writeFlash_GB(0, 1, 1);
-              feedbackPressAndReset();
-              break;
-
-            case 5:
-              //Flash MBC5 cart with 39SF040 and WE on Audio
-              display_Clear();
-              display_Update();
-              setup_GB();
-              mode = CORE_GB;
-
-              //Setup Audio-In(PH4) as Output
-              DDRH |= (1 << 4);
-              // Output a high signal on Audio-In(PH4)
-              PORTH |= (1 << 4);
-              //Tell writeByte_GB function to pulse Audio-In
-              audioWE = 1;
+              if (selectedWE == 0) {
+                //Setup Audio-In(PH4) as Output
+                DDRH |= (1 << 4);
+                // Output a high signal on Audio-In(PH4)
+                PORTH |= (1 << 4);
+                //Tell writeByte_GB function to pulse Audio-In
+                audioWE = 1;
+              }
 
               // Change working dir to root
               sd.chdir("/");
-              //MBC5, 39SF040 command set, with erase
-              writeFlash_GB(5, 1, 1);
+              //MBC, command set, with/without erase
+              writeFlash_GB(selectedMBC, selectedCommand, selectedErase);
               feedbackPressAndReset();
-              break;
-
-            case 6:
-              resetArduino();
-              break;
+            }
           }
           break;
 
@@ -1078,6 +1120,17 @@ void getCartInfo_GB() {
     myLength--;
   }
   romName[myLength] = 0;
+
+  if (myLength == 0) {
+    // rom name unknown
+    romName[0] = 'U';
+    romName[1] = 'N';
+    romName[2] = 'K';
+    romName[3] = 'N';
+    romName[4] = 'O';
+    romName[5] = 'W';
+    romName[6] = 'N';
+  }
 
   // M161 (Mani 4 in 1)
   if (strncmp(romName, "TETRIS SET", 10) == 0 && sdBuffer[0x14D] == 0x3F) {
@@ -2024,9 +2077,66 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       }
     }
 
-    if (MBC == 3) {
+    if (MBC == 1) {
       if (audioWE)
-        println_Msg(F("Writing flash MBC30 (Audio)"));
+        println_Msg(F("Writing flash MBC1 (Audio)"));
+      else
+        println_Msg(F("Writing flash MBC1 (WR)"));
+      display_Update();
+
+      // Write flash
+      word currAddr = 0;
+      word endAddr = 0x3FFF;
+
+      //Initialize progress bar
+      uint32_t processedProgressBar = 0;
+      uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
+      draw_progressbar(0, totalProgressBar);
+
+      for (word currBank = 0; currBank < romBanks; currBank++) {
+        // Blink led
+        blinkLED();
+
+        // Set ROM bank for MBC1
+        if (currBank > 0) {
+          writeByte_GB(0x6000, 0);                // Set ROM Mode
+          writeByte_GB(0x4000, currBank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
+          writeByte_GB(0x2000, currBank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
+        }
+
+        if (currBank > 0) {
+          currAddr = 0x4000;
+          endAddr = 0x7FFF;
+        }
+
+        while (currAddr <= endAddr) {
+          myFile.read(sdBuffer, 512);
+
+          for (int currByte = 0; currByte < 512; currByte++) {
+            // Write command sequence
+            sendFlashCommand_GB(0xa0, commandSet);
+            // Write current byte
+            writeByte_GB(currAddr + currByte, sdBuffer[currByte], audioWE);
+
+            // Set OE/RD(PH6) LOW
+            PORTH &= ~(1 << 6);
+
+            // Busy check
+            busyCheck_GB(currAddr + currByte, sdBuffer[currByte]);
+
+            // Switch OE/RD(PH6) to HIGH
+            PORTH |= (1 << 6);
+          }
+          currAddr += 512;
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
+        }
+      }
+    }
+
+    else if (MBC == 3) {
+      if (audioWE)
+        println_Msg(F("Writing flash MBC3 (Audio)"));
       else
         println_Msg(F("Writing flash MBC3 (WR)"));
       display_Update();
