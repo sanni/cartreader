@@ -330,7 +330,7 @@ void mdMenu() {
       resetFlashCFI_MD();
       delay(1000);
       display_Clear();
-      println_Msg("Verifying...");
+      println_Msg(F("Verifying..."));
       verifyFlashCFI_MD();
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
@@ -3175,9 +3175,9 @@ void verifyFlashCFI_MD() {
 }
 
 void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
-  print_Msg("Verifying Chip");
+  print_Msg(F("Verifying Chip"));
   print_Msg(currChip);
-  println_Msg("...");
+  println_Msg(F("..."));
   display_Update();
 
   blank = 0;
@@ -3238,8 +3238,8 @@ void identifyFlashCFIChip_MD(byte currChip) {
     print_Msg(currChip);
     print_Msg(F(" CFI "));
     print_Msg(size >> 17);
-    println_Msg("MBit x16");
-    print_Msg("SN: ");
+    println_Msg(F("MBit x16"));
+    print_Msg(F("SN: "));
     println_Msg(cfiID);
     display_Update();
   } else {
