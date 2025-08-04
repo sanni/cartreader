@@ -29,7 +29,7 @@ static const char* const menuOptionsGB[] PROGMEM = { FSTRING_READ_ROM, FSTRING_R
 
 #if defined(ENABLE_FLASH)
 // GB Flash items
-static const char GBFlashItem1[] PROGMEM = "GB 29F/39SF Repro";
+static const char GBFlashItem1[] PROGMEM = "GB 29F0/39SF Repro";
 static const char GBFlashItem2[] PROGMEM = "GB CFI Repro";
 static const char GBFlashItem3[] PROGMEM = "GB CFI and Save";
 static const char GBFlashItem4[] PROGMEM = "GB Smart";
