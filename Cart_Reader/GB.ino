@@ -56,8 +56,8 @@ static const char GBFlashEraseItem2[] PROGMEM = "No";
 static const char* const menuOptionsGBFlashErase[] PROGMEM = { GBFlashEraseItem1, GBFlashEraseItem2, FSTRING_RESET };
 
 // 29F command set selection items
-static const char GBFlashCommandItem1[] PROGMEM = "29F";
-static const char GBFlashCommandItem2[] PROGMEM = "39SF";
+static const char GBFlashCommandItem1[] PROGMEM = "29F080/16/32/33";
+static const char GBFlashCommandItem2[] PROGMEM = "39SF010/20/40";
 static const char* const menuOptionsGBFlashCommand[] PROGMEM = { GBFlashCommandItem1, GBFlashCommandItem2, FSTRING_RESET };
 #endif
 
