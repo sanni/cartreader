@@ -18,16 +18,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check for commits since last release
+      - name: Check for commits in the last 60 days
         run: |
-          git fetch origin master --tags
-          LATEST_TAG=$(git describe --tags --abbrev=0 origin/master 2>/dev/null)
-
-          COMMITS=$(git rev-list --count $LATEST_TAG..origin/master)
-          echo "Commits since last release: $COMMITS"
-    
-          if [ "$COMMITS" -lt 2 ]; then
-            echo "$COMMITS commits since last release. Skipping release."
+          git fetch origin master
+          COMMITS=$(git rev-list --count --since="60 days ago" origin/master)
+          echo "Commits in last 60 days: $COMMITS"
+          if [ "$COMMITS" -lt 3 ]; then
+            echo "$COMMITS commits in the last 60 days. Skipping release."
             exit 0
           fi
         shell: bash
