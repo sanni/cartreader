@@ -2085,8 +2085,8 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       display_Update();
 
       // Write flash
-      word currAddr = 0;
-      word endAddr = 0x3FFF;
+      word currAddr;
+      word endAddr;
 
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
@@ -2097,14 +2097,19 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
         // Blink led
         blinkLED();
 
-        // Set ROM bank for MBC1
-        if (currBank > 0) {
-          writeByte_GB(0x6000, 0);                // Set ROM Mode
-          writeByte_GB(0x4000, currBank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
-          writeByte_GB(0x2000, currBank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
-        }
-
-        if (currBank > 0) {
+        // Banking Mode
+        if ((currBank == 0x20) || (currBank == 0x40) || (currBank == 0x60))
+          writeByte_GB(0x6000, 1);
+        else
+          writeByte_GB(0x6000, 0);
+        //ROM Bank Number
+        writeByte_GB(0x4000, currBank >> 5);    // Set bits 5–6
+        writeByte_GB(0x2000, currBank & 0x1F);  // Set bits 0–4
+        // Set address region of selected bank
+        if ((currBank == 0) || (currBank == 0x20) || (currBank == 0x40) || (currBank == 0x60)) {
+          currAddr = 0x0;
+          endAddr = 0x3FFF;
+        } else {
           currAddr = 0x4000;
           endAddr = 0x7FFF;
         }
@@ -2275,47 +2280,87 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       }
     }
 
+    // Verify flashrom
     print_STR(verifying_STR, 0);
     display_Update();
 
     // Go back to file beginning
     myFile.seekSet(0);
-    //unsigned int addr = 0;  // unused
     writeErrors = 0;
 
-    // Verify flashrom
-    word romAddress = 0;
-
-    // Read number of banks and switch banks
-    for (word bank = 1; bank < romBanks; bank++) {
-      if (MBC > 0) {
-        if (romType >= 5) {                   // MBC2 and above
-          writeByte_GB(0x2100, bank);         // Set ROM bank
-        } else {                              // MBC1
-          writeByte_GB(0x6000, 0);            // Set ROM Mode
-          writeByte_GB(0x4000, bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
-          writeByte_GB(0x2000, bank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
-        }
-
-        if (bank > 1) {
-          romAddress = 0x4000;
-        }
+    if ((MBC == 1) && (romBanks > 32)) {
+      for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
         blinkLED();
-      }
-      // Read up to 7FFF per bank
-      while (romAddress <= 0x7FFF) {
-        // Fill sdBuffer
-        myFile.read(sdBuffer, 512);
-        // Compare
-        for (int i = 0; i < 512; i++) {
-          if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-            writeErrors++;
-          }
+
+        word currAddr;
+        word endAddr;
+
+        // Banking Mode
+        if ((currBank == 0x20) || (currBank == 0x40) || (currBank == 0x60))
+          writeByte_GB(0x6000, 1);
+        else
+          writeByte_GB(0x6000, 0);
+        //ROM Bank Number
+        writeByte_GB(0x4000, currBank >> 5);    // Set bits 5–6
+        writeByte_GB(0x2000, currBank & 0x1F);  // Set bits 0–4
+        // Set address region of selected bank
+        if ((currBank == 0) || (currBank == 0x20) || (currBank == 0x40) || (currBank == 0x60)) {
+          currAddr = 0x0;
+          endAddr = 0x3FFF;
+        } else {
+          currAddr = 0x4000;
+          endAddr = 0x7FFF;
         }
-        romAddress += 512;
+
+        // Read and verify current bank
+        while (currAddr <= endAddr) {
+          // Fill sdBuffer from file
+          myFile.read(sdBuffer, 512);
+          // Compare with flash content
+          for (int i = 0; i < 512; i++) {
+            if (readByte_GB(currAddr + i) != sdBuffer[i]) {
+              writeErrors++;
+            }
+          }
+          currAddr += 512;
+        }
+      }
+    } else {
+      word romAddress = 0;
+
+      // Read number of banks and switch banks
+      for (word bank = 1; bank < romBanks; bank++) {
+        if (MBC > 0) {
+          if (romType >= 5) {                   // MBC2 and above
+            writeByte_GB(0x2100, bank);         // Set ROM bank
+          } else {                              // MBC1
+            writeByte_GB(0x6000, 0);            // Set ROM Mode
+            writeByte_GB(0x4000, bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
+            writeByte_GB(0x2000, bank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
+          }
+
+          if (bank > 1) {
+            romAddress = 0x4000;
+          }
+          // Blink led
+          blinkLED();
+        }
+        // Read up to 7FFF per bank
+        while (romAddress <= 0x7FFF) {
+          // Fill sdBuffer
+          myFile.read(sdBuffer, 512);
+          // Compare
+          for (int i = 0; i < 512; i++) {
+            if (readByte_GB(romAddress + i) != sdBuffer[i]) {
+              writeErrors++;
+            }
+          }
+          romAddress += 512;
+        }
       }
     }
+
     // Close the file:
     myFile.close();
 
