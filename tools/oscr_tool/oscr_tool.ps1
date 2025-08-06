@@ -980,6 +980,7 @@ try {
                 "editor.linenumbers" = "editor.linenumbers=true"
                 "editor.save_on_verify" = "editor.save_on_verify=false"
                 "upload.verbose" = "upload.verbose=true"
+                "serial.line_ending" = "serial.line_ending=0"
             }
 
             if (-not (Test-Path $prefsPath)) {

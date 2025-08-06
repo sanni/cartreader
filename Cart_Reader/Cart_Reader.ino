@@ -2230,9 +2230,6 @@ void setup() {
 #ifdef ENABLE_SERIAL
   // Serial Begin
   Serial.begin(9600);
-  Serial.println(FS(FSTRING_EMPTY));
-  Serial.println(F("Cartridge Reader"));
-  Serial.println(F("2025 github.com/sanni"));
   // LED Error
   rgbLed(blue_color);
 #endif /* ENABLE_SERIAL */
@@ -2860,9 +2857,9 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 
 #if defined(ENABLE_SERIAL)
 // Serial Monitor
-byte questionBox_Serial(const __FlashStringHelper* question __attribute__((unused)), char answers[7][20], uint8_t num_answers, uint8_t default_choice __attribute__((unused))) {
+byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice __attribute__((unused))) {
   // Print menu to serial monitor
-  Serial.println(FS(FSTRING_EMPTY));
+  Serial.println(question);
   for (byte i = 0; i < num_answers; i++) {
     Serial.print(i);
     Serial.print(F(")"));
@@ -3152,8 +3149,9 @@ void wait_serial() {
   }
   while (Serial.available() == 0) {
   }
-  // Result is ignored, so don't even bother putting it in a variable
+  // Result is ignored
   Serial.read();
+  Serial.println(FS(FSTRING_EMPTY));
 }
 #endif
 
@@ -3438,10 +3436,6 @@ void fileBrowser(const __FlashStringHelper* browserTitle) {
   char nameStr[FILENAME_LENGTH];
 
 browserstart:
-
-  // Print title
-  println_Msg(browserTitle);
-
   // Set currFile back to 0
   currFile = 0;
   currPage = 1;
@@ -3472,9 +3466,11 @@ page:
 #ifdef ENABLE_GLOBAL_LOG
   dont_log = true;
 #endif
+#ifndef SERIAL_MONITOR
   display_Clear();
   println_Msg(F("Sorting..."));
   display_Update();
+#endif
 #ifdef ENABLE_GLOBAL_LOG
   dont_log = false;
 #endif
