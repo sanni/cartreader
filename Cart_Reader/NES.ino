@@ -3353,8 +3353,10 @@ void readPRG(bool readrom) {
       case 380:
         banks = int_pow(2, prgsize);
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xF201 + ((i & 0x1F) << 2), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          for (word address = 0x0; address < 0x4000; address += 512) {
+            write_prg_pulsem2(0x8201 + ((i << 2) & 0x7C), 0);
+            dumpPRG_pulsem2(base, address);
+          }
         }
         break;
 
