@@ -29,7 +29,7 @@ static const char* const menuOptionsGB[] PROGMEM = { FSTRING_READ_ROM, FSTRING_R
 
 #if defined(ENABLE_FLASH)
 // GB Flash items
-static const char GBFlashItem1[] PROGMEM = "GB 29F0/39SF Repro";
+static const char GBFlashItem1[] PROGMEM = "GB 29F/39SF Repro";
 static const char GBFlashItem2[] PROGMEM = "GB CFI Repro";
 static const char GBFlashItem3[] PROGMEM = "GB CFI and Save";
 static const char GBFlashItem4[] PROGMEM = "GB Smart";
@@ -58,7 +58,8 @@ static const char* const menuOptionsGBFlashErase[] PROGMEM = { GBFlashEraseItem1
 // 29F command set selection items
 static const char GBFlashCommandItem1[] PROGMEM = "29F080/16/32/33";
 static const char GBFlashCommandItem2[] PROGMEM = "39SF010/20/40";
-static const char* const menuOptionsGBFlashCommand[] PROGMEM = { GBFlashCommandItem1, GBFlashCommandItem2, FSTRING_RESET };
+static const char GBFlashCommandItem3[] PROGMEM = "29F160";
+static const char* const menuOptionsGBFlashCommand[] PROGMEM = { GBFlashCommandItem1, GBFlashCommandItem2, GBFlashCommandItem3, FSTRING_RESET };
 #endif
 
 // Pelican Codebreaker, Brainboy, and Monster Brain Operation Menu
@@ -178,7 +179,7 @@ void gbxMenu() {
             byte selectedMBC = 0;
             boolean selectedWE = 0;
             boolean selectedErase = 0;
-            boolean selectedCommand = 0;
+            byte selectedCommand = 0;
 
             // create submenu with title and 6 options to choose from
             unsigned char gbFlashMBC;
@@ -272,6 +273,10 @@ void gbxMenu() {
                 break;
 
               case 2:
+                selectedCommand = 2;
+                break;
+
+              case 3:
                 resetArduino();
                 break;
             }
@@ -1895,7 +1900,7 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
 /******************************************
   29F016/29F032/29F033/39SF040 flashrom functions
 *****************************************/
-void sendFlashCommand_GB(byte cmd, boolean commandSet) {
+void sendFlashCommand_GB(byte cmd, byte commandSet) {
   if (commandSet == 0) {
     //29F016/29F032/29F033
     writeByte_GB(0x555, 0xaa, audioWE);
@@ -1906,6 +1911,11 @@ void sendFlashCommand_GB(byte cmd, boolean commandSet) {
     writeByte_GB(0x5555, 0xaa, audioWE);
     writeByte_GB(0x2aaa, 0x55, audioWE);
     writeByte_GB(0x5555, cmd, audioWE);
+  } else if (commandSet == 2) {
+    //29F160
+    writeByte_GB(0xaaa, 0xaa, audioWE);
+    writeByte_GB(0x555, 0x55, audioWE);
+    writeByte_GB(0xaaa, cmd, audioWE);
   }
 }
 
@@ -1934,7 +1944,7 @@ void busyCheck_GB(unsigned long address, byte data) {
 // Write AMD type flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
+void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   filePath[0] = '\0';
   sd.chdir("/");
@@ -2025,6 +2035,12 @@ void writeFlash_GB(byte MBC, boolean commandSet, boolean flashErase) {
       print_Msg(F("Banks: "));
       print_Msg(romBanks);
       println_Msg(F("/8"));
+      display_Update();
+    } else if ((flashid == 0x01D2) || (flashid == 0x01D8)) {
+      println_Msg(F("Micron M29F160FB/T"));
+      print_Msg(F("Banks: "));
+      print_Msg(romBanks);
+      println_Msg(F("/128"));
       display_Update();
     } else {
       print_Msg(F("Flash ID: "));
