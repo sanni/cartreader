@@ -21,6 +21,8 @@ unsigned long blank;
 #ifdef ENABLE_FLASH
 unsigned long flashSizeCFI[] = {0, 0};
 unsigned long totalFlashSizeCFI = 0;
+unsigned long chipIdLowCFI[] = {0, 0};
+unsigned long chipIdHighCFI[] = {0, 0};
 byte totalChipsCFI = 0;
 #endif
 
@@ -330,7 +332,7 @@ void mdMenu() {
       resetFlashCFI_MD();
       delay(1000);
       display_Clear();
-      println_Msg("Verifying...");
+      println_Msg(F("Verifying..."));
       verifyFlashCFI_MD();
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
@@ -3175,9 +3177,9 @@ void verifyFlashCFI_MD() {
 }
 
 void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
-  print_Msg("Verifying Chip");
+  print_Msg(F("Verifying Chip"));
   print_Msg(currChip);
-  println_Msg("...");
+  println_Msg(F("..."));
   display_Update();
 
   blank = 0;
@@ -3224,11 +3226,21 @@ void identifyFlashCFIChip_MD(byte currChip) {
     readFlashCFI_MD(currChip, 0x12));
 
   char cfiID[17];
-  sprintf(cfiID, "%04X%04X%04X%04X",
-    readFlashCFI_MD(currChip, 0x61),
-    readFlashCFI_MD(currChip, 0x62),
-    readFlashCFI_MD(currChip, 0x63),
-    readFlashCFI_MD(currChip, 0x64));
+  unsigned long chipIdHigh = (long(readFlashCFI_MD(currChip, 0x61)) << 16)
+        | readFlashCFI_MD(currChip, 0x62);
+  unsigned long chipIdLow = (long(readFlashCFI_MD(currChip, 0x63)) << 16)
+        | readFlashCFI_MD(currChip, 0x64);
+  sprintf(cfiID, "%08lX%08lX", chipIdHigh, chipIdLow);
+  chipIdLowCFI[currChip] = chipIdLow;
+  chipIdHighCFI[currChip] = chipIdHigh;
+
+  if (currChip == 1 && chipIdLowCFI[0] == chipIdLow && chipIdHighCFI[0] == chipIdHigh) {
+    // If the ID matches then this board has only one flash chip
+    resetFlashCFIChip_MD(currChip);
+    dataIn_MD();
+    return;
+  }
+
   word sizeReg = readFlashCFI_MD(currChip, 0x27);
   unsigned long size = 1L << sizeReg;
   if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
@@ -3238,8 +3250,8 @@ void identifyFlashCFIChip_MD(byte currChip) {
     print_Msg(currChip);
     print_Msg(F(" CFI "));
     print_Msg(size >> 17);
-    println_Msg("MBit x16");
-    print_Msg("SN: ");
+    println_Msg(F("MBit x16"));
+    print_Msg(F("SN: "));
     println_Msg(cfiID);
     display_Update();
   } else {
