@@ -67,7 +67,8 @@ static const char* const menuOptionsN64Controller[] PROGMEM = { N64ContMenuItem1
 
 // N64 cart menu items
 static const char N64CartMenuItem4[] PROGMEM = "Force Savetype";
-static const char* const menuOptionsN64Cart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, N64CartMenuItem4, FSTRING_RESET };
+static const char N64CartMenuItem5[] PROGMEM = "Force ROM size";
+static const char* const menuOptionsN64Cart[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, N64CartMenuItem4, N64CartMenuItem5, FSTRING_RESET };
 
 // Rom menu
 static const char N64RomItem1[] PROGMEM = "4 MB";
@@ -78,6 +79,16 @@ static const char N64RomItem5[] PROGMEM = "32 MB";
 static const char N64RomItem6[] PROGMEM = "64 MB";
 static const char N64RomItem7[] PROGMEM = "128 MB";
 static const char* const romOptionsN64[] PROGMEM = { N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6, N64RomItem7 };
+
+// Mapper menu
+static const char N64MapItem1[] PROGMEM = "1";
+static const char N64MapItem2[] PROGMEM = "2";
+static const char N64MapItem3[] PROGMEM = "3";
+static const char N64MapItem4[] PROGMEM = "4";
+static const char N64MapItem5[] PROGMEM = "5";
+static const char N64MapItem6[] PROGMEM = "6";
+static const char N64MapItem7[] PROGMEM = "Menu";
+static const char* const mapOptionsN64[] PROGMEM = { N64MapItem1, N64MapItem2, N64MapItem3, N64MapItem4, N64MapItem5, N64MapItem6, N64MapItem7};
 
 // Save menu
 static const char N64SaveItem1[] PROGMEM = "None";
@@ -242,11 +253,11 @@ void n64ControllerMenu() {
 
 // N64 Cartridge Menu
 void n64CartMenu() {
-  // create menu with title and 4 options to choose from
+  // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64Cart, 5);
-  mainMenu = question_box(F("N64 Cart Reader"), menuOptions, 5, 0);
+  convertPgm(menuOptionsN64Cart, 6);
+  mainMenu = question_box(F("N64 Cart Reader"), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -426,6 +437,52 @@ void n64CartMenu() {
       break;
 
     case 4:
+      // Set cartsize manually
+      unsigned char N64RomMenu;
+      // Copy menuOptions out of progmem
+      convertPgm(romOptionsN64, 7);
+      N64RomMenu = question_box(F("Select ROM size"), menuOptions, 7, 0);
+
+      // wait for user choice to come back from the question box menu
+      switch (N64RomMenu) {
+        case 0:
+          // 4MB
+          cartSize = 4;
+          break;
+
+        case 1:
+          // 8MB
+          cartSize = 8;
+          break;
+
+        case 2:
+          // 12MB
+          cartSize = 12;
+          break;
+
+        case 3:
+          // 16MB
+          cartSize = 16;
+          break;
+
+        case 4:
+          // 32MB
+          cartSize = 32;
+          break;
+
+        case 5:
+          // 64MB
+          cartSize = 64;
+          break;
+
+        case 6:
+          // 128MB
+          cartSize = 128;
+          break;
+      }
+      break;
+
+    case 5:
       resetArduino();
       break;
   }
@@ -2005,50 +2062,7 @@ void printCartInfo_N64() {
     print_STR(press_button_STR, 1);
     display_Update();
     wait();
-
-    // Set cartsize manually
-    unsigned char N64RomMenu;
-    // Copy menuOptions out of progmem
-    convertPgm(romOptionsN64, 7);
-    N64RomMenu = question_box(F("Select ROM size"), menuOptions, 7, 0);
-
-    // wait for user choice to come back from the question box menu
-    switch (N64RomMenu) {
-      case 0:
-        // 4MB
-        cartSize = 4;
-        break;
-
-      case 1:
-        // 8MB
-        cartSize = 8;
-        break;
-
-      case 2:
-        // 12MB
-        cartSize = 12;
-        break;
-
-      case 3:
-        // 16MB
-        cartSize = 16;
-        break;
-
-      case 4:
-        // 32MB
-        cartSize = 32;
-        break;
-
-      case 5:
-        // 64MB
-        cartSize = 64;
-        break;
-
-      case 6:
-        // 128MB
-        cartSize = 128;
-        break;
-    }
+    cartSize = 64;
   }
 }
 
@@ -2190,6 +2204,85 @@ void idCart() {
   // CRC1
   sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
 
+  // 18-in-1 repro
+  if (strcmp("95A70568", checksumStr) == 0) {
+    word cmdOne;
+    word cmdTwo;
+
+    unsigned char N64MapMenu;
+    // Copy menuOptions out of progmem
+    convertPgm(mapOptionsN64, 7);
+    N64MapMenu = question_box(F("Select game slot"), menuOptions, 7, 0);
+    // wait for user choice to come back from the question box menu
+    switch (N64MapMenu) {
+      case 0:
+        setAddress_N64(romBase + 0x00101000);
+        cmdOne = readWord_N64();
+        cmdTwo = readWord_N64();
+        break;
+
+      case 1:
+        setAddress_N64(romBase + 0x00101000 + 4);
+        cmdOne = readWord_N64();
+        cmdTwo = readWord_N64();
+        break;
+
+      case 2:
+        setAddress_N64(romBase + 0x00101000 + 8);
+        cmdOne = readWord_N64();
+        cmdTwo = readWord_N64();
+        break;
+
+      case 3:
+        setAddress_N64(romBase + 0x00101000 + 12);
+        cmdOne = readWord_N64();
+        cmdTwo = readWord_N64();
+        break;
+
+      case 4:
+        setAddress_N64(romBase + 0x00101000 + 16);
+        cmdOne = readWord_N64();
+        cmdTwo = readWord_N64();
+        break;
+
+      case 5:
+        setAddress_N64(romBase + 0x00101000 + 20);
+        cmdOne = readWord_N64();
+        cmdTwo = readWord_N64();
+        break;
+
+      case 6:
+        cmdOne = 0x0000;
+        cmdTwo = 0x0800;
+        break;
+    }
+
+    // Set 18-in-1 mapper
+    setAddress_N64(0x8000000);
+    writeWord_N64(cmdOne);
+    setAddress_N64(0x8000002);
+    writeWord_N64(cmdTwo);
+
+    // Set the address
+    setAddress_N64(romBase);
+    // Read first 64 bytes of rom
+    for (int c = 0; c < 64; c += 2) {
+      // split word
+      word myWord = readWord_N64();
+      byte loByte = myWord & 0xFF;
+      byte hiByte = myWord >> 8;
+
+      // write to buffer
+      sdBuffer[c] = hiByte;
+      sdBuffer[c + 1] = loByte;
+    }
+    // Pull ale_H(PC1) high
+    PORTC |= (1 << 1);
+
+    // CRC1
+    sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
+  }
+
   // Get cart id
   cartID[0] = sdBuffer[0x3B];
   cartID[1] = sdBuffer[0x3C];
@@ -2271,7 +2364,7 @@ void writeEeprom_N64() {
   }
 }
 
-boolean readEepromPageList(byte* output, byte page_number, byte page_count) {
+boolean readEepromPageList(byte * output, byte page_number, byte page_count) {
   byte command[] = { 0x04, page_number };
 
   // Disable interrupts for more uniform clock pulses
