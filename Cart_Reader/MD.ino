@@ -3216,7 +3216,28 @@ void identifyFlashCFI_MD() {
   }
 }
 
+bool identifySramCFI_MD(byte currChip) {
+  dataIn_MD();
+  word firstWord = readFlashCFI_MD(currChip, 0x0);
+  dataOut_MD();
+  writeFlashCFI_MD(currChip, 0x0, firstWord + 0x0101);
+  dataIn_MD();
+  word readBack = readFlashCFI_MD(currChip, 0x0);
+  dataOut_MD();
+  writeFlashCFI_MD(currChip, 0x0, firstWord);
+  dataIn_MD();
+  // If we were able to change the value, this is a SRAM Chip and not Flash.
+  return firstWord != readBack;
+}
+
 void identifyFlashCFIChip_MD(byte currChip) {
+  if (currChip == 1 && identifySramCFI_MD(currChip)) {
+     print_Msg(F("Chip"));
+     print_Msg(currChip);
+     println_Msg(F(" SRAM"));
+     display_Update();
+     return;
+  }
   startCFIMode_MD(currChip);
   dataIn_MD();
   char cfiQRYx16[13];
