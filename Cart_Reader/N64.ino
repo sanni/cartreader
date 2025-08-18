@@ -2126,6 +2126,9 @@ void getCartInfo_N64() {
   display_Clear();
   println_Msg(F("Searching database..."));
   display_Update();
+#if defined(SERIAL_MONITOR)
+  println_Msg(FS(FSTRING_EMPTY));
+#endif
 
   if (myFile.open("n64.txt", O_READ)) {
     // Loop through file
@@ -2198,6 +2201,9 @@ byte selectSlotNumber() {
   else
     println_Msg(slotNumber);
   display_Update();
+#if defined(SERIAL_MONITOR)
+  println_Msg(FS(FSTRING_EMPTY));
+#endif
   delay(200);
   return slotNumber;
 }
