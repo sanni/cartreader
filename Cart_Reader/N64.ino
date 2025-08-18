@@ -89,6 +89,11 @@ static const char N64SaveItem5[] PROGMEM = "FLASH";
 static const char* const saveOptionsN64[] PROGMEM = { N64SaveItem1, N64SaveItem2, N64SaveItem3, N64SaveItem4, N64SaveItem5 };
 
 #if defined(ENABLE_FLASH)
+// N64 erase selection items
+static const char N64FlashEraseItem1[] PROGMEM = "Yes";
+static const char N64FlashEraseItem2[] PROGMEM = "No";
+static const char* const menuOptionsN64FlashErase[] PROGMEM = { N64FlashEraseItem1, N64FlashEraseItem2 };
+
 // Repro write buffer menu
 static const char N64BufferItem1[] PROGMEM = "No buffer";
 static const char N64BufferItem2[] PROGMEM = "32 Byte";
@@ -3323,6 +3328,25 @@ void flashRepro_N64() {
 
   // Open file on sd card
   if (myFile.open(filePath, O_READ)) {
+    // create submenu with title and 2 options to choose from
+    boolean selectedErase = 0;
+    unsigned char n64FlashErase;
+    // Copy menuOptions out of progmem
+    convertPgm(menuOptionsN64FlashErase, 2);
+    n64FlashErase = question_box(F("Erase?"), menuOptions, 2, 0);
+
+    // wait for user choice to come back from the question box menu
+    switch (n64FlashErase) {
+      case 0:
+        selectedErase = 1;
+        break;
+
+      case 1:
+        selectedErase = 0;
+        break;
+    }
+
+    display_Clear();
     // Get rom size from file
     fileSize = myFile.fileSize();
     print_Msg(F("File size: "));
@@ -3335,22 +3359,28 @@ void flashRepro_N64() {
       print_FatalError(file_too_big_STR);
     }
 
-    // Erase needed sectors
-    if (flashid == 0x227E) {
-      // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
-      eraseSector_N64(0x20000);
-    } else if (flashid == 0x7E7E) {
-      // Fujitsu MSP55LV100S
-      eraseMSP55LV100_N64();
-    } else if ((flashid == 0x8813) || (flashid == 0x8816)) {
-      // Intel 4400L0ZDQ0
-      eraseIntel4400_N64();
-      resetIntel4400_N64();
-    } else if ((flashid == 0x22C9) || (flashid == 0x22CB)) {
-      // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
-      eraseSector_N64(0x8000);
-    } else {
-      eraseFlashrom_N64();
+    if (selectedErase) {
+      // Erase needed sectors
+      if (flashid == 0x227E) {
+        // Spansion S29GL256N or Fujitsu MSP55LV512 with 0x20000 sector size and 32 byte buffer
+        eraseSector_N64(0x20000);
+      } else if (flashid == 0x7E7E) {
+        // Fujitsu MSP55LV100S
+        eraseMSP55LV100_N64();
+      } else if ((flashid == 0x8813) || (flashid == 0x8816)) {
+        // Intel 4400L0ZDQ0
+        eraseIntel4400_N64();
+        resetIntel4400_N64();
+      } else if ((flashid == 0x22C9) || (flashid == 0x22CB)) {
+        // Macronix MX29LV640, C9 is top boot and CB is bottom boot block
+        eraseSector_N64(0x8000);
+      } else {
+        eraseFlashrom_N64();
+      }
+    }
+    else {
+      print_Msg(F("Blankcheck..."));
+      display_Update();
     }
 
     // Check if erase was successful
@@ -3729,7 +3759,7 @@ void eraseMSP55LV100_N64() {
     // Blink led
     blinkLED();
 
-    // Send Erase Command to first chip
+    // Send Erase Command
     setAddress_N64(flashBase + (0x555 << 1));
     writeWord_N64(0xAAAA);
     setAddress_N64(flashBase + (0x2AA << 1));
