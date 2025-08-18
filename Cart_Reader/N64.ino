@@ -80,16 +80,6 @@ static const char N64RomItem6[] PROGMEM = "64 MB";
 static const char N64RomItem7[] PROGMEM = "128 MB";
 static const char* const romOptionsN64[] PROGMEM = { N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6, N64RomItem7 };
 
-// Mapper menu
-static const char N64MapItem1[] PROGMEM = "1";
-static const char N64MapItem2[] PROGMEM = "2";
-static const char N64MapItem3[] PROGMEM = "3";
-static const char N64MapItem4[] PROGMEM = "4";
-static const char N64MapItem5[] PROGMEM = "5";
-static const char N64MapItem6[] PROGMEM = "6";
-static const char N64MapItem7[] PROGMEM = "Menu";
-static const char* const mapOptionsN64[] PROGMEM = { N64MapItem1, N64MapItem2, N64MapItem3, N64MapItem4, N64MapItem5, N64MapItem6, N64MapItem7};
-
 // Save menu
 static const char N64SaveItem1[] PROGMEM = "None";
 static const char N64SaveItem2[] PROGMEM = "4K EEPROM";
@@ -2183,6 +2173,35 @@ void getCartInfo_N64() {
   }
 }
 
+void printSlotNumber(int index) {
+  display_Clear();
+  print_Msg(F("Slot Number: "));
+  if (index == 0)
+    println_Msg(F("Menu"));
+  else if (index == 19)
+    println_Msg(F("2nd half"));
+  else
+    println_Msg(index);
+}
+
+byte selectSlotNumber() {
+  byte slotNumber;
+  slotNumber = navigateMenu(0, 19, &printSlotNumber);
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  display.setCursor(0, 56);  // Display selection at bottom
+#endif
+  print_Msg(F("Slot Number: "));
+  if (slotNumber == 0)
+    println_Msg(F("Menu"));
+  else if (slotNumber == 19)
+    println_Msg(F("2nd half"));
+  else
+    println_Msg(slotNumber);
+  display_Update();
+  delay(200);
+  return slotNumber;
+}
+
 // Read rom ID
 void idCart() {
   // Set the address
@@ -2208,53 +2227,23 @@ void idCart() {
   if (strcmp("95A70568", checksumStr) == 0) {
     word cmdOne;
     word cmdTwo;
+    byte slotNum = selectSlotNumber();
 
-    unsigned char N64MapMenu;
-    // Copy menuOptions out of progmem
-    convertPgm(mapOptionsN64, 7);
-    N64MapMenu = question_box(F("Select game slot"), menuOptions, 7, 0);
-    // wait for user choice to come back from the question box menu
-    switch (N64MapMenu) {
-      case 0:
-        setAddress_N64(romBase + 0x00101000);
-        cmdOne = readWord_N64();
-        cmdTwo = readWord_N64();
-        break;
-
-      case 1:
-        setAddress_N64(romBase + 0x00101000 + 4);
-        cmdOne = readWord_N64();
-        cmdTwo = readWord_N64();
-        break;
-
-      case 2:
-        setAddress_N64(romBase + 0x00101000 + 8);
-        cmdOne = readWord_N64();
-        cmdTwo = readWord_N64();
-        break;
-
-      case 3:
-        setAddress_N64(romBase + 0x00101000 + 12);
-        cmdOne = readWord_N64();
-        cmdTwo = readWord_N64();
-        break;
-
-      case 4:
-        setAddress_N64(romBase + 0x00101000 + 16);
-        cmdOne = readWord_N64();
-        cmdTwo = readWord_N64();
-        break;
-
-      case 5:
-        setAddress_N64(romBase + 0x00101000 + 20);
-        cmdOne = readWord_N64();
-        cmdTwo = readWord_N64();
-        break;
-
-      case 6:
-        cmdOne = 0x0000;
-        cmdTwo = 0x0800;
-        break;
+    // 1st half with menu (power-on default)
+    if (slotNum == 0) {
+      cmdOne = 0x0000;
+      cmdTwo = 0x0800;
+    }
+    // 2nd half of rom chip
+    else if (slotNum == 19) {
+      cmdOne = 0x0000;
+      cmdTwo = 0x0C00;
+    }
+    // Set game
+    else {
+      setAddress_N64(romBase + 0x00101000 + (slotNum - 1) * 4);
+      cmdOne = readWord_N64();
+      cmdTwo = readWord_N64();
     }
 
     // Set 18-in-1 mapper
@@ -2263,9 +2252,8 @@ void idCart() {
     setAddress_N64(0x8000002);
     writeWord_N64(cmdTwo);
 
-    // Set the address
+    // Read rom header again
     setAddress_N64(romBase);
-    // Read first 64 bytes of rom
     for (int c = 0; c < 64; c += 2) {
       // split word
       word myWord = readWord_N64();
