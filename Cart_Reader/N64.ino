@@ -2052,7 +2052,7 @@ void printCartInfo_N64() {
     print_STR(press_button_STR, 1);
     display_Update();
     wait();
-    cartSize = 64;
+    cartSize = 2;
   }
 }
 
