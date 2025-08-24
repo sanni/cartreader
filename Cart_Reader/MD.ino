@@ -3038,8 +3038,6 @@ void force_cartSize_MD() {
   delay(1000);
 }
 
-#endif
-
 // CFI Support
 #ifdef ENABLE_FLASH
 void eraseFlashCFI_MD() {
@@ -3324,6 +3322,8 @@ word readFlashCFI_MD(byte currChip, unsigned long myAddress) {
 }
 
 #endif // ENABLE_FLASH
+
+#endif // ENABLE_MD
 
 //******************************************
 // End of File
