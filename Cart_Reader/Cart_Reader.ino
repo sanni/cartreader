@@ -120,7 +120,7 @@ typedef enum COLOR_T {
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 #endif
 
-// Adafruit Clock Generator
+// Etherkit Clock Generator
 #include <si5351.h>
 Si5351 clockgen;
 bool i2c_found;
@@ -3774,3 +3774,4 @@ void loop() {
 //******************************************
 // End of File
 //******************************************
+
