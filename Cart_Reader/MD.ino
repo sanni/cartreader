@@ -3208,9 +3208,32 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
 void identifyFlashCFI_MD() {
   totalChipsCFI = 0;
   totalFlashSizeCFI = 0;
-  for (byte currChip = 0; currChip < 2; currChip++) {
-    identifyFlashCFIChip_MD(currChip);
-    totalFlashSizeCFI += flashSizeCFI[currChip];
+
+  if (identifyFlashCFIChip_MD(0) || identifyCFI_29F800_MD(0)) {
+    totalFlashSizeCFI += flashSizeCFI[0];
+  } else {
+    println_Msg(F("CFI Query failed!"));
+    resetFlashCFIChip_MD(0);
+    print_STR(press_button_STR, 0);
+    display_Update();
+    wait();
+    resetArduino();
+    return;
+  }
+
+  if (totalFlashSizeCFI < 2097152) {
+    // Only supports 2 flash chips if the first one is 16Mbit.
+    return;
+  }
+
+  if (identifySramCFI_MD(1)) {
+    println_Msg(F("Chip1 SRAM"));
+    display_Update();
+    return;
+  }
+
+  if (identifyFlashCFIChip_MD(1)) {
+    totalFlashSizeCFI += flashSizeCFI[1];
   }
 }
 
@@ -3228,14 +3251,7 @@ bool identifySramCFI_MD(byte currChip) {
   return firstWord != readBack;
 }
 
-void identifyFlashCFIChip_MD(byte currChip) {
-  if (currChip == 1 && identifySramCFI_MD(currChip)) {
-     print_Msg(F("Chip"));
-     print_Msg(currChip);
-     println_Msg(F(" SRAM"));
-     display_Update();
-     return;
-  }
+bool identifyFlashCFIChip_MD(byte currChip) {
   startCFIMode_MD(currChip);
   dataIn_MD();
   char cfiQRYx16[13];
@@ -3257,35 +3273,52 @@ void identifyFlashCFIChip_MD(byte currChip) {
     // If the ID matches then this board has only one flash chip
     resetFlashCFIChip_MD(currChip);
     dataIn_MD();
-    return;
+    return false;
   }
 
   word sizeReg = readFlashCFI_MD(currChip, 0x27);
   unsigned long size = 1L << sizeReg;
-  if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-    totalChipsCFI++;
-    flashSizeCFI[currChip] = size;
-    print_Msg(F("Chip"));
-    print_Msg(currChip);
-    print_Msg(F(" CFI "));
-    print_Msg(size >> 17);
-    println_Msg(F("MBit x16"));
-    print_Msg(F("SN: "));
-    println_Msg(cfiID);
-    display_Update();
-  } else {
-    println_Msg(F("CFI Query failed!"));
-    resetFlashCFIChip_MD(currChip);
-    print_STR(press_button_STR, 0);
-    display_Update();
-    wait();
-    resetArduino();
-    return;
+  if (strcmp(cfiQRYx16, "515259") != 0) {  // QRY in x16 mode
+    // Did not return "QRY", does not support CFI
+    return false;
   }
+
+  totalChipsCFI++;
+  flashSizeCFI[currChip] = size;
+  print_Msg(F("Chip"));
+  print_Msg(currChip);
+  print_Msg(F(" CFI "));
+  print_Msg(size >> 17);
+  println_Msg(F("MBit x16"));
+  print_Msg(F("SN: "));
+  println_Msg(cfiID);
+  display_Update();
 
   // Reset flash
   resetFlashCFIChip_MD(currChip);
   dataIn_MD();
+
+  return true;
+}
+
+// The 29F800 is compatible with CFI commands but does not offer
+// the ID part of CFI so we have to identify it here.
+bool identifyCFI_29F800_MD(byte currChip) {
+  resetFlashCFIChip_MD(currChip);
+  dataOut_MD();
+  sendCFICommand_MD(currChip, 0x90);
+  dataIn_MD();
+  word deviceId = readFlashCFI_MD(currChip, 0x01);
+  if (deviceId == 0x2258) {
+    totalChipsCFI++;
+    flashSizeCFI[currChip] = 1048576;
+    print_Msg(F("Chip"));
+    print_Msg(currChip);
+    println_Msg(F(" 8MBit 29F800"));
+    display_Update();
+    return true;
+  }
+  return false;
 }
 
 void sendCFICommand_MD(byte currChip, byte cmd) {
