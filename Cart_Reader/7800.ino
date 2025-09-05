@@ -60,7 +60,7 @@ static const byte PROGMEM a7800mapsize[] = {
   5, 3, 3,  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
   6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant]
   7, 1, 4,  // Bankset switching
-  8, 5, 5,  // Bentley Bears Bear's Crystal Quest/Bounty Bob Strikes Back
+  8, 2, 5,  // Bentley Bears Bear's Crystal Quest/Bounty Bob Strikes Back
 };
 
 byte a7800mapcount = 9;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
@@ -416,8 +416,21 @@ void readROM_7800() {
       break;
     case 8: // Bentley Bear's Crystal Quest/Bounty Bob Strikes Back!
       readSegment_7800(0x4000, 0x8000);   //            16K
-      readSegmentBank_7800(0, 7);         // Bank 0-6 +112K
-      readSegment_7800(0xC000, 0x10000);  // Bank 7   + 16K = 144K
+      switch (a7800size) {
+        case 2: // 48K
+          readSegmentBank_7800(0, 1);     // Bank 0   + 16K
+          break;
+        case 3: // 64K
+          readSegmentBank_7800(0, 2);     // Bank 0-1 + 32K
+          break;
+        case 4: // 128K
+          readSegmentBank_7800(0, 6);     // Bank 0-5 + 96K
+          break;
+        case 5: // 144K
+          readSegmentBank_7800(0, 7);     // Bank 0-6 + 112K
+          break;
+      }
+      readSegment_7800(0xC000, 0x10000);  // Bank 7   + 16K
       break;
 
   }

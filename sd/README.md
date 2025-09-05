@@ -170,6 +170,7 @@ mapper:
 5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]   
 6 = Karateka (PAL) 64K [78S4 Variant]   
 7 = Bankset switching   
+8 = Bounty Bob Strikes Back/Bentley Bear's Crystal Quest   
 
 cart size:   
 0 = 16K   

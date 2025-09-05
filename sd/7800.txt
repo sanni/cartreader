@@ -38,7 +38,7 @@ Berzerk
 0,2
 
 Bounty Bob Strikes Back!
-8,5
+8,2
 
 Centipede
 0,0
