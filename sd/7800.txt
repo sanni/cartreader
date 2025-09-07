@@ -19,6 +19,9 @@ Atari 7800 Development Card
 Attack of the Petscii Robots
 7,4
 
+A.R.T.I.
+1,6
+
 Ballblazer
 0,1
 
@@ -195,6 +198,9 @@ Space Duel
 
 Summer Games
 1,4
+
+Super Cirus Atari
+8,1
 
 Super Huey UH-IX
 0,2

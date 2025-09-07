@@ -163,7 +163,7 @@ mapper, cart size
 
 mapper:   
 0 = Standard 16K/32K/48K [7816/7832/7848]   
-1 = SuperGame 128K [78SG]   
+1 = SuperGame 128K/256K [78SG/ARTI]   
 2 = SuperGame - Alien Brigade/Crossbow 144K [78S9]   
 3 = F-18 Hornet 64K [78AB]   
 4 = Double Dragon/Rampage 128K [78AC]   
@@ -179,6 +179,7 @@ cart size:
 3 = 64K   
 4 = 128K   
 5 = 144K   
+6 = 256K   
 
 ## arccart.txt   
 This file stores known Emerson Arcadia 2001 games with the required cart size.   

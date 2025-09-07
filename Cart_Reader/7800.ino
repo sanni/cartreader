@@ -53,23 +53,23 @@
 // Format = {mapper,romsizelo,romsizehi}
 static const byte PROGMEM a7800mapsize[] = {
   0, 0, 2,  // Standard 16K/32K/48K [7816/7832/7848]
-  1, 4, 4,  // SuperGame 128K [78SG]
+  1, 4, 6,  // SuperGame 128K/256K [78SG/ARTI]
   2, 5, 5,  // SuperGame - Alien Brigade/Crossbow 144K [78S9]
   3, 3, 3,  // F-18 Hornet 64K [78AB]
   4, 4, 4,  // Double Dragon/Rampage 128K [78AC]
   5, 3, 3,  // Realsports Baseball/Tank Command/Tower Toppler/Waterski 64K [78S4]
   6, 3, 3,  // Karateka (PAL) 64K [78S4 Variant]
   7, 1, 4,  // Bankset switching
-  8, 2, 5,  // Bentley Bears Bear's Crystal Quest/Bounty Bob Strikes Back
+  8, 1, 5,  // Bentley Bears Bear's Crystal Quest/Bounty Bob Strikes Back/Super Circus Atari
 };
 
 byte a7800mapcount = 9;  // (sizeof(a7800mapsize) / sizeof(a7800mapsize[0])) / 3;
 byte a7800mapselect;
 int a7800index;
 
-byte a7800[] = { 16, 32, 48, 64, 128, 144 };
+uint16_t a7800[] = { 16, 32, 48, 64, 128, 144, 256 };
 byte a7800lo = 0;  // Lowest Entry
-byte a7800hi = 5;  // Highest Entry
+byte a7800hi = 6;  // Highest Entry
 byte a7800mapper = 0;
 byte a7800size;
 
@@ -250,9 +250,9 @@ void readStandard_7800() {
   readSegment_7800(0xC000, 0x10000);  // 16K
 }
 
-void readSupergame_7800() {
-  readSegmentBank_7800(0, 7);         // Bank 0-6 16K * 7 = 112K
-  readSegment_7800(0xC000, 0x10000);  // Bank 7  +16K = 128K
+void readSupergame_7800(uint8_t endbank = 7) {
+  readSegmentBank_7800(0, endbank);   // Bank 0-6 16K * 7 = 112K || Bank 0-14 16K * 15 = 240K
+  readSegment_7800(0xC000, 0x10000);  // Bank 7  +16K     = 128K || Bank 16  +16K      = 256K
 }
 
 
@@ -350,8 +350,8 @@ void readROM_7800() {
       readStandard_7800();
       break;
 
-    case 1:  // SuperGame 128K [78SG]
-      readSupergame_7800();
+    case 1:  // SuperGame 128K/256K [78SG]
+      readSupergame_7800(a7800size == 4 ? 7 : 15);
       break;
 
     case 2:                              // SuperGame - Alien Brigade/Crossbow 144K [78S9]
@@ -415,8 +415,11 @@ void readROM_7800() {
       }
       break;
     case 8: // Bentley Bear's Crystal Quest/Bounty Bob Strikes Back!
-      readSegment_7800(0x4000, 0x8000);   //            16K
+      if (a7800size > 1) {
+        readSegment_7800(0x4000, 0x8000); //            16K
+      }
       switch (a7800size) {
+        case 1: // 32K
         case 2: // 48K
           readSegmentBank_7800(0, 1);     // Bank 0   + 16K
           break;
@@ -432,7 +435,6 @@ void readROM_7800() {
       }
       readSegment_7800(0xC000, 0x10000);  // Bank 7   + 16K
       break;
-
   }
   myFile.close();
 
@@ -481,7 +483,7 @@ void println_Mapper7800(byte mapper) {
   if (mapper == 0)
     println_Msg(F("STANDARD"));
   else if (mapper == 1)
-    println_Msg(F("SUPERGAME 128K[78SG]"));
+    println_Msg(F("SUPERGAME 128K/256K"));
   else if (mapper == 2)
     println_Msg(F("SUPERGAME 144K[78S9]"));
   else if (mapper == 3)
@@ -561,7 +563,7 @@ void checkStatus_7800() {
     a7800mapper = 0;  // default
     EEPROM_writeAnything(7, a7800mapper);
   }
-  if (a7800size > 5) {
+  if (a7800size > 6) {
     a7800size = 0;  // default 16KB
     EEPROM_writeAnything(8, a7800size);
   }
@@ -585,7 +587,7 @@ void checkStatus_7800() {
   if (a7800mapper == 0)
     Serial.println(F("Standard [7816/7832/7848]"));
   else if (a7800mapper == 1)
-    Serial.println(F("SuperGame 128K [78SG]"));
+    Serial.println(F("SuperGame 128/256K [78SG/ARTI]"));
   else if (a7800mapper == 2)
     Serial.println(F("SuperGame 144K [78S9] - Alien Brigade/Crossbow"));
   else if (a7800mapper == 3)
