@@ -716,10 +716,10 @@ void getCartInfo_GBA() {
     cartID[3] = char(sdBuffer[0xAF]);
 
     if (strcmp("", cartID) == 0) {
-      cartID[0] = 'n';
-      cartID[1] = 'u';
-      cartID[2] = 'l';
-      cartID[3] = 'l';
+      cartID[0] = '0';
+      cartID[1] = '0';
+      cartID[2] = '0';
+      cartID[3] = '0';
     }
 
     display_Clear();
@@ -845,10 +845,13 @@ void getCartInfo_GBA() {
     buildRomName(romName, &sdBuffer[0xA0], 12);
 
     if (strcmp("", romName) == 0) {
-      romName[0] = 'n';
-      romName[1] = 'u';
-      romName[2] = 'l';
-      romName[3] = 'l';
+      romName[0] = 'U';
+      romName[1] = 'N';
+      romName[2] = 'K';
+      romName[3] = 'N';
+      romName[4] = 'O';
+      romName[5] = 'W';
+      romName[6] = 'N';
     }
 
     // Get ROM version
