@@ -2186,7 +2186,7 @@ void printSlotNumber(int index) {
   print_Msg(F("Slot Number: "));
   if (index == 0)
     println_Msg(F("Menu"));
-  else if (index == 19)
+  else if (index == 21)
     println_Msg(F("2nd half"));
   else
     println_Msg(index);
@@ -2194,14 +2194,14 @@ void printSlotNumber(int index) {
 
 byte selectSlotNumber() {
   byte slotNumber;
-  slotNumber = navigateMenu(0, 19, &printSlotNumber);
+  slotNumber = navigateMenu(0, 21, &printSlotNumber);
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
 #endif
   print_Msg(F("Slot Number: "));
   if (slotNumber == 0)
     println_Msg(F("Menu"));
-  else if (slotNumber == 19)
+  else if (slotNumber == 21)
     println_Msg(F("2nd half"));
   else
     println_Msg(slotNumber);
@@ -2234,8 +2234,22 @@ void idCart() {
   // CRC1
   sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
 
+  // Get cart id
+  cartID[0] = sdBuffer[0x3B];
+  cartID[1] = sdBuffer[0x3C];
+  cartID[2] = sdBuffer[0x3D];
+  cartID[3] = sdBuffer[0x3E];
+
+  // Get rom version
+  romVersion = sdBuffer[0x3F];
+
+  // If name consists out of all japanese characters use cart id
+  if (buildRomName(romName, &sdBuffer[0x20], 20) == 0) {
+    strcpy(romName, cartID);
+  }
+
   // 18-in-1 repro
-  if (strcmp("95A70568", checksumStr) == 0) {
+  if (strcmp("CZN Production!", romName) == 0) {
     word cmdOne;
     word cmdTwo;
     byte slotNum = selectSlotNumber();
@@ -2246,7 +2260,7 @@ void idCart() {
       cmdTwo = 0x0800;
     }
     // 2nd half of rom chip
-    else if (slotNum == 19) {
+    else if (slotNum == 21) {
       cmdOne = 0x0000;
       cmdTwo = 0x0C00;
     }
@@ -2280,20 +2294,20 @@ void idCart() {
 
     // CRC1
     sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
-  }
 
-  // Get cart id
-  cartID[0] = sdBuffer[0x3B];
-  cartID[1] = sdBuffer[0x3C];
-  cartID[2] = sdBuffer[0x3D];
-  cartID[3] = sdBuffer[0x3E];
+    // Get cart id
+    cartID[0] = sdBuffer[0x3B];
+    cartID[1] = sdBuffer[0x3C];
+    cartID[2] = sdBuffer[0x3D];
+    cartID[3] = sdBuffer[0x3E];
 
-  // Get rom version
-  romVersion = sdBuffer[0x3F];
+    // Get rom version
+    romVersion = sdBuffer[0x3F];
 
-  // If name consists out of all japanese characters use cart id
-  if (buildRomName(romName, &sdBuffer[0x20], 20) == 0) {
-    strcpy(romName, cartID);
+    // If name consists out of all japanese characters use cart id
+    if (buildRomName(romName, &sdBuffer[0x20], 20) == 0) {
+      strcpy(romName, cartID);
+    }
   }
 
 #ifdef OPTION_N64_SAVESUMMARY
