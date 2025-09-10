@@ -2124,6 +2124,10 @@ void readPRG(bool readrom) {
       case 998:
       case 999:
         if ((mapper == 206) && (prgsize == 1)) {
+          write_prg_byte(0x8000, 6);
+          write_prg_byte(0x8001, 0);
+          write_prg_byte(0x8000, 7);
+          write_prg_byte(0x8001, 1);
           dumpBankPRG(0x0, 0x8000, base);
         } else {
           banks = int_pow(2, prgsize) * 2;
