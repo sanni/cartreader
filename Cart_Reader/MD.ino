@@ -42,7 +42,7 @@ byte eepType;
 // chksum is located in ROM at 0x18E (0xC7)
 // eepType and eepSize are combined to conserve memory
 //*********************************************************
-const byte MDSize[] PROGMEM = { 1, 2, 4, 8, 12, 16, 20, 24, 32, 40 };
+const byte MDSize[] PROGMEM = { 1, 2, 4, 8, 12, 16, 20, 24, 32, 40, 72, 120 };
 
 static const word PROGMEM eepid[] = {
   // ACCLAIM TYPE 1
@@ -3026,7 +3026,7 @@ void printRomSize_MD(int index) {
 }
 
 void force_cartSize_MD() {
-  cartSize = navigateMenu(0, 9, &printRomSize_MD);
+  cartSize = navigateMenu(0, sizeof(MDSize) - 1, &printRomSize_MD);
   cartSize = pgm_read_byte(&(MDSize[cartSize])) * 131072;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
