@@ -55,6 +55,9 @@ Choplifter! (USA)
 Commando
 1,4
 
+Countermeasure 2
+0,2
+
 Crack'ed
 1,4
 
@@ -199,7 +202,7 @@ Space Duel
 Summer Games
 1,4
 
-Super Cirus Atari
+Super Circus Atari
 8,1
 
 Super Huey UH-IX
@@ -210,6 +213,9 @@ Super Skateboardin'
 
 Tank Command
 5,3
+
+Tiger-Heli
+8,5
 
 Title Match Pro Wrestling
 0,1
