@@ -2,7 +2,7 @@ name: bi-monthly release
 
 on:
   schedule:
-    - cron: '0 0 1 2,4,6,8,10,12 *'  # Runs at 00:00 on the 1st of every month
+    - cron: '0 0 1 2,4,6,8,10,12 *'  # Runs at 00:00 on the 1st of every second month
   workflow_dispatch:
 
 jobs:
