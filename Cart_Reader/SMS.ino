@@ -27,7 +27,7 @@ static const char SMSRomSizeItem2[] PROGMEM = "16 KB";
 static const char SMSRomSizeItem3[] PROGMEM = "24 KB";
 static const char SMSRomSizeItem4[] PROGMEM = "32 KB";
 static const char SMSRomSizeItem5[] PROGMEM = "40 KB";  //SG-1000 40k mapping not yet supported
-static const char SMSRomSizeItem6[] PROGMEM = "48 KB";  //SG-1000 40k mapping not yet supported
+static const char SMSRomSizeItem6[] PROGMEM = "48 KB";  //SG-1000 48k mapping not yet supported
 static const char SMSRomSizeItem7[] PROGMEM = "64 KB";
 static const char SMSRomSizeItem8[] PROGMEM = "128 KB";
 static const char SMSRomSizeItem9[] PROGMEM = "256 KB";
@@ -42,9 +42,9 @@ static bool system_gg = false;      // GameGear
 static bool system_sg1000 = false;  // SG-1000
 
 // Init adapters
-static bool adapter_raphnet = false;  // raphet adapater (SMS-to-MD or MIII-to-MD)
-static bool adapter_retrode = false;  // Retrode adapter (SMS-to-MD or GG-to-MD)
-static bool adapter_retron = false;   // Retron 3in1 adapter (SMS-to-MD or GG-to-MD)
+static bool adapter_raphnet = false;  // "raphnet" adapater (SMS or MIII slot)
+static bool adapter_retrode = false;  // "Retrode" adapter (SMS or GG slot)
+static bool adapter_retron = false;   // "Retron 3-in-1" adapter (SMS or GG slot) and "Retrofreak gear converter" adapter (MIII or GG slot)
 
 // Manual ROM Size Selection Flag
 bool manRomSizeSelected = false;
@@ -755,3 +755,4 @@ void writeSRAM_SMS() {
 //******************************************
 // End of File
 //******************************************
+
