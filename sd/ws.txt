@@ -19,6 +19,9 @@ Bakusou Dekotora Densetsu for WonderSwan (Japan).ws
 BANDAI Default Splash Screen (Japan) (Program).ws
 9DA44185
 
+Battle Spirit - Digimon Frontier (Japan).wsc
+A28D3DC5
+
 Battle Spirit - Digimon Frontier (Japan) (Rev 1).wsc
 8BA49DAB
 
