@@ -43,6 +43,9 @@ Alpha Beam with Ernie
 Amidar
 064
 
+Angeln I
+064
+
 Angriff der Luftflotten
 064
 
@@ -509,6 +512,9 @@ Front Line
 248
 
 Frostbite
+064
+
+Fussball
 064
 
 G.I. Joe
