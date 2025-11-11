@@ -262,7 +262,11 @@ VOLTS setVoltage(VOLTS newVoltage) {
 
       // Adjust voltage high if VSELECT is available
   #if defined(ENABLE_VSELECT)
+    #ifdef ENABLE_NEOPIXEL
       PORTD &= ~(1 << 7); /*[1]*/
+    #else
+      PORTB &= ~(1 << 7); /*[1]*/
+    #endif
       voltage = VOLTS_SET_5V;
   #endif
 
@@ -315,7 +319,11 @@ VOLTS setVoltage(VOLTS newVoltage) {
 
       // Adjust voltage high if VSELECT is available
   #if defined(ENABLE_VSELECT)
+    #ifdef ENABLE_NEOPIXEL
       PORTD |= (1 << 7); /*[1]*/
+    #else
+      PORTB |= (1 << 7); /*[1]*/
+    #endif
       voltage = VOLTS_SET_3V3;
   #endif
 

@@ -2144,26 +2144,33 @@ int32_t initializeClockOffset() {
 void setup() {
   // Set Button Pin PG2 to Input
   DDRG &= ~(1 << 2);
-#if defined(HW5) && !defined(ENABLE_VSELECT)
+  // Set pin PD7 to Input by default (e.g. HW1-3 have button connected to PD7)
+  DDRD &= ~(1 << 7);
+
+#ifdef ENABLE_VSELECT
+  #ifdef ENABLE_NEOPIXEL // e.g. HW5, HW4
   /**
-     HW5 has status LED connected to PD7
-     Set LED Pin PD7 to Output
+   * VSELECT uses pin PD7 when NEOPIXEL is enabled (PB7 is used)
+   * Set LED Pin PD7 to Output
+   **/
+  DDRD |= (1 << 7);
+  #else /* !defined(ENABLE_NEOPIXEL) */
+  /**
+   * VSELECT uses pin PB7 when NEOPIXEL is NOT enabled (PB7 is NOT used)
+   * Set NEOPIXEL Pin PB7 to Output
+   **/
+  DDRB |= (1 << 7);
+  #endif /* ENABLE_NEOPIXEL */
+#else  /* !defined(ENABLE_VSELECT) */
+  #ifdef HW5
+  /**
+   * HW5 has status LED connected to PD7
+   * Set LED Pin PD7 to Output
    **/
   DDRD |= (1 << 7);
   PORTD |= (1 << 7);
-#elif defined(ENABLE_VSELECT)
-  /**
-     VSELECT uses pin PD7
-     Set LED Pin PD7 to Output
-   **/
-  DDRD |= (1 << 7);
-#else  /* !defined(HW5) && !defined(ENABLE_VSELECT) */
-  /**
-     HW1-3 have button connected to PD7
-     Set pin PD7 to input for button
-   **/
-  DDRD &= ~(1 << 7);
-#endif /* HW5 &| ENABLE_VSELECT */
+  #endif /* HW5 */
+#endif /* ENABLE_VSELECT */
 
   // Set power to low to protect carts
   setVoltage(VOLTS_SET_3V3);
