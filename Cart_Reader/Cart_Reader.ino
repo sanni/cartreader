@@ -2148,19 +2148,19 @@ void setup() {
   DDRD &= ~(1 << 7);
 
 #ifdef ENABLE_VSELECT
-  #ifdef ENABLE_NEOPIXEL // e.g. HW5, HW4
+  #ifdef ENABLE_ROTARY // e.g. HW5, HW4
   /**
-   * VSELECT uses pin PD7 when NEOPIXEL is enabled (PB7 is used)
+   * VSELECT uses pin PD7 when ROTARY is enabled (PD3 is used)
    * Set LED Pin PD7 to Output
    **/
   DDRD |= (1 << 7);
-  #else /* !defined(ENABLE_NEOPIXEL) */
+  #else /* !defined(ENABLE_ROTARY) */
   /**
-   * VSELECT uses pin PB7 when NEOPIXEL is NOT enabled (PB7 is NOT used)
-   * Set NEOPIXEL Pin PB7 to Output
+   * VSELECT uses pin PD3 when ROTARY is NOT enabled (PD3 is NOT used)
+   * Set ROTARY Pin PD3 to Output
    **/
-  DDRB |= (1 << 7);
-  #endif /* ENABLE_NEOPIXEL */
+  DDRD |= (1 << 3);
+  #endif /* ENABLE_ROTARY */
 #else  /* !defined(ENABLE_VSELECT) */
   #ifdef HW5
   /**
