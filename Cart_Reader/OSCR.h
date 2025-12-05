@@ -42,14 +42,14 @@
 # if defined(ENABLE_VSELECT)
 
 // Error if not a supported hardware version
-#   if !(defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
+#   if !(defined(HW3) || defined(HW4) || defined(HW5) || defined(SERIAL_MONITOR))
 #     if defined(ALLOW_UNSAFE_CONFIG)
-#       warning Using VSELECT with hardware revisions other than 4 or 5 is not supported.
+#       warning Using VSELECT with hardware revisions other than 3 or 4 or 5 is not supported.
 #     else /* !defined(ALLOW_UNSAFE_CONFIG) */
-#       error Using VSELECT with hardware revisions other than 4 or 5 is not supported. \
+#       error Using VSELECT with hardware revisions other than 3 or 4 or 5 is not supported. \
               If you understand what you are doing you can define ALLOW_UNSAFE_CONFIG in Config.h to allow compiling.
 #     endif /* ALLOW_UNSAFE_CONFIG */
-#   endif /* !(HW4 | HW5 | SERIAL_MONITOR) */
+#   endif /* !(HW3 | HW4 | HW5 | SERIAL_MONITOR) */
 
 // HW4 might work but needs tested. Make sure they know it's untested.
 #   if defined(HW4)
