@@ -43,17 +43,17 @@ void setup_SuprAcan() {
   DDRG |= (1 << 5);
   PORTG |= (1 << 5);
 
-  dataOut_MD();
+  dataOut_Acan();
   writeCommand_Acan(0, 0x9090);
 
-  dataIn_MD();
+  dataIn_Acan();
   eepbit[0] = readWord_Acan(0x2);
   eepbit[1] = readWord_Acan(0x0);
 
-  dataOut_MD();
+  dataOut_Acan();
   writeWord_Acan(0x0, 0xf0f0);
 
-  dataIn_MD();
+  dataIn_Acan();
   // set /CARTIN(PG5) input
   PORTG &= ~(1 << 5);
   DDRG &= ~(1 << 5);
@@ -143,6 +143,21 @@ void suprAcanMenu() {
   wait();
 }
 
+// Switch data pins to write
+void dataOut_Acan() {
+  DDRC = 0xFF;
+  DDRA = 0xFF;
+}
+
+// Switch data pins to read
+void dataIn_Acan() {
+  DDRC = 0x00;
+  DDRA = 0x00;
+  // Enable Internal Pullups (needed for games like Batman Forever that are open bus with random bytes on the last 1MB, so we get a clean 0xFF padding)
+  PORTC = 0xFF;
+  PORTA = 0xFF;
+}
+
 static void writeCommand_Acan(uint32_t offset, uint16_t command) {
   writeWord_Acan(offset + 0xaaaa, 0xaaaa);
   writeWord_Acan(offset + 0x5555, 0x5555);
@@ -170,7 +185,7 @@ static void readROM_Acan() {
 
   draw_progressbar(0, cartSize);
 
-  dataIn_MD();
+  dataIn_Acan();
   for (uint32_t addr = 0; addr < cartSize; addr += 512, draw_progressbar(addr, cartSize)) {
     for (uint32_t i = 0; i < 512; i += 2) {
       *((uint16_t *)(sdBuffer + i)) = readWord_Acan(addr + i);
@@ -196,7 +211,7 @@ static void readROM_Acan() {
 static void readSRAM_Acan() {
   createFolderAndOpenFile("/ACAN", "SAVE", "save", "bin");
 
-  dataIn_MD();
+  dataIn_Acan();
   for (uint32_t i = 0; i < 0x10000; i += 1024) {
     for (uint32_t j = 0; j < 1024; j += 2)
       sdBuffer[(j >> 1)] = readWord_Acan(0xec0000 + i + j);
@@ -216,7 +231,7 @@ static void writeSRAM_Acan() {
   println_Msg(F("..."));
   display_Update();
 
-  dataOut_MD();
+  dataOut_Acan();
   for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024) {
     myFile.read(sdBuffer, 512);
 
@@ -226,7 +241,7 @@ static void writeSRAM_Acan() {
 
   myFile.close();
 
-  dataIn_MD();
+  dataIn_Acan();
   print_STR(done_STR, 1);
 }
 
@@ -241,7 +256,7 @@ static void verifySRAM_Acan() {
 
   uint16_t write_errors = 0;
 
-  dataIn_MD();
+  dataIn_Acan();
   for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024) {
     myFile.read(sdBuffer, 512);
 
@@ -268,10 +283,10 @@ static void readUM6650() {
   createFolderAndOpenFile("/ACAN", "UM6650", "UM6650", "bin");
 
   for (uint16_t i = 0; i < 256; i++) {
-    dataOut_MD();
+    dataOut_Acan();
     writeWord_Acan(0xeb0d03, i);
 
-    dataIn_MD();
+    dataIn_Acan();
     sdBuffer[i] = readWord_Acan(0xeb0d01);
   }
 
@@ -295,10 +310,10 @@ static void verifyUM6650() {
   myFile.close();
 
   for (uint16_t i = 0; i < len; i++) {
-    dataOut_MD();
+    dataOut_Acan();
     writeWord_Acan(0xeb0d03, i);
 
-    dataIn_MD();
+    dataIn_Acan();
     if (readWord_Acan(0xeb0d01) != sdBuffer[i])
       write_errors++;
   }
@@ -325,7 +340,7 @@ static void writeUM6650() {
   println_Msg(F("..."));
   display_Update();
 
-  dataOut_MD();
+  dataOut_Acan();
   for (uint16_t i = 0; i < len; i++) {
     writeWord_Acan(0xeb0d03, i);
     writeWord_Acan(0xeb0d01, sdBuffer[i]);
@@ -333,7 +348,7 @@ static void writeUM6650() {
     delay(10);  // for AT28C64B write
   }
 
-  dataIn_MD();
+  dataIn_Acan();
   print_STR(done_STR, 1);
 }
 
@@ -357,11 +372,11 @@ static void flashCart_Acan() {
 
   for (i = 0; i < file_length; i += *flash_size) {
     // erase chip
-    dataOut_MD();
+    dataOut_Acan();
     writeCommand_Acan(i, 0x8080);
     writeCommand_Acan(i, 0x1010);
 
-    dataIn_MD();
+    dataIn_Acan();
     while (readWord_Acan(i) != 0xffff)
       ;
 
@@ -371,11 +386,11 @@ static void flashCart_Acan() {
       for (k = 0; k < 512; k += 2) {
         data = *((uint16_t *)(sdBuffer + k));
 
-        dataOut_MD();
+        dataOut_Acan();
         writeCommand_Acan(i, 0xa0a0);
         writeWord_Acan(i + j + k, data);
 
-        dataIn_MD();
+        dataIn_Acan();
         while (readWord_Acan(i + j + k) != data)
           ;
       }

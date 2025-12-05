@@ -166,6 +166,25 @@ void setup_GPC() {
 }
 
 /******************************************
+   I/O Functions
+ *****************************************/
+// Switch control pins to write
+void controlOut_GPC() {
+  // Switch RD(PH6) and WR(PH5) to HIGH
+  PORTH |= (1 << 6) | (1 << 5);
+  // Switch CS(PH3) to LOW
+  PORTH &= ~(1 << 3);
+}
+
+// Switch control pins to read
+void controlIn_GPC() {
+  // Switch WR(PH5) to HIGH
+  PORTH |= (1 << 5);
+  // Switch CS(PH3) and RD(PH6) to LOW
+  PORTH &= ~((1 << 3) | (1 << 6));
+}
+
+/******************************************
    Low level functions
  *****************************************/
 // Write one byte of data to a location specified by bank and address, 00:0000
@@ -265,7 +284,7 @@ byte readBank_GPC(byte myBank, word myAddress) {
 void readRAM_GPC() {
   // Set control
   dataIn();
-  controlIn_SNES();
+  controlIn_GPC();
 
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("SNES", "ROM", "GPC4M", "sfc");
@@ -313,14 +332,14 @@ void writeRAM_GPC(void) {
 
     //Disable ram cassette write protection
     dataOut();
-    controlOut_SNES();
+    controlOut_GPC();
     for (int countProtect = 0; countProtect < 15; countProtect++) {
       writeBank_GPC(0x20, 0x6000, 0x00);
     }
 
     //Write ram
     dataOut();
-    controlOut_SNES();
+    controlOut_GPC();
     println_Msg(F("Writing ram..."));
     display_Update();
     for (int currBank = 0xC0; currBank < 0xC8; currBank++) {
@@ -337,11 +356,11 @@ void writeRAM_GPC(void) {
 
     //reenable write protection
     dataIn();
-    controlIn_SNES();
+    controlIn_GPC();
     byte keepByte = readBank_GPC(0x20, 0x6000);
     delay(100);
     dataOut();
-    controlOut_SNES();
+    controlOut_GPC();
     writeBank_GPC(0x20, 0x6000, keepByte);
 
     draw_progressbar(0x80000, 0x80000);
@@ -367,7 +386,7 @@ unsigned long verifyRAM_GPC() {
     writeErrors = 0;
 
     // Set control
-    controlIn_SNES();
+    controlIn_GPC();
 
     //startBank = 0xC0; endBank = 0xC7; CS low
     for (byte currBank = 0xC0; currBank < 0xC8; currBank++) {
