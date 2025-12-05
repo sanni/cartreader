@@ -88,11 +88,11 @@ try {
 
                 ### Step 2: Update AVR-GCC compiler ###
                 Write-Host "Step 2: Downloading latest AVR-GCC compiler..." -ForegroundColor Green
-                $avrGccZip = Join-Path $root "avr-gcc-14.1.0-x64-windows.zip"
-                Get-FileWithProgress -Url "https://github.com/ZakKemble/avr-gcc-build/releases/download/v14.1.0-1/avr-gcc-14.1.0-x64-windows.zip" -Destination $avrGccZip
+                $avrGccZip = Join-Path $root "avr-gcc-15.2.0-x64-windows.zip"
+                Get-FileWithProgress -Url "https://github.com/ZakKemble/avr-gcc-build/releases/download/v15.2.0-1/avr-gcc-15.2.0-x64-windows.zip" -Destination $avrGccZip
 
                 Write-Host "Verifying AVR-GCC SHA256..."
-                $expectedAvrHash = "d0efbf289004b2d700ae039aa0b592d7d34a9e797e8fe8aa1fef249e997bbae7"
+                $expectedAvrHash = "3bcfdbdbff6e3576ef0bef9e119b16f7012657d30f002d6d9d4848a7efd4f8b7"
                 $avrHash = (Get-FileHash $avrGccZip -Algorithm SHA256).Hash
                 if ($avrHash -ne $expectedAvrHash) {
                     Write-Error "AVR-GCC checksum mismatch! Aborting."
@@ -122,7 +122,7 @@ try {
 
                 # Move new AVR-GCC to tools folder
                 Write-Host "Installing new AVR-GCC compiler..."
-                Move-Item "$root\temp_avr\avr-gcc-14.1.0-x64-windows" "$toolsPath\avr"
+                Move-Item "$root\temp_avr\avr-gcc-15.2.0-x64-windows" "$toolsPath\avr"
 
                 # Copy essential files from old AVR installation if backup exists
                 if (Test-Path $backupAvrPath) {
@@ -168,23 +168,23 @@ try {
                 Remove-Item "$root\avr_backup" -Recurse -Force
 				
                 ### Step 3: Update AVRDUDE ###
-                if ($true) {
-                    # New avrdude 8.0 hangs on old PC, skip for now
+                if ($false) {
+                    # New avrdude might have bugs, add option to skip
                     Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
                 }
                 else {
                     Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
-                    $avrdudeZip = Join-Path $root "avrdude-v8.0-windows-x64.zip"
+                    $avrdudeZip = Join-Path $root "avrdude-v8.1-windows-x64.zip"
                     $avrdudeBinPath = "$root\Arduino IDE\hardware\tools\avr\bin"
                     $avrdudeEtcPath = "$root\Arduino IDE\hardware\tools\avr\etc"
                     $avrdudeExePath = Join-Path $avrdudeBinPath "avrdude.exe"
                     $avrdudeConfPath = Join-Path $avrdudeEtcPath "avrdude.conf"         
 
                     Write-Host "Downloading AVRDUDE..."
-                    Get-FileWithProgress -Url "https://github.com/avrdudes/avrdude/releases/download/v8.0/avrdude-v8.0-windows-x64.zip" -Destination $avrdudeZip
+                    Get-FileWithProgress -Url "https://github.com/avrdudes/avrdude/releases/download/v8.1/avrdude-v8.1-windows-x64.zip" -Destination $avrdudeZip
 
                     Write-Host "Verifying AVRDUDE SHA256..."
-                    $expectedAvrdudeHash = "f4aa811042ef95b52c68531f6e5044c5b5a8711bcd4b495d6b9af20f9ac41325"
+                    $expectedAvrdudeHash = "e4d571d81fee3387d51bfdedd0b6565e4c201e974101cac2caec7adfd6201da3"
                     $avrdudeHash = (Get-FileHash $avrdudeZip -Algorithm SHA256).Hash
                     if ($avrdudeHash -ne $expectedAvrdudeHash) {
                     	Write-Error "AVRDUDE checksum mismatch! Aborting."
@@ -356,7 +356,18 @@ try {
                 Remove-Item $CH341Dest -Recurse -Force
             }
             $drvZip = Join-Path $root "drivers.zip"
-            Get-FileWithProgress -Url "https://www.wch.cn/download/file?id=5" -Destination $drvZip
+            Get-FileWithProgress -Url "https://file.wch.cn/download/file?id=5" -Destination $drvZip
+
+            Write-Host "Verifying SHA256..."
+            $expectedHash = "07b0fd92b1d0c26f1b9d35028a02d7c03af539a744da7c4dbec4c09480ac6417"
+            $hash = (Get-FileHash $drvZip -Algorithm SHA256).Hash
+            if ($hash -ne $expectedHash) {
+                Write-Error "Checksum mismatch! Aborting."
+                exit 1
+            } else {
+                Write-Host "Checksum OK."
+            }
+
             Expand-Zip -ZipPath $drvZip -OutPath "$root\drivers"
             Move-Item "$root\drivers\CH341SER" "$root\CH341 Drivers" -Force
             Remove-Item "$root\drivers" -Recurse -Force
