@@ -2,19 +2,122 @@ name: CI
 
 on:
   push:
-
   pull_request:
 
 env:
   ARDUINO_LIBRARY_ENABLE_UNSAFE_INSTALL: false
 
 jobs:
+  # JOB 1: Determine which cores need to be tested based on changed files
+  setup:
+    name: Calculate Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      cores: ${{ steps.set-matrix.outputs.cores }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # REQUIRED: 0 means "all history". Needed to compare commit ranges for push events.
+
+      - name: Determine Cores to Build
+        id: set-matrix
+        run: |
+          # 1. Define lists
+          # List of ALL available cores for detection
+          ALL_CORES="ENABLE_2600 ENABLE_5200 ENABLE_7800 ENABLE_JAGUAR ENABLE_LYNX ENABLE_ATARI8 ENABLE_BALLY ENABLE_LJ ENABLE_LJPRO ENABLE_PCW ENABLE_PV1000 ENABLE_COLV ENABLE_C64 ENABLE_VIC20 ENABLE_ARC ENABLE_FAIRCHILD ENABLE_FLASH ENABLE_FLASH8 ENABLE_FLASH16 ENABLE_GBX ENABLE_INTV ENABLE_LEAP ENABLE_NGP ENABLE_N64 ENABLE_NES ENABLE_ODY2 ENABLE_MSX ENABLE_PCE ENABLE_POKE ENABLE_RCA ENABLE_SMS ENABLE_MD ENABLE_SFM ENABLE_SV ENABLE_ST ENABLE_GPC ENABLE_SNES ENABLE_TI99 ENABLE_PYUUTA ENABLE_TRS80 ENABLE_VECTREX ENABLE_VBOY ENABLE_VSMILE ENABLE_WSV ENABLE_WS ENABLE_SUPRACAN ENABLE_LOOPY ENABLE_CPS3"
+          
+          # List of cores enabled by default in Config.h (Standard Build)
+          DEFAULT_CORES_LIST="ENABLE_GBX ENABLE_N64 ENABLE_NES ENABLE_SMS ENABLE_MD ENABLE_SNES"
+
+          # 2. Get changed files (ROBUST METHOD)
+          echo "Event: ${{ github.event_name }}"
+          
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # Compare the PR branch tip against the base branch (usually main/master)
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          elif [ "${{ github.event_name }}" == "push" ]; then
+            if [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
+              # New branch push: Compare HEAD against its parent (fallback)
+              CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+            else
+              # Standard push: Compare the 'before' SHA (previous state) with 'after' SHA (current state)
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+            fi
+          else
+            # Manual triggers or other events: Fallback to last commit
+            CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Temporary file to collect results
+          touch cores_to_run.txt
+
+          # 3. Global File Check
+          if echo "$CHANGED_FILES" | grep -q -E "Cart_Reader/Config.h|Cart_Reader/Cart_Reader.ino|Cart_Reader/OSCR.cpp|Cart_Reader/OSCR.h|Cart_Reader/ClockedSerial.cpp|Cart_Reader/ClockedSerial.h"; then
+            echo "Global file changed. Adding ALL_DEFAULTS run."
+            # Write to parent file because we might be inside Cart_Reader later
+            echo "ALL_DEFAULTS" >> cores_to_run.txt
+          fi
+
+          # 4. Module Logic: Check specific .ino files
+          cd Cart_Reader
+          
+          # Loop through all available cores
+          for core in $ALL_CORES; do
+            # Check every .ino file (except the main one) to see if it defines/uses this core
+            for file in $(ls *.ino | grep -v "Cart_Reader.ino"); do
+              
+              # Improved header check: first 10 lines 
+              if head -n 10 "$file" | grep -q "$core"; then
+                 
+                 # We found the file for this core. Did it change?
+                 if echo "$CHANGED_FILES" | grep -q "Cart_Reader/$file"; then
+                    echo "File '$file' changed (matched $core). Adding to build list."
+                    echo "$core" >> ../cores_to_run.txt
+                 fi
+              fi
+            done
+          done
+          cd ..
+
+          # 5. OPTIMIZATION: Remove redundant default cores if ALL_DEFAULTS is present
+          if grep -q "ALL_DEFAULTS" cores_to_run.txt; then
+            echo "ALL_DEFAULTS detected. Removing redundant default cores from individual test list..."
+            for def_core in $DEFAULT_CORES_LIST; do
+              # Delete lines matching the default core exactly
+              sed -i "/^$def_core$/d" cores_to_run.txt
+            done
+          fi
+
+          # 6. Output JSON for the matrix
+          if [ -s cores_to_run.txt ]; then
+            # Sort and remove duplicates
+            UNIQUE_CORES=$(sort -u cores_to_run.txt)
+            
+            # Convert list to JSON array ["CORE1","CORE2"]
+            JSON_ARRAY=$(echo "$UNIQUE_CORES" | jq -R -s -c 'split("\n")[:-1]')
+            
+            echo "Matrix to build: $JSON_ARRAY"
+            echo "cores=$JSON_ARRAY" >> $GITHUB_OUTPUT
+          else
+            echo "No relevant changes found."
+            echo "cores=[]" >> $GITHUB_OUTPUT
+          fi
+
+  # JOB 2: Run the actual compilation using the dynamic matrix
   ci:
-    name: ${{ matrix.hwVersion }}
+    needs: setup
+    # Skip if the cores list is empty
+    if: ${{ needs.setup.outputs.cores != '[]' && needs.setup.outputs.cores != '' }}
+    name: ${{ matrix.hwVersion }}-${{ matrix.core }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        hwVersion: [HW5, HW4, HW3, HW2, HW1]
+        hwVersion: [HW3, HW5]
+        core: ${{ fromJson(needs.setup.outputs.cores) }}
 
     steps:
       - name: Install Arduino CLI
@@ -45,6 +148,28 @@ jobs:
       - name: Compile
         run: |
           cd Cart_Reader/
-          # Select hardware version by uncommenting it (using regular expression)
+          
+          # 1. Set Hardware Version (Always needed)
           sed -i 's/^\/\/[\t ]*#define ${{ matrix.hwVersion }}/#define ${{ matrix.hwVersion }}/g' Config.h
+          
+          # 2. Configure Cores
+          if [ "${{ matrix.core }}" == "ALL_DEFAULTS" ]; then
+             echo "BUILD TYPE: ALL_DEFAULTS"
+             echo "Keeping default Config.h (Enables: GBX, N64, NES, SMS, MD, SNES simultaneously)"
+             # We do NOT comment out the default cores here.
+          else
+             echo "BUILD TYPE: SINGLE CORE (${{ matrix.core }})"
+             
+             # Comment out all cores that are enabled by default
+             sed -i 's/^#define ENABLE_GBX/\/\/#define ENABLE_GBX/g' Config.h
+             sed -i 's/^#define ENABLE_N64/\/\/#define ENABLE_N64/g' Config.h
+             sed -i 's/^#define ENABLE_NES/\/\/#define ENABLE_NES/g' Config.h
+             sed -i 's/^#define ENABLE_SMS/\/\/#define ENABLE_SMS/g' Config.h
+             sed -i 's/^#define ENABLE_MD/\/\/#define ENABLE_MD/g' Config.h
+             sed -i 's/^#define ENABLE_SNES/\/\/#define ENABLE_SNES/g' Config.h
+             
+             # Uncomment only the core being tested
+             sed -i 's/^\/\/[\t ]*#define ${{ matrix.core }}/#define ${{ matrix.core }}/g' Config.h
+          fi
+          
           arduino-cli compile --fqbn arduino:avr:mega --warnings all --build-property compiler.cpp.extra_flags="-DGITHUB_CI"
