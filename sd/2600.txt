@@ -178,8 +178,11 @@ Buck Rogers - Planet of Zoom
 Bugs
 064
 
-Bump 'n' Jump
+Bump 'n' Jump (Mattel)
 231
+
+Bump 'n' Jump (Telegames)
+248
 
 Bumper Bash
 064
