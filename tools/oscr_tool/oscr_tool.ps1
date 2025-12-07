@@ -168,8 +168,8 @@ try {
                 Remove-Item "$root\avr_backup" -Recurse -Force
 				
                 ### Step 3: Update AVRDUDE ###
-                if ($false) {
-                    # New avrdude might have bugs, add option to skip
+                if ($true) {
+                    # New avrdude has timeout error, add option to skip
                     Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
                 }
                 else {
@@ -228,7 +228,7 @@ try {
 
                     # Clean up temporary files
                     Remove-Item $tempAvrdudeDir -Recurse -Force
-                    Write-Host "AVRDUDE v8.0 installation complete!"
+                    Write-Host "AVRDUDE installation complete!"
                 }
             }
 			
@@ -236,16 +236,16 @@ try {
             Write-Host "Step 4: Setting up Arduino CLI..." -ForegroundColor Green
             # Make sure libraries folder exists
             New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
-            $arduinoCliZip = Join-Path $root "arduino-cli_1.2.2_Windows_64bit.zip"
+            $arduinoCliZip = Join-Path $root "arduino-cli_1.3.1_Windows_64bit.zip"
             $arduinoCliExe = Join-Path $root "Arduino IDE\arduino-cli.exe"
             
             # Download arduino-cli if not already present
             if (-not (Test-Path $arduinoCliExe)) {
                 Write-Host "Downloading Arduino CLI..."
-                Get-FileWithProgress -Url "https://github.com/arduino/arduino-cli/releases/download/v1.2.2/arduino-cli_1.2.2_Windows_64bit.zip" -Destination $arduinoCliZip
+                Get-FileWithProgress -Url "https://github.com/arduino/arduino-cli/releases/download/v1.3.1/arduino-cli_1.3.1_Windows_64bit.zip" -Destination $arduinoCliZip
                 
                 Write-Host "Verifying Arduino CLI SHA256..."
-                $expectedCliHash = "bdd3ed88a361af8539e51a1cc0bf831b269be155ddfdd90cb96a900ce78723b7"
+                $expectedCliHash = "cfece6f356fdc9ca003cc3f0a488470030719c8e0e7bfce5e42ac9410d87441f"
                 $cliHash = (Get-FileHash $arduinoCliZip -Algorithm SHA256).Hash
                 if ($cliHash -ne $expectedCliHash) {
                     Write-Error "Arduino CLI checksum mismatch! Aborting."
