@@ -796,9 +796,9 @@ void getMapping() {
     // never reached
   }
 
-  // Read first 512 bytes of first and last block of PRG ROM and compute CRC32
+  // Read last 8kb block of PRG ROM and compute CRC32
   // Some mappers (like MMC3) map the last 8KB block of PRG ROM to 0xE000 while 0x8000 can contain random data after bootup
-  for (size_t c = 0; c < 512; c++) {
+  for (size_t c = 0; c < 8192; c++) {
     UPDATE_CRC(oldcrc32, read_prg_byte(0x8000 + c));
     UPDATE_CRC(oldcrc32MMC3, read_prg_byte(0xE000 + c));
   }

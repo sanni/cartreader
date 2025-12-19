@@ -1297,6 +1297,11 @@ void mainMenu() {
       display_Clear();
       display_Update();
       setup_NES();
+      // Wait for MMC3
+      for (size_t c = 0; c < 512; c++) {
+        read_prg_byte(0x8000 + c);
+        read_prg_byte(0xE000 + c);
+      }
       getMapping();
       checkStatus_NES();
       return nesMenu();
@@ -3774,4 +3779,3 @@ void loop() {
 //******************************************
 // End of File
 //******************************************
-
