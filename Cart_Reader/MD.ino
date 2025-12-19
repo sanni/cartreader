@@ -884,6 +884,10 @@ void getCartInfo_MD() {
         cartSize = 0x200000;
         chksum = 0x6965;
         break;
+      case 0x4581:  // True Galactic Mission (Aftermarket)
+        cartSize = 0x400000;
+        chksum = 0x0694;
+        break;
     }
   }
   if (cartSize == 0xC0000) {
