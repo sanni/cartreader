@@ -356,10 +356,9 @@ try {
                 Remove-Item $CH341Dest -Recurse -Force
             }
             $drvZip = Join-Path $root "drivers.zip"
-            Get-FileWithProgress -Url "https://file.wch.cn/download/file?id=5" -Destination $drvZip
-
+            Get-FileWithProgress -Url "https://www.wch-ic.com/download/file?id=5" -Destination $drvZip
             Write-Host "Verifying SHA256..."
-            $expectedHash = "07b0fd92b1d0c26f1b9d35028a02d7c03af539a744da7c4dbec4c09480ac6417"
+            $expectedHash = "a7b08baaaf9b0e8548ffbab2a91fab8c75595f8d63a42a490fbf3fd1e747e21c"
             $hash = (Get-FileHash $drvZip -Algorithm SHA256).Hash
             if ($hash -ne $expectedHash) {
                 Write-Error "Checksum mismatch! Aborting."
