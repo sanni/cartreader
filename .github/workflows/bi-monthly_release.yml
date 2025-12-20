@@ -120,7 +120,7 @@ jobs:
 
               ### Step 2: Update AVR-GCC compiler ###
               Write-Host "Step 2: Downloading latest AVR-GCC compiler..." -ForegroundColor Green
-              $avrGccZip = Join-Path $root "avr-gcc-14.1.0-x64-windows.zip"
+              $avrGccZip = Join-Path $root "avr-gcc-15.2.0-x64-windows.zip"
               Get-FileWithProgress -Url "https://github.com/ZakKemble/avr-gcc-build/releases/download/v15.2.0-1/avr-gcc-15.2.0-x64-windows.zip" -Destination $avrGccZip
 
               Write-Host "Verifying AVR-GCC SHA256..."
@@ -154,7 +154,7 @@ jobs:
 
               # Move new AVR-GCC to tools folder
               Write-Host "Installing new AVR-GCC compiler..."
-              Move-Item "$root\temp_avr\avr-gcc-15.2.0-x64-windows" "$toolsPath\avr"
+              Move-Item "$root\temp_avr\15.2.0-x64-windows" "$toolsPath\avr"
 
               # Copy essential files from old AVR installation if backup exists
               if (Test-Path $backupAvrPath) {
@@ -201,7 +201,7 @@ jobs:
 
               ### Step 3: Update AVRDUDE ###
               if ($true) {
-                  # New avrdude might have bugs, add option to skip
+                  # New avrdude has timeout error, add option to skip
                   Write-Host "Skipping Step 3: Updating AVRDUDE..." -ForegroundColor Green
               } else {
                   Write-Host "Step 3: Updating AVRDUDE..." -ForegroundColor Green
@@ -259,7 +259,7 @@ jobs:
 
                   # Clean up temporary files
                   Remove-Item $tempAvrdudeDir -Recurse -Force
-                  Write-Host "AVRDUDE v8.0 installation complete!"
+                  Write-Host "AVRDUDE v8.1 installation complete!"
               }
           }
 
@@ -267,16 +267,16 @@ jobs:
           Write-Host "Step 4: Setting up Arduino CLI..." -ForegroundColor Green
           # Make sure libraries folder exists
           New-Item -ItemType Directory -Path "$root\Arduino IDE\portable\sketchbook\libraries" -Force | Out-Null
-          $arduinoCliZip = Join-Path $root "arduino-cli_1.2.2_Windows_64bit.zip"
+          $arduinoCliZip = Join-Path $root "arduino-cli_1.3.1_Windows_64bit.zip"
           $arduinoCliExe = Join-Path $root "Arduino IDE\arduino-cli.exe"
 
           # Download arduino-cli if not already present
           if (-not (Test-Path $arduinoCliExe)) {
               Write-Host "Downloading Arduino CLI..."
-              Get-FileWithProgress -Url "https://github.com/arduino/arduino-cli/releases/download/v1.2.2/arduino-cli_1.2.2_Windows_64bit.zip" -Destination $arduinoCliZip
+              Get-FileWithProgress -Url "https://github.com/arduino/arduino-cli/releases/download/v1.3.1/arduino-cli_1.3.1_Windows_64bit.zip" -Destination $arduinoCliZip
 
               Write-Host "Verifying Arduino CLI SHA256..."
-              $expectedCliHash = "bdd3ed88a361af8539e51a1cc0bf831b269be155ddfdd90cb96a900ce78723b7"
+              $expectedCliHash = "cfece6f356fdc9ca003cc3f0a488470030719c8e0e7bfce5e42ac9410d87441f"
               $cliHash = (Get-FileHash $arduinoCliZip -Algorithm SHA256).Hash
               if ($cliHash -ne $expectedCliHash) {
                   Write-Error "Arduino CLI checksum mismatch! Aborting."
