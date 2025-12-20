@@ -154,7 +154,7 @@ jobs:
 
               # Move new AVR-GCC to tools folder
               Write-Host "Installing new AVR-GCC compiler..."
-              Move-Item "$root\temp_avr\15.2.0-x64-windows" "$toolsPath\avr"
+              Move-Item "$root\temp_avr\avr-gcc-15.2.0-x64-windows" "$toolsPath\avr"
 
               # Copy essential files from old AVR installation if backup exists
               if (Test-Path $backupAvrPath) {
