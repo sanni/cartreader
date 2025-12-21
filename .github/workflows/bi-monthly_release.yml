@@ -415,10 +415,32 @@ jobs:
               -replace '#define U8G2_WITH_UNICODE', '//#define U8G2_WITH_UNICODE' |
           Set-Content -Encoding ASCII $u8g2Header
 
-          Write-Host "DONE. Portable Arduino IDE for OSCR with updated AVR-GCC compiler is ready."
+          ### Step 9: Optimize Compiler ###
+          Write-Host "Step 9: Optimizing compiler..." -ForegroundColor Green
+          $platformLocalPath = Join-Path $root 'Arduino IDE\hardware\arduino\avr\platform.local.txt'
 
-          ### Step 9: README ###
-          Write-Host "Step 9: Creating README.txt..."
+          # Ensure target directory exists
+          $platformDir = Split-Path $platformLocalPath -Parent
+          if (-not (Test-Path $platformDir)) {
+              New-Item -Path $platformDir -ItemType Directory -Force | Out-Null
+          }
+
+          # Desired content as array (preserves indentation)
+          $platformLocalContent = @(
+              'compiler.c.extra_flags=-mcall-prologues'
+              'compiler.cpp.extra_flags=-mcall-prologues'
+              'compiler.S.extra_flags='
+              'compiler.ar.extra_flags='
+              'compiler.objcopy.eep.extra_flags='
+              'compiler.elf2hex.extra_flags='
+              'compiler.c.elf.extra_flags=-Wl,--relax'
+          )
+
+          # Create / overwrite file with UTF-8 encoding
+          $platformLocalContent | Set-Content -Path $platformLocalPath -Encoding UTF8 -Force
+
+          ### Step 10: README ###
+          Write-Host "Step 10: Creating README.txt..."
           @"
           1) Install CH341 Drivers by running SETUP.exe in the "CH341 Drivers" folder
           2) Launch arduino.exe found in the "Arduino IDE" directory
@@ -434,8 +456,8 @@ jobs:
           More info: https://github.com/sanni/cartreader/wiki
           "@ | Set-Content -Encoding UTF8 -Path "$root\README.txt"
 
-          ### Step 10: Extracting version from OSCR.cpp ###
-          Write-Host "Step 10: Extracting version from OSCR.cpp..."
+          ### Step 11: Extracting version from OSCR.cpp ###
+          Write-Host "Step 11: Extracting version from OSCR.cpp..."
 
           $pattern = 'FSTRING_VERSION\[\] = "(.*)";'
           $cppPath = Join-Path $root "Arduino IDE\portable\sketchbook\Cart_Reader\OSCR.cpp"
@@ -456,8 +478,8 @@ jobs:
 
           Add-Content -Path $githubEnv -Value "OSCR_VERSION=$version"
 
-          ### Step 11: Create zip ###
-          Write-Host "Step 11: Create zip..."
+          ### Step 12: Create zip ###
+          Write-Host "Step 12: Create zip..."
           # Go up one directory
           Set-Location (Split-Path $root -Parent)
 
