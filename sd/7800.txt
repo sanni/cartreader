@@ -172,6 +172,9 @@ Ninja Golf
 One-on-One Basketball
 0,2
 
+Pac-Man
+0,2
+
 Pete Rose Baseball
 0,1
 
