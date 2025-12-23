@@ -419,10 +419,10 @@ uint32_t calculateCRC(const byte* buffer, size_t length) {
 }
 
 uint32_t calculateCRC(FsFile& infile) {
-  uint32_t byte_count;
+  int32_t byte_count;
   uint32_t crc = 0xFFFFFFFF;
 
-  while ((byte_count = infile.read(sdBuffer, sizeof(sdBuffer))) != 0) {
+  while ((byte_count = infile.read(sdBuffer, sizeof(sdBuffer))) > 0) {
     crc = updateCRC(sdBuffer, byte_count, crc);
   }
   return ~crc;
