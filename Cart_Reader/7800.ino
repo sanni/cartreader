@@ -78,6 +78,7 @@ byte a7800size;
 // 08 ROM SIZE
 
 bool enable_clockgen = false;
+bool clockgen_selected = false;
 
 //******************************************
 //  Menu
@@ -167,22 +168,26 @@ void a7800Menu() {
   uint8_t mainMenu;
 
 #ifdef ENABLE_CLOCKGEN
-  convertPgm(menuClockGen7800, 2);
-  mainMenu = question_box(F("ATARI 7800 MENU"), menuOptions, 2, 0);
+  if (!clockgen_selected) {
+    convertPgm(menuClockGen7800, 2);
+    mainMenu = question_box(F("ATARI 7800 MENU"), menuOptions, 2, 0);
 
-  switch (mainMenu) {
-    case 0:
-      // Disable Clock Gen
-      enable_clockgen = false;
-      break;
+    switch (mainMenu) {
+      case 0:
+        // Disable Clock Gen
+        enable_clockgen = false;
+        break;
 
-    case 1:
-      // Enable Clock Gen
-      enable_clockgen = true;
-      break;
+      case 1:
+        // Enable Clock Gen
+        enable_clockgen = true;
+        break;
+    }
+
+    setup_7800(true);
+
+    clockgen_selected = true;
   }
-
-  setup_7800(true);
 #endif
 
   convertPgm(menuOptions7800, 4);
