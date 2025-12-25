@@ -87,7 +87,7 @@ static const char* const menuOptions7800[] PROGMEM = { FSTRING_SELECT_CART, FSTR
 // Clock Gen Menu
 static const char* const menuClockGen7800[] PROGMEM = { FSTRING_CLKGEN_OFF, FSTRING_CLKGEN_ON };
 
-void setup_7800() {
+void setup_7800(bool display_status) {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
 
@@ -147,7 +147,10 @@ void setup_7800() {
     PORTH |= (1 << 1);
   }
 
-  checkStatus_7800();
+  if (display_status) {
+    checkStatus_7800();
+  }
+  
   strcpy(romName, "ATARI");
 
   mode = CORE_7800;
@@ -172,7 +175,7 @@ void a7800Menu() {
       break;
   }
 
-  setup_7800();
+  setup_7800(true);
 #endif
 
   convertPgm(menuOptions7800, 4);
@@ -182,7 +185,7 @@ void a7800Menu() {
     case 0:
       // Select Cart
       setCart_7800();
-      setup_7800();
+      setup_7800(true);
       break;
 
     case 1:

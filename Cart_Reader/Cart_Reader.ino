@@ -1455,7 +1455,7 @@ void mainMenu() {
 
 #ifdef ENABLE_7800
     case SYSTEM_MENU_7800:
-      setup_7800();
+      setup_7800(false);
       return a7800Menu();
       break;
 #endif
