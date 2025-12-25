@@ -122,25 +122,32 @@ void setup_7800(bool display_status) {
   PORTL = 0xFF;       // A16-A23
   PORTJ |= (1 << 0);  // TIME(PJ0)
 
+#ifdef ENABLE_CLOCKGEN
+  // Adafruit Clock Generator
+
+  initializeClockOffset();
+
+  if (!i2c_found) {
+    display_Clear();
+    print_FatalError(F("Clock Generator not found"));
+  }
+
+  // Set Eeprom clock to 1Mhz
+  clockgen.set_freq(200000000ULL, SI5351_CLK1);
+
   if (enable_clockgen) {
-    // Adafruit Clock Generator
-
-    initializeClockOffset();
-
-    if (!i2c_found) {
-      display_Clear();
-      print_FatalError(F("Clock Generator not found"));
-    }
-
-    // Set Eeprom clock to 1Mhz
-    clockgen.set_freq(200000000ULL, SI5351_CLK1);
-
     // Start outputting Eeprom clock
     clockgen.output_enable(SI5351_CLK1, 1);  // Eeprom clock
-
-    // Wait for clock generator
-    clockgen.update_status();
   } else {
+    clockgen.output_enable(SI5351_CLK1, 0); // SI5351_CLK_DISABLE = 0
+    clockgen.set_clock_disable(SI5351_CLK1, 2); // SI5351_CLK_DISABLE_HI_Z = 2
+  }
+
+  // Wait for clock generator
+  clockgen.update_status();
+#endif
+
+  if (!enable_clockgen) {
     // Set CLK(PH1) to Output
     DDRH |= (1 << 1);
     // Output a high signal CLK(PH1)
