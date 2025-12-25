@@ -80,6 +80,8 @@ constexpr char PROGMEM FSTRING_CHECKSUM[] = "Checksum: ";
 constexpr char PROGMEM FSTRING_ROM_SIZE[] = "ROM Size: ";
 constexpr char PROGMEM FSTRING_REVISION[] = "Revision: ";
 constexpr char PROGMEM FSTRING_SERIAL[] = "Serial: ";
+constexpr char PROGMEM FSTRING_CLKGEN_ON[] = "Enable Clock Gen";
+constexpr char PROGMEM FSTRING_CLKGEN_OFF[] = "Disable Clock Gen";
 
 /*==== /CONSTANTS =================================================*/
 

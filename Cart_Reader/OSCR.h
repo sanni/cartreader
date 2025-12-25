@@ -130,6 +130,8 @@ extern const char PROGMEM FSTRING_NAME[];
 extern const char PROGMEM FSTRING_CHECKSUM[];
 extern const char PROGMEM FSTRING_REVISION[];
 extern const char PROGMEM FSTRING_SERIAL[];
+extern const char PROGMEM FSTRING_CLKGEN_ON[];
+extern const char PROGMEM FSTRING_CLKGEN_OFF[];
 
 #define FS(pmem_string) (reinterpret_cast<const __FlashStringHelper *>(pmem_string))
 

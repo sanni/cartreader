@@ -77,11 +77,15 @@ byte a7800size;
 // 07 MAPPER
 // 08 ROM SIZE
 
+bool enable_clockgen = false;
+
 //******************************************
 //  Menu
 //******************************************
 // Base Menu
 static const char* const menuOptions7800[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
+// Clock Gen Menu
+static const char* const menuClockGen7800[] PROGMEM = { FSTRING_CLKGEN_OFF, FSTRING_CLKGEN_ON };
 
 void setup_7800() {
   // Request 5V
@@ -118,31 +122,30 @@ void setup_7800() {
   PORTL = 0xFF;       // A16-A23
   PORTJ |= (1 << 0);  // TIME(PJ0)
 
-#ifdef ENABLE_CLOCKGEN
-  // Adafruit Clock Generator
+  if (enable_clockgen) {
+    // Adafruit Clock Generator
 
-  initializeClockOffset();
+    initializeClockOffset();
 
-  if (!i2c_found) {
-    display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    if (!i2c_found) {
+      display_Clear();
+      print_FatalError(F("Clock Generator not found"));
+    }
+
+    // Set Eeprom clock to 1Mhz
+    clockgen.set_freq(200000000ULL, SI5351_CLK1);
+
+    // Start outputting Eeprom clock
+    clockgen.output_enable(SI5351_CLK1, 1);  // Eeprom clock
+
+    // Wait for clock generator
+    clockgen.update_status();
+  } else {
+    // Set CLK(PH1) to Output
+    DDRH |= (1 << 1);
+    // Output a high signal CLK(PH1)
+    PORTH |= (1 << 1);
   }
-
-  // Set Eeprom clock to 1Mhz
-  clockgen.set_freq(200000000ULL, SI5351_CLK1);
-
-  // Start outputting Eeprom clock
-  clockgen.output_enable(SI5351_CLK1, 1);  // Eeprom clock
-
-  // Wait for clock generator
-  clockgen.update_status();
-
-#else
-  // Set CLK(PH1) to Output
-  DDRH |= (1 << 1);
-  // Output a high signal CLK(PH1)
-  PORTH |= (1 << 1);
-#endif
 
   checkStatus_7800();
   strcpy(romName, "ATARI");
@@ -151,8 +154,29 @@ void setup_7800() {
 }
 
 void a7800Menu() {
+  uint8_t mainMenu;
+
+#ifdef ENABLE_CLOCKGEN
+  convertPgm(menuClockGen7800, 2);
+  mainMenu = question_box(F("ATARI 7800 MENU"), menuOptions, 2, 0);
+
+  switch (mainMenu) {
+    case 0:
+      // Disable Clock Gen
+      enable_clockgen = false;
+      break;
+
+    case 1:
+      // Enable Clock Gen
+      enable_clockgen = true;
+      break;
+  }
+
+  setup_7800();
+#endif
+
   convertPgm(menuOptions7800, 4);
-  uint8_t mainMenu = question_box(F("ATARI 7800 MENU"), menuOptions, 4, 0);
+  mainMenu = question_box(F("ATARI 7800 MENU"), menuOptions, 4, 0);
 
   switch (mainMenu) {
     case 0:
@@ -579,6 +603,7 @@ void checkStatus_7800() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[a7800size]);
   println_Msg(F("K"));
+  println_Msg(enable_clockgen ? FS(FSTRING_CLKGEN_ON) : FS(FSTRING_CLKGEN_OFF));
   display_Update();
   wait();
 #else
@@ -605,7 +630,8 @@ void checkStatus_7800() {
   Serial.print(FS(FSTRING_ROM_SIZE));
   Serial.print(A7800[a7800size]);
   Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  Serial.println(F("K"));
+  Serial.println(enable_clockgen ? FS(FSTRING_CLKGEN_ON) : FS(FSTRING_CLKGEN_OFF));
 #endif
 }
 
