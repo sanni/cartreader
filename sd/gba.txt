@@ -1,32 +1,38 @@
+2004Mbit Competition (World) (Unl).gba
+107DE6B7,0000,04,SRAM_V112
+
 4x4 Off-Roaders (Europe) (Proto).gba
-08A7EC46,0000,02,NONE
+08A7EC46,0000,03,NONE
 
 Action Replay (Europe) (En,Fr,De,It) (v3.3) (Unl).gba
-4304BD2D,0000,00,NONE
-
-Action Replay GBX (Europe) (En,Fr,De,It) (Unl) (Alt).gba
-45BB6F4E,0000,00,NONE
+4304BD2D,0000,01,NONE
 
 Action Replay GBX (Europe) (En,Fr,De,It) (Unl).gba
-18CE5322,0000,00,NONE
+18CE5322,0000,01,NONE
+
+Action Replay GBX (Europe) (En,Fr,De,It) (Unl) (Alt).gba
+45BB6F4E,0000,01,NONE
 
 Action Replay GBX (Europe) (En,Fr,De,It) (v3.1) (Unl).gba
-3DB7A213,0000,00,NONE
+3DB7A213,0000,01,NONE
 
 Action Replay GBX (Europe) (Unl).gba
-5AD72359,0000,00,NONE
+5AD72359,0000,01,NONE
 
 Action Replay GBX (France) (Unl).gba
-F1173773,0000,00,NONE
+F1173773,0000,01,NONE
 
 Action Replay GBX (Germany) (Unl).gba
-D6260D4C,0000,00,NONE
+D6260D4C,0000,01,NONE
 
 Action Replay GBX (Italy) (Unl).gba
-7DE61966,0000,00,NONE
+7DE61966,0000,01,NONE
 
 Action Replay MAX (Europe) (Unl).gba
-3FC75439,0000,01,FLASH_BASE
+3FC75439,0000,01,NONE
+
+Advanced Ghost Wranglin' (World) (Demo) (Aftermarket) (Unl).gba
+739EB5CE,0000,01,NONE
 
 Advanced Music Player (Europe) (Unl) [b].gba
 91D7D8D4,0000,04,NONE
@@ -35,64 +41,205 @@ Advanced Music Player (USA) (Unl) [b].gba
 73618BF5,0000,04,NONE
 
 AGB-Parallel Interface Cartridge (Japan) (En) (Program).gba
-7B887226,0000,01,NONE
+7B887226,0000,02,NONE
 
-Anguna - Warriors of Virtue (World) (v0.95) (Homebrew).gba
-3346891F,0000,01,NONE
+Agoria - Ode to Fate (World) (Unl).gba
+67D3361F,0000,03,NONE
+
+Alice Sisters (World) (En,Ja,Fr) (Aftermarket) (Unl).gba
+1EBDDDED,0000,16,NONE
+
+Anguna - Warriors of Virtue (World) (2021-02-28) (Patreon) (Aftermarket) (Unl).gba
+A354D555,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (Demo) (Aftermarket) (Unl).gba
+0A9098B4,0000,01,NONE
+
+Anguna - Warriors of Virtue (World) (Evercade) (Aftermarket) (Unl).gba
+7D8C00D3,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (Retro-Bit Generations) (Aftermarket) (Unl).gba
+A234813C,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.91) (Aftermarket) (Unl).gba
+EEBB016F,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.92) (Aftermarket) (Unl).gba
+BA271987,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.93) (Aftermarket) (Unl).gba
+DF7108E3,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.93) (Aftermarket) (Unl) (Alt).gba
+54FF2E56,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.94) (Aftermarket) (Unl).gba
+CB4E2768,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.95) (Aftermarket) (Unl).gba
+3346891F,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v0.95) (Itch.io) (Aftermarket) (Unl).gba
+41EA5B0B,0000,02,NONE
+
+Anguna - Warriors of Virtue (World) (v2.0) (Demo) (Aftermarket) (Unl).gba
+63C1CC2C,0000,01,NONE
+
+Army Men - Sarge's Heroes (USA, Europe) (Proto) (2000-08-22).gba
+F5CD5C7C,0000,01,NONE
+
+Army Men - Sarge's Heroes (USA, Europe) (Proto) (2000-08-31).gba
+26DEE7B7,0000,02,NONE
+
+Army Men - Sarge's Heroes (USA, Europe) (Proto) (2000-09-06).gba
+4863F99E,0000,02,NONE
+
+Army Men - Sarge's Heroes (USA, Europe) (Proto) (2000-09-08).gba
+E57FFF8A,0000,02,NONE
+
+Army Men - Sarge's Heroes (USA, Europe) (Proto) (2000-09-14T121024).gba
+F10D532A,0000,02,NONE
+
+Army Men - Sarge's Heroes (USA, Europe) (Proto) (2000-09-14T125538).gba
+4E6E3E92,0000,02,NONE
 
 Asterix & Obelix XXL (Europe) (Fr) (Beta 1).gba
 F6A977A5,0000,08,NONE
 
+Atomix (World) (Unl).gba
+FC610889,0000,01,NONE
+
+Attack on Voxelburg (World) (Demo) (GBA Jam 2022) (Aftermarket) (Unl).gba
+941C1FE0,0000,01,NONE
+
+Ayu Ayu Panic Advance (World) (v1.02) (Aftermarket) (Unl).gba
+3F7108EC,0000,04,NONE
+
+Back to Stone (Europe) (En,Fr,De) (Beta).gba
+EF365600,0000,04,NONE
+
 Backup LIB Sample (Unknown) (v1.04) (Program).gba
-E905937F,0000,16,EEPROM_V122
+E905937F,0000,16,FLASH512_V131
 
 Backup Mem. Quick-Copy (Unknown) (v1.04) (Program).gba
-689CAF43,0000,32,EEPROM_V124
+689CAF43,0000,32,FLASH512_V131
 
 Banjo-Kazooie - Grunty's Revenge (Europe) (Beta 1).gba
-4E0F10FA,0000,07,EEPROM_V122
+4E0F10FA,0000,08,EEPROM_V122
 
 Banjo-Kazooie - Grunty's Revenge (Europe) (Beta 2).gba
-106ED779,0000,07,EEPROM_V122
+106ED779,0000,08,EEPROM_V122
+
+Barbarian (USA, Europe) (En,Fr) (Proto) (2001-04-13).gba
+20FB4537,0000,03,NONE
+
+Barbarian (USA, Europe) (En,Fr) (Proto) (2001-06-20).gba
+5D162F27,0000,03,NONE
+
+Barbie and the Magic of Pegasus (USA) (Beta) (2005-01-21).gba
+AE6CF631,0000,01,NONE
+
+Barbie and the Magic of Pegasus (USA) (Beta) (2005-02-18).gba
+BD807770,0000,01,NONE
+
+Barbie and the Magic of Pegasus (USA) (Beta) (2005-03-18).gba
+4B58B5D6,0000,02,NONE
+
+Barbie and the Magic of Pegasus (USA) (Beta) (2005-04-15).gba
+46F21E41,0000,03,NONE
+
+Battle Picross (World) (Unl).gba
+7F36D6F0,0000,01,NONE
+
+Bengt Swinger of Longarm (World) (Unl).gba
+E514DE30,0000,01,NONE
+
+Black Sigil - Blade of the Exiled (USA) (Proto) (2007-02-10).gba
+010035A8,0000,12,NONE
 
 Blue Angelo - Angels from the Shrine (Europe) (Proto 1).gba
-0CEC865B,0000,07,NONE
+0CEC865B,0000,08,NONE
 
 Blue Angelo - Angels from the Shrine (Europe) (Proto 2).gba
-F1B924DC,0000,18,NONE
+F1B924DC,0000,19,NONE
 
-Bounty Hunter X (Europe) (Unl).gba
-91344285,0000,00,NONE
+BoulderCrash GBA (World) (Aftermarket) (Unl).gba
+4431021A,0000,01,NONE
+
+Bounty Hunter X (World) (Unl).gba
+91344285,0000,01,NONE
 
 Broken Circle (Europe) (En,It) (Proto).gba
-1E8F8AE0,0000,08,EEPROM_V124
+E78BC690,0000,09,EEPROM_V124
 
 Broken Circle (World) (En,It) (Aftermarket) (Unl).gba
 3212C09B,0000,16,EEPROM_V124
 
-Celeste Classic (World) (v1.0) (Homebrew).gba
-F79B0D53,0000,05,NONE
+Caesars Palace Advance - Millennium Gold Edition (USA, Europe) (Beta).gba
+13DC0731,0000,04,NONE
 
-Celeste Classic (World) (v1.1) (Homebrew).gba
-F5D36AD2,0000,05,NONE
+Cat's Curse (World) (Aftermarket) (Unl).gba
+A35D87DE,0000,01,NONE
 
-Celeste Classic (World) (v1.2) (Homebrew).gba
-FF0E8ADA,0000,05,NONE
+CCCP (World) (Aftermarket) (Unl).gba
+AD634C54,0000,01,NONE
+
+Celeste Classic (World) (Aftermarket) (Unl).gba
+F79B0D53,0000,06,NONE
+
+Celeste Classic (World) (v1.1) (Aftermarket) (Unl).gba
+F5D36AD2,0000,06,NONE
+
+Celeste Classic (World) (v1.2) (Aftermarket) (Unl).gba
+FF0E8ADA,0000,06,NONE
 
 Chaoji Maliou DX (Taiwan) (Unl).gba
 2C7AF7E8,0000,32,NONE
 
+Chip Advance (World) (En,Fr) (v2.1) (Unl).gba
+586C4345,0000,11,NONE
+
+Chopper 2 - The Return (World) (Unl).gba
+F33AAC43,0000,01,NONE
+
+City Connection (World) (Fr) (v1.7) (Unl).gba
+234A42A5,0000,02,NONE
+
 CodeBreaker (USA) (Unl).gba
-F5B2F65E,0000,00,NONE
+F5B2F65E,0000,01,NONE
+
+Codename Hacker (World) (En,Fr) (Aftermarket) (Unl).gba
+1CCFBE29,0000,04,NONE
 
 Commandos 2 (Japan) (Proto) (2002-11-28).gba
-DD58AECD,0000,02,NONE
+DD58AECD,0000,03,NONE
+
+Contra Advance (USA) (Beta).gba
+511D7556,0000,04,NONE
+
+COVID Adventure (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+E37400B5,0000,01,NONE
 
 Crash Advance IV (USA) (Unl).gba
 4B67247C,0000,32,NONE
 
-Diddy Kong Pilot (Unknown) (Proto) (2001).gba
-8903CC5F,0000,07,FLASH_1MF
+Crazy Taxi - Catch a Ride (Europe) (En,Fr,De,Es) (Beta).gba
+FE0D0B86,0000,08,EEPROM_V122
+
+Crouching Tiger, Hidden Dragon (USA) (Beta 1).gba
+A1D2D006,0000,04,NONE
+
+Crouching Tiger, Hidden Dragon (USA) (Beta 2).gba
+204FF8D5,0000,08,NONE
+
+Cruis'n Velocity (USA, Europe) (Beta).gba
+5436D5DA,0000,08,NONE
+
+Decoder Cart (Japan) (En) (Pirate).gba
+80AA9CC5,0000,08,NONE
+
+Deflektor (World) (v1.1) (Unl).gba
+5EC91001,0000,01,NONE
 
 Digimon - Ruby and Sapphire (USA) (Unl).gba
 51EF4700,0000,32,NONE
@@ -100,8 +247,26 @@ Digimon - Ruby and Sapphire (USA) (Unl).gba
 Disney Cart (USA) (Unl) [b].gba
 BD6C8B22,0000,32,NONE
 
+Dog Trainer (Europe) (DS Cheat Cartridge) (Unl).gba
+6B3961FB,0000,01,NONE
+
+Dog Trainer 2 (Europe) (DS Cheat Cartridge) (Unl).gba
+B2100FED,0000,01,NONE
+
 Donkey Kong 2 (USA) (Unl).gba
 006A6AFA,0000,32,NONE
+
+Donsol (World) (Aftermarket) (Unl).gba
+AEC144B3,0000,01,NONE
+
+Dragon Ball GT - Transformation (USA) (Beta) (2005-04-27).gba
+431BC807,0000,08,EEPROM_V124
+
+Dragon Ball Z - The Legacy of Goku II (USA) (Beta) (2003-01-23).gba
+3C30F5B3,0000,07,EEPROM_V122
+
+Dragon Ball Z - The Legacy of Goku II (USA) (Beta) (2003-01-31).gba
+25F34DBC,0000,07,EEPROM_V122
 
 Driv3r (Europe) (Beta 1) [b].gba
 0A483C43,0000,08,NONE
@@ -112,32 +277,125 @@ Driv3r (Europe) (Beta 3).gba
 Driv3r (Europe) (Es) (Beta 2).gba
 58E1F5A6,0000,08,NONE
 
+Dungeon Tactics Advance (World) (Aftermarket) (Unl).gba
+C8385702,0000,09,NONE
+
+Dungeon Tactics Advance (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+B86CC21C,0000,09,NONE
+
+Elements of Darkness (World) (Demo) (Unl).gba
+5F3B0637,0000,03,NONE
+
+Eliminator GBA (World) (v0.91) (Proto) (Aftermarket) (Unl).gba
+637DC1AA,0000,01,NONE
+
+Elite - The New Kind (World) (v1.7.1) (Unl).gba
+5F9B4211,0000,01,NONE
+
+Elite AGB (World) (v0.5.2) (Beta) (Aftermarket) (Unl).gba
+F00C939F,0000,01,NONE
+
+Elite AGB (World) (v1.4.1) (Aftermarket) (Unl).gba
+28985872,0000,01,NONE
+
 Farbe (Germany) (En) (Proto) (Test Program).gba
 8CC3C550,0000,08,NONE
+
+FILA Decathlon (Europe) (Beta).gba
+07434E3A,0000,04,NONE
 
 Fire Eaters - Zero Bandits (Europe) (Demo).gba
 8698F50A,0000,08,NONE
 
+Flappy Bird (World) (Aftermarket) (Unl).gba
+4D099541,0000,01,NONE
+
 Flashback Legends (France) (Proto).gba
-EB33477D,0000,03,NONE
+EB33477D,0000,04,NONE
 
 Frank Herbert's Dune - Ornithopter Assault (Europe) (En,Fr,De,Es,It) (Proto).gba
 298D627B,0000,04,NONE
 
-GameShark GBA (USA) (Unl) (Alt).gba
-9AD94C62,0000,00,NONE
+Fuzz & Rocket (USA) (Proto) (2005-01-18).gba
+FD239437,0000,04,EEPROM_V124
+
+Galactic Quest (World) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+F13F3FBD,0000,03,NONE
 
 GameShark GBA (USA) (Unl).gba
-D71DBCA6,0000,00,NONE
+D71DBCA6,0000,01,NONE
+
+GameShark GBA (USA) (Unl) (Alt).gba
+9AD94C62,0000,01,NONE
+
+Gap-Man (World) (Unl).gba
+05E327D1,0000,01,NONE
+
+GBA Asteroids (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+D52AA1CF,0000,01,NONE
+
+GBA Tactics (World) (Proto) (NEO Coding Compo 2006) (Aftermarket) (Unl).gba
+81B449A6,0000,01,NONE
+
+Glacia Dungeon (World) (En,Es,Ru,Ro) (v1.5.2) (Aftermarket) (Unl).gba
+AB5AE65B,0000,02,SRAM_V113
+
+Goldrunner (World) (Aftermarket) (Unl).gba
+53F4CAC1,0000,01,NONE
+
+Google Dino Advance (World) (v1.0.1) (Aftermarket) (Unl).gba
+6534185E,0000,01,NONE
+
+Graveblood (World) (v0.0.1.1.5.2) (Demo) (Aftermarket) (Unl).gba
+FE0DDFC6,0000,11,NONE
+
+Green Memories (World) (v1.4.2) (Aftermarket) (Unl).gba
+9FA9F00F,0000,07,NONE
+
+Green Memories (World) (v1.4.4) (Aftermarket) (Unl).gba
+702B46C6,0000,07,NONE
+
+Green Memories (World) (v1.4.7) (Aftermarket) (Unl).gba
+67AB8688,0000,07,NONE
+
+Green Memories (World) (v1.4.8) (Aftermarket) (Unl).gba
+7E8C875C,0000,08,NONE
 
 Gu Huo Lang 4 (Taiwan) (Unl).gba
 1608F6DB,0000,32,NONE
 
-Ha Li Bo Te IV (Taiwan) (Unl).gba
+Guilty Gear X - Advance Edition (Japan) (Beta).gba
+4506ADA8,0000,08,NONE
+
+Hali Bote IV (Taiwan) (Unl).gba
 892347D4,0000,32,NONE
 
 Harry Potter IV (USA) (Unl).gba
 8F482DF4,0000,32,NONE
+
+Healz (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+A217374F,0000,11,NONE
+
+Hex Advance (World) (v0.3) (Proto) (Aftermarket) (Unl).gba
+8DBE63B7,0000,01,NONE
+
+Hexa Virus (World) (Aftermarket) (Unl).gba
+92243509,0000,02,NONE
+
+Hi Hi Puffy AmiYumi - Puffy Ami Yumi and the Manga Madman! (USA) (Proto).gba
+D048EC49,0000,08,NONE
+
+Holy Hell (World) (Proto) (NEO Coding Compo 2012) (Aftermarket) (Unl).gba
+09E21865,0000,06,SRAM_V113
+
+Inheritors of the Oubliette (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+965A1A75,0000,25,NONE
+
+Inheritors of the Oubliette (World) (v1.2) (Aftermarket) (Unl).gba
+A9014760,0000,11,NONE
+
+I-Ninja (USA) (Proto).gba
+8F31E9C6,0000,08,EEPROM_V122
 
 iQue Reader (China).gba
 8724750B,0000,04,NONE
@@ -145,62 +403,155 @@ iQue Reader (China).gba
 iQue Video & Audio (China).gba
 92852A72,0000,16,NONE
 
+Join 4 Together (World) (Proto) (Aftermarket) (Unl).gba
+97D3C875,0000,01,NONE
+
+Juezhan Sanguo (Taiwan) (Unl).gba
+CEB670B2,0000,04,NONE
+
+Jurl (World) (v1.0c) (Aftermarket) (Unl).gba
+1DFFB414,0000,01,NONE
+
 Kaisertal - Fight the Necronis War (Europe) (Demo).gba
 62992510,0000,08,NONE
+
+Kien (World) (Incub8 Games) (Unl).gba
+5A64B473,0000,08,NONE
+
+King of Fighters EX, The - NeoBlood (Japan) (Beta).gba
+811FFCFA,0000,08,NONE
+
+Legends of Aereven Advance - Sleeping Azure (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+CD3D8F80,0000,06,NONE
+
+LEGO Racers 2 (Europe) (Beta).gba
+7D05AE2C,0000,08,EEPROM_V120
 
 Leiman IV - Guangming Zhi Lv (Taiwan) (Unl).gba
 D05C8414,0000,32,NONE
 
+Life and Adventures of Buscon de Tormes (World) (En,Es) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+490125DB,0000,06,SRAM_V113
+
+Lindsi Luna Blast (World) (v1.01) (Unl).gba
+E6FADD1A,0000,05,NONE
+
 Lord of the Rings IV, The - The Fellowship of the Ring (USA) (Unl).gba
 09C7C895,0000,32,NONE
 
-Mandrake the Magician (Italy) (It) (Proto).gba
+Luma (World) (Aftermarket) (Unl).gba
+CDC54313,0000,01,NONE
+
+Magic & Legend - Time Knights (World) (Beta) (Aftermarket) (Unl).gba
+17AF9E42,0000,01,NONE
+
+Mandrake the Magician (Italy) (Proto).gba
 7CFE1889,0000,08,EEPROM_V122
+
+Manic Miner (Europe) (Beta).gba
+FB3D52BD,0000,08,NONE
+
+Mario & Luigi (USA) (Demo) (Kiosk, E3 2003).gba
+2D01A8DF,0000,08,EEPROM_V122
 
 Mario DX (USA) (Unl).gba
 9255C170,0000,32,NONE
 
+Mario Kart XXL (Europe) (Demo).gba
+E3075601,0000,04,NONE
+
+MazezaM (World) (NEO Coding Compo 2013) (Aftermarket) (Unl).gba
+7C200ED5,0000,01,NONE
+
+MazezaM (World) (v1.1) (NEO Coding Compo 2013) (Aftermarket) (Unl).gba
+F7BC9DB0,0000,01,NONE
+
+Metal Gear Solid 2D - Sensible (World) (v0.31) (Demo) (Unl).gba
+C797641C,0000,01,NONE
+
 Metal Slug - Super Vehicle-001 (Japan) (En) (Proto).gba
 6ABF352D,0000,16,EEPROM_V124
 
-Misfortune Advance (World) (Homebrew).gba
-18F2166D,0000,04,NONE
+Metal Slug Advance (Japan) (Beta).gba
+3F746AC1,0000,08,NONE
+
+Metal Warrior 4 - Agents of Metal (World) (v1.1) (Aftermarket) (Unl).gba
+5BE69B8D,0000,01,NONE
+
+Metal Warrior 4 - Agents of Metal (World) (v1.3) (Aftermarket) (Unl).gba
+7EC3485E,0000,01,NONE
+
+Misfortune Advance (World) (Aftermarket) (Unl).gba
+18F2166D,0000,05,NONE
+
+Mooncat's Trio (World) (Beta) (Aftermarket) (Unl).gba
+CD3328EE,0000,01,NONE
 
 Motocross Challenge (USA) (Proto).gba
 E5A7DE43,0000,04,NONE
 
+MotoGP (Europe) (Beta).gba
+508BF8DC,0000,04,NONE
+
 Mythri (USA) (Proto).gba
-FD686B7B,0000,00,NONE
+FD686B7B,0000,01,NONE
 
 Naruto - Saikyou Ninja Daikesshuu 2 (Japan) (Demo) (Kiosk, GameCube).gba
 BA1F514A,0000,08,SRAM_V113
 
-Nekketsu Monogatari Advance (Japan) (Demo) (Aftermarket) (Unl).gba
-55A0734D,0000,00,NONE
+Necropolis (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+9AB229B1,0000,01,NONE
 
-Overstorm (Unknown) (Proto).gba
-EE764CF6,0000,03,NONE
+Nekketsu Monogatari Advance (Japan) (Demo) (Aftermarket) (Unl).gba
+55A0734D,0000,01,NONE
+
+Notebook Adventure (World) (v1.3) (Aftermarket) (Unl).gba
+CC110502,0000,01,NONE
+
+Overstorm (Europe) (Proto).gba
+EE764CF6,0000,04,NONE
 
 Perplexus Diodomin (World) (Proto).gba
-3442F9CF,0000,01,NONE
+3442F9CF,0000,02,NONE
 
-Phantom, The (Italy) (It) (Proto).gba
+Phantom, The (Italy) (Proto).gba
 5833169C,0000,08,EEPROM_V122
+
+Pocket Meat (World) (Proto) (Aftermarket) (Unl).gba
+0B029DA3,0000,01,NONE
 
 Pokemon - Leaf Green (USA) (Pirate).gba
 11870BD9,0000,32,FLASH1M_V103
 
-Pokemon - Sapphire Version - Gotta Catch 'em All! (USA) (Unl).gba
+Pokemon - Sapphire Version - Gotta Catch 'em All! (USA) (Pirate).gba
 86A602AB,0000,32,FLASH1M_V103
+
+Powder (World) (v1.18) (Aftermarket) (Unl).gba
+44EA10FA,0000,03,SRAM_V113
+
+Powerpig (World) (NEO Coding Compo 2013) (Aftermarket) (Unl).gba
+318F1504,0000,03,SRAM_V113
+
+Prehistorik Kart (USA, Europe) (Proto).gba
+8496BC19,0000,01,NONE
 
 Pro Action Replay (Japan) (Unl).gba
 9C249666,0000,01,NONE
 
+Quokka Wokka (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+97BE09CE,0000,01,NONE
+
 Qwak (Europe) (Demo) (Unl).gba
-09C59E6B,0000,00,NONE
+09C59E6B,0000,01,NONE
 
 Qwak (Europe) (En,Fr,De,Es,It) (Unl).gba
 9027917F,0000,08,SRAM_V113
+
+R3D Demo (Europe) (Demo).gba
+3E7F9100,0000,08,NONE
+
+Racing Gears Advance (USA) (Beta).gba
+7A3820B3,0000,08,EEPROM_V122
 
 Rayman IV (Russia) (Unl).gba
 8EE6B303,0000,32,NONE
@@ -208,14 +559,65 @@ Rayman IV (Russia) (Unl).gba
 Rayman IV (USA) (Unl).gba
 D72C620F,0000,32,NONE
 
-Ren Zhe Shen Gui 2 (Taiwan) (Unl).gba
+Renzhe Shen Gui 2 (Taiwan) (Unl).gba
 F4641711,0000,32,NONE
 
 Resident Evil 2 (Unknown) (Proto).gba
-26B5CF8B,0000,02,NONE
+26B5CF8B,0000,03,NONE
 
-Shi Rui Ke II - Yu Mei Ren (Taiwan) (Unl).gba
+Revenge of the Smurfs, The (Europe) (Beta) (2002-03-22).gba
+A5EF2D7E,0000,04,NONE
+
+Rezal (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+CD43F4D3,0000,01,NONE
+
+Rick Dangerous (World) (Aftermarket) (Unl).gba
+53D4F7C5,0000,05,NONE
+
+Rick Dangerous (World) (NEO Coding Compo 2013) (Aftermarket) (Unl).gba
+7EDB6E6E,0000,05,NONE
+
+Rick Dangerous 2 (World) (Aftermarket) (Unl).gba
+65A8D986,0000,05,NONE
+
+Ring Dash (World) (Aftermarket) (Unl).gba
+3AC16D5C,0000,02,NONE
+
+Ring Dash (World) (v1.0c) (Aftermarket) (Unl).gba
+69687F2B,0000,02,NONE
+
+Robot Wars - Advanced Destruction (USA) (Beta) (2001-03-20).gba
+CE95BBD6,0000,01,NONE
+
+Rocket Power - Beach Bandits (USA, Europe) (v0.14) (Beta).gba
+D3755452,0000,04,NONE
+
+S World 3 (World) (Beta 1) (Unl).gba
+6B1A6173,0000,01,NONE
+
+S World 3 (World) (Beta 2) (Unl).gba
+34AD13FE,0000,01,NONE
+
+S World 3 (World) (Beta 3) (Unl).gba
+3BC15E46,0000,01,NONE
+
+S World 3 (World) (Beta 4) (Unl).gba
+9D5E128C,0000,01,NONE
+
+Shadow - A Parable (World) (Audio) (Aftermarket) (Unl).gba
+3178488F,0000,02,NONE
+
+Shantae 2 - Risky Revolution (USA) (Proto).gba
+C3C28363,0000,03,NONE
+
+Shantae Advance - Risky Revolution (World) (Limited Run Games).gba
+31265C5D,0000,16,EEPROM_V122
+
+Shiruike II - Yu Meiren (Taiwan) (Unl).gba
 16D294D1,0000,32,NONE
+
+Shoot for the Moon (World) (Aftermarket) (Unl).gba
+F3BD4F90,0000,08,NONE
 
 Shrek Prezessin (Russia) (Unl).gba
 D0FFE138,0000,32,NONE
@@ -226,35 +628,167 @@ SN Systems (Europe) (Test Program) (Unl).gba
 Sonic 3 - Fighter Sonic (USA) (Unl).gba
 8E0A9112,0000,32,NONE
 
+Space Twins (World) (Proto) (Unl).gba
+0EDC97D9,0000,02,NONE
+
 Spider-Man 3 (USA) (Unl).gba
 3E1B693A,0000,32,NONE
 
+Spirit - Der Wilde Mustang - Auf der Suche nach Homeland (Germany) (Beta).gba
+CAAAEFB6,0000,04,NONE
+
+SpongeBob SquarePants - Revenge of the Flying Dutchman (USA) (Beta).gba
+4F21757D,0000,08,EEPROM_V122
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2000-11-28).gba
+22F37CFD,0000,01,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-01-08T051624).gba
+49754EE4,0000,01,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-01-08T074756).gba
+B83D7E0D,0000,01,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-02-05).gba
+DFA0465F,0000,06,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-02-15).gba
+9DD49688,0000,02,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-02-23).gba
+78D0D354,0000,03,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-02-26).gba
+D0FB4BD2,0000,03,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-03-01).gba
+6B458C53,0000,03,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-03-12).gba
+70456F6E,0000,03,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-03-14).gba
+FFEA9FEC,0000,05,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-03-28).gba
+1407D86E,0000,05,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-04-03).gba
+0BC6DFAF,0000,06,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-04-04).gba
+23D7BA77,0000,06,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-06-06T113400).gba
+40CC2E8A,0000,03,NONE
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-06-06T113900).gba
+FF4F1EE7,0000,03,NONE
+
 SpongeBob SquarePants Movie, The (USA) (Beta 1).gba
-DF3D16A1,0000,06,SRAM_V113
+DF3D16A1,0000,07,SRAM_V113
+
+Spout GBA (World) (Aftermarket) (Unl).gba
+AB42F086,0000,01,NONE
+
+Spyro 2 - Season of Flame (Europe) (En,Fr,De,Es,It) (Beta).gba
+D05C86BB,0000,08,EEPROM_V122
+
+Super Monkey Ball Jr. (USA) (Beta) (2002-08-06).gba
+0D72F2CC,0000,04,EEPROM_V122
 
 Super Panda (USA) (Unl).gba
-2796F04D,0000,NONE,
+2796F04D,0000,01,NONE
+
+Sushi the Cat (World) (Unl).gba
+6F019A88,0000,01,NONE
 
 Teenage Mutant Ninja Turtles 2 (USA) (Unl).gba
 8EE6D3D5,0000,32,NONE
 
+Tiger Rescue (World) (Aftermarket) (Unl).gba
+34E118E5,0000,02,NONE
+
+Tigermoth (World) (Proto) (Aftermarket) (Unl).gba
+7D7B8695,0000,01,NONE
+
+Titei Senki Advance (World) (Aftermarket) (Unl).gba
+2F843CBB,0000,01,NONE
+
+Titei Senki Advance (World) (v1.01) (Aftermarket) (Unl).gba
+C8457637,0000,09,NONE
+
+Titei Senki Advance (World) (v1.02) (Aftermarket) (Unl).gba
+CA987B79,0000,09,NONE
+
+Titei Senki Advance (World) (v1.03) (Aftermarket) (Unl).gba
+F2254660,0000,09,NONE
+
+Toadally Awesome (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+FA6F976C,0000,01,NONE
+
+Toadally Awesome (World) (GBA Jam 2021) (Unlocked) (Aftermarket) (Unl).gba
+11044EB3,0000,01,NONE
+
+Tom Clancy's Rainbow Six - Rogue Spear (USA, Europe) (En,Fr,De,Es,It) (Beta) (2001-10-25).gba
+666E31B5,0000,08,EEPROM_V122
+
+Tragedy of the Uncanny (World) (Demo) (Aftermarket) (Unl).gba
+D4B49C5A,0000,01,NONE
+
+Trials of Chaos (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+1822F291,0000,18,NONE
+
+Tristam Island (World) (v9) (Digital) (Aftermarket) (Unl).gba
+4BAA947C,0000,01,NONE
+
+Tsuukin Hitofude (Japan) (Beta).gba
+9542E247,0000,01,NONE
+
 Turok Advance (Unknown) (Proto) (Bright Version).gba
-9EF46F34,0000,04,NONE
+9EF46F34,0000,05,NONE
 
 Turok Advance (Unknown) (Proto) (Dark Version).gba
-378D6DA7,0000,04,NONE
+378D6DA7,0000,05,NONE
 
 Turok Advance (Unknown) (Proto) (Earlier).gba
-401E10EA,0000,03,NONE
+401E10EA,0000,04,NONE
 
 Tyrian 2000 (USA) (Proto).gba
-E5ACBA28,0000,02,NONE
+E5ACBA28,0000,03,NONE
 
 Ultraman - Confrontation Between Justice and Evil (Russia) (Unl).gba
 4683DBB5,0000,32,NONE
 
-Viewpoint (World) (Tech Demo).gba
+Uranus 2 - Sun Tear (World) (En,Fr) (Unl).gba
+F1C63552,0000,04,NONE
+
+Uranus Zero - Sun Tear (World) (En,Fr) (Unl).gba
+117183CC,0000,08,NONE
+
+Uranus Zero EV (World) (En,Fr) (Unl).gba
+ADBCBA92,0000,08,NONE
+
+Uranus Zero EV (World) (En,Fr) (v1.1) (Unl).gba
+1B463C9E,0000,08,NONE
+
+Viewpoint (Europe) (Demo).gba
 7AD65E4B,0000,02,NONE
+
+Waimanu - Grinding Blocks Adventure (World) (NEO Coding Compo 2013) (Aftermarket) (Unl).gba
+0FE153C5,0000,02,NONE
+
+Werewolf Tale, A (World) (Proto) (NEO Coding Compo 2012) (Aftermarket) (Unl).gba
+FA1A22D3,0000,08,SRAM_V113
+
+With the Last Moonbeam (World) (Aftermarket) (Unl).gba
+4FFA611D,0000,02,NONE
+
+World of Zoink (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+8C3B3702,0000,05,NONE
+
+WWF - Road to WrestleMania (USA, Europe) (Beta).gba
+8314421B,0000,04,NONE
 
 X Zhan Jing (Taiwan) (Unl).gba
 652A2EBE,0000,32,NONE
@@ -262,17 +796,32 @@ X Zhan Jing (Taiwan) (Unl).gba
 X-Man - Armour of Might (Russia) (Unl).gba
 E14C9B78,0000,32,NONE
 
-X-Terminator Advance (Japan) (Unl).gba
-D48D5587,0000,00,NONE
+Xploder Advance (Europe) (Unl).gba
+AD71F6FF,0000,01,NONE
 
 Xploder Advance (Europe) (Unl) (Alt).gba
-4F3E7427,0000,00,NONE
+4F3E7427,0000,01,NONE
 
-Xploder Advance (Europe) (Unl).gba
-AD71F6FF,0000,00,NONE
+X-Terminator Advance (Japan) (Unl).gba
+D48D5587,0000,01,NONE
 
 Yoshi Sample (Japan) (En) (Tech Demo).gba
-34F2EF47,0000,01,NONE
+34F2EF47,0000,02,NONE
+
+Yu Yu Hakusho - Ghostfiles - Spirit Detective (USA) (Beta).gba
+8CBFA66B,0000,16,EEPROM_V122
+
+ZenF (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+F32A27C3,0000,01,NONE
+
+ZenF (World) (v1.1) (Aftermarket) (Unl).gba
+4EE84F31,0000,01,NONE
+
+Zipline Zapper (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+297D664B,0000,02,NONE
+
+Iridion II (USA) (Beta).gba
+9C63D17C,1234,08,EEPROM_V122
 
 Rockman & Crystal (USA) (Unl).gba
 9DC4DC05,2003,04,NONE
@@ -280,29 +829,89 @@ Rockman & Crystal (USA) (Unl).gba
 Zook Man ZX4 (Taiwan) (Unl).gba
 8F47FA54,2003,04,NONE
 
-Goodboy Galaxy (World) (Ar) (Demo) (Aftermarket) (Unl).gba
-A4054C2B,2G0P,12,SRAM_V111
+Apotris (World) (v3.4.5) (Aftermarket) (Unl).gba
+55AE4312,2ATE,04,NONE
 
-Goodboy Galaxy (World) (En) (Demo) (Aftermarket) (Unl).gba
-19BA7D80,2G0P,12,SRAM_V111
+Apotris (World) (v4.0.2) (Aftermarket) (Unl).gba
+107F69E0,2ATE,04,NONE
 
-Goodboy Galaxy (World) (Es) (Demo) (Aftermarket) (Unl).gba
-C1811C9B,2G0P,12,SRAM_V111
+Apotris (World) (v4.1.0) (Aftermarket) (Unl).gba
+9B777CBA,2ATE,04,NONE
 
-Goodboy Galaxy (World) (Fr) (Demo) (Aftermarket) (Unl).gba
-21512022,2G0P,12,SRAM_V111
+Blood Drive (World) (GBA Jam Week) (Aftermarket) (Unl).gba
+3444A7AE,2BDP,02,SRAM_V100
 
-Goodboy Galaxy (World) (Ja) (Demo) (Aftermarket) (Unl).gba
-D4621E3E,2G0P,12,SRAM_V111
+Goodboy Galaxy - Chapter Zero (World) (Ar) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+A4054C2B,2G0P,13,SRAM_V111
 
-Goodboy Galaxy (World) (Pt) (Demo) (Aftermarket) (Unl).gba
-3477EF15,2G0P,12,SRAM_V111
+Goodboy Galaxy - Chapter Zero (World) (Ar) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+B14CD1B4,2G0P,13,SRAM_V111
 
-Goodboy Galaxy (World) (Zh) (Demo) (Aftermarket) (Unl).gba
-3360E114,2G0P,12,SRAM_V111
+Goodboy Galaxy - Chapter Zero (World) (De) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+D02CDB6A,2G0P,13,SRAM_V111
 
-Juezhan Sanguo (Taiwan) (Unl).gba
-CEB670B2,ŸŸŸ ,04,NONE
+Goodboy Galaxy - Chapter Zero (World) (En) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+19BA7D80,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (En) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+AB179D6E,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Es) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+C1811C9B,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Es) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+906717A5,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Fr) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+21512022,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Fr) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+3AA591F1,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Ja) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+D4621E3E,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Ja) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+D3C8DFFD,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Pt) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+3477EF15,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Pt) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+D12372BD,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Zh) (v1.0.6) (Demo) (Aftermarket) (Unl).gba
+3360E114,2G0P,13,SRAM_V111
+
+Goodboy Galaxy - Chapter Zero (World) (Zh) (v1.0.7) (Demo) (Aftermarket) (Unl).gba
+119F9DDC,2G0P,13,SRAM_V111
+
+Goodboy Galaxy (World) (En,Ja,Fr,De,Es,Pt-BR,Zh,Ar) (Evercade) (Aftermarket) (Unl).gba
+EBB81069,2GBP,32,SRAM_V111
+
+Rushed Hack Job, A (World) (GBA Jam 2022) (Aftermarket) (Unl).gba
+730A5DD6,2HJP,01,SRAM_V100
+
+Sekhmet's Playground (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+D7046500,2KRP,06,SRAM_V100
+
+With the Last Moonbeam (World) (v1.0.1) (Aftermarket) (Unl).gba
+27055186,2MBE,02,NONE
+
+Raise a Pet (World) (Demo) (GBA Jam 2024) (Aftermarket) (Unl).gba
+ABF7A8A7,2NTP,01,NONE
+
+uCity Advance (World) (v1.0.2) (Aftermarket) (Unl).gba
+534A0F4D,2UCT,02,SRAM_V110
+
+xniq (World) (Proto) (GBA Jam 2021) (Aftermarket) (Unl).gba
+DDB5205D,2XNP,02,SRAM_V100
+
+2048 (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+82D431A4,324E,01,NONE
+
+Ping-Pong Diplomacy Advance (World) (Aftermarket) (Unl).gba
+9EC140D3,7777,01,NONE
 
 EZ-Talk - Shokyuu Hen 1 (Japan).gba
 D256F6F7,A22J,08,SRAM_V110
@@ -400,6 +1009,9 @@ Legends of Wrestling II (USA, Europe).gba
 Madden NFL 2002 (USA).gba
 8E797ECD,A2ME,04,EEPROM_V122
 
+Sonic Advance 2 (USA) (Beta) (2002-10-25).gba
+95AB3867,A2NE,16,FLASH512_V130
+
 Sonic Advance 2 (USA) (En,Ja,Fr,De,Es,It).gba
 7EFEE7F7,A2NE,16,FLASH512_V130
 
@@ -493,6 +1105,9 @@ A39EDD2F,A3BE,04,NONE
 Sabrina the Teenage Witch - Potion Commotion (Europe) (En,Fr,De,Es,It,Nl).gba
 CAA8225B,A3BP,04,NONE
 
+Tom Clancy's Splinter Cell (Europe) (En,Fr,De,Es,It,Nl) (Beta).gba
+E07BA799,A3BP,16,EEPROM_V122
+
 Crazy Taxi - Catch a Ride (USA).gba
 8EC709D6,A3CE,08,EEPROM_V122
 
@@ -511,11 +1126,11 @@ F01EE06C,A3EJ,08,SRAM_V112
 Gyakuten Saiban 2 (Japan).gba
 191AD26A,A3GJ,08,SRAM_V112
 
-Gyakuten Saiban 3 (Japan) (Demo) (Kiosk, GameCube).gba
-299A054B,A3GJ,08,SRAM_V112
-
 Gyakuten Saiban 2 (Japan) (Virtual Console).gba
 153F73D1,A3GJ,08,SRAM_V112
+
+Gyakuten Saiban 3 (Japan) (Demo) (Kiosk, GameCube).gba
+299A054B,A3GJ,08,SRAM_V112
 
 Hime Kishi Monogatari - Princess Blue (Japan).gba
 46810F68,A3HJ,08,SRAM_V112
@@ -529,10 +1144,10 @@ Gyakuten Saiban 3 (Japan).gba
 Gyakuten Saiban 3 (Japan) (Virtual Console).gba
 2C88386A,A3JJ,08,SRAM_V112
 
-International Karate Plus (USA).gba
+IK+ (USA).gba
 31C4F03B,A3KE,04,NONE
 
-International Karate Plus (Europe).gba
+IK+ (Europe).gba
 1052A0EA,A3KP,04,NONE
 
 Magical Quest Starring Mickey & Minnie (USA).gba
@@ -568,6 +1183,9 @@ E9339304,A3RE,08,NONE
 Revenge of Shinobi, The (Europe) (En,Fr,De,Es,It).gba
 DDB4496A,A3RP,08,NONE
 
+Revenge of Shinobi, The (Europe) (En,Fr,De,Es,It) (Beta).gba
+58A3F0E1,A3RP,08,NONE
+
 Three Stooges, The (USA).gba
 C3C855EA,A3TE,04,NONE
 
@@ -586,25 +1204,25 @@ Sonic Pinball Party (Europe) (En,Ja,Fr,De,Es,It).gba
 Bakuten Shoot Beyblade 2002 - Gekisen! Team Battle!! Seiryuu no Shou - Takao Hen (Japan).gba
 8778B36A,A3WJ,08,SRAM_V112
 
-Mega Man Battle Network 3 - Blue Version (USA).gba
+Megaman - Battle Network 3 - Blue Version (USA).gba
 C0C780F9,A3XE,08,SRAM_V112
 
-Mega Man Battle Network 3 - Blue Version (USA) (Virtual Console).gba
+Megaman - Battle Network 3 - Blue Version (USA) (Virtual Console).gba
 EDD7106E,A3XE,08,SRAM_V112
 
-Battle Network Rockman EXE 3 - Black (Japan) (Promo).gba
+Battle Network - Rockman EXE 3 - Black (Japan) (Promo).gba
 1F13C41F,A3XJ,08,SRAM_V112
 
-Battle Network Rockman EXE 3 - Black (Japan) (Rev 1).gba
+Battle Network - Rockman EXE 3 - Black (Japan) (Rev 1).gba
 FD57493B,A3XJ,08,SRAM_V112
 
-Battle Network Rockman EXE 3 - Black (Japan) (Rev 1) (Virtual Console).gba
+Battle Network - Rockman EXE 3 - Black (Japan) (Rev 1) (Virtual Console).gba
 93E89735,A3XJ,08,SRAM_V112
 
-Mega Man Battle Network 3 - Blue (Europe).gba
+Megaman - Battle Network 3 - Blue Version (Europe).gba
 1F036CBA,A3XP,08,SRAM_V112
 
-Mega Man Battle Network 3 - Blue (Europe) (Virtual Console).gba
+Megaman - Battle Network 3 - Blue Version (Europe) (Virtual Console).gba
 3213FC2D,A3XP,08,SRAM_V112
 
 Street Jam Basketball (USA, Europe).gba
@@ -727,17 +1345,17 @@ DAEC2264,A5AE,04,EEPROM_V120
 Chocobo Land - A Game of Dice (Japan).gba
 D4F8152E,A5BJ,08,SRAM_V112
 
-SimCity 2000 (USA) (Rev 1).gba
-097E8628,A5CE,04,EEPROM_V124
-
 SimCity 2000 (USA).gba
 733751B3,A5CE,04,EEPROM_V124
 
-SimCity 2000 (Europe) (En,Fr,De,Es,It) (Rev 1).gba
-95C79648,A5CP,04,EEPROM_V124
+SimCity 2000 (USA) (Rev 1).gba
+097E8628,A5CE,04,EEPROM_V124
 
 SimCity 2000 (Europe) (En,Fr,De,Es,It).gba
 A74187D3,A5CP,04,EEPROM_V124
+
+SimCity 2000 (Europe) (En,Fr,De,Es,It) (Rev 1).gba
+95C79648,A5CP,04,EEPROM_V124
 
 Disney Sports - Snowboarding (USA).gba
 4733693C,A5DE,16,EEPROM_V122
@@ -751,20 +1369,23 @@ Disney Sports - Snowboarding (Europe) (En,Fr,De,Es,It).gba
 Dragon Drive - World D Break (Japan).gba
 E5A571AD,A5GJ,08,SRAM_V113
 
-Medarot Ni Core - Kabuto (Japan) (Rev 1).gba
-3F15FEAA,A5KJ,08,EEPROM_V122
-
 Medarot Ni Core - Kabuto (Japan).gba
 3FCAF2D0,A5KJ,08,EEPROM_V122
+
+Medarot Ni Core - Kabuto (Japan) (Rev 1).gba
+3F15FEAA,A5KJ,08,EEPROM_V122
 
 Medarot Ni Core - Kabuto (Japan) (Rev 1) (Virtual Console).gba
 F74C1FA3,A5KJ,08,EEPROM_V122
 
-MLB SlugFest 20-04 (USA).gba
+MLB SlugFest 2004 (USA).gba
 A4E12D4B,A5ME,04,NONE
 
 Donkey Kong Country (USA).gba
 12F7A968,A5NE,08,EEPROM_V122
+
+Donkey Kong Country 3 (USA) (Beta) (2005-05-06).gba
+8DD750EF,A5NE,16,EEPROM_V124
 
 Super Donkey Kong (Japan).gba
 2206B04D,A5NJ,08,EEPROM_V122
@@ -772,14 +1393,14 @@ Super Donkey Kong (Japan).gba
 Donkey Kong Country (Europe) (En,Fr,De,Es,It).gba
 41D277FE,A5NP,08,EEPROM_V122
 
-Power Pro Kun Pocket 5 (Japan) (Promo).gba
+Power Pro Kun Pocket 5 (Japan).gba
+06F0F8D4,A5PJ,08,SRAM_V112
+
+Power Pro Kun Pocket 5 (Japan) (Demo) (Kiosk).gba
 969AC691,A5PJ,08,SRAM_V112
 
 Power Pro Kun Pocket 5 (Japan) (Rev 1).gba
 B2D8732D,A5PJ,08,SRAM_V112
-
-Power Pro Kun Pocket 5 (Japan).gba
-06F0F8D4,A5PJ,08,SRAM_V112
 
 Medarot Ni Core - Kuwagata (Japan).gba
 285FE485,A5QJ,08,EEPROM_V122
@@ -805,10 +1426,10 @@ Rugrats - Go Wild (USA, Europe).gba
 Razmoket Rencontrent les Delajungle, Les (France).gba
 720B7FF2,A5WF,04,NONE
 
-Mega Man Zero 2 (USA).gba
+Megaman Zero 2 (USA).gba
 CE1E37BB,A62E,08,SRAM_V113
 
-Mega Man Zero 2 (USA) (Virtual Console).gba
+Megaman Zero 2 (USA) (Virtual Console).gba
 30D051FE,A62E,08,SRAM_V113
 
 Rockman Zero 2 (Japan).gba
@@ -817,40 +1438,43 @@ Rockman Zero 2 (Japan).gba
 Rockman Zero 2 (Japan) (Virtual Console).gba
 B88847AA,A62J,08,SRAM_V113
 
-Mega Man Zero 2 (Europe).gba
+Megaman Zero 2 (Europe).gba
 29A14B59,A62P,08,SRAM_V113
 
-Mega Man Zero 2 (Europe) (Virtual Console).gba
+Megaman Zero 2 (Europe) (Virtual Console).gba
 D76F2D1C,A62P,08,SRAM_V113
 
 Kawaii Pet Shop Monogatari 3 (Japan).gba
 39AEFB7B,A63J,04,EEPROM_V122
 
-Shimura Ken no Baka Tonosama - Bakushou Tenka Touitsu Game (Japan) (Rev 1).gba
-5546B016,A64J,04,EEPROM_V122
+Matantei Loki Ragnarok - Gensou no Labyrinth (Japan) (Debug).gba
+225E2FB3,A63J,04,EEPROM_V124
 
 Shimura Ken no Baka Tonosama - Bakushou Tenka Touitsu Game (Japan).gba
 F29E6E2D,A64J,04,EEPROM_V122
 
-Mega Man Battle Network 3 - White Version (USA).gba
+Shimura Ken no Baka Tonosama - Bakushou Tenka Touitsu Game (Japan) (Rev 1).gba
+5546B016,A64J,04,EEPROM_V122
+
+Megaman - Battle Network 3 - White Version (USA).gba
 0BE4410A,A6BE,08,SRAM_V112
 
-Mega Man Battle Network 3 - White Version (USA) (Virtual Console).gba
+Megaman - Battle Network 3 - White Version (USA) (Virtual Console).gba
 F1C5AC80,A6BE,08,SRAM_V112
 
-Battle Network Rockman EXE 3 (Japan) (Rev 1).gba
-E48E6BC9,A6BJ,08,SRAM_V112
-
-Battle Network Rockman EXE 3 (Japan).gba
+Battle Network - Rockman EXE 3 (Japan).gba
 1C57724E,A6BJ,08,SRAM_V112
 
-Battle Network Rockman EXE 3 (Japan) (Rev 1) (Virtual Console).gba
+Battle Network - Rockman EXE 3 (Japan) (Rev 1).gba
+E48E6BC9,A6BJ,08,SRAM_V112
+
+Battle Network - Rockman EXE 3 (Japan) (Rev 1) (Virtual Console).gba
 47CCB9B8,A6BJ,08,SRAM_V112
 
-Mega Man Battle Network 3 - White (Europe).gba
+Megaman - Battle Network 3 - White Version (Europe).gba
 23D0A981,A6BP,08,SRAM_V112
 
-Mega Man Battle Network 3 - White (Europe) (Virtual Console).gba
+Megaman - Battle Network 3 - White Version (Europe) (Virtual Console).gba
 D9F1440B,A6BP,08,SRAM_V112
 
 Croket! - Yume no Banker Survival! (Japan).gba
@@ -868,16 +1492,16 @@ Disney Sports - Football (Soccer) (Europe) (En,Fr,De,Es,It).gba
 Monster Gate - Ooinaru Dungeon - Fuuin no Orb (Japan).gba
 05AC7685,A6GJ,08,SRAM_F_V102
 
-Mega Man & Bass (USA).gba
+Megaman & Bass (USA).gba
 EEA68C2E,A6ME,08,EEPROM_V122
 
-Mega Man & Bass (USA) (Virtual Console).gba
+Megaman & Bass (USA) (Virtual Console).gba
 B61F99D4,A6ME,08,EEPROM_V122
 
-Mega Man & Bass (Europe).gba
+Megaman & Bass (Europe).gba
 01B4D95E,A6MP,08,EEPROM_V122
 
-Mega Man & Bass (Europe) (Virtual Console).gba
+Megaman & Bass (Europe) (Virtual Console).gba
 6E140BFA,A6MP,08,EEPROM_V122
 
 Onimusha Tactics (USA).gba
@@ -904,11 +1528,11 @@ Whistle! - Dai-37-kai Tokyo-to Chuugakkou Sougou Taiiku Soccer Taikai (Japan).gb
 Naruto - Ninja Council (USA).gba
 C402878C,A7AE,08,EEPROM_V124
 
-Naruto - Ninjutsu Zenkai! Saikyou Ninja Daikesshuu (Japan) (Rev 1).gba
-F5F8ECB4,A7AJ,08,SRAM_V112
-
 Naruto - Ninjutsu Zenkai! Saikyou Ninja Daikesshuu (Japan).gba
 E15875FC,A7AJ,08,SRAM_V112
+
+Naruto - Ninjutsu Zenkai! Saikyou Ninja Daikesshuu (Japan) (Rev 1).gba
+F5F8ECB4,A7AJ,08,SRAM_V112
 
 Sengoku Kakumei Gaiden (Japan).gba
 3DD25FD7,A7GJ,08,SRAM_V112
@@ -955,6 +1579,9 @@ Hamster Paradise - Pure Heart (Japan).gba
 Hamster Monogatari 3 GBA (Japan).gba
 C99D3787,A83J,08,EEPROM_V122
 
+Hamtaro - Rainbow Rescue (USA) (Proto) (2003-07-29).gba
+5C5B934D,A84E,08,SRAM_V112
+
 Tottoko Hamutarou 4 - Nijiiro Daikoushin Dechu (Japan).gba
 1B6E5617,A84J,08,SRAM_V113
 
@@ -968,7 +1595,7 @@ Sonic Pinball Party (Japan) (En,Ja,Fr,De,Es,It).gba
 43B5F167,A86J,08,FLASH512_V131
 
 Ohanaya-san Monogatari GBA - Iyashikei Ohanaya-san Ikusei Game (Japan).gba
-D5059733,A87J,08,EEPROM_V122
+D5059733,A87J,08,SRAM_F_V102
 
 Maliou Yu Luyiji RPG (China) (Proto).gba
 5574B73E,A88C,16,EEPROM_V122
@@ -991,22 +1618,22 @@ Mario & Luigi - Superstar Saga (Europe) (En,Fr,De,Es,It).gba
 Mario & Luigi - Superstar Saga (Europe) (En,Fr,De,Es,It) (Virtual Console).gba
 6A5BD4F0,A88P,16,EEPROM_V124
 
-Mega Man Battle Chip Challenge (USA).gba
+Megaman - Battle Chip Challenge (USA).gba
 26BE44FD,A89E,08,SRAM_V113
 
-Mega Man Battle Chip Challenge (USA) (Virtual Console).gba
+Megaman - Battle Chip Challenge (USA) (Virtual Console).gba
 59FC1EF6,A89E,08,SRAM_V113
 
-Rockman EXE Battle Chip GP (Japan).gba
+Rockman EXE - Battle Chip GP (Japan).gba
 9217FB18,A89J,08,SRAM_V113
 
-Rockman EXE Battle Chip GP (Japan) (Virtual Console).gba
+Rockman EXE - Battle Chip GP (Japan) (Virtual Console).gba
 F37BF038,A89J,08,SRAM_V113
 
-Mega Man Battle Chip Challenge (Europe).gba
+Megaman - Battle Chip Challenge (Europe).gba
 5B4631F9,A89P,08,SRAM_V113
 
-Mega Man Battle Chip Challenge (Europe) (Virtual Console).gba
+Megaman - Battle Chip Challenge (Europe) (Virtual Console).gba
 24046BF2,A89P,08,SRAM_V113
 
 Medabots - Metabee (USA).gba
@@ -1027,11 +1654,11 @@ Medabots - Metabee (Spain).gba
 Card Party (Japan).gba
 3D5A2C07,A8CJ,08,NONE
 
-Doubutsu-jima no Chobigurumi (Japan) (Rev 1).gba
-B9C15F87,A8DJ,08,FLASH512_V131
-
 Doubutsu-jima no Chobigurumi (Japan).gba
 C764CC7E,A8DJ,08,FLASH512_V131
+
+Doubutsu-jima no Chobigurumi (Japan) (Rev 1).gba
+B9C15F87,A8DJ,08,FLASH512_V131
 
 Hachiemon (Japan).gba
 47C45B41,A8EJ,04,EEPROM_V122
@@ -1051,11 +1678,11 @@ FB67EFBC,A8MJ,08,SRAM_F_V102
 Kotoba no Puzzle - Mojipittan Advance (Japan) (Virtual Console).gba
 B99D538B,A8MJ,08,SRAM_F_V102
 
-Hunter X Hunter - Minna Tomodachi Daisakusen!! (Japan) (Rev 1).gba
-86C21AEB,A8NJ,16,SRAM_V112
-
 Hunter X Hunter - Minna Tomodachi Daisakusen!! (Japan).gba
 AF22A5EA,A8NJ,16,SRAM_V112
+
+Hunter X Hunter - Minna Tomodachi Daisakusen!! (Japan) (Rev 1).gba
+86C21AEB,A8NJ,16,SRAM_V112
 
 Dokidoki Cooking Series 2 - Gourmet Kitchen - Suteki na Obentou (Japan).gba
 08DFC956,A8OJ,08,EEPROM_V122
@@ -1064,13 +1691,16 @@ Derby Stallion Advance (Japan).gba
 9746EF12,A8PJ,04,FLASH_V126
 
 Pirates of the Caribbean - The Curse of the Black Pearl (USA) (En,Fr,De,Es,It).gba
-8F15BF4C,A8QE,08,EEPROM_READ
+8F15BF4C,A8QE,08,NONE
 
 Pirates of the Caribbean - The Curse of the Black Pearl (Europe) (En,Fr,De,Es,It).gba
-2DF9D7F0,A8QP,08,EEPROM_READ
+2DF9D7F0,A8QP,08,NONE
 
 Tennis no Ouji-sama 2003 - Passion Red (Japan).gba
 59D1DC73,A8RJ,16,SRAM_F_V102
+
+Digimon - Battle Spirit (Europe) (En,Fr,De,Es,It) (Beta).gba
+DA8677AD,A8SE,04,EEPROM_V122
 
 Digimon - Battle Spirit (USA).gba
 CEEF2008,A8SE,04,EEPROM_V122
@@ -1087,7 +1717,7 @@ Boboboubo Boubobo - Ougi 87.5 Bakuretsu Hanage Shinken (Japan).gba
 Best Play Pro Yakyuu (Japan).gba
 61709D3D,A8YJ,04,FLASH_V126
 
-Shin Megami Tensei Devil Children - Puzzle de Call! (Japan).gba
+Shin Megami Tensei - Devil Children - Puzzle de Call! (Japan).gba
 EA8A185A,A8ZJ,04,EEPROM_V122
 
 Demon Driver - Time to Burn Rubber! (USA).gba
@@ -1138,10 +1768,10 @@ Slime Morimori Dragon Quest - Shougeki no Shippo Dan (Japan).gba
 Tennis no Ouji-sama 2003 - Cool Blue (Japan).gba
 9F7FC898,A9LJ,16,SRAM_F_V102
 
-Motoracer Advance (USA) (En,Fr,De,Es,It).gba
+Moto Racer Advance (USA) (En,Fr,De,Es,It).gba
 2FDBE7A8,A9ME,04,SRAM_F_V102
 
-Motoracer Advance (Europe) (En,Fr,De,Es,It).gba
+Moto Racer Advance (Europe) (En,Fr,De,Es,It).gba
 8CB19DA0,A9MP,04,SRAM_F_V102
 
 Piglet's Big Game (USA).gba
@@ -1168,11 +1798,11 @@ F4693458,A9RP,04,NONE
 Dancing Sword - Senkou (Japan).gba
 E2316D47,A9SJ,08,EEPROM_V122
 
-Metal Max 2 Kai (Japan) (Rev 1).gba
-66725A09,A9TJ,04,EEPROM_V122
-
 Metal Max 2 Kai (Japan).gba
 BC1FEAF0,A9TJ,04,EEPROM_V122
+
+Metal Max 2 Kai (Japan) (Rev 1).gba
+66725A09,A9TJ,04,EEPROM_V122
 
 Chaoji Maliou Shijie (China).gba
 D97D4156,AA2C,04,EEPROM_V122
@@ -1216,6 +1846,9 @@ Duel Masters (Japan).gba
 Duel Masters - Sempai Legends (Europe) (En,Fr,De,Es,It).gba
 2FFF9BA9,AA9P,08,EEPROM_V124
 
+Duel Masters - Sempai Legends (Europe) (En,Fr,De,Es,It) (Beta).gba
+AFCB61C9,AA9P,08,EEPROM_V124
+
 American Bass Challenge (USA).gba
 D76AD62D,AABE,04,EEPROM_V122
 
@@ -1227,6 +1860,9 @@ Super Black Bass Advance (Europe).gba
 
 Donald Duck Advance (Japan).gba
 0195DE8F,AADJ,08,NONE
+
+Hey Arnold! - The Movie (Europe) (En,Fr,De) (Beta).gba
+9E4773BA,AAEE,04,NONE
 
 Hey Arnold! - The Movie (USA).gba
 59DFAB9E,AAEE,04,NONE
@@ -1294,13 +1930,13 @@ DBA05255,AAMP,08,SRAM_V110
 Animal Mania - Dokidoki Aishou Check (Japan).gba
 89E6CD89,AANJ,04,SRAM_F_V102
 
-Aero the Acro-Bat - Rascal Rival Revenge (USA).gba
+Aero the Acro-Bat (USA).gba
 B47AC020,AAOE,04,EEPROM_V122
 
 Acrobat Kid (Japan).gba
 71720E98,AAOJ,04,EEPROM_V122
 
-Aero the Acro-Bat - Rascal Rival Revenge (Europe).gba
+Aero the Acro-Bat (Europe).gba
 A7E98EBE,AAOP,04,EEPROM_V122
 
 Metalgun Slinger (Japan).gba
@@ -1444,6 +2080,9 @@ Super Bust-A-Move (USA) (En,Fr,Es).gba
 Super Puzzle Bobble Advance (Japan) (En).gba
 F2BC49CE,ABMJ,04,NONE
 
+Get's!! Loto Club (Japan) (Proto).gba
+93F2E51E,ABMP,08,SRAM_V112
+
 Super Bust-A-Move (Europe) (En,Fr,De,Es,It).gba
 6BFD2915,ABMP,04,NONE
 
@@ -1464,6 +2103,9 @@ E9A34F49,ABQP,04,EEPROM_V122
 
 Blender Bros. (USA).gba
 9A91D7F1,ABRE,08,SRAM_V112
+
+Blender Bros. (World) (Aftermarket) (Unl).gba
+440F2F06,ABRE,08,SRAM_V112
 
 Bomberman Tournament (USA, Europe).gba
 240282E6,ABSE,04,SRAM_V112
@@ -1504,7 +2146,7 @@ Britney's Dance Beat (Europe) (En,Fr).gba
 Britney's Dance Beat (Europe) (En,De).gba
 CFE69825,ABYY,08,NONE
 
-NFL Blitz 20-02 (USA).gba
+NFL Blitz 2002 (USA).gba
 8C748DCB,ABZE,04,NONE
 
 J.League Pro Soccer Club o Tsukurou! Advance (Japan).gba
@@ -1518,6 +2160,9 @@ DemiKids - Dark Version (USA).gba
 
 Shin Megami Tensei Devil Children - Yami no Sho (Japan).gba
 E0E153B7,AC5J,08,SRAM_F_V102
+
+Shin Megami Tensei Devil Children - Yami no Sho (Japan) (Beta).gba
+81F30EBC,AC5J,08,SRAM_F_V102
 
 Spirit - Der Wilde Mustang - Auf der Suche nach Homeland (Germany).gba
 4785EEE0,AC6D,04,NONE
@@ -1536,6 +2181,9 @@ AEA22AE0,AC7E,04,NONE
 
 CT Special Forces (Europe) (En,Fr,De,Es,It,Nl).gba
 A20D9ADB,AC7P,04,NONE
+
+CT Special Forces (Europe) (En,Fr,De,Es,It,Nl) (Beta).gba
+40A0E1C9,AC7P,04,NONE
 
 Crash Bandicoot 2 - N-Tranced (USA).gba
 2E16184A,AC8E,08,EEPROM_V122
@@ -1621,11 +2269,11 @@ A2E19014,ACME,04,EEPROM_V122
 Colin McRae Rally 2.0 (Europe) (En,Fr,De).gba
 70520C5C,ACMP,04,EEPROM_V122
 
-Manga-ka Debut Monogatari (Japan) (Rev 1).gba
-F0C22C62,ACOJ,04,EEPROM_V122
-
-Manga-ka Debut Monogatari (Japan).gba
+Manga-ka Debut Monogatari - Akogare! Manga Ka Ikusei Game! (Japan).gba
 61A602D7,ACOJ,04,EEPROM_V122
+
+Manga-ka Debut Monogatari - Akogare! Manga Ka Ikusei Game! (Japan) (Rev 1).gba
+F0C22C62,ACOJ,04,EEPROM_V122
 
 Caesars Palace Advance - Millennium Gold Edition (USA, Europe).gba
 5D54ECE5,ACPE,08,NONE
@@ -1702,6 +2350,9 @@ B789DAC5,AD2P,04,SRAM_F_V100
 Dinotopia - The Timestone Pirates (USA, Europe) (En,Fr,De,Es,It,Nl).gba
 7BD01B31,AD3E,08,EEPROM_V122
 
+Dungeons & Dragons - Eye of the Beholder (Europe) (En,Fr,De,Es,It) (Beta).gba
+60C38E52,AD4E,04,SRAM_F_V102
+
 Dungeons & Dragons - Eye of the Beholder (USA).gba
 91B16892,AD4E,04,SRAM_F_V102
 
@@ -1723,11 +2374,17 @@ Davis Cup (Europe) (En,Fr,De,Es,It).gba
 Droopy's Tennis Open (Europe) (En,Fr,De,Es,It,Nl).gba
 F14B65EF,AD7P,04,NONE
 
+Droopy's Tennis Open (Europe) (En,Fr,De,Es,It,Nl) (Beta).gba
+484E7D56,AD7P,04,NONE
+
 Duke Nukem Advance (USA).gba
 06570282,AD9E,08,EEPROM_V120
 
 Duke Nukem Advance (Europe) (En,Fr,De,It).gba
 DC7DAB56,AD9P,08,EEPROM_V120
+
+Duke Nukem Advance (World) (En,Fr,De,It) (Evercade).gba
+2B077058,AD9P,08,EEPROM_V120
 
 Dark Arena (USA, Europe).gba
 DE5DCDEE,ADAE,08,NONE
@@ -1747,11 +2404,14 @@ A2D6CEA6,ADDJ,08,EEPROM_V122
 Adventure of Tokyo Disney Sea (Japan).gba
 5781ACAF,ADEJ,04,SRAM_V112
 
-Super Dodge Ball Advance (USA) (Rev 1).gba
-63CA5050,ADFE,04,SRAM_V110
-
 Super Dodge Ball Advance (USA).gba
 1D31DC6B,ADFE,04,SRAM_V110
+
+Super Dodge Ball Advance (USA) (Beta).gba
+626603B5,ADFE,04,SRAM_V110
+
+Super Dodge Ball Advance (USA) (Rev 1).gba
+63CA5050,ADFE,04,SRAM_V110
 
 Bakunetsu Dodge Ball Fighters (Japan).gba
 9030515D,ADFJ,04,SRAM_V110
@@ -1774,11 +2434,11 @@ Donald Duck Advance (USA).gba
 Donald Duck Advance (Europe) (En,Fr,De,Es,It).gba
 4C086A5E,ADKP,08,NONE
 
-Dexter's Laboratory - Deesaster Strikes! (USA) (En,Fr,De,Es,It) (Rev 1).gba
-6BF168E6,ADLE,04,EEPROM_V122
-
 Dexter's Laboratory - Deesaster Strikes! (USA) (En,Fr,De,Es,It).gba
 E948D412,ADLE,04,EEPROM_V122
+
+Dexter's Laboratory - Deesaster Strikes! (USA) (En,Fr,De,Es,It) (Rev 1).gba
+6BF168E6,ADLE,04,EEPROM_V122
 
 Dexter's Laboratory - Deesaster Strikes! (Europe) (En,Fr,De,Es,It).gba
 3E8012BF,ADLP,04,EEPROM_V122
@@ -1816,14 +2476,23 @@ Doraemon - Midori no Wakusei Dokidoki Daikyuushutsu! (Japan).gba
 Daisenryaku for Game Boy Advance (Japan).gba
 3D644946,ADSJ,08,FLASH_V126
 
+Driver 2 Advance (Europe) (En,Fr,De,Es,It) (Beta) (2002-06-06).gba
+2A18850C,ADUE,08,EEPROM_V122
+
 Driver 2 Advance (USA).gba
 BBE2A163,ADUE,08,EEPROM_V122
 
 Driver 2 Advance (Europe) (En,Fr,De,Es,It).gba
 69EE551C,ADUP,08,EEPROM_V122
 
+Driver 2 Advance (Europe) (En,Fr,De,Es,It) (Beta).gba
+B24FA448,ADUP,08,EEPROM_V122
+
 Driven (USA) (En,Fr,De,Es,It).gba
 F2068738,ADVE,04,EEPROM_V120
+
+Adventures of Mr. Bean (Europe) (Demo).gba
+5E3B686D,ADVN,02,NONE
 
 Driven (Europe) (En,Fr,De,Es,It).gba
 95F2C572,ADVP,04,EEPROM_V120
@@ -1843,44 +2512,50 @@ DE7B8DCD,ADYJ,04,EEPROM_V122
 Dragon Ball Z - Collectible Card Game (USA).gba
 F6124D7F,ADZE,08,SRAM_F_V102
 
-Mega Man Battle Network 2 (USA) (Debug Version).gba
-FBDADAA7,AE2E,32,SRAM_V112
-
-Mega Man Battle Network 2 (USA).gba
+Megaman - Battle Network 2 (USA).gba
 6D961F82,AE2E,08,SRAM_V112
 
-Mega Man Battle Network 2 (USA, Europe) (Virtual Console).gba
+Megaman - Battle Network 2 (USA) (Debug Version).gba
+C3AABD70,AE2E,08,SRAM_V112
+
+Megaman - Battle Network 2 (USA, Europe) (Virtual Console).gba
 5E88C34B,AE2E,08,SRAM_V112
 
-Battle Network Rockman EXE 2 (Japan) (Rev 1).gba
-41576087,AE2J,08,SRAM_V112
-
-Battle Network Rockman EXE 2 (Japan).gba
+Battle Network - Rockman EXE 2 (Japan).gba
 98E4F096,AE2J,08,SRAM_V112
 
-Battle Network Rockman EXE 2 (Japan) (Rev 1) (Virtual Console).gba
+Battle Network - Rockman EXE 2 (Japan) (Rev 1).gba
+41576087,AE2J,08,SRAM_V112
+
+Battle Network - Rockman EXE 2 (Japan) (Rev 1) (Virtual Console).gba
 44D44721,AE2J,08,SRAM_V112
 
-Ed, Edd n Eddy - Jawbreakers! (USA) (Rev 1).gba
-315A9114,AE3E,04,EEPROM_V122
+Battle Network - Rockman EXE 2 (World) (Ja) (Mega Man Battle Network Legacy Collection).gba
+046EED8D,AE2J,08,SRAM_V112
 
 Ed, Edd n Eddy - Jawbreakers! (USA).gba
 48E5A70E,AE3E,04,EEPROM_V122
 
+Ed, Edd n Eddy - Jawbreakers! (USA) (Rev 1).gba
+315A9114,AE3E,04,EEPROM_V122
+
 Ed, Edd n Eddy - Jawbreakers! (Europe) (En,Fr,De,Es,It).gba
 E7F6E42F,AE3P,04,EEPROM_V122
 
-Fire Emblem (USA, Australia).gba
-2A524221,AE7E,16,SRAM_F_V102
-
 Fire Emblem (USA) (Virtual Console).gba
 1B8713C7,AE7E,16,SRAM_F_V102
+
+Fire Emblem (USA, Australia).gba
+2A524221,AE7E,16,SRAM_F_V102
 
 Fire Emblem - Rekka no Ken (Japan).gba
 F0C10E72,AE7J,16,SRAM_F_V102
 
 Fire Emblem - Rekka no Ken (Japan) (Virtual Console).gba
 0BA2FD1F,AE7J,16,SRAM_F_V102
+
+Fire Emblem - Seima no Kouseki (Japan) (Beta).gba
+CD9D8972,AE7J,16,SRAM_F_V103
 
 Fire Emblem (Europe) (En,Fr,De).gba
 4A805ED1,AE7X,16,SRAM_F_V102
@@ -1919,7 +2594,7 @@ Puzzle & Tantei Collection (Japan).gba
 893551BB,AEHJ,08,EEPROM_V122
 
 Aero the Acro-Bat (USA) (Beta 1).gba
-BEED50F0,AEJE,00,NONE
+BEED50F0,AEJE,01,NONE
 
 Earthworm Jim (USA, Europe).gba
 C4991D13,AEJE,08,NONE
@@ -1938,6 +2613,9 @@ Egg Mania - Tsukande! Mawashite! Dossun Puzzle!! (Japan).gba
 
 Eggo Mania (Europe) (En,Fr,De,Es,It,Nl).gba
 0B2961CE,AEMP,04,NONE
+
+Eggo Mania (Europe) (En,Fr,De,Es,It,Nl) (Beta).gba
+F4C9A628,AEMP,04,NONE
 
 Serious Sam Advance (USA) (En,Fr,De).gba
 FDF4ECA7,AENE,08,NONE
@@ -1975,17 +2653,20 @@ King of Fighters EX 2, The - Howling Blood (Europe).gba
 King of Fighters EX 2, The - Howling Blood (USA).gba
 15F8F9D5,AEXE,08,EEPROM_V122
 
+King of Fighters EX 2, The - Howling Blood (USA) (Beta) (2003-04-03).gba
+7704FF39,AEXE,08,EEPROM_V122
+
 King of Fighters EX 2, The - Howling Blood (Japan) (Rev 1).gba
 DC5BEACD,AEXJ,08,EEPROM_V122
 
 Kim Possible - Revenge of Monkey Fist (USA).gba
 1A56EFBD,AEYE,08,NONE
 
-Kim Possible (Europe) (En,Fr,De,Es) (Rev 1).gba
-48428C2A,AEYP,08,NONE
-
 Kim Possible (Europe) (En,Fr,De,Es).gba
 0C35D0FC,AEYP,08,NONE
+
+Kim Possible (Europe) (En,Fr,De,Es) (Rev 1).gba
+48428C2A,AEYP,08,NONE
 
 Zero One (Japan).gba
 84A4C1B4,AF3J,16,EEPROM_V122
@@ -2046,6 +2727,12 @@ D38763E1,AFEJ,08,SRAM_F_V102
 
 Fire Emblem - Fuuin no Tsurugi (Japan) (Virtual Console).gba
 F8AF3359,AFEJ,08,SRAM_F_V102
+
+Fire Emblem - Rekka no Ken (Japan) (Beta) (2003-02-06).gba
+B40D6854,AFEJ,16,SRAM_F_V102
+
+Fire Emblem - Rekka no Ken (Japan) (Beta) (2003-02-19).gba
+8146A270,AFEJ,16,SRAM_F_V102
 
 Final Fight One (USA).gba
 052C9997,AFFE,04,EEPROM_V121
@@ -2128,6 +2815,9 @@ B0533F41,AFVE,04,NONE
 Final Fire Pro Wrestling - Yume no Dantai Unei! (Japan).gba
 A0093822,AFWJ,16,FLASH_V126
 
+Final Fire Pro Wrestling - Yume no Dantai Unei! (Japan) (Rev 1).gba
+3F98600B,AFWJ,16,FLASH_V126
+
 Final Fantasy Tactics Advance (USA).gba
 5645E56C,AFXE,16,FLASH512_V130
 
@@ -2176,20 +2866,20 @@ Gojira - Kaijuu Dairantou Advance (Japan).gba
 Godzilla - Domination! (Europe) (En,Fr,De,Es,It).gba
 7C43545E,AG4P,04,NONE
 
-Super Ghouls'n Ghosts (USA, Europe).gba
-1EF2ACF3,AG5E,04,EEPROM_V122
-
 Super Ghouls'n Ghosts (USA) (Virtual Console).gba
 E279EC31,AG5E,04,EEPROM_V122
+
+Super Ghouls'n Ghosts (USA, Europe).gba
+1EF2ACF3,AG5E,04,EEPROM_V122
 
 Mugenborg (Japan).gba
 1C31BBEC,AG6J,08,SRAM_F_V102
 
-Advance GTA (Japan) (En) (Rev 1).gba
-FCA59484,AG7J,08,SRAM_V110
-
 Advance GTA (Japan) (En).gba
 FDC82E98,AG7J,08,SRAM_V110
+
+Advance GTA (Japan) (En) (Rev 1).gba
+FCA59484,AG7J,08,SRAM_V110
 
 Galidor - Defenders of the Outer Dimension (USA) (En,Fr,De,Es,It,Nl,Sv,Da).gba
 4D8F49F9,AG8E,04,EEPROM_V122
@@ -2206,19 +2896,58 @@ Gradius Generation (Japan).gba
 Gradius Advance (Europe).gba
 3722BDFA,AGAP,04,EEPROM_V122
 
+Adventures of Jimmy Neutron Boy Genius vs. Jimmy Negatron, The (Germany) (Beta).gba
+220CCF25,AGBJ,04,NONE
+
+Animaniacs - Hollywood Hypnotics (Europe) (En,Fr,De,Es,It) (Proto).gba
+8904B833,AGBJ,04,NONE
+
+Beyblade V-Force - Ultimate Blader Jam (Europe) (En,Fr,De,Es,It) (Beta).gba
+55CAE46A,AGBJ,08,EEPROM_V122
+
+Dragon Ball Z - Taiketsu (USA) (Beta).gba
+92CABBBE,AGBJ,08,EEPROM_V122
+
+Freekstyle (Europe) (En,Fr,De,Es,It) (Beta).gba
+211DFD7F,AGBJ,08,EEPROM_V122
+
 GBA AV Adapter (China) (Unl).gba
-A1B64F16,AGBJ,00,NONE
+A1B64F16,AGBJ,01,NONE
 
 GetBackers Dakkanya - Jigoku no Scaramouche (Japan).gba
 C0A0A979,AGBJ,04,FLASH_V120
 
+Grim Adventures of Billy & Mandy, The (USA) (Beta) (2006-08-15).gba
+67A51C79,AGBJ,08,EEPROM_V124
+
+GT Racers (Europe) (Beta) (2005-07-13).gba
+E027657A,AGBJ,01,NONE
+
+GT Racers (Europe) (Beta) (2005-10-14).gba
+A0F745A0,AGBJ,03,NONE
+
+Justice League - Chronicles (USA) (Beta) (2003-03-03).gba
+FDBD4BD0,AGBJ,04,EEPROM_V122
+
+Justice League - Chronicles (USA) (Tech Demo) (2003-03-03).gba
+4861F9A6,AGBJ,01,NONE
+
+Pac-Man World 2 (USA) (Beta) (2005-04-15).gba
+B645B5EF,AGBJ,04,EEPROM_V124
+
 Pokemon - Liechi Berry Glitch Fix & Shiny Zigzagoon Distribution (Europe) (Kiosk).gba
 D78B5A1F,AGBJ,04,NONE
 
-Yoshi Sample (Japan) (En) (SDK 3.0) (Tech Demo).gba
-954D2619,AGBJ,02,NONE
+Superman Returns - Fortress of Solitude (USA, Europe) (Beta).gba
+A0FB8E93,AGBJ,16,EEPROM_V122
 
-Guru Logic Champ (Japan).gba
+Wild Thornberrys Movie, The (USA, Europe) (Beta).gba
+E41720F5,AGBJ,04,NONE
+
+Yoshi Sample (Japan) (En) (SDK 3.0) (Tech Demo).gba
+954D2619,AGBJ,03,NONE
+
+Guru Logichamp (Japan).gba
 30D04AD9,AGCJ,04,FLASH_V126
 
 Lufia - The Ruins of Lore (USA).gba
@@ -2265,6 +2994,9 @@ Gremlins - Stripe vs Gizmo (USA).gba
 
 Gremlins - Stripe vs Gizmo (Europe) (En,Fr,De,Es,It,Pt).gba
 B6225186,AGGP,04,NONE
+
+Gremlins - Stripe vs Gizmo (Europe) (En,Fr,De,Es,It,Pt) (Beta).gba
+68AE6BBB,AGGP,04,NONE
 
 Medarot G - Kabuto (Japan).gba
 B107C73D,AGHJ,08,EEPROM_V122
@@ -2368,6 +3100,9 @@ CD48B673,AH3E,08,SRAM_F_V103
 Tottoko Hamutarou 3 - Love Love Daibouken Dechu (Japan).gba
 C2945D42,AH3J,08,SRAM_F_V102
 
+Tottoko Hamutarou 3 - Love Love Daibouken Dechu (Japan) (Beta) (2002-05-29).gba
+782E25AE,AH3J,08,SRAM_F_V102
+
 Hamtaro - Ham-Ham Heartbreak (Europe) (En,Fr,De,Es,It).gba
 ECBD80EA,AH3P,16,SRAM_F_V103
 
@@ -2425,11 +3160,11 @@ ED5CA311,AHJE,04,EEPROM_V124
 Hugo - The Evil Mirror (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi,Pl).gba
 9E9D5AD7,AHJP,04,EEPROM_V122
 
-Hikaru no Go (Japan) (Rev 1).gba
-53116FD7,AHKJ,08,SRAM_F_V102
-
 Hikaru no Go (Japan).gba
 5A6C7537,AHKJ,08,SRAM_F_V102
+
+Hikaru no Go (Japan) (Rev 1).gba
+53116FD7,AHKJ,08,SRAM_F_V102
 
 Incredible Hulk, The (USA).gba
 0B978DFA,AHLE,08,EEPROM_V122
@@ -2473,7 +3208,7 @@ A069750D,AHRJ,08,EEPROM_V122
 Hatena Satena (Japan).gba
 6139E34D,AHSJ,04,SRAM_V110
 
-Hikaru no Go (Japan) (Demo) (Promo).gba
+Hikaru no Go - Taikenban (Japan) (Demo).gba
 4955FA1B,AHTJ,04,NONE
 
 Shining Soul (USA).gba
@@ -2488,11 +3223,11 @@ Shining Soul (Japan) (Virtual Console).gba
 Shining Soul (Europe) (En,Fr,De,Es,It).gba
 74B5D069,AHUP,08,FLASH512_V130
 
-Nakayoshi Youchien - Sukoyaka Enji Ikusei Game (Japan) (Rev 1).gba
-B46DACA0,AHVJ,04,EEPROM_V122
-
 Nakayoshi Youchien - Sukoyaka Enji Ikusei Game (Japan).gba
 1276A95C,AHVJ,04,EEPROM_V122
+
+Nakayoshi Youchien - Sukoyaka Enji Ikusei Game (Japan) (Rev 1).gba
+B46DACA0,AHVJ,04,EEPROM_V122
 
 Hot Wheels - Burnin' Rubber (USA).gba
 37DCBB0D,AHWE,08,EEPROM_V121
@@ -2505,6 +3240,9 @@ Hot Wheels - Burnin' Rubber (Europe) (En,Fr).gba
 
 High Heat Major League Baseball 2003 (Japan) (En).gba
 0D9043A4,AHXJ,04,EEPROM_V122
+
+Cartoon Network Block Party (USA) (Beta) (2003-06-17).gba
+5CFAC364,AHYE,05,NONE
 
 Higanbana (Japan) (Rev 1).gba
 C23AC287,AHZJ,08,EEPROM_V122
@@ -2553,6 +3291,9 @@ Guranbo (Japan) (Virtual Console).gba
 
 Oshaberi Inko Club (Japan).gba
 DF6901F0,AICJ,08,FLASH_V126
+
+Oshaberi Inko Club (Japan) (Beta).gba
+F896BB9E,AICJ,08,FLASH_V126
 
 Space Invaders (USA, Europe).gba
 5EA3F3B5,AIDE,04,EEPROM_V120
@@ -2627,7 +3368,7 @@ Jurassic Park III - Park Builder (USA).gba
 EDDDCF19,AJ3E,04,SRAM_F_V102
 
 Jurassic Park III - Kyouryuu ni Ainiikou! (Japan).gba
-F2BF8990,AJ3J,04,SRAM_V112
+F2BF8990,AJ3J,04,SRAM_F_V102
 
 Jurassic Park III - Park Builder (Europe) (En,Fr,De,Es,It).gba
 51061EFF,AJ3P,04,SRAM_F_V102
@@ -2698,10 +3439,13 @@ B80AA966,AJKJ,08,EEPROM_V122
 Justice League - Injustice for All (USA).gba
 B2477B72,AJLE,08,EEPROM_V122
 
+Justice League - Injustice for All (USA) (Beta).gba
+C41081CF,AJLE,08,EEPROM_V122
+
 Justice League - Injustice for All (Europe) (En,Fr,De,Es,It).gba
 D71C4382,AJLP,08,EEPROM_V122
 
-Jonny Moseley Mad Trix (USA, Europe) (En,Fr,De,Es,It).gba
+Jonny Moseley Mad Trix (USA) (En,Fr,De,Es,It).gba
 96488632,AJME,08,EEPROM_V121
 
 Jimmy Neutron - Boy Genius (USA).gba
@@ -2713,11 +3457,11 @@ A9423234,AJNX,04,NONE
 Magical Houshin (Japan).gba
 70123550,AJOJ,08,FLASH_V126
 
-J.League Pocket (Japan) (Rev 1).gba
-0524E9EF,AJPJ,08,SRAM_V110
-
 J.League Pocket (Japan).gba
 51BE73B8,AJPJ,08,SRAM_V110
+
+J.League Pocket (Japan) (Rev 1).gba
+0524E9EF,AJPJ,08,SRAM_V110
 
 Jurassic Park III - Island Attack (USA).gba
 1E7048D2,AJQE,08,EEPROM_V122
@@ -2842,7 +3586,7 @@ Digimon Rury (USA) (Unl).gba
 Digimon Sapphire (USA) (Unl).gba
 AD17D41E,AKIJ,04,NONE
 
-Ji Xie Ren Da Zhan - Zhong Jie Ban (Taiwan) (Unl).gba
+Jixie Ren Dazhan - Zhongjie Ban (Taiwan) (Unl).gba
 81462ABA,AKIJ,08,NONE
 
 Kiki Kaikai Advance (Japan).gba
@@ -2851,16 +3595,16 @@ Kiki Kaikai Advance (Japan).gba
 Lord of the Rings, The - The Return of the King (USA) (Unl).gba
 5A5EF8E3,AKIJ,04,NONE
 
-Mo Jie Qibing (Taiwan) (Unl).gba
+Mojie Qibing (Taiwan) (Unl).gba
 8EE0ED6F,AKIJ,04,NONE
 
 Shuma Guaishou - Hongbaoshi Ban (Taiwan) (Unl).gba
 AC355418,AKIJ,08,NONE
 
-Kao the Kangaroo (USA) (En,Fr,De,Es,It,Nl).gba
+KAO the Kangaroo (USA) (En,Fr,De,Es,It,Nl).gba
 F6667B3E,AKKE,04,NONE
 
-Kao the Kangaroo (Europe) (En,Fr,De,Es,It,Nl).gba
+KAO the Kangaroo (Europe) (En,Fr,De,Es,It,Nl).gba
 51E7522C,AKKP,04,NONE
 
 Klonoa - Empire of Dreams (USA).gba
@@ -2875,11 +3619,11 @@ Klonoa - Empire of Dreams (Europe).gba
 Kiwame Mahjong Deluxe - Mirai Senshi 21 (Japan).gba
 66F7614B,AKMJ,08,SRAM_V112
 
-King of Fighters EX, The - NeoBlood (USA) (Rev 1).gba
-0F960E70,AKOE,08,EEPROM_V122
-
 King of Fighters EX, The - NeoBlood (USA).gba
 2B92EB8E,AKOE,08,EEPROM_V122
+
+King of Fighters EX, The - NeoBlood (USA) (Rev 1).gba
+0F960E70,AKOE,08,EEPROM_V122
 
 King of Fighters EX, The - NeoBlood (Japan).gba
 0814C78D,AKOJ,08,EEPROM_V122
@@ -2919,6 +3663,9 @@ FBDD4384,AKVJ,04,EEPROM_V122
 
 Konami Krazy Racers (USA).gba
 C80D4F5C,AKWE,04,SRAM_V111
+
+Konami Krazy Racers (USA) (Beta).gba
+5F2AE8FE,AKWE,04,SRAM_V111
 
 Konami Krazy Racers (USA) (Virtual Console).gba
 95CCC956,AKWE,04,SRAM_V111
@@ -3037,14 +3784,14 @@ Lunar Legend (USA).gba
 Lunar Legend (Japan).gba
 4E044191,ALNJ,08,SRAM_V112
 
-Lord of the Rings, The - The Fellowship of the Ring (USA) (Rev 1).gba
-5A2B01F1,ALOE,08,EEPROM_READ
-
 Lord of the Rings, The - The Fellowship of the Ring (USA).gba
-EE0C58BC,ALOE,08,EEPROM_READ
+EE0C58BC,ALOE,08,EEPROM_V122
+
+Lord of the Rings, The - The Fellowship of the Ring (USA) (Rev 1).gba
+5A2B01F1,ALOE,08,EEPROM_V122
 
 Lord of the Rings, The - The Fellowship of the Ring (Europe) (En,Fr,De,Es,It).gba
-2380B93A,ALOP,08,EEPROM_READ
+2380B93A,ALOP,08,EEPROM_V122
 
 Lord of the Rings, The - The Two Towers (USA, Europe) (En,Fr,De,Es,It,Nl).gba
 A1E3BF33,ALPE,16,EEPROM_V122
@@ -3061,17 +3808,17 @@ E13B63AD,ALRE,08,EEPROM_V120
 LEGO Racers 2 (Europe) (En,Fr,De,Es,It,Nl,Sv,Da).gba
 7A1DC458,ALRP,08,EEPROM_V120
 
-LEGO Soccer Mania (USA, Europe) (En,Fr,De,Es,It,Nl,Sv,Da).gba
+Soccer Mania (USA, Europe) (En,Fr,De,Es,It,Nl,Sv,Da).gba
 73EF3A35,ALSE,08,EEPROM_V122
 
 Lilo & Stitch (USA).gba
 542AA4AC,ALTE,08,NONE
 
-Lilo & Stitch (Europe) (En,Fr,De,Es,It,Nl) (Rev 1).gba
-E7BC4EF1,ALTP,08,NONE
-
 Lilo & Stitch (Europe) (En,Fr,De,Es,It,Nl).gba
 2A10F7E4,ALTP,08,NONE
+
+Lilo & Stitch (Europe) (En,Fr,De,Es,It,Nl) (Rev 1).gba
+E7BC4EF1,ALTP,08,NONE
 
 Super Monkey Ball Jr. (USA).gba
 0A8031F0,ALUE,04,EEPROM_V122
@@ -3088,7 +3835,7 @@ Lost Vikings, The (Europe) (En,Fr,De,Es).gba
 Ace Lightning (Europe).gba
 E94AAFC9,ALXP,04,EEPROM_V122
 
-Mega Man Battle Network 2 (Europe).gba
+Megaman - Battle Network 2 (Europe).gba
 66341F3B,AM2P,08,SRAM_V112
 
 Midway's Greatest Arcade Hits (USA, Europe).gba
@@ -3132,6 +3879,9 @@ Super Mario Advance (USA, Europe).gba
 
 Super Mario Advance (USA, Europe) (Virtual Console).gba
 5251F2BF,AMAE,04,EEPROM_V120
+
+GBA Movie Player - 2nd Version (World) (V2.00) (Unl).gba
+3FC91D4F,AMAJ,01,NONE
 
 Super Mario Advance - Super Mario USA + Mario Brothers (Japan).gba
 B993B92F,AMAJ,04,EEPROM_V111
@@ -3184,6 +3934,9 @@ D38672BF,AMJJ,04,SRAM_V110
 Maliou Kadingche - Chaoji Saidao (China) (Proto).gba
 36201D7C,AMKC,08,FLASH_V124
 
+Mario Kart - Super Circuit (China) (En) (Proto) (2006-06-06) (Netcard).gba
+31AC3BD3,AMKE,16,FLASH_V124
+
 Mario Kart - Super Circuit (USA).gba
 ED316E37,AMKE,04,FLASH_V124
 
@@ -3214,11 +3967,11 @@ BF0523D1,AMMJ,04,SRAM_V110
 Monster Guardians (Japan).gba
 93815CDE,AMNJ,08,SRAM_V110
 
-EX Monopoly (Japan) (Rev 1).gba
-D45ABF21,AMOJ,04,SRAM_V112
-
 EX Monopoly (Japan).gba
 916EFD5B,AMOJ,04,SRAM_V112
+
+EX Monopoly (Japan) (Rev 1).gba
+D45ABF21,AMOJ,04,SRAM_V112
 
 Mahjong Keiji (Japan).gba
 AD32A2D3,AMPJ,04,SRAM_V112
@@ -3310,16 +4063,16 @@ Natural 2 - Duo (Japan).gba
 Catz (USA, Europe).gba
 CE418ED1,AN3E,04,EEPROM_V124
 
-Nakayoshi Pet Advance Series 3 - Kawaii Koneko (Japan) (Rev 1).gba
-89FBEB55,AN3J,04,EEPROM_V122
-
 Nakayoshi Pet Advance Series 3 - Kawaii Koneko (Japan).gba
 0290DFB5,AN3J,04,EEPROM_V122
+
+Nakayoshi Pet Advance Series 3 - Kawaii Koneko (Japan) (Rev 1).gba
+89FBEB55,AN3J,04,EEPROM_V122
 
 Catz (Europe) (En,Fr,De,It).gba
 C3AA382D,AN3X,08,EEPROM_V124
 
-NHL Hitz 20-03 (USA).gba
+NHL Hitz 2003 (USA).gba
 4F1ADF75,AN4E,04,EEPROM_V122
 
 Kawa no Nushi Tsuri 5 - Fushigi no Mori kara (Japan).gba
@@ -3373,11 +4126,11 @@ ZooCube (Europe) (En,Fr,De,Es,It).gba
 Nancy Drew - Message in a Haunted Mansion (USA).gba
 7652CD25,ANDE,04,NONE
 
-Monster Gate (Japan) (Rev 1).gba
-7960926C,ANFJ,08,SRAM_F_V102
-
 Monster Gate (Japan).gba
 5B8AAA03,ANFJ,08,SRAM_F_V102
+
+Monster Gate (Japan) (Rev 1).gba
+7960926C,ANFJ,08,SRAM_F_V102
 
 NASCAR Heat 2002 (USA).gba
 87E15F5B,ANHE,04,EEPROM_V120
@@ -3388,7 +4141,7 @@ Animaniacs - Lights, Camera, Action! (Europe) (En,Fr,De,Es,It).gba
 Madden NFL 2003 (USA).gba
 64B93824,ANJE,04,EEPROM_V122
 
-NFL Blitz 20-03 (USA).gba
+NFL Blitz 2003 (USA).gba
 E0B137E7,ANKE,04,NONE
 
 NHL 2002 (USA).gba
@@ -3424,6 +4177,9 @@ Nicktoons Racing (USA).gba
 Nicktoons Racing (Europe) (En,Fr,De,Es,It).gba
 BABCCEFD,ANQP,04,EEPROM_V122
 
+Nicktoons Racing (USA) (Beta).gba
+4ED6E860,ANQP,04,EEPROM_V122
+
 Cartoon Network Speedway (USA).gba
 066A2705,ANRE,04,NONE
 
@@ -3436,20 +4192,26 @@ Nihon Pro Mahjong Renmei Kounin - Tetsuman Advance - Menkyo Kaiden Series (Japan
 Antz - Extreme Racing (USA).gba
 F4EFC5ED,ANUE,04,NONE
 
-Shiren Monsters - Netsal (Japan) (Demo) (Kiosk, GameCube).gba
-25B0B122,ANVJ,16,SRAM_F_V102
-
 Shiren Monsters - Netsal (Japan).gba
 C1F2B5EC,ANVJ,16,SRAM_F_V102
+
+Shiren Monsters - Netsal (Japan) (Demo) (Kiosk, GameCube).gba
+25B0B122,ANVJ,16,SRAM_F_V102
 
 Elevator Action - Old & New (Japan).gba
 2D88526A,ANWJ,08,EEPROM_V122
 
-Ninja Five-0 (USA).gba
+Ninja Five-O (USA).gba
 EB3954C6,ANXE,04,EEPROM_V122
+
+Ninja Five-O (USA) (Limited Run Games).gba
+5AF43420,ANXE,08,EEPROM_V122
 
 Ninja Cop (Europe).gba
 C14295B1,ANXP,04,EEPROM_V122
+
+Ninja Cop (Europe) (Limited Run Games).gba
+5935D29A,ANXP,08,EEPROM_V122
 
 Gachinko Pro Yakyuu (Japan).gba
 81DE0C16,ANYJ,08,SRAM_F_V102
@@ -3461,10 +4223,10 @@ Oshare Princess 2 + Doubutsu Kyaranabi Uranai (Japan).gba
 8383FCDA,AO2J,08,EEPROM_V122
 
 Terminator 3 - Rise of the Machines (USA).gba
-F74B3C7D,AO3E,08,FLASH_BANG
+F74B3C7D,AO3E,08,NONE
 
 Terminator 3 - Rise of the Machines (Europe) (En,Fr,De,Es,It).gba
-16C3CAC3,AO3P,08,FLASH_BANG
+16C3CAC3,AO3P,08,NONE
 
 Tom Clancy's Splinter Cell (USA) (En,Fr,Es).gba
 308BA69C,AO4E,08,EEPROM_V122
@@ -3553,17 +4315,17 @@ Spyro - Attack of the Rhynocs (USA).gba
 Spyro Adventure (Europe) (En,Fr,De,Es,It,Nl).gba
 1F62D660,AOWP,08,EEPROM_V122
 
-Power Pro Kun Pocket 3 (Japan) (Rev 1).gba
-D8397194,AP3J,08,SRAM_V110
-
 Power Pro Kun Pocket 3 (Japan).gba
 4314D8BC,AP3J,08,SRAM_V110
 
-Power Pro Kun Pocket 4 (Japan) (Rev 1).gba
-89A3A2C7,AP4J,08,SRAM_V112
+Power Pro Kun Pocket 3 (Japan) (Rev 1).gba
+D8397194,AP3J,08,SRAM_V110
 
 Power Pro Kun Pocket 4 (Japan).gba
 30B4A347,AP4J,08,SRAM_V112
+
+Power Pro Kun Pocket 4 (Japan) (Rev 1).gba
+89A3A2C7,AP4J,08,SRAM_V112
 
 Powerpuff Girls, The - Him and Seek (USA).gba
 4D22B35E,AP5E,08,EEPROM_V122
@@ -3634,11 +4396,17 @@ Pitfall - The Mayan Adventure (USA, Europe).gba
 Punch King - Arcade Boxing (USA).gba
 540B6CC1,APGE,08,NONE
 
+Punch King - Arcade Boxing (World) (Evercade).gba
+2AFD6FF9,APGE,08,NONE
+
 Punch King - Arcade Boxing (Europe) (En,Fr,Es).gba
 3E4CB21C,APGP,08,NONE
 
 Prehistorik Man (USA, Europe) (En,Fr,De,Es,It,Nl).gba
 0D3B922B,APHE,04,NONE
+
+Prehistorik Man (USA, Europe) (En,Fr,De,Es,It,Nl) (Beta).gba
+ABB50D93,APHE,04,NONE
 
 Pinky and the Brain - The Master Plan (Europe) (En,Fr,De,Es,It).gba
 FF7D5F62,APIP,04,NONE
@@ -3664,17 +4432,17 @@ Pinky Monkey Town (Japan).gba
 Popeye - Rush for Spinach (USA, Europe) (En,Fr,De,Es,It).gba
 CFFC52DD,APOE,04,NONE
 
-Peter Pan - Return to Neverland (USA) (Rev 1).gba
-431DFEA8,APPE,08,NONE
-
 Peter Pan - Return to Neverland (USA).gba
 4CAFCCBD,APPE,08,NONE
 
-Peter Pan - Return to Neverland (Europe) (En,Fr,De,Es,It,Nl) (Rev 1).gba
-4C682CC3,APPP,08,NONE
+Peter Pan - Return to Neverland (USA) (Rev 1).gba
+431DFEA8,APPE,08,NONE
 
 Peter Pan - Return to Neverland (Europe) (En,Fr,De,Es,It,Nl).gba
 BE7D574C,APPP,08,NONE
+
+Peter Pan - Return to Neverland (Europe) (En,Fr,De,Es,It,Nl) (Rev 1).gba
+4C682CC3,APPP,08,NONE
 
 Power Rangers - Time Force (Germany).gba
 933F5477,APRD,04,NONE
@@ -3699,6 +4467,12 @@ Power Rangers - Wild Force (USA, Europe).gba
 
 Phalanx (USA).gba
 EB733713,APXE,04,EEPROM_V122
+
+Crazy Chase (Europe) (En,Fr,De) (Beta).gba
+5F331132,APXJ,04,EEPROM_V122
+
+Crazy Chase (USA) (Beta).gba
+FF7E2E9B,APXJ,04,EEPROM_V122
 
 Phalanx (Japan).gba
 5F419F32,APXJ,04,EEPROM_V122
@@ -3730,11 +4504,11 @@ SpongeBob SquarePants - Revenge of the Flying Dutchman (USA, Europe).gba
 Gadget Racers (USA).gba
 95DD156A,AQAE,04,SRAM_V112
 
-Choro Q Advance (Japan) (Rev 1).gba
-872BC075,AQAJ,04,SRAM_V112
-
 Choro Q Advance (Japan).gba
 93FE0E34,AQAJ,04,SRAM_V112
+
+Choro Q Advance (Japan) (Rev 1).gba
+872BC075,AQAJ,04,SRAM_V112
 
 Penny Racers (Europe).gba
 8FDDD48B,AQAP,04,SRAM_V112
@@ -3859,22 +4633,22 @@ RoboCop (USA) (Proto).gba
 Ripping Friends, The - The World's Most Manly Men! (USA, Europe).gba
 9850BF21,ARDE,04,NONE
 
-Mega Man Battle Network (USA).gba
+Megaman - Battle Network (USA).gba
 1D347971,AREE,08,SRAM_V112
 
-Mega Man Battle Network (USA) (Virtual Console).gba
+Megaman - Battle Network (USA) (Virtual Console).gba
 1D5D0CB6,AREE,08,SRAM_V112
 
-Battle Network Rockman EXE (Japan).gba
+Battle Network - Rockman EXE (Japan).gba
 D9516E50,AREJ,08,SRAM_V110
 
-Battle Network Rockman EXE (Japan) (Virtual Console).gba
+Battle Network - Rockman EXE (Japan) (Virtual Console).gba
 109F133B,AREJ,08,SRAM_V110
 
-Mega Man Battle Network (Europe).gba
+Megaman - Battle Network (Europe).gba
 1A7FB4FA,AREP,08,SRAM_V112
 
-Mega Man Battle Network (Europe) (Virtual Console).gba
+Megaman - Battle Network (Europe) (Virtual Console).gba
 1A16C13D,AREP,08,SRAM_V112
 
 Razor Freestyle Scooter (USA).gba
@@ -3910,11 +4684,11 @@ Rocket Power - Le Cauchemar d'Otto (France).gba
 Minority Report - Everybody Runs (USA, Europe).gba
 3D56EAD6,ARME,08,EEPROM_V120
 
-Neoromance Game - Harukanaru Toki no Naka de (Japan) (Rev 1).gba
-E4FE52DB,ARNJ,08,EEPROM_V122
-
 Neoromance Game - Harukanaru Toki no Naka de (Japan).gba
 BF12B590,ARNJ,08,EEPROM_V122
+
+Neoromance Game - Harukanaru Toki no Naka de (Japan) (Rev 1).gba
+E4FE52DB,ARNJ,08,EEPROM_V122
 
 Rocky (Europe) (En,Fr,De,Es,It).gba
 D2E55FB5,AROP,08,EEPROM_V122
@@ -3925,10 +4699,10 @@ CA73E17A,ARPE,08,FLASH_V126
 Robot Poncots 2 - Ring Version (Japan).gba
 6002159C,ARPJ,08,FLASH_V126
 
-Matchbox Cross Town Heroes (USA).gba
+Cross Town Heroes (USA).gba
 0FFFB458,ARQE,04,NONE
 
-Matchbox Cross Town Heroes (Europe).gba
+Cross Town Heroes (Europe).gba
 C9EA02F5,ARQP,04,NONE
 
 Robot Wars - Extreme Destruction (Europe) (En,Fr,De,Es,It,Nl).gba
@@ -3952,6 +4726,9 @@ Rayman Advance (USA) (En,Fr,De,Es,It).gba
 Rayman Advance (Europe) (En,Fr,De,Es,It).gba
 B43783B4,ARYP,08,EEPROM_V111
 
+Rayman Advance (Europe) (En,Fr,De,Es,It) (Beta).gba
+4B1B4E02,ARYP,08,EEPROM_V111
+
 Rockman Zero (Japan).gba
 FF2A67B1,ARZJ,08,SRAM_V112
 
@@ -3967,11 +4744,11 @@ C492C46D,AS2X,08,NONE
 Kelly Slater's Pro Surfer (USA, Europe).gba
 31F85DBE,AS3E,08,EEPROM_V122
 
-Shrek - Swamp Kart Speedway (USA, Europe) (En,Fr,De,Es,It,Nl).gba
-91483D87,AS4E,08,EEPROM_V122
-
 Shrek - Swamp Kart Speedway (USA) (En,Fr,De,Es,It,Nl) (Rev 1).gba
 41F55560,AS4E,08,EEPROM_V122
+
+Shrek - Swamp Kart Speedway (USA, Europe) (En,Fr,De,Es,It,Nl).gba
+91483D87,AS4E,08,EEPROM_V122
 
 Salt Lake 2002 (USA) (En,Fr,De,Es,It,Nl).gba
 4603205A,AS5E,04,EEPROM_V121
@@ -3988,11 +4765,11 @@ Star X (Europe) (En,Fr,De,Es,It,Nl).gba
 Army Men Advance (USA, Europe) (En,Fr,De,Es,It).gba
 9A4A509F,ASAE,04,NONE
 
-Gyakuten Saiban (Japan) (Rev 1).gba
-A0F4801F,ASBJ,08,SRAM_V112
-
 Gyakuten Saiban (Japan).gba
 C88F0952,ASBJ,08,SRAM_V112
+
+Gyakuten Saiban (Japan) (Rev 1).gba
+A0F4801F,ASBJ,08,SRAM_V112
 
 Gyakuten Saiban (Japan) (Rev 1) (Virtual Console).gba
 257E49F9,ASBJ,08,SRAM_V112
@@ -4027,11 +4804,11 @@ Smuggler's Run (Europe) (En,Fr,De,Es,It).gba
 Play Novel - Silent Hill (Japan).gba
 318A1E9B,ASHJ,08,SRAM_V110
 
-Sims, The - Bustin' Out (USA, Europe) (En,Fr,De,Es,It,Nl).gba
-ABAF519C,ASIE,16,EEPROM_V124
-
 Sims, The - Bustin' Out (USA) (En,Fr,De,Es,It,Nl) (Rev 1).gba
 D1183501,ASIE,16,EEPROM_V124
+
+Sims, The - Bustin' Out (USA, Europe) (En,Fr,De,Es,It,Nl).gba
+ABAF519C,ASIE,16,EEPROM_V124
 
 Sutakomi - Star Communicator (Japan).gba
 260683C7,ASKJ,08,SRAM_V110
@@ -4051,23 +4828,26 @@ Saibara Rieko no Dendou Mahjong (Japan).gba
 All-Star Baseball 2004 (USA) (Beta 1).gba
 D6106C26,ASNB,08,SRAM_V112
 
+Samsara Naga 1x2 (Japan).gba
+68076B62,ASNJ,08,EEPROM_V122
+
 Samsara Naga 1x2 (Japan) (Rev 1).gba
 A79872FE,ASNJ,08,EEPROM_V122
 
 Samsara Naga 1x2 (Japan) (Rev 2).gba
 B3780A4F,ASNJ,08,EEPROM_V122
 
-Samsara Naga 1x2 (Japan).gba
-68076B62,ASNJ,08,EEPROM_V122
-
 Sonic Advance (USA) (En,Ja).gba
 63F70FD8,ASOE,08,FLASH_V126
 
-Sonic Advance (Japan) (En,Ja) (Rev 1).gba
-85957A24,ASOJ,08,FLASH_V126
+Sonic Advance (USA) (En,Ja) (Beta) (2001-10-31).gba
+A80DE3B2,ASOE,08,FLASH_V126
 
 Sonic Advance (Japan) (En,Ja).gba
 5F512223,ASOJ,08,FLASH_V126
+
+Sonic Advance (Japan) (En,Ja) (Rev 1).gba
+85957A24,ASOJ,08,FLASH_V126
 
 Sonic Advance (Japan) (En,Ja) (Rev 1) (Virtual Console).gba
 431E55AC,ASOJ,08,FLASH_V126
@@ -4192,7 +4972,7 @@ WTA Tour Tennis (USA).gba
 Pro Tennis WTA Tour (Europe).gba
 F7171521,ATEP,04,EEPROM_V122
 
-Alex Ferguson's Player Manager 2002 ~ Total Soccer Manager (Europe) (En,Fr,De,Es,It,Nl).gba
+Total Soccer Manager (Europe) (En,Fr,De,Es,It,Nl).gba
 92F99295,ATFP,04,EEPROM_V122
 
 Top Gun - Firestorm Advance (USA, Europe) (En,Fr,De,Es,It).gba
@@ -4264,7 +5044,7 @@ Keitai Denjuu Telefang 2 - Power (Japan).gba
 TOCA World Touring Cars (Europe).gba
 D8125874,ATQP,08,EEPROM_V122
 
-Toyrobo Force (Japan).gba
+Toy Robo Force (Japan).gba
 227FC16B,ATRJ,04,SRAM_V112
 
 Keitai Denjuu Telefang 2 - Speed (Japan).gba
@@ -4279,7 +5059,7 @@ Tiny Toon Adventures - Buster's Bad Dream (Europe) (En,Fr,De,Es,It).gba
 Total Soccer Advance (Japan).gba
 28C3E211,ATUJ,04,EEPROM_V122
 
-Steven Gerrard's Total Soccer 2002 (Europe) (En,Fr,De,Es,It,Nl).gba
+Total Soccer 2002 (Europe) (En,Fr,De,Es,It,Nl).gba
 B94DDC93,ATUP,04,EEPROM_V122
 
 Tir et But - Edition Champions du Monde (France).gba
@@ -4288,11 +5068,11 @@ Tir et But - Edition Champions du Monde (France).gba
 Tetris Worlds (USA).gba
 7B729804,ATWE,04,NONE
 
-Tetris Worlds (Japan) (Rev 1).gba
-FCF2D471,ATWJ,04,NONE
-
 Tetris Worlds (Japan).gba
 DD271470,ATWJ,04,NONE
+
+Tetris Worlds (Japan) (Rev 1).gba
+FCF2D471,ATWJ,04,NONE
 
 Tetris Worlds (Europe) (En,Fr,De,Nl).gba
 AD97EB3F,ATWX,04,NONE
@@ -4306,11 +5086,11 @@ Next Generation Tennis (Europe) (En,Fr,De,Es,It,Pt).gba
 Gambler Densetsu Tetsuya - Yomigaeru Densetsu (Japan).gba
 8A879018,ATYJ,08,EEPROM_V122
 
-Zoids Saga (Japan) (Rev 1).gba
-28E8B0D9,ATZJ,08,SRAM_F_V102
-
 Zoids Saga (Japan).gba
 5975DDA8,ATZJ,08,SRAM_F_V102
+
+Zoids Saga (Japan) (Rev 1).gba
+28E8B0D9,ATZJ,08,SRAM_F_V102
 
 Shining Soul II (USA).gba
 4038E282,AU2E,16,FLASH512_V131
@@ -4330,11 +5110,11 @@ A16C10A8,AU3P,04,EEPROM_V120
 Uchuu Daisakusen Choco Vader - Uchuu kara no Shinryakusha (Japan).gba
 5A211B60,AUCJ,08,EEPROM_V122
 
-Naruto - Konoha Senki (Japan) (Rev 1).gba
-69CF0418,AUEJ,08,SRAM_F_V103
-
 Naruto - Konoha Senki (Japan).gba
 11829AFA,AUEJ,08,SRAM_F_V103
+
+Naruto - Konoha Senki (Japan) (Rev 1).gba
+69CF0418,AUEJ,08,SRAM_F_V103
 
 Medal of Honor - Underground (USA).gba
 6DFA0F50,AUGE,08,NONE
@@ -4356,6 +5136,9 @@ Butt-Ugly Martians - B.K.M. Battles (Europe) (En,Fr,De,Es,It).gba
 
 From TV Animation One Piece - Mezase! King of Berry (Japan).gba
 E6F5BDD5,AUSJ,08,FLASH_V126
+
+From TV Animation One Piece - Mezase! King of Berry (Japan) (Beta).gba
+4E63DCE0,AUSJ,08,FLASH_V126
 
 Lara Croft Tomb Raider - The Prophecy (Japan).gba
 7799E1DA,AUTJ,08,NONE
@@ -4381,16 +5164,16 @@ A93601F5,AV3P,08,EEPROM_V122
 Tennis no Ouji-sama - Aim at the Victory! (Japan).gba
 AFC3FCF7,AVAJ,16,SRAM_V112
 
-Barbie Groovy Games (USA).gba
+Barbie Software - Groovy Games (USA).gba
 AA017567,AVBE,04,NONE
 
-Barbie Groovy Games (Europe) (En,Fr,De,Es,It).gba
+Barbie Software - Groovy Games (Europe) (En,Fr,De,Es,It).gba
 749339B2,AVBP,04,NONE
 
 Corvette (USA) (En,Fr,De,Es,It).gba
 A4C6DB01,AVCE,08,EEPROM_V122
 
-Legend of Dynamic Goushouden - Houkai no Rondo (Japan).gba
+Legend of Dynamic - Goushouden - Houkai no Rondo (Japan).gba
 67F18F8E,AVDJ,08,SRAM_V112
 
 Ultimate Beach Soccer (USA).gba
@@ -4477,6 +5260,9 @@ Buffy contre les Vampires - La Colere de Darkhul (France).gba
 Super Bubble Pop (USA).gba
 5EC8EA61,AVZE,04,EEPROM_V122
 
+Super Bubble Pop (World) (Evercade).gba
+940F385E,AVZE,04,EEPROM_V122
+
 Super Bubble Pop (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv).gba
 25123D97,AVZP,04,EEPROM_V122
 
@@ -4528,13 +5314,16 @@ A8CD90F9,AWAJ,08,SRAM_V112
 Worms Blast (Europe) (En,Fr,De,Es,It).gba
 5223F5AA,AWBP,04,NONE
 
+Worms Blast (World) (En,Fr,De,Es,It) (Evercade).gba
+55C25C4A,AWBP,04,NONE
+
 World Tennis Stars (USA).gba
 036E30B0,AWCE,04,NONE
 
 World Tennis Stars (Europe).gba
 B5830F5F,AWCP,04,NONE
 
-Travis Pastrana's Pro MotoX (USA, Europe) (Proto) (2002-12-12).gba
+Travis Pastrana's Pro MotoX (USA) (Proto) (2002-12-12).gba
 ECFE5F96,AWDE,04,NONE
 
 Wakeboarding Unleashed Featuring Shaun Murray (Europe).gba
@@ -4582,14 +5371,14 @@ Castleween (Europe) (En,Fr,De,Es,It).gba
 Wolfenstein 3D (USA, Europe).gba
 C4AA2B7B,AWOE,08,EEPROM_V120
 
+Winning Post for Game Boy Advance (Japan).gba
+5ADA60F6,AWPJ,04,FLASH_V121
+
 Winning Post for Game Boy Advance (Japan) (Rev 1).gba
 F6180AF5,AWPJ,04,FLASH_V123
 
 Winning Post for Game Boy Advance (Japan) (Rev 2).gba
 9FB4AF0A,AWPJ,04,FLASH_V124
-
-Winning Post for Game Boy Advance (Japan).gba
-5ADA60F6,AWPJ,04,FLASH_V121
 
 Wings (USA).gba
 49041BC8,AWQE,08,EEPROM_V122
@@ -4600,14 +5389,17 @@ Wings (Europe).gba
 Lu-Hai-Kong Dazhan (China) (Proto).gba
 E166E6ED,AWRC,08,FLASH_V121
 
-Advance Wars (USA) (Rev 1).gba
-26FD0FC9,AWRE,04,FLASH_V121
-
 Advance Wars (USA).gba
 DBEF116C,AWRE,04,FLASH_V121
 
+Advance Wars (USA) (Rev 1).gba
+26FD0FC9,AWRE,04,FLASH_V121
+
 Advance Wars (USA) (Virtual Console).gba
 BDE36F98,AWRE,04,FLASH_V121
+
+Wreckage (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+A155DF23,AWRE,01,NONE
 
 Advance Wars (Europe) (En,Fr,De,Es).gba
 66FB29E9,AWRP,08,FLASH_V121
@@ -4660,26 +5452,26 @@ ESPN Winter X-Games Snowboarding 2002 (Japan) (En).gba
 ESPN Winter X-Games Snowboarding 2 (Europe).gba
 CE62F1F4,AWXP,04,EEPROM_V122
 
-Worms World Party (USA) (En,Fr,De,Es,It).gba
+Worms - World Party (USA) (En,Fr,De,Es,It).gba
 E8789C18,AWYE,04,NONE
 
-Worms World Party (Europe) (En,Fr,De,Es,It).gba
+Worms - World Party (Europe) (En,Fr,De,Es,It).gba
 8EE32CBE,AWYP,04,NONE
-
-Wizardry Summoner (Japan) (Rev 1).gba
-B3C77A61,AWZJ,04,SRAM_F_V102
 
 Wizardry Summoner (Japan).gba
 71695A71,AWZJ,04,SRAM_F_V102
 
+Wizardry Summoner (Japan) (Rev 1).gba
+B3C77A61,AWZJ,04,SRAM_F_V102
+
 Dave Mirra Freestyle BMX 2 (USA).gba
 64B1E921,AX2E,08,EEPROM_V122
 
-Dave Mirra Freestyle BMX 2 (Europe) (En,Fr,De,Es,It) (Rev 1).gba
-8E39FEE9,AX2P,08,EEPROM_V124
-
 Dave Mirra Freestyle BMX 2 (Europe) (En,Fr,De,Es,It).gba
 69E89581,AX2P,08,EEPROM_V122
+
+Dave Mirra Freestyle BMX 2 (Europe) (En,Fr,De,Es,It) (Rev 1).gba
+8E39FEE9,AX2P,08,EEPROM_V124
 
 xXx (USA, Europe).gba
 2B3A2AB2,AX3E,08,EEPROM_V121
@@ -4687,14 +5479,20 @@ xXx (USA, Europe).gba
 xXx (France).gba
 44A77F71,AX3F,08,EEPROM_V121
 
-Super Mario Advance 4 - Super Mario Bros. 3 (USA, Australia) (Rev 1).gba
-88DAB27F,AX4E,04,FLASH1M_V102
-
 Super Mario Advance 4 - Super Mario Bros. 3 (USA).gba
 A44BA79F,AX4E,04,FLASH1M_V102
 
+Super Mario Advance 4 - Super Mario Bros. 3 (USA) (Rev 1) (Switch Online).gba
+22E12D0E,AX4E,08,FLASH1M_V102
+
 Super Mario Advance 4 - Super Mario Bros. 3 (USA) (Rev 1) (Virtual Console).gba
 D4C13AC3,AX4E,08,FLASH1M_V102
+
+Super Mario Advance 4 - Super Mario Bros. 3 (USA, Australia) (Rev 1).gba
+88DAB27F,AX4E,04,FLASH1M_V102
+
+Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan).gba
+F3C87306,AX4J,04,FLASH1M_V102
 
 Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan) (Rev 1).gba
 5A676424,AX4J,04,FLASH1M_V102
@@ -4702,17 +5500,20 @@ Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan) (Rev 1).gba
 Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan) (Rev 2).gba
 7B1A4C22,AX4J,04,FLASH1M_V102
 
-Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan).gba
-F3C87306,AX4J,04,FLASH1M_V102
+Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan) (Rev 2) (Switch Online).gba
+AA312980,AX4J,08,FLASH1M_V102
 
 Super Mario Advance 4 - Super Mario 3 + Mario Brothers (Japan) (Rev 2) (Virtual Console).gba
 4AEE9C77,AX4J,08,FLASH1M_V102
 
+Super Mario Advance 4 - Super Mario Bros. 3 (Europe) (En,Fr,De,Es,It).gba
+37141F32,AX4P,08,FLASH1M_V102
+
 Super Mario Advance 4 - Super Mario Bros. 3 (Europe) (En,Fr,De,Es,It) (Rev 1).gba
 8D84ACFC,AX4P,08,FLASH1M_V102
 
-Super Mario Advance 4 - Super Mario Bros. 3 (Europe) (En,Fr,De,Es,It).gba
-37141F32,AX4P,08,FLASH1M_V102
+Super Mario Advance 4 - Super Mario Bros. 3 (Europe) (En,Fr,De,Es,It) (Rev 1) (Switch Online).gba
+E3847E32,AX4P,08,FLASH1M_V102
 
 Super Mario Advance 4 - Super Mario Bros. 3 (Europe) (En,Fr,De,Es,It) (Rev 1) (Virtual Console).gba
 D4F45B01,AX4P,08,FLASH1M_V102
@@ -4738,13 +5539,13 @@ C05F9907,AXIP,04,NONE
 X-Men - Reign of Apocalypse (USA, Europe).gba
 25F43491,AXME,08,EEPROM_V121
 
-Pokemon - Saphir-Edition (Germany) (Rev 1).gba
-B0C40C7C,AXPD,16,FLASH1M_V103
-
 Pokemon - Saphir-Edition (Germany).gba
 6FCD7A98,AXPD,16,FLASH1M_V103
 
-Pokemon - Sapphire Version (USA, Australia).gba
+Pokemon - Saphir-Edition (Germany) (Rev 1).gba
+B0C40C7C,AXPD,16,FLASH1M_V103
+
+Pokemon - Sapphire Version (USA, Europe).gba
 554DEDC4,AXPE,16,FLASH1M_V103
 
 Pokemon - Sapphire Version (USA, Europe) (Rev 1).gba
@@ -4753,17 +5554,20 @@ BAFEDAE5,AXPE,16,FLASH1M_V103
 Pokemon - Sapphire Version (USA, Europe) (Rev 2).gba
 9CC4410E,AXPE,16,FLASH1M_V103
 
+Pokemon - Version Saphir (France).gba
+3581A05F,AXPF,16,FLASH1M_V103
+
 Pokemon - Version Saphir (France) (Rev 1).gba
 2AE49146,AXPF,16,FLASH1M_V103
 
-Pokemon - Version Saphir (France).gba
-3581A05F,AXPF,16,FLASH1M_V103
+Pokemon - Versione Zaffiro (Italy).gba
+0C7992A9,AXPI,16,FLASH1M_V103
 
 Pokemon - Versione Zaffiro (Italy) (Rev 1).gba
 5EFE4493,AXPI,16,FLASH1M_V103
 
-Pokemon - Versione Zaffiro (Italy).gba
-0C7992A9,AXPI,16,FLASH1M_V103
+Pocket Monsters - Sapphire (Japan).gba
+FD1EEB78,AXPJ,08,FLASH1M_V103
 
 Pocket Monsters - Sapphire (Japan) (Pokemon Box).gba
 9EAEA813,AXPJ,08,FLASH1M_V103
@@ -4771,14 +5575,11 @@ Pocket Monsters - Sapphire (Japan) (Pokemon Box).gba
 Pocket Monsters - Sapphire (Japan) (Rev 1).gba
 01BD60E3,AXPJ,08,FLASH1M_V103
 
-Pocket Monsters - Sapphire (Japan).gba
-FD1EEB78,AXPJ,08,FLASH1M_V103
+Pokemon - Edicion Zafiro (Spain).gba
+A04F5F0B,AXPS,16,FLASH1M_V103
 
 Pokemon - Edicion Zafiro (Spain) (Rev 1).gba
 F2C88931,AXPS,16,FLASH1M_V103
-
-Pokemon - Edicion Zafiro (Spain).gba
-A04F5F0B,AXPS,16,FLASH1M_V103
 
 Taxi 3 (France).gba
 2D2B0C11,AXQF,08,NONE
@@ -4795,11 +5596,11 @@ Super Street Fighter II X - Revival (Japan).gba
 Super Street Fighter II X - Revival (Japan) (Virtual Console).gba
 660C5754,AXRJ,08,EEPROM_V121
 
-Super Street Fighter II Turbo - Revival (Europe) (Rev 1).gba
-459600A9,AXRP,08,EEPROM_V121
-
 Super Street Fighter II Turbo - Revival (Europe).gba
 461B4590,AXRP,08,EEPROM_V121
+
+Super Street Fighter II Turbo - Revival (Europe) (Rev 1).gba
+459600A9,AXRP,08,EEPROM_V121
 
 Super Street Fighter II Turbo - Revival (Europe) (Rev 1) (Virtual Console).gba
 8D423E8D,AXRP,08,EEPROM_V121
@@ -4816,14 +5617,17 @@ ESPN X-Games Skateboarding (Europe) (En,Fr,De,Es,It).gba
 Island Xtreme Stunts (USA, Europe) (En,Fr,De,Es,It,Nl,Sv,Da).gba
 3BEB5446,AXTE,04,EEPROM_V122
 
+Pokemon - Rubin-Edition (Germany).gba
+15E1E280,AXVD,16,FLASH1M_V103
+
 Pokemon - Rubin-Edition (Germany) (Debug Version).gba
 40686C47,AXVD,16,FLASH1M_V103
 
 Pokemon - Rubin-Edition (Germany) (Rev 1).gba
 CAE89464,AXVD,16,FLASH1M_V103
 
-Pokemon - Rubin-Edition (Germany).gba
-15E1E280,AXVD,16,FLASH1M_V103
+Pokemon - Ruby Version (USA, Europe).gba
+F0815EE7,AXVE,16,FLASH1M_V103
 
 Pokemon - Ruby Version (USA, Europe) (Rev 1).gba
 61641576,AXVE,16,FLASH1M_V103
@@ -4831,20 +5635,20 @@ Pokemon - Ruby Version (USA, Europe) (Rev 1).gba
 Pokemon - Ruby Version (USA, Europe) (Rev 2).gba
 AEAC73E6,AXVE,16,FLASH1M_V103
 
-Pokemon - Ruby Version (USA).gba
-F0815EE7,AXVE,16,FLASH1M_V103
+Pokemon - Version Rubis (France).gba
+690FD310,AXVF,16,FLASH1M_V103
 
 Pokemon - Version Rubis (France) (Rev 1).gba
 9F981F72,AXVF,16,FLASH1M_V103
 
-Pokemon - Version Rubis (France).gba
-690FD310,AXVF,16,FLASH1M_V103
+Pokemon - Versione Rubino (Italy).gba
+C18231A9,AXVI,16,FLASH1M_V103
 
 Pokemon - Versione Rubino (Italy) (Rev 1).gba
 9305E793,AXVI,16,FLASH1M_V103
 
-Pokemon - Versione Rubino (Italy).gba
-C18231A9,AXVI,16,FLASH1M_V103
+Pocket Monsters - Ruby (Japan).gba
+CEE9471A,AXVJ,08,FLASH1M_V103
 
 Pocket Monsters - Ruby (Japan) (Pokemon Box).gba
 606C9ADB,AXVJ,08,FLASH1M_V103
@@ -4852,17 +5656,17 @@ Pocket Monsters - Ruby (Japan) (Pokemon Box).gba
 Pocket Monsters - Ruby (Japan) (Rev 1).gba
 B448A337,AXVJ,08,FLASH1M_V103
 
-Pocket Monsters - Ruby (Japan).gba
-CEE9471A,AXVJ,08,FLASH1M_V103
+Pokemon - Edicion Rubi (Spain).gba
+EB0729CF,AXVS,16,FLASH1M_V103
 
 Pokemon - Edicion Rubi (Spain) (Rev 1).gba
 B980FFF5,AXVS,16,FLASH1M_V103
 
-Pokemon - Edicion Rubi (Spain).gba
-EB0729CF,AXVS,16,FLASH1M_V103
-
 Santa Claus Jr. Advance (Europe).gba
 FE3E6769,AXXP,04,EEPROM_V122
+
+Santa Claus Jr. Advance (Europe) (Beta).gba
+38D896BD,AXXP,04,EEPROM_V122
 
 SSX Tricky (USA, Europe) (En,Fr,De).gba
 E0988123,AXYE,08,EEPROM_V120
@@ -4886,13 +5690,13 @@ Yu-Gi-Oh! Duel Monsters 6 Expert 2 (Japan).gba
 A7054D60,AY6J,16,SRAM_V112
 
 Yu-Gi-Oh! - The Sacred Cards (USA).gba
-141FB1CC,AY7E,16,SRAM_V112
+141FB1CC,AY7E,16,SRAM_F_V102
 
 Yu-Gi-Oh! Duel Monsters 7 - Kettou Toshi Densetsu (Japan).gba
-B9BE9B91,AY7J,16,SRAM_V112
+B9BE9B91,AY7J,16,SRAM_F_V102
 
 Yu-Gi-Oh! - The Sacred Cards (Europe) (En,Fr,De,Es,It).gba
-D19DB37C,AY7P,16,SRAM_V112
+D19DB37C,AY7P,16,SRAM_F_V102
 
 Yu-Gi-Oh! - Reshef of Destruction (USA).gba
 09E0C559,AY8E,16,SRAM_F_V102
@@ -4903,11 +5707,11 @@ Yu-Gi-Oh! Duel Monsters 8 - Hametsu no Daijashin (Japan).gba
 Yu-Gi-Oh! - Reshef of Destruction (Europe) (En,Fr,De,Es,It).gba
 460E073F,AY8P,16,SRAM_F_V102
 
-Dokodemo Taikyoku - Yakuman Advance (Japan) (Rev 1).gba
-A7279ED5,AYAJ,08,SRAM_F_V102
-
 Dokodemo Taikyoku - Yakuman Advance (Japan).gba
 C2424EDD,AYAJ,08,SRAM_F_V102
+
+Dokodemo Taikyoku - Yakuman Advance (Japan) (Rev 1).gba
+A7279ED5,AYAJ,08,SRAM_F_V102
 
 Backyard Basketball (USA).gba
 CBDA1D31,AYBE,04,EEPROM_V124
@@ -4939,6 +5743,9 @@ E99DE964,AYGE,08,EEPROM_V122
 Starsky & Hutch (USA).gba
 B3993252,AYHE,04,EEPROM_V122
 
+Starsky & Hutch (USA) (Beta) (2003-02-11).gba
+AB142D2E,AYHE,05,EEPROM_V122
+
 Starsky & Hutch (Europe) (En,Fr,De,Es,It).gba
 209958E5,AYHP,04,EEPROM_V122
 
@@ -4956,6 +5763,9 @@ E57C16F7,AYLJ,08,SRAM_F_V102
 
 SEGA Rally Championship (Europe).gba
 D125A6BB,AYLP,08,SRAM_F_V102
+
+SEGA Rally Championship (Europe) (Beta).gba
+D9F19D76,AYLP,08,SRAM_F_V102
 
 Tanbi Musou - Meine Liebe (Japan).gba
 2785CB89,AYMJ,08,SRAM_F_V100
@@ -4981,14 +5791,17 @@ Gakkou o Tsukurou!! Advance (Japan).gba
 Yu-Gi-Oh! - Worldwide Edition - Stairway to the Destined Duel (USA) (En,Ja,Fr,De,Es,It).gba
 39B5E771,AYWE,16,SRAM_V113
 
-Yu-Gi-Oh! Duel Monsters International - Worldwide Edition (Japan) (En,Ja,Fr,De,Es,It) (Rev 1).gba
-1BECF9D3,AYWJ,16,SRAM_V113
-
 Yu-Gi-Oh! Duel Monsters International - Worldwide Edition (Japan) (En,Ja,Fr,De,Es,It).gba
 98507497,AYWJ,16,SRAM_V112
 
+Yu-Gi-Oh! Duel Monsters International - Worldwide Edition (Japan) (En,Ja,Fr,De,Es,It) (Rev 1).gba
+1BECF9D3,AYWJ,16,SRAM_V113
+
 Yu-Gi-Oh! - Worldwide Edition - Stairway to the Destined Duel (Europe) (En,Ja,Fr,De,Es,It).gba
 ACA5FFC6,AYWP,16,SRAM_V112
+
+Rayman 3 (USA) (Beta).gba
+C3ADBC41,AYZE,16,EEPROM_V122
 
 Rayman 3 (USA) (En,Fr,Es).gba
 D1613266,AYZE,08,EEPROM_V122
@@ -4996,7 +5809,10 @@ D1613266,AYZE,08,EEPROM_V122
 Rayman 3 (Europe) (En,Fr,De,Es,It,Nl,Sv,No,Da,Fi).gba
 29F83314,AYZP,08,EEPROM_V122
 
-Zoids Legacy (USA).gba
+Rayman 3 (Europe) (En,Fr,De,Es,It,Nl,Sv,No,Da,Fi) (Beta).gba
+8F34B14F,AYZP,08,EEPROM_V122
+
+Zoids - Legacy (USA).gba
 302E75F3,AZ2E,08,SRAM_F_V103
 
 Zoids Saga II (Japan).gba
@@ -5005,20 +5821,20 @@ Zoids Saga II (Japan).gba
 Cyberdrive Zoids - Kijuu no Senshi Hyuu (Japan).gba
 0020A2ED,AZ3J,08,SRAM_V112
 
-Super Puzzle Fighter II (USA) (Rev 1).gba
-62066FC9,AZ8E,08,EEPROM_V122
-
 Super Puzzle Fighter II (USA).gba
 1201243A,AZ8E,08,EEPROM_V122
+
+Super Puzzle Fighter II (USA) (Rev 1).gba
+62066FC9,AZ8E,08,EEPROM_V122
 
 Super Puzzle Fighter II (Europe).gba
 AAC3E9CA,AZ8P,08,EEPROM_V122
 
-Simple 2960 Tomodachi Series Vol. 2 - The Block Kuzushi (Japan) (Rev 1).gba
-180901E3,AZ9J,04,EEPROM_V122
-
 Simple 2960 Tomodachi Series Vol. 2 - The Block Kuzushi (Japan).gba
 E731FD45,AZ9J,04,EEPROM_V122
+
+Simple 2960 Tomodachi Series Vol. 2 - The Block Kuzushi (Japan) (Rev 1).gba
+180901E3,AZ9J,04,EEPROM_V122
 
 Azumanga Daiou Advance (Japan).gba
 216704F6,AZAJ,08,EEPROM_V122
@@ -5026,13 +5842,13 @@ Azumanga Daiou Advance (Japan).gba
 Bass Tsuri Shiyouze! - Tournament wa Senryaku da! (Japan).gba
 1326E683,AZBJ,08,EEPROM_V122
 
-Mega Man Zero (USA, Europe).gba
-9707D2A1,AZCE,08,SRAM_V112
-
-Mega Man Zero (USA) (Virtual Console).gba
+Megaman Zero (USA) (Virtual Console).gba
 9C77209C,AZCE,08,SRAM_V112
 
-Zidane Football Generation 2002 (Europe) (En,Fr,De,Es,It).gba
+Megaman Zero (USA, Europe).gba
+9707D2A1,AZCE,08,SRAM_V112
+
+Zidane - Football Generation 2002 (Europe) (En,Fr,De,Es,It).gba
 59E2635F,AZDP,04,NONE
 
 Zone of the Enders - The Fist of Mars (USA).gba
@@ -5059,6 +5875,9 @@ B34A2071,AZHP,04,NONE
 Findet Nemo (Germany).gba
 6B6B0908,AZID,08,NONE
 
+Findet Nemo (Germany) (Beta).gba
+92197FBB,AZID,08,NONE
+
 Finding Nemo (USA, Europe).gba
 3B098667,AZIE,08,NONE
 
@@ -5077,14 +5896,14 @@ Dragon Ball Z - Bukuu Tougeki (Japan).gba
 Dragon Ball Z - Moogongtoogeuk (Korea).gba
 E4893DD7,AZJK,16,EEPROM_V124
 
+Dragon Ball Z - Supersonic Warriors (Europe) (En,Fr,De,Es,It).gba
+B4D9572C,AZJP,16,EEPROM_V124
+
 Dragon Ball Z - Supersonic Warriors (Europe) (En,Fr,De,Es,It) (Beta 1).gba
 73C132FE,AZJP,16,EEPROM_V122
 
 Dragon Ball Z - Supersonic Warriors (Europe) (En,Fr,De,Es,It) (Beta 2).gba
 F20C38D0,AZJP,16,EEPROM_V124
-
-Dragon Ball Z - Supersonic Warriors (Europe) (En,Fr,De,Es,It).gba
-B4D9572C,AZJP,16,EEPROM_V124
 
 Simple 2960 Tomodachi Series Vol. 1 - The Table Game Collection - Mahjong, Shougi, Hanafuda, Reversi (Japan).gba
 8B72BA3C,AZKJ,04,EEPROM_V122
@@ -5119,11 +5938,11 @@ Zapper (Europe) (En,Fr,De,Es,It).gba
 Treasure Planet (USA).gba
 8B14F9EC,AZQE,08,NONE
 
-Treasure Planet (Europe) (En,Fr,De,Es,It,Nl) (Rev 1).gba
-794B2602,AZQP,08,NONE
-
 Treasure Planet (Europe) (En,Fr,De,Es,It,Nl).gba
 D52DDCE1,AZQP,08,NONE
+
+Treasure Planet (Europe) (En,Fr,De,Es,It,Nl) (Rev 1).gba
+794B2602,AZQP,08,NONE
 
 Mr Nutz (Europe) (En,Fr,De,Es,It).gba
 7F21D693,AZRP,04,NONE
@@ -5147,25 +5966,28 @@ Waliou Zhizao (China).gba
 78A4D2D4,AZWC,08,SRAM_V113
 
 WarioWare, Inc. - Mega Microgame$! (USA).gba
-785D8B8C,AZWE,08,FLASH_IN_E
+785D8B8C,AZWE,08,SRAM_V112
+
+WarioWare, Inc. - Mega Microgame$! (USA) (Beta).gba
+EC0C0C58,AZWE,08,SRAM_V112
 
 WarioWare, Inc. - Mega Microgame$! (USA) (Virtual Console).gba
-B0182907,AZWE,08,FLASH_IN_E
-
-Made in Wario (Japan) (Demo) (Kiosk, GameCube).gba
-11FF7A67,AZWJ,08,SRAM_V112
+B0182907,AZWE,08,SRAM_V112
 
 Made in Wario (Japan).gba
 87A0EEA0,AZWJ,08,SRAM_V112
+
+Made in Wario (Japan) (Demo) (Kiosk, GameCube).gba
+11FF7A67,AZWJ,08,SRAM_V112
 
 Made in Wario (Japan) (Virtual Console).gba
 EE98906F,AZWJ,08,SRAM_V112
 
 WarioWare, Inc. - Minigame Mania (Europe) (En,Fr,De,Es,It).gba
-500CA178,AZWP,08,FLASH_IN_E
+500CA178,AZWP,08,SRAM_V112
 
 WarioWare, Inc. - Minigame Mania (Europe) (En,Fr,De,Es,It) (Virtual Console).gba
-1FE34E43,AZWP,08,FLASH_IN_E
+1FE34E43,AZWP,08,SRAM_V112
 
 Rocket Power - Zero Gravity Zone (USA).gba
 26D62D32,AZZE,08,NONE
@@ -5227,6 +6049,9 @@ AEF11223,B2DP,08,EEPROM_V124
 Dora the Explorer Double Pack (USA).gba
 1F9D002E,B2EE,08,NONE
 
+Dora the Explorer Double Pack (USA) (Beta).gba
+185F34F5,B2EE,08,NONE
+
 Family Feud (USA).gba
 EC36A3DF,B2FE,04,NONE
 
@@ -5241,6 +6066,9 @@ Totally Spies! 2 - Undercover (USA) (En,Fr).gba
 
 Totally Spies! 2 - Undercover (Europe) (En,Fr,De,Es,It,Nl).gba
 CA245559,B2LP,08,EEPROM_V124
+
+Totally Spies! 2 - Undercover (Europe) (En,Fr,De,Es,It,Nl) (Beta).gba
+5515C841,B2LP,08,EEPROM_V124
 
 Shaman King - Master of Spirits 2 (USA).gba
 201E3412,B2ME,16,SRAM_V113
@@ -5269,7 +6097,7 @@ Super Robot Taisen - Original Generation 2 (USA).gba
 Super Robot Taisen - Original Generation 2 (Japan).gba
 A608800F,B2RJ,16,FLASH512_V130
 
-Cinnamon Game Series 2 - Yume no Daibouken (Japan).gba
+Cinnamon - Yume no Daibouken (Japan).gba
 5A2CADA1,B2SJ,04,EEPROM_V124
 
 Tony Hawk's Underground 2 (USA, Europe).gba
@@ -5296,20 +6124,20 @@ Let's Ride! - Sunshine Stables (USA).gba
 Strawberry Shortcake - Summertime Adventure (USA).gba
 7FEC3419,B35E,04,NONE
 
-Strawberry Shortcake - Ice Cream Island - Riding Camp (Europe) (En,Fr,De,Es,It,Nl,Pt,Da) (Rev 1).gba
-F3F2E465,B35P,08,EEPROM_V124
-
 Strawberry Shortcake - Ice Cream Island - Riding Camp (Europe) (En,Fr,De,Es,It,Nl,Pt,Da).gba
 C40220CF,B35P,08,EEPROM_V124
+
+Strawberry Shortcake - Ice Cream Island - Riding Camp (Europe) (En,Fr,De,Es,It,Nl,Pt,Da) (Rev 1).gba
+F3F2E465,B35P,08,EEPROM_V124
 
 Dynasty Warriors Advance (USA).gba
 AD5A2A4E,B36E,16,SRAM_V113
 
-Shin Sangoku Musou Advance (Japan) (Rev 1).gba
-7CEDED10,B36J,16,SRAM_V113
-
 Shin Sangoku Musou Advance (Japan).gba
 FE1BE6C1,B36J,16,SRAM_V113
+
+Shin Sangoku Musou Advance (Japan) (Rev 1).gba
+7CEDED10,B36J,16,SRAM_V113
 
 Dynasty Warriors Advance (Europe) (En,Fr,De,Es,It).gba
 74CDB37A,B36P,16,SRAM_V113
@@ -5329,11 +6157,11 @@ B1D2896F,B3BP,04,NONE
 Summon Night - Craft Sword Monogatari - Hajimari no Ishi (Japan).gba
 12AFAE5D,B3CJ,32,EEPROM_V126
 
-Densetsu no Stafy 3 (Japan) (Rev 1).gba
-2D6E4C3B,B3DJ,16,SRAM_V113
-
 Densetsu no Stafy 3 (Japan).gba
 FCAF1AA8,B3DJ,16,SRAM_V113
+
+Densetsu no Stafy 3 (Japan) (Rev 1).gba
+2D6E4C3B,B3DJ,16,SRAM_V113
 
 Densetsu no Stafy 3 (Japan) (Rev 1) (Virtual Console).gba
 59CA95C6,B3DJ,16,SRAM_V113
@@ -5413,6 +6241,9 @@ Sonic Advance 3 (Japan) (En,Ja,Fr,De,Es,It) (Virtual Console).gba
 Sonic Advance 3 (Europe) (En,Ja,Fr,De,Es,It).gba
 5BF83456,B3SP,16,FLASH512_V131
 
+Sonic Advance 3 (Europe) (En,Ja,Fr,De,Es,It) (Beta).gba
+4C93DAC6,B3SP,16,FLASH512_V131
+
 Tales of the World - Narikiri Dungeon 3 (Japan).gba
 1867CCEF,B3TJ,16,EEPROM_V124
 
@@ -5440,7 +6271,7 @@ Global Star - Sudoku Fever (Europe) (En,Fr,De,Es,It).gba
 Kidou Senshi Gundam - Seed Destiny (Japan).gba
 AA250CCA,B42J,08,EEPROM_V124
 
-Cinnamon Game Series 3 - Fuwafuwa Daisakusen (Japan).gba
+Cinnamon - Fuwafuwa Daisakusen (Japan).gba
 A1CBA145,B43J,04,EEPROM_V124
 
 3 Games in 1 - Rugrats - I Gotta Go Party + SpongeBob SquarePants - SuperSponge + Tak and the Power of Juju (Europe) (En+En+En,Fr,De).gba
@@ -5449,22 +6280,25 @@ A1CBA145,B43J,04,EEPROM_V124
 Sims 2, The (USA, Europe) (En,Fr,De,Es,It,Nl).gba
 8B1BC7DF,B46E,32,FLASH512_V131
 
-Mega Man Battle Network 4 - Blue Moon (USA).gba
+Megaman - Battle Network 4 - Blue Moon (USA).gba
 758A46E9,B4BE,08,SRAM_V113
 
-Mega Man Battle Network 4 - Blue Moon (USA) (Virtual Console).gba
+Megaman - Battle Network 4 - Blue Moon (USA) (Virtual Console).gba
 739B7EC4,B4BE,08,SRAM_V113
 
 Rockman EXE 4 - Tournament Blue Moon (Japan).gba
 ED7C5B50,B4BJ,08,SRAM_V113
 
+Rockman EXE 4 - Tournament Blue Moon (Japan) (Rev 1).gba
+709BBF07,B4BJ,08,SRAM_V113
+
 Rockman EXE 4 - Tournament Blue Moon (Japan) (Rev 1) (Virtual Console).gba
 0A27789E,B4BJ,08,SRAM_V113
 
-Mega Man Battle Network 4 - Blue Moon (Europe).gba
+Megaman - Battle Network 4 - Blue Moon (Europe).gba
 48758316,B4BP,08,SRAM_V113
 
-Mega Man Battle Network 4 - Blue Moon (Europe) (Virtual Console).gba
+Megaman - Battle Network 4 - Blue Moon (Europe) (Virtual Console).gba
 AD89F27D,B4BP,08,SRAM_V113
 
 Sky Dancers - They Magically Fly! (USA).gba
@@ -5518,31 +6352,31 @@ E2EC9EED,B4UE,08,EEPROM_V124
 Shrek - Super Slam (Europe) (En,Fr,De,Es,It,Nl).gba
 DF73101E,B4UP,08,EEPROM_V124
 
-Mega Man Battle Network 4 - Red Sun (USA).gba
+Megaman - Battle Network 4 - Red Sun (USA).gba
 2120695C,B4WE,08,SRAM_V113
 
-Mega Man Battle Network 4 - Red Sun (USA) (Virtual Console).gba
+Megaman - Battle Network 4 - Red Sun (USA) (Virtual Console).gba
 12E7AB52,B4WE,08,SRAM_V113
-
-Rockman EXE 4 - Tournament Red Sun (Japan) (Rev 1).gba
-CF0E8B05,B4WJ,08,SRAM_V113
 
 Rockman EXE 4 - Tournament Red Sun (Japan).gba
 6A51907D,B4WJ,08,SRAM_V113
 
+Rockman EXE 4 - Tournament Red Sun (Japan) (Rev 1).gba
+CF0E8B05,B4WJ,08,SRAM_V113
+
 Rockman EXE 4 - Tournament Red Sun (Japan) (Rev 1) (Virtual Console).gba
 BFE9AC96,B4WJ,08,SRAM_V113
 
-Mega Man Battle Network 4 - Red Sun (Europe).gba
+Megaman - Battle Network 4 - Red Sun (Europe).gba
 0CB136C2,B4WP,08,SRAM_V113
 
-Mega Man Battle Network 4 - Red Sun (Europe) (Virtual Console).gba
+Megaman - Battle Network 4 - Red Sun (Europe) (Virtual Console).gba
 CB3BBF74,B4WP,08,SRAM_V113
 
-Mega Man Zero 4 (USA).gba
+Megaman Zero 4 (USA).gba
 7EE24793,B4ZE,16,EEPROM_V124
 
-Mega Man Zero 4 (USA) (Virtual Console).gba
+Megaman Zero 4 (USA) (Virtual Console).gba
 C4838CFA,B4ZE,16,EEPROM_V124
 
 Rockman Zero 4 (Japan).gba
@@ -5551,10 +6385,10 @@ ECE42D0E,B4ZJ,16,EEPROM_V124
 Rockman Zero 4 (Japan) (Virtual Console).gba
 41E7180E,B4ZJ,16,EEPROM_V124
 
-Mega Man Zero 4 (Europe).gba
+Megaman Zero 4 (Europe).gba
 B7F022B9,B4ZP,16,EEPROM_V124
 
-Mega Man Zero 4 (Europe) (Virtual Console).gba
+Megaman Zero 4 (Europe) (Virtual Console).gba
 FFDA95BE,B4ZP,16,EEPROM_V124
 
 Crash & Spyro Super Pack Volume 2 (Europe) (En,Fr,De,Es,It,Nl).gba
@@ -5575,16 +6409,16 @@ C89DEB4F,B55P,04,NONE
 Crash & Spyro Super Pack Volume 1 (Europe) (En,Fr,De,Es,It,Nl).gba
 D8382427,B5AP,16,EEPROM_V122
 
-Pocket Monster Pearl Tomodachi to Issho ni! Present Campaign Senyou Cartridge (Japan) [b].gba
-21E120BE,B5BJ,02,NONE
-
-Pokemon - Slot 2 Distribution (Japan) (En) (B5DJ).gba
+Pocket Monsters Diamond - Pocket Monsters Pearl - Manaphy Present Campaign Senyou Cartridge (Japan) (En).gba
 E31566CF,B5BJ,02,NONE
 
-Pokemon - Slot 2 Distribution (Japan) (Proto).gba
-E4D657EB,B5BJ,01,NONE
+Pocket Monsters Pearl - Tomodachi to Issho ni! - Present Campaign Senyou Cartridge (Japan) [b].gba
+21E120BE,B5BJ,02,NONE
 
-Pocket Monster Diamond Tomodachi to Issho Ni! Present Campaign Senyou Cartridge (Japan) [b].gba
+Pokemon - Slot 2 Distribution (Japan) (Proto).gba
+E4D657EB,B5BJ,02,NONE
+
+Pocket Monsters Diamond - Tomodachi to Issho ni! - Present Campaign Senyou Cartridge (Japan) [b].gba
 393A77E8,B5CJ,02,NONE
 
 Namco Museum - 50th Anniversary (USA).gba
@@ -5614,11 +6448,11 @@ F42B4E70,B64P,04,NONE
 Three-in-One Pack - Connect Four + Perfection + Trouble (USA).gba
 D482421E,B65E,04,NONE
 
-Three-in-One Pack - Risk + Battleship + Clue (USA) (Rev 1).gba
-15C24091,B66E,04,NONE
-
 Three-in-One Pack - Risk + Battleship + Clue (USA).gba
 F6F70922,B66E,04,NONE
+
+Three-in-One Pack - Risk + Battleship + Clue (USA) (Rev 1).gba
+15C24091,B66E,04,NONE
 
 Three-in-One Pack - Sorry! + Aggravation + Scrabble Junior (USA).gba
 111EB61A,B67E,04,NONE
@@ -5806,9 +6640,6 @@ C8C889E2,B8MP,16,EEPROM_V124
 Mario Party Advance (Europe) (En,Fr,De,Es,It) (Virtual Console).gba
 46C66F40,B8MP,16,EEPROM_V124
 
-Power Pro Kun Pocket 1, 2 (Japan) (Promo).gba
-46493FA1,B8PJ,08,SRAM_V112
-
 Power Pro Kun Pocket 1, 2 (Japan).gba
 A84032AA,B8PJ,08,SRAM_V112
 
@@ -5831,7 +6662,7 @@ Kunio-kun Nekketsu Collection 3 (Japan).gba
 093054FC,B9CJ,04,NONE
 
 Pokemon Mystery Dungeon - Red Rescue Team (USA) (Demo) (Kiosk).gba
-F12F908E,B9JE,16,FLASH_01
+F12F908E,B9JE,16,NONE
 
 Trick Star (Europe) (En,Fr,De,Es,It).gba
 961260AE,B9SP,04,EEPROM_V124
@@ -5853,6 +6684,12 @@ Aladdin (USA) (En,Fr,De,Es).gba
 
 Aladdin (Europe) (En,Fr,De,Es).gba
 594FBB7C,BADP,04,EEPROM_V122
+
+Bata Dubnos (World) (En,Fr) (Demo) (GBA Jam 2024) (Aftermarket) (Unl).gba
+F9370288,BADU,03,SRAM_V113
+
+Ace Combat Advance (Europe) (En,Fr,De,Es,It) (Beta).gba
+76DA5C78,BAEE,04,NONE
 
 Ace Combat Advance (USA, Europe).gba
 43F5E157,BAEE,04,NONE
@@ -5893,17 +6730,20 @@ Van Helsing (Europe) (En,Fr,De,Es,It).gba
 American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (En,Fr,De,Es,It).gba
 698377D2,BAPE,08,EEPROM_V124
 
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (En,Fr,De,Es,It) (Beta) (2006-04-25).gba
+BDCC074A,BAPE,08,EEPROM_V124
+
 Premier Action Soccer (Europe) (En,Fr,De,Es,It).gba
 B5432FA4,BAQP,08,EEPROM_V124
 
 2 Games in 1 - Moto GP + GT Advance 3 - Pro Concept Racing (Europe) (En,Fr,De,Es,It+En).gba
 51D6CEB0,BARP,16,EEPROM_V122
 
-Gakuen Alice - Dokidoki Fushigi Taiken (Japan) (Rev 1).gba
-8CB61158,BASJ,08,SRAM_V113
-
 Gakuen Alice - Dokidoki Fushigi Taiken (Japan).gba
 AAB51F8C,BASJ,08,SRAM_V113
+
+Gakuen Alice - Dokidoki Fushigi Taiken (Japan) (Rev 1).gba
+8CB61158,BASJ,08,SRAM_V113
 
 Batman - Rise of Sin Tzu (USA) (En,Fr,Es).gba
 EF3790D1,BATE,08,NONE
@@ -5929,11 +6769,11 @@ Animal Yokochou - Doki Doki Shinkyuu Shiken! no Maki (Japan).gba
 Animal Yokochou - Doki Doki Kyuushutsu Daisakusen! no Maki (Japan).gba
 D53C9438,BAYJ,16,SRAM_V113
 
-Aka-chan Doubutsuen (Japan) (Rev 1).gba
-C1072E26,BAZJ,04,EEPROM_V124
-
 Aka-chan Doubutsuen (Japan).gba
 B50CD166,BAZJ,04,EEPROM_V124
+
+Aka-chan Doubutsuen (Japan) (Rev 1).gba
+C1072E26,BAZJ,04,EEPROM_V124
 
 Beyblade G-Revolution (USA).gba
 33AFDBE8,BB2E,04,EEPROM_V124
@@ -5966,10 +6806,10 @@ Boboboubo Boubobo - 9 Kyoku Senshi Gag Yuugou (Japan).gba
 0BD9700B,BB9J,16,SRAM_V113
 
 Shamu's Deep Sea Adventures (USA).gba
-4E9426EB,BBAE,32,FLASH_ECLA
+7ECB7529,BBAE,32,EEPROM_V126
 
 Shamu's Deep Sea Adventures (Europe).gba
-5A507F49,BBAP,32,FLASH_ECLA
+5A507F49,BBAP,32,EEPROM_V126
 
 Back to Stone (USA) (En,Fr).gba
 4C29C9C8,BBCE,04,NONE
@@ -6025,7 +6865,7 @@ Battle B-Daman - Fire Spirits! (USA).gba
 B-Densetsu! Battle B-Daman - Fire Spirits! (Japan).gba
 EE41C0EB,BBMJ,08,EEPROM_V124
 
-Barbie as the Island Princess (USA).gba
+Barbie as The Island Princess (USA).gba
 DB6160EB,BBNE,08,EEPROM_V124
 
 Berenstain Bears and the Spooky Old Tree, The (USA).gba
@@ -6076,6 +6916,9 @@ Bibi Blocksberg - Der Magische Hexenkreis (Germany).gba
 Barnyard (USA).gba
 FF7987DA,BBYE,08,EEPROM_V124
 
+Barnyard (USA) (En,Fr,De,Es,It,Nl) (Beta).gba
+178CAE0D,BBYE,08,EEPROM_V124
+
 Barnyard (Europe) (En,Fr,De,Es,It,Nl).gba
 F2B06467,BBYX,08,EEPROM_V124
 
@@ -6091,7 +6934,7 @@ Crayon Shin-chan - Densetsu o Yobu Omake no Miyako Shockgaan! (Japan).gba
 Shin chan contra los Munecos de Shock Gahn (Spain).gba
 FD47A2FE,BC2S,16,EEPROM_V126
 
-CT Special Forces - Bioterror (Europe) (En,Fr,De,Es,It,Nl).gba
+CT Special Forces 3 - Bioterror (Europe) (En,Fr,De,Es,It,Nl).gba
 7DC40EDA,BC3P,08,NONE
 
 3 Game Pack! - Candy Land + Chutes and Ladders + Original Memory Game (USA).gba
@@ -6175,6 +7018,9 @@ BA511FB2,BCJE,16,EEPROM_V124
 Charlotte's Web (Europe) (En,Fr,De,Es,It).gba
 8658BB4F,BCJP,16,EEPROM_V124
 
+Star Wars Trilogy - Apprentice of the Force (USA) (Beta).gba
+B5D61C72,BCKE,08,EEPROM_V124
+
 Star Wars Trilogy - Apprentice of the Force (USA) (En,Fr,Es).gba
 714A0D3A,BCKE,08,EEPROM_V124
 
@@ -6247,11 +7093,11 @@ Duel Masters 2 - Invincible Advance (Japan).gba
 Dragon Quest Characters - Torneko no Daibouken 3 Advance - Fushigi no Dungeon (Japan).gba
 C891B2A0,BD3J,16,FLASH512_V131
 
-Crash Bandicoot Purple - Ripto's Rampage (USA) (Rev 1).gba
-3DDF07A1,BD4E,16,EEPROM_V124
-
 Crash Bandicoot Purple - Ripto's Rampage (USA).gba
 FC284E05,BD4E,16,EEPROM_V124
+
+Crash Bandicoot Purple - Ripto's Rampage (USA) (Rev 1).gba
+3DDF07A1,BD4E,16,EEPROM_V124
 
 Crash Bandicoot Fusion (Europe) (En,Fr,De,Es,It).gba
 F24C8E77,BD4P,16,EEPROM_V124
@@ -6271,6 +7117,9 @@ Kid Paddle (Europe) (Fr,Nl) (Beta 2) (2005-07-08).gba
 Duel Masters - Kaijudo Showdown (Europe) (En,Fr,De,Es,It).gba
 52E0AA95,BD6P,16,EEPROM_V124
 
+Duel Masters - Kaijudo Showdown (Europe) (En,Fr,De,Es,It) (Beta).gba
+84C579DD,BD6P,16,EEPROM_V124
+
 Proud Family, The (USA).gba
 C92BDE6E,BD7E,08,EEPROM_V124
 
@@ -6280,7 +7129,7 @@ Disney's Party (USA, Europe) (En,Fr,De,Es,It).gba
 Dragon Tales - Dragon Adventures (USA).gba
 8AF23450,BD9E,04,NONE
 
-Donchan Puzzle - Hanabi de Dohn! Advance (Japan).gba
+Don-chan Puzzle - Hanabi de Doon! Advance (Japan).gba
 500922E8,BDAJ,08,EEPROM_V124
 
 Dragon Ball Z - Taiketsu (USA).gba
@@ -6316,7 +7165,7 @@ DADD4C10,BDGE,08,EEPROM_V124
 Digimon Racing (Europe) (En,Fr,De,Es,It).gba
 4F1B0157,BDGP,08,EEPROM_V124
 
-Shin Megami Tensei Devil Children - Honoo no Sho (Japan).gba
+Shin Megami Tensei - Devil Children - Honoo no Sho (Japan).gba
 9A0903BC,BDHJ,08,SRAM_F_V103
 
 Koinu to Issho - Aijou Monogatari (Japan).gba
@@ -6326,9 +7175,9 @@ Digimon Racing (Japan).gba
 C50468A8,BDJJ,08,EEPROM_V124
 
 DigiCommunication Nyo - Datou! Black Gemagema Dan (Japan).gba
-1372E829,BDKJ,16,EEPROM_V124
+1372E829,BDKJ,16,SRAM_F_V103
 
-Shin Megami Tensei Devil Children - Messiah Riser (Japan).gba
+Shin Megami Tensei - Devil Children - Messiah Riser (Japan).gba
 0EC98C51,BDLJ,08,SRAM_V113
 
 Super Real Mahjong Dousoukai (Japan).gba
@@ -6373,11 +7222,11 @@ Downtown - Nekketsu Monogatari EX (Japan).gba
 Duel Masters - Shadow of the Code (USA).gba
 94D9053D,BDUE,16,EEPROM_V124
 
-Duel Masters 3 (Japan) (Rev 1).gba
-D2B9CFB6,BDUJ,08,SRAM_V113
-
 Duel Masters 3 (Japan).gba
 D65E3E03,BDUJ,08,SRAM_V113
+
+Duel Masters 3 (Japan) (Rev 1).gba
+D2B9CFB6,BDUJ,08,SRAM_V113
 
 Duel Masters - Shadow of the Code (Europe) (En,Fr,De,Es,It).gba
 9D429F3E,BDUP,16,EEPROM_V124
@@ -6394,13 +7243,16 @@ Dragon Ball - Advance Adventure (Korea).gba
 Dragon Ball - Advanced Adventure (Europe) (En,Fr,De,Es,It).gba
 6C135820,BDVP,16,EEPROM_V124
 
+Dragon Ball - Advanced Adventure (Europe) (En,Fr,De,Es,It) (Beta) (2005-02-25).gba
+2B136906,BDVP,16,EEPROM_V124
+
 Battle B-Daman (USA).gba
 6DCE8A26,BDXE,08,EEPROM_V124
 
 B-Densetsu! Battle B-Daman - Moero! B-Damashii!! (Japan).gba
 D6E4064F,BDXJ,08,EEPROM_V124
 
-Shin Megami Tensei Devil Children - Koori no Sho (Japan).gba
+Shin Megami Tensei - Devil Children - Koori no Sho (Japan).gba
 AD80D5F9,BDYJ,08,SRAM_F_V103
 
 2 Games in 1 - Die Monster AG + Findet Nemo (Germany).gba
@@ -6442,11 +7294,11 @@ Barbie and the Magic of Pegasus (USA).gba
 Barbie and the Magic of Pegasus (Europe) (En,Fr,De,Es,It,Nl).gba
 5661E71A,BE5P,04,NONE
 
-Fire Emblem - The Sacred Stones (USA, Australia).gba
-A47246AE,BE8E,16,SRAM_F_V103
-
 Fire Emblem - The Sacred Stones (USA) (Virtual Console).gba
 DEA3B767,BE8E,16,SRAM_F_V103
+
+Fire Emblem - The Sacred Stones (USA, Australia).gba
+A47246AE,BE8E,16,SRAM_F_V103
 
 Fire Emblem - Seima no Kouseki (Japan).gba
 9D76826F,BE8J,16,SRAM_F_V103
@@ -6460,10 +7312,10 @@ B3005195,BE8P,32,SRAM_F_V103
 Fire Emblem - The Sacred Stones (Europe) (En,Fr,De,Es,It) (Virtual Console).gba
 2653401A,BE8P,32,SRAM_F_V103
 
-Care Bears - The Care Quests (USA) (En,Fr,Es).gba
+Care Bears - The Care Quest (USA) (En,Fr,Es).gba
 F848C327,BEAE,04,EEPROM_V124
 
-Care Bears - The Care Quests (Europe) (En,Fr,De,Es,It,Nl,Pt,Da).gba
+Care Bears - The Care Quest (Europe) (En,Fr,De,Es,It,Nl,Pt,Da).gba
 6111ED1E,BEAP,04,EEPROM_V124
 
 Elf Bowling 1 & 2 (USA).gba
@@ -6482,10 +7334,10 @@ Maya the Bee - Sweet Gold (Europe) (En,Fr,De,Es,It).gba
 A75778C7,BEEP,04,EEPROM_V124
 
 Let's Ride! - Friends Forever (USA).gba
-8BDD13AD,BEFE,08,EEPROM_OK
+8BDD13AD,BEFE,08,EEPROM_V124
 
 Pferd & Pony - Best Friends - Mein Pferd (Germany) (En,De).gba
-AA02CB0C,BEFP,08,EEPROM_OK
+AA02CB0C,BEFP,08,EEPROM_V124
 
 Little Einsteins (USA).gba
 C8340B37,BEIE,08,NONE
@@ -6511,17 +7363,20 @@ BB05A63F,BENP,16,EEPROM_V124
 Dora the Explorer - Super Spies (USA).gba
 650FDFDB,BERE,04,NONE
 
-Extreme Skate Adventure (USA, Europe).gba
-AD7BB7C8,BESE,08,EEPROM_V122
-
 Extreme Skate Adventure (USA) (Rev 1).gba
 7A3EF446,BESE,08,EEPROM_V122
+
+Extreme Skate Adventure (USA, Europe).gba
+AD7BB7C8,BESE,08,EEPROM_V122
 
 Extreme Skate Adventure (Europe) (Fr,De).gba
 58594AE9,BESX,08,EEPROM_V122
 
 Atomic Betty (USA, Europe).gba
 8919D82C,BETE,08,NONE
+
+Atomic Betty (USA, Europe) (Beta).gba
+B79472B8,BETP,08,NONE
 
 everGirl (USA).gba
 AFBB1D35,BEVE,04,EEPROM_V124
@@ -6583,14 +7438,14 @@ C8CDB4ED,BFBP,32,SRAM_V113
 Fantastic Children (Japan).gba
 FEFE25BE,BFCJ,08,EEPROM_V124
 
+Fruits Mura no Doubutsu-tachi (Japan).gba
+EBF89B0D,BFDJ,08,EEPROM_V124
+
 Fruits Mura no Doubutsu-tachi (Japan) (Rev 1).gba
 AA14B198,BFDJ,08,EEPROM_V124
 
 Fruits Mura no Doubutsu-tachi (Japan) (Rev 2).gba
 195D7EA7,BFDJ,08,EEPROM_V124
-
-Fruits Mura no Doubutsu-tachi (Japan).gba
-EBF89B0D,BFDJ,08,EEPROM_V124
 
 Dogz - Fashion (USA).gba
 63BD3463,BFEE,08,EEPROM_V124
@@ -6631,11 +7486,11 @@ Franklin the Turtle (USA) (En,Fr,De,Es,It,Sv,No,Da,Fi).gba
 Franklin the Turtle (Europe) (En,Fr,De,Es,It,Sv,No,Da,Fi) (Rev 2).gba
 A0952CD0,BFKP,04,EEPROM_V124
 
-Franklin the Turtle (Europe) (En,Fr,De,It,Sv,No,Da,Fi) (Rev 1).gba
-1A2F7EE6,BFKP,04,EEPROM_V124
-
 Franklin the Turtle (Europe) (En,Fr,De,It,Sv,No,Da,Fi).gba
 17C48263,BFKP,04,EEPROM_V124
+
+Franklin the Turtle (Europe) (En,Fr,De,It,Sv,No,Da,Fi) (Rev 1).gba
+1A2F7EE6,BFKP,04,EEPROM_V124
 
 Franklin's Great Adventures (USA) (En,Fr,Es).gba
 7FBF8E98,BFLE,04,EEPROM_V124
@@ -6676,8 +7531,8 @@ DBDC71E3,BFTJ,16,FLASH1M_V102
 F-Zero - Climax (Japan) (Virtual Console).gba
 13E65EB4,BFTJ,16,FLASH1M_V102
 
-Fear Factor Unleashed (USA).gba
-1289639C,BFUE,08,EEPROM_V124
+Fear Factor - Unleashed (USA).gba
+BF91C27D,BFUE,08,EEPROM_V124
 
 Twin Series 1 - Mezase Debut! - Fashion Designer Monogatari + Kawaii Pet Game Gallery 2 (Japan).gba
 09F5E672,BFVJ,16,EEPROM_V124
@@ -6702,6 +7557,45 @@ D7C80592,BFYE,04,EEPROM_V124
 
 Foster's Home for Imaginary Friends (Europe).gba
 DEE47A85,BFYP,04,EEPROM_V124
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-09) (Netcard).gba
+C46FD22A,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-11) (Netcard).gba
+DEBC0ACB,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-15) (Netcard).gba
+7EC47244,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-16) (Netcard).gba
+AA522F27,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-17) (Netcard).gba
+E73C5F4A,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-18 02.40.54) (Netcard).gba
+27C8A067,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-18 23.00.14) (Netcard).gba
+6F7486D7,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-23) (Netcard).gba
+4D224E17,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-24) (Netcard).gba
+77C0C615,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-26) (Netcard).gba
+C77188B6,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-08-29) (Netcard).gba
+D329DF50,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-09-02 00.17.57) (Netcard).gba
+61F9DC0E,BFZE,16,SRAM_V113
+
+F-Zero - GP Legend (Unknown) (Proto) (2005-09-02 01.21.24) (Netcard).gba
+26358B01,BFZE,16,SRAM_V113
 
 F-Zero - GP Legend (USA).gba
 781AAB58,BFZE,16,SRAM_V113
@@ -6743,7 +7637,7 @@ Games Explosion! (USA).gba
 68D63D5F,BG7E,04,NONE
 
 Ganbare! Dodge Fighters (Japan).gba
-276E5814,BG8J,04,EEPROM_V124
+276E5814,BG8J,04,SRAM_F_V103
 
 Garfield and His Nine Lives (USA) (En,Fr,Es).gba
 D442F13D,BG9E,04,EEPROM_V124
@@ -6805,11 +7699,11 @@ Garfield - The Search for Pooky (USA) (En,Fr,De,Es,It).gba
 Garfield - The Search for Pooky (Europe) (En,Fr,De,Es,It) (Rev 2).gba
 0C3AA538,BGOP,08,NONE
 
-Garfield - The Search for Pooky (Europe) (En,Fr,De,It) (Rev 1).gba
-387EB638,BGOP,08,NONE
-
 Garfield - The Search for Pooky (Europe) (En,Fr,De,It).gba
 CE9291F1,BGOP,16,NONE
+
+Garfield - The Search for Pooky (Europe) (En,Fr,De,It) (Rev 1).gba
+387EB638,BGOP,08,NONE
 
 Get Ride! Amdriver - Shutsugeki! Battle Party (Japan).gba
 66D6E299,BGPJ,16,SRAM_V113
@@ -6841,6 +7735,9 @@ Gunstar Super Heroes (Japan).gba
 Konjiki no Gashbell!! - Unare! Yuujou no Zakeru 2 (Japan).gba
 B7827F20,BGYJ,16,EEPROM_V124
 
+Konjiki no Gashbell!! - Unare! Yuujou no Zakeru 2 (Japan) (Rev 1).gba
+F40E19A9,BGYJ,16,EEPROM_V124
+
 Madagascar (USA).gba
 7503F71B,BGZE,08,EEPROM_V124
 
@@ -6863,13 +7760,13 @@ Madagascar (Europe) (Fr,De,Pt).gba
 274C9135,BGZX,08,EEPROM_V124
 
 Hagane no Renkinjutsushi - Omoide no Sonata (Japan).gba
-C6144316,BH2J,08,EEPROM_INIT
+C6144316,BH2J,08,EEPROM_V124
 
 Happy Feet (USA) (En,Fr).gba
-682617CF,BH3E,32,EEPROM_V126
+98235433,BH3E,32,EEPROM_V126
 
 Happy Feet (Europe) (En,Fr,De,Es,It).gba
-7A53173C,BH3P,32,EEPROM_V126
+B8653E59,BH3P,32,EEPROM_V126
 
 Fantastic 4 - Flame On (USA).gba
 DDDE4295,BH4E,08,EEPROM_V124
@@ -6931,11 +7828,11 @@ F71761BA,BHBP,08,EEPROM_V124
 Hamster Monogatari Collection (Japan).gba
 35584EA6,BHCJ,08,EEPROM_V122
 
-Hello! Idol Debut - Kids Idol Ikusei Game (Japan) (Rev 1).gba
-40958C2C,BHDJ,08,EEPROM_V124
-
 Hello! Idol Debut - Kids Idol Ikusei Game (Japan).gba
 304BDFC3,BHDJ,08,EEPROM_V124
+
+Hello! Idol Debut - Kids Idol Ikusei Game (Japan) (Rev 1).gba
+40958C2C,BHDJ,08,EEPROM_V124
 
 Hot Wheels - Stunt Track Challenge (USA, Europe).gba
 D0AB6A37,BHEE,08,NONE
@@ -7141,17 +8038,17 @@ EECDD3EF,BIKJ,04,EEPROM_V124
 Bionicle - Maze of Shadows (USA).gba
 3FE09C34,BILE,08,EEPROM_V124
 
-Bionicle - Maze of Shadows (Europe) (En,De) (Rev 1).gba
-9D66EC5E,BILP,08,EEPROM_V124
-
 Bionicle - Maze of Shadows (Europe) (En,De).gba
 BCE2D68E,BILP,08,EEPROM_V124
 
-Dogz 2 (USA) (Rev 1).gba
-A0EBB191,BIME,16,EEPROM_V124
+Bionicle - Maze of Shadows (Europe) (En,De) (Rev 1).gba
+9D66EC5E,BILP,08,EEPROM_V124
 
 Dogz 2 (USA).gba
 0E2ACA9E,BIME,16,EEPROM_V124
+
+Dogz 2 (USA) (Rev 1).gba
+A0EBB191,BIME,16,EEPROM_V124
 
 Dogz 2 (Europe).gba
 28163523,BIMP,16,EEPROM_V124
@@ -7204,6 +8101,9 @@ Onmyou Taisenki - Zeroshiki (Japan).gba
 Ignition Collection - Volume 1 (Europe).gba
 164A75AC,BIVP,16,NONE
 
+Holy Bible, The - World English Bible (USA) (Proto).gba
+0152A619,BIWE,04,EEPROM_V124
+
 Calciobit (Japan).gba
 498443DA,BIXJ,08,FLASH1M_V102
 
@@ -7212,6 +8112,9 @@ AECD1301,BIYE,08,EEPROM_V124
 
 High School Musical - Livin' the Dream (USA).gba
 7B31D4DA,BJ2E,16,EEPROM_V124
+
+High School Musical - Livin' the Dream (USA) (Beta).gba
+C340D5F7,BJ2E,16,EEPROM_V124
 
 Zettaizetsumei Dangerous Jiisan 3 - Hateshinaki Mamonogatari (Japan).gba
 5BE52FB7,BJ3J,08,SRAM_V113
@@ -7231,6 +8134,9 @@ Moero!! Jaleco Collection (Japan).gba
 Dragon's Rock (Europe) (En,Fr,De,Es,It).gba
 F0CA6D70,BJDP,04,EEPROM_V124
 
+Glucoboy (Australia).gba
+6E2D7EFF,BJGE,16,EEPROM_V124
+
 Justice League Heroes - The Flash (USA).gba
 87A4D12C,BJHE,08,EEPROM_V124
 
@@ -7244,7 +8150,7 @@ Juka and the Monophonic Menace (Europe) (En,Fr,De,Es,It).gba
 E62BFFEB,BJKP,16,EEPROM_V124
 
 Justice League - Chronicles (USA).gba
-07090F67,BJLE,08,FLASH_BEHA
+07090F67,BJLE,08,EEPROM_V120
 
 Adventures of Jimmy Neutron Boy Genius, The - Jet Fusion (USA, Europe).gba
 67756000,BJNE,04,NONE
@@ -7266,6 +8172,24 @@ Tak and the Power of Juju (Europe) (En,Fr,De).gba
 
 Tak and the Power of Juju (Europe) (Es,It).gba
 4D0C3680,BJUX,08,EEPROM_V124
+
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (Beta) (2005-10-04).gba
+8DF1B63B,BJWE,08,EEPROM_V124
+
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (Beta) (2005-11-03).gba
+A9384458,BJWE,08,EEPROM_V124
+
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (Beta) (2005-11-28).gba
+DA9D458F,BJWE,08,EEPROM_V124
+
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (Beta) (2005-12-10).gba
+29AFE447,BJWE,08,EEPROM_V124
+
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (Beta) (2005-12-27).gba
+8F9253BB,BJWE,08,EEPROM_V124
+
+American Dragon - Jake Long - Rise of the Huntsclan (USA, Europe) (Beta) (2006-02-07).gba
+B96C5A0B,BJWE,05,EEPROM_V124
 
 Tak - The Great Juju Challenge (USA, Europe).gba
 881C8416,BJWE,08,EEPROM_V124
@@ -7306,11 +8230,11 @@ Kong - King of Atlantis (Europe).gba
 Kappa no Kai-kata - Kaatan Daibouken! (Japan).gba
 BF5F326E,BK8J,08,SRAM_V113
 
-Sennen Kazoku (Japan) (Rev 1).gba
-DCAAE075,BKAJ,16,FLASH1M_V102
-
 Sennen Kazoku (Japan).gba
 A2F6976C,BKAJ,16,FLASH1M_V102
+
+Sennen Kazoku (Japan) (Rev 1).gba
+DCAAE075,BKAJ,16,FLASH1M_V102
 
 Sennen Kazoku (Japan) (Rev 1) (Virtual Console).gba
 18C9DA4C,BKAJ,16,FLASH1M_V102
@@ -7355,13 +8279,13 @@ Minna no Shiiku Series - Boku no Kabuto, Kuwagata (Japan).gba
 20E296A6,BKKJ,08,EEPROM_V122
 
 Kim Possible 2 - Drakken's Demise (USA) (En,Fr).gba
-FA946FC6,BKME,08,EEPROM_V124
+FA946FC6,BKME,08,FLASH512_V131
 
 Kim Possible (Japan).gba
-69843F73,BKMJ,08,EEPROM_V124
+69843F73,BKMJ,08,FLASH512_V131
 
 Kim Possible 2 - Drakken's Demise (Europe) (En,Fr,De,Es).gba
-71C505C8,BKMP,08,EEPROM_V124
+71C505C8,BKMP,08,FLASH512_V131
 
 Knights' Kingdom (USA).gba
 88FE3F31,BKNE,04,NONE
@@ -7387,13 +8311,13 @@ King Kong - The Official Game of the Movie (Europe) (En,Sv,No,Da,Fi).gba
 No No No Puzzle Chailien (Japan).gba
 1B00BC2C,BKRJ,08,EEPROM_V124
 
-Cardcaptor Sakura - Sakura Card Hen - Sakura to Card to Otomodachi (Japan) (Rev 1).gba
-2C8488B2,BKSJ,16,EEPROM_V124
-
 Cardcaptor Sakura - Sakura Card Hen - Sakura to Card to Otomodachi (Japan).gba
 D5BB189C,BKSJ,16,EEPROM_V124
 
-Koutetsu Teikoku from HOT-B (Japan).gba
+Cardcaptor Sakura - Sakura Card Hen - Sakura to Card to Otomodachi (Japan) (Rev 1).gba
+2C8488B2,BKSJ,16,EEPROM_V124
+
+Koutetsu Teikoku (Japan).gba
 CDFAC4EE,BKTJ,04,EEPROM_V124
 
 Steel Empire (Europe).gba
@@ -7564,11 +8488,11 @@ AEABFA5F,BLWE,16,EEPROM_V124
 LEGO Star Wars - The Video Game (Japan).gba
 55A5AAF2,BLWJ,16,EEPROM_V124
 
-Asterix & Obelix XXL (Europe) (En,Fr,De,Es,It,Nl) (Beta 2).gba
-52824B58,BLXP,08,NONE
-
 Asterix & Obelix XXL (Europe) (En,Fr,De,Es,It,Nl).gba
 A9B1ECE5,BLXP,08,EEPROM_V124
+
+Asterix & Obelix XXL (Europe) (En,Fr,De,Es,It,Nl) (Beta 2).gba
+52824B58,BLXP,08,NONE
 
 Lemony Snicket - Raetselhafte Ereignisse (Germany).gba
 F7AC3D9E,BLYD,16,EEPROM_V124
@@ -7594,11 +8518,11 @@ EDB264B8,BM4J,08,EEPROM_V124
 Mario vs. Donkey Kong (USA, Australia).gba
 25C394D1,BM5E,16,FLASH512_V131
 
-Mario vs. Donkey Kong (Japan) (Demo) (Kiosk, GameCube).gba
-B3642431,BM5J,16,NONE
-
 Mario vs. Donkey Kong (Japan).gba
 7C2B5269,BM5J,16,FLASH512_V131
+
+Mario vs. Donkey Kong (Japan) (Demo) (Kiosk, GameCube).gba
+B3642431,BM5J,16,NONE
 
 Mario vs. Donkey Kong (Europe) (En,Fr,De,Es,It).gba
 CA030D61,BM5P,16,FLASH512_V131
@@ -7717,11 +8641,11 @@ Magical Quest 3 Starring Mickey & Donald (USA) (En,Fr,De).gba
 Magical Quest 3 Starring Mickey & Donald (Europe) (En,Fr,De).gba
 AAD912F9,BMQP,08,EEPROM_V124
 
-Matantei Loki Ragnarok - Gensou no Labyrinth (Japan) (Rev 1).gba
-D647AB18,BMRJ,08,EEPROM_V124
-
 Matantei Loki Ragnarok - Gensou no Labyrinth (Japan).gba
 4EBDAD86,BMRJ,08,EEPROM_V124
+
+Matantei Loki Ragnarok - Gensou no Labyrinth (Japan) (Rev 1).gba
+D647AB18,BMRJ,08,EEPROM_V124
 
 Monster Truck Madness (USA, Europe).gba
 DD872538,BMTE,04,EEPROM_V120
@@ -7732,17 +8656,17 @@ Scooby-Doo 2 - Monsters Unleashed (USA, Europe).gba
 Scooby-Doo 2 - Monsters Unleashed (Europe) (En,Fr,De,Es,It).gba
 7BDAB2CF,BMUX,08,NONE
 
-Mario Pinball Land (USA, Australia).gba
-70A6D2C1,BMVE,08,EEPROM_V124
-
 Mario Pinball Land (USA) (Kiosk, GameCube).gba
 799A1E40,BMVE,08,EEPROM_V124
 
-Super Mario Ball (Japan) (Demo) (Kiosk, GameCube).gba
-65B1D9CB,BMVE,08,EEPROM_V124
-
 Mario Pinball Land (USA) (Virtual Console).gba
 A0D418A4,BMVE,08,EEPROM_V124
+
+Mario Pinball Land (USA, Australia).gba
+70A6D2C1,BMVE,08,EEPROM_V124
+
+Super Mario Ball (Japan) (Demo) (Kiosk, GameCube).gba
+65B1D9CB,BMVE,08,EEPROM_V124
 
 Super Mario Ball (Japan).gba
 7EB4A336,BMVJ,08,EEPROM_V124
@@ -7765,6 +8689,9 @@ E951865C,BMXC,08,SRAM_V113
 Metroid - Zero Mission (USA).gba
 5C61A844,BMXE,08,SRAM_V113
 
+Metroid - Zero Mission (USA) (Beta).gba
+922C4A10,BMXE,16,SRAM_V113
+
 Metroid - Zero Mission (USA) (Virtual Console).gba
 8825294A,BMXE,08,SRAM_V113
 
@@ -7776,6 +8703,9 @@ Metroid - Zero Mission (Japan) (Virtual Console).gba
 
 Metroid - Zero Mission (Europe) (En,Fr,De,Es,It).gba
 F1D92E63,BMXP,08,SRAM_V113
+
+Metroid - Zero Mission (Europe) (En,Fr,De,Es,It) (Beta).gba
+B6438226,BMXP,16,SRAM_V113
 
 Metroid - Zero Mission (Europe) (En,Fr,De,Es,It) (Virtual Console).gba
 3AB66D36,BMXP,08,SRAM_V113
@@ -7801,7 +8731,7 @@ Kawa no Nushi Tsuri 3 & 4 (Japan).gba
 Kawa no Nushi Tsuri 3 & 4 (Japan) (Virtual Console).gba
 23D97A37,BN4J,04,SRAM_V113
 
-Need for Speed Carbon - Own the City (USA, Europe) (En,Fr,De,Es,It).gba
+Need for Speed - Carbon - Own the City (USA, Europe) (En,Fr,De,Es,It).gba
 F4C0D140,BN7E,08,EEPROM_V124
 
 Little Mermaid, The - Magic in Two Kingdoms (USA, Europe) (En,Fr,De,Es,It).gba
@@ -7810,11 +8740,11 @@ Little Mermaid, The - Magic in Two Kingdoms (USA, Europe) (En,Fr,De,Es,It).gba
 Petz Vet (USA).gba
 1DBF4D3D,BNBE,08,EEPROM_V124
 
-Himawari Doubutsu Byouin - Pet no Oishasan Ikusei Game (Japan) (Rev 1).gba
-526FDFFF,BNBJ,08,EEPROM_V124
-
 Himawari Doubutsu Byouin - Pet no Oishasan Ikusei Game (Japan).gba
 8EA9AFCC,BNBJ,08,EEPROM_V124
+
+Himawari Doubutsu Byouin - Pet no Oishasan Ikusei Game (Japan) (Rev 1).gba
+526FDFFF,BNBJ,08,EEPROM_V124
 
 Tim Burton's The Nightmare Before Christmas - The Pumpkin King (USA, Europe) (En,Fr,De,Es,It).gba
 3C247C14,BNCE,08,EEPROM_V124
@@ -7849,7 +8779,7 @@ AA2EB686,BNLE,08,NONE
 Ratatouille (Europe) (En,It,Sv,No,Da).gba
 82F9C596,BNLP,08,NONE
 
-Ratatouille (Greece) (En).gba
+Ratatouille (Australia, Greece) (En).gba
 3E1711C7,BNLU,08,NONE
 
 Ratatouille (Europe) (Fr,De,Nl).gba
@@ -7867,14 +8797,14 @@ B07CB7BA,BNPE,04,NONE
 Princess Natasha - Student, Secret Agent, Princess (Europe) (En,Fr,De,Es,It).gba
 E6567686,BNPP,04,NONE
 
+Naruto RPG - Uketsugareshi Hi no Ishi (Japan).gba
+C036D0F0,BNRJ,08,SRAM_V113
+
 Naruto RPG - Uketsugareshi Hi no Ishi (Japan) (Demo) (Kiosk, GameCube).gba
 502E4A7D,BNRJ,08,NONE
 
 Naruto RPG - Uketsugareshi Hi no Ishi (Japan) (Rev 1).gba
 2BF6555A,BNRJ,08,SRAM_V113
-
-Naruto RPG - Uketsugareshi Hi no Ishi (Japan).gba
-C036D0F0,BNRJ,08,SRAM_V113
 
 Need for Speed - Underground (USA, Europe) (En,Fr,De,It).gba
 828020E9,BNSE,08,EEPROM_V124
@@ -7886,10 +8816,10 @@ Teenage Mutant Ninja Turtles (Europe) (En,Fr,De,Es,It).gba
 15BDF0AD,BNTP,08,EEPROM_V122
 
 Nicktoons Unite! (USA).gba
-75C35F7C,BNUE,04,FLASH_TIME
+75C35F7C,BNUE,04,NONE
 
-SpongeBob SquarePants and Friends Unite! (Europe) (En,Fr,De,Es,It).gba
-611CC620,BNUP,04,FLASH_TIME
+SpongeBob SquarePants and Friends Unite! (Europe) (En,Fr,De,Es,Nl).gba
+611CC620,BNUP,04,NONE
 
 Nicktoons - Battle for Volcano Island (USA).gba
 FEAFBD72,BNVE,04,EEPROM_V124
@@ -7975,9 +8905,6 @@ Premier Manager 2004-2005 (Europe) (En,Fr,De,It).gba
 Premier Manager 2005-2006 (Europe) (En,Fr,De,It).gba
 3B04673B,BP5P,04,FLASH512_V131
 
-Power Pro Kun Pocket 6 (Japan) (Promo).gba
-023A9A75,BP6J,08,SRAM_V112
-
 Power Pro Kun Pocket 6 (Japan).gba
 88513763,BP6J,08,SRAM_V112
 
@@ -8003,7 +8930,7 @@ Pac-Man World (Europe) (En,Fr,De,Es,It).gba
 1F92814E,BPAP,08,EEPROM_V124
 
 Pyuu to Fuku! Jaguar - Byoo to Deru! Megane-kun (Japan).gba
-1F67BD36,BPBJ,08,SRAM_V113
+1F67BD36,BPBJ,08,SRAM_F_V103
 
 Ms. Pac-Man - Maze Madness (USA).gba
 DDE5DF02,BPCE,04,EEPROM_V124
@@ -8041,11 +8968,11 @@ Puyo Pop Fever (Europe) (En,Fr,De,Es,It).gba
 Pokemon - Blattgruene Edition (Germany).gba
 D12F1FDD,BPGD,16,FLASH1M_V103
 
+Pokemon - LeafGreen Version (USA, Europe).gba
+D69C96CC,BPGE,16,FLASH1M_V103
+
 Pokemon - LeafGreen Version (USA, Europe) (Rev 1).gba
 DAFFECEC,BPGE,16,FLASH1M_V103
-
-Pokemon - LeafGreen Version (USA).gba
-D69C96CC,BPGE,16,FLASH1M_V103
 
 Pokemon - Version Vert Feuille (France).gba
 BA3285E3,BPGF,16,FLASH1M_V103
@@ -8053,11 +8980,11 @@ BA3285E3,BPGF,16,FLASH1M_V103
 Pokemon - Versione Verde Foglia (Italy).gba
 16974506,BPGI,16,FLASH1M_V103
 
-Pocket Monsters - LeafGreen (Japan) (Rev 1).gba
-8DA4601A,BPGJ,16,FLASH1M_V103
-
 Pocket Monsters - LeafGreen (Japan).gba
 0A48556B,BPGJ,16,FLASH1M_V103
+
+Pocket Monsters - LeafGreen (Japan) (Rev 1).gba
+8DA4601A,BPGJ,16,FLASH1M_V103
 
 Pokemon - Edicion Verde Hoja (Spain).gba
 2CA11D59,BPGS,16,FLASH1M_V103
@@ -8083,11 +9010,11 @@ Payback (Europe) (En,Fr,De,Es,It).gba
 Archer Maclean's 3D Pool (USA).gba
 4202A9CD,BPLE,04,NONE
 
-Premier Manager 2003-04 (Europe) (En,Fr,De,It) (Rev 1).gba
-CA893BC4,BPMP,04,FLASH512_V131
-
 Premier Manager 2003-04 (Europe) (En,Fr,De,It).gba
 A959F638,BPMP,04,FLASH512_V131
+
+Premier Manager 2003-04 (Europe) (En,Fr,De,It) (Rev 1).gba
+CA893BC4,BPMP,04,FLASH512_V131
 
 Pikapika Nurse Monogatari - Nurse Ikusei Game (Japan).gba
 80A081FE,BPNJ,04,EEPROM_V124
@@ -8101,11 +9028,11 @@ Power Rangers - Dino Thunder (Europe) (Fr,De).gba
 Pokemon Pinball - Ruby & Sapphire (USA).gba
 B992A3C0,BPPE,08,SRAM_F_V102
 
-Pokemon Pinball - Ruby & Sapphire (Japan) (Rev 1).gba
-925A5684,BPPJ,08,SRAM_F_V102
-
 Pokemon Pinball - Ruby & Sapphire (Japan).gba
 8AF1EC73,BPPJ,08,SRAM_F_V102
+
+Pokemon Pinball - Ruby & Sapphire (Japan) (Rev 1).gba
+925A5684,BPPJ,08,SRAM_F_V102
 
 Pokemon Pinball - Ruby & Sapphire (Europe) (En,Fr,De,Es,It).gba
 A53AC14B,BPPP,16,SRAM_F_V102
@@ -8116,11 +9043,11 @@ B57FEC3A,BPQJ,04,EEPROM_V124
 Pokemon - Feuerrote Edition (Germany).gba
 1A81EEDF,BPRD,16,FLASH1M_V103
 
+Pokemon - FireRed Version (USA, Europe).gba
+DD88761C,BPRE,16,FLASH1M_V103
+
 Pokemon - FireRed Version (USA, Europe) (Rev 1).gba
 84EE4776,BPRE,16,FLASH1M_V103
-
-Pokemon - FireRed Version (USA).gba
-DD88761C,BPRE,16,FLASH1M_V103
 
 Pokemon - Version Rouge Feu (France).gba
 5DC668F6,BPRF,16,FLASH1M_V103
@@ -8128,11 +9055,11 @@ Pokemon - Version Rouge Feu (France).gba
 Pokemon - Versione Rosso Fuoco (Italy).gba
 73A72167,BPRI,16,FLASH1M_V103
 
-Pocket Monsters - FireRed (Japan) (Rev 1).gba
-BB640DF7,BPRJ,16,FLASH1M_V103
-
 Pocket Monsters - FireRed (Japan).gba
 3B2056E9,BPRJ,16,FLASH1M_V103
+
+Pocket Monsters - FireRed (Japan) (Rev 1).gba
+BB640DF7,BPRJ,16,FLASH1M_V103
 
 Pokemon - Edicion Rojo Fuego (Spain).gba
 9F08064E,BPRS,16,FLASH1M_V103
@@ -8176,11 +9103,11 @@ Power Rangers - Ninja Storm (Europe) (En,Fr,De).gba
 Polar Express, The (USA, Europe) (En,Fr,De,Es,It).gba
 62CA5620,BPXE,04,EEPROM_V124
 
-Prince of Persia - The Sands of Time (USA) (En,Fr,Es) (Rev 1).gba
-5ADF72E6,BPYE,08,EEPROM_V122
-
 Prince of Persia - The Sands of Time (USA) (En,Fr,Es).gba
 0C043BA6,BPYE,08,EEPROM_V122
+
+Prince of Persia - The Sands of Time (USA) (En,Fr,Es) (Rev 1).gba
+5ADF72E6,BPYE,08,EEPROM_V122
 
 Prince of Persia - The Sands of Time (Europe) (En,Fr,De,Es,It,Nl).gba
 F0F16B7E,BPYP,08,EEPROM_V122
@@ -8199,6 +9126,9 @@ SpongeBob SquarePants - Creature from the Krusty Krab (USA).gba
 
 SpongeBob SquarePants - Creature from the Krusty Krab (Europe) (En,Fr,De,Es,It,Nl,Sv,Da).gba
 7580FBD6,BQ4P,08,EEPROM_V124
+
+Drake & Josh (USA) (En,Fr) (Beta) (2007-01-23).gba
+E91E21F8,BQ7E,04,NONE
 
 Monster House (USA) (En,Fr).gba
 148B5072,BQ7E,08,EEPROM_V124
@@ -8253,6 +9183,12 @@ FDEC60EC,BQPE,08,EEPROM_V124
 
 SpongeBob SquarePants - Lights, Camera, Pants! (USA).gba
 23297579,BQQE,04,EEPROM_V124
+
+SpongeBob SquarePants - Lights, Camera, Pants! (USA) (Beta) (2005-08-03).gba
+52FD3771,BQQE,05,EEPROM_V124
+
+SpongeBob SquarePants - Lights, Camera, Pants! (USA) (Beta) (2005-08-05).gba
+E1461B58,BQQE,05,EEPROM_V122
 
 SpongeBob SquarePants - Lights, Camera, Pants! (Europe) (En,Fr,De,Es,It,Nl,Sv).gba
 C189013D,BQQX,08,EEPROM_V124
@@ -8314,10 +9250,10 @@ A646601B,BR4J,08,FLASH512_V131
 Rockman EXE 4.5 - Real Operation (Japan) (Virtual Console).gba
 9AD45607,BR4J,08,FLASH512_V131
 
-Mega Man Battle Network 6 - Cybeast Gregar (USA).gba
+Megaman - Battle Network 6 - Cybeast Gregar (USA).gba
 79452182,BR5E,08,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Gregar (USA) (Virtual Console).gba
+Megaman - Battle Network 6 - Cybeast Gregar (USA) (Virtual Console).gba
 E7E546FE,BR5E,08,SRAM_V113
 
 Rockman EXE 6 - Dennoujuu Gregar (Japan).gba
@@ -8326,16 +9262,16 @@ Rockman EXE 6 - Dennoujuu Gregar (Japan).gba
 Rockman EXE 6 - Dennoujuu Gregar (Japan) (Virtual Console).gba
 D0FDBEFB,BR5J,08,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Gregar (Europe).gba
+Megaman - Battle Network 6 - Cybeast Gregar (Europe).gba
 25C29EFB,BR5P,08,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Gregar (Europe) (Virtual Console).gba
+Megaman - Battle Network 6 - Cybeast Gregar (Europe) (Virtual Console).gba
 BB62F987,BR5P,08,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Falzar (USA).gba
+Megaman - Battle Network 6 - Cybeast Falzar (USA).gba
 DEE6F2A9,BR6E,08,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Falzar (USA) (Virtual Console).gba
+Megaman - Battle Network 6 - Cybeast Falzar (USA) (Virtual Console).gba
 C2A21BE3,BR6E,16,SRAM_V113
 
 Rockman EXE 6 - Dennoujuu Falzar (Japan).gba
@@ -8344,10 +9280,10 @@ Rockman EXE 6 - Dennoujuu Falzar (Japan).gba
 Rockman EXE 6 - Dennoujuu Falzar (Japan) (Virtual Console).gba
 36C9DD6F,BR6J,16,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Falzar (Europe).gba
+Megaman - Battle Network 6 - Cybeast Falzar (Europe).gba
 13183967,BR6P,08,SRAM_V113
 
-Mega Man Battle Network 6 - Cybeast Falzar (Europe) (Virtual Console).gba
+Megaman - Battle Network 6 - Cybeast Falzar (Europe) (Virtual Console).gba
 8104E85A,BR6P,16,SRAM_V113
 
 Rock'em Sock'em Robots (USA).gba
@@ -8368,10 +9304,10 @@ BF648E5C,BRAE,08,EEPROM_V124
 Racing Gears Advance (Europe) (En,Fr,De,Es,It).gba
 49A88E52,BRAP,08,EEPROM_V124
 
-Mega Man Battle Network 5 - Team Protoman (USA).gba
+Megaman - Battle Network 5 - Team Protoman (USA).gba
 A73E83A4,BRBE,08,SRAM_V113
 
-Mega Man Battle Network 5 - Team Proto Man (USA) (Virtual Console).gba
+Megaman - Battle Network 5 - Team Protoman (USA) (Virtual Console).gba
 A0911541,BRBE,08,SRAM_V113
 
 Rockman EXE 5 - Team of Blues (Japan).gba
@@ -8380,10 +9316,10 @@ C73F23C0,BRBJ,08,SRAM_V113
 Rockman EXE 5 - Team of Blues (Japan) (Virtual Console).gba
 B914DAAB,BRBJ,08,SRAM_V113
 
-Mega Man Battle Network 5 - Team Protoman (Europe).gba
+Megaman - Battle Network 5 - Team Protoman (Europe).gba
 79F45ED8,BRBP,08,SRAM_V113
 
-Mega Man Battle Network 5 - Team Proto Man (Europe) (Virtual Console).gba
+Megaman - Battle Network 5 - Team Protoman (Europe) (Virtual Console).gba
 7E5BC83D,BRBP,08,SRAM_V113
 
 Power Rangers S.P.D. (USA, Europe).gba
@@ -8398,11 +9334,11 @@ DCA64F27,BRDY,04,NONE
 Riviera - The Promised Land (USA).gba
 4FB6958D,BREE,32,SRAM_F_V103
 
-Riviera - Yakusoku no Chi Riviera (Japan) (Rev 1).gba
-146097F2,BREJ,16,SRAM_F_V103
-
 Riviera - Yakusoku no Chi Riviera (Japan).gba
 F73B840F,BREJ,16,SRAM_F_V103
+
+Riviera - Yakusoku no Chi Riviera (Japan) (Rev 1).gba
+146097F2,BREJ,16,SRAM_F_V103
 
 Rapala Pro Fishing (USA, Europe).gba
 964D39A7,BRFE,04,EEPROM_V124
@@ -8411,21 +9347,21 @@ Yu Yu Hakusho - Ghostfiles - Tournament Tactics (USA, Europe).gba
 AEF6B7CC,BRGE,08,EEPROM_V124
 
 Meet the Robinsons (USA).gba
-3787C93C,BRHE,08,FLASH_TIME
+3787C93C,BRHE,08,EEPROM_V124
 
 Meet the Robinsons (Europe) (En,Fr,De,Es,It,Nl).gba
-DF3E58D3,BRHP,08,FLASH_TIME
-
-Rhythm Tengoku (Japan) (Rev 1).gba
-A6CD88E1,BRIJ,16,SRAM_F_V110
+DF3E58D3,BRHP,08,EEPROM_V124
 
 Rhythm Tengoku (Japan).gba
 349D7025,BRIJ,16,SRAM_F_V110
 
-Mega Man Battle Network 5 - Team Colonel (USA).gba
+Rhythm Tengoku (Japan) (Rev 1).gba
+A6CD88E1,BRIJ,16,SRAM_F_V110
+
+Megaman - Battle Network 5 - Team Colonel (USA).gba
 A552F683,BRKE,08,SRAM_V113
 
-Mega Man Battle Network 5 - Team Colonel (USA) (Virtual Console).gba
+Megaman - Battle Network 5 - Team Colonel (USA) (Virtual Console).gba
 78DD4EDC,BRKE,08,SRAM_V113
 
 Rockman EXE 5 - Team of Colonel (Japan).gba
@@ -8434,11 +9370,14 @@ Rockman EXE 5 - Team of Colonel (Japan).gba
 Rockman EXE 5 - Team of Colonel (Japan) (Virtual Console).gba
 A6876EC7,BRKJ,08,SRAM_V113
 
-Mega Man Battle Network 5 - Team Colonel (Europe).gba
+Megaman - Battle Network 5 - Team Colonel (Europe).gba
 8FC8CF73,BRKP,08,SRAM_V113
 
-Mega Man Battle Network 5 - Team Colonel (Europe) (Virtual Console).gba
+Megaman - Battle Network 5 - Team Colonel (Europe) (Virtual Console).gba
 5247772C,BRKP,08,SRAM_V113
+
+Rebelstar - Tactical Command (Europe) (En,Fr,De,Es,It) (Beta).gba
+2189021C,BRLE,04,EEPROM_V124
 
 Rebelstar - Tactical Command (USA).gba
 FB6C590F,BRLE,04,EEPROM_V124
@@ -8500,6 +9439,9 @@ Racing Fever (France).gba
 Racing Fever (Europe) (En,De,Es,It).gba
 E40EC737,BRWP,04,NONE
 
+Racing Fever (World) (En,De,Es,It) (Evercade).gba
+DBD09923,BRWP,04,NONE
+
 Vattroller X - Taikenban (Japan) (Demo) (Kiosk, GameCube).gba
 BED622EC,BRXJ,08,SRAM_F_V103
 
@@ -8527,11 +9469,11 @@ A5E872D7,BRZD,16,NONE
 Simple 2960 Tomodachi Series Vol. 3 - The Itsudemo Puzzle - Massugu Soroete Straws (Japan).gba
 49B92627,BS3J,04,EEPROM_V124
 
-Simple 2960 Tomodachi Series Vol. 4 - The Trump - Minna de Asoberu 12 Shurui no Trump Game (Japan) (Rev 1).gba
-07C2D7ED,BS4J,04,EEPROM_V124
-
 Simple 2960 Tomodachi Series Vol. 4 - The Trump - Minna de Asoberu 12 Shurui no Trump Game (Japan).gba
 A6FC701F,BS4J,04,EEPROM_V124
+
+Simple 2960 Tomodachi Series Vol. 4 - The Trump - Minna de Asoberu 12 Shurui no Trump Game (Japan) (Rev 1).gba
+07C2D7ED,BS4J,04,EEPROM_V124
 
 Sylvanian Families - Yousei no Stick to Fushigi no Ki - Marron-inu no Onnanoko (Japan).gba
 00911694,BS5J,08,EEPROM_V122
@@ -8575,17 +9517,17 @@ AC1D8C97,BSEX,08,EEPROM_V124
 Sylvanian Families - Fashion Designer ni Naritai! - Kurumi-risu no Onnanoko (Japan).gba
 58DC532E,BSFJ,08,EEPROM_V124
 
-Minna no Soft Series - Minna no Shougi (Japan) (Rev 1).gba
-C62C15C6,BSGJ,04,EEPROM_V124
-
 Minna no Soft Series - Minna no Shougi (Japan).gba
 08B62391,BSGJ,04,EEPROM_V124
 
-Minna no Soft Series - Shanghai (Japan) (Rev 1).gba
-28A8DC30,BSHJ,04,EEPROM_V124
+Minna no Soft Series - Minna no Shougi (Japan) (Rev 1).gba
+C62C15C6,BSGJ,04,EEPROM_V124
 
 Minna no Soft Series - Shanghai (Japan).gba
 FEEFEDDC,BSHJ,04,EEPROM_V122
+
+Minna no Soft Series - Shanghai (Japan) (Rev 1).gba
+28A8DC30,BSHJ,04,EEPROM_V124
 
 Shrek 2 - Beg for Mercy (USA, Europe).gba
 F1861610,BSIE,08,EEPROM_V124
@@ -8614,11 +9556,11 @@ Metal Slug Advance (Japan).gba
 Metal Slug Advance (Europe).gba
 3806F4AE,BSMP,08,EEPROM_V124
 
-SpongeBob SquarePants Movie, The (USA) (Beta 2).gba
-E1068687,BSNE,08,NONE
-
 SpongeBob SquarePants Movie, The (USA).gba
 3622DA11,BSNE,08,NONE
+
+SpongeBob SquarePants Movie, The (USA) (Beta 2).gba
+E1068687,BSNE,08,NONE
 
 SpongeBob SquarePants Movie, The (Europe) (En,Fr,De,Es,It,Nl).gba
 5D9D52DE,BSNX,08,NONE
@@ -8650,11 +9592,11 @@ Wade Hixton's Counter Punch (USA, Europe).gba
 Spy Muppets - License to Croak (USA) (En,Fr,De,Es,It,Nl).gba
 848F9D42,BSSE,08,NONE
 
-Spyro Orange - The Cortex Conspiracy (USA) (Rev 1).gba
-BBF2549D,BSTE,16,EEPROM_V124
-
 Spyro Orange - The Cortex Conspiracy (USA).gba
 A9915BAF,BSTE,16,EEPROM_V124
+
+Spyro Orange - The Cortex Conspiracy (USA) (Rev 1).gba
+BBF2549D,BSTE,16,EEPROM_V124
 
 Spyro Fusion (Europe) (En,Fr,De,Es,It).gba
 E53BA082,BSTP,16,EEPROM_V124
@@ -8714,10 +9656,10 @@ Trollz - Hair Affair! (Europe).gba
 3E0ED609,BT6P,08,EEPROM_V124
 
 Trollz - Hair Affair! (Europe) (En,Fr,Es).gba
-14FEA5C0,BT6X,08,EEPROM_TROL
+14FEA5C0,BT6X,08,EEPROM_V124
 
 Trollz - Hair Affair! (Europe) (En,De,It).gba
-FB2284EF,BT6Y,08,EEPROM_TROL
+FB2284EF,BT6Y,08,EEPROM_V124
 
 Tonka - On the Job (USA).gba
 DBCD4541,BT7E,04,NONE
@@ -8748,6 +9690,9 @@ F09B7BB0,BTBE,04,NONE
 
 Titeuf - Mega Compet (France).gba
 FFD0A045,BTCF,04,NONE
+
+Titeuf - Mega Compet (France) (Beta).gba
+C9BE7FCF,BTCF,04,NONE
 
 Pocket Dogs (USA).gba
 BEDDC67F,BTDE,08,EEPROM_V124
@@ -8782,11 +9727,11 @@ B5F7BF43,BTJP,04,EEPROM_V124
 Minna no Soft Series - Happy Trump 20 (Japan).gba
 D0EF2BC4,BTLJ,04,EEPROM_V124
 
-Mario Tennis - Power Tour (USA, Australia) (En,Fr,De,Es,It).gba
-DA192D29,BTME,16,SRAM_V113
-
 Mario Tennis - Power Tour (USA) (En,Fr,De,Es,It) (Virtual Console).gba
 F763EECC,BTME,16,SRAM_V113
+
+Mario Tennis - Power Tour (USA, Australia) (En,Fr,De,Es,It).gba
+DA192D29,BTME,16,SRAM_V113
 
 Mario Tennis Advance (Japan).gba
 975E8D98,BTMJ,16,SRAM_V113
@@ -8821,11 +9766,11 @@ Tower SP, The (USA).gba
 Tower SP, The (Japan).gba
 EC325C92,BTRJ,08,FLASH512_V130
 
-Minna no Soft Series - Tetris Advance (Japan) (Rev 1).gba
-524D0749,BTTJ,04,EEPROM_V124
-
 Minna no Soft Series - Tetris Advance (Japan).gba
 67C92883,BTTJ,04,EEPROM_V124
+
+Minna no Soft Series - Tetris Advance (Japan) (Rev 1).gba
+524D0749,BTTJ,04,EEPROM_V124
 
 Totally Spies! (USA).gba
 AAA6E141,BTUE,08,EEPROM_V124
@@ -8854,6 +9799,42 @@ BD5F5F4C,BTZP,04,EEPROM_V124
 Unfabulous (USA).gba
 2547F3A1,BU4E,04,NONE
 
+Unfabulous (USA) (Beta) (2006-01-10).gba
+CBBE4A57,BU4E,02,EEPROM_V124
+
+Unfabulous (USA) (Beta) (2006-03-03).gba
+BC86EEC8,BU4E,02,EEPROM_V124
+
+Unfabulous (USA) (Beta) (2006-03-24T1132).gba
+0845BE78,BU4E,02,EEPROM_V124
+
+Unfabulous (USA) (Beta) (2006-03-24T1206).gba
+662F11D0,BU4E,02,EEPROM_V124
+
+Unfabulous (USA) (Beta) (2006-04-21).gba
+057E4BBC,BU4E,03,NONE
+
+Unfabulous (USA) (Beta) (2006-05-12).gba
+F52E65E2,BU4E,04,NONE
+
+Unfabulous (USA) (Beta) (2006-06-09).gba
+D4EA1AF8,BU4E,05,NONE
+
+Unfabulous (USA) (Beta) (2006-07-13).gba
+76589323,BU4E,05,NONE
+
+Unfabulous (USA) (Beta) (2006-07-14).gba
+E0C3E150,BU4E,05,NONE
+
+Unfabulous (USA) (Beta) (2006-07-15).gba
+1C85D06E,BU4E,04,NONE
+
+Unfabulous (USA) (Beta) (2006-07-17).gba
+77A0663D,BU4E,04,NONE
+
+Unfabulous (USA) (Beta) (2006-07-20).gba
+D3E36338,BU4E,05,NONE
+
 Uno 52 (USA).gba
 C659C6DB,BU5E,04,NONE
 
@@ -8872,14 +9853,14 @@ A3EED091,BU7P,32,EEPROM_V126
 Ultimate Puzzle Games (USA).gba
 A13F76A5,BUAE,04,EEPROM_V124
 
-Ultimate Card Games (USA, Europe).gba
-8A0831BD,BUCE,04,EEPROM_V124
-
 Ultimate Card Games (USA) (Rev 1).gba
 300F5D25,BUCE,04,EEPROM_V124
 
 Ultimate Card Games (USA) (Rev 2).gba
 94863423,BUCE,04,EEPROM_V124
+
+Ultimate Card Games (USA, Europe).gba
+8A0831BD,BUCE,04,EEPROM_V124
 
 Konjiki no Gashbell!! Yuujou no Zakeru - Dream Tag Tournament (Japan).gba
 FB5516AD,BUDJ,16,EEPROM_V124
@@ -8897,12 +9878,12 @@ Danny Phantom - The Ultimate Enemy (Europe) (En,De,Es).gba
 280587F2,BUFE,16,EEPROM_V124
 
 Ueki no Housoku - Jingi Sakuretsu! Nouryokusha Battle (Japan).gba
-ED368EF1,BUHJ,08,EEPROM_V124
+ED368EF1,BUHJ,08,FLASH512_V131
 
-Uno Free Fall (USA).gba
+Uno - Free Fall (USA).gba
 19FCC78E,BUIE,04,NONE
 
-Uno Free Fall (Europe) (En,Fr,De,Es,It).gba
+Uno - Free Fall (Europe) (En,Fr,De,Es,It).gba
 414EA9F4,BUIP,04,NONE
 
 Nicktoons - Attack of the Toybots (USA).gba
@@ -8951,7 +9932,7 @@ Ultra Keibitai - Monster Attack (Japan).gba
 C03785C7,BUTJ,08,FLASH512_V131
 
 Pokemon - 10th Anniversary Distribution (Europe) (Kiosk).gba
-7E3BA6A2,BUUJ,04,FLASH1M_V10
+7E3BA6A2,BUUJ,04,NONE
 
 Pokemon - 10th Anniversary Distribution (France) (Kiosk).gba
 6AA7AA37,BUUJ,04,NONE
@@ -8980,7 +9961,7 @@ D111CC19,BUUJ,04,FLASH1M_V102
 Pokemon - Aura Mew Distribution (Spain) (Kiosk).gba
 AE57B39E,BUUJ,04,FLASH1M_V102
 
-Pokemon - Doel Deoxys Distribution (Netherlands) (En) (Kiosk).gba
+Pokemon - Doel Deoxys Distribution (Netherlands) (Ja) (Kiosk).gba
 6346FD59,BUUJ,04,FLASH1M_V102
 
 Uchuu no Stellvia (Japan).gba
@@ -8989,11 +9970,11 @@ A00A4530,BUVJ,08,SRAM_V113
 Ultimate Winter Games (USA).gba
 95988EE2,BUWE,08,NONE
 
-Bibi und Tina - Ferien auf dem Martinshof (Germany) (Rev 1).gba
-FD8C06EE,BUXD,16,EEPROM_V124
-
 Bibi und Tina - Ferien auf dem Martinshof (Germany).gba
 95A19C3C,BUXD,16,EEPROM_V124
+
+Bibi und Tina - Ferien auf dem Martinshof (Germany) (Rev 1).gba
+FD8C06EE,BUXD,16,EEPROM_V124
 
 Ant Bully, The (USA) (En,Fr).gba
 8D51A101,BUYE,08,EEPROM_V124
@@ -9088,11 +10069,11 @@ Majokko Cream-chan no Gokko Series 1 - Wannyan Idol Gakuen (Japan).gba
 Double Game! - Golden Nugget Casino & Texas Hold 'em Poker (Europe).gba
 CFF20829,BWCP,08,NONE
 
-Wannyan Doubutsu Byouin - Doubutsu no Oishasan Ikusei Game (Japan) (Rev 1).gba
-B12D2724,BWDJ,04,EEPROM_V122
-
 Wannyan Doubutsu Byouin - Doubutsu no Oishasan Ikusei Game (Japan).gba
 6DE82857,BWDJ,04,EEPROM_V122
+
+Wannyan Doubutsu Byouin - Doubutsu no Oishasan Ikusei Game (Japan) (Rev 1).gba
+B12D2724,BWDJ,04,EEPROM_V122
 
 Whac-A-Mole (USA).gba
 E58EF9A2,BWEE,08,EEPROM_V124
@@ -9122,7 +10103,7 @@ Wanko de Kururin! Wancle (Japan).gba
 E93F547B,BWKJ,08,EEPROM_V124
 
 Wild, The (USA, Europe) (En,Fr,De,Es).gba
-DE79EDC3,BWLE,08,FLASH_TIME
+DE79EDC3,BWLE,08,EEPROM_V124
 
 Wanwan Meitantei (Japan).gba
 5F41C9FE,BWMJ,08,EEPROM_V124
@@ -9142,11 +10123,11 @@ F9EC06A9,BWQE,08,NONE
 Double Game! - Quad Desert Fury & Monster Trucks (Europe).gba
 0DB22E8C,BWQP,08,NONE
 
+World Reborn (USA) (Aftermarket) (Unl).gba
+EEFB32FF,BWRE,04,NONE
+
 World Reborn (USA) (Proto).gba
 4C48EBB3,BWRE,04,NONE
-
-World Reborn (World) (Aftermarket) (Unl).gba
-EEFB32FF,BWRE,04,NONE
 
 Shaman King - Legacy of the Spirits - Sprinting Wolf (USA).gba
 FA1AA3F6,BWSE,16,SRAM_F_V103
@@ -9156,6 +10137,9 @@ CA4F6D5D,BWTP,08,EEPROM_V124
 
 Wilden Fussball-Kerle, Die - Entscheidung im Teufelstopf (Germany).gba
 C8C12090,BWUD,16,NONE
+
+Forever RPG (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+C85B392B,BWVC,03,SRAM_V113
 
 WinX Club - Quest for the Codex (USA).gba
 29DFFF34,BWVE,08,EEPROM_V124
@@ -9199,7 +10183,7 @@ Rayman - 10th Anniversary (Europe) (En,Fr,De,Es,It,Nl,Sv,No,Da,Fi).gba
 Texas Hold 'em Poker (Europe) (Rev 1).gba
 1A13DF6B,BXAE,04,NONE
 
-Texas Hold 'em Poker (USA, Europe).gba
+Texas Hold 'em Poker (USA).gba
 78B59AAC,BXAE,04,NONE
 
 3 Game Pack! - Ker Plunk! + Toss Across + Tip It (USA).gba
@@ -9304,14 +10288,17 @@ Backyard Hockey (USA).gba
 Yu-Gi-Oh! Duel Monsters International 2 (Japan) (En,Ja).gba
 6DCFB879,BYIJ,16,SRAM_V113
 
-Kid Paddle (Europe) (Fr,Nl) (Beta 3).gba
-5AB5A26A,BYLP,08,EEPROM_V124
-
 Kid Paddle (Europe) (Fr,Nl).gba
 69951AA9,BYLP,08,EEPROM_V124
 
+Kid Paddle (Europe) (Fr,Nl) (Beta 3).gba
+5AB5A26A,BYLP,08,EEPROM_V124
+
 Monster Trucks Mayhem (USA).gba
 F47C5CF9,BYME,04,NONE
+
+2K Sports - Major League Baseball 2K7 (USA) (Beta).gba
+EA51532D,BYMP,08,NONE
 
 Monster Trucks Mayhem (Europe) (En,Fr,De,Es,It).gba
 31500381,BYMP,04,NONE
@@ -9341,7 +10328,7 @@ Yggdra Union - We'll Never Fight Alone (Europe).gba
 2931D6A8,BYUP,32,EEPROM_V126
 
 Yu-Gi-Oh! Double Pack 2 (USA) (En,Fr,De,Es,It).gba
-9CED2D3F,BYVE,32,SRAM_V113
+9CED2D3F,BYVE,32,SRAM_F_V103
 
 Yu-Gi-Oh! - World Championship Tournament 2004 (USA) (En,Ja,Fr,De,Es,It).gba
 69B6F229,BYWE,16,SRAM_V113
@@ -9361,10 +10348,10 @@ Yu Yu Hakusho - Ghostfiles - Spirit Detective (Europe) (En,Fr,De,Es,It).gba
 Zettaizetsumei Dangerous Jiisan Tsuu - Ikari no Oshioki Blues (Japan).gba
 99273EE3,BZ2J,08,SRAM_V113
 
-Mega Man Zero 3 (USA).gba
+Megaman Zero 3 (USA).gba
 2784F3F2,BZ3E,08,SRAM_V113
 
-Mega Man Zero 3 (USA) (Virtual Console).gba
+Megaman Zero 3 (USA) (Virtual Console).gba
 CBD24AC4,BZ3E,16,SRAM_V113
 
 Rockman Zero 3 (Japan).gba
@@ -9373,20 +10360,20 @@ Rockman Zero 3 (Japan).gba
 Rockman Zero 3 (Japan) (Virtual Console).gba
 C0EE255F,BZ3J,08,SRAM_V113
 
-Mega Man Zero 3 (Europe).gba
+Megaman Zero 3 (Europe).gba
 B099577F,BZ3P,08,SRAM_V113
 
-Mega Man Zero 3 (Europe) (Virtual Console).gba
+Megaman Zero 3 (Europe) (Virtual Console).gba
 87E8656E,BZ3P,08,SRAM_V113
 
 Final Fantasy IV Advance (USA).gba
 FEEEBDE4,BZ4E,08,SRAM_V113
 
-Final Fantasy IV Advance (Japan) (Rev 1).gba
-80F1133B,BZ4J,08,SRAM_V113
-
 Final Fantasy IV Advance (Japan).gba
 17036E02,BZ4J,08,SRAM_V113
+
+Final Fantasy IV Advance (Japan) (Rev 1).gba
+80F1133B,BZ4J,08,SRAM_V113
 
 Final Fantasy IV Advance (Japan) (Rev 1) (Virtual Console).gba
 A68DE435,BZ4J,08,SRAM_V113
@@ -9451,11 +10438,11 @@ D6C7DC21,BZLJ,16,SRAM_F_V110
 Legend of Zelda, The - The Minish Cap (USA).gba
 ABCEBBB1,BZME,16,EEPROM_V124
 
-Zelda no Densetsu - Fushigi no Boushi (Japan) (Demo) (Kiosk, GameCube).gba
-EA115BC4,BZMJ,16,NONE
-
 Zelda no Densetsu - Fushigi no Boushi (Japan).gba
 6CE771A5,BZMJ,16,EEPROM_V124
+
+Zelda no Densetsu - Fushigi no Boushi (Japan) (Demo) (Kiosk, GameCube).gba
+EA115BC4,BZMJ,16,NONE
 
 Legend of Zelda, The - The Minish Cap (Europe) (En,Fr,De,Es,It).gba
 E8637292,BZMP,16,EEPROM_V124
@@ -9493,11 +10480,47 @@ Touhai Densetsu Akagi - Yami ni Mai Orita Tensai (Japan).gba
 SpongeBob's Atlantis SquarePantis (USA).gba
 190B1653,BZXE,04,NONE
 
+SpongeBob's Atlantis SquarePantis (USA) (Beta).gba
+A39248A2,BZXE,04,NONE
+
 Zoey 101 (USA).gba
 9CF348A8,BZYE,04,NONE
 
-Chopper 2 The Return (Europe) (Unl).gba
-F33AAC43,C II,00,NONE
+Rushed Adventure (World) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+A340BB33,C24J,01,NONE
+
+Galacard Advance (World) (Aftermarket) (Unl).gba
+46D31560,CBJE,04,NONE
+
+Hero Core (World) (Aftermarket) (Unl).gba
+A58BFA21,CBJE,23,NONE
+
+Hero Core (World) (v0.1.2) (Beta) (GBA Jam 2022) (Aftermarket) (Unl).gba
+0A3FCAD6,CBJE,22,NONE
+
+Collie Defense (World) (Demo) (Aftermarket) (Unl).gba
+08FEB1ED,CDGB,04,SRAM_V113
+
+Green Memories (World) (v1.2.0) (Aftermarket) (Unl).gba
+78B81BBC,CGME,07,NONE
+
+Time for The Chickens to Go to Sleep (World) (Auto Demo) (GBA Jam 2021) (Aftermarket) (Unl).gba
+8FF9915B,COMT,04,NONE
+
+Inky and the Alien Aquarium (World) (Demo 1) (Aftermarket) (Unl).gba
+7EE7AE7F,CUNE,03,NONE
+
+Inky and the Alien Aquarium (World) (Demo 2) (Aftermarket) (Unl).gba
+36F8BA9C,CUNE,03,NONE
+
+DCPR (World) (Demo) (Aftermarket) (Unl).gba
+6C27348A,DCPR,01,NONE
+
+Moorhuhn Jagd (Europe) (Proto).gba
+D3F841F3,DUHU,08,NONE
+
+Eggbug Visits the Space Isle (World) (Demo) (Aftermarket) (Unl).gba
+118CD4A3,EGGB,01,NONE
 
 Classic NES Series - Castlevania (USA).gba
 23E4082C,FADE,01,EEPROM_V124
@@ -9640,16 +10663,58 @@ Classic NES Series - The Legend of Zelda (USA, Europe).gba
 Famicom Mini 05 - Zelda no Densetsu 1 - The Hyrule Fantasy (Japan).gba
 712D76E8,FZLJ,01,EEPROM_V122
 
-Tiny Chao Garden (USA) (Ja) (Phantasy Star Online Episode I & II).gba
-C523504F,GSBJ,00,NONE
+Getting Around It with Pheasant Birdy (World) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+CD007DBD,FZNT,05,NONE
 
-Another World (World) (En,Fr) (Unl).gba
-86C4F772,HOME,01,EEPROM_V124
+Hikaru no Go 3 - Senyou Joy Carry Cartridge (Japan) (Rewritable Cartridge).gba
+5BFBC276,GHTJ,32,NONE
+
+Globlins (World) (Demo 1) (GBA Jam 2024) (Aftermarket) (Unl).gba
+57106DBC,GLOB,02,SRAM_V113
+
+Globlins (World) (Demo 2) (MAGFest 2025) (Aftermarket) (Unl).gba
+55CCD78C,GLOB,02,SRAM_V113
+
+2-in-1 - Smickeonn the Game + Smickeonn the Game Deluxe (World) (Demo) (Aftermarket) (Unl).gba
+8AD5B73F,GMBC,02,NONE
+
+Building Bomber (World) (Aftermarket) (Unl).gba
+D492DE63,GMBC,01,NONE
+
+Gren's GBA Game Pack (World) (Aftermarket) (Unl).gba
+F5757128,GMBC,03,NONE
+
+Smickeonn the Game - 2024's Greatest Hits! (World) (v1.1) (Aftermarket) (Unl).gba
+B254769D,GMBC,07,NONE
+
+Hexes (World) (Aftermarket) (Unl).gba
+D8D17420,HEXS,10,SRAM_V100
+
+Airball (World) (v1.3) (Unl).gba
+52DAC8C6,Home,02,NONE
+
+Another World (World) (En,Fr) (v2.1) (Unl).gba
+86C4F772,Home,02,EEPROM_V124
+
+Another World (World) (Fr) (v1.2) (Unl).gba
+1A1397DE,Home,02,NONE
+
+Coin Adventure (World) (Unl).gba
+BB3A4566,Home,01,NONE
+
+Flood (World) (v0.9) (Proto) (Unl).gba
+46AD658A,Home,01,NONE
+
+Nebulus (World) (GBAX 2004) (Unl).gba
+FB414CCC,Home,01,NONE
+
+Nebulus (World) (v1.2) (Unl).gba
+77E2D5F0,Home,01,NONE
 
 Pokemon - Aurora Ticket Distribution (USA) (Kiosk).gba
 24C80FA6,JPAJ,04,NONE
 
-Koro Koro Puzzle - Happy Panechu! (Japan).gba
+Korokoro Puzzle - Happy Panecchu! (Japan).gba
 0BFE46E9,KHPJ,04,EEPROM_V122
 
 Yoshi Topsy-Turvy (USA).gba
@@ -9661,145 +10726,31 @@ Yoshi no Banyuuinryoku (Japan).gba
 Yoshi's Universal Gravitation (Europe) (En,Fr,De,Es,It).gba
 05F4D0AA,KYGP,08,EEPROM_V124
 
-Game Boy Advance Video - Shrek 2 (USA) (Rev 5).gba
-0D353654,M2SE,64,NONE
-
-Game Boy Advance Video - Shrek 2 (USA) (Rev 6).gba
-925B6C02,M2SE,64,NONE
-
 Hoshi no Kirby - Kagami no Daimeikyuu (Japan) (Demo) (Kiosk, GameCube).gba
 BF80F1A1,MAKO,16,SRAM_V113
 
-Game Boy Advance Video - Cartoon Network Collection - Volume 2 (USA, Europe).gba
-4BFAA8DE,MC2E,32,NONE
+Mooncat's Trio (World) (Aftermarket) (Unl).gba
+B05D5339,MCAT,02,NONE
 
-Game Boy Advance Video - Cartoon Network Collection - Limited Edition (USA).gba
-5D918B2D,MCME,32,NONE
+Metroid Fusion (Europe) (En,Fr,De,Es,It) (Beta) (2002-09-11).gba
+3ACBD239,METJ,16,SRAM_V112
 
-Game Boy Advance Video - Cartoon Network Collection - Platinum Edition (USA, Europe).gba
-6443554B,MCNE,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Edition Platinum (France).gba
-FC042F18,MCNF,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Premium Edition (USA, Europe).gba
-F2825729,MCPE,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Edition Premium (France).gba
-58F1CDE8,MCPF,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Special Edition (USA, Europe).gba
-E9B7B8A4,MCSE,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Special Edition (USA) (Rev 5).gba
-1BAF372D,MCSE,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Edition Speciale (France).gba
-71154D42,MCSF,32,NONE
-
-Game Boy Advance Video - Cartoon Network Collection - Volume 1 (USA, Europe).gba
-91F39447,MCTE,32,NONE
-
-Game Boy Advance Video - Dragon Ball GT - Volume 1 (USA).gba
-DA559199,MDBE,32,NONE
-
-Game Boy Advance Video - Disney Channel Collection - Volume 1 (USA).gba
-7CC985CB,MDCE,32,NONE
-
-Game Boy Advance Video - Dora the Explorer - Volume 1 (USA).gba
-DD6A7FCC,MDRE,32,NONE
-
-Game Boy Advance Video - Disney Channel Collection - Volume 2 (USA) (Rev 5).gba
-DA3B64F3,MDSE,32,NONE
-
-Game Boy Advance Video - The Fairly OddParents! - Volume 2 (USA) (Rev 1).gba
-BBCBC6FD,MF2E,32,NONE
-
-Game Boy Advance Video - The Fairly OddParents! - Volume 1 (USA).gba
-7958DF20,MFOE,32,NONE
-
-Game Boy Advance Video - The Proud Family - Volume 1 (USA).gba
-C6A91365,MFPE,32,NONE
-
-Game Boy Advance Video - All Grown Up! - Volume 1 (USA).gba
-FFBD4DA9,MGUE,32,NONE
-
-Game Boy Advance Video - The Adventures of Jimmy Neutron Boy Genius - Volume 1 (USA).gba
-0E556EDF,MJME,32,NONE
-
-Game Boy Advance Video - Codename - Kids Next Door - Volume 1 (USA, Europe).gba
-4463F345,MKDE,32,NONE
-
-Game Boy Advance Video - Nicktoons Collection - Volume 2 (USA).gba
-65DEEEB6,MN2E,32,NONE
-
-Game Boy Advance Video - Nicktoons - Volume 3 (USA).gba
-6FBF5CEB,MN3E,32,NONE
-
-Game Boy Advance Video - Nicktoons Collection - Volume 1 (USA).gba
-5D47676F,MNCE,32,NONE
-
-Game Boy Advance Video - Pokemon - Volume 1 (USA).gba
-A59EF954,MPAE,32,NONE
-
-Game Boy Advance Video - Pokemon - Volume 2 (USA).gba
-0DA1A383,MPBE,32,NONE
-
-Game Boy Advance Video - Pokemon - Volume 3 (USA).gba
-A36AA9C5,MPCE,32,NONE
-
-Game Boy Advance Video - Pokemon - Volume 4 (USA).gba
-BE468496,MPDE,32,NONE
+Metroid Fusion (Europe) (En,Fr,De,Es,It) (Beta) (2002-09-16).gba
+1605E4F7,METJ,08,SRAM_V112
 
 Mario vs. Donkey Kong (USA) (Demo) (Kiosk, GameCube).gba
 25505164,MRDK,16,NONE
 
-Game Boy Advance Video - SpongeBob SquarePants - Volume 2 (USA) (Rev 1).gba
-7074364A,MS2E,32,NONE
+Mandarin 2, The - Limoncello's Revenge (World) (Aftermarket) (Unl).gba
+CC2CB6A8,MSXA,01,NONE
 
-Game Boy Advance Video - SpongeBob SquarePants - Volume 3 (USA).gba
-9772CA45,MS3E,32,NONE
+notenogram (World) (GBA Jam 2022) (Aftermarket) (Unl).gba
+3B936E97,NGRM,01,NONE
 
-Game Boy Advance Video - Shark Tale (USA) (Rev 5).gba
-01468820,MSAE,64,NONE
+notenogram (World) (v1.1) (Aftermarket) (Unl).gba
+28108D5E,NGRM,01,SRAM_V113
 
-Game Boy Advance Video - Shark Tale (USA) (Rev 6).gba
-D2CF417A,MSAE,64,NONE
-
-Game Boy Advance Video - Strawberry Shortcake - Volume 1 (USA).gba
-FF7582EF,MSBE,32,NONE
-
-Game Boy Advance Video - Sonic X - Volume 1 (USA).gba
-363C3EB8,MSHE,32,NONE
-
-Game Boy Advance Video - Shrek (USA) (Rev 5).gba
-690176E5,MSKE,64,NONE
-
-Game Boy Advance Video - Shrek (USA) (Rev 6).gba
-4010E9FA,MSKE,64,NONE
-
-Game Boy Advance Video - Super Robot Monkey Team - Hyper Force Go! - Volume 1 (USA).gba
-D743A070,MSRE,32,NONE
-
-Game Boy Advance Video - SpongeBob SquarePants - Volume 1 (USA) (Rev 1).gba
-D47BF1D4,MSSE,32,NONE
-
-Game Boy Advance Video - Shrek + Shark Tale (USA) (Rev 5).gba
-AADB3E3D,MSTE,64,NONE
-
-Game Boy Advance Video - Teenage Mutant Ninja Turtles - Things Change (USA, Europe).gba
-046589C8,MTME,32,NONE
-
-Game Boy Advance Video - Teenage Mutant Ninja Turtles - Le Demenagement (France).gba
-1EE78166,MTMF,32,NONE
-
-Game Boy Advance Video - Yu-Gi-Oh! - Yugi vs. Joey (USA, Europe).gba
-8D631F4E,MYGE,32,NONE
-
-Game Boy Advance Video - Yu-Gi-Oh! - Yugi vs. Joey (France).gba
-C9B6CCF1,MYGF,32,NONE
-
-GBA Movie Player 2 CF (Spain) (Unl).gba
+GBA Movie Player - 2nd Version (World) (Unl) [b].gba
 C879B340,PASS,01,NONE
 
 GBA Personal Organizer (USA) (Unl).gba
@@ -9808,62 +10759,218 @@ GBA Personal Organizer (USA) (Unl).gba
 Card e-Reader (Japan).gba
 A4EF4E95,PEAJ,04,FLASH_V124
 
+Battery Chad - Shock the World (World) (Demo) (Aftermarket) (Unl).gba
+E0A4BC38,PNES,01,NONE
+
+Friks - Double Feature (World) (Demo) (Aftermarket) (Unl).gba
+11E47FA4,PNES,01,NONE
+
 e-Reader (USA).gba
 8B27CD67,PSAE,08,FLASH1M_V103
 
 Card e-Reader+ (Japan).gba
 4139E7C3,PSAJ,08,FLASH1M_V103
 
+Pipe Spin (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+09D723E2,PSPN,03,NONE
+
+Castle Master (World) (Unl).gba
+307F7D77,QCYC,01,NONE
+
 Battletoads (USA) (Proto).gba
-31480D89,RARE,02,NONE
+31480D89,RARE,03,NONE
+
+Diddy Kong Pilot (Unknown) (Proto) (2001).gba
+5C206101,RARE,05,NONE
 
 Diddy Kong Pilot (Unknown) (Proto) (2003).gba
-057DC388,RARE,11,EEPROM_UPDA
+057DC388,RARE,12,EEPROM_V122
 
-WarioWare - Twisted! (USA).gba
+WarioWare - Twisted! (USA, Australia).gba
 CB4E844B,RZWE,16,SRAM_V113
 
 Mawaru - Made in Wario (Japan).gba
 E69964F1,RZWJ,16,SRAM_V113
 
-Tremblay Island (World) (Fr) (v.1.10) (Solid State Version) (Homebrew).gba
-FA43669E,SBFP,15,SRAM_V113
+Butano Fighter (World) (Aftermarket) (Unl).gba
+3C31501C,SBFP,04,SRAM_V113
 
-Tremblay Island (World) (Kickstarter Edition) (Homebrew).gba
+Starlight Street (World) (Demo) (Aftermarket) (Unl).gba
+B15C6CB6,SBFP,07,SRAM_V113
+
+Tremblay Island (World) (En) (v1.1) (Aftermarket) (Unl).gba
+CE85BA07,SBFP,16,SRAM_V113
+
+Tremblay Island (World) (En) (v1.1) (Kickstarter Edition) (Aftermarket) (Unl).gba
 FF5D64AB,SBFP,16,SRAM_V113
 
-Tremblay Island (World) (v.1.10) (Homebrew).gba
-CE85BA07,SBFP,15,SRAM_V113
+Tremblay Island (World) (En) (v1.1) (Solid State Version) (Aftermarket) (Unl).gba
+BD57344D,SBFP,16,SRAM_V113
 
-Tremblay Island (World) (v.1.10) (Solid State Version) (Homebrew).gba
-BD57344D,SBFP,15,SRAM_V113
+Tremblay Island (World) (Fr) (v1.1) (Solid State Version) (Aftermarket) (Unl).gba
+FA43669E,SBFP,16,SRAM_V113
+
+SpongeBob SquarePants - SuperSponge (USA, Europe) (Beta) (2001-07-31).gba
+F2F67F40,SBSP,04,NONE
+
+Armadillo Run (World) (Demo) (Aftermarket) (Unl).gba
+5151BABD,SBTP,02,SRAM_V113
+
+Brush Rush (World) (Proto) (GBA WinterJam 2023) (Aftermarket) (Unl).gba
+AFDF2C03,SBTP,01,SRAM_V113
+
+Cat-Venture (World) (Demo 1) (GBA Jam 2024) (Aftermarket) (Unl).gba
+B4155816,SBTP,01,SRAM_V113
+
+Cat-Venture (World) (Demo 2) (Aftermarket) (Unl).gba
+91D29E6F,SBTP,01,SRAM_V113
+
+CHEESYchords (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+7FFB6699,SBTP,02,SRAM_V113
+
+CHEESYchords (World) (v1.1) (Aftermarket) (Unl).gba
+6F0D43B0,SBTP,01,SRAM_V113
+
+Cornucopia (World) (Proto) (Aftermarket) (Unl).gba
+C07C1BAF,SBTP,10,SRAM_V113
+
+Cronela's Mansion (World) (Demo 1) (Aftermarket) (Unl).gba
+3F3025DC,SBTP,04,SRAM_V113
+
+Cronela's Mansion (World) (Demo 2) (Aftermarket) (Unl).gba
+D0739B28,SBTP,04,SRAM_V113
+
+Detective Monroe - Murder at Sea (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+BF7F144D,SBTP,02,SRAM_V113
+
+Discrete Orange (World) (v0.1) (GBA Jam 2024) (Aftermarket) (Unl).gba
+8515069C,SBTP,02,SRAM_V113
+
+Discrete Orange (World) (v0.1b) (Aftermarket) (Unl).gba
+D5275F91,SBTP,02,SRAM_V113
+
+Feline (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+09B777EA,SBTP,02,NONE
+
+Fungus Forest (World) (Demo) (Aftermarket) (Unl).gba
+F0E79069,SBTP,02,SRAM_V113
+
+GBA Grand Prix (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+BF97BC21,SBTP,01,SRAM_V113
+
+Gematrix (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+2AF2DA4E,SBTP,02,SRAM_V113
+
+Happy Dawn (World) (Demo 1) (GBA Jam 2024) (Aftermarket) (Unl).gba
+F8AAE830,SBTP,02,SRAM_V113
+
+Happy Dawn (World) (Demo 2) (Aftermarket) (Unl).gba
+F7267006,SBTP,02,SRAM_V113
+
+Luggage Retrieval Officer (World) (Aftermarket) (Unl).gba
+5AA30D90,SBTP,04,NONE
+
+NEONnoir (World) (Aftermarket) (Unl).gba
+34220044,SBTP,03,SRAM_V113
+
+Oggo Boggo (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+01AFB2F7,SBTP,04,SRAM_V113
+
+Sips (World) (GBA WinterJam 2023) (Aftermarket) (Unl).gba
+5C1FB22D,SBTP,06,NONE
+
+Space Evangelion (World) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+07A021A5,SBTP,03,SRAM_V113
+
+Survivors (World) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+C2311462,SBTP,01,SRAM_V113
+
+Sys Crusher (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+DACCD9A1,SBTP,03,SRAM_V113
+
+Sys Crusher (World) (v1.1) (Aftermarket) (Unl).gba
+E83E5696,SBTP,03,SRAM_V113
+
+Sys Crusher (World) (v1.2) (Aftermarket) (Unl).gba
+E9D9B245,SBTP,04,SRAM_V113
+
+Toll Runner (World) (Demo 1) (GBA Jam 2024) (Aftermarket) (Unl).gba
+C91E6762,SBTP,06,SRAM_V113
+
+Toll Runner (World) (Demo 2) (Aftermarket) (Unl).gba
+059DF363,SBTP,06,SRAM_V113
+
+Tremblay Island (World) (Aftermarket) (Unl).gba
+95503690,SBTP,16,NONE
+
+Work Life (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+9923C8DF,SBTP,10,SRAM_V113
+
+Drawing a Leviathan (World) (Aftermarket) (Unl).gba
+1EB0F64D,SF00,10,NONE
+
+Skyland (World) (v2023.5.15.0) (Proto) (Aftermarket) (Unl).gba
+AF572DE8,SKLD,16,NONE
+
+Skyland (World) (v2023.5.26.0) (Proto) (Aftermarket) (Unl).gba
+DF05EDFF,SKLD,16,NONE
+
+Skyland (World) (v2023.5.5.0) (Proto) (Aftermarket) (Unl).gba
+C798529D,SKLD,16,NONE
+
+Skyland (World) (v2023.8.1.1) (Proto) (Aftermarket) (Unl).gba
+D271C516,SKLD,16,NONE
+
+Skyland (World) (v2024.5.24.0) (Proto) (Aftermarket) (Unl).gba
+4CFB40D2,SKLD,16,NONE
+
+Sleep Paradox (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+DA47E4DE,SLPX,01,SRAM_V113
+
+Frost Princess (World) (GBA Winter Jam 2021) (Aftermarket) (Unl).gba
+833D052A,SMHM,01,NONE
+
+Master System 106-in-1 (World) (Pirate).gba
+3E1705E2,SMSA,32,NONE
+
+2048 Pool (World) (Aftermarket) (Unl).gba
+9DF6AE4F,SV3D,01,SRAM_V113
+
+Varooom 3D (World) (GBA Jam 2021) (Aftermarket) (Unl).gba
+3F127891,SV3D,08,NONE
+
+AGB Aging Cartridge (World) (Test Program).gba
+D2E80E33,TCHK,04,EEPROM_V110
+
+AGS Aging Cartridge (World) (Rev 1) (v7.0) (Test Program).gba
+E16E1360,TCHK,04,EEPROM_V122
+
+AGS Aging Cartridge (World) (Rev 3) (v9.0) (Test Program).gba
+584BBDC7,TCHK,04,EEPROM_V124
 
 AGS Aging Cartridge (World) (v10.0) (Test Program).gba
-96B54925,TCHK,01,EEPROM_V124
-
-AGS Aging Cartridge (World) (v7.0) (Test Program).gba
-BBB6A960,TCHK,02,EEPROM_V122
+96B54925,TCHK,02,EEPROM_V124
 
 AGS Aging Cartridge (World) (v7.1) (Test Program).gba
 D047FFDF,TCHK,08,EEPROM_V122
 
-AGS Aging Cartridge (World) (v9.0) (Test Program).gba
-2E69686D,TCHK,02,EEPROM_V124
+Ninja Tower (World) (Proto) (GBA Jam 2024) (Aftermarket) (Unl).gba
+15C693C2,TOWR,01,SRAM_V113
 
-GBA TV Tuner PAL (China) (v1.3) (Unl).gba
-AF124F8C,TVAP,01,NONE
+GB-A TV Tuner PAL (China) (v1.3) (Unl).gba
+63524B0F,tvap,01,NONE
 
-GBA TV Tuner PAL (China) (v2.0) (Unl).gba
-B511DF64,TVAP,08,NONE
+GB-A TV Tuner PAL (China) (v2.0) (Unl).gba
+0ABECB5B,tvap,01,NONE
 
 Boktai 2 - Solar Boy Django (USA).gba
 E1FFB2D1,U32E,16,EEPROM_V124
 
-Zoku Bokura no Taiyou - Taiyou Shounen Django (Japan) (Rev 1).gba
-71E2CD01,U32J,16,EEPROM_V124
-
 Zoku Bokura no Taiyou - Taiyou Shounen Django (Japan).gba
 2804E589,U32J,16,EEPROM_V124
+
+Zoku Bokura no Taiyou - Taiyou Shounen Django (Japan) (Rev 1).gba
+71E2CD01,U32J,16,EEPROM_V124
 
 Boktai 2 - Solar Boy Django (Europe) (En,Fr,De,Es,It).gba
 748189B5,U32P,16,EEPROM_V124
@@ -9880,8 +10987,17 @@ A09C0807,U3IJ,16,EEPROM_V122
 Boktai - The Sun Is in Your Hand (Europe) (En,Fr,De,Es,It).gba
 9686C36B,U3IP,16,EEPROM_V122
 
-Remute - Unity (World) (Aftermarket) (Unl).gba
-6CD42A32,UNTY,32,NONE
+uCity Advance (World) (Aftermarket) (Unl).gba
+9CC88417,UCAD,02,SRAM_V110
+
+uCity Advance (World) (v1.0.1) (GBA Jam 2021) (Aftermarket) (Unl).gba
+A6E47443,UCAD,02,SRAM_V110
+
+BeatBeast (World) (GBA Jam 2024) (Aftermarket) (Unl).gba
+1821DA49,V49E,32,SRAM_V113
+
+Blind Jump (World) (En,Ja,Fr,It,Ru) (v2021.11.20.0) (Proto) (Aftermarket) (Unl).gba
+2342E91E,V49E,16,NONE
 
 Drill Dozer (USA).gba
 E60EC183,V49E,08,SRAM_V113
@@ -9899,10 +11015,16 @@ Aero the Acro-Bat - Rascal Rival Revenge (USA) (Beta 2) (2002-03-27).gba
 6F3EA564,XXXX,04,EEPROM_V122
 
 Banjo-Pilot (Europe) (Beta 1).gba
-817FD31D,XXXX,14,EEPROM_V122
+817FD31D,XXXX,15,EEPROM_V122
 
 Banjo-Pilot (Europe) (En,Fr,De,Es,It) (Beta 2) (2004-09-29).gba
 3168A9A4,XXXX,16,EEPROM_V124
+
+Daigassou! Band-Brothers - Request Selection (Japan) (DS Expansion Cartridge).gba
+374DE320,ZBBJ,01,NONE
+
+Uranus (World) (Unl).gba
+8152384D,ZGN0,04,NONE
 
 Play-Yan (Japan).gba
 27F7B403,ZMAJ,01,SRAM_V113
@@ -9910,8 +11032,20 @@ Play-Yan (Japan).gba
 Play-Yan Micro (Japan).gba
 9FD40094,ZMBJ,01,SRAM_V113
 
+Minicraft (World) (Aftermarket) (Unl).gba
+E852C9E9,ZMCE,01,NONE
+
+Minicraft (World) (v1.1) (Aftermarket) (Unl).gba
+07595773,ZMCE,01,NONE
+
+Minicraft (World) (v1.2) (Aftermarket) (Unl).gba
+37E7EE7D,ZMCE,01,NONE
+
+Minicraft (World) (v1.3) (Aftermarket) (Unl).gba
+CC48E03A,ZMCE,01,NONE
+
 Nintendo MP3 Player (Europe) (En,Fr,De,Es,It).gba
-867BEC76,ZMDE,04,NONE
+16E5D0F2,ZMDE,01,NONE
 
 GBA Jukebox (USA).gba
 F34B25F2,ZMPE,04,NONE
