@@ -14,6 +14,7 @@ body:
       label: OSCR hardware version
       description: What hardware version are you using?
       options:
+        - Select hardware version
         - HW1
         - HW2
         - HW3
@@ -37,6 +38,7 @@ body:
       label: System used
       description: Which system is affected?
       options:
+        - Select a system
         - all/none/doesn't matter
         - NES/Famicom/Family Basic
         - SNES/Super Famicom
@@ -81,6 +83,7 @@ body:
       label: Cartridge pins freshly cleaned?
       description: Clean gold fingers with IPA and cotton swap until no more black comes off.
       options:
+        - Select answer
         - "No"
         - "Yes"
     validations:
