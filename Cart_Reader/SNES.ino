@@ -1760,6 +1760,7 @@ void writeSRAM(boolean browseFile) {
       if (i2c_found) {
         // Enable CPU Clock
         clockgen.output_enable(SI5351_CLK1, 1);
+        clockgen.update_status();
       }
 
       // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
@@ -1781,7 +1782,6 @@ void writeSRAM(boolean browseFile) {
 
       // Use $2224 (SNES) to map BW-RAM block to 0x6000-0x7FFF
       // Use $2226 (SNES) to write enable the BW-RAM
-      byte firstByte = 0;
       for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
         // Set 0x2224 (SNES BMAPS) to map SRAM Block to 0x6000-0x7FFF
         writeBank_SNES(0, 0x2224, currBlock);
@@ -1789,18 +1789,19 @@ void writeSRAM(boolean browseFile) {
         writeBank_SNES(0, 0x2226, 0x80);
         for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
           myFile.read(sdBuffer, 512);
-          if ((currBlock == 0) && (currByte == 0x6000)) {
-            firstByte = sdBuffer[0];
-          }
           for (int c = 0; c < 512; c++) {
             writeBank_SNES(0, currByte + c, sdBuffer[c]);
           }
         }
       }
-      // Rewrite First Byte
+      // Rewrite first 16 bytes since they often get written incorrectly(fixes Super Bomberman Panic Bomber W), first byte needs to be written last(fixes PGA Tour 96)
+      myFile.seekSet(0);
+      myFile.read(sdBuffer, 16);
       writeBank_SNES(0, 0x2224, 0);
       writeBank_SNES(0, 0x2226, 0x80);
-      writeBank_SNES(0, 0x6000, firstByte);
+      for (int c = 15; c >= 0; c--) {
+        writeBank_SNES(0, 0x6000 + c,  sdBuffer[c]);
+      }
       if (i2c_found) {
         // Disable CPU clock
         clockgen.output_enable(SI5351_CLK1, 0);
