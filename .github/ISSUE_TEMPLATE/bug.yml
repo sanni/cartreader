@@ -83,8 +83,8 @@ body:
       label: Cartridge pins freshly cleaned?
       description: Clean gold fingers with IPA and cotton swap until no more black comes off.
       options:
-        - No
-        - Yes 
+        - "No"
+        - "Yes"
     validations:
       required: false
   - type: textarea
