@@ -1156,6 +1156,9 @@ Ski Run
 Skiing
 032
 
+Sky Alien
+064
+
 Sky Diver
 032
 
