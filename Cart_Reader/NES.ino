@@ -3464,8 +3464,9 @@ void readCHR(bool readrom) {
         case 1:
         case 155:
           banks = int_pow(2, chrsize);
+          write_prg_byte(0x8000, 0x80);            // Clear Register
+          write_mmc1_byte(0x8000, 0x00);           // Mapper control
           for (size_t i = 0; i < banks; i += 2) {  // 8K/16K/32K/64K/128K (Bank #s are based on 4K Banks)
-            write_prg_byte(0x8000, 0x80);          // Clear Register
             write_mmc1_byte(0xA000, i);
             dumpBankCHR(0x0, 0x2000);
           }
