@@ -276,7 +276,7 @@ void setROMSize_VSMILE()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VSMILE[newvsmilesize]);
-  println_Msg(F("KB"));
+  println_Msg(F("MB"));
   display_Update();
   delay(1000);
 #else
@@ -290,7 +290,7 @@ setrom:
       Serial.print(i);
       Serial.print(F(" = "));
       Serial.print(VSMILE[i + vsmilelo]);
-      Serial.println(F("KB"));
+      Serial.println(F("MB"));
     }
     Serial.print(F("Enter ROM Size: "));
     while (Serial.available() == 0) {}
@@ -305,7 +305,7 @@ setrom:
   }
   Serial.print(F("ROM Size = "));
   Serial.print(VSMILE[newvsmilesize]);
-  Serial.println(F("KB"));
+  Serial.println(F("MB"));
 #endif
   EEPROM_writeAnything(8, newvsmilesize);
   vsmilesize = newvsmilesize;
